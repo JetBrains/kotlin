@@ -196,6 +196,13 @@ internal class GranularMetadataTransformation(
         override fun toString(): String = "ProjectData[path='$path']"
     }
 
+    /** TODO: Can be shared among multiple instances of [GranularMetadataTransformation] of the same project, with caching */
+    private val sourceSetVisibilityProvider = SourceSetVisibilityProvider(
+        params.buildIdentifierAccessor,
+        resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
+        allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates,
+    )
+
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
     internal val visibleSourceSetsByKmpModuleIdentifier: Map<KmpModuleIdentifier, Set<String>> by lazy {
@@ -399,13 +406,11 @@ internal class GranularMetadataTransformation(
 
         val isResolvedToProject = moduleId in params.build
 
-        val sourceSetVisibility = SourceSetVisibilityProvider(params.buildIdentifierAccessor).getVisibleSourceSets(
-            dependency,
-            params.dependingPlatformCompilations,
-            projectStructureMetadata,
-            isResolvedToProject,
-            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
-            allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates,
+        val sourceSetVisibility = sourceSetVisibilityProvider.getVisibleSourceSets(
+            resolvedRootMppDependency = dependency,
+            dependingPlatformCompilations = params.dependingPlatformCompilations,
+            dependencyProjectStructureMetadata = projectStructureMetadata,
+            resolvedToOtherProject = isResolvedToProject,
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
