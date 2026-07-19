@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -31,41 +30,35 @@ object DefaultFunctionParametersCollector : IrGenerationExtension {
         moduleFragment.files.forEach { file ->
             file.acceptVoid(object : IrVisitorVoid() {
 
-                private val rootOverriddenFunctionFinder = PathCompressingAncestorMap<IrSimpleFunctionSymbol> {
-                    it.owner.overriddenSymbols.asSequence()
+                private val rootOverriddenFunctionFinder = PathCompressingAncestorMap<IrSimpleFunctionSymbol> { element ->
+                    element.owner.overriddenSymbols.asSequence().flatMap { it.realOverridden() }.distinct()
                 }
 
-                private val visitedFunctions = mutableSetOf<IrFunctionSymbol>()
-
-                private val IrSimpleFunction.rootOverriddenFunction: IrSimpleFunctionSymbol
+                private val IrSimpleFunction.rootOverriddenFunctions: Set<IrSimpleFunctionSymbol>
                     get() = rootOverriddenFunctionFinder[symbol]
 
                 private fun IrSimpleFunctionSymbol.propagateDefaultParameters(parameterMap: MutableMap<Int, IrValueParameterSymbol> = mutableMapOf()) {
-                    if (!visitedFunctions.add(this)) return
                     owner.parameters.forEachIndexed { index, parameter ->
                         if (parameter.defaultValue != null) parameterMap[index] = parameter.symbol
                         if (index in parameterMap) parameter.closestOverriddenDefaultParameter = parameterMap[index]
                     }
-                    overridingFunctions.forEach { it.propagateDefaultParameters(parameterMap.toMutableMap()) }
+                    overridingFunctions?.forEach { it.propagateDefaultParameters(parameterMap.toMutableMap()) }
                 }
 
                 override fun visitElement(element: IrElement): Unit = element.acceptChildrenVoid(this)
 
                 override fun visitFile(declaration: IrFile) {
                     super.visitFile(declaration)
-                    visitedFunctions.clear()
                     rootOverriddenFunctionFinder.reset()
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                    if (declaration.symbol in visitedFunctions) return
-                    val rootFunction = declaration.rootOverriddenFunction
-                    rootFunction.propagateDefaultParameters()
+                    val rootFunctions = declaration.rootOverriddenFunctions
+                    rootFunctions.forEach { it.propagateDefaultParameters() }
                 }
 
                 override fun visitConstructor(declaration: IrConstructor) {
-                    if (declaration.symbol in visitedFunctions) return
-                    // Constructors cannot be overridden, so the default parameters can come only from the actual declaration itself
+                    // Constructors cannot be overridden, so the default parameters can only come from the actual declaration itself
                     declaration.parameters.forEach {
                         if (it.defaultValue != null) it.closestOverriddenDefaultParameter = it.symbol
                     }

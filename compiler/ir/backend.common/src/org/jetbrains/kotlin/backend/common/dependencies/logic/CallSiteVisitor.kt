@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Co
 import org.jetbrains.kotlin.backend.common.dependencies.model.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
 import org.jetbrains.kotlin.backend.common.dependencies.util.contains
 import org.jetbrains.kotlin.backend.common.dependencies.util.endInitializationIndex
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -192,7 +194,7 @@ class CallSiteVisitor(
         }
 
     context(context: CallSiteVisitContext, access: A)
-    private inline fun <D : IrDeclaration, S : IrBindableSymbol<*, D>, A : IrDeclarationReference> DependencyNodeBuilder.accessNode(
+    private inline fun <D : IrOverridableDeclaration<S>, S : IrBindableSymbol<*, D>, A : IrDeclarationReference> DependencyNodeBuilder.accessNode(
         symbol: S,
         dispatchReceiverSupplier: D.(A) -> IrExpression? = { null },
         extensionReceiverSupplier: D.(A) -> IrExpression? = { null },
@@ -200,33 +202,41 @@ class CallSiteVisitor(
         crossinline staticAccess: context(CallSiteVisitContext, A) DependencyNodeBuilder.(S, EnclosingEntity<*>) -> Unit,
         crossinline instanceAccess: context(CallSiteVisitContext, A) DependencyNodeBuilder.(S) -> Unit,
     ) {
-        // If the callable is an extension, visit the extension receiver for dependencies
-        symbol.owner.extensionReceiverSupplier(access)?.visitRecursively()
+        // Consider symbols which are real overrides and/or have an implementation
+        val symbols = when {
+            symbol.owner.isFakeOverride -> symbol.realOverridden().filter { it.owner.modality != Modality.ABSTRACT }.toSet()
+            else -> setOf(symbol)
+        }
 
-        // Compute the node to this callable based on the access' dispatch receiver
-        when (val receiver = symbol.owner.dispatchReceiverSupplier(access)) {
-            // `super.` access
-            null if superQualifierSupplier(access) != null ->
-                context.accessingEntity?.let { staticAccess(symbol, it) } ?: instanceAccess(symbol)
-            // top-level access
-            null if symbol.owner.isTopLevel -> symbol.owner.fileOrNull?.asFileEntity()?.let { staticAccess(symbol, it) }
-            // `this.` access (implicit or otherwise)
-            is IrGetValue if (receiver.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || receiver.origin == IrStatementOrigin.IMPLICIT_ARGUMENT) ->
-                context.accessingEntity?.let { staticAccess(symbol, it) } ?: instanceAccess(symbol)
-            // `A.` qualifier access
-            is IrGetObjectValue -> {
-                val enclosingEntity = receiver.symbol.asObjectEntity() ?: return
-                staticAccess(symbol, enclosingEntity)
+        // Compute the nodes to the callables based on the access' dispatch receiver
+        symbols.forEach { symbol ->
+            // If the callable is an extension, visit the extension receiver for dependencies
+            symbol.owner.extensionReceiverSupplier(access)?.visitRecursively()
+
+            when (val receiver = symbol.owner.dispatchReceiverSupplier(access)) {
+                // `super.` access
+                null if superQualifierSupplier(access) != null ->
+                    context.accessingEntity?.let { staticAccess(symbol, it) } ?: instanceAccess(symbol)
+                // top-level access
+                null if symbol.owner.isTopLevel -> symbol.owner.fileOrNull?.asFileEntity()?.let { staticAccess(symbol, it) }
+                // `this.` access (implicit or otherwise)
+                is IrGetValue if (receiver.symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || receiver.origin == IrStatementOrigin.IMPLICIT_ARGUMENT) ->
+                    context.accessingEntity?.let { staticAccess(symbol, it) } ?: instanceAccess(symbol)
+                // `A.` qualifier access
+                is IrGetObjectValue -> {
+                    val enclosingEntity = receiver.symbol.asObjectEntity() ?: return
+                    staticAccess(symbol, enclosingEntity)
+                }
+                // `E.ENTRY.` enum entry access
+                is IrGetEnumValue -> staticAccess(symbol, receiver.symbol.asEnumEntryEntity())
+                // `e.` arbitrary access
+                is IrDeclarationReference -> {
+                    // Receiver dependencies must be connected to the accessing node first
+                    receiver.visitRecursively()
+                    instanceAccess(symbol)
+                }
+                else -> return
             }
-            // `E.ENTRY.` enum entry access
-            is IrGetEnumValue -> staticAccess(symbol, receiver.symbol.asEnumEntryEntity())
-            // `e.` arbitrary access
-            is IrDeclarationReference -> {
-                // Receiver dependencies must be connected to the accessing node first
-                receiver.visitRecursively()
-                instanceAccess(symbol)
-            }
-            else -> return
         }
     }
 

@@ -170,34 +170,35 @@ sealed class TraversalOrder {
     }
 }
 
-class PathCompressingAncestorMap<T>(val parents: (T) -> Sequence<T>) : Map<T, T> {
-    private val ancestor = mutableMapOf<T, T>()
+class PathCompressingAncestorMap<T>(val parents: (T) -> Sequence<T>) : Map<T, Set<T>> {
+    private val ancestorMap = mutableMapOf<T, Set<T>>()
 
-    private fun find(element: T): T {
-        // All parents must have exactly ONE root ancestor
-        ancestor[element] = parents(element).map(::find).distinct().atMostSingle() ?: element
-        return ancestor.getValue(element)
+    private fun findAncestors(element: T): Set<T> {
+        val ancestors = parents(element).flatMap(::findAncestors).distinct().toMutableSet()
+        if (ancestors.isEmpty()) ancestors += element
+        ancestorMap[element] = ancestors
+        return ancestors
     }
 
-    fun reset(): Unit = ancestor.clear()
+    fun reset(): Unit = ancestorMap.clear()
 
-    override val size: Int get() = ancestor.size
+    override val size: Int get() = ancestorMap.size
 
-    override fun isEmpty(): Boolean = ancestor.isEmpty()
+    override fun isEmpty(): Boolean = ancestorMap.isEmpty()
 
-    override fun containsKey(key: T): Boolean = ancestor.containsKey(key)
+    override fun containsKey(key: T): Boolean = ancestorMap.containsKey(key)
 
-    override fun containsValue(value: T): Boolean = ancestor.containsValue(value)
+    override fun containsValue(value: Set<T>): Boolean = ancestorMap.containsValue(value)
 
-    override fun get(key: T): T = ancestor[key] ?: find(key)
+    override fun get(key: T): Set<T> = ancestorMap[key] ?: findAncestors(key)
 
-    override val keys: Set<T> get() = ancestor.keys
+    override val keys: Set<T> get() = ancestorMap.keys
 
-    override val values: Collection<T> get() = ancestor.values
+    override val values: Collection<Set<T>> get() = ancestorMap.values
 
-    override val entries: Set<Map.Entry<T, T>> get() = ancestor.entries
+    override val entries: Set<Map.Entry<T, Set<T>>> get() = ancestorMap.entries
 
-    override fun toString(): String = ancestor.asIterable()
+    override fun toString(): String = ancestorMap.asIterable()
         .joinToString(prefix = "{", postfix = "}", separator = "\t\n") { [element, parent] -> "$element -> $parent" }
 }
 
@@ -225,16 +226,6 @@ inline fun <T> Set<T>.stronglyConnectedComponents(
 
 operator fun <E, M : MutableCollection<E>> M.plus(other: Iterable<E>): M = apply {
     other.forEach { add(it) }
-}
-
-fun <T> Sequence<T>.atMostSingle(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        return null
-    val single = iterator.next()
-    if (iterator.hasNext())
-        throw IllegalArgumentException("Sequence has more than one element.")
-    return single
 }
 
 fun IrClassSymbol.collectEnumEntries(): List<IrEnumEntrySymbol> {

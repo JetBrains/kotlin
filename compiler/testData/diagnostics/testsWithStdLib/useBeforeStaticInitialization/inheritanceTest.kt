@@ -21,4 +21,9 @@ class E : B() {
     }
 }
 
+open class Base { open fun f() {} }
+interface I { fun f() }
+
+class Derived : Base(), I
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, override */

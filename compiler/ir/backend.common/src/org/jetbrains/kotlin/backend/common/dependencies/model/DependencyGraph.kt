@@ -52,7 +52,7 @@ class DependencyGraph(val module: IrModuleFragment) : Set<DependencyNode> {
         context(graph: DependencyGraph)
         operator fun EnclosingEntity<*>.contains(node: DependencyNodeIndex): Boolean = node in graph.entities[this]
 
-        fun DependencyGraph.stronglyConnectedComponents(nodes: Set<DependencyNode>): List<Set<DependencyNode>> =
+        internal fun DependencyGraph.stronglyConnectedComponents(nodes: Set<DependencyNode>): List<Set<DependencyNode>> =
             nodes.stronglyConnectedComponents(
                 ancestors = { node, visited ->
                     node.happensBeforeAncestors(visited, TraversalOrder.PostOrder) { it in this && !it.isComposite }

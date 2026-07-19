@@ -25,34 +25,41 @@ import kotlin.collections.forEach
 
 private var <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> D.overridingCallables: MutableSet<S>? by irAttribute(copyByDefault = false)
 
-val <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> S.overridingCallables: Set<S>
-    get() = owner.overridingCallables ?: emptySet()
+val <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> S.overridingCallables: Set<S>? get() = owner.overridingCallables
 
-val IrPropertySymbol.overridingProperties: Set<IrPropertySymbol> get() = overridingCallables
+val IrPropertySymbol.overridingProperties: Set<IrPropertySymbol>? get() = overridingCallables
 
-val IrSimpleFunctionSymbol.overridingFunctions: Set<IrSimpleFunctionSymbol> get() = overridingCallables
+val IrSimpleFunctionSymbol.overridingFunctions: Set<IrSimpleFunctionSymbol>? get() = overridingCallables
 
-fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> D.realOverridden(distinct: Boolean = false): Sequence<S> =
+fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> D.realOverridden(): Sequence<S> =
     traversal(this) { decl ->
         if (!decl.isFakeOverride) emit(decl.symbol)
         else decl.overriddenSymbols.forEach { traverseFor(it.owner) }
-    }.let { if (distinct) it.distinct() else it }
+    }
 
 fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> S.realOverridden(): Sequence<S> = owner.realOverridden()
 
-fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> S.overrides(): Sequence<S> = traversal(owner) { decl ->
-    decl.overridingCallables?.forEach {
-        if (it.owner.modality != Modality.ABSTRACT) emit(it)
-        traverseFor(it.owner)
+fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> D.overrides(): Sequence<S> =
+    if (isFakeOverride) realOverridden().distinct().flatMap { it.owner.overrides() }.distinct()
+    else traversal(this) { decl ->
+        decl.overridingCallables?.forEach {
+            if (it.owner.modality != Modality.ABSTRACT) emit(it)
+            traverseFor(it.owner)
+        }
     }
-}
+
+fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> S.overrides(): Sequence<S> = owner.overrides()
 
 object OverridingCallablesCollector : IrGenerationExtension {
 
     private fun <S : IrBindableSymbol<*, D>, D : IrOverridableDeclaration<S>> D.addOverrideToOverriddenCallables() {
-        overriddenSymbols.forEach { overridden ->
-            overridden.owner.overridingCallables = overridden.owner.overridingCallables?.apply { this += symbol }
-                ?: mutableSetOf(symbol)
+        if (isFakeOverride) return
+        else {
+            overridingCallables = mutableSetOf()
+            overriddenSymbols.flatMap { it.realOverridden() }.distinct().forEach { overridden ->
+                overridden.owner.overridingCallables = overridden.owner.overridingCallables?.apply { this += symbol }
+                    ?: mutableSetOf(symbol)
+            }
         }
     }
 
