@@ -22,14 +22,11 @@ val Project.platformManager
     get() = extensions.getByType<PlatformManager>()
 
 val Project.kotlinNativeDist: File
-    get() = rootProject.project(":kotlin-native").run {
-        val validPropertiesNames = listOf(
-                "konan.home",
-                "org.jetbrains.kotlin.native.home",
-                "kotlin.native.home"
-        )
-        rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
-    }
+    get() = providers.gradleProperty("konan.home")
+            .orElse(providers.systemProperty("org.jetbrains.kotlin.native.home"))
+            .orElse(providers.systemProperty("kotlin.native.home"))
+            .map( ::File )
+            .getOrElse(rootDir.resolve("kotlin-native/dist"))
 
 val Project.nativeBundlesLocation
     get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
@@ -47,7 +44,7 @@ fun projectOrFiles(proj: Project, notation: String): Any? {
 //region Task dependency.
 
 val Project.isDefaultNativeHome: Boolean
-    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").file("dist").absolutePath
+    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").projectDir.resolve("dist").absolutePath
 
 //endregion
 

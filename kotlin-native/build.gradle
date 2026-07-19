@@ -157,15 +157,15 @@ tasks.register("distNativeSources", Zip) {
                 .inject { t1, t2 -> t1 + t2 }
     }
     into('nativeWasmMain') {
-        from(project(":kotlin-stdlib").file('native-wasm/src/'))
+        from(project.project(":kotlin-stdlib").isolated.projectDirectory.dir('native-wasm/src/'))
     }
     into('nativeWasmWasiMain') {
-        from(project(":kotlin-stdlib").file('native-wasm/wasi/'))
+        from(project.project(":kotlin-stdlib").isolated.projectDirectory.dir('native-wasm/wasi/'))
     }
     into('nativeMain') {
-        from(project(':kotlin-native:runtime').file('src/main/kotlin'))
-        from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
-        from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
+        from(project.project(':kotlin-native:runtime').isolated.projectDirectory.dir('src/main/kotlin'))
+        from(project.project(':kotlin-native:Interop:Runtime').isolated.projectDirectory.dir('src/main/kotlin'))
+        from(project.project(':kotlin-native:Interop:Runtime').isolated.projectDirectory.dir('src/native/kotlin'))
     }
 }
 
@@ -199,7 +199,7 @@ tasks.register("distDef", Sync) {
     dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
     platformManager.targetValues.each { target ->
-        from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
+        from(it.project.project(":kotlin-native:platformLibs").isolated.projectDirectory.dir("src/platform/${target.family.name().toLowerCase()}")) {
             into target.visibleName
             include '**/*.def'
         }
@@ -224,11 +224,8 @@ tasks.register("distStdlibCache") {
 }
 
 tasks.register("distStdlib", Sync) {
-    from(project(":kotlin-native:runtime")
-            .tasks
-            .named("nativeStdlib")
-            .map { it.outputs.files }
-    )
+    FileCollection nativeStdlibConf = configurations.detachedConfiguration(dependencies.project(path: ":kotlin-native:runtime", configuration: "nativeStdlib"))
+    from(nativeStdlibConf)
     into(nativeDistribution.map { it.stdlib })
 }
 
@@ -261,8 +258,8 @@ tasks.register("distCompilerFingerprint", PrepareDistributionFingerprint) {
 }
 
 tasks.register("distTools", Sync) {
-    from(project(':kotlin-native:llvmDebugInfoC').file('src/scripts/konan_lldb.py'))
-    from(project(':kotlin-native:utilities').file('env_blacklist'))
+    from(it.project.project(':kotlin-native:llvmDebugInfoC').isolated.projectDirectory.file('src/scripts/konan_lldb.py'))
+    from(it.project.project(':kotlin-native:utilities').isolated.projectDirectory.file('env_blacklist'))
 
     into(nativeDistribution.map { it.tools })
 }
@@ -368,7 +365,9 @@ targetList.each { target ->
 
                 def cacheFlavor = UtilsKt.cacheFlavor(target, optimizationsEnabled)
                 def cacheName = NativeDistribution.cacheDirectoryName("stdlib", !optimizationsEnabled)
-                from(project(":kotlin-native:runtime").isolated.projectDirectory.dir("build/cache/$target/$cacheFlavor/$cacheName")) {
+                from(it.project.project(":kotlin-native:runtime").isolated
+                        .projectDirectory
+                        .dir("build/cache/$target/$cacheFlavor/$cacheName")) {
                     include('**')
                 }
             }
@@ -493,7 +492,7 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
 
-    task.from(project.rootProject.file("license")) {
+    task.from(new File(project.rootDir, "license")) {
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}/licenses"
     }
 }
@@ -647,7 +646,7 @@ tasks.register("copy_samples") {
     dependsOn 'copySamples'
 }
 tasks.register("copySamples", CopySamples) {
-    destinationDir file('build/samples-under-test')
+    destinationDir = file('build/samples-under-test')
 }
 
 compilationDatabase {
@@ -727,7 +726,7 @@ tasks.named("clean", Delete) {
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
     it.delete("${projectDir}/compile_commands.json")
-    it.delete(rootProject.file("test.output").absolutePath) // Clean up after legacy test infrastructure
+    it.delete("${rootDir}/test.output") // Clean up after legacy test infrastructure
 }
 
 publishing {

@@ -813,6 +813,10 @@ val nativeStdlib by tasks.registering(Sync::class) {
     from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 }
+val nativeStdlibConf = configurations.consumable("nativeStdlib")
+artifacts {
+    add(nativeStdlibConf.name, nativeStdlib)
+}
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
