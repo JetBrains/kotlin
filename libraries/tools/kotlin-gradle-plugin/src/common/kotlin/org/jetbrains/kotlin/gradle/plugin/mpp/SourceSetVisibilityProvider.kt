@@ -108,6 +108,78 @@ internal class SourceSetVisibilityProvider(
     }
 
     /**
+     * Associates host-specific source sets of [visibleSourceSetNames] with host-metadata artifact
+     * coming from one of source set's platform variants.
+     *
+     * Context:
+     * Metadata klib for shared host-specific source set (e.g. iosMain shared between iosX64 and iosArm64)
+     * is published as separate variant in all its underlying targets.
+     * There will be metadataApiElements -- for non host-specific source sets. i.e. commonMain
+     * And two more: iosX64MetadataApiElements and iosArm64MetadataApiElements
+     * both containing the same metadata klib of iosMain.
+     *
+     * For example:
+     * [resolvedRootMppDependencyIdentifier] == o.j.k:kotlinx-coroutines-core
+     * [visibleSourceSetNames] = `listOf("iosMain")`
+     * [dependencyProjectStructureMetadata] == PSM of coroutines
+     * [platformCompilationsByResolvedVariantName] ==
+     *      iosX64ApiElements   -> IosX64MainCompilationData
+     *      iosArm64ApiElements -> IosArm64MainCompilationData
+     * Can return the following valid responses:
+     * `mapOf("iosMain" to File("iosX64-metadata.klib"))`
+     * `mapOf("iosMain" to File("iosArm64-metadata.klib"))`
+     */
+    private fun resolveHostSpecificArtifactsBySourceSet(
+        resolvedRootMppDependencyIdentifier: KmpModuleIdentifier,
+        visibleSourceSetNames: Set<String>,
+        dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
+        platformCompilationsByResolvedVariantName: Map<String, PlatformCompilationData>,
+    ): Map<String, File> {
+        val hostSpecificSourceSets = visibleSourceSetNames.intersect(dependencyProjectStructureMetadata.hostSpecificSourceSets)
+
+        /**
+         * As all of the variants normally contain the same metadata for each of the relevant host-specific source sets,
+         * any of the variants that we resolved can be used, so choose the first one that satisfies both:
+         *
+         *  - it contains the host-specific source set, and
+         *  - we have resolved it for some compilation
+         */
+        val someVariantByHostSpecificSourceSet =
+            hostSpecificSourceSets.associate { sourceSetName ->
+                sourceSetName to dependencyProjectStructureMetadata.sourceSetNamesByVariantName
+                    .filterKeys { it in platformCompilationsByResolvedVariantName }
+                    .filterValues { sourceSetName in it }
+                    .keys.first()
+            }
+
+        return someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
+            val resolvedHostSpecificMetadataConfiguration = platformCompilationsByResolvedVariantName
+                .getValue(variantName)
+                .hostSpecificMetadataConfiguration
+                ?: return@mapNotNull null
+
+            val dependency = resolvedHostSpecificMetadataConfiguration
+                .allResolvedDependencies
+                .find { KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier }
+                ?: return@mapNotNull null
+
+            val metadataArtifact = resolvedHostSpecificMetadataConfiguration
+                // it can happen that related host-specific metadata artifact doesn't exist
+                // for example on linux machines, then just gracefully return null
+                .dependencyArtifactsOrNull(dependency)
+                ?.singleOrNull()
+                ?: return@mapNotNull null
+
+            // It can happen that host-specific artifact is mentioned in resolve but it doesn't exist physically
+            // then again gracefully return null
+            val metadataArtifactFile = metadataArtifact.file
+            if (!metadataArtifactFile.exists()) return@mapNotNull null
+
+            sourceSetName to metadataArtifact.file
+        }.toMap()
+    }
+
+    /**
      * Determine which source sets of the [resolvedRootMppDependency] are visible.
      *
      * This requires resolving dependencies of the compilations ([dependingPlatformCompilations]) to find which variants the
@@ -184,48 +256,12 @@ internal class SourceSetVisibilityProvider(
                  */
                 emptyMap()
             } else {
-                val hostSpecificSourceSets = visibleSourceSetNames.intersect(dependencyProjectStructureMetadata.hostSpecificSourceSets)
-
-                /**
-                 * As all of the variants normally contain the same metadata for each of the relevant host-specific source sets,
-                 * any of the variants that we resolved can be used, so choose the first one that satisfies both:
-                 *
-                 *  - it contains the host-specific source set, and
-                 *  - we have resolved it for some compilation
-                 */
-                val someVariantByHostSpecificSourceSet =
-                    hostSpecificSourceSets.associate { sourceSetName ->
-                        sourceSetName to dependencyProjectStructureMetadata.sourceSetNamesByVariantName
-                            .filterKeys { it in platformCompilationsByResolvedVariantName }
-                            .filterValues { sourceSetName in it }
-                            .keys.first()
-                    }
-
-                someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
-                    val resolvedHostSpecificMetadataConfiguration = platformCompilationsByResolvedVariantName
-                        .getValue(variantName)
-                        .hostSpecificMetadataConfiguration
-                        ?: return@mapNotNull null
-
-                    val dependency = resolvedHostSpecificMetadataConfiguration
-                        .allResolvedDependencies
-                        .find { KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier }
-                        ?: return@mapNotNull null
-
-                    val metadataArtifact = resolvedHostSpecificMetadataConfiguration
-                        // it can happen that related host-specific metadata artifact doesn't exist
-                        // for example on linux machines, then just gracefully return null
-                        .dependencyArtifactsOrNull(dependency)
-                        ?.singleOrNull()
-                        ?: return@mapNotNull null
-
-                    // It can happen that host-specific artifact is mentioned in resolve but it doesn't exist physically
-                    // then again gracefully return null
-                    val metadataArtifactFile = metadataArtifact.file
-                    if (!metadataArtifactFile.exists()) return@mapNotNull null
-
-                    sourceSetName to metadataArtifact.file
-                }.toMap()
+                resolveHostSpecificArtifactsBySourceSet(
+                    resolvedRootMppDependencyIdentifier = resolvedRootMppDependencyIdentifier,
+                    visibleSourceSetNames = visibleSourceSetNames,
+                    dependencyProjectStructureMetadata = dependencyProjectStructureMetadata,
+                    platformCompilationsByResolvedVariantName = platformCompilationsByResolvedVariantName,
+                )
             }
 
         /**
