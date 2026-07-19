@@ -23,10 +23,14 @@ internal interface SwiftResolveAwaitWorkParameters : WorkParameters {
     val destinationPackageResolved: Property<File>
     val sourceWorkspaceStateFile: Property<File>
     val destinationWorkspaceStateFile: Property<File>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
 }
 
 internal abstract class SwiftResolveAwaitWorkAction @Inject constructor(val fs: FileSystemOperations) : WorkAction<SwiftResolveAwaitWorkParameters> {
     override fun execute() {
+        if (parameters.testExecutionService.isPresent) {
+            parameters.testExecutionService.get().beforeSwiftResolveAwaitWorkerStarted()
+        }
         parameters.coordinationService.get().awaitSwiftResolved(parameters.syntheticPackageHash.get())
         finalizeFetchTask(
             fs,
@@ -50,6 +54,7 @@ internal interface SwiftResolveWorkParameters : WorkParameters {
     val workspaceStateJson: RegularFileProperty
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
+    val testExecutionService: Property<SwiftImportTestExecutionService>
 }
 
 
@@ -62,6 +67,12 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
 
     override fun execute() {
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeSwiftResolveOwnerWorkerStarted()
+            }
+            parameters.coordinationService.get().markSwiftResolveStarted(parameters.syntheticPackageHash.get())
+        }
         errorFile.delete()
         try {
             // Copy lock file from persisted

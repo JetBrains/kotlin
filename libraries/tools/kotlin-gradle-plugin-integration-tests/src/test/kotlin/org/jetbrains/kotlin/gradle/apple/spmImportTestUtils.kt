@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
@@ -21,6 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_XCODE_DUMP_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecutionHooks
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -72,7 +77,7 @@ const val SYNTHETIC_IMPORT_DYLIB =
 fun createLocalSwiftPackage(
     localPackageDir: Path,
     packageName: String = "LocalSwiftPackage",
-    products : List<String> = listOf(packageName),
+    products: List<String> = listOf(packageName),
     sourceLanguage: SwiftPackageSourceLanguage = SwiftPackageSourceLanguage.SWIFT_WITH_OBJC,
 ) {
     localPackageDir.createDirectories()
@@ -117,7 +122,11 @@ fun createLocalSwiftPackageWithResources(
 
             @objc public class ResourceAccessor: NSObject {
                 @objc public static func resourceContent() -> String {
-                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${resourceFileName.substringAfterLast(".")}") else {
+                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${
+            resourceFileName.substringAfterLast(
+                "."
+            )
+        }") else {
                         return "RESOURCE_NOT_FOUND"
                     }
                     return (try? String(contentsOf: url)) ?? "RESOURCE_READ_ERROR"
@@ -327,14 +336,14 @@ internal fun createSwiftPmGitRepoWithTags(
 
     writePackageManifest(repoDir, packageName, products = products)
 
-    if(source != null){
+    if (source != null) {
         products.forEach { product ->
             repoDir.resolve("Sources/$product").createDirectories()
             repoDir.resolve("Sources/$product/$product.swift").writeText(
                 source
             )
         }
-    }else{
+    } else {
         products.forEach { product ->
             repoDir.resolve("Sources/$product").createDirectories()
             repoDir.resolve("Sources/$product/$product.swift").writeText(
@@ -453,7 +462,7 @@ internal fun swiftPMPackageFingerprint(
     projectDir.resolve("build").resolve(FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH)
 
 internal fun swiftPMFingerprintCheckoutDir(
-    projectDir : Path,
+    projectDir: Path,
     rootProject: Path,
 ): Path {
     val packageFingerprint = parseSwiftPMFingerprint(swiftPMSyntheticPackageFingerprint(projectDir))
@@ -630,6 +639,92 @@ internal data class RepoRef(
     val url: String,
 ) : java.io.Serializable
 
+internal enum class SwiftImportTestExecutionRole {
+    OWNER,
+    JOINER,
+}
+
+internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
+    (extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
+}
+
+internal fun KotlinMultiplatformExtension.configureSwiftImportTestExecution(
+    serviceName: String,
+    kind: SwiftImportTestExecutionKind,
+    role: SwiftImportTestExecutionRole,
+) {
+    val service = swiftImportTestExecutionService(serviceName, kind)
+    swiftPMDependencies {
+        testExecutionService.set(service)
+        testExecutionHooks.set(swiftImportExecutionHooks(kind, role, service))
+    }
+}
+
+private fun swiftImportExecutionHooks(
+    kind: SwiftImportTestExecutionKind,
+    role: SwiftImportTestExecutionRole,
+    service: Provider<SwiftImportTestExecutionService>,
+): SwiftImportExecutionHooks {
+    if (kind == SwiftImportTestExecutionKind.SWIFT_RESOLVE && role == SwiftImportTestExecutionRole.OWNER) {
+        return SwiftResolveOwnerExecutionHooks(service)
+    }
+    if (kind == SwiftImportTestExecutionKind.SWIFT_RESOLVE) {
+        return SwiftResolveJoinerExecutionHooks(service)
+    }
+    if (role == SwiftImportTestExecutionRole.OWNER) {
+        return XcodebuildOwnerExecutionHooks(service)
+    }
+    return XcodebuildJoinerExecutionHooks(service)
+}
+
+private class SwiftResolveOwnerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        service.get().markOwnerClaimed()
+    }
+}
+
+private class SwiftResolveJoinerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveClaim() {
+        service.get().awaitOwnerClaimed()
+    }
+
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        error("Expected this project to join Swift package resolve, but it owned the bucket")
+    }
+}
+
+private class XcodebuildOwnerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        service.get().markOwnerClaimed()
+    }
+}
+
+private class XcodebuildJoinerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildClaim() {
+        service.get().awaitOwnerClaimed()
+    }
+
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        error("Expected this project to join xcodebuild args dump, but it owned the bucket")
+    }
+}
+
+private fun KotlinMultiplatformExtension.swiftImportTestExecutionService(
+    serviceName: String,
+    kind: SwiftImportTestExecutionKind,
+): Provider<SwiftImportTestExecutionService> =
+    project.gradle.sharedServices.registerIfAbsent(serviceName, SwiftImportTestExecutionService::class.java) {
+        it.parameters.kind.set(kind)
+    }
+
 internal fun TestProject.withLockFileFixture(
     packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default"),
     block: LockFileTestFixture.() -> Unit,
@@ -728,7 +823,7 @@ internal fun TestProject.dumpTaskGraph(
     return taskGraph
 }
 
-internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : String) {
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks: String) {
     val taskToExclude = setOf(
         ":kmpPartiallyResolvedDependenciesChecker",
         ":downloadKotlinNativeDistribution",
@@ -743,7 +838,7 @@ internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : Strin
     filteredGraph.assertExactTaskGraph(*tasks)
 }
 
-internal fun Set<String>.assertExactTaskGraph(vararg tasks : String) {
+internal fun Set<String>.assertExactTaskGraph(vararg tasks: String) {
     val expected = tasks.toSet()
 
     val difference = (this - expected + (expected - this)).toSet()
@@ -838,7 +933,7 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
 
 internal fun assertGitIgnoreEquals(
     gitIgnorePath: Path,
-    expectedGitIgnoreContent: String
+    expectedGitIgnoreContent: String,
 ) {
     val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
 
