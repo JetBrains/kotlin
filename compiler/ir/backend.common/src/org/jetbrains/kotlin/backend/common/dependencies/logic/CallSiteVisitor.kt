@@ -323,12 +323,12 @@ class CallSiteVisitor(
                 symbol = symbol,
                 dispatchReceiverSupplier = { it.dispatchReceiver },
                 extensionReceiverSupplier = { access ->
-                    parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.let(access.arguments::get)
+                    parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.indexInParameters?.let(access.arguments::get)
                 },
                 superQualifierSupplier = IrCall::superQualifierSymbol,
                 staticAccess = staticAccess@{ functionSymbol, receiverEntity ->
                     functionSymbol.owner.correspondingPropertySymbol?.owner?.let { property ->
-                        if (!functionSymbol.owner.isGetter && defaultParameters.isNotEmpty()) return@staticAccess
+                        if (property.isVar || !functionSymbol.owner.isGetter && defaultParameters.isNotEmpty()) return@staticAccess
                         val propertyNode = PropertyIndex(property.symbol, receiverEntity)
                         when {
                             functionSymbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer ->
@@ -338,12 +338,12 @@ class CallSiteVisitor(
                     } ?: callNode(FunctionIndex.MemberFunction(functionSymbol, receiverEntity).defaultedOrSelf(defaultParameters))
                 },
                 instanceAccess = instanceAccess@{ functionSymbol ->
-                    val constructedClass = functionSymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
-                    constructedClass.postponeInitSubgraph()
-                    val endNode = constructedClass.endInitializationIndex
-                    endNode.buildNode()
                     functionSymbol.owner.correspondingPropertySymbol?.owner?.let { property ->
-                        if (!functionSymbol.owner.isGetter && defaultParameters.isNotEmpty()) return@instanceAccess
+                        if (property.isVar || !functionSymbol.owner.isGetter && defaultParameters.isNotEmpty()) return@instanceAccess
+                        val constructedClass = functionSymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
+                        constructedClass.postponeInitSubgraph()
+                        val endNode = constructedClass.endInitializationIndex
+                        endNode.buildNode()
                         val propertyNode = PropertyIndex(property.symbol)
                         when {
                             functionSymbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer -> {
@@ -356,6 +356,10 @@ class CallSiteVisitor(
                             }
                         }
                     } ?: run {
+                        val constructedClass = functionSymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
+                        constructedClass.postponeInitSubgraph()
+                        val endNode = constructedClass.endInitializationIndex
+                        endNode.buildNode()
                         val functionNode = FunctionIndex.MemberFunction(functionSymbol).defaultedOrSelf(defaultParameters)
                         callNode(functionNode)
                         endNode mayHappenBefore functionNode
