@@ -61,6 +61,11 @@ class TestInventoryListener(private val taskName: String, buildDir: Provider<Fil
         val duration = result.endTime - result.startTime
         val testName = testDescriptor.getTestName()
         val leaf = className?.let { "$it.$testName" } ?: testName
+
+        if (leaf.endsWith("'")) {
+            error("Test $leaf ends with ' (apostrophe) symbol and may be processed incorrectly by TeamCity (TW-101796)")
+        }
+
         val fullName = (suites + leaf).joinToString(": ").replace(WHITESPACE, " ")
         records += "$fullName\t$status\t$duration"
     }

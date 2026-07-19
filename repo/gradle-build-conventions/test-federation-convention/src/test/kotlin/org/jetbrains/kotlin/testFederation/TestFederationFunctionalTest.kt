@@ -128,7 +128,7 @@ class TestFederationFunctionalTest {
      * If the test task is marked as 'isSmokeTest', then we expect all tests to be executed, always
      */
     @Test
-    fun `test - smokeTestConfig 'RunAllTests'`() {
+    fun `test - smokeTestConfig RunAllTests`() {
         val result = runTestBuild(TestFederationMode.Smoke, smokeTestConfig = "RunAllTests")
         assertEquals(
             setOf(
@@ -147,7 +147,7 @@ class TestFederationFunctionalTest {
      * If the test task is marked as 'isSmokeTest = false', then we expect it to be skipped in smoke test mode.
      */
     @Test
-    fun `test - smokeTestConfig 'Disabled'`() {
+    fun `test - smokeTestConfig Disabled`() {
         val result = runTestBuild(TestFederationMode.Smoke, smokeTestConfig = "Disabled")
         assertEquals(
             emptySet(),

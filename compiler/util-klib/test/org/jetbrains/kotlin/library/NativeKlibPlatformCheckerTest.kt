@@ -24,7 +24,7 @@ class NativeKlibPlatformCheckerTest {
     private lateinit var tmpDir: Path
 
     @Test
-    fun `No or empty 'native_targets', no or empty 'commonizer_native_targets'`() {
+    fun `No or empty native_targets, no or empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = null, nativeCommonizerTargets = null),
             mockKlib(nativeTargets = emptyList(), nativeCommonizerTargets = null),
@@ -44,7 +44,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `Non-empty 'native_targets', no or empty 'commonizer_native_targets'`() {
+    fun `Non-empty native_targets, no or empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = null),
             mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = emptyList()),
@@ -62,7 +62,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `No or empty 'native_targets', non-empty 'commonizer_native_targets'`() {
+    fun `No or empty native_targets, non-empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = null, nativeCommonizerTargets = listOf("target_a", "target_b")),
             mockKlib(nativeTargets = emptyList(), nativeCommonizerTargets = listOf("target_a", "target_b")),
@@ -80,7 +80,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `Non-empty 'native_targets', non-empty 'commonizer_native_targets'`() {
+    fun `Non-empty native_targets, non-empty commonizer_native_targets`() {
         val klib = mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = listOf("target_c", "target_d"))
 
         klib.assertLoadedWith(KlibPlatformChecker.Native())

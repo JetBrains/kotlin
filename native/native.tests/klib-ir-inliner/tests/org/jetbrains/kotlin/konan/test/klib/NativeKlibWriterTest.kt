@@ -30,7 +30,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
     }
 
     @Test
-    fun `Writing a klib with different 'targets for manifest'`() {
+    fun `Writing a klib with different targetsForManifest`() {
         listOf(
             listOf(KonanTarget.IOS_ARM64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_ARM64),
             listOf(KonanTarget.LINUX_ARM64, KonanTarget.MACOS_X64),
