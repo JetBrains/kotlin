@@ -170,6 +170,37 @@ sealed class TraversalOrder {
     }
 }
 
+class PathCompressingAncestorMap<T>(val parents: (T) -> Sequence<T>) : Map<T, T> {
+    private val ancestor = mutableMapOf<T, T>()
+
+    private fun find(element: T): T {
+        // All parents must have exactly ONE root ancestor
+        ancestor[element] = parents(element).map(::find).distinct().atMostSingle() ?: element
+        return ancestor.getValue(element)
+    }
+
+    fun reset(): Unit = ancestor.clear()
+
+    override val size: Int get() = ancestor.size
+
+    override fun isEmpty(): Boolean = ancestor.isEmpty()
+
+    override fun containsKey(key: T): Boolean = ancestor.containsKey(key)
+
+    override fun containsValue(value: T): Boolean = ancestor.containsValue(value)
+
+    override fun get(key: T): T = ancestor[key] ?: find(key)
+
+    override val keys: Set<T> get() = ancestor.keys
+
+    override val values: Collection<T> get() = ancestor.values
+
+    override val entries: Set<Map.Entry<T, T>> get() = ancestor.entries
+
+    override fun toString(): String = ancestor.asIterable()
+        .joinToString(prefix = "{", postfix = "}", separator = "\t\n") { [element, parent] -> "$element -> $parent" }
+}
+
 inline fun <T> Set<T>.stronglyConnectedComponents(
     ancestors: (T, MutableSet<T>) -> Sequence<T>,
     descendants: (T, MutableSet<T>) -> Sequence<T>,
@@ -194,6 +225,16 @@ inline fun <T> Set<T>.stronglyConnectedComponents(
 
 operator fun <E, M : MutableCollection<E>> M.plus(other: Iterable<E>): M = apply {
     other.forEach { add(it) }
+}
+
+fun <T> Sequence<T>.atMostSingle(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        return null
+    val single = iterator.next()
+    if (iterator.hasNext())
+        throw IllegalArgumentException("Sequence has more than one element.")
+    return single
 }
 
 fun IrClassSymbol.collectEnumEntries(): List<IrEnumEntrySymbol> {

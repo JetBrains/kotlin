@@ -16,7 +16,9 @@ object C : A() {
 class D : B()
 
 class E : B() {
-    override fun foo() {}
+    override fun foo() {
+        toString()
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, override */

@@ -31,5 +31,20 @@ interface ClassTest {
     }
 }
 
+interface Interface {
+    fun foo(arg: String = InterfaceTest.x): String
+}
+
+class InterfaceImpl : Interface {
+    override fun foo(arg: String): String = arg
+}
+
+interface InterfaceTest {
+    companion object {
+        val x = "OK"
+        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val z = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>InterfaceImpl().foo()<!><!>
+    }
+}
+
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration,
 primaryConstructor, propertyDeclaration, stringLiteral */

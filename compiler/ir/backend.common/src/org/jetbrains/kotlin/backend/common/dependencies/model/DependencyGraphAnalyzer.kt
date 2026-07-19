@@ -67,7 +67,7 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
         }
         val informationFlow = cycle.informationFlowInto(node)
         for ([from, _, _] in informationFlow) {
-            accessingUninitializedEntityAt(from, cycle)?.let {
+            accessingUninitializedEntityAt(from, cycle, isTransitiveAccess = true)?.let {
                 yield(it)
                 continue
             }
@@ -111,14 +111,18 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) {
      * companion objects in enum classes.
      */
     context(accessingEntity: EnclosingEntity<*>?)
-    private fun accessingUninitializedEntityAt(accessedNode: AccessibleIndex, cycle: CompositeNode): InitializationCycleAccessResult? {
+    private fun accessingUninitializedEntityAt(
+        accessedNode: AccessibleIndex,
+        cycle: CompositeNode,
+        isTransitiveAccess: Boolean = false
+    ): InitializationCycleAccessResult? {
         // Even though constructors (may) statically initialize their containing classes, there is no actual access to their (initialized)
         // declarations whatsoever
         if (accessedNode is FunctionIndex.Constructor) return null
         val accessedEntity = accessedNode.enclosingEntity
             ?: accessedNode.lazilyInitialized
             ?: return null
-        if (accessedEntity == accessingEntity) return null
+        if (accessedEntity == accessingEntity && !isTransitiveAccess) return null
         // We consider 2 cases when such accesses might arise:
         return when {
             // If the accessed entity is nested under an interface...
