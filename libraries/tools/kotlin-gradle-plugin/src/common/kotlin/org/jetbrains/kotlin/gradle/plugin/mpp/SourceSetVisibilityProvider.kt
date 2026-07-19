@@ -38,6 +38,8 @@ internal data class SourceSetVisibilityResult(
 
 internal class SourceSetVisibilityProvider(
     private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+    private val resolveWithLenientPSMResolutionScheme: Boolean,
+    private val allowMatchingByRequestedCoordinates: Boolean,
 ) {
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
@@ -47,6 +49,62 @@ internal class SourceSetVisibilityProvider(
         val targetName: String,
     ) {
         override fun toString(): String = "PlatformCompilationData(compilationName='${compilationName}')"
+    }
+
+    /**
+     * Returns resolved Gradle variant names to which [resolvedRootMppDependencyIdentifier] dependency was resolved to
+     * as part of [this]. Usually returns set of one element.
+     * Multiple elements is possible when dependency resolved in multiple variants. i.e. apiElements + fixtures.
+     * Or kotlin(test) can get resolved to kotlin-test-common and kotlin-test-junit
+     *
+     * Returns null when [resolvedRootMppDependencyIdentifier] was not resolved for given [compilation][this].
+     * It can happen when consumer tries to consume dependency that was not published for its target.
+     *
+     * **Legacy Behavior**
+     * When [allowMatchingByRequestedCoordinates] is enabled, the [requestedDependency] will be attempted to find platform variant.
+     *
+     * For example:
+     * * [this] = jvm/main compilation, i.e. [resolvedDependenciesConfiguration] = jvmCompileClasspath
+     * * [resolvedRootMppDependencyIdentifier] = o.j.kotlinx:coroutines-core
+     * Returns `setOf("jvmApiElements-published")`
+     */
+    private fun PlatformCompilationData.resolveToPlatformVariantNames(
+        resolvedRootMppDependencyIdentifier: KmpModuleIdentifier,
+        requestedDependency: ComponentSelector,
+    ): Set<String>? {
+        val resolvedPlatformDependencies = resolvedDependenciesConfiguration
+            .allResolvedDependencies
+            .filter {
+                // this is slow and will be fixed in the following commits
+                KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier ||
+                        (allowMatchingByRequestedCoordinates && it.requested == requestedDependency)
+            }.filter {
+                // Pre lenient resolve logic
+                if (!resolveWithLenientPSMResolutionScheme) return@filter true
+                /**
+                 * Detect that platform compilation's resolvedDependenciesConfiguration resolved metadata variant as a fallback
+                 *
+                 * This likely means that the dependency is missing the target of the platform compilation and we must therefore not
+                 * see this dependency in the resulting list.
+                 *
+                 * @see [UklibResolutionTestsWithMockComponents] and [KmpResolutionIT]
+                 */
+                val platformCompilationResolvedToMetadataJarVariant = it.resolvedVariant.attributes.getAttribute(
+                    KotlinPlatformType.attribute
+                ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
+                    Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
+                ) == KotlinPlatformType.common.name
+
+                return@filter !platformCompilationResolvedToMetadataJarVariant
+            }.ifEmpty { return null }
+
+        return resolvedPlatformDependencies.map { resolvedPlatformDependency ->
+            val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
+                resolvedPlatformDependency.resolvedVariant.displayName
+            )
+
+            resolvedVariant
+        }.toSet()
     }
 
     /**
@@ -66,56 +124,30 @@ internal class SourceSetVisibilityProvider(
         dependingPlatformCompilations: List<PlatformCompilationData>,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean,
-        resolveWithLenientPSMResolutionScheme: Boolean,
-        allowMatchingByRequestedCoordinates: Boolean,
     ): SourceSetVisibilityResult {
         if (dependingPlatformCompilations.isEmpty())
             return SourceSetVisibilityResult(emptySet(), emptyMap())
 
-        val resolvedRootMppDependencyIdentifier = KmpModuleIdentifier.from(resolvedRootMppDependency.selected, buildIdentifierAccessor)
+        val resolvedRootMppDependencyIdentifier = KmpModuleIdentifier.from(
+            resolvedRootMppDependency.selected,
+            buildIdentifierAccessor
+        )
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
         val visiblePlatformVariantNames: List<Set<String>> = dependingPlatformCompilations
             .mapNotNull { platformCompilationData ->
-                val resolvedPlatformDependencies = platformCompilationData
-                    .resolvedDependenciesConfiguration
-                    .allResolvedDependencies
-                    .filter {
-                        KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier ||
-                                (allowMatchingByRequestedCoordinates && it.requested == resolvedRootMppDependency.requested)
-                    }
-                    .filter {
-                        // Pre lenient resolve logic
-                        if (!resolveWithLenientPSMResolutionScheme) return@filter true
-                        /**
-                         * Detect that platform compilation's resolvedDependenciesConfiguration resolved metadata variant as a fallback
-                         *
-                         * This likely means that the dependency is missing the target of the platform compilation and we must therefore not
-                         * see this dependency in the [visiblePlatformVariantNames]
-                         *
-                         * @see [UklibResolutionTestsWithMockComponents] and [KmpResolutionIT]
-                         */
-                        val platformCompilationResolvedToMetadataJarVariant = it.resolvedVariant.attributes.getAttribute(
-                            KotlinPlatformType.attribute
-                        ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
-                            Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
-                        ) == KotlinPlatformType.common.name
 
-                        return@filter !platformCompilationResolvedToMetadataJarVariant
-                    }
-                    .ifEmpty { return@mapNotNull null }
+                val resolvedVariants = platformCompilationData.resolveToPlatformVariantNames(
+                    resolvedRootMppDependencyIdentifier, resolvedRootMppDependency.requested,
+                )
 
-                resolvedPlatformDependencies.map { resolvedPlatformDependency ->
-                    val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
-                        resolvedPlatformDependency.resolvedVariant.displayName
-                    )
-
+                resolvedVariants?.forEach { resolvedVariant ->
                     if (resolvedVariant !in platformCompilationsByResolvedVariantName) {
                         platformCompilationsByResolvedVariantName[resolvedVariant] = platformCompilationData
                     }
+                }
 
-                    resolvedVariant
-                }.toSet()
+                resolvedVariants
             }
 
         if (visiblePlatformVariantNames.isEmpty()) {
