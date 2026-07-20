@@ -28,14 +28,13 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.TestService
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
  * [TestRun] provider that is used in Kotlin/Native black box tests together with the corresponding [TestCaseGroupProvider].
  */
 class TestRunProvider(
     val testCaseGroupProvider: TestCaseGroupProvider
-) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource, TestService {
+) : BaseTestRunProvider(), AutoCloseable, TestService {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
     private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()

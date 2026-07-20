@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import org.junit.AssumptionViolatedException
+import org.opentest4j.TestAbortedException
 
 abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() {
     protected fun KaSession.performExpectCheck(symbol: KaDeclarationSymbol, testServices: TestServices) {
@@ -62,7 +62,7 @@ abstract class AbstractGetExpectsForActualByCoordinatesTest : AbstractGetExpects
 
     override fun doTest(testServices: TestServices) {
         if (Directives.DISABLE_COORDINATE_TEST in testServices.moduleStructure.allDirectives) {
-            throw AssumptionViolatedException("The test is disabled with ${Directives.DISABLE_COORDINATE_TEST::name}")
+            throw TestAbortedException("The test is disabled with ${Directives.DISABLE_COORDINATE_TEST::name}")
         }
 
         val moduleStructure = testServices.ktTestModuleStructure
