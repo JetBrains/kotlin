@@ -274,6 +274,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     public void testDelegatedPropertiesTest() {
       run("DelegatedPropertiesTest.kt");
     }
+
+    @Test
+    @TestMetadata("InitializationOrderTest.kt")
+    public void testInitializationOrderTest() {
+      run("InitializationOrderTest.kt");
+    }
   }
 
   @Nested
