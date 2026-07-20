@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -640,6 +639,10 @@ class InferenceFunctionDeclaration(
         if (this is IrSimpleFunction && this.overriddenSymbols.isNotEmpty()) {
             getLastOverridden().toScheme(defaultTarget)
         } else null
+
+    private fun IrSimpleFunction.getLastOverridden(): IrFunction {
+        return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
+    }
 
     override fun hashCode(): Int = function.hashCode() * 31
     override fun equals(other: Any?) =
