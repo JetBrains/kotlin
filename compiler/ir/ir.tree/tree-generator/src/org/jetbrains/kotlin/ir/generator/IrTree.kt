@@ -1043,8 +1043,8 @@ object IrTree : AbstractTreeBuilder() {
     val const: Element by element(Expression) {
         parent(expression)
 
-        +field("kind", type(Packages.exprs, "IrConstKind"))
-        +field("value", anyType, nullable = true)
+        +field("kind", type(Packages.exprs, "IrConstKind"), mutable = false)
+        +field("value", anyType, nullable = true, mutable = false)
     }
     val constantValue: Element by element(Expression) {
         transformByChildren = true

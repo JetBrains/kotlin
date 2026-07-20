@@ -21,8 +21,8 @@ class IrConstImpl internal constructor(
     override var startOffset: Int,
     override var endOffset: Int,
     override var type: IrType,
-    override var kind: IrConstKind,
-    override var value: Any?,
+    override val kind: IrConstKind,
+    override val value: Any?,
 ) : IrConst() {
     override var attributeOwnerId: IrElement = this
 
