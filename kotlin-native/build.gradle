@@ -62,7 +62,7 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    commonSources
+    register("commonSources")
 
     runtimeBitcode {
         canBeConsumed = false
@@ -721,7 +721,7 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 )
 
 tasks.named("clean", Delete) {
-    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
+    dependsOn subprojects.collect { "$it:clean" }
     it.delete(nativeDistribution.map { it.root })
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
