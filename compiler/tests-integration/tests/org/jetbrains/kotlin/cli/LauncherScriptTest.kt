@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli
 
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -29,32 +27,12 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
-    private fun runProcess(
-        executableName: String,
-        vararg args: String,
-        expectedStdout: String = "",
-        expectedStderr: String = "",
-        expectedExitCode: Int = 0,
-        workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
-    ) {
-        runProcess(
-            executableName,
-            *args,
-            checkStdout = { stdout -> assertEquals(expectedStdout.trim(), stdout.trim()) },
-            checkStderr = { stderr -> assertEquals(expectedStderr.trim(), stderr.trim()) },
-            expectedExitCode = expectedExitCode,
-            workDirectory = workDirectory,
-            environment = environment
-        )
-    }
-
     private fun runProcess(
         executableName: String,
         vararg args: String,
@@ -64,60 +42,39 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
     ) {
-        val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
-        val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
-
-        // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
-        // So, use ProcessBuilder instead.
-        val pb = ProcessBuilder(
-            launcherFile.absolutePath,
-            // In cmd, `=` is delimiter, so we need to surround parameter with quotes.
-            *quoteIfNeeded(args)
+        CliProcessUtils.runProcess(
+            executableName,
+            *args,
+            checkStdout = checkStdout,
+            checkStderr = checkStderr,
+            expectedExitCode = expectedExitCode,
+            workDirectory = workDirectory,
+            environment = environment,
+            testDataDirectory = testDataDirectory,
+            tmpdir = tmpdir,
         )
-        pb.environment().putAll(environment)
-        pb.directory(workDirectory)
-        val process = pb.start()
-        /*
-         * If the compiler invocation throws an exception, then the stderr could be bigger than pipe buffer (64 kb).
-         * If it happens, trying to read from stdout first could clog the buffer and cause a deadlock. So the stderr should be read first.
-         */
-        val stderr =
-            AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory, tmpdir.absolutePath
-            ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
-                .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
-        val stdout =
-            AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory, tmpdir.absolutePath
-            )
-        process.waitFor(10, TimeUnit.SECONDS)
-        val exitCode = process.exitValue()
-        try {
-            checkStdout(stdout.trim())
-            checkStderr(stderr.trim())
-
-            assertEquals(expectedExitCode, exitCode)
-        } catch (e: Throwable) {
-            System.err.println("exit code $exitCode")
-            System.err.println("=== STDOUT ===")
-            System.err.println(stdout)
-            System.err.println("=== STDERR ===")
-            System.err.println(stderr)
-            throw e
-        } finally {
-            process.destroy()
-        }
     }
 
-    private fun quoteIfNeeded(args: Array<out String>): Array<String> {
-        @Suppress("UNCHECKED_CAST")
-        return if (SystemInfo.isWindows) args.map {
-            if (it.contains('=') || it.contains(" ") || it.contains(";") || it.contains(",")) "\"$it\"" else it
-        }.toTypedArray()
-        else args as Array<String>
+    private fun runProcess(
+        executableName: String,
+        vararg args: String,
+        expectedStdout: String = "",
+        expectedStderr: String = "",
+        expectedExitCode: Int = 0,
+        workDirectory: File? = null,
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+    ) {
+        CliProcessUtils.runProcess(
+            executableName,
+            *args,
+            expectedStdout = expectedStdout,
+            expectedStderr = expectedStderr,
+            expectedExitCode = expectedExitCode,
+            workDirectory = workDirectory,
+            environment = environment,
+            testDataDirectory = testDataDirectory,
+            tmpdir = tmpdir,
+        )
     }
 
     private val testDataDirectory: String
@@ -143,16 +100,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-jvm",
             "$testDataDirectory/helloWorld.kt",
             K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
-        )
-    }
-
-    @Test
-    fun testKotlincJvmScriptWithClassPathFromSysProp() {
-        runProcess(
-            "kotlinc-jvm",
-            "-script",
-            "$testDataDirectory/classPathPropTest.kts",
-            expectedStdout = "kotlin-compiler.jar\n"
         )
     }
 
@@ -236,67 +183,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     @Test
-    fun testRunnerExpression() {
-        runProcess(
-            "kotlinr",
-            "-e",
-            "val x = 2; (args + listOf(2,1).map { (it * x).toString() }).joinToString()",
-            "--",
-            "a",
-            "b",
-            expectedStdout = "a, b, 4, 2\n"
-        )
-    }
-
-    @Test
-    fun testRunnerExpressionK2() {
-        runProcess(
-            "kotlinr",
-            CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.FIRST_NON_DEPRECATED.versionString, "-e",
-            "println(args.joinToString())",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n",
-        )
-    }
-
-    @Test
-    fun testCommandlineProcessing() {
-        runProcess(
-            "kotlinr",
-            "-e",
-            "println(args.joinToString())",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "-e",
-            "println(args.joinToString())",
-            "--",
-            "-e",
-            "b",
-            expectedStdout = "-e, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "$testDataDirectory/printargs.kts",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "$testDataDirectory/printargs.kts",
-            "--",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
     fun testLegacyAssert() {
         kotlincInProcess(
             "$testDataDirectory/legacyAssertDisabled.kt",
@@ -318,96 +204,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     @Test
-    fun testScriptWithXArguments() {
-        runProcess(
-            "kotlinr", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
-            expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.kts:1)
-"""
-        )
-        runProcess("kotlinr", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
-    }
-
-    @Test
-    fun testNoStdLib() {
-        runProcess("kotlinr", "-e", "println(42)", expectedStdout = "42\n")
-        runProcess(
-            "kotlinr", "-no-stdlib", "-e", "println(42)",
-            expectedExitCode = 1,
-            expectedStderr = """
-                script.kts:1:1: error: unresolved reference 'println'.
-                println(42)
-                ^
-                """.trimIndent()
-        )
-    }
-
-    @Test
     fun testProperty() {
         kotlincInProcess("$testDataDirectory/property.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
             "kotlinr", "PropertyKt", "-Dresult=OK",
             workDirectory = tmpdir, expectedStdout = "OK\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunExpression() {
-        runProcess(
-            "kotlinr", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
-            expectedExitCode = 1, expectedStderr = "error: expression evaluation is not compatible with -howtorun argument jar\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "-e", "println(args.joinToString())", "-a", "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunScript() {
-        runProcess(
-            "kotlinr", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/printargs.kts\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "$testDataDirectory/printargs.kts", "--", "-a", "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunCustomScript() {
-        runProcess(
-            "kotlinr", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/noInline.myscript\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1,
-            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
-        )
-        runProcess(
-            "kotlinr",
-            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
-            "-howtorun",
-            ".kts",
-            "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1,
-            expectedStderr = """compiler/tests-integration/testData/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
-@file:CompilerOptions("-Xno-inline")
-      ^
-"""
-        )
-        runProcess(
-            "kotlinr", "-howtorun", ".main.kts",
-            "-P", "plugin:kotlin.scripting:disable-script-compilation-cache=true",
-            "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.myscript:3)
-"""
         )
     }
 

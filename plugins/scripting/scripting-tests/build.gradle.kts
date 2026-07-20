@@ -9,6 +9,7 @@ plugins {
 }
 
 val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
+val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
 
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
@@ -22,6 +23,10 @@ dependencies {
     testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
+    testImplementation(project(":plugins:scripting:scripting-tests:runtime"))
+    testImplementation(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(kotlinTest("junit5"))
+
     testFixturesApi(platform(libs.junit.bom))
     testCompileOnly(project(":compiler:plugin-api"))
     testFixturesApi(libs.junit.jupiter.api)
@@ -30,6 +35,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
+    powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
 }
 
 sourceSets {
@@ -37,8 +43,9 @@ sourceSets {
     "test" {
         projectDefault()
         generatedTestDir()
+        java.srcDir("tests-organized")
     }
-    "testFixtures" { projectDefault() }
+    "testFixtures" {projectDefault() }
 }
 
 
@@ -55,8 +62,10 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 }
 
 projectTests {
-    testTask {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)) {
         workingDir = rootDir
+        addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
+        addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
     }
 
     testGenerator("org.jetbrains.kotlin.scripting.test.TestGeneratorKt")
@@ -67,6 +76,11 @@ projectTests {
     withTestJar()
     withMockJdkAnnotationsJar()
     withScriptingPlugin()
+    withScriptingTestsRuntime()
+    withMainKtsJar()
+    withAllOpenCompilerPluginJar()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
     withTestScriptDefinition()
 }
 

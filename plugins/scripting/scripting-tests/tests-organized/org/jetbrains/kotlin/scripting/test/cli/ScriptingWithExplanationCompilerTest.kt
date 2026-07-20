@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.test.cli
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.scripting.compiler.plugin.captureOutErrRet
+import org.jetbrains.kotlin.scripting.compiler.plugin.withTempFile
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -67,7 +69,7 @@ private val powerAssertJar = ForTestCompileRuntime.getFileFromProperty("kotlin.p
 
 class ScriptingWithExplanationCompilerTest {
     companion object {
-        const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData/compiler/explain/"
+        const val TEST_DATA_DIR = "plugins/scripting/scripting-tests/testData/cli/explain"
     }
 
     init {

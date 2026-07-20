@@ -16,7 +16,6 @@ val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFram
 val kotlinxCoroutinesCoreGradlePluginClasspath = configurations.create("kotlinxCoroutinesCoreGradlePluginClasspath")
 val kotlinAllOpenPluginJar = configurations.create("kotlinAllOpenPluginJar")
 val kotlinScriptingCommonJar = configurations.create("kotlinScriptingCommonJar")
-val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -87,7 +86,6 @@ dependencies {
     kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
     kotlinAllOpenPluginJar(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
     kotlinScriptingCommonJar(project(":kotlin-scripting-common")) { isTransitive = false }
-    powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -127,7 +125,6 @@ projectTests {
         withAllOpenCompilerPluginJar()
         withMainKtsJar()
         addClasspathProperty(kotlinScriptingCommonJar, "kotlin.scripting.common.jar")
-        addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
     }
 
     testData(isolated, "testData")

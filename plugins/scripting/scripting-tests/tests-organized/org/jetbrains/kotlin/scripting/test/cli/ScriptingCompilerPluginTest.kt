@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION_ERROR")
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.test.cli
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import kotlin.test.Test
 import kotlin.test.assertEquals
