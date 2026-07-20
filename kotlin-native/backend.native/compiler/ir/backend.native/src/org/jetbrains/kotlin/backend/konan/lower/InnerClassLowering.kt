@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.ConstructorDelegationKind
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.delegationKind
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -67,7 +71,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
     }
 
     private inner class InnerClassTransformer(val irClass: IrClass) : IrElementTransformerVoidWithContext() {
-        lateinit var outerThisFieldSymbol: IrFieldSymbol
+        lateinit var outerThisField: IrField
 
         fun lowerInnerClass() {
             if (!irClass.isInner) return
@@ -80,7 +84,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
         private fun createOuterThisField() {
             val outerThisField = context.innerClassesSupport.getOuterThisField(irClass)
             irClass.declarations += outerThisField
-            outerThisFieldSymbol = outerThisField.symbol
+            this.outerThisField = outerThisField
         }
 
         private fun lowerConstructors() {
@@ -97,19 +101,11 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 val blockBody = irConstructor.body as? IrBlockBody
                         ?: error("Unexpected constructor body: ${irConstructor.body}")
-                val startOffset = irConstructor.startOffset
-                val endOffset = irConstructor.endOffset
-                val thisReceiver = irClass.thisReceiver!!
                 val outerReceiver = irConstructor.dispatchReceiverParameter!!
-                blockBody.statements.add(
-                        0,
-                        IrSetFieldImpl(
-                                startOffset, endOffset, outerThisFieldSymbol,
-                                IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol),
-                                IrGetValueImpl(startOffset, endOffset, outerReceiver.type, outerReceiver.symbol),
-                                context.irBuiltIns.unitType
-                        )
-                )
+                val setOuterThis = context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).run {
+                    irSetField(irGet(irClass.thisReceiver!!), outerThisField, irGet(outerReceiver))
+                }
+                blockBody.statements.add(0, setOuterThis)
             }
 
             return irConstructor
@@ -135,9 +131,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
             }
             if (functionSymbol == null) return expression
 
-            val startOffset = expression.startOffset
-            val endOffset = expression.endOffset
-            val origin = expression.origin
+            val irBuilder = context.createIrBuilder(functionSymbol, expression.startOffset, expression.endOffset)
 
             var irThis: IrExpression
             var innerClass: IrClass
@@ -145,7 +139,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
                 // For constructor we have outer class as dispatchReceiverParameter.
                 innerClass = irClass.parent as? IrClass ?: error("No containing class for inner class ${irClass.render()}")
                 val thisParameter = functionSymbol.owner.dispatchReceiverParameter!!
-                irThis = IrGetValueImpl(startOffset, endOffset, thisParameter.type, thisParameter.symbol, origin)
+                irThis = irBuilder.irGet(thisParameter)
             } else {
                 innerClass = irClass
 
@@ -156,7 +150,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
                         else
                             irClass.thisReceiver!!
 
-                irThis = IrGetValueImpl(startOffset, endOffset, thisParameter.type, thisParameter.symbol, origin)
+                irThis = irBuilder.irGet(thisParameter)
             }
 
             while (innerClass != implicitThisClass) {
@@ -166,17 +160,11 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
                     return expression
                 }
 
-                val outerThisField = context.innerClassesSupport.getOuterThisField(innerClass)
-                irThis = IrGetFieldImpl(
-                        startOffset, endOffset,
-                        outerThisField.symbol, outerThisField.type,
-                        irThis,
-                        origin
-                )
+                irThis = irBuilder.irGetField(irThis, context.innerClassesSupport.getOuterThisField(innerClass))
 
                 val outer = innerClass.parent
                 innerClass = outer as? IrClass
-                        ?: error("Unexpected containing declaration for inner class ${innerClass.dump()}: $outer")
+                        ?: error("Unexpected containing declaration for inner class ${innerClass.render()}: $outer")
             }
 
             return irThis
