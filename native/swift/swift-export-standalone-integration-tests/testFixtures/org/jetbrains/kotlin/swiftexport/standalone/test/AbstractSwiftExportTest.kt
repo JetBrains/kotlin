@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
@@ -24,6 +25,9 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 import java.nio.file.Path
@@ -44,6 +48,26 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
     var minOSVersion: String? = null
+
+    /**
+     * Single target gate for all Swift Export suites: skips (does not fail) the test when its `testTarget`
+     * is not allowed by the [EnabledOnNativeTargets] annotation on the test class. Suites with no annotation
+     * are unconstrained.
+     */
+    @BeforeEach
+    fun assumeTestTargetEnabled(testInfo: TestInfo) {
+        val annotation = testInfo.testClass.get().getAnnotation(EnabledOnNativeTargets::class.java) ?: return
+        val unknownTargets = annotation.targets.filterNot(KonanTarget.predefinedTargets::containsKey)
+        check(unknownTargets.isEmpty()) {
+            "Unknown native targets in ${annotation.annotationClass.simpleName}: $unknownTargets"
+        }
+
+        val testTarget = targets.testTarget
+        val enabled = testTarget.family in annotation.families || testTarget.name in annotation.targets
+        Assumptions.assumeTrue(enabled) {
+            "Ignored: test target '${testTarget.name}' is not enabled by ${annotation.annotationClass.simpleName}"
+        }
+    }
 
     /**
      * Additional options appended verbatim to every `swiftc` invocation made by the test harness. Tests that

@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.junit.jupiter.api.Test
 import java.io.File
 
+// Uses external project klibs prebuilt for macos_arm64 only on the CI agents.
+@EnabledOnNativeTargets(targets = ["macos_arm64"])
 abstract class AbstractExternalProjectExecutionTest : AbstractSwiftExportExecutionTest() {
 
     @Test

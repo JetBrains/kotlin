@@ -26,6 +26,8 @@ import java.io.File
 @AffectedByNative
 @AffectedByAnalysisApi
 @ExtendWith(UpdateTestDataSupport::class)
+// TODO: KT-75530 — extend beyond OSX/IOS once other Apple families can build these apps.
+@EnabledOnNativeTargets(families = [Family.OSX, Family.IOS])
 abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExportTest() {
     protected open fun runCompiledTest(
         testPathFull: File,
@@ -38,9 +40,9 @@ abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExpor
 
     @BeforeEach
     fun checkHost() {
+        // Swift export compilation/execution requires an Apple host (swiftc/Xcode). The *target* gate
+        // lives in @EnabledOnNativeTargets on this class (see AbstractSwiftExportTest.assumeTestTargetEnabled).
         Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
-        // TODO: KT-75530
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
     }
 
     protected fun runTest(@TestDataFile testDir: String) {
