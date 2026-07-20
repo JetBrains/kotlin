@@ -5,39 +5,23 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.metadataVersion
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.util.*
 
 private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVersion>(LanguageVersion::class.java).apply {
     val oldMetadataVersion = MetadataVersion(1, 1, 18)
-    this[LanguageVersion.KOTLIN_1_0] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_1] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_2] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_3] = oldMetadataVersion
-    this[LanguageVersion.KOTLIN_1_4] = MetadataVersion(1, 4, 3)
-    this[LanguageVersion.KOTLIN_1_5] = MetadataVersion(1, 5, 1)
-    this[LanguageVersion.KOTLIN_1_6] = MetadataVersion(1, 6, 0)
-    this[LanguageVersion.KOTLIN_1_7] = MetadataVersion(1, 7, 0)
-    this[LanguageVersion.KOTLIN_1_8] = MetadataVersion(1, 8, 0)
-    this[LanguageVersion.KOTLIN_1_9] = MetadataVersion(1, 9, 0)
-    this[LanguageVersion.KOTLIN_2_0] = MetadataVersion(2, 0, 0)
-    this[LanguageVersion.KOTLIN_2_1] = MetadataVersion(2, 1, 0)
-    this[LanguageVersion.KOTLIN_2_2] = MetadataVersion(2, 2, 0)
-    this[LanguageVersion.KOTLIN_2_3] = MetadataVersion(2, 3, 0)
-    this[LanguageVersion.KOTLIN_2_4] = MetadataVersion(2, 4, 0)
-    this[LanguageVersion.KOTLIN_2_5] = MetadataVersion.INSTANCE
-    this[LanguageVersion.KOTLIN_2_6] = MetadataVersion(2, 6, 0)
-    this[LanguageVersion.KOTLIN_2_7] = MetadataVersion(2, 7, 0)
-
-    check(size == LanguageVersion.entries.size) {
-        "Please add mappings from the missing LanguageVersion instances to the corresponding MetadataVersion " +
-                "in `LANGUAGE_TO_METADATA_VERSION`"
+    for (version in LanguageVersion.entries) {
+        this[version] = when {
+            version <= LanguageVersion.KOTLIN_1_3 -> oldMetadataVersion
+            version == LanguageVersion.KOTLIN_1_4 -> MetadataVersion(1, 4, 3)
+            version == LanguageVersion.KOTLIN_1_5 -> MetadataVersion(1, 5, 1)
+            version == LanguageVersion.LATEST_STABLE -> MetadataVersion.INSTANCE
+            else -> MetadataVersion(version.major, version.minor, 0)
+        }
     }
 }
 
