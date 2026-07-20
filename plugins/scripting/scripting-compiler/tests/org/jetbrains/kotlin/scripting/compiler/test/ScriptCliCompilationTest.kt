@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Disabled
 import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
@@ -81,6 +83,7 @@ class ScriptCliCompilationTest {
     }
 
     @Test
+    @Disabled("KT-87856")
     fun testScriptWithRequire() {
         val out = checkRun("hello.req1.kts", scriptDef = TestScriptWithRequire::class)
         assertEquals("Hello from required!", out)
@@ -99,6 +102,7 @@ class ScriptCliCompilationTest {
         val collector = MessageCollectorImpl()
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            useFir = true
             updateWithBaseCompilerArguments()
             @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = collector

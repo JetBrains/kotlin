@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URLClassLoader
@@ -134,6 +136,7 @@ class ScriptTest {
             if (saveClassesDir != null) {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
+            configuration.useFir = true
 
             loadScriptingPlugin(configuration, rootDisposable)
 
