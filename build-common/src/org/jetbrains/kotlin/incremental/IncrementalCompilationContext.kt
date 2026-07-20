@@ -31,7 +31,8 @@ class IncrementalCompilationContext(
     val trackLibrarySetChanges: Boolean = false,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     val fragmentContext: FragmentContext? = null,
-    val useCompilerMapsOnly: Boolean = false
+    val useCompilerMapsOnly: Boolean = false,
+    val compilerGeneratedSyntheticSources: MutableSet<File> = mutableSetOf(),
 ) {
     @Deprecated("This constructor is scheduled to be removed. KSP is using it")
     constructor(

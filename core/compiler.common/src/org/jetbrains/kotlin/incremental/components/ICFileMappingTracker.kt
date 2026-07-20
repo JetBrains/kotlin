@@ -11,10 +11,12 @@ interface ICFileMappingTracker {
     fun recordSourceFilesToOutputFileMapping(sourceFiles: Collection<File>, outputFile: File)
     fun recordSourceReferencedByCompilerPlugin(sourceFile: File)
     fun recordOutputFileGeneratedForPlugin(outputFile: File)
+    fun recordSourceFileGeneratedForPlugin(sourceFile: File)
 
     object DoNothing : ICFileMappingTracker {
         override fun recordSourceFilesToOutputFileMapping(sourceFiles: Collection<File>, outputFile: File) {}
         override fun recordSourceReferencedByCompilerPlugin(sourceFile: File) {}
         override fun recordOutputFileGeneratedForPlugin(outputFile: File) {}
+        override fun recordSourceFileGeneratedForPlugin(sourceFile: File) {}
     }
 }
