@@ -29,15 +29,7 @@ val Project.kotlinNativeDist: File
             .getOrElse(rootDir.resolve("kotlin-native/dist"))
 
 val Project.nativeBundlesLocation
-    get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
-
-fun projectOrFiles(proj: Project, notation: String): Any? {
-    val propertyMapper = proj.findProperty("notationMapping") ?: return proj.project(notation)
-    val mapping = (propertyMapper as? Map<*, *>)?.get(notation) as? String ?: return proj.project(notation)
-    return proj.files(mapping).also {
-        proj.logger.info("MAPPING: $notation -> ${it.asPath}")
-    }
-}
+    get() = providers.gradleProperty("nativeBundlesLocation").map { file(it) }.getOrElse(project.projectDir)
 
 //endregion
 

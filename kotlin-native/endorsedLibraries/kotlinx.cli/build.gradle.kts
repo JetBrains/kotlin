@@ -21,8 +21,7 @@ kotlin {
         }
         commonTest {
             dependencies {
-                // projectOrFiles is required for the performance project that includes kotlinx.cli compositely
-                projectOrFiles(project, ":kotlin-test")?.let { implementation(it) }
+                implementation(project(":kotlin-test"))
             }
             kotlin.srcDir("src/tests")
             compilerOptions {
