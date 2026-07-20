@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrPrivateDeclarationOverrideChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
@@ -44,10 +47,9 @@ class IrValidationAfterInliningPrivateFunctionsKlibPhase<Context : LoweringConte
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
+            // Only checks specific to inlining.
             .withBasicChecks()
-            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .withCheckers(IrVisibilityChecker.Relaxed)
-            .withVarargChecks()
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
             .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
             .withoutCheckersByName(context.configuration.disableIrCheckers)
@@ -58,9 +60,12 @@ class IrValidationAfterInliningAllFunctionsKlibFirstStagePhase<Context : Lowerin
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker? = null,
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = IrValidatorConfig()
+        get() = IrValidatorConfig(checkTreeConsistency = true)
+            // Only checks specific to inlining.
+            //.withBasicChecks() // Don't run basic checks as unbound symbols may be present after inlining from other Klibs.
             .withCheckers(IrTypeOperatorRedundancyChecker, IrTypeParameterScopeChecker)
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
+            .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
             .withoutCheckersByName(context.configuration.disableIrCheckers)
 }
 
@@ -70,15 +75,22 @@ class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : Loweri
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
+            // All feasible checks.
             .withBasicChecks()
             .withCheckers(
-                IrVisibilityChecker.Relaxed,
+                IrCallValueArgumentCountChecker,
                 IrCrossFileFieldUsageChecker,
                 IrValueAccessScopeChecker,
+                //IrTypeParameterScopeChecker,
+                IrVisibilityChecker.Relaxed,
+                //IrCallTypeArgumentCountChecker, // KT-80065
+                IrFieldVisibilityChecker,
+                IrExpressionBodyInFunctionChecker,
                 IrTypeOperatorRedundancyChecker,
+                IrClassSuperTypesChecker,
             )
-            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .withVarargChecks()
+            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
             .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
             .withoutCheckersByName(context.configuration.disableIrCheckers)
@@ -86,14 +98,18 @@ class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : Loweri
 
 class IrValidationBeforeLoweringsKlibSecondStagePhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = IrValidatorConfig(checkTreeConsistency = true)
+        get() = IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
+            // All feasible checks.
             .withBasicChecks()
             .withCheckers(
-                IrValueAccessScopeChecker,
-                IrExpressionBodyInFunctionChecker,
-                IrVisibilityChecker.Relaxed,
+                IrCallValueArgumentCountChecker,
                 IrCrossFileFieldUsageChecker,
+                IrValueAccessScopeChecker,
+                //IrTypeParameterScopeChecker,
+                IrVisibilityChecker.Relaxed,
+                //IrCallTypeArgumentCountChecker, // KT-80065
                 IrFieldVisibilityChecker,
+                IrExpressionBodyInFunctionChecker,
                 IrClassSuperTypesChecker,
             )
             .withVarargChecks()
@@ -105,7 +121,8 @@ class IrValidationBeforeLoweringsKlibSecondStagePhase<Context : LoweringContext>
 open class IrValidationAfterLoweringsSecondStagePhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
+            // Only basic checks.
             .withBasicChecks()
-            .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
             .withoutCheckersByName(context.configuration.disableIrCheckers)
+            .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
 }
