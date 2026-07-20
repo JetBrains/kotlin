@@ -136,7 +136,7 @@ internal class SourceSetVisibilityProvider(
     }
 
     /**
-     * Associates host-specific source sets of [visibleSourceSetNames] with host-metadata artifact
+     * Associates host-specific source sets of host-specific source sets with host-metadata artifact
      * coming from one of source set's platform variants.
      *
      * Context:
@@ -148,7 +148,7 @@ internal class SourceSetVisibilityProvider(
      *
      * For example:
      * [resolvedRootMppDependencyIdentifier] == o.j.k:kotlinx-coroutines-core
-     * [visibleSourceSetNames] = `listOf("iosMain")`
+     * [dependencyProjectStructureMetadata.hostSpecificSourceSets][KotlinProjectStructureMetadata.hostSpecificSourceSets] = `listOf("iosMain")`
      * [dependencyProjectStructureMetadata] == PSM of coroutines
      * [platformCompilationsByResolvedVariantName] ==
      *      iosX64ApiElements   -> IosX64MainCompilationData
@@ -159,11 +159,10 @@ internal class SourceSetVisibilityProvider(
      */
     private fun resolveHostSpecificArtifactsBySourceSet(
         resolvedRootMppDependencyIdentifier: KmpModuleIdentifier,
-        visibleSourceSetNames: Set<String>,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         platformCompilationsByResolvedVariantName: Map<String, PlatformCompilationData>,
-    ): Map<String, File> {
-        val hostSpecificSourceSets = visibleSourceSetNames.intersect(dependencyProjectStructureMetadata.hostSpecificSourceSets)
+    ): Map<String, File> = cache.getOrPutSynchronized(extrasKeyOf("$projectId/${resolvedRootMppDependencyIdentifier.componentId}")) {
+        val hostSpecificSourceSets = dependencyProjectStructureMetadata.hostSpecificSourceSets
 
         /**
          * As all of the variants normally contain the same metadata for each of the relevant host-specific source sets,
@@ -286,10 +285,9 @@ internal class SourceSetVisibilityProvider(
             } else {
                 resolveHostSpecificArtifactsBySourceSet(
                     resolvedRootMppDependencyIdentifier = resolvedRootMppDependencyIdentifier,
-                    visibleSourceSetNames = visibleSourceSetNames,
                     dependencyProjectStructureMetadata = dependencyProjectStructureMetadata,
                     platformCompilationsByResolvedVariantName = platformCompilationsByResolvedVariantName,
-                )
+                ).filterKeys { it in visibleSourceSetNames }
             }
 
         /**
