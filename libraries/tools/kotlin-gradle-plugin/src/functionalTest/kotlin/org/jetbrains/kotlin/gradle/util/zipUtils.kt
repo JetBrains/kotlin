@@ -41,6 +41,7 @@ internal fun unzipTo(destination: File, zipFile: File) {
             if (entry.isDirectory) {
                 target.mkdir()
             } else {
+                @Suppress("DEPRECATION")
                 target.ensureParentDirsCreated()
                 target.outputStream().buffered().use { output -> zip.getInputStream(entry).buffered().copyTo(output) }
             }
