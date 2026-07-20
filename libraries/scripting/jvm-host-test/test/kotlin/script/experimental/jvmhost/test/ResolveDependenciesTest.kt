@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.junit.jupiter.api.Disabled
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
@@ -46,7 +47,8 @@ class ResolveDependenciesTest {
 
     // All tests with dependencies from classloader are expected to fail until the KT-60443 is implemented
     @Test
-    fun testResolveClassFromClassloader() = expectTestToFailOnK2 {
+    @Disabled("KT-60443")
+    fun testResolveClassFromClassloader() {
         runScriptAndCheckResult(classAccessScript, configurationWithDependenciesFromClassloader, null, 42)
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
@@ -58,13 +60,15 @@ class ResolveDependenciesTest {
     }
 
     @Test
-    fun testResolveFunAndValFromClassloader() = expectTestToFailOnK2 {
+    @Disabled("KT-60443")
+    fun testResolveFunAndValFromClassloader() {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClassloader, null, 42)
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
 
     @Test
-    fun testReplResolveFunAndValFromClassloader() = expectTestToFailOnK2 {
+    @Disabled("KT-60443")
+    fun testReplResolveFunAndValFromClassloader() {
         checkEvaluateInRepl(
             sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText), sequenceOf(42, 42),
             configurationWithDependenciesFromClassloader,
@@ -85,7 +89,8 @@ class ResolveDependenciesTest {
     }
 
     @Test
-    fun testResolveClassFromClassloaderIsolated() = expectTestToFailOnK2 {
+    @Disabled("KT-60443")
+    fun testResolveClassFromClassloaderIsolated() {
         val evaluationConfiguration = ScriptEvaluationConfiguration {
             jvm {
                 baseClassLoader(null)
@@ -95,7 +100,8 @@ class ResolveDependenciesTest {
     }
 
     @Test
-    fun testResolveClassesFromClassloaderAndClassPath() = expectTestToFailOnK2 {
+    @Disabled("KT-60443")
+    fun testResolveClassesFromClassloaderAndClassPath() {
         val script = """
             org.jetbrains.kotlin.mainKts.MainKtsConfigurator()
             ${thisPackage}.ShouldBeVisibleFromScript().x
@@ -115,9 +121,7 @@ class ResolveDependenciesTest {
         evaluationConfiguration: ScriptEvaluationConfiguration?,
         expectedResult: T
     ) {
-        val host =
-            if (isRunningTestOnK2) BasicJvmScriptingHost()
-            else BasicJvmScriptingHost.createLegacy()
+        val host = BasicJvmScriptingHost()
         val res = host.eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
         when (res) {
             is ResultValue.Value -> assertEquals(expectedResult, res.value)

@@ -77,9 +77,7 @@ internal inline fun <reified T : Any> evalString(
     noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
 ): ResultWithDiagnostics<EvaluationResult> {
     val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
-    val host =
-        if (isRunningTestOnK2) BasicJvmScriptingHost()
-        else BasicJvmScriptingHost.createLegacy()
+    val host = BasicJvmScriptingHost()
     return host.eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
 }
 

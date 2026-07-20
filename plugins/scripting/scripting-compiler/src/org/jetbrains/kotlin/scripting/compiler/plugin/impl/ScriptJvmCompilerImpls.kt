@@ -59,27 +59,6 @@ import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
-class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
-
-    override fun compile(
-        script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript> =
-        withMessageCollectorAndDisposable(script = script) { messageCollector, disposable ->
-            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
-                val initialConfiguration = scriptCompilationConfiguration.refineBeforeParsing(script).valueOr {
-                    return@withScriptCompilationCache it
-                }
-
-                val context = createIsolatedCompilationContext(
-                    initialConfiguration, hostConfiguration, messageCollector, disposable
-                )
-
-                compileImpl(script, context, initialConfiguration, messageCollector)
-            }
-        }
-}
-
 class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
 
     @OptIn(MessageCollectorAccess::class) // write access

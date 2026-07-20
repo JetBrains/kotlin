@@ -25,9 +25,6 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
-internal const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
-internal val isRunningTestOnK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
-
 fun evalFile(
     scriptFile: File,
     cacheDir: File? = null,
@@ -55,10 +52,7 @@ fun evalFileWithConfigurations(
         }
     )
 
-    val host =
-        if (isRunningTestOnK2) BasicJvmScriptingHost()
-        else BasicJvmScriptingHost.createLegacy()
-
+    val host = BasicJvmScriptingHost()
     return host.eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
 }
 
@@ -350,12 +344,6 @@ class MainKtsTest {
     private fun String.containsIgnoringPunctuation(it: String): Boolean {
         return this.replace(regexNonWord, "").contains(it.replace(regexNonWord, ""))
     }
-
-    private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
-        captureOut {
-            val res = evalFile(scriptFile, cacheDir)
-            assertSucceeded(res)
-        }.lines()
 }
 
 class CacheDirectoryDetectorTest {

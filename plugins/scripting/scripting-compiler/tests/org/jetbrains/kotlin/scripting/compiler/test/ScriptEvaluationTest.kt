@@ -4,9 +4,6 @@
  */
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -26,10 +23,6 @@ import kotlin.test.junit5.JUnit5Asserter.fail
 
 @SmokeTest
 class ScriptEvaluationTest {
-
-    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
-            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
-
     @Test
     fun testExceptionWithCause() {
         checkEvaluateAsError(
@@ -100,7 +93,7 @@ class ScriptEvaluationTest {
         compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
         hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
-        val compiler = if (isK2) ScriptJvmK2CompilerIsolated(hostConfiguration) else ScriptJvmCompilerIsolated(hostConfiguration)
+        val compiler = ScriptJvmK2CompilerIsolated(hostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 
