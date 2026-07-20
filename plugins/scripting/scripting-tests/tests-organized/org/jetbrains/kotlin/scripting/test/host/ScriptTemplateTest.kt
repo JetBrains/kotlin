@@ -4,7 +4,7 @@
  */
 @file:Suppress("unused", "DEPRECATION")
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
@@ -25,6 +25,30 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
 import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.test.FIB_SCRIPT_OUTPUT_TAIL
+import org.jetbrains.kotlin.scripting.compiler.test.NUM_4_LINE
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptBaseClassWithOverriddenProperty
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptReportingErrors
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptVarianceParams
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsAsyncResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsLegacyResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsSyncResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithArray2DParam
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithArrayParam
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAsyncResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithBaseClass
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithClassParam
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithDefaultArgsResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithDifferentFileNamePattern
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithIntParam
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithNullableParam
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithNullableProjection
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithSeveralConstructorsResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithThrowingResolver
+import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithoutParams
+import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
+import org.jetbrains.kotlin.scripting.compiler.test.captureOut
+import org.jetbrains.kotlin.scripting.compiler.test.compileScript
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -399,7 +423,7 @@ class ScriptTemplateTest {
 
             return try {
                 val res = compileScript(
-                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath")
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-tests/testData/host/compiler/$scriptPath")
                         .toScriptSource(),
                     environment,
                     this::class.java.classLoader.takeUnless { runIsolated }
