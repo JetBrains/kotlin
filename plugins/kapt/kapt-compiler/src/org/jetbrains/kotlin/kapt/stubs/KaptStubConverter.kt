@@ -1733,7 +1733,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 treeMaker.Literal(value)
             }
             is Float if value.isFinite() -> {
-                sb.append(java.lang.Float.toHexString(value)).append("F")
+                sb.append(value.toString()).append("F")
                 treeMaker.Literal(value)
             }
             is Float -> {
@@ -1745,7 +1745,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 )
             }
             is Double if value.isFinite() -> {
-                sb.append(java.lang.Double.toHexString(value))
+                sb.append(value.toString())
                 treeMaker.Literal(value)
             }
             is Double -> {
