@@ -92,7 +92,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
         BODY_RESOLVE -> {
             val processor = FirBodyResolveProcessor(session, scopeSession)
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.firAggressivePruning)) {
                 FirAggressivePruningProcessor(processor)
             } else {
                 processor
