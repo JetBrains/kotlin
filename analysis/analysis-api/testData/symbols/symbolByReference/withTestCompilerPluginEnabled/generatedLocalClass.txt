@@ -1,5 +1,5 @@
 KaKotlinPropertySymbol:
-  anchorPsi: null
+  anchorPsi: KtDotQualifiedExpression
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
     anchorPsi: null
