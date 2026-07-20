@@ -435,7 +435,7 @@ internal sealed interface Bridge {
      * 1. The Swift function uses `_KotlinBridgeable.__externalRCRef` to obtain a GC-aware pointer to a Kotlin object, represented in Swift as `UnsafeMutableRawPointer`.
      * 2. The Kotlin wrapper function uses `dereferenceExternalRCRef(ptr)` to obtain the Kotlin object as `Any`.
      * 3. After receiving the Kotlin result, the wrapper function calls `createRetainedExternalRCRef(res)` to obtain the pointer back.
-     * 4. Finally, the Swift function calls `__createProtocolWrapper(ptr) as! _KotlinBridgeable` to reconstruct the Swift value.
+     * 4. Finally, the Swift function calls `__createProtocolWrapper(externalRCRef: ptr, as: _KotlinBridgeable.self)` to reconstruct the Swift value.
      */
     object AsAnyBridgeable : BidirectionalBridge {
         override val swiftType: SirType = KotlinRuntimeSupportModule.kotlinBridgeableType
@@ -477,7 +477,7 @@ internal sealed interface Bridge {
      * 1. The Swift function uses `_KotlinBridgeable.__externalRCRef` to obtain a GC-aware pointer to a Kotlin object, represented in Swift as `UnsafeMutableRawPointer`.
      * 2. The Kotlin wrapper function uses `dereferenceExternalRCRef(ptr) as KotlinInterfaceName` to obtain a Kotlin object of the corresponding type.
      * 3. After receiving the Kotlin result, the wrapper function calls `createRetainedExternalRCRef(res)` to obtain the pointer back.
-     * 4. Finally, the Swift function calls `__createProtocolWrapper(ptr) as! SwiftProtocolName` to reconstruct the Swift value.
+     * 4. Finally, the Swift function calls `__createProtocolWrapper(externalRCRef: ptr, as: SwiftProtocolName.self)` to reconstruct the Swift value.
      */
     class AsExistential(override val swiftType: SirExistentialType, override val kotlinType: KotlinType, override val cType: CType) : BidirectionalBridge {
         override val inKotlinSources = object : ValueConversion {
@@ -500,8 +500,15 @@ internal sealed interface Bridge {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
             context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createProtocolWrapper(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val kotlinBase = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
+                val cast = if (swiftType.protocols.size == 1) {
+                    "(${typeNamer.swiftFqName(swiftType)}).self)"
+                } else {
+                    "nil) as! ${typeNamer.swiftFqName(swiftType)}"
+                }
+                return "${kotlinBase}.__createProtocolWrapper(externalRCRef: $valueExpression, as: $cast"
+            }
         }
     }
 
@@ -552,7 +559,7 @@ internal sealed interface Bridge {
                 val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
                 val flowProtocolFqName = typeNamer.swiftFqName(swiftType.flowType)
                 val structFqName = typeNamer.swiftFqName(structType)
-                return "$structFqName($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression) as! $flowProtocolFqName)"
+                return "$structFqName.create($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression, as: ($flowProtocolFqName).self))"
             }
         }
     }

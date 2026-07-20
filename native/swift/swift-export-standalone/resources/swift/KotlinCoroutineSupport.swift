@@ -113,8 +113,17 @@ extension KotlinTypedFlow {
 public struct _KotlinTypedFlowImpl<Element>: KotlinTypedFlow {
     public let _flow: any KotlinFlow
 
-    public init(_ flow: any KotlinFlow) {
+    private init(_ flow: any KotlinFlow) {
         self._flow = flow
+    }
+
+    public static func create(_ flow: any KotlinFlow) -> any KotlinTypedFlow<Element> {
+        switch flow {
+        case let flow as KotlinSharedFlow:
+            _KotlinTypedSharedFlowImpl<Element>.create(flow)
+        default:
+            _KotlinTypedFlowImpl<Element>(flow)
+        }
     }
 }
 
@@ -133,8 +142,19 @@ extension KotlinTypedSharedFlow {
 public struct _KotlinTypedSharedFlowImpl<Element>: KotlinTypedSharedFlow {
     public let _flow: any KotlinFlow
 
-    public init(_ flow: any KotlinSharedFlow) {
+    private init(_ flow: any KotlinSharedFlow) {
         self._flow = flow
+    }
+
+    public static func create(_ flow: any KotlinSharedFlow) -> any KotlinTypedSharedFlow<Element> {
+        switch flow {
+        case let flow as KotlinStateFlow:
+            _KotlinTypedStateFlowImpl<Element>.create(flow)
+        case let flow as KotlinMutableSharedFlow:
+            _KotlinTypedMutableSharedFlowImpl<Element>.create(flow)
+        default:
+            _KotlinTypedSharedFlowImpl<Element>(flow)
+        }
     }
 }
 
@@ -170,8 +190,17 @@ extension KotlinTypedMutableSharedFlow {
 public struct _KotlinTypedMutableSharedFlowImpl<Element>: KotlinTypedMutableSharedFlow {
     public let _flow: any KotlinFlow
 
-    public init(_ flow: any KotlinMutableSharedFlow) {
+    private init(_ flow: any KotlinMutableSharedFlow) {
         self._flow = flow
+    }
+
+    public static func create(_ flow: any KotlinMutableSharedFlow) -> any KotlinTypedMutableSharedFlow<Element> {
+        switch flow {
+        case let flow as KotlinMutableStateFlow:
+            _KotlinTypedMutableStateFlowImpl<Element>.create(flow)
+        default:
+            _KotlinTypedMutableSharedFlowImpl<Element>(flow)
+        }
     }
 }
 
@@ -190,8 +219,17 @@ extension KotlinTypedStateFlow {
 public struct _KotlinTypedStateFlowImpl<Element>: KotlinTypedStateFlow {
     public let _flow: any KotlinFlow
 
-    public init(_ flow: any KotlinStateFlow) {
+    private init(_ flow: any KotlinStateFlow) {
         self._flow = flow
+    }
+
+    public static func create(_ flow: any KotlinStateFlow) -> any KotlinTypedStateFlow<Element> {
+        switch flow {
+        case let flow as KotlinMutableStateFlow:
+            _KotlinTypedMutableStateFlowImpl<Element>.create(flow)
+        default:
+            _KotlinTypedStateFlowImpl<Element>(flow)
+        }
     }
 }
 
@@ -221,8 +259,12 @@ extension KotlinTypedMutableStateFlow {
 public struct _KotlinTypedMutableStateFlowImpl<Element>: KotlinTypedMutableStateFlow {
     public let _flow: any KotlinFlow
 
-    public init(_ flow: any KotlinMutableStateFlow) {
+    private init(_ flow: any KotlinMutableStateFlow) {
         self._flow = flow
+    }
+
+    public static func create(_ flow: any KotlinMutableStateFlow) -> any KotlinTypedMutableStateFlow<Element> {
+        _KotlinTypedMutableStateFlowImpl<Element>(flow)
     }
 }
 
@@ -282,7 +324,9 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
         let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
             let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
                 if arg0 {
-                    let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                    let element = arg1.flatMap {
+                        KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, as: Element.self)
+                    } as! Element
                     continuation(.some(element))
                 } else {
                     continuation(.none)

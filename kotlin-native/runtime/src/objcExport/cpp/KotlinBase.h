@@ -44,11 +44,13 @@ typedef NS_ENUM(NSUInteger, KotlinBaseConstructionOptions) {
  * Instead, it may construct or retrieve an appropriate wrapper object for the provided reference that may not adhere to the receiver's type hierarchy.
  *
  * @param ref A pointer to an external Kotlin reference (`kotlin.native.internal.ref.ExternalRCRef`) that this method wraps in a new or existing existential `KotlinBase` instance.
+ * @param protocol The protocol type that is being requested, a subclass is preferred if it conforms to this protocol.
  * @return A `KotlinBase` instance that serves as a general wrapper for the provided reference.
  *
  * @see `+_createClassWrapperForExternalRCRef:`
  */
-+ (KotlinBase *)_createProtocolWrapperForExternalRCRef:(void *)ref NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:));
++ (KotlinBase *)_createProtocolWrapperForExternalRCRef:(void *)ref
+                                                    as:(Protocol *)protocol NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:as:));
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
