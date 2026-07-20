@@ -2104,6 +2104,13 @@ private fun KaDiagnosticConverterBuilder.addConversions42() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions43() {
+    add(FirErrors.IE_DIAGNOSTIC) { firDiagnostic ->
+        IeDiagnosticImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.NATIVE_INDEXER_WRONG_PARAMETER_COUNT) { firDiagnostic ->
         NativeIndexerWrongParameterCountImpl(
             firDiagnostic.a,
