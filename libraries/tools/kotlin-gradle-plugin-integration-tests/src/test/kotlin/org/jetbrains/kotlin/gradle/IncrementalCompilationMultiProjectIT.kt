@@ -897,7 +897,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @DisplayName("Test handling of failures caused by user errors")
     @GradleTest
     fun testFailureHandling_UserError(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
+        defaultProject(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true)) {
             // Perform the first non-incremental build
             build(":lib:$compileKotlinTaskName")
 
