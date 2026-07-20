@@ -203,6 +203,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         )
 
     override fun exported(dependencyNotation: Any): Dependency? {
+        addDependencyByAnyNotation(parent.implementationConfigurationName, dependencyNotation)
         return addDependencyToExportConfiguration<Any>(dependencyNotation)
     }
 
@@ -210,10 +211,12 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         dependencyNotation: String,
         configure: ExternalModuleDependency.() -> Unit,
     ): ExternalModuleDependency {
+        addDependencyByStringNotation(parent.implementationConfigurationName, dependencyNotation, configure)
         return addDependencyToExportConfiguration(dependencyNotation, configure) as ExternalModuleDependency
     }
 
     override fun <T : Dependency> exported(dependency: T, configure: T.() -> Unit): T {
+        addDependency(parent.implementationConfigurationName, dependency, configure)
         return addDependencyToExportConfiguration(dependency, configure) as T
     }
 

@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exporte
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 internal object SwiftExportConstants {
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
@@ -53,19 +55,29 @@ internal fun Project.registerSwiftExportTask(
         buildType.getName(),
     )
 
+    val exportConfiguration = target.exportedSwiftExportApiConfiguration(
+        buildType,
+        mainCompilation.internal.configurations.compileDependencyConfiguration
+    )
+    val exportedModules = exportConfiguration.dependencies.mapToSetOrEmpty {
+        SwiftExportExtension.toSwiftExportDependency(
+            objectFactory = project.objects,
+            dependencyHandler = project.dependencies,
+            projectDependencyAccessor = variantImplementationFactoryProvider(),
+            projectByPath = project::project,
+            dependency = it,
+        )
+    }
     val swiftExportTask = registerSwiftExportRun(
         taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
         target = target,
         configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
-        exportConfiguration = target.exportedSwiftExportApiConfiguration(
-            buildType,
-            mainCompilation.internal.configurations.compileDependencyConfiguration
-        ),
+        exportConfiguration = exportConfiguration,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
-        exportedModules = swiftExportExtension.exportedModules,
+        exportedModules = swiftExportExtension.exportedModules.flatMap { project.providers.provider { it + exportedModules } },
         customSetting = swiftExportExtension.advancedConfiguration.settings
     )
 

@@ -220,16 +220,7 @@ abstract class SwiftExportExtension @Inject constructor(
         configure: SwiftExportedModuleMetadata.() -> Unit
     ) {
         val dependencyId = dependency.map { dep ->
-            when (dep) {
-                is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
-                is ProjectDependency -> {
-                    val projectPath = dep.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
-
-                    SwiftExportedDependency.Project(objectFactory, projectPath)
-                }
-                is Dependency -> SwiftExportedDependency.External(objectFactory, dep.moduleVersionIdentifier)
-                else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dep).moduleVersionIdentifier)
-            }.also {
+            toSwiftExportDependency(objectFactory, dependencyHandler, projectDependencyAccessor, projectByPath, dep).also {
                 it.configure()
             }
         }
@@ -260,7 +251,11 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 
     companion object {
-        fun <T : Any> addDependencyToExportConfiguration(project: Project, dependency: Any, configure: T.() -> Unit = {}): Dependency {
+        internal fun <T : Any> addDependencyToExportConfiguration(
+            project: Project,
+            dependency: Any,
+            configure: T.() -> Unit = {},
+        ): Dependency {
             val dependencyHandler = project.dependencies
             val target = (project.kotlinExtension as KotlinMultiplatformExtension).targets.withType(KotlinNativeTarget::class.java).first()
 
@@ -291,6 +286,25 @@ abstract class SwiftExportExtension @Inject constructor(
                 )
             }
             return dependency
+        }
+
+        internal fun toSwiftExportDependency(
+            objectFactory: ObjectFactory,
+            dependencyHandler: DependencyHandler,
+            projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
+            projectByPath: ProjectByPath,
+            dependency: Any,
+        ): SwiftExportedDependency {
+            return when (dependency) {
+                is Project -> SwiftExportedDependency.Project(objectFactory, dependency.path)
+                is ProjectDependency -> {
+                    val projectPath = dependency.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
+
+                    SwiftExportedDependency.Project(objectFactory, projectPath)
+                }
+                is Dependency -> SwiftExportedDependency.External(objectFactory, dependency.moduleVersionIdentifier)
+                else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dependency).moduleVersionIdentifier)
+            }
         }
     }
 }
