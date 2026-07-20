@@ -608,7 +608,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     ) {
         fun toJson(): String = jsonObject(
             "callableId" to callableId.toJsonString(),
-            "signature" to signature.toJsonString(),
+            // "signature" to signature.toJsonString(),
             "normalInference" to normalInference.toJson(),
             "twoPhaseInference" to twoPhaseInference.toJson(),
         )
@@ -621,10 +621,10 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val receiverParameters: Map<String, String>,
     ) {
         fun toJson(): String = jsonObject(
-            "inferredTypes" to inferredTypes.toJson(),
+            // "inferredTypes" to inferredTypes.toJson(),
             "receiver" to receiver.toJson(),
-            "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
-            "receiverParameters" to receiverParameters.toJson(),
+            // "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
+            // "receiverParameters" to receiverParameters.toJson(),
         )
     }
 
@@ -682,8 +682,8 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     private fun Map<String, String>.toJson(): String =
         entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${value.toJsonString()}" }
 
-    private fun <T> Map<String, T>.toJson(renderValue: (T) -> String): String =
-        entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${renderValue(value)}" }
+//    private fun <T> Map<String, T>.toJson(renderValue: (T) -> String): String =
+//        entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${renderValue(value)}" }
 
     private fun List<String>.toJson(): String = joinToString(prefix = "[", postfix = "]") { it.toJsonString() }
 
