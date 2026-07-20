@@ -1283,6 +1283,12 @@ class KonanProxyTypeProvider:
         self._proxy = None
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
+    def _cached_children_count(self):
+        responses = _get_cached_sbvalue_responses(self._valobj)
+        if responses is None:
+            return None
+        return responses.children_count
+
     def _get_proxy(self):
         if self._proxy is not None:
             return self._proxy
@@ -1327,11 +1333,10 @@ class KonanProxyTypeProvider:
         return self._valobj.GetValue()
 
     def num_children(self):
-        _trace_children_count_cache(
-            f"proxy-num-children value={_hex(self._valobj.unsigned)} "
-            f"key={_hex(_sbvalue_query_cache_key(self._valobj))}"
-        )
-        return _children_count(self._valobj)
+        cached_children_count = self._cached_children_count()
+        if cached_children_count is not None:
+            return cached_children_count
+        return self._get_proxy().num_children()
 
     def update(self):
         if self._proxy is not None:
@@ -1339,9 +1344,10 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        if self._proxy is None:
-            return True
-        return self._proxy.has_children()
+        cached_children_count = self._cached_children_count()
+        if cached_children_count is not None:
+            return cached_children_count > 0
+        return self._get_proxy().has_children()
 
     def __getattr__(self, item):
         return getattr(self._get_proxy(), item)
