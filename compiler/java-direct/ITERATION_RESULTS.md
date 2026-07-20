@@ -36,6 +36,25 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-20 — Read package-level default-nullability annotations off binary `package-info.class`
+- **Change**: the library-session facade's finder (was a no-op `findPackage`) now materialises a
+  binary `<pkg>/package-info.class` and exposes its class-level annotations as the package's
+  `JavaPackage.annotations`. Previously those were dropped, so JSR-305/JSpecify package defaults
+  (`@ParametersAreNonnullByDefault`, `@TypeQualifierDefault`, `@NullMarked`, …) on a **binary**
+  Java package were invisible: a type-variable parameter substituted with an explicitly nullable
+  Kotlin type argument stayed nullable instead of becoming definitely-non-null, producing a
+  spurious `UNSAFE_CALL` in user code (dokka's `Property<File?>.map { it.relativeToOrSelf(..) }`).
+  The finder reuses the same memoised binary index the deserializer reads through; class/package
+  existence still routes through the deserializer, so only annotations are added.
+- **Files**: `JvmBinaryClassFinderInputsOverIndex.kt` (+`findPackageInfoClass`),
+  `JavaDirectFacadeBuilder.kt` (`NoOpJavaClassFinder` → `LibraryJavaClassFinder` +
+  `BinaryPackageInfoJavaPackage`), `cli-jvm/…/JvmFrontendPipelinePhase.kt` (thread the shared
+  binary-inputs builder into the facade builder); new test
+  `codegen/boxJvm/javaInterop/foreignAnnotationsTests/tests/dnnParameterFromBinaryPackageAnnotation.kt`.
+- **Tests**: full box+phased suite green (0 FAILED). New reproducer fails without the fix with the
+  exact reported symptom (`UNSAFE_CALL … nullable receiver of type 'String?'`) and passes with it.
+- **Result**: regression fixed (java-direct now matches PSI on binary package defaults).
+
 ### 2026-07-16 — Remove the loose `probeFqnSplits` fallback: commit to the leftmost type like javac
 - **Change**: `resolveQualifiedNameToClassIdFromParts` no longer retries a failed name as a plain
   `package.Class` split. Like javac (JLS 6.5.4/6.5.5), once a leftmost type is found the

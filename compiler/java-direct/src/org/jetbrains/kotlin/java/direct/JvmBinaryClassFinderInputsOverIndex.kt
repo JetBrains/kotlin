@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolu
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Index-based, PSI-free implementation of [JvmBinaryClassFinderInputs] for binary `.class`
@@ -94,6 +95,17 @@ class JvmBinaryClassFinderInputsOverIndex(
         // Filter out Kotlin classes carrying `@Metadata` (see class KDoc).
         findClassImpl(JavaClassFinder.Request(classId, knownContent), applyScopeFilter = true)
             ?.takeIf { it.isFromSource || !it.hasMetadataAnnotation() }
+
+    /**
+     * Materialises `<package>/package-info.class` when it is present in [scope], so its
+     * class-level annotations can be surfaced as the package's default-nullability qualifiers
+     * (`@TypeQualifierDefault` / JSpecify `@NullMarked` etc.). Returns `null` when the package
+     * carries no `package-info` on the binary classpath. The library facade routes binary
+     * class/package existence through the deserializer, so this is the only package-level
+     * information the facade needs from the binary side.
+     */
+    fun findPackageInfoClass(packageFqName: FqName): JavaClass? =
+        findBinaryClass(ClassId(packageFqName, Name.identifier("package-info")), knownContent = null)
 
     private fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =
         knownClassNamesCache.getOrPut(packageFqName) {

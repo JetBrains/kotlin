@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Direct-injection seam that plugs `java-direct` into the FIR JVM sessions through the
@@ -34,8 +36,10 @@ import org.jetbrains.kotlin.name.FqName
  * `JvmAnalysisFlags.useJavaDirect` is set).
  *
  * The facade dispatches on the search scope:
- *  - **Library scope** (`scope === librariesScope`): a [NoOpJavaClassFinder]-backed facade —
- *    binary classes are read by the deserializer through [JvmBinaryClassFinderInputsOverIndex].
+ *  - **Library scope** (`scope === librariesScope`): a [LibraryJavaClassFinder] — binary classes
+ *    are read by the deserializer through [JvmBinaryClassFinderInputsOverIndex]; the facade itself
+ *    only surfaces the package-level annotations of a binary `package-info.class` (needed for
+ *    default-nullability qualifiers read via `FirJavaClass.javaPackage`).
  *  - **Source scope**: a [JavaClassFinderOverAstImpl] over the configured Java source roots
  *    (with no roots the finder is effectively a no-op, so no special-casing is needed).
  *
@@ -46,6 +50,7 @@ fun createJavaDirectSourceJavaFacadeBuilder(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
     librariesScope: AbstractProjectFileSearchScope,
+    binaryClassFinderInputsBuilder: (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?,
 ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
     val localFs = projectEnvironment.knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
 
@@ -63,9 +68,13 @@ fun createJavaDirectSourceJavaFacadeBuilder(
 
     return { _, session, moduleData, scope ->
         val finder: JavaClassFinder = when {
-            // Library-session facade: deserializer-only, no class lookups through the facade
-            // (see file KDoc).
-            scope === librariesScope -> NoOpJavaClassFinder
+            // Library-session facade: class lookups go through the deserializer; the facade only
+            // reads binary `package-info.class` package annotations (see file KDoc). Reuse the
+            // same (memoised) binary index the deserializer reads through, so the two stay in
+            // sync on scope and ct.sym visibility.
+            scope === librariesScope -> LibraryJavaClassFinder(
+                binaryClassFinderInputsBuilder(projectEnvironment, scope) as? JvmBinaryClassFinderInputsOverIndex
+            )
             // Source-session facade: source-only `JavaClassFinderOverAstImpl`. With no Java
             // sources the AST finder is effectively a no-op over an empty index.
             else -> JavaClassFinderOverAstImpl(session, sourceRootEntries)
@@ -104,17 +113,29 @@ fun createJavaDirectBinaryClassFinderInputsBuilder(
 private data class BinaryInputsCacheKey(val scopeIdentity: Int, val enableCtSym: Boolean?)
 
 /**
- * No-op [JavaClassFinder] for the library-session facade. Binary lookups go through the
- * [JvmBinaryClassFinderInputsOverIndex] adapter at the deserializer level, so this finder is
- * consulted only for package annotations (`null` yields an empty list) and for deserializer
- * Elvis fallbacks where `null`/`false` is the correct outcome.
+ * [JavaClassFinder] for the library-session facade. Binary class/package existence and lookup are
+ * handled by the deserializer through [JvmBinaryClassFinderInputsOverIndex], so every probe here
+ * is a no-op for which `null`/`false`/empty is the correct deserializer-fallback outcome — except
+ * [findPackage], which surfaces the annotations of a binary `package-info.class` so package-level
+ * default-nullability qualifiers (`@TypeQualifierDefault`, JSpecify `@NullMarked`, …) are applied
+ * to binary classes just as PSI applies them.
+ *
+ * @param binaryInputs the binary index adapter for the library scope, or `null` in non-CLI
+ *   environments with no [JvmBinaryClassFinderInputsOverIndex] (then no package annotations are
+ *   available and [findPackage] returns `null`, matching the previous behaviour).
  */
-private object NoOpJavaClassFinder : JavaClassFinder {
+private class LibraryJavaClassFinder(
+    private val binaryInputs: JvmBinaryClassFinderInputsOverIndex?,
+) : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? = null
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> = emptyList()
 
-    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? = null
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
+        if (!mayHaveAnnotations) return null
+        val packageInfoClass = binaryInputs?.findPackageInfoClass(fqName) ?: return null
+        return BinaryPackageInfoJavaPackage(fqName, packageInfoClass)
+    }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
 
@@ -125,4 +146,29 @@ private object NoOpJavaClassFinder : JavaClassFinder {
     override fun hasPackageInSources(fqName: FqName): Boolean = false
 
     override fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+}
+
+/**
+ * A [JavaPackage] that carries only the annotations of a binary `package-info.class`. On the
+ * library-session path this is reached solely via `FirJavaFacade`'s package cache to read the
+ * package's default-nullability qualifiers; class and sub-package enumeration is served by the
+ * deserializer, so those stay empty.
+ */
+private class BinaryPackageInfoJavaPackage(
+    override val fqName: FqName,
+    private val packageInfoClass: JavaClass,
+) : JavaPackage {
+    override val annotations: Collection<JavaAnnotation>
+        get() = packageInfoClass.annotations
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    override val subPackages: Collection<JavaPackage>
+        get() = emptyList()
+
+    override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> = emptyList()
 }
