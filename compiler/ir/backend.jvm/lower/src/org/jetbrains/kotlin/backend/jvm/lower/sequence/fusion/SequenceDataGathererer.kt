@@ -158,7 +158,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             expressionSequenceData.sequenceSource.initialValue is GenerateSequenceInitialValue.NoInitialValue &&
             (declaration.usageCounter ?: 0) > 1
         ) {
-            null
+            SequenceData(
+                SequenceSource.Variable(declaration.symbol),
+                emptyList()
+            )
         } else {
             expressionSequenceData
         }
@@ -171,7 +174,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isElementSequence(context, expression)) return
         val variableDeclaration = expression.symbol.owner
         variableDeclaration.accept(this, null)
-        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable
+        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable ?: SequenceData(
+            SequenceSource.Variable(expression.symbol),
+            emptyList()
+        )
     }
 
     private fun matchWithMap(
