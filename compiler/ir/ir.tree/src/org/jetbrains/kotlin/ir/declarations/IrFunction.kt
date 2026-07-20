@@ -72,8 +72,13 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        // !!!
-        _parameters.transformInPlace(transformer, data)
+        if (parameters.isEmpty() || _parameters.isNotEmpty()) {
+            _parameters.transformInPlace(transformer, data)
+        } else {
+            val list = parameters.toMutableList()
+            list.transformInPlace(transformer, data)
+            parameters = list
+        }
         body = body?.transform(transformer, data)
     }
 }
