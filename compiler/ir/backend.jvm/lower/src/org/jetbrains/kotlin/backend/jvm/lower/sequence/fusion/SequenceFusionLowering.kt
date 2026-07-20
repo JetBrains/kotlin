@@ -105,6 +105,17 @@ class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass 
     }
 }
 
+internal sealed class GenerateSequenceInitialValue {
+    // generateSequence(seed: T?, nextFunction: (T) -> T?): Sequence<T>
+    class Seed(val expression: IrExpression) : GenerateSequenceInitialValue()
+
+    // generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T>
+    class SeedFunction(val function: IrExpression) : GenerateSequenceInitialValue()
+
+    // generateSequence(nextFunction: () -> T?): Sequence<T>
+    object NextFunction : GenerateSequenceInitialValue()
+}
+
 internal typealias IrBuilderWithParent = Pair<IrBuilderWithScope, IrDeclarationParent>
 
 internal fun IrBuilderWithScope.callRichFunctionReference(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySequenceStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
@@ -34,11 +35,21 @@ internal class SequenceData(
 // sequenceSource is what the sequence was created from, to be substituted if the loop is to be fused
 internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
+    class GenerateSequence(
+        val initialValue: GenerateSequenceInitialValue,
+        val generatingFunction: IrExpression,
+        val sequenceElementType: IrType
+    ) : SequenceSource()
 
     object Empty : SequenceSource()
 
     internal fun containsVariableCopies(): Boolean = when (this) {
         is SequenceOf -> elements.any { it.containsFusedVariableCopy() }
+        is GenerateSequence -> generatingFunction.containsFusedVariableCopy() || when (initialValue) {
+            is GenerateSequenceInitialValue.Seed -> initialValue.expression.containsFusedVariableCopy()
+            is GenerateSequenceInitialValue.SeedFunction -> initialValue.function.containsFusedVariableCopy()
+            GenerateSequenceInitialValue.NextFunction -> false
+        }
         Empty -> false
     }
 
@@ -46,6 +57,7 @@ internal sealed class SequenceSource {
         builder: IrBuilderWithScope,
         context: JvmBackendContext,
     ): ProducerStrategy = when (this) {
+        is GenerateSequence -> GenerateSequenceStrategy(this)
         is SequenceOf -> SequenceOfStrategy(this, context)
         is Empty -> EmptySequenceStrategy
     }

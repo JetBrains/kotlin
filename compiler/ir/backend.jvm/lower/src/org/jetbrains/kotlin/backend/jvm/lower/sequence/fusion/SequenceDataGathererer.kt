@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
+private const val GENERATE_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "generateSequence"
 internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
 internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
 internal const val MAP_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "mapNotNull"
@@ -58,6 +59,9 @@ internal sealed class FilterVersion {
 
 private fun isSafeToLowerFromSequenceOf(expression: IrExpression): Boolean = expression.isSafeToReevaluate()
 
+private fun isSafeToLowerGenerateSequencePredicate(
+    predicate: IrExpression
+): Boolean = predicate.isFunctionExpressionSafeToReevaluate()
 
 internal fun gatherVarargArgumentFromSequenceOf(argument: IrExpression): List<IrExpression>? {
     return if (argument is IrVararg) {
@@ -148,7 +152,13 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isSequenceType(context, declaration)) return
         val expressionSequenceData = declaration.initializer?.sequenceDataOfExpression
         val readCounter = declaration.readCounter ?: 0
+        // the sequence can be iterated more than once if it is read in several places or in a loop / lambda / local class
+        val isReused = readCounter > 1 || declaration.isReadInRepeatedContext == true
         declaration.symbol.owner.sequenceDataOfVariable = if (expressionSequenceData?.isMovable == false ||
+            // `generateSequence(nextFunction)` can be iterated only once
+            expressionSequenceData?.sequenceSource is SequenceSource.GenerateSequence &&
+            expressionSequenceData.sequenceSource.initialValue is GenerateSequenceInitialValue.NextFunction &&
+            isReused ||
             // the elements and the lambdas are copied to every place of use, which grows exponentially when they contain copies
             // e.g. `val b = sequence { yieldAll(a); yieldAll(a) }; val c = sequence { yieldAll(b); yieldAll(b) }; ...`;
             // we cut the chain at copying variables which already contain copies
@@ -203,6 +213,41 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         )
     }
 
+
+    private fun matchWithGenerateSequence(expression: IrCall) {
+        val [initialValue, func] = when (expression.arguments.size) {
+            1 -> {
+                // generateSequence(() -> T?)
+                val func = expression.arguments.getOrNull(0) ?: return
+                if (!isSafeToLowerGenerateSequencePredicate(func)) return
+                GenerateSequenceInitialValue.NextFunction to func
+            }
+            2 -> {
+                val seed = expression.arguments.getOrNull(0) ?: return
+                val func = expression.arguments.getOrNull(1) ?: return
+                val fn = expression.symbol.owner
+                val initialValueOrFunctionName = fn.parameters.getOrNull(0)?.name?.asString()
+                if (!isSafeToLowerGenerateSequencePredicate(func)) return
+                when (initialValueOrFunctionName) {
+                    "seedFunction" -> {
+                        // generateSequence(() -> T?, (T) -> T?)
+                        if (!isSafeToLowerGenerateSequencePredicate(seed)) return
+                        GenerateSequenceInitialValue.SeedFunction(seed) to func
+                    }
+                    "seed" -> {
+                        // generateSequence(T?, (T) -> T?)
+                        GenerateSequenceInitialValue.Seed(seed) to func
+                    }
+                    else -> return
+                }
+            }
+            else -> return
+        }
+        val elementType = extractSequenceArgumentType(expression.type) ?: return
+        val sequenceSource = SequenceSource.GenerateSequence(initialValue, func, elementType)
+        val isMovable = initialValue !is GenerateSequenceInitialValue.Seed || initialValue.expression.isSafeToReevaluate()
+        expression.sequenceDataOfExpression = SequenceData(sequenceSource, isMovable = isMovable)
+    }
 
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
         (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.typeOrNull
@@ -260,6 +305,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER -> matchWithFilter(expression, FilterVersion.Filter)
             FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
+            GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
         }
     }
