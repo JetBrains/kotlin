@@ -1,10 +1,10 @@
 -Xuse-fir-lt=false
 -Xallow-any-scripts-in-source-roots
-$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt
-$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/jvm.kt
-$TESTDATA_DIR$/scripts/s.kts
-$TESTDATA_DIR$/scripts/s1.kts
--Xcommon-sources=$TESTDATA_DIR$/firMultiplatformCompilationWithoutErrors/common.kt,$TESTDATA_DIR$/scripts/s1.kts
+$TESTDATA_DIR$/src/common.kt
+$TESTDATA_DIR$/src/jvm.kt
+$TESTDATA_DIR$/src/s.kts
+$TESTDATA_DIR$/src/s1.kts
+-Xcommon-sources=$TESTDATA_DIR$/src/common.kt,$TESTDATA_DIR$/src/s1.kts
 -cp
 .
 -d
