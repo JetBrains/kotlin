@@ -1095,7 +1095,7 @@ internal class KaFirCompilerFacility(
             visibilityConverter = FirJvmVisibilityConverter,
             kotlinBuiltIns = DefaultBuiltIns.Instance,
             typeSystemContextProvider = ::JvmIrTypeSystemContext,
-            specialAnnotationsProvider = JvmIrSpecialAnnotationSymbolProvider,
+            specialAnnotationsProvider = JvmIrSpecialAnnotationSymbolProvider(),
             extraActualDeclarationExtractorsInitializer = {
                 error(
                     "extraActualDeclarationExtractorsInitializer should never be called, because outputs is a list of a single element. " +

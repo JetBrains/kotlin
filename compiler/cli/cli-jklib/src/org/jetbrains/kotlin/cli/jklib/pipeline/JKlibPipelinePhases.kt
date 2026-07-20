@@ -307,7 +307,7 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
-        JvmIrSpecialAnnotationSymbolProvider,
+        JvmIrSpecialAnnotationSymbolProvider(),
         if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
             { emptyList() }
         } else {

@@ -266,8 +266,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
 }
 
-fun IrClass.rawType(): IrType =
-    defaultType.addAnnotations(listOf(JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotation()))
+fun IrClass.rawType(specialAnnotations: JvmIrSpecialAnnotationSymbolProvider): IrType =
+    defaultType.addAnnotations(listOf(specialAnnotations.generateRawTypeAnnotation()))
 
 fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)

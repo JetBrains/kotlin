@@ -92,7 +92,7 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
-            JvmIrSpecialAnnotationSymbolProvider,
+            JvmIrSpecialAnnotationSymbolProvider(),
             if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
                 { emptyList() }
             } else {

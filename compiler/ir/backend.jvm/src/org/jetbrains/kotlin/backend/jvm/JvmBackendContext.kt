@@ -59,6 +59,8 @@ class JvmBackendContext(
 
     override val irFactory: IrFactory = IrFactoryImpl
 
+    val specialAnnotationsProvider: JvmIrSpecialAnnotationSymbolProvider =
+        JvmIrSpecialAnnotationSymbolProvider()
     override val typeSystem: IrTypeSystemContext = JvmIrTypeSystemContext(irBuiltIns)
     val defaultTypeMapper = IrTypeMapper(this)
     val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)

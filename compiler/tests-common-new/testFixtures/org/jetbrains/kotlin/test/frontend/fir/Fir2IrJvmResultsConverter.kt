@@ -51,7 +51,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     }
 
     override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider {
-        return JvmIrSpecialAnnotationSymbolProvider
+        return JvmIrSpecialAnnotationSymbolProvider()
     }
 
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> {

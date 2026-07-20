@@ -35,6 +35,8 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
     private val isJavaSamConversionWithEqualsHashCode =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
+    private val specialAnnotations = context.specialAnnotationsProvider
+
     override val inInlineFunctionScope: Boolean
         get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }
 
@@ -42,10 +44,10 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
-        typeOperand.erasedUpperBound.rawType()
+        typeOperand.erasedUpperBound.rawType(specialAnnotations)
 
     override fun getWrappedFunctionType(klass: IrClass): IrType =
-        klass.rawType()
+        klass.rawType(specialAnnotations)
 
     override fun getSuspendFunctionWithoutContinuation(function: IrSimpleFunction): IrSimpleFunction =
         function.suspendFunctionOriginal()

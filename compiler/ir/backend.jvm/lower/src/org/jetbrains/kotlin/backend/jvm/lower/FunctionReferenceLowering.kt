@@ -103,7 +103,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             if (setIndyDataIfPossible(expression, plainLambda = false)) return expression
         }
 
-        val samSuperType = runIf(expression.isSamConversion()) { expression.type.erasedUpperBound.rawType() }
+        val samSuperType = runIf(expression.isSamConversion()) { expression.type.erasedUpperBound.rawType(context.specialAnnotationsProvider) }
 
         return FunctionReferenceBuilder(expression, samSuperType).build()
     }
