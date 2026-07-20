@@ -214,13 +214,9 @@ public class DirectiveTestUtils {
             if (functionType.equals("function")) {
                 function = AstSearchUtil.getFunction(ast, functionName);
             } else {
-                try {
-                    function = AstSearchUtil.getClass(ast, functionName).getConstructor();
-                } catch (AssertionError e) {
-                    function = AstSearchUtil.getFunction(ast, functionName);
-                }
+                function = AstSearchUtil.getClass(ast, functionName).getConstructor();
             }
-            assert function != null: "No constructor in class";
+            assert function != null: "No function or class found";
             SideEffectKind actual = MetadataProperties.getSideEffects(function);
             SideEffectKind expected;
             switch (effectName) {
@@ -229,7 +225,7 @@ public class DirectiveTestUtils {
                 case "WRITE": expected = SideEffectKind.AFFECTS_STATE; break;
                 default: throw new IllegalArgumentException("Invalid side effect name: " + effectName);
             }
-            assertEquals((functionType.equals("function") ? "Function " : "Constructor ") + functionName, expected, actual);
+            assertEquals(expected, actual, (functionType.equals("function") ? "Function " : "Constructor ") + functionName);
         }
     };
 

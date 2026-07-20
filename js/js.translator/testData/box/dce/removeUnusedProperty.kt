@@ -57,7 +57,8 @@ fun withGlobalReadButEffects(): Int {
 // FUNCTION_HAS_EFFECTS: function empty PURE
 fun empty(): Int = 1024
 
-// FUNCTION_HAS_EFFECTS: class A WRITE
+// FUNCTION_HAS_EFFECTS: class A WRITE TARGET_BACKENDS=JS_IR_ES6
+// FUNCTION_HAS_EFFECTS: function A WRITE TARGET_BACKENDS=JS_IR
 class A {
     var x = 1
     var y = 42

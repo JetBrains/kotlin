@@ -261,15 +261,17 @@ fun translateFunction(
 
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
 
-    declaration.effects?.stored?.let {
-        function.sideEffects = when (it) {
-            EffectsKind.PURE -> SideEffectKind.PURE
-            EffectsKind.READ -> SideEffectKind.DEPENDS_ON_STATE
-            EffectsKind.WRITE -> SideEffectKind.AFFECTS_STATE
-        }
+    declaration.effects?.compute()?.let {
+        function.sideEffects = it.toJs()
     }
 
     return function
+}
+
+fun EffectsKind.toJs() = when (this) {
+    EffectsKind.PURE -> SideEffectKind.PURE
+    EffectsKind.READ -> SideEffectKind.DEPENDS_ON_STATE
+    EffectsKind.WRITE -> SideEffectKind.AFFECTS_STATE
 }
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {

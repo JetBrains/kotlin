@@ -166,4 +166,6 @@ class JsIrBackendContext(
     )
 
     internal var nextAssociatedObjectKey = 0
+
+    override var effectAnalysisFinished = false
 }

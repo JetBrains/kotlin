@@ -9,60 +9,74 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.EffectsKind
+import org.jetbrains.kotlin.ir.backend.js.EffectsKindCell
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
 import org.jetbrains.kotlin.ir.backend.js.effects
-import org.jetbrains.kotlin.ir.backend.js.setMaxEffects
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FIELD_FOR_OBJECT_INSTANCE
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.PROPERTY_BACKING_FIELD
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
+import java.lang.ref.WeakReference
 
-class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
+class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrFunction) return
-        val effectsAnnotation = container.getAnnotation(StandardClassIds.Annotations.Effects.asSingleFqName())
-        if (effectsAnnotation != null) {
-            val arg = effectsAnnotation.argumentMapping[StandardClassIds.Annotations.ParameterNames.effectsKind]
-            if (arg is IrGetEnumValue) {
-                container.setMaxEffects(EffectsKind.valueOf(arg.symbol.owner.name.asString()))
-                return
-            }
-        }
-        BodyVisitor().visit(container)
+        BodyVisitor().maybeVisit(container)
     }
 
-    class BodyVisitor : IrVisitor<Unit, IrFunction>() {
-        val alreadyVisited = hashSetOf<IrFunction>()
+    override fun lower(irFile: IrFile) {
+        context.effectAnalysisFinished = false
+        super.lower(irFile)
+        context.effectAnalysisFinished = true
+    }
 
-        fun IrFunction.isConstructor(): IrClass? = when {
-            this is IrConstructor -> constructedClass
-            origin == ES6_CONSTRUCTOR_REPLACEMENT -> parent as IrClass
-            origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT -> parent as IrClass
+    inner class BodyVisitor : IrVisitor<Unit, IrFunction>() {
+        fun IrFunction.getConstructedClass(): IrClass? = when {
+            this is IrConstructor -> this.constructedClass
+            isEs6ConstructorReplacement -> parent as IrClass
             else -> null
         }
 
-        fun visit(owner: IrFunction) {
-            if (alreadyVisited.contains(owner)) return
-            alreadyVisited.add(owner)
-            owner.setMaxEffects(EffectsKind.PURE)
+        val IrFunction.nonNullEffects: EffectsKindCell
+            get() {
+                // this can happen if an ir node is visited outside a call to maybeVisit
+                if (effects == null) throw IllegalStateException("IrElement has null effects attribute inside BodyVisitor")
+                return effects!!
+            }
+
+        fun maybeVisit(owner: IrFunction): EffectsKindCell {
+            if (owner.effects != null) return owner.effects!!
+            val effectsAnnotation = owner.getAnnotation(StandardClassIds.Annotations.Effects.asSingleFqName())
+            if (effectsAnnotation != null) {
+                val arg = effectsAnnotation.argumentMapping[StandardClassIds.Annotations.ParameterNames.effectsKind]
+                if (arg is IrGetEnumValue) {
+                    owner.effects = EffectsKindCell(context, WeakReference(owner), EffectsKind.valueOf(arg.symbol.owner.name.asString()))
+                    return owner.effects!!
+                }
+            }
+            owner.effects = EffectsKindCell(context, WeakReference(owner), null)
             owner.accept(this, owner)
+            return owner.effects!!
         }
 
         override fun visitElement(element: IrElement, data: IrFunction) {
@@ -72,71 +86,70 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
         override fun visitGetValue(expression: IrGetValue, data: IrFunction) {
             super.visitGetValue(expression, data)
             if (expression.symbol.owner.parent != data) {
-                data.setMaxEffects(EffectsKind.READ)
+                data.nonNullEffects.setAtLeast(EffectsKind.READ)
             }
         }
 
         override fun visitGetField(expression: IrGetField, data: IrFunction) {
             super.visitGetField(expression, data)
-            data.setMaxEffects(EffectsKind.READ)
-        }
-
-        override fun visitFunctionReference(expression: IrFunctionReference, data: IrFunction) {
-            super.visitFunctionReference(expression, data)
-            if (expression.symbol.owner != data) {
-                data.setMaxEffects(EffectsKind.READ)
+            if (expression.symbol.owner.origin == PROPERTY_BACKING_FIELD) {
+                // we can ignore reads from global constants.
+                if (expression.symbol.owner.isFinal && expression.symbol.owner.parent is IrFile) {
+                    return
+                }
             }
-        }
-
-        override fun visitVariable(declaration: IrVariable, data: IrFunction) {
-            if (declaration.origin == ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT) {
-                // don't check children
-                // these origin checks are to prevent functions that use object's from always being WRITE
-                return
+            // we can ignore reads from the instance field since there is only one write (and it doesn't have any reads before it).
+            if (data.origin == OBJECT_GET_INSTANCE_FUNCTION) {
+                if (expression.symbol.owner.origin == FIELD_FOR_OBJECT_INSTANCE) {
+                    return
+                }
             }
-            super.visitVariable(declaration, data)
+            data.nonNullEffects.setAtLeast(EffectsKind.READ)
         }
 
         override fun visitSetField(expression: IrSetField, data: IrFunction) {
-            val constructedClass = data.isConstructor()
+            val constructedClass = data.getConstructedClass()
             if (constructedClass != null) {
+                // we ignore writes to "this" in constructors because there are never any reads before them.
                 val receiver = expression.receiver
                 if (receiver is IrGetValue) {
                     if (receiver.symbol == constructedClass.thisReceiver!!.symbol) {
-                        expression.acceptChildren(this, data)
+                        expression.value.accept(this, data)
                         return
                     }
                     if (receiver.symbol.owner.origin == ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT) {
-                        expression.acceptChildren(this, data)
+                        expression.value.accept(this, data)
                         return
                     }
                 }
             }
+            // we ignore writes to the object instance field because there are never any reads before them.
             if (expression.symbol.owner.origin == FIELD_FOR_OBJECT_INSTANCE) {
                 return
             }
-            data.setMaxEffects(EffectsKind.WRITE)
+            data.nonNullEffects.setAtLeast(EffectsKind.WRITE)
         }
 
         override fun visitSetValue(expression: IrSetValue, data: IrFunction) {
             if (expression.symbol.owner.parent != data) {
-                data.setMaxEffects(EffectsKind.WRITE)
+                data.nonNullEffects.setAtLeast(EffectsKind.WRITE)
                 return
             }
-            data.setMaxEffects(EffectsKind.PURE)
             super.visitSetValue(expression, data)
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction) {
-            if (!expression.symbol.owner.isFinal || expression.symbol.owner.isExternal) {
-                data.setMaxEffects(EffectsKind.WRITE)
+            val called = expression.symbol.owner
+            if (!called.isFinal || called.isExternal) {
+                data.nonNullEffects.setAtLeast(EffectsKind.WRITE)
+                return
+            }
+            // exception for Unit_getInstance?
+            if (called.origin == OBJECT_GET_INSTANCE_FUNCTION && called.returnType.isUnit()) {
                 return
             }
             super.visitFunctionAccess(expression, data)
-            if (expression.symbol.owner.effects == null) {
-                visit(expression.symbol.owner)
-            }
-            data.setMaxEffects(expression.symbol.owner.effects?.stored)
+            data.nonNullEffects.dependOn(maybeVisit(called))
         }
 
         val IrFunction.isFinal: Boolean
