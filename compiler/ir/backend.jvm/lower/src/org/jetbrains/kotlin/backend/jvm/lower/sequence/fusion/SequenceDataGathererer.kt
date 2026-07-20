@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 private const val SEQUENCE_OF = "sequenceOf"
+private const val GENERATE_SEQUENCE = "generateSequence"
 internal const val MAP = "map"
 internal const val MAP_INDEXED = "mapIndexed"
 internal const val MAP_NOT_NULL = "mapNotNull"
@@ -73,6 +75,16 @@ internal fun gatherVarargArgument(argument: IrExpression): List<IrExpression>? {
         if (!isSafeToLowerFromSequenceOf(argument)) return null
         listOf(argument)
     }
+}
+
+private fun isSafeToLower(reference: IrRichFunctionReference): Boolean {
+    return reference.boundValues.isEmpty()
+}
+
+private fun isSafeToLower(expression: IrExpression): Boolean = when {
+    containsMutable(expression) -> false
+    expression is IrRichFunctionReference -> isSafeToLower(expression)
+    else -> true
 }
 
 private fun IrExpression.isSafeToMove(): Boolean {
@@ -142,7 +154,14 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (declaration.isVar) return
         if (!isElementSequence(context, declaration)) return
         val expressionSequenceData = declaration.initializer?.sequenceDataOfExpression
-        declaration.symbol.owner.sequenceDataOfVariable = expressionSequenceData
+        declaration.symbol.owner.sequenceDataOfVariable = if (expressionSequenceData?.sequenceSource is SequenceSource.GenerateSequence &&
+            expressionSequenceData.sequenceSource.initialValue is GenerateSequenceInitialValue.NoInitialValue &&
+            (declaration.usageCounter ?: 0) > 1
+        ) {
+            null
+        } else {
+            expressionSequenceData
+        }
     }
 
     // assigns sequence data of the variable to the corresponding expression
@@ -191,6 +210,42 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             )
         ) + receiverData.transformers
         expression.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
+    private fun matchWithGenerateSequence(expression: IrCall) {
+        val results = when (expression.arguments.size) {
+            1 -> {
+                // generateSequence(() -> T?)
+                val func = expression.arguments.getOrNull(0) ?: return
+                GenerateSequenceInitialValue.NoInitialValue to func
+            }
+            2 -> {
+                val initialValueOrFunction = expression.arguments.getOrNull(0) ?: return
+                val func = expression.arguments.getOrNull(1) ?: return
+                val fn = expression.symbol.owner
+                val initialValueOrFunctionName = fn.parameters.getOrNull(0)?.name?.asString()
+                when (initialValueOrFunctionName) {
+                    "seedFunction" -> {
+                        // generateSequence(() -> T?, (T) -> T?)
+                        GenerateSequenceInitialValue.InitialFunction(initialValueOrFunction) to func
+                    }
+                    "seed" -> {
+                        // generateSequence(T?, (T) -> T?)
+                        if (!isSafeToLower(initialValueOrFunction)) return
+                        GenerateSequenceInitialValue.InitialValue(initialValueOrFunction) to func
+                    }
+                    else -> return
+                }
+            }
+            else -> return
+        }
+        val initialValue = results.first
+        val func = results.second
+        val elementType = extractSequenceArgumentType(expression.type) ?: return
+        expression.sequenceDataOfExpression = SequenceData(
+            SequenceSource.GenerateSequence(initialValue, func, elementType),
+            emptyList()
+        )
     }
 
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
@@ -253,6 +308,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER -> matchWithFilter(expression, FilterVersion.Filter)
             FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
+            GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
         }
     }

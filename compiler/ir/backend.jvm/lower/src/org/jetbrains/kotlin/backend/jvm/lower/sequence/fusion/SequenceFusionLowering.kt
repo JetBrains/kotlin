@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -80,9 +81,17 @@ internal data class SequenceReplacement(
 
 class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        val reuseMarker = ReusedSequenceMarker(context)
+        irFile.acceptChildrenVoid(reuseMarker)
         val transformer = SequenceFusionTransformer(context)
         irFile.transformChildrenVoid(transformer)
     }
+}
+
+internal sealed class GenerateSequenceInitialValue {
+    class InitialValue(val expression: IrExpression) : GenerateSequenceInitialValue()
+    class InitialFunction(val function: IrExpression) : GenerateSequenceInitialValue()
+    object NoInitialValue : GenerateSequenceInitialValue()
 }
 
 internal typealias IrBuilderWithParent = Pair<IrBuilderWithScope, IrDeclarationParent>
