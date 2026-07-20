@@ -29,7 +29,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
 }
 public var flowFoo: any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
     get {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
     }
 }
 public func accept_suspend_function_type(
@@ -79,7 +79,7 @@ public func closure_returning_flow(
     return { __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__({
         let originalBlock: (any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo>) -> Swift.Void = i
         return { (arg0: Swift.UnsafeMutableRawPointer) in
-            let _arg0: any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> = KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+            let _arg0: any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> = KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
             let _result = originalBlock(_arg0)
             return { _result; return true }()
         }
@@ -91,13 +91,13 @@ public func consume_flow(
     return { __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(flow.wrapped.__externalRCRef()); return () }()
 }
 public func demo() -> any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
-    return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func flowOfNullableUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfNullableUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfNullableUnit(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func flowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
-    return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfUnit(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func functionalInterfaceWithSuspendFunction(
     function: @escaping () async throws -> Swift.Void
@@ -119,13 +119,13 @@ public func functionalInterfaceWithSuspendFunction(
             }
             return { _result; return true }()
         }
-    }())) as! any main.FunctionalInterfaceWithSuspendFunction
+    }()), conformsTo: { wrapperClass in wrapperClass is (main.FunctionalInterfaceWithSuspendFunction).Type }) as! any main.FunctionalInterfaceWithSuspendFunction
 }
 public func mutableStateFlowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
-    return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___mutableStateFlowOfUnit()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
+    return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___mutableStateFlowOfUnit(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow)
 }
 public func produce_flow() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Int32> {
-    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Int32>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+    return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Int32>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow(), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.Flow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func produce_function() -> (Swift.Int32) async throws -> Swift.Int32 {
     return {
@@ -431,7 +431,7 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._FunctionalInterfa
 }
 @_cdecl("FunctionalInterfaceWithSuspendFunction_emit__reverse_swift")
 package func FunctionalInterfaceWithSuspendFunction_emit__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.FunctionalInterfaceWithSuspendFunction
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.FunctionalInterfaceWithSuspendFunction).Type }) as! any main.FunctionalInterfaceWithSuspendFunction
     let __continuation: (Swift.Void) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }

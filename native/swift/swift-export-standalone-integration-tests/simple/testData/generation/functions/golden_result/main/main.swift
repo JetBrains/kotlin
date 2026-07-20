@@ -472,7 +472,7 @@ extension ExportedKotlinPackages.operators {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: operators_Foo_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: operators_Foo_iterator(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public func rangeTo(
             other: ExportedKotlinPackages.operators.Foo

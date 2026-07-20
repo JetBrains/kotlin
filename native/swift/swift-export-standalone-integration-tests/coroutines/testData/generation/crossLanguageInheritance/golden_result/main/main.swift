@@ -504,7 +504,7 @@ package func AsyncBase_sync__TypesOfArguments__Swift_String____reverse_swift(_ `
 
 @_cdecl("AsyncDefaulter_describe__reverse_swift")
 package func AsyncDefaulter_describe__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AsyncDefaulter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.AsyncDefaulter).Type }) as! any main.AsyncDefaulter
     let __continuation: (Swift.String) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock.__externalRCRef()!, _1); return () }() }
@@ -522,7 +522,7 @@ package func AsyncDefaulter_describe__reverse_swift(_ `self`: Swift.UnsafeMutabl
 
 @_cdecl("AsyncDefaulter_tag__reverse_swift")
 package func AsyncDefaulter_tag__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AsyncDefaulter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.AsyncDefaulter).Type }) as! any main.AsyncDefaulter
     let __continuation: (Swift.String) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock.__externalRCRef()!, _1); return () }() }
@@ -576,7 +576,7 @@ package func AsyncGreeterBase_salutation__reverse_swift(_ `self`: Swift.UnsafeMu
 
 @_cdecl("AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift")
 package func AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AsyncGreeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.AsyncGreeter).Type }) as! any main.AsyncGreeter
     let __continuation: (Swift.String) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock.__externalRCRef()!, _1); return () }() }
@@ -594,7 +594,7 @@ package func AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift
 
 @_cdecl("AsyncGreeter_salutation__reverse_swift")
 package func AsyncGreeter_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.AsyncGreeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.AsyncGreeter).Type }) as! any main.AsyncGreeter
     let __continuation: (Swift.String) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock.__externalRCRef()!, _1); return () }() }

@@ -18,7 +18,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
         return kotlin_collections_Collection_isEmpty(self.__externalRCRef())
     }
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Collection_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Collection_iterator(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
     public static func ~=(
         this: Self,
@@ -31,7 +31,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable {
@@ -71,7 +71,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
         return kotlin_collections_List_isEmpty(self.__externalRCRef())
     }
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_iterator(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
     public func lastIndexOf(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -79,12 +79,12 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
         return kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
     public func listIterator() -> any ExportedKotlinPackages.kotlin.collections.ListIterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_listIterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_listIterator(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     }
     public func listIterator(
         index: Swift.Int32
     ) -> any ExportedKotlinPackages.kotlin.collections.ListIterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     }
     public func subList(
         fromIndex: Swift.Int32,
@@ -231,161 +231,161 @@ extension ExportedKotlinPackages.kotlin.collections {
 }
 @_cdecl("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Collection).Type }) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: Swift.Bool = _self.contains(element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlin_collections_Collection_isEmpty__reverse_swift")
 package func kotlin_collections_Collection_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Collection).Type }) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: Swift.Bool = _self.isEmpty()
     return _result
 }
 
 @_cdecl("kotlin_collections_Collection_iterator__reverse_swift")
 package func kotlin_collections_Collection_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Collection).Type }) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_Collection_size_get__reverse_swift")
 package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Collection).Type }) as! any ExportedKotlinPackages.kotlin.collections.Collection
     let _result: Swift.Int32 = _self.size
     return _result
 }
 
 @_cdecl("kotlin_collections_Iterable_iterator__reverse_swift")
 package func kotlin_collections_Iterable_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterable
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterable).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterable
     let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_Iterator_hasNext__reverse_swift")
 package func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     let _result: Swift.Bool = _self.hasNext()
     return _result
 }
 
 @_cdecl("kotlin_collections_Iterator_next__reverse_swift")
 package func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.Iterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_collections_ListIterator_hasNext__reverse_swift")
 package func kotlin_collections_ListIterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Bool = _self.hasNext()
     return _result
 }
 
 @_cdecl("kotlin_collections_ListIterator_hasPrevious__reverse_swift")
 package func kotlin_collections_ListIterator_hasPrevious__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Bool = _self.hasPrevious()
     return _result
 }
 
 @_cdecl("kotlin_collections_ListIterator_nextIndex__reverse_swift")
 package func kotlin_collections_ListIterator_nextIndex__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Int32 = _self.nextIndex()
     return _result
 }
 
 @_cdecl("kotlin_collections_ListIterator_next__reverse_swift")
 package func kotlin_collections_ListIterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_collections_ListIterator_previousIndex__reverse_swift")
 package func kotlin_collections_ListIterator_previousIndex__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Int32 = _self.previousIndex()
     return _result
 }
 
 @_cdecl("kotlin_collections_ListIterator_previous__reverse_swift")
 package func kotlin_collections_ListIterator_previous__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.ListIterator).Type }) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.previous()
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Bool = _self.contains(element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse_swift")
 package func kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self._get(index: index)
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Int32 = _self.indexOf(element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlin_collections_List_isEmpty__reverse_swift")
 package func kotlin_collections_List_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Bool = _self.isEmpty()
     return _result
 }
 
 @_cdecl("kotlin_collections_List_iterator__reverse_swift")
 package func kotlin_collections_List_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Int32 = _self.lastIndexOf(element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32____reverse_swift")
 package func kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: any ExportedKotlinPackages.kotlin.collections.ListIterator = _self.listIterator(index: index)
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_List_listIterator__reverse_swift")
 package func kotlin_collections_List_listIterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: any ExportedKotlinPackages.kotlin.collections.ListIterator = _self.listIterator()
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_collections_List_size_get__reverse_swift")
 package func kotlin_collections_List_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Int32 = _self.size
     return _result
 }
 
 @_cdecl("kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
 package func kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ fromIndex: Swift.Int32, _ toIndex: Swift.Int32) -> Any {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlin.collections.List).Type }) as! any ExportedKotlinPackages.kotlin.collections.List
     let _result: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.subList(fromIndex: fromIndex, toIndex: toIndex)
     return _result.map { it in it as! NSObject? ?? NSNull() }
 }

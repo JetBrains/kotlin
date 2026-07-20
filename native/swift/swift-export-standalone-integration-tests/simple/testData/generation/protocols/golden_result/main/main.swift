@@ -152,7 +152,7 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.__Barable, 
 public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main.__Foeble {
     public var baz: any main.Foeble {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foo_baz_get(self.__externalRCRef())) as! any main.Foeble
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foo_baz_get(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
         }
     }
     public init() {
@@ -383,7 +383,7 @@ public var list: [any main.Foeble] {
 }
 public var normal: any main.Foeble {
     get {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___normal_get()) as! any main.Foeble
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___normal_get(), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
     }
     set {
         return { __root___normal_set__TypesOfArguments__anyU20main_Foeble__(newValue.__externalRCRef()); return () }()
@@ -391,7 +391,7 @@ public var normal: any main.Foeble {
 }
 public var nullable: (any main.Foeble)? {
     get {
-        return { switch __root___nullable_get() { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
+        return { switch __root___nullable_get() { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble; } }()
     }
     set {
         return { __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -425,23 +425,23 @@ public func list(
 public func normal(
     value: any main.Foeble
 ) -> any main.Foeble {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___normal__TypesOfArguments__anyU20main_Foeble__(value.__externalRCRef())) as! any main.Foeble
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___normal__TypesOfArguments__anyU20main_Foeble__(value.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
 }
 public func nullable(
     value: (any main.Foeble)?
 ) -> (any main.Foeble)? {
-    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
+    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble; } }()
 }
 extension main.Barable where Self : main.__Barable {
     public var baz: any main.Foeble {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_baz_get(self.__externalRCRef())) as! any main.Foeble
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_baz_get(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
         }
     }
     public func bar(
         arg: any main.Foeble
     ) -> any main.Barable {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef())) as! any main.Barable
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Barable).Type }) as! any main.Barable
     }
 }
 extension main.Barable {
@@ -469,13 +469,13 @@ extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol {
 extension main.Foeble where Self : main.__Foeble {
     public var baz: any main.Foeble {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_baz_get(self.__externalRCRef())) as! any main.Foeble
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_baz_get(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
         }
     }
     public func bar(
         arg: any main.Foeble
     ) -> any main.Foeble {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef())) as! any main.Foeble
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
     }
 }
 extension main.Foeble {
@@ -929,28 +929,28 @@ extension ExportedKotlinPackages.repeating_conformances {
 }
 @_cdecl("Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
 package func Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Barable
-    let _result: any main.Barable = _self.bar(arg: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg) as! any main.Foeble)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.Barable).Type }) as! any main.Barable
+    let _result: any main.Barable = _self.bar(arg: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble)
     return _result.__externalRCRef()
 }
 
 @_cdecl("Barable_baz_get__reverse_swift")
 package func Barable_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Barable
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.Barable).Type }) as! any main.Barable
     let _result: any main.Foeble = _self.baz
     return _result.__externalRCRef()
 }
 
 @_cdecl("Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
 package func Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Foeble
-    let _result: any main.Foeble = _self.bar(arg: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg) as! any main.Foeble)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
+    let _result: any main.Foeble = _self.bar(arg: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble)
     return _result.__externalRCRef()
 }
 
 @_cdecl("Foeble_baz_get__reverse_swift")
 package func Foeble_baz_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Foeble
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.Foeble).Type }) as! any main.Foeble
     let _result: any main.Foeble = _self.baz
     return _result.__externalRCRef()
 }

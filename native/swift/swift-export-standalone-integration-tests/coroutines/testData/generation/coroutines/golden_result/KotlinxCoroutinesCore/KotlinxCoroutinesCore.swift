@@ -36,7 +36,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector {
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableSharedFlow {
     public var subscriptionCount: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> {
         get {
-            return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Int32>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
+            return KotlinCoroutineSupport._KotlinTypedStateFlowImpl<Swift.Int32>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get(self.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow)
         }
     }
     public func emit(
@@ -228,12 +228,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
                 }
                 return { _result; return true }()
             }
-        }())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+        }()), conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     }
 }
 @_cdecl("kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     let __continuation: (Swift.Void) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
@@ -251,7 +251,7 @@ package func kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift
 
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
     let __continuation: (Swift.Void) -> Swift.Void = {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
     return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
@@ -269,56 +269,56 @@ package func kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__S
 
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
     let _result: Swift.Void = _self.resetReplayCache()
     return { _result; return true }()
 }
 
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
     let _result: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> = _self.subscriptionCount
     return _result.wrapped.__externalRCRef()
 }
 
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
     let _result: Swift.Bool = _self.tryEmit(value: { switch value { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ expect: Swift.UnsafeMutableRawPointer?, _ update: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
     let _result: Swift.Bool = _self.compareAndSet(expect: { switch expect { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), update: { switch update { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift")
 package func kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.value
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
     let _result: Swift.Void = { _self.value = { switch newValue { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }()
     return { _result; return true }()
 }
 
 @_cdecl("kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift")
 package func kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Any {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow
     let _result: Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> = _self.replayCache
     return _result.map { it in it as! NSObject? ?? NSNull() }
 }
 
 @_cdecl("kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift")
 package func kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow).Type }) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.value
     return _result.map { it in it.__externalRCRef() } ?? nil
 }

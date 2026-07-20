@@ -106,7 +106,7 @@ package func BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Opt
 
 @_cdecl("Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg__anyU20main__Driver_Listener____reverse_swift")
 package func Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg__anyU20main__Driver_Listener____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ queryKeys: Any, _ listener: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Driver
-    let _result: Swift.Void = unsafeBitCast(_self.addListener, to: ((Swift.Array<Swift.String>, any main._Driver_Listener) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.String>, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: listener) as! any main._Driver_Listener)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.Driver).Type }) as! any main.Driver
+    let _result: Swift.Void = unsafeBitCast(_self.addListener, to: ((Swift.Array<Swift.String>, any main._Driver_Listener) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.String>, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: listener, conformsTo: { wrapperClass in wrapperClass is (main._Driver_Listener).Type }) as! any main._Driver_Listener)
     return { _result; return true }()
 }

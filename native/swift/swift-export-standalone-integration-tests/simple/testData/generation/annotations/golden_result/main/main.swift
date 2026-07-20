@@ -1153,7 +1153,7 @@ public var hiddenInterfaceProperty: Swift.Never {
 }
 public var interfaceC: any main.SwiftInterfaceC {
     get {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___interfaceC_get()) as! any main.SwiftInterfaceC
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___interfaceC_get(), conformsTo: { wrapperClass in wrapperClass is (main.SwiftInterfaceC).Type }) as! any main.SwiftInterfaceC
     }
 }
 public var objectB: main.ObjCObjectB {
@@ -1338,7 +1338,7 @@ public func returnHiddenT() -> Swift.Never {
 public func returnInterfaceC(
     value: any main.SwiftInterfaceC
 ) -> any main.SwiftInterfaceC {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(value.__externalRCRef())) as! any main.SwiftInterfaceC
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(value.__externalRCRef()), conformsTo: { wrapperClass in wrapperClass is (main.SwiftInterfaceC).Type }) as! any main.SwiftInterfaceC
 }
 public func returnObjectB(
     value: main.ObjCObjectB
@@ -1468,35 +1468,35 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SwiftInterfaceC {
 @available(*, deprecated, message: "Deprecated")
 @_cdecl("InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift")
 package func InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.InterfaceWithDeprecatedMembers
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.InterfaceWithDeprecatedMembers).Type }) as! any main.InterfaceWithDeprecatedMembers
     let _result: Swift.Void = _self.deprecatedWarningFunction()
     return { _result; return true }()
 }
 
 @_cdecl("InterfaceWithDeprecatedMembers_regularFunction__reverse_swift")
 package func InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.InterfaceWithDeprecatedMembers
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.InterfaceWithDeprecatedMembers).Type }) as! any main.InterfaceWithDeprecatedMembers
     let _result: Swift.Void = _self.regularFunction()
     return { _result; return true }()
 }
 
 @_cdecl("KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift")
 package func KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ swiftParamD: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SwiftInterfaceC
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.SwiftInterfaceC).Type }) as! any main.SwiftInterfaceC
     let _result: Swift.Void = _self.swiftFunD(swiftParamD: swiftParamD)
     return { _result; return true }()
 }
 
 @_cdecl("KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift")
 package func KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ kotlinParamE: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SwiftInterfaceC
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.SwiftInterfaceC).Type }) as! any main.SwiftInterfaceC
     let _result: Swift.Void = _self.kotlinFunE(kotlinParamE)
     return { _result; return true }()
 }
 
 @_cdecl("NonDeprecatedInterface_bar__reverse_swift")
 package func NonDeprecatedInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.NonDeprecatedInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.NonDeprecatedInterface).Type }) as! any main.NonDeprecatedInterface
     let _result: Swift.Void = _self.bar()
     return { _result; return true }()
 }
@@ -1517,21 +1517,21 @@ package func PublicClassImplHiddenInterface_foo__reverse_swift(_ `self`: Swift.U
 
 @_cdecl("SomeInterface_barC_get__reverse_swift")
 package func SomeInterface_barC_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SomeInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.SomeInterface).Type }) as! any main.SomeInterface
     let _result: Swift.String = _self.barC
     return _result
 }
 
 @_cdecl("SomeInterface_barC_set__TypesOfArguments__Swift_String____reverse_swift")
 package func SomeInterface_barC_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SomeInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.SomeInterface).Type }) as! any main.SomeInterface
     let _result: Swift.Void = { _self.barC = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("SomeInterface_fooB__reverse_swift")
 package func SomeInterface_fooB__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SomeInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: { wrapperClass in wrapperClass is (main.SomeInterface).Type }) as! any main.SomeInterface
     let _result: Swift.String = _self.fooB()
     return _result
 }
