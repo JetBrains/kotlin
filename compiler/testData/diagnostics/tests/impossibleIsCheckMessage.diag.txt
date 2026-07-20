@@ -1,0 +1,1 @@
+/impossibleIsCheckMessage.kt:11:13: warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
