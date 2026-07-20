@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -31,7 +30,8 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.jvm
 import kotlin.test.AfterTest
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/constructAnnotations"
 
@@ -51,7 +51,7 @@ class ConstructAnnotationTest {
     @AfterTest
     fun tearDown() {
         RunAll(
-            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            { Disposer.dispose(testRootDisposable) },
         )
     }
 
@@ -59,9 +59,9 @@ class ConstructAnnotationTest {
     fun testAnnotationEmptyVarArg() {
         val annotations = annotations("TestAnnotationEmptyVarArg.kts", TestAnnotation::class)
             .valueOrThrow()
-            .filterIsInstance(TestAnnotation::class.java)
+            .filterIsInstance<TestAnnotation>()
 
-        assertEquals(annotations.count(), 1)
+        assertEquals(1, annotations.count())
         assert(annotations.first().options.isEmpty())
     }
 
@@ -69,39 +69,39 @@ class ConstructAnnotationTest {
     fun testBasicVarArgTestAnnotation() {
         val annotations = annotations("SimpleTestAnnotation.kts", TestAnnotation::class)
             .valueOrThrow()
-            .filterIsInstance(TestAnnotation::class.java)
+            .filterIsInstance<TestAnnotation>()
 
-        assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(1, annotations.count())
+        assertEquals(listOf("option"), annotations.first().options.toList())
     }
 
     @Test
     fun testAnnotationWithArrayLiteral() {
         val annotations = annotations("TestAnnotationWithArrayLiteral.kts", TestAnnotation::class)
             .valueOrThrow()
-            .filterIsInstance(TestAnnotation::class.java)
+            .filterIsInstance<TestAnnotation>()
 
-        assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(1, annotations.count())
+        assertEquals(listOf("option"), annotations.first().options.toList())
     }
 
     @Test
     fun testAnnotationWithArrayOfFunction() {
         val annotations = annotations("TestAnnotationWithArrayOfFunction.kts", TestAnnotation::class)
             .valueOrThrow()
-            .filterIsInstance(TestAnnotation::class.java)
+            .filterIsInstance<TestAnnotation>()
 
-        assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(1, annotations.count())
+        assertEquals(listOf("option"), annotations.first().options.toList())
     }
 
     @Test
     fun testAnnotationWithEmptyArrayFunction() {
         val annotations = annotations("TestAnnotationWithEmptyArrayFunction.kts", TestAnnotation::class)
             .valueOrThrow()
-            .filterIsInstance(TestAnnotation::class.java)
+            .filterIsInstance<TestAnnotation>()
 
-        assertEquals(annotations.count(), 1)
+        assertEquals(1, annotations.count())
         assert(annotations.first().options.isEmpty())
     }
 
@@ -109,11 +109,11 @@ class ConstructAnnotationTest {
     fun testArrayAfterVarArgInAnnotation() {
         val annotations = annotations("TestAnnotationWithVarArgAndArray.kts", AnnotationWithVarArgAndArray::class)
             .valueOrThrow()
-            .filterIsInstance(AnnotationWithVarArgAndArray::class.java)
+            .filterIsInstance<AnnotationWithVarArgAndArray>()
 
-        assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
-        assertEquals(annotations.first().moreOptions.toList(), listOf("otherOption"))
+        assertEquals(1, annotations.count())
+        assertEquals(listOf("option"), annotations.first().options.toList())
+        assertEquals(listOf("otherOption"), annotations.first().moreOptions.toList())
     }
 
     private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
@@ -157,7 +157,7 @@ class ConstructAnnotationTest {
         val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations
-            .filterIsInstance(InvalidScriptResolverAnnotation::class.java)
+            .filterIsInstance<InvalidScriptResolverAnnotation>()
             .takeIf { it.isNotEmpty() }
             ?.let { invalid ->
                 val reports = invalid.map { "Failed to resolve annotation of type ${it.name} due to ${it.error}".asErrorDiagnostics() }

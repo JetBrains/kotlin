@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ThrowableRunnable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -46,7 +45,7 @@ class CompileTimeFibonacciTest {
     @AfterTest
     fun tearDown() {
         RunAll(
-            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            { Disposer.dispose(testRootDisposable) },
         )
     }
 

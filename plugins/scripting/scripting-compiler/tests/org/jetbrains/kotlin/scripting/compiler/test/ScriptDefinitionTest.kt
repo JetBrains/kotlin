@@ -47,7 +47,7 @@ class ScriptDefinitionTest {
             )
         }
 
-        with (initScriptDefinition) {
+        with(initScriptDefinition) {
             assertMatches("some/path/init.gradle.kts")
             assertMatches("init.gradle.kts")
             assertMatches("some/path/some.init.gradle.kts")
@@ -58,7 +58,7 @@ class ScriptDefinitionTest {
             assertNotMatches("something.gradle.kts")
         }
 
-        with (settingsScriptDefinition) {
+        with(settingsScriptDefinition) {
             assertMatches("some/path/settings.gradle.kts")
             assertMatches("settings.gradle.kts")
             assertMatches("some/path/some.settings.gradle.kts")
@@ -69,7 +69,7 @@ class ScriptDefinitionTest {
             assertNotMatches("something.gradle.kts")
         }
 
-        with (buildScriptDefinition) {
+        with(buildScriptDefinition) {
             assertNotMatches("some/path/settings.gradle.kts")
             assertNotMatches("settings.gradle.kts")
             assertNotMatches("some/path/init.gradle.kts")

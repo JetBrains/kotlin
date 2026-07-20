@@ -46,10 +46,11 @@ import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-// TODO: the contetnts of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
+// TODO: the contents of this file should go into ScriptTest.kt and replace appropriate xml-based functionality,
 // as soon as the the latter is removed from the codebase
 
 class ScriptTemplateTest {
@@ -399,7 +400,8 @@ class ScriptTemplateTest {
 
             return try {
                 val res = compileScript(
-                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath")
+                        .toScriptSource(),
                     environment,
                     this::class.java.classLoader.takeUnless { runIsolated }
                 )
@@ -521,8 +523,9 @@ private val annotationFqNames = listOf(TestAnno1::class, TestAnno2::class, TestA
 interface AcceptedAnnotationsCheck {
     fun checkHasAnno1Annotation(scriptContents: ScriptContents): ResolveResult.Success {
         val actualAnnotations = scriptContents.annotations
-        assertTrue(
-            actualAnnotations.singleOrNull()?.annotationClass?.qualifiedName == TestAnno1::class.qualifiedName,
+        assertEquals(
+            actualAnnotations.singleOrNull()?.annotationClass?.qualifiedName,
+            TestAnno1::class.qualifiedName,
             "Loaded annotation: $actualAnnotations"
         )
 

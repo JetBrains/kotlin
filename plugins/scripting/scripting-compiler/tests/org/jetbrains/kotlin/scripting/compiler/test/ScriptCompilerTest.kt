@@ -56,11 +56,13 @@ class ScriptCompilerTest {
 
     @Test
     fun testDeprecationAnnotation() {
-        val res = compile("""
+        val res = compile(
+            """
             @Deprecated("BECAUSE")
             fun deprecatedFunction() {}
             deprecatedFunction()
-        """.trimIndent().toScriptSource()) {}
+        """.trimIndent().toScriptSource()
+        ) {}
 
         assertTrue(res is ResultWithDiagnostics.Success)
         assertTrue(res.reports.any { it.message.contains("deprecatedFunction(): Unit' is deprecated. BECAUSE") })
