@@ -137,8 +137,4 @@ class Fir2IrLazySimpleFunction(
     override var companionExtensionClass: IrClassSymbol?
         get() = fir.receiverParameter?.takeIf { fir.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
         set(_) = mutationNotSupported()
-
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
-        transformingNotSupported(fir)
-    }
 }

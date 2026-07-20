@@ -139,11 +139,4 @@ class Fir2IrLazyConstructor(
             declarationStorage.leaveScope(this@Fir2IrLazyConstructor.symbol)
         }
     }
-
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
-        transformingNotSupported(fir)
-    }
 }
-
-internal fun transformingNotSupported(fir: FirDeclaration): Nothing =
-    error("Transforming children is not supported for lazy functions! ${fir.render()}")

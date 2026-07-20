@@ -183,9 +183,4 @@ class Fir2IrLazyPropertyAccessor(
     override var companionExtensionClass: IrClassSymbol?
         get() = firParentProperty.receiverParameter?.takeIf { firParentProperty.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
         set(_) = mutationNotSupported()
-
-
-    override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
-        transformingNotSupported(fir)
-    }
 }

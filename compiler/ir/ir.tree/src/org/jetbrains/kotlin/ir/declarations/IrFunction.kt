@@ -72,9 +72,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        // Here we can't transform parameters as the list is immutable,
-        // so we have to forbid transforming for all implementations that
-        // override parameters
+        // !!!
         _parameters.transformInPlace(transformer, data)
         body = body?.transform(transformer, data)
     }
