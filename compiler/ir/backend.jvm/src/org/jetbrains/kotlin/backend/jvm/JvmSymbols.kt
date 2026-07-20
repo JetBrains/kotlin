@@ -691,6 +691,15 @@ class JvmSymbols(
     }
     val illegalArgumentExceptionCtorString = illegalArgumentException.constructors.single()
 
+    val noSuchElementException = createClass(FqName("java.util.NoSuchElementException")) { irClass ->
+        irClass.addConstructor {
+            name = Name.special("<init>")
+        }.apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+    }
+    val noSuchElementExceptionCtorString = noSuchElementException.constructors.single()
+
     val arithmeticException = createClass(FqName("java.lang.ArithmeticException")) { irClass ->
         irClass.addConstructor {
             name = Name.special("<init>")
