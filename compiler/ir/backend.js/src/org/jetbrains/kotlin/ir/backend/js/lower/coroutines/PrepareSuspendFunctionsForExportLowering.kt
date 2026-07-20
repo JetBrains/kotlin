@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -528,12 +529,19 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 @PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class)
 class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (
-            container is IrSimpleFunction &&
-            (container.origin == EXPORTED_SUSPEND_FUNCTION_BRIDGE || container.origin == PROMISIFIED_MEMBER_WRAPPER)
-        ) return
+        // No need to replace calls inside synthetic $promisified and $suspendBridge function bodies
+        if (container is IrSimpleFunction && container.isSyntheticSuspendCallContainer)
+            return
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                // In case of anonymous classes, we also need to exempt from replacing nested promisified and bridge function declarations
+                if (declaration.isSyntheticSuspendCallContainer)
+                    return declaration
+
+                return super.visitSimpleFunction(declaration)
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 // In the case of super.suspendCall, as an optimization, we can keep the call without bridging it
                 // since at compile time we know that it's always a Kotlin suspend function
@@ -547,6 +555,9 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
             }
         })
     }
+
+    private val IrSimpleFunction.isSyntheticSuspendCallContainer: Boolean
+        get() = origin == EXPORTED_SUSPEND_FUNCTION_BRIDGE || origin == PROMISIFIED_MEMBER_WRAPPER
 }
 
 /** We need to ignore exporting of the original functions only after all the exported suspend function calls
