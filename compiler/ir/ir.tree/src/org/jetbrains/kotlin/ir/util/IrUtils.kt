@@ -1529,10 +1529,10 @@ public fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFF
         PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
         PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, convertTo(this))
         null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
-            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
-            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
-            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+            UnsignedType.UBYTE -> IrConstImpl.ubyte(startOffset, endOffset, constType, this as UByte)
+            UnsignedType.USHORT -> IrConstImpl.ushort(startOffset, endOffset, constType, this as UShort)
+            UnsignedType.UINT -> IrConstImpl.uint(startOffset, endOffset, constType, this as UInt)
+            UnsignedType.ULONG -> IrConstImpl.ulong(startOffset, endOffset, constType, this as ULong)
             null -> when {
                 constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
                 else -> null

@@ -1466,11 +1466,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrConstKind.Boolean -> "" to ""
             is IrConstKind.Char -> "'" to "'"
             // it's not valid kotlin
-            is IrConstKind.Byte -> "" to "B"
+            is IrConstKind.Byte, is IrConstKind.UByte -> "" to "B"
             // it's not valid kotlin
-            is IrConstKind.Short -> "" to "S"
-            is IrConstKind.Int -> "" to ""
-            is IrConstKind.Long -> "" to "L"
+            is IrConstKind.Short, is IrConstKind.UShort -> "" to "S"
+            is IrConstKind.Int, is IrConstKind.UInt -> "" to ""
+            is IrConstKind.Long, is IrConstKind.ULong -> "" to "L"
             is IrConstKind.String -> "\"" to "\""
             is IrConstKind.Float -> "" to "F"
             is IrConstKind.Double -> "" to ""

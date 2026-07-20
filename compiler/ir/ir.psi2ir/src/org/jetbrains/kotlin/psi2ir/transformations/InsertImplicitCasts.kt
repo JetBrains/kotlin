@@ -422,10 +422,10 @@ internal class InsertImplicitCasts(
                 targetType.isByte() -> IrConstImpl.byte(startOffset, endOffset, irType, value.toByte())
                 targetType.isShort() -> IrConstImpl.short(startOffset, endOffset, irType, value.toShort())
                 targetType.isLong() -> IrConstImpl.long(startOffset, endOffset, irType, value.toLong())
-                KotlinBuiltIns.isUByte(targetType) -> IrConstImpl.byte(startOffset, endOffset, irType, value.toByte())
-                KotlinBuiltIns.isUShort(targetType) -> IrConstImpl.short(startOffset, endOffset, irType, value.toShort())
-                KotlinBuiltIns.isUInt(targetType) -> IrConstImpl.int(startOffset, endOffset, irType, value)
-                KotlinBuiltIns.isULong(targetType) -> IrConstImpl.long(startOffset, endOffset, irType, value.toLong())
+                KotlinBuiltIns.isUByte(targetType) -> IrConstImpl.ubyte(startOffset, endOffset, irType, value.toUByte())
+                KotlinBuiltIns.isUShort(targetType) -> IrConstImpl.ushort(startOffset, endOffset, irType, value.toUShort())
+                KotlinBuiltIns.isUInt(targetType) -> IrConstImpl.uint(startOffset, endOffset, irType, value.toUInt())
+                KotlinBuiltIns.isULong(targetType) -> IrConstImpl.ulong(startOffset, endOffset, irType, value.toULong())
                 else -> throw AssertionError("Unexpected target type for integer coercion: $targetType")
             }
         } else {

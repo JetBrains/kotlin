@@ -1673,10 +1673,14 @@ internal class CodeGeneratorVisitor(
             IrConstKind.Null -> true
             IrConstKind.Boolean -> (value.value as Boolean) == false
             IrConstKind.Byte -> (value.value as Byte) == 0.toByte()
+            IrConstKind.UByte -> (value.value as UByte) == 0.toUByte()
             IrConstKind.Char -> (value.value as Char) == 0.toChar()
             IrConstKind.Short -> (value.value as Short) == 0.toShort()
+            IrConstKind.UShort -> (value.value as UShort) == 0.toUShort()
             IrConstKind.Int -> (value.value as Int) == 0
+            IrConstKind.UInt -> (value.value as UInt) == 0.toUInt()
             IrConstKind.Long -> (value.value as Long) == 0L
+            IrConstKind.ULong -> (value.value as ULong) == 0.toULong()
             IrConstKind.Float -> (value.value as Float).toRawBits() == 0
             IrConstKind.Double -> (value.value as Double).toRawBits() == 0L
             IrConstKind.String -> false
@@ -1771,9 +1775,13 @@ internal class CodeGeneratorVisitor(
             IrConstKind.Boolean -> llvm.constInt1(value.value as Boolean)
             IrConstKind.Char -> llvm.constChar16(value.value as Char)
             IrConstKind.Byte -> llvm.constInt8(value.value as Byte)
+            IrConstKind.UByte -> llvm.constInt8((value.value as UByte).toByte())
             IrConstKind.Short -> llvm.constInt16(value.value as Short)
+            IrConstKind.UShort -> llvm.constInt16((value.value as UShort).toShort())
             IrConstKind.Int -> llvm.constInt32(value.value as Int)
+            IrConstKind.UInt -> llvm.constInt32((value.value as UInt).toInt())
             IrConstKind.Long -> llvm.constInt64(value.value as Long)
+            IrConstKind.ULong -> llvm.constInt64((value.value as ULong).toLong())
             IrConstKind.String -> evaluateStringConst(value.value as String)
             IrConstKind.Float -> llvm.constFloat32((value.value as Float).normalizeNan())
             IrConstKind.Double -> llvm.constFloat64((value.value as Double).normalizeNan())

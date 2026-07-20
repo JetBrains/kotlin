@@ -721,10 +721,14 @@ open class IrFileSerializer(
             IrConstKind.Null -> proto.`null` = true
             IrConstKind.Boolean -> proto.boolean = value.value as Boolean
             IrConstKind.Byte -> proto.byte = (value.value as Byte).toInt()
+            IrConstKind.UByte -> proto.byte = (value.value as UByte).toInt()
             IrConstKind.Char -> proto.char = (value.value as Char).code
             IrConstKind.Short -> proto.short = (value.value as Short).toInt()
+            IrConstKind.UShort -> proto.short = (value.value as UShort).toInt()
             IrConstKind.Int -> proto.int = value.value as Int
+            IrConstKind.UInt -> proto.int = (value.value as UInt).toInt()
             IrConstKind.Long -> proto.long = value.value as Long
+            IrConstKind.ULong -> proto.long = (value.value as ULong).toLong()
             IrConstKind.String -> proto.string = serializeString(value.value as String)
             IrConstKind.Float -> proto.floatBits = (value.value as Float).toBits()
             IrConstKind.Double -> proto.doubleBits = (value.value as Double).toBits()

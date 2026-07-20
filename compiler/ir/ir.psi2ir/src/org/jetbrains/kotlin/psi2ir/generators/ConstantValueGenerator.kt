@@ -76,18 +76,18 @@ abstract class ConstantValueGenerator(
         return when (constantValue) {
             is StringValue -> IrConstImpl.string(startOffset, endOffset, constantType, constantValue.value)
             is IntValue -> IrConstImpl.int(startOffset, endOffset, constantType, constantValue.value)
-            is UIntValue -> IrConstImpl.int(startOffset, endOffset, constantType, constantValue.value)
+            is UIntValue -> IrConstImpl.uint(startOffset, endOffset, constantType, constantValue.value.toUInt())
             is NullValue -> IrConstImpl.constNull(startOffset, endOffset, constantType)
             is BooleanValue -> IrConstImpl.boolean(startOffset, endOffset, constantType, constantValue.value)
             is LongValue -> IrConstImpl.long(startOffset, endOffset, constantType, constantValue.value)
-            is ULongValue -> IrConstImpl.long(startOffset, endOffset, constantType, constantValue.value)
+            is ULongValue -> IrConstImpl.ulong(startOffset, endOffset, constantType, constantValue.value.toULong())
             is DoubleValue -> IrConstImpl.double(startOffset, endOffset, constantType, constantValue.value)
             is FloatValue -> IrConstImpl.float(startOffset, endOffset, constantType, constantValue.value)
             is CharValue -> IrConstImpl.char(startOffset, endOffset, constantType, constantValue.value)
             is ByteValue -> IrConstImpl.byte(startOffset, endOffset, constantType, constantValue.value)
-            is UByteValue -> IrConstImpl.byte(startOffset, endOffset, constantType, constantValue.value)
+            is UByteValue -> IrConstImpl.ubyte(startOffset, endOffset, constantType, constantValue.value.toUByte())
             is ShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
-            is UShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
+            is UShortValue -> IrConstImpl.ushort(startOffset, endOffset, constantType, constantValue.value.toUShort())
 
             is ArrayValue -> {
                 //  TODO: in `spreadOperatorInAnnotationArguments`, `@A(*arrayOf("a"), *arrayOf("b"))` is incorrectly

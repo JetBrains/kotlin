@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.isUByte
+import org.jetbrains.kotlin.ir.types.isUInt
+import org.jetbrains.kotlin.ir.types.isULong
+import org.jetbrains.kotlin.ir.types.isUShort
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -333,9 +337,16 @@ class LenientModeMissingActualDeclarationProvider(
             builtins.charType -> IrConstImpl.char(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = Char.MIN_VALUE)
             builtins.floatType -> IrConstImpl.float(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.0f)
             builtins.doubleType -> IrConstImpl.double(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.0)
-            else -> {
-                require(returnType.isNullable()) { "Cannot generate default return value for ${returnType.render()}" }
-                IrConstImpl.constNull(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type)
+            else -> when {
+                // Unsigned types could be missing in lanient mode
+                returnType.isUByte() -> IrConstImpl.ubyte(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.toUByte())
+                returnType.isUShort() -> IrConstImpl.ushort(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.toUShort())
+                returnType.isUInt() -> IrConstImpl.uint(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.toUInt())
+                returnType.isULong() -> IrConstImpl.ulong(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.toULong())
+                else -> {
+                    require(returnType.isNullable()) { "Cannot generate default return value for ${returnType.render()}" }
+                    IrConstImpl.constNull(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type)
+                }
             }
         }
     }

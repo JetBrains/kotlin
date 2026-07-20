@@ -222,9 +222,9 @@ FILE fqName:<root> fileName:/main.kt
       VAR name:uints type:kotlin.UIntArray [val]
         CALL 'public final fun uint (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
           ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
-            CONST Int type=kotlin.UInt value=1
-            CONST Int type=kotlin.UInt value=2
-            CONST Int type=kotlin.UInt value=3
+            CONST UInt type=kotlin.UInt value=1
+            CONST UInt type=kotlin.UInt value=2
+            CONST UInt type=kotlin.UInt value=3
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -233,19 +233,19 @@ FILE fqName:<root> fileName:/main.kt
                 ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
                   SPREAD_ELEMENT
                     GET_VAR 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-              ARG arg1: CONST Int type=kotlin.UInt value=6
+              ARG arg1: CONST UInt type=kotlin.UInt value=6
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="Fail 1"
       VAR name:complextUInts type:kotlin.UIntArray [val]
         CALL 'public final fun uint (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
           ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
-            CONST Int type=kotlin.UInt value=4
+            CONST UInt type=kotlin.UInt value=4
             SPREAD_ELEMENT
               GET_VAR 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-            CONST Int type=kotlin.UInt value=5
+            CONST UInt type=kotlin.UInt value=5
             SPREAD_ELEMENT
               GET_VAR 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-            CONST Int type=kotlin.UInt value=6
+            CONST UInt type=kotlin.UInt value=6
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -254,15 +254,15 @@ FILE fqName:<root> fileName:/main.kt
                 ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
                   SPREAD_ELEMENT
                     GET_VAR 'val complextUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-              ARG arg1: CONST Int type=kotlin.UInt value=27
+              ARG arg1: CONST UInt type=kotlin.UInt value=27
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="Fail 2"
       VAR name:nullableUInts type:kotlin.UIntArray [val]
         CALL 'public final fun nullableUInt (vararg us: kotlin.UInt?): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
           ARG us: VARARG type=kotlin.Array<out kotlin.UInt?> varargElementType=kotlin.UInt?
-            CONST Int type=kotlin.UInt value=1
+            CONST UInt type=kotlin.UInt value=1
             CONST Null type=kotlin.Nothing? value=null
-            CONST Int type=kotlin.UInt value=2
+            CONST UInt type=kotlin.UInt value=2
             CONST Null type=kotlin.Nothing? value=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -272,14 +272,14 @@ FILE fqName:<root> fileName:/main.kt
                 ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
                   SPREAD_ELEMENT
                     GET_VAR 'val nullableUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-              ARG arg1: CONST Int type=kotlin.UInt value=3
+              ARG arg1: CONST UInt type=kotlin.UInt value=3
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="Fail 3"
       VAR name:inlinedUInts type:kotlin.UIntArray [val]
         CALL 'public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
           ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
-            CONST Int type=kotlin.UInt value=1
-            CONST Int type=kotlin.UInt value=3
+            CONST UInt type=kotlin.UInt value=1
+            CONST UInt type=kotlin.UInt value=3
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -288,7 +288,7 @@ FILE fqName:<root> fileName:/main.kt
                 ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
                   SPREAD_ELEMENT
                     GET_VAR 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-              ARG arg1: CONST Int type=kotlin.UInt value=4
+              ARG arg1: CONST UInt type=kotlin.UInt value=4
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="Fail 4"
       VAR name:complexInlinedUInts type:kotlin.UIntArray [val]
@@ -296,7 +296,7 @@ FILE fqName:<root> fileName:/main.kt
           ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
             SPREAD_ELEMENT
               GET_VAR 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-            CONST Int type=kotlin.UInt value=3
+            CONST UInt type=kotlin.UInt value=3
             SPREAD_ELEMENT
               GET_VAR 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
       WHEN type=kotlin.Unit origin=IF
@@ -307,7 +307,7 @@ FILE fqName:<root> fileName:/main.kt
                 ARG us: VARARG type=kotlin.UIntArray varargElementType=kotlin.UInt
                   SPREAD_ELEMENT
                     GET_VAR 'val complexInlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
-              ARG arg1: CONST Int type=kotlin.UInt value=11
+              ARG arg1: CONST UInt type=kotlin.UInt value=11
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="Fail 5"
       WHEN type=kotlin.Unit origin=IF
@@ -347,7 +347,7 @@ FILE fqName:<root> fileName:/main.kt
     VALUE_PARAMETER kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
     BLOCK_BODY
       VAR name:sum type:kotlin.UInt [var]
-        CONST Int type=kotlin.UInt value=0
+        CONST UInt type=kotlin.UInt value=0
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<kotlin.UInt> [val]
           CALL 'public open fun iterator (): kotlin.collections.Iterator<kotlin.UInt> declared in kotlin.UIntArray' type=kotlin.collections.Iterator<kotlin.UInt> origin=FOR_LOOP_ITERATOR

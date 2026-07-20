@@ -28,9 +28,13 @@ object IrConstTypeChecker : IrElementChecker<IrConst>(IrConst::class) {
             IrConstKind.Boolean -> irBuiltIns.booleanType
             IrConstKind.Char -> irBuiltIns.charType
             IrConstKind.Byte -> irBuiltIns.byteType
+            IrConstKind.UByte -> irBuiltIns.ubyteType
             IrConstKind.Short -> irBuiltIns.shortType
+            IrConstKind.UShort -> irBuiltIns.ushortType
             IrConstKind.Int -> irBuiltIns.intType
+            IrConstKind.UInt -> irBuiltIns.uintType
             IrConstKind.Long -> irBuiltIns.longType
+            IrConstKind.ULong -> irBuiltIns.ulongType
             IrConstKind.String -> irBuiltIns.stringType
             IrConstKind.Float -> irBuiltIns.floatType
             IrConstKind.Double -> irBuiltIns.doubleType

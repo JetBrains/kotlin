@@ -3,7 +3,7 @@ val testSimpleUIntLiteral: UInt
   get
 
 val testSimpleUIntLiteralWithOverflow: UInt
-  field = -1
+  field = 4294967295
   get
 
 val testUByteWithExpectedType: UByte

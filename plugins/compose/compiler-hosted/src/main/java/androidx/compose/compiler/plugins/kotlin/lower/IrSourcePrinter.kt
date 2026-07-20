@@ -1114,7 +1114,9 @@ class IrSourcePrinterVisitor(
             is IrConstKind.Boolean -> "${expression.value}"
             is IrConstKind.Char -> "'${expression.value}'"
             is IrConstKind.Byte -> "${expression.value}"
+            is IrConstKind.UByte -> "${(expression.value as UByte).toByte()}"
             is IrConstKind.Short -> "${expression.value}"
+            is IrConstKind.UShort -> "${(expression.value as UShort).toShort()}"
             is IrConstKind.Int -> {
                 if (printIntsAsBinary) {
                     intAsBinaryString(expression.value as Int)
@@ -1122,7 +1124,15 @@ class IrSourcePrinterVisitor(
                     "${expression.value}"
                 }
             }
+            is IrConstKind.UInt -> {
+                if (printIntsAsBinary) {
+                    intAsBinaryString((expression.value as UInt).toInt())
+                } else {
+                    "${(expression.value as UInt).toInt()}"
+                }
+            }
             is IrConstKind.Long -> "${expression.value}L"
+            is IrConstKind.ULong -> "${(expression.value as ULong).toLong()}L"
             is IrConstKind.Float -> "${expression.value}f"
             is IrConstKind.Double -> "${expression.value}"
             is IrConstKind.String -> "\"${expression.value}\""

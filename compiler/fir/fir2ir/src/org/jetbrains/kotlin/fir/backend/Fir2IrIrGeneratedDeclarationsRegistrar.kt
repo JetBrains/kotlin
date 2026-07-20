@@ -652,6 +652,12 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         this.value as Byte,
                         setType = true
                     )
+                    IrConstKind.UByte -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.UnsignedByte,
+                        this.value as UByte,
+                        setType = true
+                    )
                     IrConstKind.Char -> buildLiteralExpression(
                         source = null,
                         ConstantValueKind.Char,
@@ -676,10 +682,22 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         this.value as Int,
                         setType = true
                     )
+                    IrConstKind.UInt -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.UnsignedInt,
+                        this.value as UInt,
+                        setType = true
+                    )
                     IrConstKind.Long -> buildLiteralExpression(
                         source = null,
                         ConstantValueKind.Long,
                         this.value as Long,
+                        setType = true
+                    )
+                    IrConstKind.ULong -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.UnsignedLong,
+                        this.value as ULong,
                         setType = true
                     )
                     IrConstKind.Null -> buildLiteralExpression(
@@ -692,6 +710,12 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         source = null,
                         ConstantValueKind.Short,
                         this.value as Short,
+                        setType = true
+                    )
+                    IrConstKind.UShort -> buildLiteralExpression(
+                        source = null,
+                        ConstantValueKind.UnsignedShort,
+                        this.value as UShort,
                         setType = true
                     )
                     IrConstKind.String -> buildLiteralExpression(

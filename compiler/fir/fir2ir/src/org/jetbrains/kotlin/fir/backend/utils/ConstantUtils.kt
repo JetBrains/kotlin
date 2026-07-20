@@ -42,9 +42,13 @@ fun FirLiteralExpression.toIrConst(irType: IrType): IrConst {
         when (kind) {
             IrConstKind.Boolean -> IrConstImpl.boolean(startOffset, endOffset, type, value as Boolean)
             IrConstKind.Byte -> IrConstImpl.byte(startOffset, endOffset, type, (value as Number).toByte())
+            IrConstKind.UByte -> IrConstImpl.ubyte(startOffset, endOffset, type, (value as? UByte) ?: (value as Number).toByte().toUByte())
             IrConstKind.Short -> IrConstImpl.short(startOffset, endOffset, type, (value as Number).toShort())
+            IrConstKind.UShort -> IrConstImpl.ushort(startOffset, endOffset, type, (value as? UShort) ?: (value as Number).toShort().toUShort())
             IrConstKind.Int -> IrConstImpl.int(startOffset, endOffset, type, (value as Number).toInt())
+            IrConstKind.UInt -> IrConstImpl.uint(startOffset, endOffset, type, (value as? UInt) ?: (value as Number).toInt().toUInt())
             IrConstKind.Long -> IrConstImpl.long(startOffset, endOffset, type, (value as Number).toLong())
+            IrConstKind.ULong -> IrConstImpl.ulong(startOffset, endOffset, type, (value as? ULong) ?: (value as Number).toLong().toULong())
             IrConstKind.Char -> IrConstImpl.char(startOffset, endOffset, type, value as Char)
             IrConstKind.Float -> IrConstImpl.float(startOffset, endOffset, type, (value as Number).toFloat())
             IrConstKind.Double -> IrConstImpl.double(startOffset, endOffset, type, (value as Number).toDouble())
@@ -64,10 +68,10 @@ private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
     ConstantValueKind.Int -> IrConstKind.Int
     ConstantValueKind.Long -> IrConstKind.Long
 
-    ConstantValueKind.UnsignedByte -> IrConstKind.Byte
-    ConstantValueKind.UnsignedShort -> IrConstKind.Short
-    ConstantValueKind.UnsignedInt -> IrConstKind.Int
-    ConstantValueKind.UnsignedLong -> IrConstKind.Long
+    ConstantValueKind.UnsignedByte -> IrConstKind.UByte
+    ConstantValueKind.UnsignedShort -> IrConstKind.UShort
+    ConstantValueKind.UnsignedInt -> IrConstKind.UInt
+    ConstantValueKind.UnsignedLong -> IrConstKind.ULong
 
     ConstantValueKind.String -> IrConstKind.String
     ConstantValueKind.Float -> IrConstKind.Float
