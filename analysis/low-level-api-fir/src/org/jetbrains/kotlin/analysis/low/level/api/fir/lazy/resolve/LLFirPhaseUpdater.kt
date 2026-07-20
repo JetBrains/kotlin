@@ -16,8 +16,12 @@ internal object LLFirPhaseUpdater {
     fun updateDeclarationContent(target: FirElementWithResolveState, newPhase: FirResolvePhase) {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
+        // TODO: We could null-assert here, as the resolution target should already have an assigned back reference (assuming back
+        //  references are on).
+        val rootDeclaration = (target as? FirDeclaration)?.rootDeclaration
+
         if (newPhase == FirResolvePhase.BODY_RESOLVE) {
-            val transformer = LocalElementPhaseUpdatingTransformer((target as? FirDeclaration)?.rootDeclaration)
+            val transformer = LocalElementPhaseUpdatingTransformer(rootDeclaration)
             updateDeclarationSignatureBody(target, transformer)
 
             when (target) {
@@ -34,7 +38,19 @@ internal object LLFirPhaseUpdater {
                 is FirCodeFragment -> target.block.accept(transformer)
                 is FirDanglingModifierList -> target.acceptChildren(transformer)
             }
+        } else if (newPhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+            if (rootDeclaration != null) {
+                // While we (apparently) don't need to update phases outside body resolve, the resolution may generate additional local
+                // declarations which require back references. In that sense, it's not much different to body resolution.
+                val transformer = LocalElementBackReferenceUpdatingTransformer(rootDeclaration)
+                target.accept(transformer)
+            }
         }
+
+//        if (target is FirDeclaration) {
+//            @Suppress("TestOnlyProblems")
+//            checkRootDeclarationReferences(target.rootDeclaration!!)
+//        }
     }
 
     /**
@@ -148,3 +164,22 @@ private class LocalElementPhaseUpdatingTransformer(private val rootDeclaration: 
         element.acceptChildren(this)
     }
 }
+
+// Note: We still assign back references in `LocalElementPhaseUpdatingTransformer` to avoid duplicate tree traversal. This class is for
+// cases where we don't need to update the phase.
+private class LocalElementBackReferenceUpdatingTransformer(private val rootDeclaration: FirDeclaration?) : FirVisitorVoid() {
+    override fun visitElement(element: FirElement) {
+        // "Back references to FIR" (KT-70517): declarations synthesized during resolution (e.g. the implicit `it` parameter of a lambda or
+        // anonymous functions produced by callable references) are not covered by raw FIR building, so we assign their file back reference
+        // as we walk the freshly resolved body.
+        //
+        // CAUTION: This is a quick workaround in response to the problems described above, found in a few failing tests, and might not be
+        // the best solution.
+        if (rootDeclaration != null && element is FirDeclaration) {
+            element.rootDeclaration = rootDeclaration
+        }
+
+        element.acceptChildren(this)
+    }
+}
+
