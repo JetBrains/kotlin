@@ -324,9 +324,7 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
         let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
             let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
                 if arg0 {
-                    let element = arg1.flatMap {
-                        KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, as: Element.self)
-                    } as! Element
+                    let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
                     continuation(.some(element))
                 } else {
                     continuation(.none)

@@ -247,8 +247,8 @@ internal open class SirFunctionFromKtSymbol(
      * Computes the self SirType for interface methods (covering both direct protocol parents
      * and F-bounded class methods overriding interface methods). Returns `SirExistentialType(proto)`
      * so that the bridge uses `AsExistential` — whose kotlinToSwift conversion produces
-     * `KotlinBase.__createProtocolWrapper(externalRCRef: ptr, as: Foo.self)`, required for reverse bridges
-     * where the concrete Swift conformer is unknown at compile time.
+     * `KotlinBase.__createProtocolWrapper(externalRCRef: ptr, conformsTo: { $0 is Foo.Type }) as! Foo`,
+     * required for reverse bridges where the concrete Swift conformer is unknown at compile time.
      *
      * Returns null if not applicable (e.g., plain class method with no interface origin).
      */

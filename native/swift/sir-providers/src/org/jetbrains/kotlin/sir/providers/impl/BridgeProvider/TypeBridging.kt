@@ -502,12 +502,9 @@ internal sealed interface Bridge {
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val kotlinBase = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
-                val cast = if (swiftType.protocols.size == 1) {
-                    "(${typeNamer.swiftFqName(swiftType)}).self)"
-                } else {
-                    "nil) as! ${typeNamer.swiftFqName(swiftType)}"
-                }
-                return "${kotlinBase}.__createProtocolWrapper(externalRCRef: $valueExpression, as: $cast"
+                val swiftFqName = typeNamer.swiftFqName(swiftType)
+                val bareProtocol = swiftFqName.removePrefix("any ")
+                return "$kotlinBase.__createProtocolWrapper(externalRCRef: $valueExpression, conformsTo: { wrapperClass in wrapperClass is ($bareProtocol).Type }) as! $swiftFqName"
             }
         }
     }
@@ -558,8 +555,9 @@ internal sealed interface Bridge {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
                 val flowProtocolFqName = typeNamer.swiftFqName(swiftType.flowType)
+                val bareFlowProtocol = flowProtocolFqName.removePrefix("any ")
                 val structFqName = typeNamer.swiftFqName(structType)
-                return "$structFqName.create($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression, as: ($flowProtocolFqName).self))"
+                return "$structFqName.create($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression, conformsTo: { wrapperClass in wrapperClass is ($bareFlowProtocol).Type }) as! $flowProtocolFqName)"
             }
         }
     }

@@ -160,8 +160,7 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null
-    override val attributes: List<SirAttribute>
-        get() = listOf(SirAttribute.ObjC("_${target.swiftFqName}".replace('.', '_')))
+    override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
