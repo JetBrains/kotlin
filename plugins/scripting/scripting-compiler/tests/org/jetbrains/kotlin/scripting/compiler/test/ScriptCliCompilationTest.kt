@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -46,7 +45,7 @@ class ScriptCliCompilationTest {
     @AfterTest
     fun tearDown() {
         RunAll(
-            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            { Disposer.dispose(testRootDisposable) },
         )
     }
 

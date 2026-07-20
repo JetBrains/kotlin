@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -41,7 +40,7 @@ class CollectScriptCompilationDependenciesTest {
     @AfterTest
     fun tearDown() {
         RunAll(
-            ThrowableRunnable { Disposer.dispose(testRootDisposable) }
+            { Disposer.dispose(testRootDisposable) }
         )
     }
 

@@ -33,7 +33,9 @@ class ReplReceiver1 {
 }
 
 @Suppress("unused") // Used in snippets
-class TestReplReceiver1() { fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1()) }
+class TestReplReceiver1 {
+    fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1())
+}
 
 val dependenciesResolver = CompoundDependenciesResolver(MavenDependenciesResolver())
 
@@ -61,7 +63,7 @@ class CustomK2ReplTest {
     @Test
     fun testWithImplicitReceiver() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf("val x = ok", "ok", "x",),
+            sequenceOf("val x = ok", "ok", "x"),
             sequenceOf(null, "OK", "OK"),
         )
     }
@@ -69,7 +71,7 @@ class CustomK2ReplTest {
     @Test
     fun testWithImplicitReceiverWithShadowing() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf("val ok = 42", "ok",),
+            sequenceOf("val ok = 42", "ok"),
             sequenceOf(null, 42),
         )
     }
@@ -170,25 +172,26 @@ class CustomK2ReplTest {
             ),
             baseCompilationConfiguration,
             baseEvaluationConfiguration,
-            {
-                it.onSuccess { s ->
+            { result ->
+                result.onSuccess { s ->
                     s.get().result.let { r ->
-                        @Suppress("UNCHECKED_CAST") val propx = r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as kotlin.reflect.KMutableProperty1<Any, Int>
+                        @Suppress("UNCHECKED_CAST") val propx =
+                            r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as kotlin.reflect.KMutableProperty1<Any, Int>
                         val x = propx.get(r.scriptInstance!!)
                         assertEquals(3, x)
                         propx.set(r.scriptInstance!!, 5)
                     }
-                    it
+                    result
                 }
             },
-            {
-                it.onSuccess { s ->
+            { result ->
+                result.onSuccess { s ->
                     s.get().result.let { r ->
                         val funf = r.scriptClass!!.declaredMemberFunctions.first { it.name == "f" }
                         val fret = funf.call(r.scriptInstance!!) as Int
                         assertEquals(5, fret)
                     }
-                    it
+                    result
                 }
             }
         )
@@ -382,15 +385,15 @@ class CustomK2ReplTest {
         val snippetClass = results.last().get().result.scriptClass!!
 
         val layer1 = snippetClass.nestedClasses.toList()
-        assertEquals(layer1.map { it.simpleName }, listOf("A", "B"))
+        assertEquals(listOf("A", "B"), layer1.map { it.simpleName })
         val [_, bClass] = layer1
 
         val layer2 = bClass.nestedClasses.toList()
-        assertEquals(layer2.map { it.simpleName }, listOf("C", "D"))
+        assertEquals(listOf("C", "D"), layer2.map { it.simpleName })
         val [_, dClass] = layer2
 
         val layer3 = dClass.nestedClasses.toList()
-        assertEquals(layer3.map { it.simpleName }, listOf("E"))
+        assertEquals(listOf("E"), layer3.map { it.simpleName })
     }
 
     @Test
@@ -547,8 +550,8 @@ private fun compileEvalAndCheckSnippetsSequence(
         internalScriptingRunSuspend {
             snippets.asIterable().mapSuccess { snippet ->
                 val checker = if (checkersIterator.hasNext()) checkersIterator.next() else null
-                compiler.compile(snippet.toScriptSource("s${snippetNo++}.$filenameExtension")).onSuccess {
-                    evaluator.eval(it, evaluationConfiguration).let { checker?.invoke(it) ?: it }
+                compiler.compile(snippet.toScriptSource("s${snippetNo++}.$filenameExtension")).onSuccess { snippet ->
+                    evaluator.eval(snippet, evaluationConfiguration).let { checker?.invoke(it) ?: it }
                 }
             }
         }
@@ -581,7 +584,8 @@ private fun evalAndCheckSnippetsResultVals(
     // this is K2-only tests
     if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
 
-    val evaluationResults = compileEvalAndCheckSnippetsSequence(snippets, compilationConfiguration, evaluationConfiguration, emptySequence())
+    val evaluationResults =
+        compileEvalAndCheckSnippetsSequence(snippets, compilationConfiguration, evaluationConfiguration, emptySequence())
     checkEvaluatedSnippetsResultVals(expectedResultVals, evaluationResults)
 }
 

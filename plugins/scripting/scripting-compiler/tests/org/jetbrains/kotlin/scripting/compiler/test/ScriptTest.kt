@@ -60,15 +60,15 @@ class ScriptTest {
     }
 
     @Test
-    fun testStandardScriptWithSaving(@TempDir tmpdir: File) {
-        val aClass = compileScript("fib_std.kts", saveClassesDir = tmpdir)
+    fun testStandardScriptWithSaving(@TempDir tmpDir: File) {
+        val aClass = compileScript("fib_std.kts", saveClassesDir = tmpDir)
         assertNotNull(aClass)
         val out1 = captureOut {
             val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out1)
-        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass.classLoader)
+        val savedClassLoader = URLClassLoader(arrayOf(tmpDir.toURI().toURL()), aClass.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         assertNotNull(aClassSaved)
         val out2 = captureOut {
@@ -110,7 +110,7 @@ class ScriptTest {
         val scriptClass = compileScript("metadata_flag.kts") ?: throw AssertionError("compilation failed")
         assertTrue(scriptClass.isFlagSet(), "Script class SHOULD have the metadata flag set")
         assertFalse(
-            scriptClass.classLoader.loadClass("Metadata_flag\$RandomClass").isFlagSet(),
+            scriptClass.classLoader.loadClass($$"Metadata_flag$RandomClass").isFlagSet(),
             "Non-script class in a script should NOT have the metadata flag set"
         )
     }
@@ -142,7 +142,8 @@ class ScriptTest {
 
             try {
                 return compileScript(
-                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath")
+                        .toScriptSource(),
                     environment,
                 ).first?.java
             } catch (e: CompilationException) {

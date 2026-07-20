@@ -33,7 +33,7 @@ const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.bas
 internal fun getBaseCompilerArgumentsFromProperty(): List<String>? =
     System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')
 
-// TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
+// TODO: partially copy pasted from LauncherReplTest, consider extracting common parts to some (new) test util module
 fun runWithKotlinc(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
@@ -212,11 +212,11 @@ fun runWithK2JVMCompiler(
     expectedExitCode: Int = 0,
     expectedSomeErrPatterns: List<String>? = null
 ) {
-    val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
+    val argsWithBaseFromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
     val [out, err, ret] = captureOutErrRet {
         CLICompiler.doMainNoExit(
             K2JVMCompiler(),
-            argsWithBasefromProp
+            argsWithBaseFromProp
         )
     }
     try {
