@@ -57,13 +57,13 @@ projectTests {
 
 publish()
 
-val unshaded by task<Jar> {
+val unshaded = tasks.register<Jar>("unshaded") {
     archiveClassifier.set("unshaded")
     from(mainSourceSet.output)
 }
 project.addArtifact("unshaded", unshaded, unshaded)
 
-val relocatedJar by task<ShadowJar> {
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
@@ -74,7 +74,7 @@ val relocatedJar by task<ShadowJar> {
     relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(relocatedJar)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), relocatedJar.get().outputs.files)
@@ -98,7 +98,7 @@ val proguard by task<CacheableProguardTask> {
     configuration("metadata.pro")
 }
 
-val resultJar by task<Jar> {
+val resultJar = tasks.register<Jar>("resultJar") {
     val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
     dependsOn(pack)
     setupPublicJar(base.archivesName.get())

@@ -1,4 +1,4 @@
-package Package
+package package1
 
 class Outer {
     class Nested {
@@ -7,4 +7,4 @@ class Outer {
     }
 }
 
-fun box() = Package.Outer.Nested().O + Outer.Nested().K
+fun box() = package1.Outer.Nested().O + Outer.Nested().K

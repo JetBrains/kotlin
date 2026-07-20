@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // DUMP_KLIB_ABI: DEFAULT
 import kotlin.test.assertEquals
 import kotlin.reflect.*

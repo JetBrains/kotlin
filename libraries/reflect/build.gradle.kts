@@ -158,7 +158,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : ResourceTransf
     }
 }
 
-val reflectShadowJar by task<ShadowJar> {
+val reflectShadowJar = tasks.register<ShadowJar>("reflectShadowJar") {
     archiveClassifier.set("shadow")
     configurations = listOf(embedded)
 
@@ -209,7 +209,7 @@ val stripMetadata by tasks.registering {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(stripMetadata)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
@@ -233,7 +233,7 @@ val proguard by task<CacheableProguardTask> {
     configuration("$core/reflection.jvm/reflection.pro")
 }
 
-val relocateCoreSources by task<Copy> {
+val relocateCoreSources = tasks.register<Copy>("relocateCoreSources") {
     val relocatedCoreSrc = relocatedCoreSrc
     val fs = serviceOf<FileSystemOperations>()
     doFirst {
@@ -297,7 +297,7 @@ val intermediate = when {
     else -> reflectShadowJar
 }
 
-val result by task<Jar> {
+val result = tasks.register<Jar>("result") {
     dependsOn(intermediate)
     from {
         zipTree(intermediate.get().singleOutputFile(layout))

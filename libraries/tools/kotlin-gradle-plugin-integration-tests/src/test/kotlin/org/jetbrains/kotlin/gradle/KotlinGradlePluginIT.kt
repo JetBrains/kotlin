@@ -683,9 +683,10 @@ class KotlinGradleIT : KGPBaseTest() {
                     }
                     else -> {
                         // Attributes may come in random order
+                        val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
                         val attributeMatchingString = output.lineSequence().find {
                             it.trimStart().startsWith(
-                                "> No matching variant of project :projA was found. " +
+                                "> No matching variant of project $projName was found. " +
                                         "The consumer was configured to find a library for use during compile-time, " +
                                         "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, and its dependencies declared externally, "
@@ -733,9 +734,10 @@ class KotlinGradleIT : KGPBaseTest() {
                     }
                     else -> {
                         // Attributes may come in random order
+                        val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
                         val attributeMatchingString = output.lineSequence().find {
                             it.contains(
-                                "No matching variant of project :projA was found. " +
+                                "No matching variant of project $projName was found. " +
                                         "The consumer was configured to find a library for use during compile-time, " +
                                         "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, and its dependencies declared externally, "

@@ -26,6 +26,7 @@ internal class KotlinKConstructor(
     override val typeParameterTable: TypeParameterTable get() = (container as KClassImpl<*>).typeParameterTable
     override val jvmSignature: JvmMethodSignature
         get() = kmConstructor.signature ?: throw KotlinReflectionInternalError("No signature for constructor: $this")
+    override val metadataAnnotations: List<KmAnnotation> get() = kmConstructor.annotations
 
     override val name: String
         get() = "<init>"

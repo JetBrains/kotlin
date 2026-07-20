@@ -25,12 +25,33 @@ import javax.inject.Inject
 internal interface XcodebuildAwaitArgsDumpWorkParameters : WorkParameters {
     val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
     val key: Property<XcodeDumpBucketMapKey>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
+    val ideaSyncEnabled: Property<Boolean>
+    val errorFile: RegularFileProperty
 }
 
 // We await xcodebuilds in a work action on purpose, so that we don't block other tasks within the project from running in parallel.
 internal abstract class XcodebuildArgsDumpAwaitWorkAction : WorkAction<XcodebuildAwaitArgsDumpWorkParameters> {
+    private val logger = Logging.getLogger(XcodebuildArgsDumpAwaitWorkAction::class.java)
+
     override fun execute() {
-        parameters.fingerprintCoordinationService.get().awaitXcodeDump(parameters.key.get())
+        logger.info("Awaiting xcodebuild dump: ${parameters.key.get()}")
+        val errorFile = parameters.errorFile.get().asFile
+        errorFile.delete()
+        try {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeXcodebuildAwaitWorkerStarted()
+            }
+            parameters.fingerprintCoordinationService.get().awaitXcodeDump(parameters.key.get())
+        } catch (failure: Throwable) {
+            if (parameters.ideaSyncEnabled.get()) {
+                val errorText = "Warning: Failed to dump xcodebuild arguments: ${failure.message ?: ""}"
+                logger.warn(errorText, failure)
+                errorFile.writeText(errorText)
+            } else {
+                throw failure
+            }
+        }
     }
 }
 
@@ -57,6 +78,7 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
     val xcodebuildFinishedMarkerFile: Property<File>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
 }
 
 /**
@@ -71,7 +93,16 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
     private val logger = Logging.getLogger(XcodebuildArgsDumpWorkAction::class.java)
 
     override fun execute() {
+        logger.info("Starting xcodebuild dump ${parameters.xcodebuildExecutionFingerprint.orNull?.let { "(bucket ${it})" }}}")
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeXcodebuildOwnerWorkerStarted()
+            }
+            parameters.fingerprintCoordinationService.get().markXcodeDumpStarted(
+                key = parameters.xcodebuildExecutionFingerprint.get(),
+            )
+        }
         errorFile.delete()
         try {
             doExecute()
@@ -88,13 +119,14 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                     failure = failure,
                 )
             }
+
             if (parameters.ideaSyncEnabled.get()) {
                 val errorText = "Warning: Failed to dump xcodebuild arguments: ${failure.message ?: ""}"
                 logger.warn(errorText, failure)
                 errorFile.writeText(errorText)
-                return
+            } else {
+                throw failure
             }
-            throw failure
         }
     }
 

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 abstract class ResolutionStage {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -627,7 +626,6 @@ private object CheckDslScopeViolation {
             is ConeTypeParameterType -> originalType.lookupTag.typeParameterSymbol.resolvedBounds.forEach {
                 collectDslMarkerAnnotations(it.coneType)
             }
-            is ConeLookupTagBasedType -> unreachableBranch(originalType)
             is ConeIntegerConstantOperatorType, is ConeIntegerLiteralConstantType,
             is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType,
                 -> return

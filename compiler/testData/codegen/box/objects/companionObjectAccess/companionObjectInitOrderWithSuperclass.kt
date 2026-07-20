@@ -1,5 +1,5 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
-// ^ On Native `CompanionBlocksAndExtensions` language feature enables the JVM-like initialization.
+// LANGUAGE: +CompanionBlocks
+// ^ On Native `CompanionBlocks` language feature enables the JVM-like initialization.
 //   See nativeCompanionInitOrderLegacy for Native behavior without the language feature.
 // ISSUE: KT-84267 K/Wasm: init order of companion objects is different from JVM
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS,Wasm-js:2.3,2.4

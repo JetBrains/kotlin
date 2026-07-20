@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
@@ -899,7 +898,7 @@ object FirFakeOverrideGenerator {
             useSiteSession: FirSession,
         ): ConeSubstitutor = substitutorByMap(
             pairs.associate { [originalTypeParameter, new] ->
-                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
+                Pair(originalTypeParameter.symbol, ConeTypeParameterType(new.symbol.toLookupTag(), isMarkedNullable = false))
             },
             useSiteSession
         )

@@ -9,6 +9,8 @@ NSString * MyInterface_foo_get__reverse_swift(void * self);
 
 _Bool MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
 
+_Bool MyInterface_optInFunWithDefault__reverse_swift(void * self);
+
 _Bool MyInterface_optInFun__reverse_swift(void * self);
 
 NSString * MyInterface_optInProp_get__reverse_swift(void * self);
@@ -40,6 +42,10 @@ NSString * MyInterface_foo_get(void * self);
 _Bool MyInterface_foo_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
 _Bool MyInterface_optInFun(void * self);
+
+_Bool MyInterface_optInFunWithDefault(void * self);
+
+_Bool MyInterface_optInFunWithDefault_direct(void * self);
 
 NSString * MyInterface_optInProp_get(void * self);
 

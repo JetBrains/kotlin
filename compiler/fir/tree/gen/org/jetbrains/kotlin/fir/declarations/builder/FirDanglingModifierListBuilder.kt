@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
 class FirDanglingModifierListBuilder : FirAnnotationContainerBuilder {
     var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirDanglingModifierSymbol
-    val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    val contextParameters: MutableList<FirValueParameter> = []
 
     override fun build(): FirDanglingModifierList {
         return FirDanglingModifierListImpl(

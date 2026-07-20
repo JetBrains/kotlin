@@ -20,7 +20,7 @@ class DeterministicBuildIT : KGPBaseTest() {
     @DisplayName("Kapt generate stubs task - KT-40882")
     @GradleTest
     fun testKaptGenerateStubsTask(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project("kapt/simple", gradleVersion) {
             javaSourcesDir()
                 .resolve("Foo.kt")
                 .writeText(

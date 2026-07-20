@@ -1,6 +1,6 @@
 // ISSUE: KT-76655 Kotlin/Native: Native test infrastructure does not support per-module directives
-// LANGUAGE: +CompanionBlocksAndExtensions
-// ^ On Native `CompanionBlocksAndExtensions` language feature enables the JVM-like initialization.
+// LANGUAGE: +CompanionBlocks
+// ^ On Native `CompanionBlocks` language feature enables the JVM-like initialization.
 //   See nativeCompanionInitOrderCrossModuleLegacy for Native behavior without the language feature.
 //   Native also needs tests when some modules are built with the feature enabled, and some with it disabled.
 // ISSUE: KT-84267 K/Wasm: init order of companion objects is different from JVM

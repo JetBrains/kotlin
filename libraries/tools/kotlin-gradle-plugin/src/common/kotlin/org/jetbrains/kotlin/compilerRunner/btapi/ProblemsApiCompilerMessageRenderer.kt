@@ -35,6 +35,23 @@ internal class ProblemsApiCompilerMessageRenderer(
 ) : CompilerMessageRendererWithDiagnosticId {
     private val bufferedDiagnostics = ConcurrentLinkedQueue<BufferedDiagnostic>()
 
+    /**
+     * Changes for all already received diagnostics error severity to warning.
+     */
+    @Synchronized
+    fun lowerErrorSeveritiesToWarning() {
+        val errors = bufferedDiagnostics.toList()
+
+        bufferedDiagnostics.clear()
+        bufferedDiagnostics.addAll(errors.map {
+            if (it.severity == CompilerMessageRenderer.Severity.ERROR) {
+                it.copy(severity = CompilerMessageRenderer.Severity.WARNING)
+            } else {
+                it
+            }
+        })
+    }
+
     override fun render(
         severity: CompilerMessageRenderer.Severity,
         message: String,

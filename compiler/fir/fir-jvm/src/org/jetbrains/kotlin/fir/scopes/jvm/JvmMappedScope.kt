@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
@@ -203,7 +203,7 @@ class JvmMappedScope(
             isLocal = firKotlinClass.isLocal
             returnTypeRef = buildResolvedTypeRef {
                 coneType = firKotlinClass.typeParameters.firstOrNull()
-                    ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
+                    ?.let { ConeTypeParameterType(it.symbol.toLookupTag(), isMarkedNullable = false) }
                     ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
             }
             this.name = name
@@ -436,7 +436,7 @@ class JvmMappedScope(
         private fun createMappingSubstitutor(fromClass: FirRegularClass, toClass: FirRegularClass, session: FirSession): ConeSubstitutor =
             substitutorByMap(
                 fromClass.typeParameters.zip(toClass.typeParameters).associate { [fromTypeParameter, toTypeParameter] ->
-                    fromTypeParameter.symbol to ConeTypeParameterTypeImpl(
+                    fromTypeParameter.symbol to ConeTypeParameterType(
                         ConeTypeParameterLookupTag(toTypeParameter.symbol),
                         isMarkedNullable = false
                     )

@@ -51,7 +51,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @GradleTest
     fun testRelocationSimpleKapt(gradleVersion: GradleVersion) {
         val [firstProject, secondProject] = prepareTestProjects(
-            "kapt2/simple",
+            "kapt/simple",
             gradleVersion
         ) {
             it.gradleProperties.append(
@@ -207,7 +207,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val [firstProject, secondProject] = prepareTestProjects(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             defaultBuildOptions.copy(androidVersion = agpVersion),
             jdkProvider.location
@@ -237,7 +237,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val [firstProject, secondProject] = prepareTestProjects(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             defaultBuildOptions.copy(androidVersion = agpVersion),
             jdkProvider.location
@@ -304,7 +304,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("Kapt incremental compilation works with cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
-        project("kapt2/kaptAvoidance", gradleVersion) {
+        project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
 
             checkKaptCachingIncrementalBuild(this, this)
@@ -315,11 +315,11 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("Kapt incremental compilation build does not break relocated build cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
-        val firstProject = project("kapt2/kaptAvoidance", gradleVersion) {
+        val firstProject = project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
         }
 
-        val secondProject = project("kapt2/kaptAvoidance", gradleVersion) {
+        val secondProject = project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
         }
 

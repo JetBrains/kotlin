@@ -53,7 +53,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         when (module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JDK_KIND)) {
             TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.FULL_JDK, TestJdkKind.FULL_JDK_8, null -> {}
             // Classes for newer JDK can't be loaded into the current old Java runtime (Java 8)
-            TestJdkKind.FULL_JDK_11, TestJdkKind.FULL_JDK_17, TestJdkKind.FULL_JDK_21 -> return
+            TestJdkKind.FULL_JDK_11, TestJdkKind.FULL_JDK_17, TestJdkKind.FULL_JDK_21, TestJdkKind.FULL_JDK_VALHALLA -> return
         }
         val classPathFiles = computeTestRuntimeClasspath(testServices, module)
         val (k1ReflectDumpResult, newReflectDumpResult) = dumpK1AndNewReflect(

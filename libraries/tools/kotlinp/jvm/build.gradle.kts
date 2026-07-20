@@ -62,7 +62,7 @@ projectTests {
     withScriptingPlugin()
 }
 
-val shadowJar by task<ShadowJar> {
+val shadowJar = tasks.register<ShadowJar>("shadowJar") {
     archiveClassifier.set("shadow")
     archiveVersion.set("")
     configurations = listOf(shadows)

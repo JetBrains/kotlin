@@ -45,6 +45,9 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("org/jetbrains/annotations/**")
     exclude("META-INF/native-image/**")
     mergeServiceFiles()
+    manifest {
+        attributes("Multi-Release" to true)
+    }
 }
 
 val sourcesJar = sourcesJar {

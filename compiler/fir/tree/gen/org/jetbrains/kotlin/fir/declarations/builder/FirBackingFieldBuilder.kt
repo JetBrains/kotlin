@@ -42,7 +42,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     lateinit var symbol: FirBackingFieldSymbol
     lateinit var propertySymbol: FirPropertySymbol
     override var initializer: FirExpression? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var status: FirDeclarationStatus
 
     @OptIn(FirImplementationDetail::class)
@@ -102,7 +102,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
         }
 
     @Deprecated("Modification of 'contextParameters' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
 
     @Deprecated("Modification of 'delegate' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var delegate: FirExpression?

@@ -8,7 +8,7 @@
 // LATEST_LV_DIFFERENCE
 
 // MODULE: m1
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FILE: m1.kt
 class C {
     companion {
@@ -17,7 +17,7 @@ class C {
 }
 
 // MODULE: m2(m1)
-// LANGUAGE: -CompanionBlocksAndExtensions
+// LANGUAGE: -CompanionBlocks -CompanionExtensions
 // FILE: m2.kt
 fun test() {
     C()

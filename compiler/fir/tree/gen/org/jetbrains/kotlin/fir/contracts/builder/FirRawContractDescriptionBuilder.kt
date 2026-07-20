@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 @FirBuilderDsl
 class FirRawContractDescriptionBuilder {
     var source: KtSourceElement? = null
-    val rawEffects: MutableList<FirExpression> = mutableListOf()
+    val rawEffects: MutableList<FirExpression> = []
 
     fun build(): FirRawContractDescription {
         return FirRawContractDescriptionImpl(

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
 fun ConeClassifierLookupTag.constructType(
@@ -18,7 +15,7 @@ fun ConeClassifierLookupTag.constructType(
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable, attributes)
+        is ConeTypeParameterLookupTag -> ConeTypeParameterType(this, isMarkedNullable, attributes)
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isMarkedNullable, attributes)
         else -> error("! ${this::class}")
     }
@@ -50,7 +47,7 @@ fun FirClassifierSymbol<*>.constructType(
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
+        is FirTypeParameterSymbol -> ConeTypeParameterType(this.toLookupTag(), isMarkedNullable, attributes)
         is FirClassLikeSymbol<*> -> constructType(typeArguments, isMarkedNullable, attributes)
     }
 }

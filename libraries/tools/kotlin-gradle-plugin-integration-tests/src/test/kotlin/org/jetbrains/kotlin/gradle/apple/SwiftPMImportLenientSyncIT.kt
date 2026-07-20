@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.writeText
@@ -38,7 +40,6 @@ class SwiftPMImportLenientSyncIT : KGPBaseTest() {
     private val generateTask = ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}"
     private val serializeTask = ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}"
     private val umbrellaFetchTask = ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName("default")}"
-    private fun convertTask(sdk: String) = ":${ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME}$sdk"
     private fun dumpTask(sdk: String) = ":${DumpXcodeBuildArgs.TASK_NAME}$sdk"
 
     @DisplayName("Failing 'swift package resolve' fails a normal build but only warns during IDE sync")
@@ -46,30 +47,56 @@ class SwiftPMImportLenientSyncIT : KGPBaseTest() {
     fun `resolve failure is lenient during IDE sync`(version: GradleVersion) {
         project("empty", version) {
             val cacheDirFile = projectPath.resolve("customXcodePackageCache").toFile()
+
+            // Also test for KT-87630
+            val samePackage: SwiftPMImportExtension.() -> Unit = {
+                swiftPackage(
+                    url = "https://example.invalid/NonExistentPackage.git",
+                    version = "1.0.0",
+                    products = listOf("NonExistent"),
+                )
+            }
+            val left = project("empty", version) {
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        samePackage()
+                    }
+                }
+            }
+            val right = project("empty", version) {
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        samePackage()
+                    }
+                }
+            }
+            include(left, "left")
+            include(right, "right")
+
             initSwiftPmProject(cacheDirFile) {
-                swiftPMDependencies {
-                    swiftPackage(
-                        url = "https://example.invalid/NonExistentPackage.git",
-                        version = "1.0.0",
-                        products = listOf("NonExistent"),
-                    )
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":left"))
+                    implementation(project(":right"))
                 }
             }
 
             /* Normal build: pipeline failure aborts the build */
             buildAndFail(ideaImportTask) {
-                assertTasksExecuted(generateTask, serializeTask)
                 assertTasksFailed(umbrellaFetchTask)
             }
 
             /* IDE sync: pipeline failure is downgraded to a warning, import succeeds */
             build(ideaImportTask, buildOptions = ideaSyncBuildOptions) {
+                assertTasksExecuted(":left:${FetchSyntheticImportProjectPackages.TASK_NAME}")
+                assertTasksExecuted(":right:${FetchSyntheticImportProjectPackages.TASK_NAME}")
                 assertTasksExecuted(umbrellaFetchTask)
                 assertOutputContains("Warning: Failed to resolve SwiftPM packages")
             }
 
             /* Lenient failure is not up-to-date: it re-runs and warns again on the next sync */
             build(ideaImportTask, buildOptions = ideaSyncBuildOptions) {
+                assertTasksExecuted(":left:${FetchSyntheticImportProjectPackages.TASK_NAME}")
+                assertTasksExecuted(":right:${FetchSyntheticImportProjectPackages.TASK_NAME}")
                 assertTasksExecuted(umbrellaFetchTask)
                 assertOutputContains("Warning: Failed to resolve SwiftPM packages")
             }

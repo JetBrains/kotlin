@@ -163,6 +163,26 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         }
     }
 
+    fun awaitXcodeDumpOwnerStarted(key: XcodeDumpBucketMapKey) {
+        val bucket = synchronized(stateLock) {
+            dumpBucketsByXcodebuildFingerprint[key]
+        } ?: error("No bucket found for key $key")
+
+        // Do not let a joiner submit its blocking worker until the owner worker has actually started.
+        // Otherwise, under a saturated Worker API pool, joiners can occupy the last slots while waiting
+        // and prevent the owner from ever starting.
+        bucket.ownerStarted.await()
+    }
+
+    fun markXcodeDumpStarted(key: XcodeDumpBucketMapKey) {
+        synchronized(stateLock) {
+            val bucket = dumpBucketsByXcodebuildFingerprint[key]
+                ?: error("Xcode dump bucket is missing for $key")
+
+            bucket.ownerStarted.countDown()
+        }
+    }
+
     fun markXcodeDumpCompleted(
         key: XcodeDumpBucketMapKey,
     ) {
@@ -221,6 +241,26 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         }
     }
 
+    fun awaitSwiftResolveOwnerStarted(key: SwiftResolveBucketMapKey) {
+        val bucket = synchronized(stateLock) {
+            fetchBucketsBySyntheticPackageFingerprint[key]
+        } ?: error("Swift resolve bucket is missing for package hash $key")
+
+        // Do not let a joiner submit its blocking worker until the owner worker has actually started.
+        // Otherwise, under a saturated Worker API pool, joiners can occupy the last slots while waiting
+        // and prevent the owner from ever starting.
+        bucket.ownerStarted.await()
+    }
+
+    fun markSwiftResolveStarted(packageHash: SwiftResolveBucketMapKey) {
+        synchronized(stateLock) {
+            val bucket = fetchBucketsBySyntheticPackageFingerprint[packageHash]
+                ?: error("Swift resolve bucket is missing for package hash $packageHash")
+
+            bucket.ownerStarted.countDown()
+        }
+    }
+
     companion object {
         private const val SERVICE_NAME = "SwiftImportFingerprintedCoordinationService"
 
@@ -265,6 +305,7 @@ internal data class GeneratePackageBucketMapKey(
 
 internal open class CoordinationBucket(
     val completion: CountDownLatch = CountDownLatch(1),
+    val ownerStarted: CountDownLatch = CountDownLatch(1),
     var failure: Throwable? = null,
     var completed: Boolean = false,
 )

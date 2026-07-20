@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState a
 import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols as allOverriddenSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration as containingDeclarationEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingFile as containingFileEndpoint
+import org.jetbrains.kotlin.analysis.api.symbols.containingModule as containingModuleEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol as containingSymbolEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols as directlyOverriddenSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.fakeOverrideOriginal as fakeOverrideOriginalEndpoint
@@ -52,7 +53,7 @@ internal class KaSymbolRelationProviderBridge(
         get() = context(analysisSession) { containingFileEndpoint }
 
     override val KaSymbol.containingModule: KaModule
-        get() = proxy.containingModule(this)
+        get() = context(analysisSession) { containingModuleEndpoint }
 
     override val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
         get() = context(analysisSession) { samConstructorEndpoint }

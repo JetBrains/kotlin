@@ -188,7 +188,7 @@ bitcode {
             sourceSets {}
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("breakpad") {
                 srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
                 val sources = listOf(
@@ -621,7 +621,7 @@ bitcode {
             }
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
                 // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
@@ -757,6 +757,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xklib-ir-inliner=intra-module",
             "-Xcontext-parameters",
             "-Xname-based-destructuring=complete",
+            "-Xcollection-literals",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
@@ -781,29 +782,29 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     ))
 
     val common by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
-        srcDir(project(":kotlin-stdlib").file("common/src/generated"))
-        srcDir(project(":kotlin-stdlib").file("unsigned/src"))
-        srcDir(project(":kotlin-stdlib").files("src").builtBy(":prepare:build.version:writeStdlibVersion"))
-        srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
-        srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/kotlin"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/generated"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("unsigned/src"))
+        srcDir(project.files(project(":kotlin-stdlib").projectDir.resolve("src")).builtBy(":prepare:build.version:writeStdlibVersion"))
+        srcDir(project(":kotlin-test").projectDir.resolve("annotations-common/src/main/kotlin"))
+        srcDir(project(":kotlin-test").projectDir.resolve("common/src/main/kotlin"))
     }
 
     val commonNonJvm by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("common-non-jvm/src"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common-non-jvm/src"))
     }
 
     val nativeWasm by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/src/"))
     }
 
     val nativeWasmWasi by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("native-wasm/wasi/"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/wasi/"))
     }
 
     val nativeMain by sourceSets.creating {
-        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
-        srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
+        srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/main/kotlin"))
+        srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/native/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
 }

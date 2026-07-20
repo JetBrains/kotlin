@@ -1,0 +1,9 @@
+Resulting Resolution Scope:
+Module LIBRARY:
+    + Foo.class
+    + fake.kotlin_builtins
+    - main.kt
+Module MAIN:
+    + Foo.class
+    + fake.kotlin_builtins
+    + main.kt

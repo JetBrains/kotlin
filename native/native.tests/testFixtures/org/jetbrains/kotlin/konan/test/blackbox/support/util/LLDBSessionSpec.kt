@@ -37,6 +37,15 @@ abstract class LLDBSessionSpec {
         val kt84923Message = "attached to process, but could not pause execution; attach failed"
         assumeFalse(output.contains(kt84923Message)) { "Test skipped because of KT-84923" }
 
+        // Workaround for KT-87414: an lldb stepping race can leave a step-into command stuck at an already deleted internal breakpoint;
+        // the watchdog in konan_lldb_test_helper.py converts the resulting hang into this failure. Both markers are required:
+        // the watchdog/ message alone may also indicate a genuine deadlock in the tested program, which must still fail the test.
+        val stuckStepMessage = "A single step-into command didn't complete"
+        val deletedBreakpointMessage = "which has been deleted"
+        assumeFalse(output.contains(stuckStepMessage) && output.contains(deletedBreakpointMessage)) {
+            "Test skipped because of KT-87414"
+        }
+
         // LLDB sporadically fails to run its Objective-C runtime introspection code in the inferior
         // (timing- and load-dependent, so it only happens on some CI runs) and reports this warning.
         // It is harmless for these tests: LLDB just falls back to symbol-based type lookup.

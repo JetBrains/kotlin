@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirEnumEntryDeserializedAccessExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var enumClassId: ClassId
     lateinit var enumEntryName: Name
 

@@ -209,7 +209,7 @@ fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersio
         manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, presentablePoisoningFeatures)
     }
 
-    if (languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocksAndExtensions)) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocks)) {
         manifestProperties.setProperty(KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION, true.toString())
     }
 }

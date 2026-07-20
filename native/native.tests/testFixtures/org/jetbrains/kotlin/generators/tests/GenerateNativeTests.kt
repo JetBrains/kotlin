@@ -93,6 +93,7 @@ fun main(args: Array<String>) {
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
@@ -102,6 +103,7 @@ fun main(args: Array<String>) {
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropHeaderModeTest>(
                 suiteTestClassName = "CInteropHeaderModeTestGenerated",
@@ -111,6 +113,7 @@ fun main(args: Array<String>) {
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",

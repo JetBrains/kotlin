@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
-import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
@@ -17,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
+abstract class FirResolvedArgumentList : FirArgumentList() {
     /**
      * Contains the original, unresolved [FirArgumentList] which contains [FirNamedArgumentExpression]s,
      * whereas [FirNamedArgumentExpression]s are removed from `this` resolved argument list.
@@ -48,15 +46,7 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (argument in arguments) {
-            argument.accept(visitor, data)
-        }
-    }
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedArgumentList {
         transformArguments(transformer, data)
         return this
     }
@@ -76,6 +66,12 @@ internal class FirResolvedArgumentListImpl(
     private fun filterArgumentMapping(): LinkedHashMap<FirExpression, FirValueParameter> {
         return mappingIncludingContextArguments.filterTo(LinkedHashMap()) { it.value.valueParameterKind == FirValueParameterKind.Regular }
             .let { if (it.size == mappingIncludingContextArguments.size) mappingIncludingContextArguments else it }
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        for (argument in mappingIncludingContextArguments.keys) {
+            argument.accept(visitor, data)
+        }
     }
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
@@ -103,6 +99,12 @@ internal class FirResolvedArgumentListForErrorCall(
 
     override val arguments: List<FirExpression>
         get() = _mapping.keys.toList()
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        for (argument in arguments) {
+            argument.accept(visitor, data)
+        }
+    }
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirResolvedArgumentListForErrorCall {
         _mapping = _mapping.mapKeys { [k, _] -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>

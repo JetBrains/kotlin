@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     var calleeReference: FirReference = FirStubReference
     lateinit var tryBlock: FirBlock
-    val catches: MutableList<FirCatch> = mutableListOf()
+    val catches: MutableList<FirCatch> = []
     var finallyBlock: FirBlock? = null
 
     override fun build(): FirTryExpression {

@@ -91,6 +91,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     init {
         // KT-85468: a lenient failure during IDE sync writes an error file; while it exists the
         // task must not be up-to-date so the next build retries the resolve.
+        testExecutionHooks.convention(SwiftImportExecutionHooks.NONE)
         outputs.upToDateWhen { !ideImportError.get().asFile.exists() }
     }
 
@@ -110,6 +111,12 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
     @get:Internal
     abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
+
+    @get:Internal
+    abstract val testExecutionHooks: Property<SwiftImportExecutionHooks>
+
+    @get:Internal
+    abstract val testExecutionService: Property<SwiftImportTestExecutionService>
 
     @get:Inject
     abstract val fs: FileSystemOperations
@@ -132,11 +139,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         }
 
         val ownerHash = syntheticPackageFingerprint.asFile.get().readText().trim().split("\n")[1]
+        testExecutionHooks.get().beforeSwiftResolveClaim()
         val claim = coordinationService.get().claimOrJoinSwiftResolve(
             packageHash = ownerHash,
         )
         when (claim) {
             is CoordinationClaim.Existing -> {
+                coordinationService.get().awaitSwiftResolveOwnerStarted(claim.bucket.key)
                 workerExecutor.noIsolation().submit(SwiftResolveAwaitWorkAction::class.java) {
                     it.sourcePackageResolvedFile.set(claim.bucket.ownerPackageResolvedFile)
                     it.destinationPackageResolved.set(syntheticLockFile.get().asFile)
@@ -144,10 +153,14 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                     it.destinationWorkspaceStateFile.set(workspaceStateJson.get().asFile)
                     it.syntheticPackageHash.set(claim.bucket.key)
                     it.coordinationService.set(coordinationService)
+                    it.testExecutionService.set(testExecutionService)
+                    it.ideaSyncEnabled.set(ideaSyncEnabled)
+                    it.errorFile.set(errorFile)
                 }
             }
 
             is CoordinationClaim.Owner -> {
+                testExecutionHooks.get().beforeSwiftResolveOwnerWorkerSubmission()
                 runOwnerSwiftResolve(
                     claim.bucket.ownerSyntheticImportProjectRoot,
                     claim.bucket.ownerSwiftPMDependenciesCheckout,
@@ -157,7 +170,6 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         }
 
     }
-
 
     private fun runOwnerSwiftResolve(
         syntheticImportProjectRoot: File,
@@ -185,6 +197,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             params.coordinationEnabled.set(isCoordinationEnabled)
             params.ideaSyncEnabled.set(ideaSyncEnabled)
             params.errorFile.set(ideImportError)
+            params.testExecutionService.set(testExecutionService)
 
             if (isCoordinationEnabled) {
                 params.coordinationService.set(coordinationService)

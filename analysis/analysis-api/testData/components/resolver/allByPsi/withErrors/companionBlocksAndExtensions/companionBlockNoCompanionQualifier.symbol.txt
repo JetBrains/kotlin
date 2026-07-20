@@ -1,10 +1,10 @@
 KtFile: 'companionBlockNoCompanionQualifier.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -12,53 +12,53 @@ KtNameReferenceExpression(51,55): 'test'
       test
     ]
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,111): 'class C {'
+KtClass(65,119): 'class C {'
   null
 
-KtClassBody(65,111): '{'
+KtClassBody(73,119): '{'
   null
 
-KtCompanionBlock(71,109): 'companion {'
+KtCompanionBlock(79,117): 'companion {'
   null
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   null
 
-KtClassBody(81,109): '{'
+KtClassBody(89,117): '{'
   null
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   null
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   null
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   null
 
-KtNamedFunction(113,266): 'fun usage() {'
+KtNamedFunction(121,274): 'fun usage() {'
   null
 
-KtParameterList(122,124): '()'
+KtParameterList(130,132): '()'
   null
 
-KtBlockExpression(125,266): '{'
+KtBlockExpression(133,274): '{'
   null
 
-KtDotQualifiedExpression(247,264): 'C.Companion.foo()'
+KtDotQualifiedExpression(255,272): 'C.Companion.foo()'
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 
-KtDotQualifiedExpression(247,258): 'C.Companion'
+KtDotQualifiedExpression(255,266): 'C.Companion'
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
 
-KtNameReferenceExpression(247,248): 'C'
+KtNameReferenceExpression(255,256): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -66,24 +66,24 @@ KtNameReferenceExpression(247,248): 'C'
       test/C
     ]
 
-KtNameReferenceExpression(249,258): 'Companion'
+KtNameReferenceExpression(257,266): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
 
-KtCallExpression(259,264): 'foo()'
+KtCallExpression(267,272): 'foo()'
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 
-KtNameReferenceExpression(259,262): 'foo'
+KtNameReferenceExpression(267,270): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 
-KtValueArgumentList(262,264): '()'
+KtValueArgumentList(270,272): '()'
   null

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE_FEATURE_TOGGLED: ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 class C { companion object }

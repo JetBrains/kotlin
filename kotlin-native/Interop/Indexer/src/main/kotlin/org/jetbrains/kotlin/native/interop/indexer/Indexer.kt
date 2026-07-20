@@ -95,6 +95,30 @@ private class ObjCCategoryImpl(
 
 public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
 
+    private val apiNotes: ApiNotes? by lazy {
+        if (library.apiNotesSwiftName) {
+            ApiNotes.load(library)
+        } else {
+            null
+        }
+    }
+
+    /**
+     * The API notes [ApiNotes.Context] for the Objective-C class/protocol (or the class behind a category)
+     * that [memberCursor] — a method or property — belongs to, or `null` if there are no notes for it.
+     */
+    private fun apiNotesContainer(memberCursor: CValue<CXCursor>): ApiNotes.Context? {
+        return apiNotes?.let {
+            val parent = clang_getCursorSemanticParent(memberCursor)
+            return when (parent.kind) {
+                CXCursorKind.CXCursor_ObjCInterfaceDecl -> it.objCClass(getCursorSpelling(parent))
+                CXCursorKind.CXCursor_ObjCProtocolDecl -> it.protocol(getCursorSpelling(parent))
+                CXCursorKind.CXCursor_ObjCCategoryDecl -> it.objCClass(getCursorSpelling(getObjCCategoryClassCursor(parent)))
+                else -> null
+            }
+        }
+    }
+
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
         data class Spelling(val spelling: String) : DeclarationID()
@@ -457,7 +481,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     isForwardDeclaration = false,
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name },
                     typeParameters = parameters,
-                    swiftName = readSwiftName(cursor)
+                    // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                    swiftName = apiNotes?.objCClass(name)?.swiftName ?: readSwiftName(cursor)
             )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
@@ -531,7 +556,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = binaryName,
                     location = getLocation(cursor),
                     isForwardDeclaration = false,
-                    swiftName = readSwiftName(cursor)
+                    // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                    swiftName = apiNotes?.protocol(name)?.swiftName ?: readSwiftName(cursor)
             )
         }) {
             addChildrenToObjCContainer(cursor, it)
@@ -1075,7 +1101,10 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     }
 
                     if (getter != null) {
-                        val property = ObjCProperty(entityName!!, getter, setter, readSwiftName(cursor))
+                        // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                        val swiftName = apiNotesContainer(cursor)?.property(entityName!!, isInstance = !getter.isClass)?.swiftName
+                                ?: readSwiftName(cursor)
+                        val property = ObjCProperty(entityName!!, getter, setter, swiftName)
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
@@ -1185,7 +1214,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
                 isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
                 isDirect = hasAttribute(cursor, OBJC_DIRECT),
-                swiftName = readSwiftName(cursor),
+                // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                swiftName = apiNotesContainer(cursor)?.method(selector, isInstance = !isClass)?.swiftName ?: readSwiftName(cursor),
         )
     }
 

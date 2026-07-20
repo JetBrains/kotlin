@@ -15,6 +15,11 @@ fun box(): String {
         Any::class.constructors.joinToString("\n"),
     )
     assertEquals(
+        "[]",
+        Any::class.constructors.single().annotations.toString(),
+    )
+
+    assertEquals(
         "fun `<init>`(): kotlin.String",
         String::class.constructors.joinToString("\n"),
     )
@@ -34,6 +39,10 @@ fun box(): String {
     assertEquals(
         "fun `<init>`(): kotlin.Float",
         Float::class.javaObjectType.kotlin.constructors.joinToString("\n"),
+    )
+    assertEquals(
+        "[]",
+        Float::class.constructors.single().annotations.toString(),
     )
 
     assertEquals(

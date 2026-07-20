@@ -263,7 +263,7 @@ class KotlinCoreEnvironment private constructor(
         val [roots, singleJavaFileRoots] =
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
-        // REPL and kapt2 update classpath dynamically
+        // REPL updates classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
             addIndex(JvmDependenciesIndexImpl(roots))
             updateClasspathFromRootsIndex(this)

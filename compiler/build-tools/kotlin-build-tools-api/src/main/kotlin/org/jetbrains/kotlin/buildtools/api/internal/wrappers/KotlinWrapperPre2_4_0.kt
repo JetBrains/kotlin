@@ -489,7 +489,7 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.CLASSPATH,
-                JvmCompilerArguments.X_KLIB,
+                @OptIn(RemovedCompilerArgument::class) JvmCompilerArguments.X_KLIB,
                 JvmCompilerArguments.X_MODULE_PATH,
                     -> {
                     if (delegate[key] == null) return null as V
@@ -667,7 +667,7 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.CLASSPATH,
-                JvmCompilerArguments.X_KLIB,
+                @OptIn(RemovedCompilerArgument::class) JvmCompilerArguments.X_KLIB,
                 JvmCompilerArguments.X_MODULE_PATH,
                     -> {
                     @Suppress("UNCHECKED_CAST")

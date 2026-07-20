@@ -233,7 +233,8 @@ class ConstraintIncorporator(
                 otherVariable,
                 otherConstraint,
                 prepareType(true),
-                isSubtype = false
+                isSubtype = false,
+                isCausedByFixation = isCausedByFixation,
             )
         }
 
@@ -244,7 +245,8 @@ class ConstraintIncorporator(
                 otherVariable,
                 otherConstraint,
                 prepareType(false),
-                isSubtype = true
+                isSubtype = true,
+                isCausedByFixation = isCausedByFixation,
             )
         }
     }
@@ -334,8 +336,11 @@ class ConstraintIncorporator(
         // Inv<out Number>
         newConstraintType: KotlinTypeMarker,
         isSubtype: Boolean,
+        isCausedByFixation: Boolean,
     ) {
-        if (newConstraintType.containsNestedTypeVariable(targetVariable)) return
+        val preserveConstraintsWithNestedTypeVariables = isCausedByFixation
+                && languageVersionSettings.supportsFeature(LanguageFeature.DontIgnoreUpperBoundViolatedOnImplicitArguments)
+        if (!preserveConstraintsWithNestedTypeVariables && newConstraintType.containsNestedTypeVariable(targetVariable)) return
 
         val isUsefulForNullabilityConstraint =
             newConstraintType.isPotentialUsefulNullabilityConstraint(

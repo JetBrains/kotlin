@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -93,7 +91,6 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration.configureJavaModulesContentRoots(arguments)
         configuration.configureStandardLibs(configuration.kotlinPaths, arguments)
         configuration.configureAdvancedJvmOptions(arguments)
-        configuration.configureKlibPaths(arguments)
         if (arguments.expression == null) {
             configuration.setupModuleChunk(arguments)
         } else {

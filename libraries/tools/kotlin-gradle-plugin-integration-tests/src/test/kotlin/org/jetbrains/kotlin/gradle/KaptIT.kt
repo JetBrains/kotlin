@@ -108,7 +108,7 @@ abstract class KaptBaseIT : KGPBaseTest() {
         test = test,
     )
 
-    protected val String.withPrefix get() = "kapt2/$this"
+    protected val String.withPrefix get() = "kapt/$this"
 }
 
 /**
@@ -492,7 +492,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("passes arguments from kapt configuration")
     @GradleTest
-    @TestMetadata("kapt2/arguments")
+    @TestMetadata("kapt/arguments")
     fun testArguments(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -574,7 +574,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
-    @TestMetadata("kapt2/arguments")
+    @TestMetadata("kapt/arguments")
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -1042,7 +1042,7 @@ open class KaptIT : KaptBaseIT() {
                 )
             )
         ) {
-            includeOtherProjectAsSubmodule("simple", "kapt2")
+            includeOtherProjectAsSubmodule("simple", "kapt")
             buildGradle.append("\ndependencies { implementation project(':simple') }")
 
             testResolveAllConfigurations()

@@ -754,6 +754,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "27",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -1329,6 +1338,15 @@
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.4.0",
                         "stabilizedVersion": "2.4.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "27",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
@@ -2877,6 +2895,51 @@
                             },
                             "isNullable": {
                                 "current": true,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
+                        "name": "Xcompanion-blocks",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enables companion blocks.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
                                 "valueInVersions": []
                             }
                         },
@@ -8130,7 +8193,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
+                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
@@ -8141,6 +8204,11 @@
                                             "minReleaseVersion": "2.3.0",
                                             "maxReleaseVersion": "2.3.20",
                                             "value": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version."
+                                        },
+                                        {
+                                            "minReleaseVersion": "2.4.0",
+                                            "maxReleaseVersion": "2.4.20",
+                                            "value": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version."
                                         }
                                     ]
                                 },
@@ -8442,7 +8510,7 @@
                                     "introducedVersion": "1.4.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.SearchPathType",
@@ -9859,6 +9927,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xvalhalla-support",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "{none|primitives|primitivesAndFullValueClasses|allValues}",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportModeType",
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xvalidate-bytecode",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -10319,7 +10432,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
+                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
@@ -10330,6 +10443,11 @@
                                             "minReleaseVersion": "2.3.0",
                                             "maxReleaseVersion": "2.3.20",
                                             "value": "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default."
+                                        },
+                                        {
+                                            "minReleaseVersion": "2.4.0",
+                                            "maxReleaseVersion": "2.4.20",
+                                            "value": "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default."
                                         }
                                     ]
                                 },

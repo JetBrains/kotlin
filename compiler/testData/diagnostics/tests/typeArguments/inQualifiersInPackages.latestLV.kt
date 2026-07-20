@@ -4,7 +4,8 @@
 // LANGUAGE_FEATURE_TOGGLED: ProperSupportOfInnerClassesInCallableReferenceLHS
 // LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
 // LANGUAGE_FEATURE_TOGGLED: ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 
 // FILE: part1/part2/GenericJava.java
 

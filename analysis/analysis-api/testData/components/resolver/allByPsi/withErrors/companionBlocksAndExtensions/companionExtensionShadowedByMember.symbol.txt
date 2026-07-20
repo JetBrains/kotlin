@@ -1,10 +1,10 @@
 KtFile: 'companionExtensionShadowedByMember.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -12,52 +12,52 @@ KtNameReferenceExpression(51,55): 'test'
       test
     ]
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,111): 'class C {'
+KtClass(65,119): 'class C {'
   null
 
-KtClassBody(65,111): '{'
+KtClassBody(73,119): '{'
   null
 
-KtCompanionBlock(71,109): 'companion {'
+KtCompanionBlock(79,117): 'companion {'
   null
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   null
 
-KtClassBody(81,109): '{'
+KtClassBody(89,117): '{'
   null
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   null
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   null
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   null
 
-KtNamedFunction(113,137): 'companion fun C.foo() {}'
+KtNamedFunction(121,145): 'companion fun C.foo() {}'
   null
 
-KtDeclarationModifierList(113,122): 'companion'
+KtDeclarationModifierList(121,130): 'companion'
   null
 
-KtTypeReference(127,128): 'C'
+KtTypeReference(135,136): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtUserType(127,128): 'C'
+KtUserType(135,136): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtNameReferenceExpression(127,128): 'C'
+KtNameReferenceExpression(135,136): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -65,28 +65,28 @@ KtNameReferenceExpression(127,128): 'C'
       test/C
     ]
 
-KtParameterList(132,134): '()'
+KtParameterList(140,142): '()'
   null
 
-KtBlockExpression(135,137): '{}'
+KtBlockExpression(143,145): '{}'
   null
 
-KtNamedFunction(139,166): 'fun usage() {'
+KtNamedFunction(147,174): 'fun usage() {'
   null
 
-KtParameterList(148,150): '()'
+KtParameterList(156,158): '()'
   null
 
-KtBlockExpression(151,166): '{'
+KtBlockExpression(159,174): '{'
   null
 
-KtDotQualifiedExpression(157,164): 'C.foo()'
+KtDotQualifiedExpression(165,172): 'C.foo()'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
 
-KtNameReferenceExpression(157,158): 'C'
+KtNameReferenceExpression(165,166): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -94,13 +94,13 @@ KtNameReferenceExpression(157,158): 'C'
       test/C
     ]
 
-KtCallExpression(159,164): 'foo()'
+KtCallExpression(167,172): 'foo()'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
 
-KtNameReferenceExpression(159,162): 'foo'
+KtNameReferenceExpression(167,170): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -108,5 +108,5 @@ KtNameReferenceExpression(159,162): 'foo'
       test/C.foo(): kotlin.Unit
     ]
 
-KtValueArgumentList(162,164): '()'
+KtValueArgumentList(170,172): '()'
   null

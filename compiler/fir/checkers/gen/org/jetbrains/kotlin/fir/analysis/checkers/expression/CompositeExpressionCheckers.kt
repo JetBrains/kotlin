@@ -18,83 +18,83 @@ class CompositeExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
-        field: MutableSet<FirBasicExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirBasicExpressionChecker> = []
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
-        field: MutableSet<FirQualifiedAccessExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirQualifiedAccessExpressionChecker> = []
     override val callCheckers: Set<FirCallChecker>
-        field: MutableSet<FirCallChecker> = mutableSetOf()
+        field: MutableSet<FirCallChecker> = []
     override val functionCallCheckers: Set<FirFunctionCallChecker>
-        field: MutableSet<FirFunctionCallChecker> = mutableSetOf()
+        field: MutableSet<FirFunctionCallChecker> = []
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
-        field: MutableSet<FirPropertyAccessExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirPropertyAccessExpressionChecker> = []
     override val superReceiverExpressionCheckers: Set<FirSuperReceiverExpressionChecker>
-        field: MutableSet<FirSuperReceiverExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirSuperReceiverExpressionChecker> = []
     override val integerLiteralOperatorCallCheckers: Set<FirIntegerLiteralOperatorCallChecker>
-        field: MutableSet<FirIntegerLiteralOperatorCallChecker> = mutableSetOf()
+        field: MutableSet<FirIntegerLiteralOperatorCallChecker> = []
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
-        field: MutableSet<FirVariableAssignmentChecker> = mutableSetOf()
+        field: MutableSet<FirVariableAssignmentChecker> = []
     override val tryExpressionCheckers: Set<FirTryExpressionChecker>
-        field: MutableSet<FirTryExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirTryExpressionChecker> = []
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
-        field: MutableSet<FirWhenExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirWhenExpressionChecker> = []
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
-        field: MutableSet<FirLoopExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirLoopExpressionChecker> = []
     override val loopJumpCheckers: Set<FirLoopJumpChecker>
-        field: MutableSet<FirLoopJumpChecker> = mutableSetOf()
+        field: MutableSet<FirLoopJumpChecker> = []
     override val booleanOperatorExpressionCheckers: Set<FirBooleanOperatorExpressionChecker>
-        field: MutableSet<FirBooleanOperatorExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirBooleanOperatorExpressionChecker> = []
     override val returnExpressionCheckers: Set<FirReturnExpressionChecker>
-        field: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirReturnExpressionChecker> = []
     override val blockCheckers: Set<FirBlockChecker>
-        field: MutableSet<FirBlockChecker> = mutableSetOf()
+        field: MutableSet<FirBlockChecker> = []
     override val replDeclarationReferenceCheckers: Set<FirReplDeclarationReferenceChecker>
-        field: MutableSet<FirReplDeclarationReferenceChecker> = mutableSetOf()
+        field: MutableSet<FirReplDeclarationReferenceChecker> = []
     override val replPropertyInitializerCheckers: Set<FirReplPropertyInitializerChecker>
-        field: MutableSet<FirReplPropertyInitializerChecker> = mutableSetOf()
+        field: MutableSet<FirReplPropertyInitializerChecker> = []
     override val replPropertyDelegateCheckers: Set<FirReplPropertyDelegateChecker>
-        field: MutableSet<FirReplPropertyDelegateChecker> = mutableSetOf()
+        field: MutableSet<FirReplPropertyDelegateChecker> = []
     override val replExpressionReferenceCheckers: Set<FirReplExpressionReferenceChecker>
-        field: MutableSet<FirReplExpressionReferenceChecker> = mutableSetOf()
+        field: MutableSet<FirReplExpressionReferenceChecker> = []
     override val annotationCheckers: Set<FirAnnotationChecker>
-        field: MutableSet<FirAnnotationChecker> = mutableSetOf()
+        field: MutableSet<FirAnnotationChecker> = []
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        field: MutableSet<FirAnnotationCallChecker> = mutableSetOf()
+        field: MutableSet<FirAnnotationCallChecker> = []
     override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
-        field: MutableSet<FirCheckNotNullCallChecker> = mutableSetOf()
+        field: MutableSet<FirCheckNotNullCallChecker> = []
     override val elvisExpressionCheckers: Set<FirElvisExpressionChecker>
-        field: MutableSet<FirElvisExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirElvisExpressionChecker> = []
     override val getClassCallCheckers: Set<FirGetClassCallChecker>
-        field: MutableSet<FirGetClassCallChecker> = mutableSetOf()
+        field: MutableSet<FirGetClassCallChecker> = []
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
-        field: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirSafeCallExpressionChecker> = []
     override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker>
-        field: MutableSet<FirSmartCastExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirSmartCastExpressionChecker> = []
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
-        field: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
+        field: MutableSet<FirEqualityOperatorCallChecker> = []
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
-        field: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
+        field: MutableSet<FirStringConcatenationCallChecker> = []
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
-        field: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
+        field: MutableSet<FirTypeOperatorCallChecker> = []
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
-        field: MutableSet<FirResolvedQualifierChecker> = mutableSetOf()
+        field: MutableSet<FirResolvedQualifierChecker> = []
     override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
-        field: MutableSet<FirLiteralExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirLiteralExpressionChecker> = []
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
-        field: MutableSet<FirCallableReferenceAccessChecker> = mutableSetOf()
+        field: MutableSet<FirCallableReferenceAccessChecker> = []
     override val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker>
-        field: MutableSet<FirThisReceiverExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirThisReceiverExpressionChecker> = []
     override val whileLoopCheckers: Set<FirWhileLoopChecker>
-        field: MutableSet<FirWhileLoopChecker> = mutableSetOf()
+        field: MutableSet<FirWhileLoopChecker> = []
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
-        field: MutableSet<FirThrowExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirThrowExpressionChecker> = []
     override val doWhileLoopCheckers: Set<FirDoWhileLoopChecker>
-        field: MutableSet<FirDoWhileLoopChecker> = mutableSetOf()
+        field: MutableSet<FirDoWhileLoopChecker> = []
     override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker>
-        field: MutableSet<FirCollectionLiteralChecker> = mutableSetOf()
+        field: MutableSet<FirCollectionLiteralChecker> = []
     override val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker>
-        field: MutableSet<FirClassReferenceExpressionChecker> = mutableSetOf()
+        field: MutableSet<FirClassReferenceExpressionChecker> = []
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
-        field: MutableSet<FirInaccessibleReceiverChecker> = mutableSetOf()
+        field: MutableSet<FirInaccessibleReceiverChecker> = []
 
     @CheckersComponentInternal
     fun register(checkers: ExpressionCheckers) {

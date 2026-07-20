@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 
 open class FirAnnotationArgumentsTransformer(
@@ -74,11 +72,6 @@ open class FirAnnotationArgumentsTransformer(
         }
 }
 
-/**
- *  Set of enum class IDs that are resolved in COMPILER_REQUIRED_ANNOTATIONS phase that need to be rechecked here.
- */
-private val classIdsToCheck: Set<ClassId> = setOf(StandardClassIds.DeprecationLevel, StandardClassIds.AnnotationTarget)
-
 private class FirExpressionTransformerForAnnotationArguments(
     private val annotationArgumentsTransformer: FirAnnotationArgumentsTransformer,
 ) : FirExpressionsResolveTransformer(annotationArgumentsTransformer) {
@@ -103,7 +96,7 @@ private class FirExpressionTransformerForAnnotationArguments(
             val calleeReference = qualifiedAccessExpression.calleeReference
             if (calleeReference is FirResolvedNamedReference) {
                 val resolvedSymbol = calleeReference.resolvedSymbol
-                if (resolvedSymbol is FirEnumEntrySymbol && resolvedSymbol.containingClassLookupTag()?.classId in classIdsToCheck) {
+                if (resolvedSymbol is FirEnumEntrySymbol && resolvedSymbol.containingClassLookupTag()?.classId in session.annotationPlatformSupport.requiredArguments) {
                     return resolveSpecialPropertyAccess(qualifiedAccessExpression, calleeReference, resolvedSymbol, data)
                 }
             }

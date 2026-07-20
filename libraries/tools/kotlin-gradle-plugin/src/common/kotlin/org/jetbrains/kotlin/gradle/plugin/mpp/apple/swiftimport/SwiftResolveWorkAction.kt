@@ -23,18 +23,39 @@ internal interface SwiftResolveAwaitWorkParameters : WorkParameters {
     val destinationPackageResolved: Property<File>
     val sourceWorkspaceStateFile: Property<File>
     val destinationWorkspaceStateFile: Property<File>
+    val testExecutionService: Property<SwiftImportTestExecutionService>
+    val ideaSyncEnabled: Property<Boolean>
+    val errorFile: RegularFileProperty
 }
 
 internal abstract class SwiftResolveAwaitWorkAction @Inject constructor(val fs: FileSystemOperations) : WorkAction<SwiftResolveAwaitWorkParameters> {
+    private val logger = Logging.getLogger(SwiftResolveAwaitWorkAction::class.java)
+
     override fun execute() {
-        parameters.coordinationService.get().awaitSwiftResolved(parameters.syntheticPackageHash.get())
-        finalizeFetchTask(
-            fs,
-            parameters.sourcePackageResolvedFile.get(),
-            parameters.destinationPackageResolved.get(),
-            parameters.sourceWorkspaceStateFile.get(),
-            parameters.destinationWorkspaceStateFile.get()
-        )
+        logger.info("Awaiting SwiftPM package resolution ${parameters.syntheticPackageHash.get()}")
+        val errorFile = parameters.errorFile.get().asFile
+        errorFile.delete()
+        try {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeSwiftResolveAwaitWorkerStarted()
+            }
+            parameters.coordinationService.get().awaitSwiftResolved(parameters.syntheticPackageHash.get())
+            finalizeFetchTask(
+                fs,
+                parameters.sourcePackageResolvedFile.get(),
+                parameters.destinationPackageResolved.get(),
+                parameters.sourceWorkspaceStateFile.get(),
+                parameters.destinationWorkspaceStateFile.get()
+            )
+        } catch (failure: Throwable) {
+            if (parameters.ideaSyncEnabled.get()) {
+                val errorText = "Warning: Failed to resolve SwiftPM packages : ${failure.message ?: ""}"
+                logger.warn(errorText, failure)
+                errorFile.writeText(errorText)
+            } else {
+                throw failure
+            }
+        }
     }
 }
 
@@ -50,6 +71,7 @@ internal interface SwiftResolveWorkParameters : WorkParameters {
     val workspaceStateJson: RegularFileProperty
     val ideaSyncEnabled: Property<Boolean>
     val errorFile: RegularFileProperty
+    val testExecutionService: Property<SwiftImportTestExecutionService>
 }
 
 
@@ -61,7 +83,14 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
     private val logger = Logging.getLogger(SwiftResolveWorkAction::class.java)
 
     override fun execute() {
+        logger.info("Starting SwiftPM package resolution ${parameters.syntheticPackageHash.orNull?.let { "(bucket ${it})" }}")
         val errorFile = parameters.errorFile.get().asFile
+        if (parameters.coordinationEnabled.get()) {
+            if (parameters.testExecutionService.isPresent) {
+                parameters.testExecutionService.get().beforeSwiftResolveOwnerWorkerStarted()
+            }
+            parameters.coordinationService.get().markSwiftResolveStarted(parameters.syntheticPackageHash.get())
+        }
         errorFile.delete()
         try {
             // Copy lock file from persisted
@@ -93,9 +122,9 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
                 val errorText = "Warning: Failed to resolve SwiftPM packages : ${failure.message ?: ""}"
                 logger.warn(errorText, failure)
                 errorFile.writeText(errorText)
-                return
+            } else {
+                throw failure
             }
-            throw failure
         }
     }
 

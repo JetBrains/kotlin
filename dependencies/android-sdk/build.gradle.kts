@@ -75,16 +75,16 @@ val toolsOsDarwinArch = when {
     }
 }
 
-val preparePlatform by task<DefaultTask> {
+val preparePlatform = tasks.register<DefaultTask>("preparePlatform") {
     doLast {}
 }
 
-val prepareSdk by task<DefaultTask> {
+val prepareSdk = tasks.register<DefaultTask>("prepareSdk") {
     doLast {}
     dependsOn(preparePlatform)
 }
 
-val prepareEmulator by task<DefaultTask> {
+val prepareEmulator = tasks.register<DefaultTask>("prepareEmulator") {
     doLast {}
     dependsOn(prepareSdk)
 }
@@ -316,7 +316,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
 unzipSdkTask("commandlinetools-$toolsOsShort", "${commandLineToolsVersion}_latest", "", "")
 
-val clean by task<Delete> {
+val clean = tasks.register<Delete>("clean") {
     delete(layout.buildDirectory)
 }
 

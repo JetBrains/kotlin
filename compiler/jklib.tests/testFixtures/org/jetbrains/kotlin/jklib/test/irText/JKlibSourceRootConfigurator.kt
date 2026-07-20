@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.jklib.test.irText
 
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
+import org.jetbrains.kotlin.cli.jklib.config.klibPaths
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.klibPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.addSourcesForDependsOnClosure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.File
 
 class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

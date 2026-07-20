@@ -29,91 +29,65 @@ flowchart TD
     class constraint4 nowrapClass;
     stage3 ~~~ constraint4
 
-    constraint4 ~~~ candidate5
+    constraint4 ~~~ stage5
 
-    candidate5["Candidate 2: <tt>FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>constructor(p0: Throwable!): {kotlin/IllegalStateException=} IllegalStateException</tt></pre>"]
-    class candidate5 nowrapClass;
-    class candidate5 candidateStyle;
+    stage5["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage5 nowrapClass;
+    class stage5 stageStyle;
+    constraint6["<tt>{IllegalStateException=} IllegalStateException &lt;: Throwable</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint6 nowrapClass;
+    stage5 ~~~ constraint6
 
-    candidate5 --> stage6
+    constraint6 ~~~ call7
 
-    stage6["Resolution Stages > CheckArguments"]
-    class stage6 nowrapClass;
-    class stage6 stageStyle;
-    constraint8["<tt>String &lt;: Throwable!</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(Something is not defined.)</tt></pre></i>"]
-    class constraint8 nowrapClass;
-    stage6 ~~~ constraint8
+    call7["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>parse#(R|&lt;local>/data|)</tt></pre>"]
+    class call7 nowrapClass;
+    class call7 callStyle;
 
-    constraint8 ~~~ error7
+    call7 --> candidate8
 
-    error7["<b>NewConstraintError: <tt>kotlin/String &lt;: kotlin/Throwable!</tt><b>"]
-    class error7 nowrapClass;
+    candidate8["Candidate 1: <tt>FirNamedFunctionSymbol /parse</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T> parse(data: String): T</tt></pre>"]
+    class candidate8 nowrapClass;
+    class candidate8 candidateStyle;
 
-    error7 ~~~ candidate9
+    candidate8 --> stage9
 
-    candidate9["Candidate 1: <tt>FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>constructor(p0: String!): {kotlin/IllegalStateException=} IllegalStateException</tt></pre>"]
-    class candidate9 nowrapClass;
-    class candidate9 candidateStyle;
+    stage9["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage9 nowrapClass;
+    class stage9 stageStyle;
 
-    candidate9 --> stage10
+    stage9 ~~~ newVariable10
 
-    stage10["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
-    class stage10 nowrapClass;
-    class stage10 stageStyle;
-    constraint11["<tt>{IllegalStateException=} IllegalStateException &lt;: Throwable</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint11 nowrapClass;
-    stage10 ~~~ constraint11
+    newVariable10["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /parse</tt>s parameter 0"]
+    class newVariable10 nowrapClass;
 
-    constraint11 ~~~ call12
+    newVariable10 ~~~ stage11
 
-    call12["Call 2<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>parse#(R|&lt;local>/data|)</tt></pre>"]
-    class call12 nowrapClass;
-    class call12 callStyle;
+    stage11["Resolution Stages > CheckArguments"]
+    class stage11 nowrapClass;
+    class stage11 stageStyle;
+    constraint12["<tt>String &lt;: String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/data|</tt></pre></i>"]
+    class constraint12 nowrapClass;
+    stage11 ~~~ constraint12
 
-    call12 --> candidate13
+    constraint12 ~~~ stage13
 
-    candidate13["Candidate 1: <tt>FirNamedFunctionSymbol /parse</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T> parse(data: String): T</tt></pre>"]
-    class candidate13 nowrapClass;
-    class candidate13 candidateStyle;
+    stage13["Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage13 nowrapClass;
+    class stage13 stageStyle;
+    constraint14["<tt>TypeVariable(T) &lt;: dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint14 nowrapClass;
+    stage13 ~~~ constraint14
 
-    candidate13 --> stage14
+    constraint14 ~~~ stage15
 
-    stage14["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
-    class stage14 nowrapClass;
-    class stage14 stageStyle;
+    stage15["Call Completion"]
+    class stage15 nowrapClass;
+    class stage15 stageStyle;
 
-    stage14 ~~~ newVariable15
+    stage15 ~~~ variableReadiness16
 
-    newVariable15["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /parse</tt>s parameter 0"]
-    class newVariable15 nowrapClass;
-
-    newVariable15 ~~~ stage16
-
-    stage16["Resolution Stages > CheckArguments"]
-    class stage16 nowrapClass;
-    class stage16 stageStyle;
-    constraint17["<tt>String &lt;: String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/data|</tt></pre></i>"]
-    class constraint17 nowrapClass;
-    stage16 ~~~ constraint17
-
-    constraint17 ~~~ stage18
-
-    stage18["Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
-    class stage18 nowrapClass;
-    class stage18 stageStyle;
-    constraint19["<tt>TypeVariable(T) &lt;: dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint19 nowrapClass;
-    stage18 ~~~ constraint19
-
-    constraint19 ~~~ stage20
-
-    stage20["Call Completion"]
-    class stage20 nowrapClass;
-    class stage20 stageStyle;
-
-    stage20 ~~~ variableReadiness21
-
-    variableReadiness21["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness16["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	false ALLOWED
 	false HAS_PROPER_CONSTRAINTS
 	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -129,12 +103,12 @@ flowchart TD
 	false HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness21 nowrapClass;
-    class variableReadiness21 readinessStyle;
+    class variableReadiness16 nowrapClass;
+    class variableReadiness16 readinessStyle;
 
-    variableReadiness21 ~~~ call22
+    variableReadiness16 ~~~ call17
 
-    call22["Call 3<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>when () {
+    call17["Call 3<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>when () {
     ==(this@R|/Test|.R|/Test.something|, Null(null)) ->  {
         throw R|java/lang/IllegalStateException.IllegalStateException|(String(Something is not defined.))
     }
@@ -143,62 +117,62 @@ flowchart TD
     }
 }
 </tt></pre>"]
-    class call22 nowrapClass;
-    class call22 callStyle;
+    class call17 nowrapClass;
+    class call17 callStyle;
 
-    call22 --> candidate23
+    call17 --> candidate18
 
-    candidate23["Candidate 1: <tt>FirSyntheticFunctionSymbol _synthetic/WHEN_CALL</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;K> WHEN_CALL(vararg branches: K): K
+    candidate18["Candidate 1: <tt>FirSyntheticFunctionSymbol _synthetic/WHEN_CALL</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;K> WHEN_CALL(vararg branches: K): K
 </tt></pre>"]
-    class candidate23 nowrapClass;
-    class candidate23 candidateStyle;
+    class candidate18 nowrapClass;
+    class candidate18 candidateStyle;
 
-    candidate23 --> stage24
+    candidate18 --> stage19
 
-    stage24["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    stage19["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage19 nowrapClass;
+    class stage19 stageStyle;
+
+    stage19 ~~~ newVariable20
+
+    newVariable20["New <tt>TypeVariable(K)</tt> for <tt>FirSyntheticFunctionSymbol _synthetic/WHEN_CALL</tt>s parameter 0"]
+    class newVariable20 nowrapClass;
+
+    newVariable20 ~~~ stage21
+
+    stage21["Resolution Stages > CheckArguments"]
+    class stage21 nowrapClass;
+    class stage21 stageStyle;
+    constraint22["<tt>Nothing &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument throw R|java/lang/IllegalStateException.IllegalStateException|(String(Something is not defined.))</tt></pre></i>"]
+    class constraint22 nowrapClass;
+    stage21 ~~~ constraint22
+    constraint23["<tt>TypeVariable(T) &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R?C|/parse|(R|&lt;local>/data|)</tt></pre></i>"]
+    class constraint23 nowrapClass;
+    stage21 ~~~ constraint23
+
+    constraint22 ~~~ stage24
+    constraint23 ~~~ stage24
+
+    stage24["Resolution Stages > CheckIncompatibleTypeVariableUpperBounds"]
     class stage24 nowrapClass;
     class stage24 stageStyle;
+    constraint25["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint25 nowrapClass;
+    stage24 ~~~ constraint25
+    constraint26["<tt>TypeVariable(T) &lt;: dynamic</tt>"]
+    class constraint26 nowrapClass;
+    constraint23 --> constraint26
+    constraint25 --> constraint26
 
-    stage24 ~~~ newVariable25
+    constraint26 ~~~ stage27
 
-    newVariable25["New <tt>TypeVariable(K)</tt> for <tt>FirSyntheticFunctionSymbol _synthetic/WHEN_CALL</tt>s parameter 0"]
-    class newVariable25 nowrapClass;
+    stage27["Call Completion"]
+    class stage27 nowrapClass;
+    class stage27 stageStyle;
 
-    newVariable25 ~~~ stage26
+    stage27 ~~~ variableReadiness28
 
-    stage26["Resolution Stages > CheckArguments"]
-    class stage26 nowrapClass;
-    class stage26 stageStyle;
-    constraint27["<tt>Nothing &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument throw R|java/lang/IllegalStateException.IllegalStateException|(String(Something is not defined.))</tt></pre></i>"]
-    class constraint27 nowrapClass;
-    stage26 ~~~ constraint27
-    constraint28["<tt>TypeVariable(T) &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R?C|/parse|(R|&lt;local>/data|)</tt></pre></i>"]
-    class constraint28 nowrapClass;
-    stage26 ~~~ constraint28
-
-    constraint27 ~~~ stage29
-    constraint28 ~~~ stage29
-
-    stage29["Resolution Stages > CheckIncompatibleTypeVariableUpperBounds"]
-    class stage29 nowrapClass;
-    class stage29 stageStyle;
-    constraint30["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint30 nowrapClass;
-    stage29 ~~~ constraint30
-    constraint31["<tt>TypeVariable(T) &lt;: dynamic</tt>"]
-    class constraint31 nowrapClass;
-    constraint28 --> constraint31
-    constraint30 --> constraint31
-
-    constraint31 ~~~ stage32
-
-    stage32["Call Completion"]
-    class stage32 nowrapClass;
-    class stage32 stageStyle;
-
-    stage32 ~~~ variableReadiness33
-
-    variableReadiness33["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness28["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -214,19 +188,19 @@ flowchart TD
 	false HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness33 nowrapClass;
-    class variableReadiness33 readinessStyle;
-    constraint35["<tt>TypeVariable(T) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint35 nowrapClass;
-    variableReadiness33 ~~~ constraint35
-    constraint36["<tt>dynamic &lt;: TypeVariable(K)</tt>"]
-    class constraint36 nowrapClass;
-    constraint35 --> constraint36
-    constraint28 --> constraint36
+    class variableReadiness28 nowrapClass;
+    class variableReadiness28 readinessStyle;
+    constraint30["<tt>TypeVariable(T) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint30 nowrapClass;
+    variableReadiness28 ~~~ constraint30
+    constraint31["<tt>dynamic &lt;: TypeVariable(K)</tt>"]
+    class constraint31 nowrapClass;
+    constraint30 --> constraint31
+    constraint23 --> constraint31
 
-    constraint36 ~~~ variableReadiness34
+    constraint31 ~~~ variableReadiness29
 
-    variableReadiness34["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness29["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -242,57 +216,55 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness34 nowrapClass;
-    class variableReadiness34 readinessStyle;
-    constraint37["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
-    class constraint37 nowrapClass;
-    variableReadiness34 ~~~ constraint37
+    class variableReadiness29 nowrapClass;
+    class variableReadiness29 readinessStyle;
+    constraint32["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint32 nowrapClass;
+    variableReadiness29 ~~~ constraint32
 
-    constraint37 ~~~ call38
+    constraint32 ~~~ call33
 
-    call38["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
-    class call38 nowrapClass;
-    class call38 callStyle;
+    call33["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
+    class call33 nowrapClass;
+    class call33 callStyle;
 
-    call38 --> candidate39
+    call33 --> candidate34
 
-    candidate39["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
+    candidate34["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
 </tt></pre>"]
-    class candidate39 nowrapClass;
-    class candidate39 candidateStyle;
+    class candidate34 nowrapClass;
+    class candidate34 candidateStyle;
 
-    candidate39 --> stage40
+    candidate34 --> stage35
 
-    stage40["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
-    class stage40 nowrapClass;
-    class stage40 stageStyle;
-    constraint41["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint41 nowrapClass;
-    stage40 ~~~ constraint41
+    stage35["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage35 nowrapClass;
+    class stage35 stageStyle;
+    constraint36["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint36 nowrapClass;
+    stage35 ~~~ constraint36
 
     linkStyle 4 stroke:#990000
-    linkStyle 7 stroke:#009999
-    linkStyle 11 stroke:#4c9900
-    linkStyle 17 stroke:#4c0099
-    linkStyle 19 stroke:#994900
-    linkStyle 28 stroke:#004f99
-    linkStyle 29 stroke:#039900
-    linkStyle 31 stroke:#039900
-    linkStyle 32 stroke:#950099
-    linkStyle 33 stroke:#992400
-    linkStyle 36 stroke:#007499
-    linkStyle 37 stroke:#039900
-    linkStyle 38 stroke:#279900
-    linkStyle 40 stroke:#710099
+    linkStyle 6 stroke:#009999
+    linkStyle 12 stroke:#4c9900
+    linkStyle 14 stroke:#4c0099
+    linkStyle 23 stroke:#994900
+    linkStyle 24 stroke:#004f99
+    linkStyle 26 stroke:#004f99
+    linkStyle 27 stroke:#039900
+    linkStyle 28 stroke:#950099
+    linkStyle 31 stroke:#992400
+    linkStyle 32 stroke:#004f99
+    linkStyle 33 stroke:#007499
+    linkStyle 35 stroke:#279900
     style constraint4 stroke:#990000;
-    style constraint8 stroke:#009999;
-    style constraint11 stroke:#4c9900;
-    style constraint17 stroke:#4c0099;
-    style constraint19 stroke:#994900;
-    style constraint27 stroke:#004f99;
-    style constraint28 stroke:#039900;
-    style constraint30 stroke:#950099;
-    style constraint31 stroke:#992400;
-    style constraint35 stroke:#007499;
-    style constraint36 stroke:#279900;
-    style constraint37 stroke:#710099;
+    style constraint6 stroke:#009999;
+    style constraint12 stroke:#4c9900;
+    style constraint14 stroke:#4c0099;
+    style constraint22 stroke:#994900;
+    style constraint23 stroke:#004f99;
+    style constraint25 stroke:#039900;
+    style constraint26 stroke:#950099;
+    style constraint30 stroke:#992400;
+    style constraint31 stroke:#007499;
+    style constraint32 stroke:#279900;

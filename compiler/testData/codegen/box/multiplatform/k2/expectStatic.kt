@@ -1,4 +1,4 @@
-// LANGUAGE: +MultiPlatformProjects, +CompanionBlocksAndExtensions
+// LANGUAGE: +MultiPlatformProjects +CompanionBlocks +CompanionExtensions
 
 // MODULE: common
 // FILE: common.kt

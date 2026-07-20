@@ -43,6 +43,16 @@ public fun MyInterface_foo_set__TypesOfArguments__Swift_String____reverse(self: 
     return run<Unit> { _result }
 }
 
+@ImportedBridge("MyInterface_optInFunWithDefault__reverse_swift")
+internal external fun MyInterface_optInFunWithDefault__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "optInFunWithDefault")
+public fun MyInterface_optInFunWithDefault__reverse(self: MyInterface): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = MyInterface_optInFunWithDefault__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("MyInterface_optInFun__reverse_swift")
 internal external fun MyInterface_optInFun__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -176,6 +186,22 @@ public fun MyInterface_foo_set__TypesOfArguments__Swift_String__(self: kotlin.na
 public fun MyInterface_optInFun(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
     val _result = run { __self.optInFun() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_optInFunWithDefault")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInFunWithDefault(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.optInFunWithDefault() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_optInFunWithDefault_direct", nonVirtualTargetMethod = "optInFunWithDefault")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInFunWithDefault_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.optInFunWithDefault() }
     return run { _result; true }
 }
 

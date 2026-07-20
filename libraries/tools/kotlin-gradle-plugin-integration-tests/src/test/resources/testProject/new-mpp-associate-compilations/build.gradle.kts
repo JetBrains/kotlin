@@ -13,7 +13,7 @@ kotlin {
         }
     }
 
-    val commonIntegrationTest by sourceSets.creating
+    val commonIntegrationTest = sourceSets.create("commonIntegrationTest")
 
     jvm {
         compilations["test"].defaultSourceSet.dependencies {

@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: ANY
 // MODULE: lib
 // FILE: A.kt

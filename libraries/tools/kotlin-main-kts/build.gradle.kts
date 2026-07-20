@@ -64,7 +64,7 @@ sourceSets {
 publish()
 
 val embeddedConfiguration = configurations.named("embedded")
-val relocatedJar by task<ShadowJar> {
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
     configurations.set(setOf(embeddedConfiguration.get()))
     from(mainSourceSet.output)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -81,7 +81,7 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(relocatedJar)
     configuration("main-kts.pro")
 
@@ -115,7 +115,7 @@ val proguard by task<CacheableProguardTask> {
     )
 }
 
-val resultJar by task<Jar> {
+val resultJar = tasks.register<Jar>("resultJar") {
     val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)

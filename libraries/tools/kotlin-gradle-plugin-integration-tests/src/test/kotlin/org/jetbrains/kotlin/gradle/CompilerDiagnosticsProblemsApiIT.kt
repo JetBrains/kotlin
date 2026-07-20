@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnost
 @GradleTestVersions(
     minVersion = TestVersions.Gradle.G_8_11, // This test asserts via the HTML problems report, which is available from Gradle 8.11+
     additionalVersions = [
-        TestVersions.Gradle.G_8_13
+        TestVersions.Gradle.G_8_13,
+        TestVersions.Gradle.G_9_5,
     ]
 )
 @OtherGradlePluginTests

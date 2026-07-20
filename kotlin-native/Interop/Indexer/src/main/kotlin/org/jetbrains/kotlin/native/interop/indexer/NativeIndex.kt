@@ -126,6 +126,7 @@ data class NativeLibrary(
         val headerExclusionPolicy: HeaderExclusionPolicy,
         val headerFilter: NativeLibraryHeaderFilter,
         val objCClassesIncludingCategories: Set<String>,
+        val apiNotesSwiftName: Boolean,
         val allowIncludingObjCCategoriesFromDefFile: Boolean,
 ) : Compilation
 

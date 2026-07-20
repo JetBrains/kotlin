@@ -11,7 +11,7 @@ kotlin {
     }
 
     sourceSets {
-        val jvmMain by getting {
+        val jvmMain = getByName("jvmMain") {
             dependencies {
                 api(project(":lib"))
             }

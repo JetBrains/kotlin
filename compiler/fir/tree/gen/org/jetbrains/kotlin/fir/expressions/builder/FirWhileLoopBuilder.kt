@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirWhileLoopImpl
 @FirBuilderDsl
 class FirWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override var label: FirLabel? = null
     override lateinit var condition: FirExpression
     override lateinit var block: FirBlock

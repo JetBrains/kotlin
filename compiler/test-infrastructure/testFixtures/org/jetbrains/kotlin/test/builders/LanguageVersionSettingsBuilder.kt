@@ -119,6 +119,7 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.ideMode, trueOrNull(LanguageSettingsDirectives.IDE_MODE in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
+            analysisFlag(JvmAnalysisFlags.valhallaSupport, directives.singleOrZeroValue(LanguageSettingsDirectives.VALHALLA_SUPPORT)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),

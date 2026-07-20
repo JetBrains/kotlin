@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -108,6 +111,22 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
             removedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xklib"
+        compilerName = "klibLibraries"
+        description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 }

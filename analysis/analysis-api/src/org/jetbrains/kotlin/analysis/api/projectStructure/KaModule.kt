@@ -183,14 +183,17 @@ public interface KaSourceModule : KaModule {
  *
  * ### Platform-specific content scope restriction
  *
- * In the K2 implementation of the Analysis API, the [contentScope] of the library module is restricted to file types that are relevant for
- * the [targetPlatform]. For example, a JVM library module filters out any files that are not `.class` and `.kotlin_builtins` files. This
- * allows the Analysis API to exclude content which isn't relevant for the target platform, such as `.knm` files in a JVM library.
+ * The [contentScope] of the library module excludes file types that are harmful for the [targetPlatform]. For example, a JVM library module
+ * filters out `.kotlin_metadata` and `.knm` files, which excludes Kotlin declarations from non-JVM platforms. It also filters out source
+ * files.
  *
  * While most proper library module setups don't need such filtering, there are both pathological as well as legitimate use cases in the
  * wild. For example, certain Kotlin stdlib setups required both the `kotlin-stdlib` and `kotlin-stdlib-common` JARs to be part of the same
  * [KaLibraryModule] (this has been fixed with 2.x stdlibs). Such a library module has the JVM target platform, and we need to exclude
  * `.kotlin_metadata` files from the content scope.
+ *
+ * As another example, a JVM library module might accidentally include source JARs in its binary roots. These sources must be excluded.
+ * Otherwise, the Analysis API might accidentally try to load library declarations from them.
  */
 @SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibraryModule : KaModule {
@@ -283,8 +286,9 @@ public interface KaLibrarySourceModule : KaModule {
  * [dependentLibrary]. This allows resolving symbols defined in the dependencies of the library. In most cases, while not perfectly precise,
  * this approach resolves the correct symbols.
  *
- * The fallback dependencies module's [baseContentScope] should be the scope of all libraries excluding [dependentLibrary]. It should have
- * the same [targetPlatform] as [dependentLibrary].
+ * The fallback dependencies module's [baseContentScope] should be the scope of the *binary files* of all libraries excluding
+ * [dependentLibrary]. Source files must not be included. Additionally, the module should have the same [targetPlatform] as
+ * [dependentLibrary].
  *
  * [KaLibraryFallbackDependenciesModule] is not [resolvable][isResolvable] and thus cannot be a use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze]
  * call. It should not be returned by [KaModuleProvider.getModule].

@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.config.ValhallaSupportMode
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.valhallaSupportMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -82,8 +85,16 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
-            (if (isInner) 0 else Opcodes.ACC_STATIC)
+            (if (isInner) 0 else Opcodes.ACC_STATIC) or
+            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
 }
+
+
+private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean =
+    when (context.configuration.languageVersionSettings.valhallaSupportMode) {
+        ValhallaSupportMode.NONE, null -> false
+        else -> true
+    }
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {

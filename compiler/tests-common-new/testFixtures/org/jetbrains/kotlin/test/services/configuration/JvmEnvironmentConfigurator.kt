@@ -147,6 +147,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+            TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
             TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
                 runIf(currentJavaVersion() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
             }
@@ -170,6 +171,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
+            TestJdkKind.FULL_JDK_VALHALLA -> null
             TestJdkKind.FULL_JDK -> null
         }
     }
@@ -228,6 +230,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
             TestJdkKind.FULL_JDK_21 -> {}
+            TestJdkKind.FULL_JDK_VALHALLA -> {}
             TestJdkKind.FULL_JDK -> {}
         }
 

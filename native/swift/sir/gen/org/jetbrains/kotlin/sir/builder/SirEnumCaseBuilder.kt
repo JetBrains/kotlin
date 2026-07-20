@@ -19,10 +19,10 @@ class SirEnumCaseBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
+    val bridges: MutableList<SirBridge> = []
     lateinit var name: String
-    val associatedValueTypes: MutableList<SirType> = mutableListOf()
+    val associatedValueTypes: MutableList<SirType> = []
 
     fun build(): SirEnumCase {
         return SirEnumCaseImpl(

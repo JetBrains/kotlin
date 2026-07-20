@@ -23,7 +23,7 @@ interface AndroidRuntimeTestListener {
 }
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) : AutoCloseable {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private var emulator: Emulator? = null
     private var gradleRunner: GradleRunner? = null
@@ -69,7 +69,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             logcatJob = scope.async { emulator.printLog() }
             isStarted = true
         } catch (e: Throwable) {
-            if (e is RuntimeException) {
+            if (e is RuntimeException && e !is CancellationException) {
                 e.printStackTrace()
             }
             closeStartedProcesses()
@@ -79,22 +79,26 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
     fun buildFlavorApks(flavorName: String) {
         runBlocking {
-            check(isStarted) { "Android emulator is not started" }
-            val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
-            throwIfBackgroundProcessFailed()
-            gradleRunner.assembleAndroidDebugTest(flavorName)
-            throwIfBackgroundProcessFailed()
+            scope.async {
+                check(isStarted) { "Android emulator is not started" }
+                val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
+                throwIfBackgroundProcessFailed()
+                gradleRunner.assembleAndroidDebugTest(flavorName)
+                throwIfBackgroundProcessFailed()
+            }.await()
         }
     }
 
     fun installFlavorApks(flavorName: String) {
         runBlocking {
-            check(isStarted) { "Android emulator is not started" }
-            val emulator = emulator ?: error("Android emulator is not created")
-            val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
-            throwIfBackgroundProcessFailed()
-            installAndroidDebugTestWithRetry(gradleRunner, emulator, flavorName)
-            throwIfBackgroundProcessFailed()
+            scope.async {
+                check(isStarted) { "Android emulator is not started" }
+                val emulator = emulator ?: error("Android emulator is not created")
+                val gradleRunner = gradleRunner ?: error("Gradle runner is not created")
+                throwIfBackgroundProcessFailed()
+                installAndroidDebugTestWithRetry(gradleRunner, emulator, flavorName)
+                throwIfBackgroundProcessFailed()
+            }.await()
         }
     }
 
@@ -121,6 +125,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 throwIfBackgroundProcessFailed()
             }
         } catch (e: RuntimeException) {
+            if (e is CancellationException) {
+                throw e
+            }
             e.printStackTrace()
             throw e
         }
@@ -321,7 +328,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val runner = CodegenTestsOnAndroidRunner(pathManager)
             try {
                 runBlocking {
-                    runner.startEmulator()
+                    runner.scope.async {
+                        runner.startEmulator()
+                    }.await()
                 }
                 return runner
             } catch (e: Throwable) {

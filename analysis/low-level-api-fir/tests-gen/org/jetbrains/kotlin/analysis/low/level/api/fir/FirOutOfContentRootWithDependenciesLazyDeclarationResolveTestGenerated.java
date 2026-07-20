@@ -2294,6 +2294,18 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("javaTarget.kt")
+    public void testJavaTarget() {
+      run("javaTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetWithImport.kt")
+    public void testJavaTargetWithImport() {
+      run("javaTargetWithImport.kt");
+    }
+
+    @Test
     @TestMetadata("requiredAnnotationWithFakeOverrideAsImportedArgument.kt")
     public void testRequiredAnnotationWithFakeOverrideAsImportedArgument() {
       run("requiredAnnotationWithFakeOverrideAsImportedArgument.kt");

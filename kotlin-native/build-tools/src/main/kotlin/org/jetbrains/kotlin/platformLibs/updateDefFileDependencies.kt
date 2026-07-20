@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.platformLibs
 
+import kotlinBuildProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
@@ -30,7 +31,7 @@ fun Project.familyDefFiles(family: Family) = fileTree("src/platform/${family.vis
         .filter { it.name.endsWith(".def") }
 
 fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask: TaskProvider<*>): Map<Family, TaskProvider<*>> {
-    val shouldUpdate = project.getBooleanProperty(updateDefFileDependenciesFlag) ?: false
+    val shouldUpdate = project.kotlinBuildProperties.booleanProperty(updateDefFileDependenciesFlag, false).get()
 
     val updateDefFilesTaskPerFamily = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily }.groupBy { it.family }.mapValues {
         registerUpdateDefFileDependenciesTask(
@@ -162,11 +163,4 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
         return diff.toString()
     }
 
-}
-
-
-private fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
-    val v = it.toString()
-    if (v.isBlank()) true
-    else v.toBoolean()
 }

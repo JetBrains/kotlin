@@ -114,6 +114,22 @@ class RemovedCompilerArguments {
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xklib",
+        valueDescription = "<path>",
+        description = "Paths to cross-platform libraries in the .klib format.",
+        delimiter = Argument.Delimiters.pathSeparator,
+        removedVersion = "2.5.0",
+    )
+    var klibLibraries: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xserialize-ir",
         valueDescription = "{none|inline|all}",
         description = "Save the IR to metadata (Experimental).",

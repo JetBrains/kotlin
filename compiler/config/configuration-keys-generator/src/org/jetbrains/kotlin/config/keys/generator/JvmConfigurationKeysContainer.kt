@@ -41,7 +41,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val JDK_RELEASE by key<Int>()
     val SAM_CONVERSIONS by key<JvmClosureGenerationScheme>()
     val LAMBDAS by key<JvmClosureGenerationScheme>()
-    val KLIB_PATHS by key<List<String>>("Paths to .klib libraries.")
     val ABI_STABILITY by key<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR.")
     val DO_NOT_CLEAR_BINDING_CONTEXT by key<Boolean>("When using K1, do not clear BindingContext between psi2ir and lowerings.")
     val NO_RESET_JAR_TIMESTAMPS by key<Boolean>()

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS +CompanionBlocksAndExtensions
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS +CompanionBlocks +CompanionExtensions
 //           (^ changes positioning of `WRONG_NUMBER_OF_TYPE_ARGUMENTS`)
 
 class G<A>

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.commonjswas
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.*
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -154,10 +155,19 @@ internal class CommonJsAndWasmCompilerArgumentConversionTest : BaseCompilationTe
 
     private fun CommonJsAndWasmArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
+        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+
         assumeTrue(
-            kotlinToolchain.getCompilerVersion() >= availableSinceVersion.toString(),
-            "Test requires compiler version >= $availableSinceVersion"
+            compilerVersion >= KotlinToolingVersion(introducedVersion),
+            "Test requires compiler version >= $introducedVersion"
         )
+
+        if (removedVersion != null) {
+            assumeTrue(
+                compilerVersion < KotlinToolingVersion(removedVersion),
+                "Test requires compiler version < $removedVersion"
+            )
+        }
     }
 
     private fun <B : BaseCompilationOperation.Builder> CommonJsAndWasmArgumentConfiguration<*>.testInvalidRawArgumentKlibCompilationFails(

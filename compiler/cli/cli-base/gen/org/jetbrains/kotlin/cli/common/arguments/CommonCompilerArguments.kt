@@ -237,10 +237,22 @@ They should be a subset of sources passed as free arguments.""",
         }
 
     @Argument(
+        value = "-Xcompanion-blocks",
+        description = "Enables companion blocks.",
+    )
+    @Enables(LanguageFeature.CompanionBlocks)
+    var companionBlocks: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xcompanion-blocks-and-extensions",
         description = "Enables companion blocks and extensions.",
     )
-    @Enables(LanguageFeature.CompanionBlocksAndExtensions)
+    @Enables(LanguageFeature.CompanionBlocks)
+    @Enables(LanguageFeature.CompanionExtensions)
     var companionBlocksAndExtensions: Boolean = false
         set(value) {
             checkFrozen()

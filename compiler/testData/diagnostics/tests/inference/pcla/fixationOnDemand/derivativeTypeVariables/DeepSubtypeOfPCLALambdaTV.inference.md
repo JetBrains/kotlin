@@ -77,11 +77,6 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
 
 1. New `TypeVariable(PNT)` for `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable`s parameter 0
 
-##### Resolution Stages > CheckArguments:
-
-1. `ContravariantContainer<TypeVariable(OT)> <: InvariantContainer<in TypeVariable(PNT)>` _from Argument R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideContainer|()_
-2. __NewConstraintError: `ContravariantContainer<TypeVariable(OT)> <: InvariantContainer<in TypeVariable(PNT)>`__
-
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable` --- `fun <PNT> createDerivativeTypeVariable(constrainingTypeValue: ContravariantContainer<PNT>): TypeVariableOwner<PNT>`
 ##### Call Completion:
 
@@ -131,18 +126,6 @@ R?C|<local>/otvOwner|.provide#()
     1. `TypeVariable(PNT) == ScopeOwner`
 4. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
-
-### Call 5
-
-```
-R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: ScopeOwner): Unit`
-##### Resolution Stages > CheckArguments:
-
-1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
-2. __NewConstraintError: `Interloper <: ScopeOwner`__
 
 ### Call 1
 
@@ -213,7 +196,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    )`
 6. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
 
-### Call 6
+### Call 5
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -270,7 +253,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 7
+### Call 6
 
 ```
 R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideContainer|())
@@ -290,11 +273,6 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(PNT)` for `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `ContravariantContainer<TypeVariable(OT)> <: InvariantContainer<in TypeVariable(PNT)>` _from Argument R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideContainer|()_
-2. __NewConstraintError: `ContravariantContainer<TypeVariable(OT)> <: InvariantContainer<in TypeVariable(PNT)>`__
 
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable` --- `fun <PNT> createDerivativeTypeVariable(constrainingTypeValue: ContravariantContainer<PNT>): TypeVariableOwner<PNT>`
 ##### Call Completion:
@@ -316,7 +294,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 8
+### Call 7
 
 ```
 R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
@@ -327,7 +305,7 @@ R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
 
 1. `ScopeOwner <: TypeVariable(OT)` _from Argument R|/ScopeOwner.ScopeOwner|()_
 
-### Call 9
+### Call 8
 
 ```
 R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
@@ -338,7 +316,7 @@ R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 
 1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
 
-### Call 10
+### Call 9
 
 ```
 R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
@@ -351,7 +329,7 @@ R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
 2. Combine `Interloper <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `Interloper <: TypeVariable(OT)`
 
-### Call 6
+### Call 5
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -421,7 +399,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    )`
 6. `TypeVariable(PNT) == Interloper` _from Fix variable PNT_
 
-### Call 11
+### Call 10
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -477,7 +455,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 12
+### Call 11
 
 ```
 R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideProjectedContainer|())
@@ -487,11 +465,6 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(PNT)` for `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `InvariantContainer<CapturedType(in TypeVariable(OT))> <: ContravariantContainer<TypeVariable(PNT)>` _from Argument R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideProjectedContainer|()_
-2. __NewConstraintError: `InvariantContainer<CapturedType(in TypeVariable(OT))> <: ContravariantContainer<TypeVariable(PNT)>`__
 
 #### Candidate 2: `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable` --- `fun <PNT> createDerivativeTypeVariable(constrainingTypeValue: InvariantContainer<in PNT>): TypeVariableOwner<PNT>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
@@ -523,7 +496,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 13
+### Call 12
 
 ```
 R?C|<local>/pntvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
@@ -536,7 +509,7 @@ R?C|<local>/pntvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
 2. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
 
-### Call 14
+### Call 13
 
 ```
 R?C|<local>/otvOwner|.provide#()
@@ -555,19 +528,7 @@ R?C|<local>/otvOwner|.provide#()
 5. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
 
-### Call 15
-
-```
-R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: ScopeOwner): Unit`
-##### Resolution Stages > CheckArguments:
-
-1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
-2. __NewConstraintError: `Interloper <: ScopeOwner`__
-
-### Call 11
+### Call 10
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -638,7 +599,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    )`
 7. `TypeVariable(PNT) == ScopeOwner` _from Fix variable PNT_
 
-### Call 16
+### Call 14
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -695,7 +656,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 17
+### Call 15
 
 ```
 R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideProjectedContainer|())
@@ -705,11 +666,6 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(PNT)` for `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `InvariantContainer<CapturedType(in TypeVariable(OT))> <: ContravariantContainer<TypeVariable(PNT)>` _from Argument R?C|<local>/otvOwner|.R?C|/TypeVariableOwner.provideProjectedContainer|()_
-2. __NewConstraintError: `InvariantContainer<CapturedType(in TypeVariable(OT))> <: ContravariantContainer<TypeVariable(PNT)>`__
 
 #### Candidate 2: `FirNamedFunctionSymbol /TypeVariableOwner.createDerivativeTypeVariable` --- `fun <PNT> createDerivativeTypeVariable(constrainingTypeValue: InvariantContainer<in PNT>): TypeVariableOwner<PNT>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
@@ -741,7 +697,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 18
+### Call 16
 
 ```
 R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
@@ -752,7 +708,7 @@ R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
 
 1. `ScopeOwner <: TypeVariable(OT)` _from Argument R|/ScopeOwner.ScopeOwner|()_
 
-### Call 19
+### Call 17
 
 ```
 R?C|<local>/pntvOwner|.provide#()
@@ -761,18 +717,13 @@ R?C|<local>/pntvOwner|.provide#()
 #### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): BaseType`
 ##### Call Completion:
 
-1. `TypeVariable(OT) == TypeVariable(PNT)` _from SimpleConstraintSystemConstraintPosition_
-2. Combine `ScopeOwner <: TypeVariable(OT)` with `TypeVariable(OT) == TypeVariable(PNT)`
-    1. `ScopeOwner <: TypeVariable(PNT)`
-3. Combine `TypeVariable(OT) == TypeVariable(PNT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in TypeVariable(PNT))`
-4. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
-    1. `ScopeOwner <: TypeVariable(OT)`
-5. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
-6. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
+1. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
+2. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
     1. `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
+3. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `TypeVariable(OT) <: TypeVariable(OT)`
 
-### Call 20
+### Call 18
 
 ```
 R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
@@ -785,7 +736,7 @@ R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 2. Combine `Interloper <: TypeVariable(OT)` with `TypeVariable(PNT) == TypeVariable(OT)`
     1. `Interloper <: TypeVariable(PNT)`
 
-### Call 21
+### Call 19
 
 ```
 R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
@@ -796,7 +747,7 @@ R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
 
 1. `Interloper <: TypeVariable(PNT)` _from Argument Q|Interloper|_
 
-### Call 16
+### Call 14
 
 ```
 pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <inline=Unknown>  {
@@ -877,7 +828,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )`
 
-### Call 22
+### Call 20
 
 ```
 Null(null)!!
@@ -918,7 +869,7 @@ Null(null)!!
    )`
 2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
-### Call 23
+### Call 21
 
 ```
 ContravariantContainer#()
@@ -932,6 +883,81 @@ ContravariantContainer#()
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `ContravariantContainer<TypeVariable(CT)> <: ContravariantContainer<T>` _from ExpectedType for some call_
+    1. `T <: TypeVariable(CT)`
+
+##### Call Completion:
+
+1. Choose `TypeVariable(CT)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	false HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
+2. `TypeVariable(CT) == T` _from Fix variable CT_
+
+### Call 22
+
+```
+TypeVariableOwner#()
+```
+
+#### Candidate 1: `FirConstructorSymbol /TypeVariableOwner.TypeVariableOwner` --- `constructor<T>(): TypeVariableOwner<T>`
+##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
+
+1. New `TypeVariable(T)` for `FirRegularClassSymbol TypeVariableOwner`s parameter 0
+
+##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
+
+1. `TypeVariableOwner<TypeVariable(T)> <: TypeVariableOwner<PNT>` _from ExpectedType for some call_
+    1. `TypeVariable(T) <: PNT`
+    2. `PNT <: TypeVariable(T)`
+2. Combine `TypeVariable(T) <: PNT` with `PNT <: TypeVariable(T)`
+    1. `TypeVariable(T) == PNT`
+
+##### Call Completion:
+
+1. Choose `TypeVariable(T)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	 true HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
+2. `TypeVariable(T) == PNT` _from Fix variable T_
+
+### Call 23
+
+```
+InvariantContainer#()
+```
+
+#### Candidate 1: `FirConstructorSymbol /InvariantContainer.InvariantContainer` --- `constructor<CT>(): InvariantContainer<CT>`
+##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
+
+1. New `TypeVariable(CT)` for `FirRegularClassSymbol InvariantContainer`s parameter 0
+
+##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
+
+1. `InvariantContainer<TypeVariable(CT)> <: InvariantContainer<in T>` _from ExpectedType for some call_
     1. `T <: TypeVariable(CT)`
 
 ##### Call Completion:
@@ -994,81 +1020,6 @@ TypeVariableOwner#()
 2. `TypeVariable(T) == PNT` _from Fix variable T_
 
 ### Call 25
-
-```
-InvariantContainer#()
-```
-
-#### Candidate 1: `FirConstructorSymbol /InvariantContainer.InvariantContainer` --- `constructor<CT>(): InvariantContainer<CT>`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(CT)` for `FirRegularClassSymbol InvariantContainer`s parameter 0
-
-##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
-
-1. `InvariantContainer<TypeVariable(CT)> <: InvariantContainer<in T>` _from ExpectedType for some call_
-    1. `T <: TypeVariable(CT)`
-
-##### Call Completion:
-
-1. Choose `TypeVariable(CT)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. `TypeVariable(CT) == T` _from Fix variable CT_
-
-### Call 26
-
-```
-TypeVariableOwner#()
-```
-
-#### Candidate 1: `FirConstructorSymbol /TypeVariableOwner.TypeVariableOwner` --- `constructor<T>(): TypeVariableOwner<T>`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(T)` for `FirRegularClassSymbol TypeVariableOwner`s parameter 0
-
-##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
-
-1. `TypeVariableOwner<TypeVariable(T)> <: TypeVariableOwner<PNT>` _from ExpectedType for some call_
-    1. `TypeVariable(T) <: PNT`
-    2. `PNT <: TypeVariable(T)`
-2. Combine `TypeVariable(T) <: PNT` with `PNT <: TypeVariable(T)`
-    1. `TypeVariable(T) == PNT`
-
-##### Call Completion:
-
-1. Choose `TypeVariable(T)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	 true HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. `TypeVariable(T) == PNT` _from Fix variable T_
-
-### Call 27
 
 ```
 Null(null)!!

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
+import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -142,10 +143,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 }
             }
             arguments.klibLibraries?.let { libraries ->
-                put(
-                    JVMConfigurationKeys.KLIB_PATHS,
-                    libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty),
-                )
+                klibPaths = libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty)
             }
             for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))

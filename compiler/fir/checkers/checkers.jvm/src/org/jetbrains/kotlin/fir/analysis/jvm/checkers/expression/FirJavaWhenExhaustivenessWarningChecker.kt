@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -41,6 +42,7 @@ object FirJavaWhenExhaustivenessWarningChecker : FirWhenExpressionChecker(MppChe
             when (val condition = it.condition) {
                 is FirEqualityOperatorCall -> condition.arguments[1].resolvedType.isNullableNothing
                 is FirTypeOperatorCall -> condition.operation == FirOperation.IS && condition.conversionTypeRef.coneType.isMarkedOrFlexiblyNullable
+                is FirElseIfTrueCondition -> true
                 else -> false
             }
         }

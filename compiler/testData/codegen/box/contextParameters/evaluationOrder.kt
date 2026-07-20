@@ -31,15 +31,7 @@ fun box(): String {
     assertEquals("context2;value;context1;", f2(c2 = context2(), v = value(), c1 = context1()))
     assertEquals("value;context1;context2;", f2(value(), c1 = context1(), c2 = context2()))
     assertEquals("value;context2;context1;", f2(value(), c2 = context2(), c1 = context1()))
-
-    try {
-        // KT-87553 K2: Incorrect argument evaluation order with explicit context argument in presence of explicit extension receiver
-        // Expected <extension;context1;value1;value2;>, actual <context1;extension;value1;value2;>
-        assertEquals("extension;context1;value1;value2;", extension().f3(c = context1(), v1 = value1(), v2 = value2()))
-        return "Fail: remove try-catch from this test"
-    } catch (e: Throwable) {
-    }
-
+    assertEquals("extension;context1;value1;value2;", extension().f3(c = context1(), v1 = value1(), v2 = value2()))
     assertEquals("extension;context1;value2;value1;", extension().f3(c = context1(), v2 = value2(), v1 = value1()))
     assertEquals("extension;value1;context1;value2;", extension().f3(v1 = value1(), c = context1(), v2 = value2()))
     assertEquals("extension;value1;context1;value2;", extension().f3(value1(), c = context1(), v2 = value2()))

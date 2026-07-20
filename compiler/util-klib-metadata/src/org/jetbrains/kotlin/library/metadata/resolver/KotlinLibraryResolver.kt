@@ -45,7 +45,10 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
             duplicatedUniqueNameStrategy,
         ).resolveDependencies()
 
-    @Deprecated("Restored to keep ABI compatibility with kotlinx-benchmark Gradle plugin (KT-71414)", level = DeprecationLevel.HIDDEN)
+    @Deprecated(
+        "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
+        level = DeprecationLevel.HIDDEN
+    )
     fun resolveWithDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,

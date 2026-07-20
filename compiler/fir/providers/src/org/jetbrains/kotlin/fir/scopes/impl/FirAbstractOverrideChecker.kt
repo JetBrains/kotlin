@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 
 abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
@@ -30,7 +30,7 @@ fun buildSubstitutorForOverridesCheck(
 
     if (baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
     val types = baseDeclaration.typeParameters.map {
-        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+        ConeTypeParameterType(it.symbol.toLookupTag(), false)
     }
     return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap(), useSiteSession)
 }

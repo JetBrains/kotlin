@@ -21,20 +21,20 @@ kotlin {
     }
 
     target.compilations {
-        val main by getting {
+        val main = getByName("main") {
             defaultSourceSet.dependencies {
                 api(kotlin("gradle-plugin-api"))
                 implementation(kotlin("stdlib-jdk8"))
             }
         }
 
-        val test by getting {
+        val test = getByName("test") {
             defaultSourceSet.dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
 
-        val benchmark by creating {
+        val benchmark = create("benchmark") {
             associateWith(main)
             defaultSourceSet.dependencies {
                 implementation(kotlin("reflect"))
@@ -43,7 +43,7 @@ kotlin {
     }
 }
 
-val runBenchmark by tasks.registering(JavaExec::class) {
+val runBenchmark = tasks.register("runBenchmark", JavaExec::class) {
     classpath = kotlin.target.compilations["benchmark"].run { runtimeDependencyFiles + output.allOutputs }
     mainClass.set("com.example.ABenchmarkKt")
 }

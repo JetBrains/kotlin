@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -286,6 +285,13 @@ public enum class KaUnificationSubstitutorPolicy {
 /**
  * Builds a new [KaSubstitutor] from substitutions specified inside [build].
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "buildSubstitutor(build)",
+        "org.jetbrains.kotlin.analysis.api.types.buildSubstitutor",
+    ),
+)
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
 @JvmName("buildSubstitutorExtension")
@@ -301,6 +307,13 @@ public inline fun KaSession.buildSubstitutor(
 /**
  * Builds a new [KaSubstitutor] from substitutions specified inside [build].
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "buildSubstitutor(build)",
+        "org.jetbrains.kotlin.analysis.api.types.buildSubstitutor",
+    ),
+)
 @KaCustomContextParameterBridge
 @KaExperimentalApi
 context(session: KaSession)
@@ -312,19 +325,29 @@ public inline fun buildSubstitutor(
         callsInPlace(build, InvocationKind.EXACTLY_ONCE)
     }
 
+    @Suppress("DEPRECATION")
     return session.buildSubstitutor(build)
 }
 
+/**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaSubstitutorBuilder] instead.**
+ *
+ * A DSL builder for [KaSubstitutor]. Instances are created internally by [buildSubstitutor].
+ *
+ * @see KaSubstitutor
+ */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @OptIn(KaImplementationDetail::class)
 public class KaSubstitutorBuilder
-@KaImplementationDetail constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
+@KaImplementationDetail constructor(override val token: KaLifetimeToken) :
+    org.jetbrains.kotlin.analysis.api.types.KaSubstitutorBuilder {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
 
     /**
      * A map of the type substitutions that have so far been accumulated by the builder.
      */
-    public val mappings: Map<KaTypeParameterSymbol, KaType>
+    override val mappings: Map<KaTypeParameterSymbol, KaType>
         get() = withValidityAssertion { backingMapping }
 
     /**
@@ -332,7 +355,7 @@ public class KaSubstitutorBuilder
      *
      * If there already was a substitution with a [typeParameter], the function replaces the corresponding substitution with a new one.
      */
-    public fun substitution(typeParameter: KaTypeParameterSymbol, type: KaType): Unit = withValidityAssertion {
+    override fun substitution(typeParameter: KaTypeParameterSymbol, type: KaType): Unit = withValidityAssertion {
         backingMapping[typeParameter] = type
     }
 
@@ -342,7 +365,7 @@ public class KaSubstitutorBuilder
      * If there already was a substitution with a [KaTypeParameterSymbol], the function replaces the corresponding substitution with a new
      * one.
      */
-    public fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
+    override fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
         backingMapping += substitutions
     }
 }

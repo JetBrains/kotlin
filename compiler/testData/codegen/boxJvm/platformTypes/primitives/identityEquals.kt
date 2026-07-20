@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// IGNORE_VALHALLA
+// ^ Boxes of primitives always have no observable identity with Valhalla
 
 // l[0] === 1000 is true on Android
 // IGNORE_BACKEND: ANDROID

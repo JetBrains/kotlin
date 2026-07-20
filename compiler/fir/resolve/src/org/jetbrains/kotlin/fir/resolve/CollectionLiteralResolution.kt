@@ -279,7 +279,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
             }
         }
 
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocksAndExtensions)) {
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocks)) {
             expectedClass.toImplicitResolvedQualifierReceiver(components, implicitReceiverSource).let {
                 if (expectedClass.staticScope(context.bodyResolveComponents)?.declaresVisibleOf(it) == true) {
                     return it

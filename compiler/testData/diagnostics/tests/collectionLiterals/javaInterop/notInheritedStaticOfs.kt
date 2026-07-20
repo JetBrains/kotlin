@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals +CompanionBlocks +CompanionExtensions
 
 // FILE: SuperA.java
 

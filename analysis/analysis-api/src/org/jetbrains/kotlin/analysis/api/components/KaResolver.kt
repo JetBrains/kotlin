@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaObsoleteComponentApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -2989,6 +2990,7 @@ public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
  * @see KtResolvable.tryResolveSymbols
  * @see KtResolvableCall.tryResolveCall
  */
+@KaObsoleteComponentApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
     return with(session) {
@@ -3006,6 +3008,7 @@ public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
  * @see KtResolvable.tryResolveSymbols
  * @see KtResolvableCall.tryResolveCall
  */
+@KaObsoleteComponentApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbol(): KaSymbol? {
     return with(session) {
@@ -3174,6 +3177,7 @@ public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSen
  *
  * @see KtResolvableCall.tryResolveCall
  */
+@KaObsoleteComponentApi
 context(session: KaSession)
 public fun KtElement.resolveToCall(): KaCallInfo? {
     return with(session) {
@@ -3192,6 +3196,7 @@ public fun KtElement.resolveToCall(): KaCallInfo? {
  *
  * @see KtResolvableCall.collectCallCandidates
  */
+@KaObsoleteComponentApi
 context(session: KaSession)
 public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
     return with(session) {

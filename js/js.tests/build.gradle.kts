@@ -204,7 +204,7 @@ val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
 val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
-val prepareNpmTestData by task<Copy> {
+val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestNpmData") {
     from(testJsFile)
     from(packageJsonFile)
     from(packageLockJsonFile)

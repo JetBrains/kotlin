@@ -34,6 +34,36 @@ public class ContentAndResolutionScopesProvidersTestGenerated extends AbstractCo
   }
 
   @Test
+  @TestMetadata("extensionlessFile.kt")
+  public void testExtensionlessFile() {
+    run("extensionlessFile.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSource.kt")
+  public void testJavaSource() {
+    run("javaSource.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinBuiltins.kt")
+  public void testKotlinBuiltins() {
+    run("kotlinBuiltins.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinScript.kt")
+  public void testKotlinScript() {
+    run("kotlinScript.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinSource.kt")
+  public void testKotlinSource() {
+    run("kotlinSource.kt");
+  }
+
+  @Test
   @TestMetadata("libraryDependency.kt")
   public void testLibraryDependency() {
     run("libraryDependency.kt");
@@ -79,5 +109,17 @@ public class ContentAndResolutionScopesProvidersTestGenerated extends AbstractCo
   @TestMetadata("singleModule.kt")
   public void testSingleModule() {
     run("singleModule.kt");
+  }
+
+  @Test
+  @TestMetadata("tasty.kt")
+  public void testTasty() {
+    run("tasty.kt");
+  }
+
+  @Test
+  @TestMetadata("textResource.kt")
+  public void testTextResource() {
+    run("textResource.kt");
   }
 }

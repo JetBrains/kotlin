@@ -1,0 +1,11 @@
+// KT-61644: a per-file cache records a dependency on a library that is later removed from the project;
+// the next build must rebuild the affected cache instead of failing with "Unknown dependent library"
+
+// DISABLE_NATIVE: targetFamily=MINGW
+MODULES: removedLib, userLib, main
+
+STEP 0:
+    libs: removedLib, userLib, main
+
+STEP 1:
+    libs: userLib, main

@@ -114,16 +114,6 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
 1. New `TypeVariable(S)` for `FirNamedFunctionSymbol /foo2`s parameter 0
 2. `TypeVariable(S) == kotlin/String` _from TypeParameter R|kotlin/String|_
 
-##### Resolution Stages > CheckArguments:
-
-1. `JavaBox<TypeVariable(T)> <: JavaBox<out TypeVariable(S)>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
-    1. `TypeVariable(T) <: TypeVariable(S)`
-2. Combine `TypeVariable(T) <: TypeVariable(S)` with `TypeVariable(S) == kotlin/String`
-    1. `TypeVariable(T) <: kotlin/String`
-3. Combine `kotlin/Nothing? <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(S)`
-    1. `kotlin/Nothing? <: TypeVariable(S)`
-4. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
-
 ##### Call Completion:
 
 1. Choose `TypeVariable(S)` with `Readiness(

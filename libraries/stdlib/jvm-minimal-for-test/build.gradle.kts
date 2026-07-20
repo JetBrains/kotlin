@@ -20,7 +20,7 @@ dependencies {
     builtinsMetadata(project(":kotlin-stdlib"))
 }
 
-val copyCommonSources by task<Sync> {
+val copyCommonSources = tasks.register<Sync>("copyCommonSources") {
     from(stdlibProjectDir.resolve("src"))
         .include(
             "kotlin/Annotation.kt",
@@ -64,7 +64,7 @@ val copyCommonSources by task<Sync> {
     into(layout.buildDirectory.dir("src/common"))
 }
 
-val copySources by task<Sync> {
+val copySources = tasks.register<Sync>("copySources") {
     from(stdlibProjectDir.resolve("jvm/runtime"))
         .include(
             "kotlin/NoWhenBranchMatchedException.kt",

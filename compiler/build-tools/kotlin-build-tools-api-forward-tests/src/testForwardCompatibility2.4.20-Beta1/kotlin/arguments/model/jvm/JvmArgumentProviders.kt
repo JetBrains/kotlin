@@ -304,6 +304,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") },
     ),
+/*
+    // TODO: KT-87792 [BTA] Handle removed arguments in BTA tests
     JvmArgumentTestDescriptor(
         argumentName = "Xklib",
         argument = X_KLIB,
@@ -326,6 +328,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
+*/
     JvmArgumentTestDescriptor(
         argumentName = "Xjava-source-roots",
         argument = X_JAVA_SOURCE_ROOTS,

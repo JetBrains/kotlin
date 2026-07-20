@@ -21,7 +21,7 @@ class AnalysisApiLegacyCallableDumpTest : AbstractAnalysisApiCodebaseDumpFileCom
                 "src/org/jetbrains/kotlin/analysis/api/components",
                 "src/org/jetbrains/kotlin/analysis/api/KaSession.kt",
             ),
-            "api/analysis-api.legacy-component-callables",
+            "api/analysis-api.non-migrated-legacy-api",
         ),
     )
 
@@ -41,12 +41,9 @@ class AnalysisApiLegacyCallableDumpTest : AbstractAnalysisApiCodebaseDumpFileCom
     private fun isToBeMigrated(declaration: KtDeclaration): Boolean = when {
         declaration.hasDeprecatedAnnotation() -> false
         !declaration.isPubliclyVisible -> false
-        declaration is KtClassOrObject -> {
-            !declaration.hasAnnotation("KaObsoleteComponentApi") &&
-                    !declaration.hasAnnotation(IMPLEMENTATION_DETAIL) &&
-                    !declaration.isSessionComponent
-        }
-
+        declaration.hasAnnotation("KaObsoleteComponentApi") -> false
+        declaration.hasAnnotation(IMPLEMENTATION_DETAIL) -> false
+        declaration is KtClassOrObject && declaration.isSessionComponent -> false
         else -> true
     }
 

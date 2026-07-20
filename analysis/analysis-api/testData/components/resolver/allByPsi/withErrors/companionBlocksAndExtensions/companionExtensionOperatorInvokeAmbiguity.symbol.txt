@@ -1,10 +1,10 @@
 KtFile: 'companionExtensionOperatorInvokeAmbiguity.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -12,73 +12,73 @@ KtNameReferenceExpression(51,55): 'test'
       test
     ]
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,131): 'class C {'
+KtClass(65,139): 'class C {'
   null
 
-KtClassBody(65,131): '{'
+KtClassBody(73,139): '{'
   null
 
-KtSecondaryConstructor(71,84): 'constructor()'
+KtSecondaryConstructor(79,92): 'constructor()'
   null
 
-KtParameterList(82,84): '()'
+KtParameterList(90,92): '()'
   null
 
-KtConstructorDelegationCall(84,84): ''
+KtConstructorDelegationCall(92,92): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtConstructorDelegationReferenceExpression(84,84): ''
+KtConstructorDelegationReferenceExpression(92,92): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtSecondaryConstructor(89,102): 'constructor()'
+KtSecondaryConstructor(97,110): 'constructor()'
   null
 
-KtParameterList(100,102): '()'
+KtParameterList(108,110): '()'
   null
 
-KtConstructorDelegationCall(102,102): ''
+KtConstructorDelegationCall(110,110): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtConstructorDelegationReferenceExpression(102,102): ''
+KtConstructorDelegationReferenceExpression(110,110): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtSecondaryConstructor(107,129): 'constructor(s: String)'
+KtSecondaryConstructor(115,137): 'constructor(s: String)'
   null
 
-KtParameterList(118,129): '(s: String)'
+KtParameterList(126,137): '(s: String)'
   null
 
-KtParameter(119,128): 's: String'
+KtParameter(127,136): 's: String'
   null
 
-KtTypeReference(122,128): 'String'
+KtTypeReference(130,136): 'String'
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
-KtUserType(122,128): 'String'
+KtUserType(130,136): 'String'
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
-KtNameReferenceExpression(122,128): 'String'
+KtNameReferenceExpression(130,136): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -86,37 +86,37 @@ KtNameReferenceExpression(122,128): 'String'
       kotlin/String
     ]
 
-KtConstructorDelegationCall(129,129): ''
+KtConstructorDelegationCall(137,137): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtConstructorDelegationReferenceExpression(129,129): ''
+KtConstructorDelegationReferenceExpression(137,137): ''
   KaSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
-KtNamedFunction(133,169): 'companion operator fun C.invoke() {}'
+KtNamedFunction(141,177): 'companion operator fun C.invoke() {}'
   null
 
-KtDeclarationModifierList(133,151): 'companion operator'
+KtDeclarationModifierList(141,159): 'companion operator'
   null
 
-KtTypeReference(156,157): 'C'
+KtTypeReference(164,165): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtUserType(156,157): 'C'
+KtUserType(164,165): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtNameReferenceExpression(156,157): 'C'
+KtNameReferenceExpression(164,165): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -124,31 +124,31 @@ KtNameReferenceExpression(156,157): 'C'
       test/C
     ]
 
-KtParameterList(164,166): '()'
+KtParameterList(172,174): '()'
   null
 
-KtBlockExpression(167,169): '{}'
+KtBlockExpression(175,177): '{}'
   null
 
-KtNamedFunction(170,206): 'companion operator fun C.invoke() {}'
+KtNamedFunction(178,214): 'companion operator fun C.invoke() {}'
   null
 
-KtDeclarationModifierList(170,188): 'companion operator'
+KtDeclarationModifierList(178,196): 'companion operator'
   null
 
-KtTypeReference(193,194): 'C'
+KtTypeReference(201,202): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtUserType(193,194): 'C'
+KtUserType(201,202): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtNameReferenceExpression(193,194): 'C'
+KtNameReferenceExpression(201,202): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -156,31 +156,31 @@ KtNameReferenceExpression(193,194): 'C'
       test/C
     ]
 
-KtParameterList(201,203): '()'
+KtParameterList(209,211): '()'
   null
 
-KtBlockExpression(204,206): '{}'
+KtBlockExpression(212,214): '{}'
   null
 
-KtNamedFunction(207,257): 'companion operator fun C.invoke(withParam: Int) {}'
+KtNamedFunction(215,265): 'companion operator fun C.invoke(withParam: Int) {}'
   null
 
-KtDeclarationModifierList(207,225): 'companion operator'
+KtDeclarationModifierList(215,233): 'companion operator'
   null
 
-KtTypeReference(230,231): 'C'
+KtTypeReference(238,239): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtUserType(230,231): 'C'
+KtUserType(238,239): 'C'
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
-KtNameReferenceExpression(230,231): 'C'
+KtNameReferenceExpression(238,239): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -188,25 +188,25 @@ KtNameReferenceExpression(230,231): 'C'
       test/C
     ]
 
-KtParameterList(238,254): '(withParam: Int)'
+KtParameterList(246,262): '(withParam: Int)'
   null
 
-KtParameter(239,253): 'withParam: Int'
+KtParameter(247,261): 'withParam: Int'
   null
 
-KtTypeReference(250,253): 'Int'
+KtTypeReference(258,261): 'Int'
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
-KtUserType(250,253): 'Int'
+KtUserType(258,261): 'Int'
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
-KtNameReferenceExpression(250,253): 'Int'
+KtNameReferenceExpression(258,261): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
@@ -214,19 +214,19 @@ KtNameReferenceExpression(250,253): 'Int'
       kotlin/Int
     ]
 
-KtBlockExpression(255,257): '{}'
+KtBlockExpression(263,265): '{}'
   null
 
-KtNamedFunction(259,297): 'fun usage() {'
+KtNamedFunction(267,305): 'fun usage() {'
   null
 
-KtParameterList(268,270): '()'
+KtParameterList(276,278): '()'
   null
 
-KtBlockExpression(271,297): '{'
+KtBlockExpression(279,305): '{'
   null
 
-KtCallExpression(277,280): 'C()'
+KtCallExpression(285,288): 'C()'
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): test.C,
@@ -235,41 +235,23 @@ KtCallExpression(277,280): 'C()'
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
     constructor(): C
     constructor(): C>
-
-KtNameReferenceExpression(277,278): 'C'
-  isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      <constructor>(): test.C,
-      <constructor>(): test.C
-    ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    constructor(): C
-    constructor(): C>
-
-KtValueArgumentList(278,280): '()'
-  null
-
-KtDotQualifiedExpression(285,295): 'C.invoke()'
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      test/invoke(<extension receiver>: test.C): kotlin.Unit,
-      test/invoke(<extension receiver>: test.C): kotlin.Unit
-    ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    companion fun C.invoke(): Unit
-    companion fun C.invoke(): Unit>
 
 KtNameReferenceExpression(285,286): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  KaSymbolResolutionSuccess:
-    symbols = [
-      test/C
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): test.C,
+      <constructor>(): test.C
     ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    constructor(): C
+    constructor(): C>
 
-KtCallExpression(287,295): 'invoke()'
+KtValueArgumentList(286,288): '()'
+  null
+
+KtDotQualifiedExpression(293,303): 'C.invoke()'
   KaSymbolResolutionError:
     candidateSymbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit,
@@ -279,7 +261,25 @@ KtCallExpression(287,295): 'invoke()'
     companion fun C.invoke(): Unit
     companion fun C.invoke(): Unit>
 
-KtNameReferenceExpression(287,293): 'invoke'
+KtNameReferenceExpression(293,294): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(295,303): 'invoke()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      test/invoke(<extension receiver>: test.C): kotlin.Unit,
+      test/invoke(<extension receiver>: test.C): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.invoke(): Unit
+    companion fun C.invoke(): Unit>
+
+KtNameReferenceExpression(295,301): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
@@ -291,5 +291,5 @@ KtNameReferenceExpression(287,293): 'invoke'
     companion fun C.invoke(): Unit
     companion fun C.invoke(): Unit>
 
-KtValueArgumentList(293,295): '()'
+KtValueArgumentList(301,303): '()'
   null

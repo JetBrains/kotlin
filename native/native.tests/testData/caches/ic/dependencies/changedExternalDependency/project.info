@@ -1,5 +1,6 @@
-// KT-87194: changing an external library to an already-cached version doesn't rebuild application's cache
-// DISABLE_NATIVE
+// DISABLE_NATIVE: targetFamily=MINGW
+
+// Reproducer for KT-87194
 
 MODULES: externalLib, userLib, main
 

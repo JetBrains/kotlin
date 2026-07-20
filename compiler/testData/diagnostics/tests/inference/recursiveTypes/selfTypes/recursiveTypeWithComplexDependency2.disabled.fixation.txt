@@ -34,6 +34,7 @@ TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: RecordId<TypeVariable(T), TypeVariable(Id)>
+     <: RecordId<kotlin/String, TypeVariable(Id)> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	 true ALLOWED
@@ -51,6 +52,7 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
+     <: RecordId<kotlin/String, TypeVariable(Id)>
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
 ********************************
 CHOSEN for fixation: TypeVariable(Id) --- Readiness(
@@ -69,5 +71,6 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
+     <: RecordId<kotlin/String, TypeVariable(Id)>
     FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
 ********************************

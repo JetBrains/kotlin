@@ -99,7 +99,7 @@ TreeSet#(Q|Wrapper|.R?C|/Wrapper.reverseOrder|())
 
 ##### Resolution Stages > CheckArguments:
 
-1. `java/util/Comparator<TypeVariable(W)!>! <: java/util/Comparator<in TypeVariable(E)!>!` _from SimpleConstraintSystemConstraintPosition_
+1. `java/util/Comparator<TypeVariable(W)!>! <: java/util/Comparator<in TypeVariable(E)!>!` _from Argument Q|Wrapper|.R?C|/Wrapper.reverseOrder|()_
     1. `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)`
     2. `TypeVariable(E) <: TypeVariable(W)!`
 2. Combine `ft<TypeVariable(E) & Any, TypeVariable(E)?> <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
@@ -113,20 +113,10 @@ TreeSet#(Q|Wrapper|.R?C|/Wrapper.reverseOrder|())
 
 1. New `TypeVariable(E)` for `FirRegularClassSymbol java/util/TreeSet`s parameter 0
 
-##### Resolution Stages > CheckArguments:
-
-1. `java/util/Comparator<TypeVariable(W)!>! <: ft<kotlin/collections/MutableCollection<out TypeVariable(E)!>, kotlin/collections/Collection<out TypeVariable(E)!>?>` _from Argument Q|Wrapper|.R?C|/Wrapper.reverseOrder|()_
-2. __NewConstraintError: `java/util/Comparator<TypeVariable(W)!>! <: ft<kotlin/collections/MutableCollection<out TypeVariable(E)!>, kotlin/collections/Collection<out TypeVariable(E)!>?>`__
-
 #### Candidate 3: `FirConstructorSymbol java/util/TreeSet.TreeSet` --- `constructor<E : Any!>(p0: SortedSet<E!>!): TreeSet<E>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(E)` for `FirRegularClassSymbol java/util/TreeSet`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `java/util/Comparator<TypeVariable(W)!>! <: java/util/SortedSet<TypeVariable(E)!>!` _from Argument Q|Wrapper|.R?C|/Wrapper.reverseOrder|()_
-2. __NewConstraintError: `java/util/Comparator<TypeVariable(W)!>! <: java/util/SortedSet<TypeVariable(E)!>!`__
 
 #### Candidate 1: `FirConstructorSymbol java/util/TreeSet.TreeSet` --- `constructor<E : Any!>(p0: Comparator<in E!>!): TreeSet<E>`
 ##### Call Completion:
@@ -501,13 +491,6 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 12. Combine `kotlin/Int! <: TypeVariable(W)` with `TypeVariable(W) <: kotlin/Int!`
     1. `TypeVariable(W) == kotlin/Int!`
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
-##### Continue Call Completion:
-
-1. `kotlin/collections/MutableSet<kotlin/Int> <: kotlin/sequences/Sequence<TypeVariable(R)>` _from LambdaArgument_
-2. __NewConstraintError: `kotlin/collections/MutableSet<kotlin/Int> <: kotlin/sequences/Sequence<TypeVariable(R)>`__
-
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Call Completion:
 
 1. Choose `TypeVariable(W)` with `Readiness(

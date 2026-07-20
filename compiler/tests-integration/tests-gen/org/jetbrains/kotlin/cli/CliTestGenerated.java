@@ -2233,6 +2233,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("valhallaSupportIllegalConfiguration.args")
+    public void testValhallaSupportIllegalConfiguration() {
+      run("valhallaSupportIllegalConfiguration.args");
+    }
+
+    @Test
     @TestMetadata("version.args")
     public void testVersion() {
       run("version.args");

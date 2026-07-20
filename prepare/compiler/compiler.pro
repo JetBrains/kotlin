@@ -35,6 +35,10 @@
 -dontwarn com.sun.jna.WString
 -dontwarn dk.brics.automaton.*
 -dontwarn java.lang.invoke.MethodHandle
+# VarHandleWrapperImpl is a multi-release (JDK 9+) class that uses java.lang.invoke.VarHandle
+# and MethodHandles.privateLookupIn, which are absent from the JDK 8 library jars ProGuard
+# runs against, so suppress its unresolved-reference warnings.
+-dontwarn com.intellij.concurrency.VarHandleWrapperImpl
 -dontwarn io.vavr.*
 -dontwarn javax.crypto.**
 -dontwarn kotlinx.collections.immutable.*

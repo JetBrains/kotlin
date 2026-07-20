@@ -6,17 +6,12 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
-import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
-import org.jetbrains.kotlin.sir.builder.buildGetterCopy
-import org.jetbrains.kotlin.sir.builder.buildSetterCopy
-import org.jetbrains.kotlin.sir.builder.buildTypealias
-import org.jetbrains.kotlin.sir.builder.buildVariableCopy
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
@@ -27,6 +22,7 @@ import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -536,49 +532,40 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                     // FIXME: we make here the best effort to restore the original name of a relocated declaration
                     name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
                     type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
-                }.also { it.parent = this }
+                }
             }
-
-        val defaultWitnesses = members
-            .filterIsInstance<SirFunctionFromKtSymbol>()
-            .mapNotNull { fn -> fn.directDispatchProtocolWitnessOrNull()?.let { fn to it } }
-        val witnessSources: Set<SirFunction> = defaultWitnesses.mapTo(mutableSetOf()) { it.first }
-        defaultWitnesses.forEach { it.second.parent = this }
-
-        val defaultVariableWitnesses = members
-            .filterIsInstance<SirAbstractVariableFromKtSymbol>()
-            .mapNotNull { variable -> variable.directDispatchProtocolWitnessOrNull()?.let { variable to it } }
-        val variableWitnessSources: Set<SirVariable> = defaultVariableWitnesses.mapTo(mutableSetOf()) { it.first }
-        defaultVariableWitnesses.forEach { it.second.parent = this }
 
         val protocolSpiGroups = targetProtocol.attributes
             .filterIsInstance<SirAttribute.SPI>()
             .mapTo(mutableSetOf()) { it.name }
-        val spiMembers = members.filter { function ->
-            function.attributes.any { it is SirAttribute.SPI && it.name !in protocolSpiGroups }
+
+        fun isSpiMember(declaration: SirDeclaration): Boolean = declaration.attributes.any {
+            it is SirAttribute.SPI && it.name !in protocolSpiGroups
         }
 
         fun createSpiTrap(name: String) =
             SirFunctionBody(listOf("fatalError(\"'${name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
 
-        val spiFunctionTraps = spiMembers.filterIsInstance<SirFunction>().map { function ->
-            buildFunctionCopy(function) {
-                origin = SirOrigin.Trampoline(function)
-                isOverride = false
-                modality = SirModality.UNSPECIFIED
-                bridges.clear() // pure Swift trap, no Kotlin bridge
-                body = createSpiTrap(function.name)
-            }.also { it.parent = this }
+        val defaultFunctions = members.filterIsInstance<SirFunctionFromKtSymbol>().mapNotNull { function ->
+            function.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(function)) {
+                buildFunctionCopy(function) {
+                    origin = SirOrigin.Trampoline(function)
+                    isOverride = false
+                    modality = SirModality.UNSPECIFIED
+                    bridges.clear() // pure Swift trap, no Kotlin bridge
+                    body = createSpiTrap(function.name)
+                }
+            }
         }
-        val spiVariableTraps = spiMembers.filterIsInstance<SirVariable>()
-            .filter { it !in variableWitnessSources } // a defaulted @_spi property gets a real witness, not a trap
-            .map { variable ->
+
+        val defaultVariables = members.filterIsInstance<SirAbstractVariableFromKtSymbol>().mapNotNull { variable ->
+            variable.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(variable)) {
                 buildVariableCopy(variable) {
                     origin = SirOrigin.Trampoline(variable)
                     isOverride = false
                     modality = SirModality.UNSPECIFIED
                     bridges.clear()
-                    getter = variable.getter?.let { getter ->
+                    getter = variable.getter.let { getter ->
                         buildGetterCopy(getter) {
                             origin = SirOrigin.Trampoline(getter)
                             bridges.clear()
@@ -593,13 +580,13 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                         }
                     }
                 }.apply {
-                    parent = this@SirAuxiliaryProtocolDeclarationsFromKtSymbol
                     getter?.parent = this
                     setter?.parent = this
                 }
             }
+        }
 
-        (typeAliases + spiFunctionTraps + spiVariableTraps + defaultWitnesses.map { it.second } + defaultVariableWitnesses.map { it.second }).toMutableList()
+        (typeAliases + defaultFunctions + defaultVariables).onEach { it.parent = this }.toMutableList()
     }
 }
 

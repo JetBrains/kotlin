@@ -1,82 +1,82 @@
 KtFile: 'illegalCompanionBlock.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtObjectDeclaration(57,112): 'object O {'
+KtObjectDeclaration(65,120): 'object O {'
   null
 
-KtClassBody(66,112): '{'
+KtClassBody(74,120): '{'
   null
 
-KtCompanionBlock(72,110): 'companion {'
+KtCompanionBlock(80,118): 'companion {'
   null
 
-KtDeclarationModifierList(72,81): 'companion'
+KtDeclarationModifierList(80,89): 'companion'
   null
 
-KtClassBody(82,110): '{'
+KtClassBody(90,118): '{'
   null
 
-KtNamedFunction(92,104): 'fun foo() {}'
+KtNamedFunction(100,112): 'fun foo() {}'
   null
 
-KtParameterList(99,101): '()'
+KtParameterList(107,109): '()'
   null
 
-KtBlockExpression(102,104): '{}'
+KtBlockExpression(110,112): '{}'
   null
 
-KtClass(114,204): 'enum class E {'
+KtClass(122,212): 'enum class E {'
   null
 
-KtDeclarationModifierList(114,118): 'enum'
+KtDeclarationModifierList(122,126): 'enum'
   null
 
-KtClassBody(127,204): '{'
+KtClassBody(135,212): '{'
   null
 
-KtEnumEntry(133,202): 'Entry {'
+KtEnumEntry(141,210): 'Entry {'
   null
 
-KtClassBody(139,201): '{'
+KtClassBody(147,209): '{'
   null
 
-KtCompanionBlock(149,195): 'companion {'
+KtCompanionBlock(157,203): 'companion {'
   null
 
-KtDeclarationModifierList(149,158): 'companion'
+KtDeclarationModifierList(157,166): 'companion'
   null
 
-KtClassBody(159,195): '{'
+KtClassBody(167,203): '{'
   null
 
-KtNamedFunction(173,185): 'fun bar() {}'
+KtNamedFunction(181,193): 'fun bar() {}'
   null
 
-KtParameterList(180,182): '()'
+KtParameterList(188,190): '()'
   null
 
-KtBlockExpression(183,185): '{}'
+KtBlockExpression(191,193): '{}'
   null
 
-KtNamedFunction(206,245): 'fun usage() {'
+KtNamedFunction(214,253): 'fun usage() {'
   null
 
-KtParameterList(215,217): '()'
+KtParameterList(223,225): '()'
   null
 
-KtBlockExpression(218,245): '{'
+KtBlockExpression(226,253): '{'
   null
 
-KtDotQualifiedExpression(224,231): 'O.foo()'
+KtDotQualifiedExpression(232,239): 'O.foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -96,10 +96,10 @@ KtDotQualifiedExpression(224,231): 'O.foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(224,225): 'O'
+KtNameReferenceExpression(232,233): 'O'
   null
 
-KtCallExpression(226,231): 'foo()'
+KtCallExpression(234,239): 'foo()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -119,7 +119,7 @@ KtCallExpression(226,231): 'foo()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(226,229): 'foo'
+KtNameReferenceExpression(234,237): 'foo'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -139,10 +139,10 @@ KtNameReferenceExpression(226,229): 'foo'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(229,231): '()'
+KtValueArgumentList(237,239): '()'
   null
 
-KtDotQualifiedExpression(236,243): 'E.Entry'
+KtDotQualifiedExpression(244,251): 'E.Entry'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -162,10 +162,10 @@ KtDotQualifiedExpression(236,243): 'E.Entry'
         callableId = test/E.Entry
       typeArgumentsMapping = {}
 
-KtNameReferenceExpression(236,237): 'E'
+KtNameReferenceExpression(244,245): 'E'
   null
 
-KtNameReferenceExpression(238,243): 'Entry'
+KtNameReferenceExpression(246,251): 'Entry'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []

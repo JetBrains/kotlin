@@ -710,6 +710,7 @@ internal fun buildNativeLibrary(
             headerExclusionPolicy = headerExclusionPolicy,
             headerFilter = headerFilter,
             objCClassesIncludingCategories = objCClassesIncludingCategories,
+            apiNotesSwiftName = def.config.apiNotesSwiftName,
             allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
     )
 }

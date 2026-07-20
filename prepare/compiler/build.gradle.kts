@@ -257,7 +257,7 @@ val distSbomTask = configureSbom(
     )
 )
 
-val packCompiler by task<Jar> {
+val packCompiler = tasks.register<Jar>("packCompiler") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
@@ -299,7 +299,7 @@ val packCompiler by task<Jar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(packCompiler)
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
@@ -317,6 +317,7 @@ val proguard by task<CacheableProguardTask> {
             !org/mozilla/javascript/xml/impl/xmlbeans/**,
             !net/sf/cglib/**,
             !META-INF/maven**,
+            !META-INF/versions/**,
             **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
             custom-formatters.js,
             META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
@@ -367,8 +368,15 @@ val jar = runtimeJar {
         compilerVersion.map(::zipTree)
     }
 
+    // ProGuard does not preserve the META-INF/versions/9 multi-release layout, it rewrites classes to paths derived from their FQ name.
+    // To fix it, we exclude VarHandleWrapperImpl.class from injars (see above) and add it here to the correct location manually.
+    from(packCompiler.map { zipTree(it.archiveFile.get().asFile) }) {
+        include("META-INF/versions/9/com/intellij/concurrency/VarHandleWrapperImpl.class")
+    }
+
     manifest.attributes["Class-Path"] = compilerManifestClassPath
     manifest.attributes["Main-Class"] = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+    manifest.attributes["Multi-Release"] = "true"
 }
 
 sourcesJar {

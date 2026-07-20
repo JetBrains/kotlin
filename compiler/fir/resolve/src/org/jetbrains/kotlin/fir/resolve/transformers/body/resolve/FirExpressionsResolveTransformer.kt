@@ -704,11 +704,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // If yes, convert it to name-based destructuring.
         if (!componentCall.isShortFormWithParentheses || skipComponentCallValueClassCheck) return super.transformComponentCall(componentCall, data)
 
-        // The type of the initializer is not set because it wasn't resolved yet.
-        // But the callee reference is initialized with a symbol pointing to the tmp variable which is already resolved at this point,
-        // so we can grab the type from it.
-        val initializerType = componentCall.explicitReceiver.toResolvedCallableSymbol(session)?.resolvedReturnType
-            ?: return super.transformComponentCall(componentCall, data)
+        // We need to resolve the receiver first to get its type.
+        componentCall.transformExplicitReceiver(this, data)
+        val initializerType = componentCall.explicitReceiver.resolvedType
 
         // We just use anySuperTypeConstructor to handle flexible types, DNNs, type variables with value bounds, captured types,
         // and intersections types.
@@ -719,10 +717,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
 
         return transformPropertyAccessExpression(buildPropertyAccessExpression {
-            source = componentCall.source
+            source = componentCall.source?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
             explicitReceiver = componentCall.explicitReceiver
             calleeReference = buildSimpleNamedReference {
-                this.source = componentCall.calleeReference.source
+                this.source = componentCall.calleeReference.source?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
                 name = componentCall.initializerName
             }
             annotations.addAll(componentCall.annotations)

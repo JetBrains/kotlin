@@ -38,8 +38,7 @@ internal fun patchFilesAndAddTest(
     testFile: File,
     module: TestModule,
     services: TestServices,
-    filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter,
-    pathManager: PathManager
+    filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
 ): FqName {
     val newPackagePrefix = testFile.relativeTo(File("").canonicalFile).path.replace("\\\\|-|\\.|/".toRegex(), "_")
     val oldPackage = Ref<FqName>()

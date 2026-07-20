@@ -1,5 +1,5 @@
 // one.C
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 package one
 
 class C(val value: Int) {

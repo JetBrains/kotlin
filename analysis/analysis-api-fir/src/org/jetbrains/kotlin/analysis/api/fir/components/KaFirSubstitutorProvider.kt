@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstrain
 import org.jetbrains.kotlin.fir.resolve.substitution.*
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -104,6 +105,9 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
+    override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = withValidityAssertion {
+        createSubstitutor(KaFirSubstitutorBuilder(token).apply(build).mappings)
+    }
 
     override fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,

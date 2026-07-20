@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 // MODULE: lib
 // FILE: lib.kt

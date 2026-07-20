@@ -5,8 +5,12 @@
 
 package com.intellij.util.containers;
 
+import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 /**
  * Internal utility class enabling the usage of VarHandle-like API in pre/after-jdk9 environments,
@@ -21,7 +25,21 @@ public abstract class VarHandleWrapper {
     public static @NotNull VarHandleWrapperFactory getFactory() {
         VarHandleWrapperFactory factory = FACTORY;
         if (factory == null) {
-            VarHandleWrapperUnsafe.useUnsafeInConcurrentCollections();
+            // try VarHandles first; if not available, use Unsafe
+            try {
+                Objects.requireNonNull(ReflectionUtil.getMethod(Class.forName("com.intellij.concurrency.VarHandleWrapperImpl"), "useVarHandlesInConcurrentCollections"))
+                        .invoke(null);
+                if (FACTORY == null) {
+                    throw new ClassNotFoundException("VarHandleWrapperImpl is found but factory is still uninitialized (loader problem?)");
+                }
+            }
+            catch (InvocationTargetException | ClassNotFoundException e) {
+                VarHandleWrapperUnsafe.useUnsafeInConcurrentCollections();
+            }
+            catch (IllegalAccessException e) {
+                // signature was broken
+                throw new RuntimeException(e);
+            }
             factory = FACTORY;
         }
         return factory;

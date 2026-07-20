@@ -1,151 +1,151 @@
 KtFile: 'companionExtensionInvalidReceivers.kt'
   null
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   null
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   null
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   null
 
-KtClass(57,64): 'class C'
+KtClass(65,72): 'class C'
   null
 
-KtClass(65,75): 'class G<T>'
+KtClass(73,83): 'class G<T>'
   null
 
-KtTypeParameterList(72,75): '<T>'
+KtTypeParameterList(80,83): '<T>'
   null
 
-KtTypeParameter(73,74): 'T'
+KtTypeParameter(81,82): 'T'
   null
 
-KtObjectDeclaration(76,84): 'object O'
+KtObjectDeclaration(84,92): 'object O'
   null
 
-KtNamedFunction(86,124): 'companion fun C?.nullableReceiver() {}'
+KtNamedFunction(94,132): 'companion fun C?.nullableReceiver() {}'
   null
 
-KtDeclarationModifierList(86,95): 'companion'
+KtDeclarationModifierList(94,103): 'companion'
   null
 
-KtTypeReference(100,102): 'C?'
+KtTypeReference(108,110): 'C?'
   null
 
-KtNullableType(100,102): 'C?'
+KtNullableType(108,110): 'C?'
   null
 
-KtUserType(100,101): 'C'
+KtUserType(108,109): 'C'
   null
 
-KtNameReferenceExpression(100,101): 'C'
+KtNameReferenceExpression(108,109): 'C'
   null
 
-KtParameterList(119,121): '()'
+KtParameterList(127,129): '()'
   null
 
-KtBlockExpression(122,124): '{}'
+KtBlockExpression(130,132): '{}'
   null
 
-KtNamedFunction(125,160): 'companion fun O.objectReceiver() {}'
+KtNamedFunction(133,168): 'companion fun O.objectReceiver() {}'
   null
 
-KtDeclarationModifierList(125,134): 'companion'
+KtDeclarationModifierList(133,142): 'companion'
   null
 
-KtTypeReference(139,140): 'O'
+KtTypeReference(147,148): 'O'
   null
 
-KtUserType(139,140): 'O'
+KtUserType(147,148): 'O'
   null
 
-KtNameReferenceExpression(139,140): 'O'
+KtNameReferenceExpression(147,148): 'O'
   null
 
-KtParameterList(155,157): '()'
+KtParameterList(163,165): '()'
   null
 
-KtBlockExpression(158,160): '{}'
+KtBlockExpression(166,168): '{}'
   null
 
-KtNamedFunction(161,222): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
+KtNamedFunction(169,230): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
   null
 
-KtDeclarationModifierList(161,177): 'companion inline'
+KtDeclarationModifierList(169,185): 'companion inline'
   null
 
-KtTypeParameterList(182,193): '<reified T>'
+KtTypeParameterList(190,201): '<reified T>'
   null
 
-KtTypeParameter(183,192): 'reified T'
+KtTypeParameter(191,200): 'reified T'
   null
 
-KtDeclarationModifierList(183,190): 'reified'
+KtDeclarationModifierList(191,198): 'reified'
   null
 
-KtTypeReference(194,195): 'T'
+KtTypeReference(202,203): 'T'
   null
 
-KtUserType(194,195): 'T'
+KtUserType(202,203): 'T'
   null
 
-KtNameReferenceExpression(194,195): 'T'
+KtNameReferenceExpression(202,203): 'T'
   null
 
-KtParameterList(217,219): '()'
+KtParameterList(225,227): '()'
   null
 
-KtBlockExpression(220,222): '{}'
+KtBlockExpression(228,230): '{}'
   null
 
-KtNamedFunction(223,273): 'companion fun G<String>.typeArgumentsReceiver() {}'
+KtNamedFunction(231,281): 'companion fun G<String>.typeArgumentsReceiver() {}'
   null
 
-KtDeclarationModifierList(223,232): 'companion'
+KtDeclarationModifierList(231,240): 'companion'
   null
 
-KtTypeReference(237,246): 'G<String>'
+KtTypeReference(245,254): 'G<String>'
   null
 
-KtUserType(237,246): 'G<String>'
+KtUserType(245,254): 'G<String>'
   null
 
-KtNameReferenceExpression(237,238): 'G'
+KtNameReferenceExpression(245,246): 'G'
   null
 
-KtTypeArgumentList(238,246): '<String>'
+KtTypeArgumentList(246,254): '<String>'
   null
 
-KtTypeProjection(239,245): 'String'
+KtTypeProjection(247,253): 'String'
   null
 
-KtTypeReference(239,245): 'String'
+KtTypeReference(247,253): 'String'
   null
 
-KtUserType(239,245): 'String'
+KtUserType(247,253): 'String'
   null
 
-KtNameReferenceExpression(239,245): 'String'
+KtNameReferenceExpression(247,253): 'String'
   null
 
-KtParameterList(268,270): '()'
+KtParameterList(276,278): '()'
   null
 
-KtBlockExpression(271,273): '{}'
+KtBlockExpression(279,281): '{}'
   null
 
-KtNamedFunction(275,368): 'fun usage() {'
+KtNamedFunction(283,376): 'fun usage() {'
   null
 
-KtParameterList(284,286): '()'
+KtParameterList(292,294): '()'
   null
 
-KtBlockExpression(287,368): '{'
+KtBlockExpression(295,376): '{'
   null
 
-KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
+KtDotQualifiedExpression(301,321): 'C.nullableReceiver()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -165,10 +165,10 @@ KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(293,294): 'C'
+KtNameReferenceExpression(301,302): 'C'
   null
 
-KtCallExpression(295,313): 'nullableReceiver()'
+KtCallExpression(303,321): 'nullableReceiver()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -188,7 +188,7 @@ KtCallExpression(295,313): 'nullableReceiver()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(295,311): 'nullableReceiver'
+KtNameReferenceExpression(303,319): 'nullableReceiver'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -208,31 +208,31 @@ KtNameReferenceExpression(295,311): 'nullableReceiver'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(311,313): '()'
+KtValueArgumentList(319,321): '()'
   null
 
-KtDotQualifiedExpression(318,336): 'O.objectReceiver()'
+KtDotQualifiedExpression(326,344): 'O.objectReceiver()'
   KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
-KtNameReferenceExpression(318,319): 'O'
+KtNameReferenceExpression(326,327): 'O'
   null
 
-KtCallExpression(320,336): 'objectReceiver()'
+KtCallExpression(328,344): 'objectReceiver()'
   KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
-KtNameReferenceExpression(320,334): 'objectReceiver'
+KtNameReferenceExpression(328,342): 'objectReceiver'
   KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
-KtValueArgumentList(334,336): '()'
+KtValueArgumentList(342,344): '()'
   null
 
-KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
+KtDotQualifiedExpression(349,374): 'G.typeArgumentsReceiver()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -252,10 +252,10 @@ KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(341,342): 'G'
+KtNameReferenceExpression(349,350): 'G'
   null
 
-KtCallExpression(343,366): 'typeArgumentsReceiver()'
+KtCallExpression(351,374): 'typeArgumentsReceiver()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -275,7 +275,7 @@ KtCallExpression(343,366): 'typeArgumentsReceiver()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
+KtNameReferenceExpression(351,372): 'typeArgumentsReceiver'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -295,5 +295,5 @@ KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(364,366): '()'
+KtValueArgumentList(372,374): '()'
   null

@@ -41,7 +41,6 @@ org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
 org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
-org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
 org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider

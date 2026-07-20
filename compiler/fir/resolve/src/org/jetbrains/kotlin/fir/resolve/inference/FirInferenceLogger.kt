@@ -259,6 +259,22 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         }
     }
 
+    private inner class SnapshotImpl : Snapshot() {
+        private val savedTopLevelElementsCount = topLevelElements.size
+        private val savedCurrentBlockItemElementsCount = currentBlockItemElements.size
+
+        override fun rollback() {
+            while (topLevelElements.size > savedTopLevelElementsCount) {
+                topLevelElements.removeLast()
+            }
+            while (currentBlockItemElements.size > savedCurrentBlockItemElementsCount) {
+                currentBlockItemElements.removeLast()
+            }
+        }
+    }
+
+    override fun getSnapshot(): Snapshot = SnapshotImpl()
+
     companion object {
         @JvmStatic
         protected fun formatConstraint(constraint: InitialConstraint): String {

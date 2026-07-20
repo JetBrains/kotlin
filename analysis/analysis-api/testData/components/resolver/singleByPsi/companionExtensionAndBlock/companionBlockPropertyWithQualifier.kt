@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks
 // MODULE: lib
 // FILE: lib.kt
 package p

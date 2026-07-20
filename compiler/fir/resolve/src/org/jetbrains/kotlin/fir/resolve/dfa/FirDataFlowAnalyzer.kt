@@ -252,7 +252,6 @@ abstract class FirDataFlowAnalyzer(
                                 is ConeCapturedType -> constructor.supertypes?.all { it.isAcceptableForSmartcast() } == true
                                 is ConeIntegerLiteralType -> true
 
-                                is ConeLookupTagBasedType,
                                 is ConeStubType,
                                 is ConeTypeVariableType,
                                     -> false
@@ -577,7 +576,7 @@ abstract class FirDataFlowAnalyzer(
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
                             flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
 
-                            if (complementarySymbols != null) {
+                            if (!complementarySymbols.isNullOrEmpty()) {
                                 flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq complementarySymbols))
                             }
                         }

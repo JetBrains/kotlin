@@ -28,4 +28,9 @@ fun test() {
     val tmp_2: Int = reordered2()
     foo(a = tmp_2, b = 1)
   }
+  { // BLOCK
+    val tmp_3: Int = reordered1()
+    foo(a = 2, b = tmp_3)
+  }
 }
+

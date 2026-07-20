@@ -272,7 +272,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
     )
     var jdkRelease: String? = null
@@ -347,18 +347,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         set(value) {
             checkFrozen()
             field = value
-        }
-
-    @Argument(
-        value = "-Xklib",
-        valueDescription = "<path>",
-        description = "Paths to cross-platform libraries in the .klib format.",
-        delimiter = Argument.Delimiters.pathSeparator,
-    )
-    var klibLibraries: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
@@ -684,6 +672,17 @@ This can be used in the event of problems with the new implementation.""",
         }
 
     @Argument(
+        value = "-Xvalhalla-support",
+        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}",
+        description = "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+    )
+    var valhallaSupport: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xvalidate-bytecode",
         description = "Validate generated JVM bytecode before and after optimizations.",
     )
@@ -793,7 +792,7 @@ The default value is 'indy' if the JVM target version is 21 or greater, and 'inl
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
+        description = "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
     )
     var jvmTarget: String? = null
         set(value) {

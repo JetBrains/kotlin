@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirDynamicTypeRefImpl
 
 @FirBuilderDsl
 class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var source: KtSourceElement
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 

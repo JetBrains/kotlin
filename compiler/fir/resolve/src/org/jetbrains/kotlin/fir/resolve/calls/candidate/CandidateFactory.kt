@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
@@ -40,7 +40,7 @@ class CandidateFactory private constructor(
     @OptIn(FirExtensionApiInternals::class)
     private val callRefinementExtensions = context.session.extensionService.callRefinementExtensions.takeIf { it.isNotEmpty() }
 
-    private val companionBlocksAndExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+    private val companionBlocksEnabled: Boolean = LanguageFeature.CompanionBlocks.isEnabled()
 
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
@@ -156,7 +156,7 @@ class CandidateFactory private constructor(
             else result.addDiagnostic(InvokeReceiverNoCompanionObject)
         }
         if (callInfo.candidateForCommonInvokeReceiver?.diagnostics?.contains(InvokeReceiverNoCompanionObject) == true) {
-            if (symbol !is FirCallableSymbol<*> || !symbol.isStatic || !companionBlocksAndExtensionsEnabled) {
+            if (symbol !is FirCallableSymbol<*> || !symbol.isStatic || !companionBlocksEnabled) {
                 result.addDiagnostic(InvokeOnHiddenCompanionObject)
             }
         }
@@ -184,8 +184,8 @@ class CandidateFactory private constructor(
             result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        if (!companionBlocksAndExtensionsEnabled && result.symbol.requiresCompanionBlockOrExtensionLf()) {
-            result.addDiagnostic(UnsupportedCompanionBlockOrExtensionCall)
+        if (!companionBlocksEnabled && result.symbol.requiresCompanionBlockLf()) {
+            result.addDiagnostic(UnsupportedCompanionBlockMemberCall)
         }
 
         return result

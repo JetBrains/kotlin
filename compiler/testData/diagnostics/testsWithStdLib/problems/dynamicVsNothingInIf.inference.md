@@ -11,13 +11,6 @@ IllegalStateException#(String(Something is not defined.))
 
 1. `kotlin/String <: kotlin/String!` _from Argument String(Something is not defined.)_
 
-#### Candidate 2: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: Throwable!): {kotlin/IllegalStateException=} IllegalStateException`
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String <: kotlin/Throwable!` _from Argument String(Something is not defined.)_
-2. __NewConstraintError: `kotlin/String <: kotlin/Throwable!`__
-
-#### Candidate 1: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: String!): {kotlin/IllegalStateException=} IllegalStateException`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `{kotlin/IllegalStateException=} java/lang/IllegalStateException <: kotlin/Throwable` _from ExpectedType for some call_

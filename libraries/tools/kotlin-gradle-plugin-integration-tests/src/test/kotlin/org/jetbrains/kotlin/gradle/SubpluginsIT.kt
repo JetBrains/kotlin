@@ -195,7 +195,7 @@ class SubpluginsIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         project(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
@@ -262,7 +262,7 @@ class SubpluginsIT : KGPBaseTest() {
                 }
                 
                 buildscript {
-                    val kotlin_version: String by extra
+                    val kotlin_version = extra["kotlin_version"]
                     repositories {
                         mavenLocal()
                     }

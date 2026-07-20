@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -911,7 +912,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             buildAndFail(":lib:$compileKotlinTaskName") {
                 assertIncrementalCompilation()
                 assertTasksFailed(":lib:$compileKotlinTaskName")
-                assertOutputContains("Compilation error. See log for more details")
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) {
+                    assertOutputContains("Compilation error. See log for more details")
+                } else {
+                    assertOutputContains("Kotlin compiler error")
+                }
             }
 
             // Fix the compile error in the source code
@@ -948,10 +953,20 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             changeMethodSignatureInLib()
 
             // In the next build, compilation should be incremental and fail, then fall back to non-incremental compilation and succeed
-            build(":lib:$compileKotlinTaskName") {
-                assertIncrementalCompilationFellBackToNonIncremental(BuildAttribute.IC_FAILED_TO_COMPILE_INCREMENTALLY)
-                // Also check that the output is not deleted (regression test for KT-49780)
-                assertFileExists(lookupFile)
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) {
+                build(":lib:$compileKotlinTaskName") {
+                    assertIncrementalCompilationFellBackToNonIncremental(BuildAttribute.IC_FAILED_TO_COMPILE_INCREMENTALLY)
+                    // Also check that the output is not deleted (regression test for KT-49780)
+                    assertFileExists(lookupFile)
+                }
+            } else {
+                // FIXME: KT-87824 Report an exception raised during an incremental compilation as an internal compiler error
+                // IC sends diagnostic with error severity level which triggers build failure
+                buildAndFail(":lib:$compileKotlinTaskName") {
+                    assertIncrementalCompilationFellBackToNonIncremental(BuildAttribute.IC_FAILED_TO_COMPILE_INCREMENTALLY)
+                    // Also check that the output is not deleted (regression test for KT-49780)
+                    assertFileExists(lookupFile)
+                }
             }
         }
     }

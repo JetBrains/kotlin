@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequi
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -53,7 +53,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
     ): Boolean {
         if (LanguageFeature.ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs.isEnabled()) return true
         if (diagnostic.forObject && !diagnostic.dueToNullableMark) return true
-        return callableReference.toResolvedCallableSymbol()?.requiresCompanionBlockOrExtensionLf() == true
+        return callableReference.toResolvedCallableSymbol()?.requiresCompanionBlockLf() == true
     }
 
     /**

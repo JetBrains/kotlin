@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -361,9 +362,9 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session,
             )
 
-            UnsupportedCompanionBlockOrExtensionCall -> FirErrors.UNSUPPORTED_FEATURE.createOn(
+            UnsupportedCompanionBlockMemberCall -> FirErrors.UNSUPPORTED_FEATURE.createOn(
                 qualifiedAccessSource ?: source,
-                LanguageFeature.CompanionBlocksAndExtensions to session.languageVersionSettings,
+                LanguageFeature.CompanionBlocks to session.languageVersionSettings,
                 session,
                 positioningStrategy = SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED,
             )

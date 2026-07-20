@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -271,7 +272,6 @@ fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
         is ConeTypeParameterType -> {
             lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
         }
-        is ConeLookupTagBasedType -> error("impossible branch")
         is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
         is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
         is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true

@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: lib.kt

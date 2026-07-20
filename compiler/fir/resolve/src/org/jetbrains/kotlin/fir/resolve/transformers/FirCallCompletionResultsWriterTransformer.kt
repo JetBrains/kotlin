@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -1084,7 +1083,7 @@ class FirCallCompletionResultsWriterTransformer(
         val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
 
         return declaration.typeParameters.map {
-            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+            val typeParameter = ConeTypeParameterType(it.symbol.toLookupTag(), false)
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
             finallySubstituteOrSelf(substitution).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
@@ -1572,7 +1571,7 @@ internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(
     ResolutionResultOverridesOtherToPreserveCompatibility in diagnostics
 
 /**
- * If the [LanguageFeature.CompanionBlocksAndExtensions] is enabled, we allow `JustSimpleQuailifer::staticMember` instead of
+ * If the [LanguageFeature.CompanionBlocks] is enabled, we allow `JustSimpleQuailifer::staticMember` instead of
  * `QualifierWithTypeArguments<...>::staticMember`. HOWEVER, in case the static receiver has explicit type arguments,
  * we still have to pretend it is a type (because we need to report errors on incorrect types).
  */
@@ -1580,13 +1579,13 @@ context(_: SessionHolder)
 private fun CallableReferenceLhsAsType.shouldBeConsideredType(kind: CallableReferenceWithTypeLhsKind): Boolean {
     return !isProperStaticReceiver
             || kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
-            || LanguageFeature.CompanionBlocksAndExtensions.isDisabled()
+            || LanguageFeature.CompanionBlocks.isDisabled()
 }
 
 context(_: SessionHolder)
 private fun CallableReferenceLhsAsType.shouldReportInvalidStaticReceiver(kind: CallableReferenceWithTypeLhsKind): Boolean {
     if (kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER) return false
-    return hasExplicitTypeArguments && LanguageFeature.CompanionBlocksAndExtensions.isEnabled() || hasNullableMark
+    return hasExplicitTypeArguments && LanguageFeature.CompanionBlocks.isEnabled() || hasNullableMark
 }
 
 context(_: SessionHolder)

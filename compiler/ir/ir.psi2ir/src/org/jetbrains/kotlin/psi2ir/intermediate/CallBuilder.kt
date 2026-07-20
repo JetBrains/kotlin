@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.hasNoSideEffects
+import org.jetbrains.kotlin.ir.expressions.hasSideEffects
 import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -58,7 +58,7 @@ internal fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?
     descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
 internal fun CallBuilder.isValueArgumentReorderingRequired() =
-    original.isValueArgumentReorderingRequired() && irValueArgumentsByIndex.any { it != null && !it.hasNoSideEffects() }
+    original.isValueArgumentReorderingRequired() && irValueArgumentsByIndex.any { it != null && it.hasSideEffects() }
 
 internal val CallBuilder.hasExtensionReceiver: Boolean
     get() =

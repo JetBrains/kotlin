@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.foldMap
@@ -106,7 +105,7 @@ class ConeErrorType(
     override fun hashCode(): Int = System.identityHashCode(this)
 }
 
-abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
+sealed class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     abstract val lookupTag: ConeClassifierLookupTag
     abstract val isMarkedNullable: Boolean
 
@@ -130,8 +129,17 @@ abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     }
 }
 
-abstract class ConeClassLikeType : ConeLookupTagBasedType() {
+sealed class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
+}
+
+class ConeTypeParameterType(
+    override val lookupTag: ConeTypeParameterLookupTag,
+    override val isMarkedNullable: Boolean,
+    override val attributes: ConeAttributes = ConeAttributes.Empty
+) : ConeLookupTagBasedType() {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
 }
 
 /**

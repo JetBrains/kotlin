@@ -473,6 +473,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_ANNOTATION_TARGET_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CHECK_PHASE_CONDITIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_COLLECTION_LITERALS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_COMPANION_BLOCKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_COMPANION_BLOCKS_AND_EXTENSIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CONTEXT_PARAMETERS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -965,6 +966,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_USE_K2_KAPT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_OLD_CLASS_FILES_READING Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_TYPE_TABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
+	public static final field X_VALHALLA_SUPPORT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_VALIDATE_BYTECODE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_VALUE_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_WHEN_EXPRESSIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
@@ -1226,6 +1228,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkReleas
 	public static final field JDK_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_26 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_27 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
@@ -1308,6 +1311,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget
 	public static final field JVM_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
+	public static final field JVM_27 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
@@ -1436,6 +1440,16 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/StringCon
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode : java/lang/Enum {
+	public static final field ALL_VALUES Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
+	public static final field NONE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
+	public static final field PRIMITIVES Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
+	public static final field PRIMITIVES_AND_FULL_VALUE_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ValhallaSupportMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode : java/lang/Enum {

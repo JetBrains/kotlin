@@ -2,7 +2,8 @@
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
 //           (^ changes positioning of `WRONG_NUMBER_OF_TYPE_ARGUMENTS`)
 // LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 
 class G<A> {
     class Other

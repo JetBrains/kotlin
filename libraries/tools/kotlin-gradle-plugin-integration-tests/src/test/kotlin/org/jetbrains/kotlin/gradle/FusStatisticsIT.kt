@@ -492,6 +492,8 @@ class FusStatisticsIT : KGPBaseTest() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_8_2,
         additionalVersions = [TestVersions.Gradle.G_8_2],
+        // Kover triggers deprecation in Gradle 9.6.0 https://github.com/Kotlin/kotlinx-kover/issues/813
+        maxVersion = TestVersions.Gradle.G_9_5,
     )
     fun testKotlinxPlugins(gradleVersion: GradleVersion) {
         project(

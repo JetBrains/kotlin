@@ -1,55 +1,55 @@
 KtFile: 'companionBlockNoCompanionQualifier.kt'
   NO_CANDIDATES
 
-KtPackageDirective(43,55): 'package test'
+KtPackageDirective(51,63): 'package test'
   NO_CANDIDATES
 
-KtNameReferenceExpression(51,55): 'test'
+KtNameReferenceExpression(59,63): 'test'
   NO_CANDIDATES
 
-KtImportList(55,55): ''
+KtImportList(63,63): ''
   NO_CANDIDATES
 
-KtClass(57,111): 'class C {'
+KtClass(65,119): 'class C {'
   NO_CANDIDATES
 
-KtClassBody(65,111): '{'
+KtClassBody(73,119): '{'
   NO_CANDIDATES
 
-KtCompanionBlock(71,109): 'companion {'
+KtCompanionBlock(79,117): 'companion {'
   NO_CANDIDATES
 
-KtDeclarationModifierList(71,80): 'companion'
+KtDeclarationModifierList(79,88): 'companion'
   NO_CANDIDATES
 
-KtClassBody(81,109): '{'
+KtClassBody(89,117): '{'
   NO_CANDIDATES
 
-KtNamedFunction(91,103): 'fun foo() {}'
+KtNamedFunction(99,111): 'fun foo() {}'
   NO_CANDIDATES
 
-KtParameterList(98,100): '()'
+KtParameterList(106,108): '()'
   NO_CANDIDATES
 
-KtBlockExpression(101,103): '{}'
+KtBlockExpression(109,111): '{}'
   NO_CANDIDATES
 
-KtNamedFunction(113,266): 'fun usage() {'
+KtNamedFunction(121,274): 'fun usage() {'
   NO_CANDIDATES
 
-KtParameterList(122,124): '()'
+KtParameterList(130,132): '()'
   NO_CANDIDATES
 
-KtBlockExpression(125,266): '{'
+KtBlockExpression(133,274): '{'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(247,264): 'C.Companion.foo()'
+KtDotQualifiedExpression(255,272): 'C.Companion.foo()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(247,258): 'C.Companion'
+KtDotQualifiedExpression(255,266): 'C.Companion'
   NO_CANDIDATES
 
-KtNameReferenceExpression(247,248): 'C'
+KtNameReferenceExpression(255,256): 'C'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -68,14 +68,14 @@ KtNameReferenceExpression(247,248): 'C'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(249,258): 'Companion'
+KtNameReferenceExpression(257,266): 'Companion'
   NO_CANDIDATES
 
-KtCallExpression(259,264): 'foo()'
+KtCallExpression(267,272): 'foo()'
   NO_CANDIDATES
 
-KtNameReferenceExpression(259,262): 'foo'
+KtNameReferenceExpression(267,270): 'foo'
   NO_CANDIDATES
 
-KtValueArgumentList(262,264): '()'
+KtValueArgumentList(270,272): '()'
   NO_CANDIDATES

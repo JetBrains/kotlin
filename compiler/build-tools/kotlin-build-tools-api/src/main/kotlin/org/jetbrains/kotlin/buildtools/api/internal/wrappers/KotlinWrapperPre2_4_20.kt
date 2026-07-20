@@ -92,7 +92,7 @@ internal class KotlinWrapperPre2_4_20(
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
             when (key) {
                 JvmCompilerArguments.CLASSPATH,
-                JvmCompilerArguments.X_KLIB,
+                @OptIn(RemovedCompilerArgument::class) JvmCompilerArguments.X_KLIB,
                 JvmCompilerArguments.X_MODULE_PATH,
                     -> {
                     @Suppress("UNCHECKED_CAST")

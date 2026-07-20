@@ -908,6 +908,7 @@ public class org/jetbrains/kotlin/psi/KtBinaryExpression : org/jetbrains/kotlin/
 	public fun getOperationReference ()Lorg/jetbrains/kotlin/psi/KtOperationReferenceExpression;
 	public synthetic fun getOperationReference ()Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
 	public fun getOperationToken ()Lcom/intellij/psi/tree/IElementType;
+	public fun getOperationTokenOrNull ()Lcom/intellij/psi/tree/IElementType;
 	public fun getRight ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 

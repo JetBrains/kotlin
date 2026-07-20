@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -112,7 +113,6 @@ internal object ConeTypeCompatibilityChecker {
             is ConeStubType,
             is ConeTypeParameterType,
             is ConeIntegerLiteralType,
-            is ConeLookupTagBasedType
                 -> false
         }
     }
@@ -251,7 +251,6 @@ internal object ConeTypeCompatibilityChecker {
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeParameterType -> emptySet()
-                else -> error("missing branch for ${javaClass.name}")
             }
             is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()

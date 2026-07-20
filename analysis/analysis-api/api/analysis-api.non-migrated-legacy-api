@@ -1,0 +1,35 @@
+KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
+KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
+KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker(KtFile, KtSimpleNameExpression, KtExpression?)
+KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
+KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.collectDiagnostics(KaDiagnosticCheckerFilter)
+KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
+KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.directDiagnostics(KaDiagnosticCheckerFilter)
+KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
+KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
+KaExpressionTypeProvider: org.jetbrains.kotlin.analysis.api.components.returnType
+KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
+KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.javaGetterName
+KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.javaSetterName
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenOptions
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeContext
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitReceiverValue
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitValue
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeKind
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeWithKind
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.compositeScope((KaScopeKind) -> Boolean)
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.importingScopeContext
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.scopeContext(KtElement)
+KaTypeInformationProvider: org.jetbrains.kotlin.analysis.api.components.isClassType(ClassId)
+KaTypeProvider: org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)

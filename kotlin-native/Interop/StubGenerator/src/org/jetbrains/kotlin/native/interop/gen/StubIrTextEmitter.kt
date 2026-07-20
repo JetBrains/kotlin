@@ -493,6 +493,14 @@ class StubIrTextEmitter(
             }
         }
         AnnotationStub.ObjC.Unavailable -> "@ObjCUnavailable"
+        is AnnotationStub.ObjC.ObjCName -> {
+            val args = listOfNotNull(
+                    annotationStub.name.takeIf { it.isNotEmpty() }?.let { "name = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.swiftName.takeIf { it.isNotEmpty() }?.let { "swiftName = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.exact.takeIf { it }?.let { "exact = true" }
+            )
+            "@kotlin.native.ObjCName(${args.joinToString(", ")})"
+        }
         AnnotationStub.CCall.CString ->
             "@CCall.CString"
         AnnotationStub.CCall.WCString ->

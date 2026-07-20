@@ -1,5 +1,5 @@
 // one.C
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // WITH_STDLIB
 // LIBRARY_PLATFORMS: JVM
 package one

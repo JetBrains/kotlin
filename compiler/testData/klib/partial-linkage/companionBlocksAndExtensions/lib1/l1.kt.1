@@ -1,0 +1,54 @@
+class A {
+    companion {
+        val valChange = "propertyChange.v2"
+        //val removedVal = 42
+        var varChange = valChange
+        //var removedVar = 42
+
+        fun bodyChange() = "bodyChange.v2"
+        //fun removedFun() {}
+
+        fun removedClass(): Any = "removedClass"
+        fun removedClassValue() = 42
+        fun removedClassParameter(p: Any) {}
+        fun <T : Any> removedClassTypeParameter() {}
+    }
+
+    companion object {
+        fun blockToObject() = "blockToObject"
+    }
+
+    companion {
+        fun objectToBlock() = "objectToBlock"
+    }
+}
+
+class RemovedBlock {
+    //companion {
+        //fun sameFun() = "block"
+    //}
+
+    companion object {
+        fun sameFun() = "object"
+    }
+}
+
+class NewBlock {
+    companion {
+        fun sameFun() = "block"
+    }
+
+    companion object {
+        fun sameFun() = "object"
+    }
+}
+
+//class RemovedClass(val value: Int)
+
+class B {
+    //companion object {
+        //val removedCompanionVal = 42
+        //var removedCompanionVar = 42
+        //fun removedCompanionFun() = "removedCompanionFun"
+    //}
+}

@@ -240,7 +240,14 @@ class MainKtsIT {
             runWithK2JVMCompiler(
                 scr.absolutePath,
                 listOf("hello"),
-                classpath = listOf(mainKtsJar)
+                classpath = listOf(mainKtsJar),
+            )
+
+            runWithK2JVMCompiler(
+                scr.absolutePath,
+                listOf("hello"),
+                classpath = listOf(mainKtsJar),
+                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
 
             runWithKotlincAndMainKts(

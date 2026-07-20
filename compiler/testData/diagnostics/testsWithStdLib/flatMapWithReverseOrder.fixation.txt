@@ -579,7 +579,6 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
      <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
-     = kotlin/Int (inferred during fixation)
     FIXED TO: kotlin/Int
 TypeVariable(C) --- Readiness(
     	 true ALLOWED

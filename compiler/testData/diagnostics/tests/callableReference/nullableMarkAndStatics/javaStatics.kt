@@ -1,6 +1,7 @@
 // LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE_FEATURE_TOGGLED: CompanionBlocksAndExtensions
+// LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
+// LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 // FILE: test/C.java

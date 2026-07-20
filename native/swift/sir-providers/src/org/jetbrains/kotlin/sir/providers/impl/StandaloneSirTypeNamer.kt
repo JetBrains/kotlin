@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.SirErrorType
 import org.jetbrains.kotlin.sir.SirExistentialType
@@ -136,20 +138,25 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     @OptIn(KaExperimentalApi::class)
-    private fun KaClassLikeSymbol.parametrisedTypeName(): String? {
+    private fun KaClassLikeSymbol.parametrisedTypeName(typeArguments: List<KaType?>? = null): String? {
+        require(typeArguments == null || typeParameters.size == typeArguments.size) {
+            "type argument count must match type parameter count"
+        }
         val fqname = classId?.asFqNameString()
             ?: return null
         if (typeParameters.isEmpty())
             return fqname
 
-        val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
-            .map {
-                when (it?.symbol?.classId?.asFqNameString()) {
-                    fqname -> "*"
-                    else -> it?.symbol?.parametrisedTypeName()
-                }
-            }
-            .map { it ?: "kotlin.Any?" }
+        val typeArguments = typeArguments ?: typeParameters.map { null }
+        val typesRendered = typeParameters.zip(typeArguments) { param, arg ->
+            arg ?: param.upperBounds.firstOrNull()
+        }.map { type ->
+            when {
+                type !is KaClassType -> null
+                type.symbol.classId?.asFqNameString() == fqname -> "*"
+                else -> type.symbol.parametrisedTypeName(type.typeArguments.map { it.type })
+            } ?: "kotlin.Any?"
+        }
 
         return "$fqname<${typesRendered.joinToString()}>"
     }

@@ -1,0 +1,9 @@
+Resulting Resolution Scope:
+Module LIBRARY:
+    + Foo.class
+    - LICENSE
+    - main.kt
+Module MAIN:
+    + Foo.class
+    - LICENSE
+    + main.kt

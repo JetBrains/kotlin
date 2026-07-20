@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? {
     return when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
-        is ConeClassifierLookupTagWithFixedSymbol -> this.symbol
+        is ConeTypeParameterLookupTagImpl -> this.typeParameterSymbol
         else -> error("missing branch for ${javaClass.name}")
     }
 }
@@ -62,6 +63,18 @@ context(sessionHolder: SessionHolder)
 fun ConeClassifierLookupTag.toRegularClassSymbol(): FirRegularClassSymbol? {
     return toRegularClassSymbol(useSiteSession = sessionHolder.session)
 }
+
+val ConeTypeParameterLookupTag.typeParameterSymbol: FirTypeParameterSymbol
+    get() = when (this) {
+        is ConeTypeParameterLookupTagImpl -> typeParameterSymbol
+        else -> error("impossible branch")
+    }
+
+val ConeTypeParameterLookupTag.symbol: FirTypeParameterSymbol
+    get() = typeParameterSymbol
+
+fun ConeClassifierLookupTag.toTypeParameterSymbol(): FirTypeParameterSymbol? =
+    (this as? ConeTypeParameterLookupTag)?.typeParameterSymbol
 
 /**
  * @see toSymbol

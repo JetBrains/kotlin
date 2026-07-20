@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // RUN_PIPELINE_TILL: BACKEND
 
 class HiddenSetInObject {

@@ -97,7 +97,7 @@ fun FirBasedSymbol<*>.isContextParameter(): Boolean {
     return this is FirValueParameterSymbol && this.fir.valueParameterKind == FirValueParameterKind.ContextParameter
 }
 
-fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
+fun FirBasedSymbol<*>.requiresCompanionBlockLf(): Boolean {
     if (this !is FirCallableSymbol) return false
     if (isJavaOrEnhancement) return false
     if (!isStatic) return false

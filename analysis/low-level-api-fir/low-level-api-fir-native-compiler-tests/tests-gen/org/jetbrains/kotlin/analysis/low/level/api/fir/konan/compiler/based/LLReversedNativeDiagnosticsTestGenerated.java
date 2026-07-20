@@ -97,6 +97,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("friendModuleAccessToInternalVolatileVal.kt")
+  public void testFriendModuleAccessToInternalVolatileVal() {
+    run("friendModuleAccessToInternalVolatileVal.kt");
+  }
+
+  @Test
   @TestMetadata("identifiers.kt")
   public void testIdentifiers() {
     run("identifiers.kt");

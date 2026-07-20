@@ -18,13 +18,11 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
         moduleDescriptor: ModuleDescriptor,
-        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
     ): List<KlibMetadataDeserializedPackageFragment> {
         val metadata = library.metadata
-        val header = customMetadataProtoLoader?.loadModuleHeader(library)
-            ?: parseModuleHeader(metadata.moduleHeaderData)
+        val header = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFqNames = buildSet {
             addAll(header.packageFragmentNameList)
@@ -44,7 +42,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,
@@ -55,7 +52,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,

@@ -100,7 +100,7 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
                 try {
                     environment.configuration.messageCollector = messageCollector
 
-                    compileImpl(script, context, initialConfiguration, messageCollector)
+                    compileImpl(script, context, context.baseScriptCompilationConfiguration, messageCollector)
                 } finally {
                     if (previousMessageCollector != null)
                         environment.configuration.messageCollector = previousMessageCollector

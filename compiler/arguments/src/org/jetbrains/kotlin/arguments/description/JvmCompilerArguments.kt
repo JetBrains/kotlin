@@ -153,6 +153,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
                         "The target version of the generated JVM bytecode (1.8 and 9-24), with 1.8 as the default.",
                 KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_3_20 to
                         "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.",
+                KotlinReleaseVersion.v2_4_0..KotlinReleaseVersion.v2_4_20 to
+                        "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
             )
         )
 
@@ -224,6 +226,22 @@ to force diagnostics to be reported.""".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xvalhalla-support"
+        compilerName = "valhallaSupport"
+        description = ("Select which declarations are compiled to behave as experimental Project Valhalla value classes. " +
+                "Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a " +
+                "Valhalla-compatible JDK.").asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}".asReleaseDependent()
+        argumentType = ValhallaSupportModeType()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -658,6 +676,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
                         """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
 The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+                KotlinReleaseVersion.v2_4_0..KotlinReleaseVersion.v2_4_20 to
+                        """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
             )
         )
         valueType = StringType.defaultNull
@@ -709,21 +731,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        name = "Xklib"
-        compilerName = "klibLibraries"
-        description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
-        argumentType = SearchPathType.defaultNull
-        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_0,
         )
     }
 

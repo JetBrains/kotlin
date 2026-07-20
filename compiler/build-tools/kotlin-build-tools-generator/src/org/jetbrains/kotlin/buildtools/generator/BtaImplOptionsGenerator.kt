@@ -547,7 +547,12 @@ internal class BtaImplOptionsGenerator(
     ): CodeBlock = CodeBlock.builder().apply {
         add("this[%M] = ", member)
         if (wasRemoved) {
-            add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
+            add(
+                "arguments.%M<%T>(%S)",
+                MemberName(targetPackage, "getUsingReflection", isExtension = true),
+                argument.getTypeArgumentForReflection(),
+                effectiveCompilerName,
+            )
         } else {
             add("arguments.%N", effectiveCompilerName)
         }
@@ -612,6 +617,22 @@ internal class BtaImplOptionsGenerator(
             else -> add("")
         }
     }.build()
+
+    /**
+     * The type of the property, used as the explicit type argument for `getUsingReflection` when an argument was removed from the compiler
+     * and is accessed reflectively. It's needed for chained transforms, otherwise the type argument cannot be inferred.
+     * See `Main.generateProperty` in the CLI arguments generator for similar code.
+     */
+    private fun BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>.getTypeArgumentForReflection(): TypeName {
+        val stringType = ClassName("kotlin", "String")
+        return when (valueType.origin) {
+            is StringArrayType, is StringListType, is PathListType, is EnumListType<*> ->
+                ClassName("kotlin", "Array").parameterizedBy(stringType)
+            is BooleanType -> ClassName("kotlin", "Boolean").copy(nullable = valueType.isNullable)
+            is SearchPathType -> stringType.copy(nullable = true)
+            else -> stringType.copy(nullable = valueType.isNullable)
+        }
+    }
 
     private fun TypeSpec.Builder.generateToCompilationInputsFun(
         level: KotlinCompilerArgumentsLevel,

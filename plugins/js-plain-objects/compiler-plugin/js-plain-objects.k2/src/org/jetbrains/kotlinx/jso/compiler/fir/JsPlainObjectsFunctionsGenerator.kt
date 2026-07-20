@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -262,7 +261,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                         symbol = FirTypeParameterSymbol()
                         containingDeclarationSymbol = functionalSymbol
                     }
-                    typeParameterSubstitutionMap[it] = ConeTypeParameterTypeImpl(
+                    typeParameterSubstitutionMap[it] = ConeTypeParameterType(
                         typeParameter.symbol.toLookupTag(), isMarkedNullable = false
                     )
                     typeParameter

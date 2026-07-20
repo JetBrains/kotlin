@@ -18,9 +18,9 @@ kotlin {
         else -> throw IllegalStateException("Unsupported host")
     }
 
-    val commonMain by sourceSets.getting
-    val nativePlatformMain by sourceSets.getting
-    val nativeMain by sourceSets.creating
+    val commonMain = sourceSets.getByName("commonMain")
+    val nativePlatformMain = sourceSets.getByName("nativePlatformMain")
+    val nativeMain = sourceSets.create("nativeMain")
 
     nativeMain.dependsOn(commonMain)
     nativePlatformMain.dependsOn(nativeMain)

@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: removedLib
+    modifications:
+        U : file1.kt -> file1.kt
+    added cache: file1.kt
+
+// The dependency on removedLib is dropped, but file1.kt's cache from step 0 still holds it.
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
+    modified cache: file1.kt

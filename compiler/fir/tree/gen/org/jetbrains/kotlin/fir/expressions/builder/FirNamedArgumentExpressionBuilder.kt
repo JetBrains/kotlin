@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirNamedArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var expression: FirExpression
     var isSpread: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var name: Name

@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
@@ -244,7 +246,13 @@ class JavaOverrideChecker internal constructor(
                     it.type.extractTypeParametersTo(result)
                 }
             }
-            else -> {
+            // Non-denotable, so we shouldn't see it in declarations, but just in case we ever support it.
+            is ConeIntersectionType -> this.intersectedTypes.forEach { it.extractTypeParametersTo(result) }
+            is ConeCapturedType,
+            is ConeStubType,
+            is ConeIntegerLiteralType,
+            is ConeTypeVariableType
+                -> {
             }
         }
     }

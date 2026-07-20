@@ -34,7 +34,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
     open lateinit var name: Name
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     open lateinit var symbol: FirValueParameterSymbol
     open var defaultValue: FirExpression? = null
     open lateinit var containingDeclarationSymbol: FirBasedSymbol<*>

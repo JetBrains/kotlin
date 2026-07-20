@@ -1,6 +1,6 @@
 // ISSUE: KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS, +CompanionBlocksAndExtensions
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS, +CompanionBlocks +CompanionExtensions
 
 class WithCompanion {
     fun M() { }

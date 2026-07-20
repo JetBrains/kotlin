@@ -8,16 +8,15 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val myCustomSourceSet by creating
+        val myCustomSourceSet = create("myCustomSourceSet")
 
         // check that usual diagnostics are not deduplicated even if they are exactly the same
-        val commonMain by getting {
-            dependsOn(myCustomSourceSet)
-        }
+        val commonMain = getByName("commonMain")
+        commonMain.dependsOn(myCustomSourceSet)
 
         afterEvaluate {
             // Check that changes made in trivial afterEvaluate are picked up
-            val unusedCreatedInAfterEvaluate by creating { }
+            val unusedCreatedInAfterEvaluate = create("unusedCreatedInAfterEvaluate")
         }
     }
 }

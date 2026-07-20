@@ -73,7 +73,7 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     public void testCompanionExtensionMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals(0, runCompiler("hello.compile", "-include-runtime", "-XXLanguage:+CompanionBlocksAndExtensions", "hello.kt", "-d", jar), "compilation failed");
+        assertEquals(0, runCompiler("hello.compile", "-include-runtime", "-XXLanguage:+CompanionBlocks", "-XXLanguage:+CompanionExtensions", "hello.kt", "-d", jar), "compilation failed");
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 

@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.compile.JavaCompile
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -57,6 +59,19 @@ sourceSets {
     }
 }
 
+val jdk9: SourceSet by sourceSets.creating {
+    java.srcDir("srcJdk9")
+}
+
+configurations["jdk9CompileClasspath"].extendsFrom(configurations.compileClasspath)
+
+tasks.named<JavaCompile>("compileJdk9Java") {
+    // Use a JDK that can emit release 9 (JDK 9 is not used on CI).
+    configureTaskToolchain(JdkMajorVersion.JDK_17_0)
+    sourceCompatibility = JavaVersion.VERSION_1_9.toString()
+    targetCompatibility = JavaVersion.VERSION_1_9.toString()
+}
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xannotation-target-all")
@@ -72,6 +87,14 @@ optInToExperimentalCompilerApi()
 tasks.jar.configure {
     //excludes unused bunch files
     exclude("META-INF/extensions/*.xml.**")
+
+    into("META-INF/versions/9") {
+        from(jdk9.output)
+        exclude("META-INF/**")
+    }
+    manifest {
+        attributes("Multi-Release" to true)
+    }
 }
 
 generatedConfigurationKeys("CLIConfigurationKeys")

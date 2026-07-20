@@ -21,9 +21,9 @@ package kotlin.reflect.full
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.KClassImpl
+import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
 import kotlin.reflect.jvm.internal.useK1Implementation
@@ -60,7 +60,7 @@ internal fun KClassifier.createTypeImpl(
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
     mutableCollectionClass: KClass<*>? = null,
-): KType {
+): AbstractKType {
     if (useK1Implementation) {
         return createK1KType(arguments, nullable, mutableCollectionClass)
     }

@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createCla
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createSupertypeList
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.getApproximatedTypeImpl
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.withNullabilityAndAttributes
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
@@ -233,7 +231,6 @@ private object ConeIntegerLiteralTypeExtensions {
         return when (this) {
             is ConeErrorType -> this
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
-            else -> error("sealed")
         }
     }
 }

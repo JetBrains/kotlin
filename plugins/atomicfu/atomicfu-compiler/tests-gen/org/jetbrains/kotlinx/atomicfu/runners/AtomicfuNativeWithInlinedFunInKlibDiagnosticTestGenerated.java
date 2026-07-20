@@ -35,6 +35,12 @@ public class AtomicfuNativeWithInlinedFunInKlibDiagnosticTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("friendModuleAccessToInternalAtomicfuVal.kt")
+  public void testFriendModuleAccessToInternalAtomicfuVal() {
+    run("friendModuleAccessToInternalAtomicfuVal.kt");
+  }
+
+  @Test
   @TestMetadata("MultiFileCAS.kt")
   public void testMultiFileCAS() {
     run("MultiFileCAS.kt");

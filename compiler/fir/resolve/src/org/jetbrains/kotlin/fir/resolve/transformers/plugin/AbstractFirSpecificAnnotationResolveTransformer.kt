@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -27,17 +28,18 @@ import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PrivateForInline
 
@@ -211,18 +213,21 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 val receiverCalleeReference = receiver.calleeReference as? FirSimpleNamedReference ?: return
                 val receiverName = receiverCalleeReference.name.takeIf { !it.isSpecial } ?: return
 
-                val symbol = scopes.firstNotNullOfOrNull {
-                    it.getSingleClassifier(receiverName) as? FirClassSymbol<*>
-                } ?: return
-
-                // If fully qualified, check that given package name matches the resolved one.
+                // Segments of the receiver's qualifier: empty for a simple `X.Y`,
+                // package parts for a fully qualified `a.b.X.Y`.
                 val segments = generateSequence(receiver.explicitReceiver) { (it as? FirQualifiedAccessExpression)?.explicitReceiver }
                     .mapNotNull { (it.toReference(session) as? FirSimpleNamedReference)?.name?.identifier }
                     .toList()
 
-                if (segments.isNotEmpty() && FqName.fromSegments(segments.asReversed()) != symbol.classId.packageFqName) {
-                    return
-                }
+                val symbol = if (segments.isEmpty()) {
+                    // Simple case `X.Y`: the class must be reachable through an import scope.
+                    scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiverName) as? FirRegularClassSymbol }
+                } else {
+                    // Fully qualified case `a.b.X.Y`: resolve the class directly by its class id, because it may
+                    // not be present in any import scope (e.g. `java.lang.annotation.ElementType.TYPE`).
+                    val classId = ClassId(FqName.fromSegments(segments.asReversed()), receiverName)
+                    session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+                } ?: return
 
                 val resolvedReceiver = buildResolvedQualifier {
                     source = receiver.source
@@ -234,8 +239,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                         explicitParent = buildResolvedQualifier {
                             packageFqName = symbol.classId.packageFqName
                             resolvedToCompanionObject = false
+                            coneTypeOrNull = session.builtinTypes.unitType.coneType
                         }
                     }
+
                     resolvedToCompanionObject = false
                 }
 

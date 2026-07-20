@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarationNameInvalidChars
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.generatedContextParameterName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -60,7 +61,7 @@ private fun ConeKotlinType.erasedUpperBoundName(tryApproximation: Boolean): Name
             }
             bounds.first().coneType.erasedUpperBoundName(tryApproximation)
         }
-        is ConeLookupTagBasedType -> fullyExpandedType().lookupTagIfAny?.name
+        is ConeClassLikeType -> fullyExpandedType().lookupTagIfAny?.name
         is ConeDefinitelyNotNullType -> original.erasedUpperBoundName(tryApproximation)
         is ConeFlexibleType -> upperBound.erasedUpperBoundName(tryApproximation)
         else if tryApproximation -> {

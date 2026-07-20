@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
-// ISSUE: KT-85405
+// ISSUE: KT-85405, KT-85307
 
 abstract class Shape
 
@@ -28,7 +28,7 @@ fun <T, B> T.removeTraitIfPresent(/*...*/): T
 }
 
 fun test1(shape: OperationShape) {
-    shape.<!UPPER_BOUND_VIOLATED!>removeTraitIfPresent<!>()
+    shape.removeTraitIfPresent()
 }
 
 fun test2(shape: OperationShape) {
@@ -43,7 +43,7 @@ fun test3(shape: OperationShape) {
 
 fun test4(shape: OperationShape) {
     // A type that "feels right"
-    shape.removeTraitIfPresent<OperationShape, <!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, OperationShape><!>>()
+    <!TYPE_MISMATCH!>shape.removeTraitIfPresent<OperationShape, <!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, OperationShape><!>>()<!>
 }
 
 @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
@@ -54,7 +54,7 @@ fun <B : AbstractShapeBuilder<B, S>, S : Shape> shapeToBuilder(shape: S): B =
 abstract class SimpleShape : Shape()
 
 fun testA(target: SimpleShape) {
-    val builder: AbstractShapeBuilder<*, *> = <!UPPER_BOUND_VIOLATED!>shapeToBuilder<!>(target)
+    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder(target)
 }
 
 fun testB(target: SimpleShape) {
@@ -64,7 +64,7 @@ fun testB(target: SimpleShape) {
 
 fun testC(target: SimpleShape) {
     // A type that "feels right"
-    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)
+    val builder: AbstractShapeBuilder<*, *> = <!TYPE_MISMATCH!>shapeToBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, primaryConstructor,

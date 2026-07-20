@@ -29,6 +29,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.coroutines.cancellation.CancellationException
 
 @ExtendWith(AndroidRuntimeReportExtension::class)
 @Execution(ExecutionMode.SAME_THREAD)
@@ -46,7 +47,7 @@ class AndroidRunner {
             } finally {
                 compilationResults = null
                 try {
-                    runtimeResults?.close()
+                    runtimeResults?.cancelAndClose()
                 } finally {
                     runtimeResults = null
                     pathManager?.tmpFolder?.let { FileUtil.delete(File(it)) }
@@ -63,6 +64,7 @@ class AndroidRunner {
         println("Created temporary folder for running android tests: ${tmpFolder.absolutePath}")
         pathManager = PathManager(tmpFolder.absolutePath)
         val plan = CodegenTestsOnAndroidGenerator.discover(pathManager!!)
+        val phaseGate = PhaseGate()
         val compilationResults = AndroidCompilationResultsCache(plan)
         val runtimeResults = AndroidRuntimeResultsCache(pathManager!!, plan)
         AndroidRunner.compilationResults = compilationResults
@@ -70,7 +72,7 @@ class AndroidRunner {
         return listOf(
             DynamicContainer.dynamicContainer(
                 "Discovery",
-                listOf(DynamicTest.dynamicTest("Discovered ${plan.tests.size} Android box tests") {
+                listOf(phaseGate.dynamicTest("Discovered ${plan.tests.size} Android box tests", AndroidPhase.DISCOVERY) {
                     if (plan.tests.isEmpty()) {
                         fail("There are no Android box tests to run")
                     }
@@ -80,7 +82,15 @@ class AndroidRunner {
                 "Compilation",
                 plan.flavorContainers { _, tests ->
                     tests.directoryContainers { test ->
-                        DynamicTest.dynamicTest(test.displayName) {
+                        phaseGate.dynamicTest(
+                            test.displayName,
+                            AndroidPhase.COMPILATION,
+                            dependsOn = listOf(AndroidPhase.DISCOVERY),
+                            skipAfterPhaseFailure = true,
+                            onFailure = {
+                                compilationResults.scope.cancel()
+                            },
+                        ) {
                             compilationResults.assertCompiled(test)
                         }
                     }
@@ -88,30 +98,92 @@ class AndroidRunner {
             ),
             DynamicContainer.dynamicContainer(
                 "Emulator",
-                listOf(DynamicTest.dynamicTest("Start Android emulator") {
-                    runtimeResults.startEmulator()
-                })
+                listOf(
+                    phaseGate.dynamicTest(
+                        "Start Android emulator",
+                        AndroidPhase.EMULATOR,
+                        dependsOn = listOf(AndroidPhase.DISCOVERY, AndroidPhase.COMPILATION),
+                        skipAfterPhaseFailure = true,
+                        onFailure = { runtimeResults.cancelAndClose() },
+                    ) {
+                        runtimeResults.startEmulator()
+                    }
+                )
             ),
             DynamicContainer.dynamicContainer(
                 "Runtime",
                 plan.flavorContainers { flavorName, tests ->
+                    val buildApksPhase = AndroidPhase.flavor(flavorName, AndroidPhase.BUILD_APKS)
+                    val installApksPhase = AndroidPhase.flavor(flavorName, AndroidPhase.INSTALL_APKS)
+                    val runtimeTestsPhase = AndroidPhase.flavor(flavorName, AndroidPhase.RUNTIME_TESTS)
                     listOf(
-                        DynamicTest.dynamicTest("Build APKs") {
+                        phaseGate.dynamicTest(
+                            "Build APKs",
+                            buildApksPhase,
+                            dependsOn = listOf(AndroidPhase.DISCOVERY, AndroidPhase.COMPILATION, AndroidPhase.EMULATOR),
+                            skipAfterPhaseFailure = true,
+                            onFailure = { cause ->
+                                if (cause is CancellationException) {
+                                    runtimeResults.cancelAndClose()
+                                }
+                            },
+                        ) {
                             runtimeResults.buildFlavorApks(flavorName)
                         },
-                        DynamicTest.dynamicTest("Install APKs") {
+                        phaseGate.dynamicTest(
+                            "Install APKs",
+                            installApksPhase,
+                            dependsOn = listOf(
+                                AndroidPhase.DISCOVERY,
+                                AndroidPhase.COMPILATION,
+                                AndroidPhase.EMULATOR,
+                                buildApksPhase,
+                            ),
+                            skipAfterPhaseFailure = true,
+                            onFailure = { cause ->
+                                if (cause is CancellationException) {
+                                    runtimeResults.cancelAndClose()
+                                }
+                            },
+                        ) {
                             runtimeResults.installFlavorApks(flavorName)
                         },
                         DynamicContainer.dynamicContainer(
                             "Tests",
                             tests.directoryContainers { test ->
-                                DynamicTest.dynamicTest(test.displayName) {
+                                phaseGate.dynamicTest(
+                                    test.displayName,
+                                    runtimeTestsPhase,
+                                    dependsOn = listOf(
+                                        AndroidPhase.DISCOVERY,
+                                        AndroidPhase.COMPILATION,
+                                        AndroidPhase.EMULATOR,
+                                        buildApksPhase,
+                                        installApksPhase,
+                                    ),
+                                    onFailure = { cause ->
+                                        if (cause is CancellationException) {
+                                            runtimeResults.cancelAndClose()
+                                        }
+                                    },
+                                ) {
                                     runtimeResults.assertPassed(test)
                                 }
                             }
                         )
                     )
-                } + DynamicTest.dynamicTest("No unexpected Android test results") {
+                } + phaseGate.dynamicTest(
+                    "No unexpected Android test results",
+                    AndroidPhase.NO_UNEXPECTED_RESULTS,
+                    dependsOn = listOf(
+                        AndroidPhase.DISCOVERY,
+                        AndroidPhase.COMPILATION,
+                        AndroidPhase.EMULATOR,
+                        AndroidPhase.BUILD_APKS,
+                        AndroidPhase.INSTALL_APKS,
+                        AndroidPhase.RUNTIME_TESTS,
+                    ),
+                ) {
                     runtimeResults.assertNoUnexpectedResults()
                 }
             )
@@ -183,7 +255,7 @@ class AndroidRunner {
     ) : AutoCloseable {
         private val parallelism = compilationParallelism()
         private val semaphore = Semaphore(parallelism)
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         private val compilationJobs = plan.tests.associate { test ->
             test.info.name to scope.async(start = CoroutineStart.LAZY) {
                 semaphore.withPermit {
@@ -192,17 +264,49 @@ class AndroidRunner {
             }
         }
 
+        @Volatile
+        private var firstFailure: Throwable? = null
         private var started = false
+
+        init {
+            for (job in compilationJobs.values) {
+                job.invokeOnCompletion { cause ->
+                    if (cause != null) {
+                        recordFailure(cause)
+                    }
+                }
+            }
+        }
 
         fun assertCompiled(test: AndroidPlannedTest) {
             runBlocking {
                 startAll()
-                compilationJobs.getValue(test.info.name).await()
+                try {
+                    compilationJobs.getValue(test.info.name).await()
+                } catch (e: Throwable) {
+                    val knownFailure = firstFailure
+                    if (knownFailure != null && knownFailure !== e) {
+                        if (knownFailure is CancellationException) {
+                            throw knownFailure
+                        }
+                        throw AssertionError("Android compilation phase failed in another compilation job", knownFailure)
+                    }
+                    recordFailure(e)
+                    throw e
+                }
             }
         }
 
         override fun close() {
             scope.cancel()
+        }
+
+        private fun recordFailure(cause: Throwable) {
+            synchronized(this) {
+                if (firstFailure != null) return
+                firstFailure = cause
+                scope.cancel()
+            }
         }
 
         private fun startAll() {
@@ -236,8 +340,11 @@ class AndroidRunner {
         private var cachedRunner: Result<CodegenTestsOnAndroidRunner>? = null
         private var runtimeRun: RuntimeRun? = null
 
-        fun close() {
-            cachedRunner?.getOrNull()?.close()
+        fun cancelAndClose() {
+            cachedRunner?.getOrNull()?.let {
+                it.scope.cancel()
+                it.close()
+            }
         }
 
         fun startEmulator() {
@@ -368,6 +475,81 @@ class AndroidRunner {
                 }
             }
         }
+    }
+
+    private object AndroidPhase {
+        const val DISCOVERY = "Discovery"
+        const val COMPILATION = "Compilation"
+        const val EMULATOR = "Emulator"
+        const val BUILD_APKS = "Build APKs"
+        const val INSTALL_APKS = "Install APKs"
+        const val RUNTIME_TESTS = "Runtime tests"
+        const val NO_UNEXPECTED_RESULTS = "No unexpected Android test results"
+
+        fun flavor(flavorName: String, phase: String): String = "$phase [$flavorName]"
+    }
+
+    private class PhaseGate {
+        private val failures = linkedMapOf<String, Throwable>()
+
+        fun dynamicTest(
+            displayName: String,
+            phase: String,
+            dependsOn: List<String> = emptyList(),
+            skipAfterPhaseFailure: Boolean = false,
+            onFailure: (Throwable) -> Unit = {},
+            action: () -> Unit,
+        ): DynamicTest {
+            return DynamicTest.dynamicTest(displayName) {
+                runPhaseAction(phase, dependsOn, skipAfterPhaseFailure, onFailure, action)
+            }
+        }
+
+        private fun runPhaseAction(
+            phase: String,
+            dependsOn: List<String>,
+            skipAfterPhaseFailure: Boolean,
+            onFailure: (Throwable) -> Unit,
+            action: () -> Unit,
+        ) {
+            val blockedBy = if (skipAfterPhaseFailure) dependsOn + phase else dependsOn
+            failureIn(blockedBy)?.let { failure ->
+                throw Assumptions.abort<Nothing>(
+                    "Skipping because ${failure.phase} phase failed: ${failure.cause.message}"
+                )
+            }
+
+            try {
+                action()
+            } catch (e: Throwable) {
+                if (e is org.opentest4j.TestAbortedException) throw e
+                recordFailure(phase, e)
+                try {
+                    onFailure(e)
+                } catch (closeFailure: Throwable) {
+                    e.addSuppressed(closeFailure)
+                }
+                throw e
+            }
+        }
+
+        private fun recordFailure(phase: String, cause: Throwable) {
+            synchronized(this) {
+                failures.putIfAbsent(phase, cause)
+            }
+        }
+
+        private fun failureIn(phases: List<String>): PhaseFailure? {
+            synchronized(this) {
+                for (phase in phases) {
+                    val cause = failures[phase] ?: continue
+                    return PhaseFailure(phase, cause)
+                }
+            }
+            return null
+        }
+
+        private data class PhaseFailure(val phase: String, val cause: Throwable)
     }
 }
 

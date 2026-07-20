@@ -22,6 +22,8 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
     func bar() -> Swift.Void
     @_spi(MyOptInApi)
     func optInFun() -> Swift.Void
+    @_spi(MyOptInApi)
+    func optInFunWithDefault() -> Swift.Void
 }
 @objc(_MyInterface)
 public protocol _MyInterface {
@@ -247,6 +249,10 @@ extension main.MyInterface where Self : main.__MyInterface {
     public func optInFun() -> Swift.Void {
         return { MyInterface_optInFun(self.__externalRCRef()); return () }()
     }
+    @_spi(MyOptInApi)
+    public func optInFunWithDefault() -> Swift.Void {
+        return { MyInterface_optInFunWithDefault(self.__externalRCRef()); return () }()
+    }
 }
 extension main.MyInterface {
     @_spi(MyOptInApi)
@@ -263,6 +269,10 @@ extension main.MyInterface {
     @_spi(MyOptInApi)
     public func optInFun() -> Swift.Void {
         fatalError("'optInFun' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(MyOptInApi)
+    public func optInFunWithDefault() -> Swift.Void {
+        return { MyInterface_optInFunWithDefault_direct(self.__externalRCRef()); return () }()
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.MyInterface, main.__MyInterface where Wrapped : main._MyInterface {
@@ -287,6 +297,13 @@ package func MyInterface_foo_get__reverse_swift(_ `self`: Swift.UnsafeMutableRaw
 package func MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
     let _result: Swift.Void = { _self.foo = newValue }()
+    return { _result; return true }()
+}
+
+@_cdecl("MyInterface_optInFunWithDefault__reverse_swift")
+package func MyInterface_optInFunWithDefault__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.Void = _self.optInFunWithDefault()
     return { _result; return true }()
 }
 

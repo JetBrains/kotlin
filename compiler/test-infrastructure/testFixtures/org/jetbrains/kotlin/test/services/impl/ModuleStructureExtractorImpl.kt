@@ -125,6 +125,7 @@ class ModuleStructureExtractorImpl(
         private val mutableFilesListPerModule = mutableMapOf<TestModule, MutableList<TestFile>>()
 
         private var currentFileName: String? = null
+        private var skipFileNameValidation = false
         private var currentSnippetNumber: Int = 1
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
@@ -191,8 +192,11 @@ class ModuleStructureExtractorImpl(
             }
         }
 
-        /*
-         * returns [true] means that passed directive was module directive and line is processed
+        /**
+         * Parses [rawDirective] to a [module structure directive][ModuleStructureDirectives] if applicable. Module structure directives are
+         * parsed with this special function, in contrast to the usual way of parsing directives.
+         *
+         * Returns `true` if [rawDirective] was a module structure directive and the line has been processed.
          */
         private fun tryParseStructureDirective(rawDirective: RegisteredDirectivesParser.RawDirective?, lineNumber: Int): Boolean {
             if (rawDirective == null) return false
@@ -251,11 +255,16 @@ class ModuleStructureExtractorImpl(
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
+                        // We need to finish the previous file.
                         finishFile(lineNumber)
                     } else {
                         resetFileCaches()
                     }
-                    currentFileName = (values.first() as String).also(::validateFileName)
+                    currentFileName = values.first() as String
+                }
+                ModuleStructureDirectives.SKIP_FILE_NAME_VALIDATION -> {
+                    // The directive applies to the current file and is consumed in `finishFile`.
+                    skipFileNameValidation = true
                 }
                 else -> return false
             }
@@ -364,6 +373,13 @@ class ModuleStructureExtractorImpl(
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
             val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }
+
+            // The file name is validated here rather than when the `FILE` directive is parsed because the `SKIP_FILE_NAME_VALIDATION`
+            // directive is only known once the whole file block has been read.
+            if (currentFileName != null && !skipFileNameValidation) {
+                validateFileName(filename)
+            }
+
             val fileContent = buildString {
                 for (i in 0 until endLineNumberOfLastFile) {
                     appendLine()
@@ -407,6 +423,7 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
+            skipFileNameValidation = false
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }
@@ -471,4 +488,3 @@ inline fun <reified T : Enum<T>> valueOfOrNull(value: String): T? {
     }
     return null
 }
-

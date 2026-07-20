@@ -60,7 +60,7 @@ fun CopySpec.removeFirstLevel() {
     includeEmptyDirs = false
 }
 
-val unzipTestSuite by task<Sync> {
+val unzipTestSuite = tasks.register<Sync>("unzipTestSuite") {
     dependsOn(testSuite)
     from({ zipTree(testSuite.singleFile) }) {
         removeFirstLevel()
@@ -68,7 +68,7 @@ val unzipTestSuite by task<Sync> {
     into(layout.buildDirectory.dir("testsuite"))
 }
 
-val unzipWabt by task<Sync> {
+val unzipWabt = tasks.register<Sync>("unzipWabt") {
     dependsOn(wabt)
     from({ tarTree(resources.gzip(wabt.singleFile)) }) {
         removeFirstLevel()

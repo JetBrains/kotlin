@@ -88,7 +88,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @OtherGradlePluginTests
     fun testKaptProject(gradleVersion: GradleVersion) {
         project(
-            "kapt2/simple",
+            "kapt/simple",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
         ) {

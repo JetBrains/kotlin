@@ -1,0 +1,19 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+// A.foo becomes final through B's fake override; C's super call is regenerated.
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
+    modified cache: file1.kt
+    unchanged cache: file2.kt
+
+// A.foo becomes open again through the same fake-override chain.
+STEP 2:
+    modifications:
+        U : file1.2.kt -> file1.kt
+    modified cache: file1.kt
+    unchanged cache: file2.kt

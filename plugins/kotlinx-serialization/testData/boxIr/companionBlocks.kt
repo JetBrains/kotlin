@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // TARGET_BACKEND: JVM_IR
 // JS: KT-85459, Native: KT-84829
 

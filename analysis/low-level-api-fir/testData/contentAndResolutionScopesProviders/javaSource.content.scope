@@ -1,0 +1,6 @@
+Resulting Content Scopes:
+Module LIBRARY:
+    - Bar.java
+    + Foo.class
+Module MAIN:
+    + main.kt

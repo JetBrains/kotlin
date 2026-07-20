@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -34,16 +34,9 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
 import org.jetbrains.kotlin.javac.components.StubJavaResolverCache
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
-import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
-import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -65,7 +58,6 @@ import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageF
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import kotlin.reflect.KFunction1
 
@@ -82,7 +74,6 @@ object TopDownAnalyzerFacadeForJVM {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory = ::FileBasedDeclarationProviderFactory,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList(),
         explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
         explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
         explicitCompilerEnvironment: TargetEnvironment = CompilerEnvironment
@@ -90,7 +81,7 @@ object TopDownAnalyzerFacadeForJVM {
         @Suppress("DEPRECATION_ERROR")
         val container = createContainer(
             project, files, trace, configuration, packagePartProvider, declarationProviderFactory, explicitCompilerEnvironment,
-            sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList,
+            sourceModuleSearchScope, explicitModuleDependencyList = explicitModuleDependencyList,
             explicitModuleFriendsList = explicitModuleFriendsList
         )
 
@@ -135,7 +126,6 @@ object TopDownAnalyzerFacadeForJVM {
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList(),
         implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
         explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
         explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
@@ -248,11 +238,9 @@ object TopDownAnalyzerFacadeForJVM {
             extension.getPackageFragmentProvider(project, module, storageManager, trace, null, lookupTracker)
         }
 
-        val klibModules = getKlibModules(klibList, dependencyModule)
-
         // TODO: remove dependencyModule from friends
         module.setDependencies(
-            listOf(module, dependencyModule, fallbackBuiltIns) + klibModules + explicitModuleDependencyList,
+            listOf(module, dependencyModule, fallbackBuiltIns) + explicitModuleDependencyList,
             setOf(dependencyModule) + explicitModuleFriendsList,
         )
         module.initialize(
@@ -303,45 +291,4 @@ object TopDownAnalyzerFacadeForJVM {
             builtIns.builtInsModule = module
         }
     }
-}
-
-// From serialization.js....klib.kt
-
-@K1Deprecation
-private val jvmFactories = KlibMetadataFactories(
-    { storageManager -> JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES) },
-    NullFlexibleTypeDeserializer
-)
-
-@K1Deprecation
-private fun getKlibModules(klibList: List<KotlinLibrary>, dependencyModule: ModuleDescriptorImpl?): List<ModuleDescriptorImpl> {
-    val descriptorMap = mutableMapOf<String, ModuleDescriptorImpl>()
-    return klibList.map { library ->
-        descriptorMap.getOrPut(library.path.toString()) { getModuleDescriptorByLibrary(library, descriptorMap, dependencyModule) }
-    }
-}
-
-@K1Deprecation
-private fun getModuleDescriptorByLibrary(
-    current: KotlinLibrary,
-    mapping: Map<String, ModuleDescriptorImpl>,
-    dependencyModule: ModuleDescriptorImpl?
-): ModuleDescriptorImpl {
-    val module = jvmFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-        current,
-        LanguageVersionSettingsImpl.DEFAULT,
-        LockBasedStorageManager.NO_LOCKS,
-        null,
-        lookupTracker = LookupTracker.DO_NOTHING
-    )
-
-    val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).mapNotNull {
-        mapping[it] ?: run {
-            assert(it == KOTLIN_NATIVE_STDLIB_NAME || it == KOTLIN_JS_STDLIB_NAME) { "Unknown library $it" }
-            null
-        }
-    }
-
-    module.setDependencies(listOf(module) + dependencies + listOfNotNull(dependencyModule))
-    return module
 }

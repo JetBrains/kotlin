@@ -47,6 +47,7 @@ import java.io.Serializable
 import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
@@ -352,9 +353,11 @@ internal class KClassImpl<T : Any>(
                 }
             } else {
                 val purelyImplementedSupertype = getPurelyImplementedSupertype(this@KClassImpl)
+                val purelyImplementedSuperclass = (purelyImplementedSupertype?.classifier as? KClass<*>)?.java
                 for (superClass in listOf(jClass.genericSuperclass, *jClass.genericInterfaces)) {
-                    if (superClass == null || superClass == Any::class.java || superClass == purelyImplementedSupertype?.classifier)
-                        continue
+                    if (superClass == null || superClass == Any::class.java ||
+                        ((superClass as? ParameterizedType)?.rawType ?: superClass) == purelyImplementedSuperclass
+                    ) continue
                     result += superClass.toKType(
                         knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
                     )

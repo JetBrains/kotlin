@@ -244,7 +244,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     fun testWithDisabledCompanionBlockFeature(testInfo: TestInfo) {
         doManifestTest(
             testInfo,
-            "-XXLanguage:-CompanionBlocksAndExtensions",
+            "-XXLanguage:-CompanionBlocks",
         )
     }
 

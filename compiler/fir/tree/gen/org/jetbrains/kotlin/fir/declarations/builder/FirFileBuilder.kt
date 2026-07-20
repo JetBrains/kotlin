@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 class FirFileBuilder : FirAnnotationContainerBuilder {
     var source: KtSourceElement? = null
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var packageDirective: FirPackageDirective
-    val imports: MutableList<FirImport> = mutableListOf()
-    val declarations: MutableList<FirDeclaration> = mutableListOf()
+    val imports: MutableList<FirImport> = []
+    val declarations: MutableList<FirDeclaration> = []
     lateinit var name: String
     var sourceFile: KtSourceFile? = null
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null

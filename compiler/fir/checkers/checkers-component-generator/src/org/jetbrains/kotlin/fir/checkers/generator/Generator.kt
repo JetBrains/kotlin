@@ -144,13 +144,13 @@ class Generator(
                 for ([alias, _] in configuration.aliases.values) {
                     println("override ${alias.valDeclaration}")
                     withIndent {
-                        println("field: ${alias.mutableSetType} = mutableSetOf()")
+                        println("field: ${alias.mutableSetType} = []")
                     }
                 }
                 for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     println("override val $fieldName: ${classFqn.simpleName.setType}")
                     withIndent {
-                        println("field: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
+                        println("field: ${classFqn.simpleName.mutableSetType} = []")
                     }
                 }
                 println()

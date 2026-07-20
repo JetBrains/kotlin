@@ -47,10 +47,10 @@ fun test(j: J, j2: J2, j3: J3, j4: J4, j5: J5) {
     j2.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s<!> = "")
     j2.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s2<!> = "")
     j3.foo(s = "")
-    j4.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s<!> = "") // should be ok
-    j4.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s2<!> = "") // should be ok
-    j5.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s<!> = "") // should be ok
-    j5.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s2<!> = "") // should be ok
+    j4.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s<!> = "")
+    j4.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s2<!> = "")
+    j5.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s<!> = "")
+    j5.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>s2<!> = "")
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, interfaceDeclaration, javaType,
