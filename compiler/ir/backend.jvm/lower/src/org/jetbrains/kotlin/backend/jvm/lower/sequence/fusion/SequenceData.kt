@@ -30,6 +30,12 @@ internal sealed class SequenceTransformer {
         val endOffset: Int,
     ) :
         SequenceTransformer()
+
+    class Filter(
+        val predicateCall: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression,
+        val startOffset: Int,
+        val endOffset: Int,
+    ) : SequenceTransformer()
 }
 
 internal class SequenceData(
