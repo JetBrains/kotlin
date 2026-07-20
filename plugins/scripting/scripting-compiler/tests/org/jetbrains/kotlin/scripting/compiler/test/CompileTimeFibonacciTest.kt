@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
+import org.junit.jupiter.api.Disabled
 import java.io.File
 import java.nio.file.Files
 import kotlin.script.experimental.annotations.KotlinScript
@@ -110,6 +112,7 @@ class CompileTimeFibonacciTest {
         script: SourceCode
     ): ResultWithDiagnostics<CompiledScript> {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            useFir = true
             updateWithBaseCompilerArguments()
             val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
             add(

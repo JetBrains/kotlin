@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -367,7 +368,9 @@ class ScriptTemplateTest {
                 if (includeKotlinRuntime) ConfigurationKind.ALL else ConfigurationKind.JDK_ONLY,
                 TestJdkKind.FULL_JDK,
                 *additionalClasspath
-            )
+            ).apply {
+                useFir = true
+            }
             configuration.updateWithBaseCompilerArguments()
             @OptIn(MessageCollectorAccess::class) // write access
             configuration.messageCollector = messageCollector
