@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
-import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -248,14 +247,24 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     ): KtDiagnosticWithSource? {
         val isAlwaysTrue = expression.operation != FirOperation.IS
 
-        val [factoryForDeprecation, valueToWarnAbout] = when {
-            areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL to !isAlwaysTrue
-            else -> FirErrors.IMPOSSIBLE_IS_CHECK to isAlwaysTrue
+        val valueToWarnAbout = when {
+            areBothTypesNullable -> !isAlwaysTrue
+            else -> isAlwaysTrue
         }
 
         val factory = when {
-            forceWarning -> factoryForDeprecation.warningFactory
-            else -> factoryForDeprecation.chooseFactory()
+            forceWarning -> when {
+                areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_WARNING
+                else -> FirErrors.IMPOSSIBLE_IS_CHECK_WARNING
+            }
+            context.languageVersionSettings.supportsFeature(LanguageFeature.TurnTypeCheckWarningsIntoErrors) -> when {
+                areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR
+                else -> FirErrors.IMPOSSIBLE_IS_CHECK_ERROR
+            }
+            else -> when {
+                areBothTypesNullable -> FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_DEPRECATION.warningFactory
+                else -> FirErrors.IMPOSSIBLE_IS_CHECK_DEPRECATION.warningFactory
+            }
         }
 
         return factory.createOn(expression.source, valueToWarnAbout, context.session)

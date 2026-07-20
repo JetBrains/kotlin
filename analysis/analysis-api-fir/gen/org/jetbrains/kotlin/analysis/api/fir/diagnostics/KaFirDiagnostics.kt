@@ -3968,6 +3968,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val compileTimeCheckResult: Boolean
     }
 
+    interface ImpossibleIsCheckDeprecationError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckDeprecationError::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckDeprecationWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckDeprecationWarning::class
+        val compileTimeCheckResult: Boolean
+    }
+
     interface ImpossibleIsCheckRelyingOnNullError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullError::class
         val compileTimeCheckResult: Boolean
@@ -3975,6 +3985,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ImpossibleIsCheckRelyingOnNullWarning : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullWarning::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckRelyingOnNullDeprecationError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullDeprecationError::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckRelyingOnNullDeprecationWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullDeprecationWarning::class
         val compileTimeCheckResult: Boolean
     }
 

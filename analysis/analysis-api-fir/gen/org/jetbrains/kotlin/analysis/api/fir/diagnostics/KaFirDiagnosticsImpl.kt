@@ -4755,6 +4755,18 @@ internal class ImpossibleIsCheckWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckWarning
 
+internal class ImpossibleIsCheckDeprecationErrorImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckDeprecationError
+
+internal class ImpossibleIsCheckDeprecationWarningImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckDeprecationWarning
+
 internal class ImpossibleIsCheckRelyingOnNullErrorImpl(
     override val compileTimeCheckResult: Boolean,
     firDiagnostic: KtPsiDiagnostic,
@@ -4766,6 +4778,18 @@ internal class ImpossibleIsCheckRelyingOnNullWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckRelyingOnNullWarning
+
+internal class ImpossibleIsCheckRelyingOnNullDeprecationErrorImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckRelyingOnNullDeprecationError
+
+internal class ImpossibleIsCheckRelyingOnNullDeprecationWarningImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckRelyingOnNullDeprecationWarning
 
 internal class UselessIsCheckImpl(
     override val compileTimeCheckResult: Boolean,

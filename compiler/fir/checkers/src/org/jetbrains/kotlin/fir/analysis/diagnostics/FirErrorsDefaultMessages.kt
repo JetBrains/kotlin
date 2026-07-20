@@ -423,8 +423,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_DEPRECATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_DEPRECATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -3395,8 +3399,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Use $toNumberCallTemplate to give the type explicitly.",
             RENDER_TYPE,
         )
-        map.put(IMPOSSIBLE_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
-        map.put(IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL, "This check only evaluates to ''{0}'' when the left-hand side is null. Consider rewriting it to an explicit null check.", TO_STRING)
+        val impossibleIsCheckMessage = "Check for instance is always ''{0}''."
+        map.put(IMPOSSIBLE_IS_CHECK_ERROR, impossibleIsCheckMessage, TO_STRING)
+        map.put(IMPOSSIBLE_IS_CHECK_WARNING, impossibleIsCheckMessage, TO_STRING)
+        map.put(IMPOSSIBLE_IS_CHECK_DEPRECATION, impossibleIsCheckMessage, TO_STRING)
+        val impossibleIsCheckRelyingOnNullMessage = "This check only evaluates to ''{0}'' when the left-hand side is null. Consider rewriting it to an explicit null check."
+        map.put(IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR, impossibleIsCheckRelyingOnNullMessage, TO_STRING)
+        map.put(IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_WARNING, impossibleIsCheckRelyingOnNullMessage, TO_STRING)
+        map.put(IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_DEPRECATION, impossibleIsCheckRelyingOnNullMessage, TO_STRING)
         map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
         map.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position.")
         map.put(IS_ENUM_ENTRY, "'is' over enum entry is prohibited. Use comparison instead.")
