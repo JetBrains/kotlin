@@ -33,7 +33,7 @@ dependencies {
     testCompileOnly(project(":core:util.runtime"))
 
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testImplementation(projectTests(":kotlin-scripting-compiler"))
+    testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
 
     testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))
     testRuntimeOnly(project(":kotlin-compiler"))

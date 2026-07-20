@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,9 +24,9 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.test.assertEquals
 
-internal const val NUM_4_LINE = "num: 4"
+const val NUM_4_LINE = "num: 4"
 
-internal const val FIB_SCRIPT_OUTPUT_TAIL =
+const val FIB_SCRIPT_OUTPUT_TAIL =
     """
 fib(1)=1
 fib(0)=1
@@ -39,7 +39,7 @@ fib(2)=2
 fib(4)=5
 """
 
-internal fun captureOut(body: () -> Unit): String {
+fun captureOut(body: () -> Unit): String {
     val outStream = ByteArrayOutputStream()
     val prevOut = System.out
     System.setOut(PrintStream(outStream))
@@ -52,14 +52,14 @@ internal fun captureOut(body: () -> Unit): String {
     return outStream.toString()
 }
 
-internal fun String.linesSplitTrim() =
+fun String.linesSplitTrim() =
     split('\n', '\r').map(String::trim).filter(String::isNotBlank)
 
-internal fun assertEqualsTrimmed(expected: String, actual: String) =
+fun assertEqualsTrimmed(expected: String, actual: String) =
     assertEquals(expected.linesSplitTrim(), actual.linesSplitTrim())
 
 // TODO: rewrite tests to avoid emulated old behavior
-internal fun compileScript(
+fun compileScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
     parentClassLoader: ClassLoader? = null
@@ -89,7 +89,7 @@ internal fun compileScript(
 }
 
 // TODO: rewrite tests to avoid emulated old behavior
-internal fun compileAndExecuteScript(
+fun compileAndExecuteScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
     scriptArgs: List<String>
