@@ -11,6 +11,7 @@ plugins {
 val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
 
 dependencies {
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
     testFixturesApi(project(":kotlin-scripting-jvm"))
     testFixturesApi(project(":kotlin-scripting-compiler-impl"))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
