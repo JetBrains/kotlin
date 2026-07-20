@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -284,15 +282,6 @@ internal fun <R> withTempFile(keyName: String = "explain", body: (File) -> R): R
         return body(tempFile)
     } finally {
         tempFile.delete()
-    }
-}
-
-internal fun <R> withDisposable(body: (Disposable) -> R) {
-    val disposable = Disposer.newDisposable("Disposable for scripting compiler tests")
-    try {
-        body(disposable)
-    } finally {
-        disposeRootInWriteAction(disposable)
     }
 }
 
