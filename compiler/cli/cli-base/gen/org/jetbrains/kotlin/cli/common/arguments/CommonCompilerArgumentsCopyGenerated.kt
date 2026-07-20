@@ -52,6 +52,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.explicitBackingFields = from.explicitBackingFields
     to.explicitContextArguments = from.explicitContextArguments
     to.explicitReturnTypes = from.explicitReturnTypes
+    to.firAggressivePruning = from.firAggressivePruning
     to.fragmentDependencies = from.fragmentDependencies.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
     to.fragmentIncrementalClasspath = from.fragmentIncrementalClasspath.copyOf()

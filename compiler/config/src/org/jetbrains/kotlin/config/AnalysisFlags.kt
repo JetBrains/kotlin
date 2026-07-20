@@ -103,6 +103,8 @@ object AnalysisFlags {
     val headerMode by AnalysisFlag.Delegates.Boolean
 
     val headerModeType by AnalysisFlag.Delegates.HeaderModeTypeAnyByDefault
+
+    val firAggressivePruning by AnalysisFlag.Delegates.Boolean
 }
 
 val LanguageVersionSettings.hmppProvidersEnabled: Boolean

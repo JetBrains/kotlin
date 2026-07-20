@@ -1398,6 +1398,17 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xfir-aggressive-pruning"
+        compilerName = "firAggressivePruning"
+        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
         name = "Xdont-sort-source-files"
         description = """
             Disable automatic sorting of source files.

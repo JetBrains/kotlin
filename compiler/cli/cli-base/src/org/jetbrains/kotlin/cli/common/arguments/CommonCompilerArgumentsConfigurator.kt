@@ -60,6 +60,7 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
             putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
+            putAnalysisFlag(AnalysisFlags.firAggressivePruning, firAggressivePruning ?: headerMode)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, fragmentIncrementalClasspath.isNotEmpty() && multiPlatform)
             fillWarningLevelMap(arguments, reporter)

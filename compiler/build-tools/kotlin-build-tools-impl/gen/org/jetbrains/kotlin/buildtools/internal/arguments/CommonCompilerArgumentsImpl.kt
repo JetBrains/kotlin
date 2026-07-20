@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_API
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_CONTEXT_ARGUMENTS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FIR_AGGRESSIVE_PRUNING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
@@ -246,6 +247,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
     if (X_EXPLICIT_BACKING_FIELDS in this) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS)}
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
+    if (X_FIR_AGGRESSIVE_PRUNING in this) { arguments.firAggressivePruning = get(X_FIR_AGGRESSIVE_PRUNING)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
@@ -361,6 +363,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
+    try { this[X_FIR_AGGRESSIVE_PRUNING] = arguments.firAggressivePruning } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_INCREMENTAL_CLASSPATH] = arguments.fragmentIncrementalClasspath } catch (_: NoSuchMethodError) {  }
@@ -471,6 +474,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
     if (X_EXPLICIT_BACKING_FIELDS in this) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS)}
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
+    if (X_FIR_AGGRESSIVE_PRUNING in this) { arguments.firAggressivePruning = get(X_FIR_AGGRESSIVE_PRUNING)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
@@ -681,6 +685,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS")
+
+    public val X_FIR_AGGRESSIVE_PRUNING: CommonCompilerArgument<Boolean?> =
+        CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING")
 
     public val X_FRAGMENT_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENT_DEPENDENCY")

@@ -541,6 +541,16 @@ Use the 'warning' level to issue warnings instead of errors.""",
         }
 
     @Argument(
+        value = "-Xfir-aggressive-pruning",
+        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.",
+    )
+    var firAggressivePruning: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xfragment-dependency",
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib dependencies for the specific fragment.

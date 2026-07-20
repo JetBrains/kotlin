@@ -455,6 +455,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
 
     /**
+     * Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FIR_AGGRESSIVE_PRUNING: CommonCompilerArgument<Boolean?> =
+        CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * Enable header compilation mode.
      * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
      * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
