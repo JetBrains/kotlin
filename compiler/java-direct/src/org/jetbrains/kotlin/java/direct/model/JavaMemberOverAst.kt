@@ -81,8 +81,9 @@ class JavaFieldOverAst(
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
      * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
      */
-    private val leadingFieldNode: JavaLightNode?
-        get() = computeLeadingFieldNode()
+    private val leadingFieldNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computeLeadingFieldNode()
+    }
 
     private fun computeLeadingFieldNode(): JavaLightNode? {
         if (tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST) != null ||
@@ -106,9 +107,10 @@ class JavaFieldOverAst(
         return null
     }
 
-    override val modifierList: JavaLightNode?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+    override val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
             ?: leadingFieldNode?.let { tree.findChildByType(it, JavaSyntaxElementType.MODIFIER_LIST) }
+    }
 
     private fun hasFieldModifier(modifier: SyntaxElementType): Boolean {
         return modifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
@@ -130,11 +132,13 @@ class JavaFieldOverAst(
             }
         }
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
+    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
+    }
 
-    override val type: JavaType
-        get() = computeType()
+    override val type: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computeType()
+    }
 
     private fun computeType(): JavaType {
         if (isEnumEntry) {
@@ -151,15 +155,14 @@ class JavaFieldOverAst(
     /**
      * The initializer expression node, if present.
      */
-    private val initializerNode: JavaLightNode?
-        get() {
-            val children = tree.getChildren(node)
-            val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
-            return if (eqIndex < 0) null
-            else children.drop(eqIndex + 1).firstOrNull {
-                tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
-            }
+    private val initializerNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val children = tree.getChildren(node)
+        val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
+        if (eqIndex < 0) null
+        else children.drop(eqIndex + 1).firstOrNull {
+            tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
         }
+    }
 
     override val hasInitializer: Boolean
         get() = initializerNode != null
@@ -296,15 +299,16 @@ abstract class JavaMethodBaseOverAst(
         computeTypeParameters(node, tree, containingClass.memberResolutionContext)
     }
 
-    override val resolutionContext: JavaResolutionContext
-        get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+    override val resolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+    }
 
-    val valueParameters: List<JavaValueParameter>
-        get() {
-            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST) ?: return emptyList()
-            return tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
-                .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
-        }
+    val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
+        if (parameterList == null) emptyList()
+        else tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
+            .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
+    }
 }
 
 class JavaMethodOverAst(
@@ -313,16 +317,15 @@ class JavaMethodOverAst(
     containingClass: JavaClassOverAst,
 ) : JavaMethodBaseOverAst(node, tree, containingClass), JavaMethod {
 
-    override val returnType: JavaType
-        get() {
-            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
-            return if (typeNode != null) {
-                // TYPE_USE annotations appear in the method modifier list but belong to the return type
-                createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
-            } else {
-                JavaPrimitiveTypeOverAst(node, tree, resolutionContext)
-            }
+    override val returnType: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
+        if (typeNode != null) {
+            // TYPE_USE annotations appear in the method modifier list but belong to the return type
+            createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
+        } else {
+            JavaPrimitiveTypeOverAst(node, tree, resolutionContext)
         }
+    }
 
     // Interface methods are abstract unless they have 'default', 'static', or 'private'
     // (Java 9+) modifiers. We must NOT use hasBody to determine abstractness — non-default

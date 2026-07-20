@@ -36,6 +36,22 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-20 — Perf review: memoize recomputed reads in the Java-source model
+- **Change**: the model layer recomputed pure, AST-derived values on every access. Converted the
+  hot ones to `by lazy(PUBLICATION)` (same precedent as `supertypes`/`typeParameters`): class
+  keyword flags (`isInterface`/`isEnum`/`isRecord`/`isAnnotationType`/`isSealed`),
+  `methods`/`fields`/`constructors`/`recordComponents`/`innerClassNames`/`annotations`; per-member
+  `resolutionContext`/`valueParameters`/`returnType` and field
+  `leadingFieldNode`/`modifierList`/`type`/`initializerNode`/`annotations`; type
+  `rawTypeNameParts`/`typeArguments`. Memoizing the class collections is the key enabler — member
+  wrappers are now stable, so the per-member lazies actually cache. Behaviour-preserving (pure
+  functions of the immutable AST + already-lazy `classifier`).
+- **Files**: `model/JavaClassOverAst.kt`, `model/JavaMemberOverAst.kt`, `model/JavaTypeOverAst.kt`.
+- **Tests**: box+phased 2767/2767 (0 FAILED); `JavaParsing*` 105/105.
+- **Result**: green. Full write-up + reviewed-healthy caches + riskier follow-ups (plain-`HashMap`
+  concurrency in `JvmBinaryClassFinderInputsOverIndex`, annotation `classId` memoization, more
+  per-type/param lazies) in `implDocs/PERFORMANCE_REVIEW_2026_07_20.md`.
+
 ### 2026-07-20 — Read package-level default-nullability annotations off binary `package-info.class`
 - **Change**: the library-session facade's finder (was a no-op `findPackage`) now materialises a
   binary `<pkg>/package-info.class` and exposes its class-level annotations as the package's
