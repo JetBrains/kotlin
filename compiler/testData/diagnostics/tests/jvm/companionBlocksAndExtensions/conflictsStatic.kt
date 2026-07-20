@@ -15,3 +15,6 @@ class A {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, propertyDeclaration,
+stringLiteral */
