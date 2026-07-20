@@ -28,13 +28,14 @@ internal abstract class KotlinGradleTaskExecutionCache : BuildService<BuildServi
     operator fun <V> get(key: Extras.Key<V>): V? = extras[key]
 }
 
+@Suppress("UNCHECKED_CAST")
 internal inline fun <V> KotlinGradleTaskExecutionCache.getOrPutSynchronized(
     key: Extras.Key<V>,
     compute: () -> V
 ): V {
-    if (contains(key)) return get(key)!!
+    if (contains(key)) return get(key) as V
     synchronized(this) {
-        if (contains(key)) return get(key)!!
+        if (contains(key)) return get(key) as V
         val value = compute()
         set(key, value)
         return value
