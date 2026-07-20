@@ -63,11 +63,12 @@ dependencies {
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:frontend.java"))
     testImplementation(project(":compiler:fir:plugin-utils"))
-    testImplementation(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4
+    testImplementation(testFixtures(project(":compiler:tests-common"))) {
         if (this is ProjectDependency) {
             exclude(group = "com.nordstrom.tools", module = "junit-foundation")
         }
     }
+    testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

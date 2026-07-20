@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
 
 const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
 
-internal fun getBaseCompilerArgumentsFromProperty(): List<String>? =
+fun getBaseCompilerArgumentsFromProperty(): List<String>? =
     System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')
 
 // TODO: partially copy pasted from LauncherReplTest, consider extracting common parts to some (new) test util module
@@ -249,7 +249,7 @@ fun runWithK2JVMCompiler(
     }
 }
 
-internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
+fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
     val prevOut = System.out
@@ -267,7 +267,7 @@ internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     return Triple(outStream.toString().trim(), errStream.toString().trim(), ret)
 }
 
-internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
+fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
     val tempDir = Files.createTempDirectory(keyName).toFile()
     try {
         return body(tempDir)
@@ -276,7 +276,7 @@ internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
     }
 }
 
-internal fun <R> withTempFile(keyName: String = "explain", body: (File) -> R): R {
+fun <R> withTempFile(keyName: String = "explain", body: (File) -> R): R {
     val tempFile = Files.createTempFile(keyName, ".txt").toFile()
     try {
         return body(tempFile)
