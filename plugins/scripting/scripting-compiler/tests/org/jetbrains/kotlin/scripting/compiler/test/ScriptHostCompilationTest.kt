@@ -42,8 +42,8 @@ import kotlin.test.*
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
 @SmokeTest
-class ScriptCliCompilationTest {
-    private val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
+class ScriptHostCompilationTest {
+    private val testRootDisposable: Disposable = TestDisposable("${ScriptHostCompilationTest::class.simpleName}.testRootDisposable")
 
     @AfterTest
     fun tearDown() {
@@ -91,7 +91,7 @@ class ScriptCliCompilationTest {
     }
 
 
-    private val thisClasspath = listOf(PathUtil.getResourcePathForClass(ScriptCliCompilationTest::class.java))
+    private val thisClasspath = listOf(PathUtil.getResourcePathForClass(ScriptHostCompilationTest::class.java))
 
     private fun runCompiler(
         script: File,
