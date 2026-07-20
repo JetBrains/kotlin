@@ -266,6 +266,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val MEMBER_EXTENSION_TWO_PHASE_INFERENCE by info<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("json")
         }
+        val MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY by info<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("json")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

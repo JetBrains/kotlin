@@ -624,6 +624,12 @@ internal class MemberExtensionTwoPhaseInferenceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.MemberExtensionTwoPhaseInference
 
+internal class MemberExtensionTwoPhaseInferenceSummaryImpl(
+    override val json: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.MemberExtensionTwoPhaseInferenceSummary
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -531,6 +531,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val json: String
     }
 
+    interface MemberExtensionTwoPhaseInferenceSummary : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = MemberExtensionTwoPhaseInferenceSummary::class
+        val json: String
+    }
+
     interface SuperIsNotAnExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

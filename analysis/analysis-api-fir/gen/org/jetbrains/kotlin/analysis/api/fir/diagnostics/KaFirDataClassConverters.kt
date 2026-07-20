@@ -6622,6 +6622,13 @@ private fun KaDiagnosticConverterBuilder.addConversions145() {
             token,
         )
     }
+    add(FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY) { firDiagnostic ->
+        MemberExtensionTwoPhaseInferenceSummaryImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS.warningFactory) { firDiagnostic ->
         NullableSupertypeThroughTypealiasWarningImpl(
             firDiagnostic as KtPsiDiagnostic,

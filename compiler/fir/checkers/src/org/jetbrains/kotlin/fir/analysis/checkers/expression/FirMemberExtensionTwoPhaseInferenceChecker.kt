@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.collectUpperBounds
@@ -86,11 +89,55 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             twoPhaseInference = analyzeOrIgnore(expression, symbol),
         )
 
-        reporter.reportOn(
-            expression.calleeReference.source ?: expression.source,
-            FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE,
-            diagnostic.toJson(),
-        )
+        val source = expression.calleeReference.source ?: expression.source ?: return
+        recordCall(context.session, source, context, diagnostic)
+        if (diagnostic.twoPhaseInference.shouldReportDirectly()) {
+            reporter.reportOn(
+                source,
+                FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE,
+                diagnostic.toJson(),
+            )
+        }
+    }
+
+    fun reportSummaries(session: FirSession, reporter: PendingDiagnosticReporter) {
+        val summaries = synchronized(statisticsBySession) {
+            statisticsBySession.remove(session)?.values?.toList().orEmpty()
+        }
+        for (statistics in summaries) {
+            reporter.reportOn(
+                statistics.source,
+                FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY,
+                statistics.toJson(),
+                statistics.context,
+            )
+            reporter.checkAndCommitReportsOn(statistics.source, statistics.context, commitEverything = true)
+        }
+    }
+
+    fun startCollectingStatistics(session: FirSession) {
+        synchronized(statisticsBySession) {
+            statisticsBySession[session] = linkedMapOf()
+        }
+    }
+
+    fun discardStatistics(session: FirSession) {
+        synchronized(statisticsBySession) {
+            statisticsBySession.remove(session)
+        }
+    }
+
+    private fun recordCall(
+        session: FirSession,
+        source: AbstractKtSourceElement,
+        context: DiagnosticContext,
+        diagnostic: DiagnosticData,
+    ) {
+        synchronized(statisticsBySession) {
+            val statistics = (statisticsBySession[session] ?: return)
+                .getOrPut(diagnostic.callableId) { CallableStatistics(diagnostic.callableId, source, context) }
+            statistics.record(diagnostic.twoPhaseInference)
+        }
     }
 
     context(context: CheckerContext)
@@ -608,7 +655,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     ) {
         fun toJson(): String = jsonObject(
             "callableId" to callableId.toJsonString(),
-            // "signature" to signature.toJsonString(),
+            "signature" to signature.toJsonString(),
             "normalInference" to normalInference.toJson(),
             "twoPhaseInference" to twoPhaseInference.toJson(),
         )
@@ -621,10 +668,10 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val receiverParameters: Map<String, String>,
     ) {
         fun toJson(): String = jsonObject(
-            // "inferredTypes" to inferredTypes.toJson(),
+            "inferredTypes" to inferredTypes.toJson(),
             "receiver" to receiver.toJson(),
-            // "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
-            // "receiverParameters" to receiverParameters.toJson(),
+            "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
+            "receiverParameters" to receiverParameters.toJson(),
         )
     }
 
@@ -674,6 +721,41 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         RECEIVER_INFERENCE_FAILED("failed"),
     }
 
+    private class CallableStatistics(
+        val callableId: String,
+        val source: AbstractKtSourceElement,
+        val context: DiagnosticContext,
+    ) {
+        private var totalCalls: Int = 0
+        private var successfulCalls: Int = 0
+        private var inapplicableCalls: Int = 0
+        private var failedCalls: Int = 0
+        private var errorCalls: Int = 0
+
+        fun record(result: AnalysisResult) {
+            totalCalls++
+            when (result) {
+                is AnalysisResult.Error -> errorCalls++
+                is AnalysisResult.Success -> when (result.outcome) {
+                    TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED -> successfulCalls++
+                    TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_FAILED -> inapplicableCalls++
+                    TwoPhaseOutcome.RECEIVER_INFERENCE_FAILED -> failedCalls++
+                }
+            }
+        }
+
+        fun toJson(): String = jsonObject(
+            "callableId" to callableId.toJsonString(),
+            "summary" to jsonObject(
+                "totalCalls" to totalCalls.toString(),
+                "successfulCalls" to successfulCalls.toString(),
+                "inapplicableCalls" to inapplicableCalls.toString(),
+                "failedCalls" to failedCalls.toString(),
+                "errorCalls" to errorCalls.toString(),
+            ),
+        )
+    }
+
     private fun jsonObject(vararg entries: Pair<String, String>): String =
         entries.joinToString(prefix = "{", postfix = "}") { entry ->
             "${entry.first.toJsonString()}:${entry.second}"
@@ -682,8 +764,8 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     private fun Map<String, String>.toJson(): String =
         entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${value.toJsonString()}" }
 
-//    private fun <T> Map<String, T>.toJson(renderValue: (T) -> String): String =
-//        entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${renderValue(value)}" }
+    private fun <T> Map<String, T>.toJson(renderValue: (T) -> String): String =
+        entries.joinToString(prefix = "{", postfix = "}") { (key, value) -> "${key.toJsonString()}:${renderValue(value)}" }
 
     private fun List<String>.toJson(): String = joinToString(prefix = "[", postfix = "]") { it.toJsonString() }
 
@@ -705,4 +787,11 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         }
         append('"')
     }
+
+    private fun AnalysisResult.shouldReportDirectly(): Boolean = when (this) {
+        is AnalysisResult.Error -> true
+        is AnalysisResult.Success -> outcome != TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED
+    }
+
+    private val statisticsBySession = mutableMapOf<FirSession, MutableMap<String, CallableStatistics>>()
 }

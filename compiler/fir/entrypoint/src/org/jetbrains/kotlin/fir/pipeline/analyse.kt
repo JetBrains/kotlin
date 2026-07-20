@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMemberExtensionTwoPhaseInferenceChecker
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.CliDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
@@ -34,12 +35,19 @@ fun FirSession.runCheckers(
 ): Map<FirFile, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
     val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
-    for (file in firFiles) {
-        withFileAnalysisExceptionWrapping(file) {
-            collector.collectDiagnostics(file, diagnosticsReporter)
+    FirMemberExtensionTwoPhaseInferenceChecker.startCollectingStatistics(this)
+    try {
+        for (file in firFiles) {
+            withFileAnalysisExceptionWrapping(file) {
+                collector.collectDiagnostics(file, diagnosticsReporter)
+            }
         }
+        collector.collectDiagnosticsInSettings(diagnosticsReporter)
+    } catch (throwable: Throwable) {
+        FirMemberExtensionTwoPhaseInferenceChecker.discardStatistics(this)
+        throw throwable
     }
-    collector.collectDiagnosticsInSettings(diagnosticsReporter)
+    FirMemberExtensionTwoPhaseInferenceChecker.reportSummaries(this, diagnosticsReporter)
     return firFiles.associateWith {
         val sourceFile = it.sourceFile ?: return@associateWith emptyList()
         diagnosticsCollector.diagnosticsByFile[sourceFile] ?: emptyList()
