@@ -239,6 +239,15 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
                 .associate { [parameter, expression] -> parameter.name to expression!!.toConstantValue() }
             AnnotationValue.create(classId, argumentMapping)
         }
+        is IrConstructorCall -> {
+            if (!this.type.isAnnotation() && this.type !is IrErrorType) return null
+            val classId = this.symbol.owner.constructedClass.classId ?: return null
+            val rawArguments = this.getAllArgumentsWithIr()
+            val argumentMapping = rawArguments
+                .filter { it.second != null }
+                .associate { [parameter, expression] -> parameter.name to expression!!.toConstantValue() }
+            AnnotationValue.create(classId, argumentMapping)
+        }
         is IrGetEnumValue -> {
             val classId = this.type.getClass()?.classId ?: return null
             EnumValue(classId, this.symbol.owner.name)

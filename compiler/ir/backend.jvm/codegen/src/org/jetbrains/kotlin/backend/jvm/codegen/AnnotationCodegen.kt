@@ -199,6 +199,19 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         }
     }
 
+    private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
+        val annotationClass = annotation.symbol.owner.parentAsClass
+        for (param in annotation.symbol.owner.parameters) {
+            val value = annotation.arguments[param]
+            if (value != null)
+                genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
+            else if (param.defaultValue != null)
+                continue // Default value will be supplied by JVM at runtime.
+            else if (context.state.classBuilderMode.generateBodies) //skip error for KAPT
+                error("No value for annotation parameter ${param.render()}")
+        }
+    }
+
     private fun getAnnotationArgumentJvmName(annotationClass: IrClass?, parameterName: Name): String {
         if (annotationClass == null) return parameterName.asString()
 
@@ -220,13 +233,19 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     ) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
-            is IrAnnotation -> {
-                val annotationClassType = value.classSymbol.owner.defaultType
-                val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
-                val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
-                value.classSymbol.owner.let(classCodegen::addInnerClassInfo)
-                genAnnotationArguments(value, visitor)
-                visitor.visitEnd()
+            is IrConstructorCall -> {
+                val callee = value.symbol.owner
+                when {
+                    callee.parentAsClass.isAnnotationClass -> {
+                        val annotationClassType = callee.returnType
+                        val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
+                        val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
+                        annotationClassType.classOrNull?.owner?.let(classCodegen::addInnerClassInfo)
+                        genAnnotationArguments(value, visitor)
+                        visitor.visitEnd()
+                    }
+                    else -> error("Not supported as annotation! ${ir2string(value)}")
+                }
             }
             is IrGetEnumValue -> {
                 val enumEntry = value.symbol.owner

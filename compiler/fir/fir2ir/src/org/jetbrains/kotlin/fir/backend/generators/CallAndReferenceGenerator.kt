@@ -590,33 +590,18 @@ class CallAndReferenceGenerator(
                     val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
-                    if (firSymbol.isAnnotationConstructor(session)) {
-                        IrAnnotationImplWithShape(
-                            startOffset,
-                            endOffset,
-                            irType,
-                            irSymbol,
-                            typeArgumentsCount = totalTypeParametersCount,
-                            valueArgumentsCount = firSymbol.valueParametersSize(),
-                            contextParameterCount = constructor.contextParameters.size,
-                            constructorTypeArgumentsCount = constructorTypeParametersCount,
-                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
-                            hasExtensionReceiver = firSymbol.isInstanceExtension,
-                        )
-                    } else {
-                        IrConstructorCallImplWithShape(
-                            startOffset,
-                            endOffset,
-                            irType,
-                            irSymbol,
-                            typeArgumentsCount = totalTypeParametersCount,
-                            valueArgumentsCount = firSymbol.valueParametersSize(),
-                            contextParameterCount = constructor.contextParameters.size,
-                            constructorTypeArgumentsCount = constructorTypeParametersCount,
-                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
-                            hasExtensionReceiver = firSymbol.isInstanceExtension,
-                        )
-                    }
+                    IrConstructorCallImplWithShape(
+                        startOffset,
+                        endOffset,
+                        irType,
+                        irSymbol,
+                        typeArgumentsCount = totalTypeParametersCount,
+                        valueArgumentsCount = firSymbol.valueParametersSize(),
+                        contextParameterCount = constructor.contextParameters.size,
+                        constructorTypeArgumentsCount = constructorTypeParametersCount,
+                        hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
+                        hasExtensionReceiver = firSymbol.isInstanceExtension,
+                    )
                 }
                 is IrSimpleFunctionSymbol -> {
                     val callOrigin = calleeReference.statementOrigin()
@@ -1021,21 +1006,39 @@ class CallAndReferenceGenerator(
                     }
                     val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
 
-                    IrAnnotationImplWithShape(
-                        startOffset, endOffset, type, irConstructor,
-                        // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
-                        // parameter is annotated with the same annotation.
-                        // In this case, the IR value parameters won't be initialized yet, and we will get 0 from
-                        // `irConstructor.owner.valueParameters.size`.
-                        // See KT-58294
-                        valueArgumentsCount = firConstructorSymbol.valueParameterSymbols.size,
-                        contextParameterCount = firConstructorSymbol.contextParameterSymbols.size,
-                        hasDispatchReceiver = firConstructorSymbol.dispatchReceiverType != null,
-                        hasExtensionReceiver = firConstructorSymbol.isExtension,
-                        typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
-                        constructorTypeArgumentsCount = 0,
-                        source = FirAnnotationSourceElement(annotation),
-                    )
+                    if (visitor.annotationMode) {
+                        IrConstructorCallImplWithShape(
+                            startOffset, endOffset, type, irConstructor,
+                            // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
+                            // parameter is annotated with the same annotation.
+                            // In this case, the IR value parameters won't be initialized yet, and we will get 0 from
+                            // `irConstructor.owner.valueParameters.size`.
+                            // See KT-58294
+                            valueArgumentsCount = firConstructorSymbol.valueParameterSymbols.size,
+                            contextParameterCount = firConstructorSymbol.contextParameterSymbols.size,
+                            hasDispatchReceiver = firConstructorSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firConstructorSymbol.isExtension,
+                            typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
+                            constructorTypeArgumentsCount = 0,
+                            source = FirAnnotationSourceElement(annotation),
+                        )
+                    } else {
+                        IrAnnotationImplWithShape(
+                            startOffset, endOffset, type, irConstructor,
+                            // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
+                            // parameter is annotated with the same annotation.
+                            // In this case, the IR value parameters won't be initialized yet, and we will get 0 from
+                            // `irConstructor.owner.valueParameters.size`.
+                            // See KT-58294
+                            valueArgumentsCount = firConstructorSymbol.valueParameterSymbols.size,
+                            contextParameterCount = firConstructorSymbol.contextParameterSymbols.size,
+                            hasDispatchReceiver = firConstructorSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firConstructorSymbol.isExtension,
+                            typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
+                            constructorTypeArgumentsCount = 0,
+                            source = FirAnnotationSourceElement(annotation),
+                        )
+                    }
                 }
             }
         }
@@ -1557,6 +1560,10 @@ class CallAndReferenceGenerator(
             }
 
             is IrAnnotation if statement is FirAnnotationCall -> {
+                // annotation calls don't have receivers
+            }
+
+            is IrConstructorCall if statement is FirAnnotationCall -> {
                 // annotation calls don't have receivers
             }
 

@@ -258,6 +258,13 @@ internal open class ActualizerVisitor(
             arguments.assignFrom(expression.arguments) { it?.transform() }
             typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
+
+            // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
+            // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
+            // See KT-67488 for details.
+            if (constructorSymbol.isBound) {
+                arguments.setSize(constructorSymbol.owner.parameters.size)
+            }
         }
     }
 

@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
@@ -654,17 +658,8 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitAnnotation(expression: IrAnnotation) {
-        val name = expression.classSymbol.owner.name
         print("@")
-        print(name)
-
-        val printArgumentList = expression.arguments.any { it != null }
-        if (printArgumentList) {
-            expression.printArgumentList(
-                forceParameterNames = true,
-                forceSingleLine = true
-            )
-        }
+        print(renderAsAnnotation(expression))
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall) {
@@ -1485,30 +1480,55 @@ class IrSourcePrinterVisitor(
     private fun renderAsAnnotation(irAnnotation: IrAnnotation): String =
         StringBuilder().also { it.renderAsAnnotation(irAnnotation) }.toString()
 
+    private fun StringBuilder.renderAsAnnotation(
+        annotationClassName: String,
+        args: Map<String, IrExpression?>
+    ) {
+        append(annotationClassName)
+
+        if (args.isEmpty()) return
+
+        var first = true
+        append("(")
+        for ([key, value] in args.entries) {
+            if (first) {
+                first = false
+            } else {
+                append(", ")
+            }
+            append(key)
+            append(" = ")
+            renderAsAnnotationArgument(value!!)
+        }
+        append(")")
+    }
+
     private fun StringBuilder.renderAsAnnotation(irAnnotation: IrAnnotation) {
         val annotationClassName = try {
             irAnnotation.classId.shortClassName.asString()
         } catch (e: Exception) {
             "<unbound>"
         }
-        append(annotationClassName)
 
-        if (irAnnotation.argumentMapping.isEmpty()) return
+        val nonNullValues = irAnnotation.argumentMapping.filter { it.value != null }
+        renderAsAnnotation(
+            annotationClassName,
+            nonNullValues.map { it.key.asString() to it.value!! }.toMap()
+        )
+    }
+
+    private fun StringBuilder.renderAsAnnotation(irAnnotation: IrConstructorCall) {
+        val annotationClassName = try {
+            irAnnotation.symbol.owner.parentAsClass.name.asString()
+        } catch (e: Exception) {
+            "<unbound>"
+        }
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
-        var first = true
-        append("(")
-        for (i in 0 until irAnnotation.arguments.size) {
-            if (first) {
-                first = false
-            } else {
-                append(", ")
-            }
-            append(valueParameterNames[i])
-            append(" = ")
-            renderAsAnnotationArgument(irAnnotation.arguments[i])
-        }
-        append(")")
+        renderAsAnnotation(
+            annotationClassName,
+            valueParameterNames.zip(irAnnotation.arguments).toMap()
+        )
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -1566,15 +1586,20 @@ class IrSourcePrinterVisitor(
         when (irElement) {
             null -> append("<null>")
             is IrAnnotation -> renderAsAnnotation(irElement)
+            is IrConstructorCall -> renderAsAnnotation(irElement)
             is IrConst -> {
-                append('\'')
-                append(irElement.value.toString())
-                append('\'')
+                val value = irElement.value
+                if (value is String) append('"')
+                append(value.toString())
+                if (value is String) append('"')
             }
             is IrVararg -> {
                 appendListWith(irElement.elements, "[", "]", ", ") {
                     renderAsAnnotationArgument(it)
                 }
+            }
+            is IrGetEnumValue -> {
+                append(irElement.symbol.owner.parentAsClass.name.asString() + "." + irElement.symbol.owner.name)
             }
             else -> append(irElement.accept(this@IrSourcePrinterVisitor, null))
         }

@@ -71,7 +71,7 @@
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.E>
     @-1:-1..-1 PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
       annotations:
-        @-1:-1..-1 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.internal.IntrinsicConstEvaluation' type=kotlin.internal.IntrinsicConstEvaluation origin=null
+        @-1:-1..-1 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:IntrinsicConstEvaluation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]' type=kotlin.internal.IntrinsicConstEvaluation origin=null
       @-1:-1..-1 FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> (<this>:kotlin.Enum<<root>.E>) returnType:kotlin.String [fake_override]
         @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.E>
     @-1:-1..-1 PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]

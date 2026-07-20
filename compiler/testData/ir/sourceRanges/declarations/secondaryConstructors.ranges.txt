@@ -16,7 +16,7 @@
         @9:4..36 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @12:4..32 CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:<root>.C1
       annotations:
-        @11:4..32 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+        @11:4..32 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
           @11:14..31 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @11:14..31 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @12:16..22 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any
@@ -38,7 +38,7 @@
         @16:4..17 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @19:4..40 CONSTRUCTOR visibility:public <> (p:kotlin.String) returnType:<root>.C2
       annotations:
-        @18:4..32 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+        @18:4..32 ANNOTATION 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Suppress modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Suppress origin=null
           @18:14..31 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @18:14..31 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @19:16..30 VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.String

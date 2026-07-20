@@ -38,7 +38,7 @@ private fun Test(%composer: Composer?, %changed: Int) {
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
 @FunctionKeyMeta(key = 1884885184, startOffset = 268, endOffset = 401)
-private fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+private fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = "item")] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
   val <iterator> = items.iterator()
   while (<iterator>.hasNext()) {
