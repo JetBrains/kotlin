@@ -32,10 +32,11 @@ import org.junit.jupiter.api.Disabled
 import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
-import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.*
-import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
@@ -146,43 +147,3 @@ class ScriptCliCompilationTest {
             assertFalse(res.second.hasErrors(), resMessage.value)
         }
 }
-
-@KotlinScript(
-    fileExtension = "req1.kts",
-    compilationConfiguration = TestScriptWithRequireConfiguration::class
-)
-abstract class TestScriptWithRequire
-
-object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
-    {
-        defaultImports(Import::class, DependsOn::class)
-        jvm {
-            dependenciesFromCurrentContext(wholeClasspath = true)
-        }
-        refineConfiguration {
-            onAnnotations(Import::class, DependsOn::class) { context: ScriptConfigurationRefinementContext ->
-                val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
-                val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation }
-                val sources = annotations
-                    ?.flatMap {
-                        (it as? Import)?.sources?.map { sourceName ->
-                            FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
-                        } ?: emptyList()
-                    }
-                val deps = annotations
-                    ?.mapNotNull {
-                        (it as? DependsOn)?.path?.let(::File)
-                    }
-                ScriptCompilationConfiguration(context.compilationConfiguration) {
-                    if (sources?.isNotEmpty() == true) importScripts.append(sources)
-                    if (deps != null) updateClasspath(deps)
-                }.asSuccess()
-            }
-        }
-    }
-)
-
-@Target(AnnotationTarget.FILE)
-@Repeatable
-@Retention(AnnotationRetention.SOURCE)
-annotation class Import(vararg val sources: String)

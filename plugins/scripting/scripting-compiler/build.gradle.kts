@@ -76,6 +76,7 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
 
     testImplementation(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(project(":plugins:scripting:scripting-tests:runtime"))
 
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.coroutines.core)
@@ -141,6 +142,7 @@ projectTests {
     withWasmRuntime()
     withScriptRuntime()
     withScriptingPlugin()
+    withScriptingTestsRuntime()
     withTestJar()
     withMockJdkRuntime()
     @OptIn(KotlinCompilerDistUsage::class)

@@ -264,6 +264,17 @@ fun Test.withScriptingPlugin() {
     )
 }
 
+fun Test.withScriptingTestsRuntime() {
+    addClasspathProperty(
+        configurationElements(
+            "scriptingTestsRuntimeTests",
+            dependencies = {
+                add(project.dependencies.project(":plugins:scripting:scripting-tests:runtime"))
+            }
+        ), TestCompilePaths.KOTLIN_SCRIPTING_TESTS_RUNTIME_CLASSPATH
+    )
+}
+
 fun Test.withTestScriptDefinition() {
     addClasspathProperty(
         configurationElements(
