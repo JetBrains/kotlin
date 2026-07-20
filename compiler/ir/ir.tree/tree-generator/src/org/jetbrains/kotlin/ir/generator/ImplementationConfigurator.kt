@@ -302,6 +302,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Int, value)
                 
+                        fun uint(startOffset: Int, endOffset: Int, type: IrType, value: UInt): IrConstImpl =
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.UInt, value)
+                        
                         fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Null, null)
                 
@@ -317,6 +320,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Long, value)
                 
+                        fun ulong(startOffset: Int, endOffset: Int, type: IrType, value: ULong): IrConstImpl =
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.ULong, value)
+                        
                         fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Float, value)
                 
@@ -329,8 +335,14 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Byte, value)
                 
+                        fun ubyte(startOffset: Int, endOffset: Int, type: IrType, value: UByte): IrConstImpl =
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.UByte, value)
+                
                         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
                             IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Short, value)
+                            
+                        fun ushort(startOffset: Int, endOffset: Int, type: IrType, value: UShort): IrConstImpl =
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.UShort, value)
                     }
                 """.trimIndent())
             }
