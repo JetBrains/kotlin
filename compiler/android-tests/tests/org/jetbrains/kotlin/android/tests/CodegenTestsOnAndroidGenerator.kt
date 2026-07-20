@@ -226,7 +226,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         val holders = mutableMapOf<ConfigurationKey, FilesWriter>()
 
         for (dir in dirs) {
-            val files = dir.listFiles() ?: error("Folder with testData is empty: ${dir.absolutePath}")
+            val files = dir.listFilesDeterministically()
             processFiles(files, holders, commonFlavor, reflectionFlavor)
         }
 
@@ -326,17 +326,15 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     @OptIn(TestInfrastructureInternals::class)
     @Throws(IOException::class)
     private fun processFiles(
-        files: Array<File>,
+        files: List<File>,
         holders: MutableMap<ConfigurationKey, FilesWriter>,
         commonFlavor: FlavorConfig,
         reflectionFlavor: FlavorConfig
     ) {
         for (file in files) {
             if (file.isDirectory) {
-                val listFiles = file.listFiles()
-                if (listFiles != null) {
-                    processFiles(listFiles, holders, commonFlavor, reflectionFlavor)
-                }
+                val listFiles = file.listFilesDeterministically()
+                processFiles(listFiles, holders, commonFlavor, reflectionFlavor)
             } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.EXTENSION) {
                 // skip non kotlin files
             } else {
@@ -432,6 +430,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             }
         }
     }
+
+    private fun File.listFilesDeterministically(): List<File> =
+        (listFiles() ?: emptyArray())
+            .sortedBy { FileUtil.toSystemIndependentName(it.path) }
 
     private fun createTestConfiguration(testDataFile: File): NonGroupingStageTestConfiguration {
         return TestConfigurationBuilder().apply {
