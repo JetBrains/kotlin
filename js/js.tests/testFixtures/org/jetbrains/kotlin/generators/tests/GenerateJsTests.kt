@@ -21,7 +21,6 @@ fun main(args: Array<String>) {
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
-    val irInterpreterTests = "involvesIrInterpreter"
     val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     // TODO: repair these tests
@@ -208,7 +207,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxInlineTest> {
@@ -216,7 +215,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest> {
