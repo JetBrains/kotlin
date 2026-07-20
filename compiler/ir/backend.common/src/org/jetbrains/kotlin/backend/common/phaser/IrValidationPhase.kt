@@ -81,7 +81,7 @@ class IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<Context : Loweri
                 IrCallValueArgumentCountChecker,
                 IrCrossFileFieldUsageChecker,
                 IrValueAccessScopeChecker,
-                //IrTypeParameterScopeChecker,
+                IrTypeParameterScopeChecker,
                 IrVisibilityChecker.Relaxed,
                 //IrCallTypeArgumentCountChecker, // KT-80065
                 IrFieldVisibilityChecker,
@@ -105,7 +105,7 @@ class IrValidationBeforeLoweringsKlibSecondStagePhase<Context : LoweringContext>
                 IrCallValueArgumentCountChecker,
                 IrCrossFileFieldUsageChecker,
                 IrValueAccessScopeChecker,
-                //IrTypeParameterScopeChecker,
+                IrTypeParameterScopeChecker,
                 IrVisibilityChecker.Relaxed,
                 //IrCallTypeArgumentCountChecker, // KT-80065
                 IrFieldVisibilityChecker,
