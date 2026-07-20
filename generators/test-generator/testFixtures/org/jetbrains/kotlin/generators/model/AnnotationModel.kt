@@ -48,6 +48,10 @@ class AnnotationModel(
     }
 }
 
+inline fun <reified T : Annotation> annotation(vararg arguments: Pair<String, Any>): AnnotationModel {
+    return annotation(T::class.java, *arguments)
+}
+
 fun annotation(annotation: Class<out Annotation>, singleArgumentValue: Any): AnnotationModel {
     return AnnotationModel(annotation, listOf(AnnotationArgumentModel(value = singleArgumentValue)))
 }
