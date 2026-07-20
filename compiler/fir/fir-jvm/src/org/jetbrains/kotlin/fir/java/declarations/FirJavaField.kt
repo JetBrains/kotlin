@@ -84,6 +84,10 @@ class FirJavaField @FirImplementationDetail constructor(
      * Whether the underlying Java declaration carries any initializer expression. Mirrors
      * [org.jetbrains.kotlin.load.java.structure.JavaField.hasInitializer]; broader than
      * [hasConstantInitializer], which is restricted to JLS 4.12.4 compile-time constants.
+     *
+     * Read by the lombok plugin's `RequiredArgsConstructorGeneratorPart` and
+     * `AllArgsConstructorGeneratorPart` (`plugins/lombok`) to exclude already-initialized fields
+     * from generated constructors.
      */
     val hasInitializer: Boolean
         get() = lazyHasInitializer.value

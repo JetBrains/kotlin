@@ -329,6 +329,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         buildJavaField {
                             isFromSource = true
                             lazyHasConstantInitializer = lazy { false }
+                            lazyHasInitializer = lazy { false }
                             this@buildJavaField.containingClassSymbol = builderSymbol
 
                             moduleData = containingClassSymbol.moduleData

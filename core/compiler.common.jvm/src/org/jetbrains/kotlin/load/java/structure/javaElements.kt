@@ -136,18 +136,11 @@ interface JavaField : JavaMember {
     val hasConstantNotNullInitializer: Boolean
 
     /**
-     * Whether [resolveInitializerValue] does anything beyond returning [initializerValue]. Lets
-     * the caller skip allocating the callback closure when it would be ignored. PSI/binary fields
-     * already evaluate Java-side constant expressions at structure-build time and cannot have a
-     * non-Java reference here, so they inherit `false`. java-direct overrides this to `true` for
-     * fields whose initializer is a non-literal reference that may need cross-language resolution.
-     */
-    val supportsExternalInitializerResolution: Boolean get() = false
-
-    /**
      * Whether the source/binary declaration carries any initializer expression (constant or not).
-     * Broader than [hasConstantNotNullInitializer], which requires the initializer to be a
-     * compile-time constant per JLS 4.12.4.
+     * Broader than [hasConstantNotNullInitializer].
+     * Used by the lombok plugin's `@RequiredArgsConstructor`/`@AllArgsConstructor` generation to
+     * exclude fields that already have an initializer (`RequiredArgsConstructorGeneratorPart`,
+     * `AllArgsConstructorGeneratorPart` in `plugins/lombok`).
      */
     val hasInitializer: Boolean
 }
