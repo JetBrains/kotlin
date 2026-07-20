@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class VarargInjectionLowering(val context: Context) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.forEach{
+        irDeclarationContainer.declarations.forEach {
             when (it) {
-                is IrField    -> lower(it.symbol, it.initializer)
+                is IrField -> lower(it.symbol, it.initializer)
                 is IrFunction -> lower(it.symbol, it.body)
                 is IrProperty -> {
                     it.backingField?.let { field ->
@@ -61,7 +61,7 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
     }
 
     private fun lower(owner: IrSymbol, element: IrElement?) {
-        element?.transformChildrenVoid(object: IrElementTransformerVoid() {
+        element?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 // Skip nested.
                 return declaration
@@ -77,16 +77,16 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
                         log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.arguments[it.indexInParameters])}" }
                     }
                     callee.parameters
-                        .filter { it.varargElementType != null && expression.arguments[it.indexInParameters] == null }
-                        .forEach {
-                            expression.arguments[it.indexInParameters] =
-                                IrVarargImpl(
-                                    startOffset = startOffset,
-                                    endOffset = endOffset,
-                                    type = it.type,
-                                    varargElementType = it.varargElementType!!
-                                )
-                        }
+                            .filter { it.varargElementType != null && expression.arguments[it.indexInParameters] == null }
+                            .forEach {
+                                expression.arguments[it.indexInParameters] =
+                                        IrVarargImpl(
+                                                startOffset = startOffset,
+                                                endOffset = endOffset,
+                                                type = it.type,
+                                                varargElementType = it.varargElementType!!
+                                        )
+                            }
                 }
                 expression.transformChildrenVoid(this)
             }
@@ -142,8 +142,8 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
                         if (element !is IrSpreadElement) {
                             +irCall(arrayHandle.setMethodSymbol).apply {
                                 arguments[0] = irGet(arrayTmpVariable)
-                                arguments[1] =  if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i)
-                                arguments[2] =  irGet(dst)
+                                arguments[1] = if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i)
+                                arguments[2] = irGet(dst)
                             }
                             if (hasSpreadElement)
                                 +incrementVariable(indexTmpVariable, kIntOne)
@@ -190,13 +190,13 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
         })
     }
 
-    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression {
+    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope: Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression {
         context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             if (!hasSpreadElement)
                 return irConstInt(expression.elements.size)
-            val notSpreadElementCount = expression.elements.filter { it !is IrSpreadElement}.size
+            val notSpreadElementCount = expression.elements.filter { it !is IrSpreadElement }.size
             val initialValue = irConstInt(notSpreadElementCount) as IrExpression
-            return vars.filter{it.key is IrSpreadElement}.toList().fold( initial = initialValue) { result, it ->
+            return vars.filter { it.key is IrSpreadElement }.toList().fold(initial = initialValue) { result, it ->
                 val arraySize = irArraySize(arrayHandle, irGet(it.second))
                 increment(result, arraySize)
             }
@@ -211,9 +211,9 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
     }
 
 
-    private fun hasSpreadElement(expression: IrVararg?) = expression?.elements?.any { it is IrSpreadElement }?:false
+    private fun hasSpreadElement(expression: IrVararg?) = expression?.elements?.any { it is IrSpreadElement } ?: false
 
-    private fun log(msg:() -> String) {
+    private fun log(msg: () -> String) {
         context.log { "VARARG-INJECTOR:    ${msg()}" }
     }
 
@@ -329,11 +329,12 @@ internal class VarargInjectionLowering(val context: Context) : DeclarationContai
 
 
     val arrayToHandle =
-        (primitiveArrayHandles.values + unsignedArrayHandles + ReferenceArrayHandle()).associateBy { it.arraySymbol }
+            (primitiveArrayHandles.values + unsignedArrayHandles + ReferenceArrayHandle()).associateBy { it.arraySymbol }
 
 }
 
 private fun IrBuilderWithScope.irConstInt(value: Int): IrConst =
-    IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
+        IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
+
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)
