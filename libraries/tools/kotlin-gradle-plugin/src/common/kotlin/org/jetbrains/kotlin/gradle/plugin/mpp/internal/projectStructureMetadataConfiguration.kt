@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeMetadataCompilationOutputs
@@ -104,6 +105,9 @@ private fun setupTransformActionFromJarToPsm(project: Project) {
         fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
         toArtifactType = KotlinUsages.KOTLIN_PSM_METADATA
     ) { transform ->
+        transform.parameters { params ->
+            params.psmPath.set("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
+        }
         transform.from.apply {
             attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
         }
