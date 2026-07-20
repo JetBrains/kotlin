@@ -68,3 +68,19 @@ private fun Configuration.lazyArtifactCollection(configureArtifactView: Artifact
 internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): ResolvedVariantResult {
     return if (externalVariant.isPresent) externalVariant.get().lastExternalVariantOrSelf() else this
 }
+
+internal fun <K, V> LazyResolvedConfigurationComponent.groupByToNonNullSet(
+    keySelector: (DependencyResult) -> K?,
+    valueTransform: (DependencyResult) -> V?,
+): Map<K, Set<V>> {
+    val computed = mutableMapOf<K, MutableSet<V>>()
+    for (dependency in allDependencies) {
+        val key = keySelector(dependency) ?: continue
+
+        val value = valueTransform(dependency)
+        if (value != null) {
+            computed.getOrPut(key) { mutableSetOf() } += value
+        }
+    }
+    return computed
+}

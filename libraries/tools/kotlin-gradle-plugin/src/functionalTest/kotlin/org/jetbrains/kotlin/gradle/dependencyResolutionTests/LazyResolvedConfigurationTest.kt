@@ -8,19 +8,28 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
 import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.gradle.cache.getOrPutSynchronized
+import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 import kotlin.test.fail
 
 class LazyResolvedConfigurationTest {
@@ -178,5 +187,93 @@ class LazyResolvedConfigurationTest {
             ?: fail("Expected to have single artifact")
 
         assertEquals("artifact.tmp", artifactName)
+    }
+
+    @Test
+    fun `test - cachingGroupByToNonNullSet`() {
+        val project = buildProject {
+            enableDependencyVerification(false)
+            repositories.mavenLocal { repo ->
+                repo.mavenContent { it.includeGroupByRegex(".*jetbrains.*") }
+            }
+            repositories.mavenCentral()
+            applyMultiplatformPlugin()
+        }
+
+        val kotlin = project.multiplatformExtension
+        kotlin.jvm()
+        kotlin.linuxX64()
+
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            implementation("com.squareup.okio:okio:3.3.0")
+        }
+
+        project.evaluate()
+
+        val commonMainCompileDependencies = kotlin.metadata().compilations.getByName("commonMain")
+            .internal.configurations.compileDependencyConfiguration
+
+        val lazyCommonMainCompileDependencies = LazyResolvedConfigurationComponent(commonMainCompileDependencies)
+        val coordinatesMapper = { dependency: DependencyResult ->
+            if (dependency is ResolvedDependencyResult) {
+                val id = dependency.selected.id as ModuleComponentIdentifier
+                "${id.group}:${id.module}"
+            } else null
+        }
+        val variantNameMapper = { dependency: DependencyResult ->
+            if (dependency is ResolvedDependencyResult) {
+                dependency.resolvedVariant.displayName
+            } else null
+        }
+
+        val cache = project.kotlinGradleTaskExecutionCache.get()
+
+        val group = cache.getOrPutSynchronized(extrasKeyOf("group")) {
+            lazyCommonMainCompileDependencies.groupByToNonNullSet(coordinatesMapper, variantNameMapper)
+        }
+
+        // getting group with the same name but different selectors should return the previously computed group
+        val groupV2 = cache.getOrPutSynchronized(extrasKeyOf("group")) {
+            lazyCommonMainCompileDependencies.groupByToNonNullSet({ "" }, { "" })
+        }
+        assertSame(
+            group,
+            groupV2
+        )
+
+        assertEquals(
+            mapOf(
+                "com.squareup.okio:okio" to setOf(
+                    "metadataApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib" to setOf(
+                    "metadataApiElements",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib-common" to setOf(
+                    "stdlibCommonElements",
+                ),
+            ).prettyPrinted,
+            group.prettyPrinted
+        )
+
+        val reversedGroup = cache.getOrPutSynchronized(extrasKeyOf("reversedGroup")) {
+            lazyCommonMainCompileDependencies.groupByToNonNullSet(
+                keySelector = variantNameMapper,
+                valueTransform = coordinatesMapper
+            )
+        }
+
+        assertEquals(
+            mapOf(
+                "metadataApiElements" to setOf(
+                    "com.squareup.okio:okio",
+                    "org.jetbrains.kotlin:kotlin-stdlib",
+                ),
+                "stdlibCommonElements" to setOf(
+                    "org.jetbrains.kotlin:kotlin-stdlib-common",
+                ),
+            ).prettyPrinted,
+            reversedGroup.prettyPrinted
+        )
     }
 }

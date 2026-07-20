@@ -18,6 +18,8 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
+import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.metadataFragmentAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
@@ -116,6 +118,9 @@ internal class GranularMetadataTransformation(
      */
     class Params private constructor(
         @get:Internal
+        val projectId: String,
+
+        @get:Internal
         val build: CurrentBuildIdentifier,
 
         @get:Input
@@ -165,8 +170,12 @@ internal class GranularMetadataTransformation(
 
         @get:Internal
         val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+
+        @get:Internal
+        val cache: Provider<KotlinGradleTaskExecutionCache>
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
+            projectId = project.path,
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfigurationWithArtifacts(kotlinSourceSet.internal.resolvableMetadataConfiguration),
@@ -185,6 +194,7 @@ internal class GranularMetadataTransformation(
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
             buildIdentifierAccessor = project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>(),
+            cache = project.kotlinGradleTaskExecutionCache
         )
     }
 
@@ -196,11 +206,12 @@ internal class GranularMetadataTransformation(
         override fun toString(): String = "ProjectData[path='$path']"
     }
 
-    /** TODO: Can be shared among multiple instances of [GranularMetadataTransformation] of the same project, with caching */
     private val sourceSetVisibilityProvider = SourceSetVisibilityProvider(
-        params.buildIdentifierAccessor,
+        projectId = params.projectId,
+        buildIdentifierAccessor = params.buildIdentifierAccessor,
         resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
         allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates,
+        cache = params.cache.get()
     )
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
