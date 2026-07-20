@@ -23,12 +23,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
@@ -67,52 +63,33 @@ internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : Inn
 
 internal class InnerClassLowering(val context: NativeBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        InnerClassTransformer(irClass).lowerInnerClass()
+        if (!irClass.isInner) return
+
+        val outerThisField = context.innerClassesSupport.getOuterThisField(irClass)
+        irClass.declarations += outerThisField
+        irClass.transformChildrenVoid(InnerClassTransformer(irClass, outerThisField))
     }
 
-    private inner class InnerClassTransformer(val irClass: IrClass) : IrElementTransformerVoidWithContext() {
-        lateinit var outerThisField: IrField
-
-        fun lowerInnerClass() {
-            if (!irClass.isInner) return
-
-            irClass.transformChildrenVoid(this)
-            createOuterThisField()
-            lowerConstructors()
+    private inner class InnerClassTransformer(val irClass: IrClass, val outerThisField: IrField) : IrElementTransformerVoidWithContext() {
+        override fun visitClassNew(declaration: IrClass): IrStatement {
+            // Skip nested.
+            return declaration
         }
 
-        private fun createOuterThisField() {
-            val outerThisField = context.innerClassesSupport.getOuterThisField(irClass)
-            irClass.declarations += outerThisField
-            this.outerThisField = outerThisField
-        }
+        override fun visitFunctionNew(declaration: IrFunction): IrStatement {
+            declaration.transformChildrenVoid(this)
 
-        private fun lowerConstructors() {
-            irClass.declarations.transformFlat { irMember ->
-                if (irMember is IrConstructor)
-                    listOf(lowerConstructor(irMember))
-                else
-                    null
-            }
-        }
-
-        private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            if (irConstructor.delegationKind(context) == ConstructorDelegationKind.CALLS_SUPER) {
+            if ((declaration as? IrConstructor)?.delegationKind(context) == ConstructorDelegationKind.CALLS_SUPER) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
-                val blockBody = irConstructor.body as? IrBlockBody
-                        ?: error("Unexpected constructor body: ${irConstructor.body}")
-                val outerReceiver = irConstructor.dispatchReceiverParameter!!
-                val setOuterThis = context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).run {
+                val blockBody = declaration.body as? IrBlockBody
+                        ?: error("Unexpected constructor body: ${declaration.body}")
+                val outerReceiver = declaration.dispatchReceiverParameter!!
+                val setOuterThis = context.createIrBuilder(declaration.symbol, declaration.startOffset, declaration.endOffset).run {
                     irSetField(irGet(irClass.thisReceiver!!), outerThisField, irGet(outerReceiver))
                 }
                 blockBody.statements.add(0, setOuterThis)
             }
 
-            return irConstructor
-        }
-
-        override fun visitClassNew(declaration: IrClass): IrStatement {
-            // Skip nested.
             return declaration
         }
 
