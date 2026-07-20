@@ -95,7 +95,6 @@ bool coreSymbolicationUseOnlyKotlinImage() noexcept;
 bool objcDisposeOnMain() noexcept;
 bool objcDisposeWithRunLoop() noexcept;
 bool enableSafepointSignposts() noexcept;
-bool globalDataLazyInit() noexcept;
 bool swiftExport() noexcept;
 bool latin1Strings() noexcept;
 uint8_t mmapTag() noexcept;

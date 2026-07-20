@@ -2671,7 +2671,6 @@ internal class CodeGeneratorVisitor(
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.OBJC_DSIPOSE_WITH_RUN_LOOP, context.config.objcDisposeWithRunLoop.toLlvmConstInt32())
 
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.ENABLE_SAFEPOINT_SIGNPOSTS, context.config.enableSafepointSignposts.toLlvmConstInt32())
-            overrideRuntimeGlobal(NativeRuntimeOverridableConstants.GLOBAL_DATA_LAZY_INIT, context.config.globalDataLazyInit.toLlvmConstInt32())
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.SWIFT_EXPORT, context.config.swiftExport.toLlvmConstInt32())
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.LATIN1_STRINGS, context.config.latin1Strings.toLlvmConstInt32())
             overrideRuntimeGlobal(NativeRuntimeOverridableConstants.MMAP_TAG, context.config.mmapTag.toLlvmConstUInt8())

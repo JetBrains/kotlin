@@ -324,6 +324,14 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
+
+    get(BinaryOptions.globalDataLazyInit)?.let {
+        if (!it) {
+            report(KONAN_ARGUMENT_ERROR, "Eager Global Data initialization is no longer supported")
+        } else {
+            report(KONAN_ARGUMENT_STRONG_WARNING, "Binary option globalDataLazyInit is deprecated and will be removed in a future release")
+        }
+    }
 }
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()

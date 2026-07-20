@@ -34,7 +34,6 @@ object NativeRuntimeOverridableConstants {
     const val OBJC_DSIPOSE_WITH_RUN_LOOP: String = "Kotlin_objcDisposeWithRunLoop"
 
     const val ENABLE_SAFEPOINT_SIGNPOSTS: String = "Kotlin_enableSafepointSignposts"
-    const val GLOBAL_DATA_LAZY_INIT: String = "Kotlin_globalDataLazyInit"
     const val SWIFT_EXPORT: String = "Kotlin_swiftExport"
     const val LATIN1_STRINGS: String = "Kotlin_latin1Strings"
     const val MMAP_TAG: String = "Kotlin_mmapTag"

@@ -322,13 +322,6 @@ class NativeSecondStageCompilationConfig(
             configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()
                     ?: defaultForceNativeThreadStateForFunctions
 
-    val globalDataLazyInit: Boolean
-        get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
-            if (!it) {
-                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager Global Data initialization is deprecated")
-            }
-        } ?: true
-
     private val defaultGenericSafeCasts = !optimizationsEnabled // For now disabled in -opt due to performance penalty.
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
