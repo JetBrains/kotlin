@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
@@ -22,6 +22,11 @@ import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.test.FIB_SCRIPT_OUTPUT_TAIL
+import org.jetbrains.kotlin.scripting.compiler.test.NUM_4_LINE
+import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
+import org.jetbrains.kotlin.scripting.compiler.test.captureOut
+import org.jetbrains.kotlin.scripting.compiler.test.compileScript
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -145,7 +150,7 @@ class ScriptTest {
 
             try {
                 return compileScript(
-                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath")
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-tests/testData/host/compiler/$scriptPath")
                         .toScriptSource(),
                     environment,
                 ).first?.java

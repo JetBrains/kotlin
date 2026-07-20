@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.test.CompileTimeFibonacci
+import org.jetbrains.kotlin.scripting.compiler.test.captureOut
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -39,7 +41,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci"
+private const val testDataPath = "plugins/scripting/scripting-tests/testData/host/compiler/compileTimeFibonacci"
 
 class CompileTimeFibonacciTest {
     private val testRootDisposable: Disposable = TestDisposable("${CompileTimeFibonacciTest::class.simpleName}.testRootDisposable")
@@ -80,7 +82,7 @@ class CompileTimeFibonacciTest {
                 val error = result.reports.first()
 
                 val expectedFile =
-                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts")
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-tests/testData/host/compiler/compileTimeFibonacci/unsupported.fib.kts")
                 val expectedErrorMessage = """
                     ($expectedFile:3:1) Fibonacci of non-positive numbers like 0 are not supported
                 """.trimIndent()

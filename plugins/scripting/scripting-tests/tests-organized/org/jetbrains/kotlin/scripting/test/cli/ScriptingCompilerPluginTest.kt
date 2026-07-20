@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.scripting.test.cli
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -46,13 +44,6 @@ class ScriptingCompilerPluginTest {
         )
     }
 
-}
-
-fun MessageCollectorImpl.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
-    assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
-        "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
-                messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
-    }
 }
 
 fun assertTrue(exp: Boolean, msg: () -> String) {

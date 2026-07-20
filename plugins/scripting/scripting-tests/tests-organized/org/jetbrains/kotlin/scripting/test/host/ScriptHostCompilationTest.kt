@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
+import org.jetbrains.kotlin.scripting.compiler.test.captureOut
+import org.jetbrains.kotlin.scripting.compiler.test.compileAndExecuteScript
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -39,7 +42,7 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
-private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
+private const val testDataPath = "plugins/scripting/scripting-tests/testData/host/cliCompilation"
 
 @SmokeTest
 class ScriptHostCompilationTest {
