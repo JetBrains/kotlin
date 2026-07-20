@@ -37,23 +37,20 @@ fun FirLiteralExpression.getIrConstKind(): IrConstKind = when (kind) {
 fun FirLiteralExpression.toIrConst(irType: IrType): IrConst {
     return convertWithOffsets { startOffset, endOffset ->
         val kind = getIrConstKind()
-
-        val value = (value as? Long)?.let {
-            when (kind) {
-                IrConstKind.Byte -> it.toByte()
-                IrConstKind.Short -> it.toShort()
-                IrConstKind.Int -> it.toInt()
-                IrConstKind.Float -> it.toFloat()
-                IrConstKind.Double -> it.toDouble()
-                else -> it
-            }
-        } ?: value
-        IrConstImpl(
-            startOffset, endOffset,
-            // Strip all annotations (including special annotations such as @EnhancedNullability) from a constant type
-            irType.removeAnnotations(),
-            kind, value
-        )
+        // Strip all annotations (including special annotations such as @EnhancedNullability) from a constant type
+        val type = irType.removeAnnotations()
+        when (kind) {
+            IrConstKind.Boolean -> IrConstImpl.boolean(startOffset, endOffset, type, value as Boolean)
+            IrConstKind.Byte -> IrConstImpl.byte(startOffset, endOffset, type, (value as Number).toByte())
+            IrConstKind.Short -> IrConstImpl.short(startOffset, endOffset, type, (value as Number).toShort())
+            IrConstKind.Int -> IrConstImpl.int(startOffset, endOffset, type, (value as Number).toInt())
+            IrConstKind.Long -> IrConstImpl.long(startOffset, endOffset, type, (value as Number).toLong())
+            IrConstKind.Char -> IrConstImpl.char(startOffset, endOffset, type, value as Char)
+            IrConstKind.Float -> IrConstImpl.float(startOffset, endOffset, type, (value as Number).toFloat())
+            IrConstKind.Double -> IrConstImpl.double(startOffset, endOffset, type, (value as Number).toDouble())
+            IrConstKind.String -> IrConstImpl.string(startOffset, endOffset, type, value as String)
+            IrConstKind.Null -> IrConstImpl.constNull(startOffset, endOffset, type)
+        }
     }
 }
 

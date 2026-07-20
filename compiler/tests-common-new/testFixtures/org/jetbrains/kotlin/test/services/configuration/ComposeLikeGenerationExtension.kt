@@ -247,11 +247,10 @@ private class ComposeLikeDefaultArgumentRewriter(
         )
     }
 
-    private fun irConst(value: Int): IrConst = IrConstImpl(
+    private fun irConst(value: Int): IrConst = IrConstImpl.int(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,
-        IrConstKind.Int,
         value
     )
 

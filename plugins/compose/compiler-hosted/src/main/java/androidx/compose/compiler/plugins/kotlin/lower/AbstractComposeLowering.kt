@@ -506,44 +506,38 @@ abstract class AbstractComposeLowering(
 //        context.irBuiltIns.eqeqSymbol
 //        context.irBuiltIns.greaterFunByOperandType
 
-    protected fun irConst(value: Int): IrConst = IrConstImpl(
+    protected fun irConst(value: Int): IrConst = IrConstImpl.int(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,
-        IrConstKind.Int,
         value
     )
 
-    protected fun irConst(value: Long): IrConst = IrConstImpl(
+    protected fun irConst(value: Long): IrConst = IrConstImpl.long(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.longType,
-        IrConstKind.Long,
         value
     )
 
-    protected fun irConst(value: String): IrConst = IrConstImpl(
+    protected fun irConst(value: String): IrConst = IrConstImpl.string(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.stringType,
-        IrConstKind.String,
         value
     )
 
-    protected fun irConst(value: Boolean) = IrConstImpl(
+    protected fun irConst(value: Boolean) = IrConstImpl.boolean(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.booleanType,
-        IrConstKind.Boolean,
         value
     )
 
-    protected fun irNull() = IrConstImpl(
+    protected fun irNull() = IrConstImpl.constNull(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.anyNType,
-        IrConstKind.Null,
-        null
     )
 
     protected fun irForLoop(

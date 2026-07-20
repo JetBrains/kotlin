@@ -79,7 +79,7 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
     )
 
 fun IrBuilder.irBoolean(value: Boolean) =
-    IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, value)
+    IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, value)
 
 fun IrBuilder.irUnit() =
     irGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
