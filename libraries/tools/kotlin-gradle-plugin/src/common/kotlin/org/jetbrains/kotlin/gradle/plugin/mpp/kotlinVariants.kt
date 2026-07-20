@@ -11,7 +11,6 @@ import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ModuleCoordinates
@@ -65,19 +64,17 @@ private interface KotlinTargetComponentWithCoordinatesAndPublication :
 }
 
 open class KotlinVariant(
-    val producingCompilation: KotlinCompilation<*>,
+    final override val target: KotlinTarget,
     private val usages: Set<DefaultKotlinUsageContext>,
 ) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication {
     var componentName: String? = null
 
     var artifactTargetName: String = target.targetName
 
-    final override val target: KotlinTarget
-        get() = producingCompilation.target
 
-    override fun getUsages(): Set<KotlinUsageContext> = usages.publishableUsages()
+    override fun getUsages(): Set<DefaultKotlinUsageContext> = usages.publishableUsages()
 
-    override fun getName(): String = componentName ?: producingCompilation.target.targetName
+    override fun getName(): String = componentName ?: target.targetName
 
     override var publishable: Boolean = true
     override val publishableOnCurrentHost: Boolean
@@ -92,16 +89,16 @@ open class KotlinVariant(
 }
 
 open class KotlinVariantWithCoordinates(
-    producingCompilation: KotlinCompilation<*>,
+    target: KotlinTarget,
     usages: Set<DefaultKotlinUsageContext>,
-) : KotlinVariant(producingCompilation, usages),
+) : KotlinVariant(target, usages),
     KotlinTargetComponentWithCoordinatesAndPublication /* Gradle 4.7+ API, don't use with older versions */
 
 class KotlinVariantWithMetadataVariant(
-    producingCompilation: KotlinCompilation<*>,
+    target: KotlinTarget,
     usages: Set<DefaultKotlinUsageContext>,
     internal val metadataTarget: AbstractKotlinTarget,
-) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
+) : KotlinVariantWithCoordinates(target, usages), ComponentWithVariants {
     override fun getVariants() = metadataTarget.components
 }
 

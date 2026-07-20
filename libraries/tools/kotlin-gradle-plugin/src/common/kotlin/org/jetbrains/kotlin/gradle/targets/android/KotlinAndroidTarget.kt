@@ -196,7 +196,6 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
-                    compilation,
                     usageContexts,
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
