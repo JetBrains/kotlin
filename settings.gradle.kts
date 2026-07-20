@@ -435,6 +435,7 @@ include(
     ":kotlin-scripting-compiler-impl-embeddable",
     ":plugins:scripting:test-script-definition",
     ":plugins:scripting:scripting-tests",
+    ":plugins:scripting:scripting-tests:runtime",
     ":kotlin-scripting-dependencies",
     ":kotlin-scripting-dependencies-maven",
     ":kotlin-scripting-dependencies-maven-all",

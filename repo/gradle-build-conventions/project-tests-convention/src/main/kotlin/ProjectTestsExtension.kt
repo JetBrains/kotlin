@@ -74,6 +74,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         project.tasks.withType(Test::class.java).configureEach { withTestScriptDefinition() }
     }
 
+    fun withScriptingTestsRuntime() {
+        project.tasks.withType(Test::class.java).configureEach { withScriptingTestsRuntime() }
+    }
+
     @KotlinCompilerDistUsage
     fun withDist() {
         project.tasks.withType(Test::class.java).configureEach { withDist() }

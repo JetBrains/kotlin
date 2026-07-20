@@ -14,9 +14,10 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import static java.lang.System.*;
+import static java.lang.System.getProperty;
 import static org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.*;
 
 public class ForTestCompileRuntime {
@@ -139,6 +140,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static List<File> testScriptDefinitionClasspathForTests() {
         return getFilesFromProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH);
+    }
+
+    @NotNull
+    public static File scriptingTestsRuntimeClasspathForTests() {
+        return getFileFromProperty(KOTLIN_SCRIPTING_TESTS_RUNTIME_CLASSPATH);
     }
 
     @NotNull

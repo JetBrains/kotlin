@@ -28,15 +28,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.fail
 
-class ReplReceiver1 {
-    val ok = "OK"
-}
-
-@Suppress("unused") // Used in snippets
-class TestReplReceiver1 {
-    fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1())
-}
-
 val dependenciesResolver = CompoundDependenciesResolver(MavenDependenciesResolver())
 
 class CustomK2ReplTest {
@@ -528,7 +519,7 @@ private val baseCompilationConfiguration: ScriptCompilationConfiguration =
     ScriptCompilationConfiguration {
         val classpath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
             ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty()
-        updateClasspath(classpath + ForTestCompileRuntime.runtimeJarForTests())
+        updateClasspath(classpath + ForTestCompileRuntime.runtimeJarForTests() + ForTestCompileRuntime.scriptingTestsRuntimeClasspathForTests())
         compilerOptions("-Xrender-internal-diagnostic-names=true")
     }
 
