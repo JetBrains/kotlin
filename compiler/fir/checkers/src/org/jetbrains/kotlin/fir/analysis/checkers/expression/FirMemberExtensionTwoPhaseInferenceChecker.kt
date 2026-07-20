@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.createConeSubstitutorFromTypeArgumen
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -447,7 +448,12 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             symbol.typeParameterSymbols,
             inferredTypeByParameter,
         )
-        return NormalInferenceData(inferredTypes, receiverComparison, receiverTypeParameters)
+        return NormalInferenceData(
+            inferredTypes,
+            receiverComparison,
+            receiverTypeParameters,
+            receiverParameters = declaredReceiverType?.let { receiverParameters(it) }.orEmpty(),
+        )
     }
 
     context(context: CheckerContext)
@@ -526,6 +532,21 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     }
 
     context(context: CheckerContext)
+    private fun receiverParameters(receiverType: ConeKotlinType): Map<String, String> {
+        val receiverClass = receiverType.fullyExpandedType()
+            .classLikeLookupTagIfAny
+            ?.toRegularClassSymbol()
+            ?: return emptyMap()
+        return receiverClass.typeParameterSymbols.associate { parameter ->
+            parameter.name.asString() to when (parameter.variance) {
+                Variance.OUT_VARIANCE -> "covariant"
+                Variance.IN_VARIANCE -> "contravariant"
+                Variance.INVARIANT -> "invariant"
+            }
+        }
+    }
+
+    context(context: CheckerContext)
     private fun compareReceiverTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): String {
         if (actualType == null || inferredType == null) return "unavailable"
         val typeContext = context.session.typeContext
@@ -597,11 +618,13 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val inferredTypes: Map<String, String>,
         val receiver: ReceiverComparison,
         val receiverTypeParameters: Map<String, ReceiverComparison>,
+        val receiverParameters: Map<String, String>,
     ) {
         fun toJson(): String = jsonObject(
             "inferredTypes" to inferredTypes.toJson(),
             "receiver" to receiver.toJson(),
             "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
+            "receiverParameters" to receiverParameters.toJson(),
         )
     }
 
