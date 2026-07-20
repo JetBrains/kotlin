@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationR
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.ENABLE_FIR_BACK_REFERENCES
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ENABLE_SOURCE_BASED_SYMBOL_IDS
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.LLRootDeclarationsAssignmentService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirHiddenDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
-import org.jetbrains.kotlin.fir.declarations.roots.FirRootDeclarationAssignmentService
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
@@ -58,10 +55,6 @@ internal fun LLFirSession.registerIdeComponents(
 
     val symbolIdFactory = if (ENABLE_SOURCE_BASED_SYMBOL_IDS) LLSymbolIdFactory(this) else FirUniqueSymbolIdFactory
     register(FirSymbolIdFactory::class, symbolIdFactory)
-
-    if (ENABLE_FIR_BACK_REFERENCES) {
-        register(FirRootDeclarationAssignmentService::class, LLRootDeclarationsAssignmentService())
-    }
 
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
