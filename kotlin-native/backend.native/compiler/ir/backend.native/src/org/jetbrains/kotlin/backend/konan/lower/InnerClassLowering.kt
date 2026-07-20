@@ -96,7 +96,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
             if (irConstructor.delegationKind(context) == ConstructorDelegationKind.CALLS_SUPER) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 val blockBody = irConstructor.body as? IrBlockBody
-                        ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
+                        ?: error("Unexpected constructor body: ${irConstructor.body}")
                 val startOffset = irConstructor.startOffset
                 val endOffset = irConstructor.endOffset
                 val thisReceiver = irClass.thisReceiver!!
@@ -176,7 +176,7 @@ internal class InnerClassLowering(val context: NativeBackendContext) : ClassLowe
 
                 val outer = innerClass.parent
                 innerClass = outer as? IrClass
-                        ?: throw AssertionError("Unexpected containing declaration for inner class ${innerClass.dump()}: $outer")
+                        ?: error("Unexpected containing declaration for inner class ${innerClass.dump()}: $outer")
             }
 
             return irThis
