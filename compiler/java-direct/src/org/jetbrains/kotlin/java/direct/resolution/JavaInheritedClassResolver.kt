@@ -108,13 +108,14 @@ private fun walkSupertypeClassIds(simpleName: String, initialAncestorIds: List<C
 }
 
 /**
- * JLS 6.6 accessibility of an inherited nested class from the file being resolved. An inaccessible
- * nested class is not inherited (JLS 8.2), so it is not in scope and must not shadow a same-named
- * top-level or same-package class:
+ * Whether an inherited nested class is in scope as a member of the class whose supertypes are
+ * being walked — i.e. whether it is inherited per JLS 8.2, so it can shadow a same-named top-level
+ * or same-package class. A non-inherited nested class is not a member and must not shadow. The
+ * walked class is by construction a subtype of every ancestor probed here, so:
  *  - `private` — never inherited;
  *  - package-private — inherited only within the declaring package;
- *  - `public` / `protected` (the reference site is always a subtype here) / Kotlin `internal`
- *    (public in bytecode) — in scope.
+ *  - `public` / `protected` / Kotlin `internal` (public in bytecode) — always inherited by a
+ *    subtype, hence in scope.
  *
  * Defaults to accessible when the nested class cannot be materialised.
  */
