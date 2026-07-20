@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -24,9 +28,11 @@ import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersDeserializ
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -40,26 +46,42 @@ import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
 
-// TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
         config: NativeSecondStageCompilationConfig,
         val sourcesModules: Set<ModuleDescriptor>,
         @OptIn(K1Deprecation::class)
-        override val builtIns: KonanBuiltIns,
+        val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<Path, IrModuleFragment>,
         val irLinker: KonanIrLinker,
         override val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
-) : KonanBackendContext(config) {
+) : BasicNativeBackendPhaseContext(config), CommonBackendContext {
     override val configuration get() = config.configuration
+
+    override val irFactory: IrFactory = IrFactoryImpl
 
     override val optimizeLoopsOverUnsignedArrays = true
 
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
+        override fun isClassInlineLike(klass: IrClass): Boolean =
+                klass.isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+    }
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
+
+    override val sharedVariablesManager by lazy {
+        // Creating lazily because builtIns module seems to be incomplete during `link` test;
+        // TODO: investigate this.
+        KlibSharedVariablesManager(symbols)
+    }
+
+    override fun log(message: String) {
+        super<BasicNativeBackendPhaseContext>.log(message)
+    }
 
     val moduleDeserializerProvider by lazy {
         ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
