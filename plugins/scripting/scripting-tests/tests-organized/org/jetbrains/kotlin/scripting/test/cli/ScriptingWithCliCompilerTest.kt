@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.test.cli
 
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -14,19 +14,25 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.runtimeJarForTests
-import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
+import org.jetbrains.kotlin.scripting.compiler.plugin.captureOutErrRet
+import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
+import org.jetbrains.kotlin.scripting.compiler.plugin.withTempDir
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Files
-import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Execution(ExecutionMode.SAME_THREAD)
 class ScriptingWithCliCompilerTest {
 
     companion object {
-        val TEST_DATA_DIR: String = ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData").path
+        val TEST_DATA_DIR: String = ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-tests/testData/cli/scripting-compiler").path
         val SIMPLE_TEST_SCRIPT = "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScript.main.kts"
     }
 
@@ -60,7 +66,7 @@ class ScriptingWithCliCompilerTest {
                     K2JVMCompilerArguments::destination.cliArgument,
                     tmpdir.absolutePath,
                     K2JVMCompilerArguments::classpath.cliArgument,
-                    getMainKtsClassPath().joinToString(File.pathSeparator),
+                    (getMainKtsClassPath() + ForTestCompileRuntime.scriptingTestsRuntimeClasspathForTests()).joinToString(File.pathSeparator),
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                     @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     "$TEST_DATA_DIR/integration/hello-resolve-junit.main.kts",
@@ -336,3 +342,6 @@ class ScriptingWithCliCompilerTest {
     }
 }
 
+private const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
+
+private fun String.linesSplitTrim(): List<String> = lines().map(String::trim).filter(String::isNotEmpty)

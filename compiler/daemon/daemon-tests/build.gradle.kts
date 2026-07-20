@@ -34,4 +34,5 @@ projectTests {
     withDist()
 
     testData(project(":compiler:tests-integration").isolated, "testData/integration/smoke/")
+    testData(project(":plugins:scripting:scripting-tests").isolated, "testData/cli/smoke/")
 }
