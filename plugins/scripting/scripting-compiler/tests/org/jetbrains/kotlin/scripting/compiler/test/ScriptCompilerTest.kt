@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import kotlin.reflect.KClass
@@ -22,10 +19,6 @@ import kotlin.test.*
 
 @SmokeTest
 class ScriptCompilerTest {
-
-    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
-            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
-
     @Test
     fun testCompilationWithRefinementError() {
         val res = compile("nonsense".toScriptSource()) {
@@ -177,9 +170,7 @@ class ScriptCompilerTest {
                 compilerOptions.append(it)
             }
         }
-        val compiler =
-            if (isK2) ScriptJvmK2CompilerIsolated(defaultJvmScriptingHostConfiguration)
-            else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+        val compiler = ScriptJvmK2CompilerIsolated(defaultJvmScriptingHostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 
