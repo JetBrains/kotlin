@@ -25,6 +25,7 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
+    compileOnly(project(":compiler:psi:psi-utils"))
     implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
