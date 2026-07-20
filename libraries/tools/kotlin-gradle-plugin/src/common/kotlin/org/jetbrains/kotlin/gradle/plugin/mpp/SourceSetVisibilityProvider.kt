@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ComponentSelector
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.artifacts.component.ModuleComponentSelector
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
+import org.jetbrains.kotlin.gradle.cache.getOrPutSynchronized
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
+import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.io.File
+import kotlin.collections.contains
+import kotlin.collections.ifEmpty
 
 private typealias KotlinSourceSetName = String
 
@@ -37,10 +38,28 @@ internal data class SourceSetVisibilityResult(
 )
 
 internal class SourceSetVisibilityProvider(
+    private val projectId: String,
     private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
     private val resolveWithLenientPSMResolutionScheme: Boolean,
     private val allowMatchingByRequestedCoordinates: Boolean,
+    private val cache: KotlinGradleTaskExecutionCache,
 ) {
+    fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
+        cache.getOrPutSynchronized(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByKmpModuleId")) {
+            groupByToNonNullSet(
+                keySelector = { KmpModuleIdentifier.from(it.from, buildIdentifierAccessor) },
+                valueTransform = { it as? ResolvedDependencyResult },
+            )
+        }
+
+    fun LazyResolvedConfigurationComponent.resolvedDependenciesByRequested(): Map<ComponentSelector, Set<ResolvedDependencyResult>> =
+        cache.getOrPutSynchronized(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByRequested")) {
+            groupByToNonNullSet(
+                keySelector = { it.requested },
+                valueTransform = { it as? ResolvedDependencyResult },
+            )
+        }
+
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfigurationComponent,
@@ -48,7 +67,8 @@ internal class SourceSetVisibilityProvider(
         val compilationName: String,
         val targetName: String,
     ) {
-        override fun toString(): String = "PlatformCompilationData(compilationName='${compilationName}')"
+        val compilationId: String get() = "$targetName/$compilationName"
+        override fun toString(): String = "PlatformCompilationData($compilationId)"
     }
 
     /**
@@ -72,31 +92,39 @@ internal class SourceSetVisibilityProvider(
         resolvedRootMppDependencyIdentifier: KmpModuleIdentifier,
         requestedDependency: ComponentSelector,
     ): Set<String>? {
-        val resolvedPlatformDependencies = resolvedDependenciesConfiguration
-            .allResolvedDependencies
-            .filter {
-                // this is slow and will be fixed in the following commits
-                KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier ||
-                        (allowMatchingByRequestedCoordinates && it.requested == requestedDependency)
-            }.filter {
-                // Pre lenient resolve logic
-                if (!resolveWithLenientPSMResolutionScheme) return@filter true
-                /**
-                 * Detect that platform compilation's resolvedDependenciesConfiguration resolved metadata variant as a fallback
-                 *
-                 * This likely means that the dependency is missing the target of the platform compilation and we must therefore not
-                 * see this dependency in the resulting list.
-                 *
-                 * @see [UklibResolutionTestsWithMockComponents] and [KmpResolutionIT]
-                 */
-                val platformCompilationResolvedToMetadataJarVariant = it.resolvedVariant.attributes.getAttribute(
-                    KotlinPlatformType.attribute
-                ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
-                    Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
-                ) == KotlinPlatformType.common.name
+        val resolvedPlatformDependencies = buildList {
+            resolvedDependenciesConfiguration
+                .resolvedDependenciesByKmpModuleId()
+                .get(resolvedRootMppDependencyIdentifier)
+                .orEmpty()
+                .let(::addAll)
 
-                return@filter !platformCompilationResolvedToMetadataJarVariant
-            }.ifEmpty { return null }
+            if (allowMatchingByRequestedCoordinates) {
+                resolvedDependenciesConfiguration
+                    .resolvedDependenciesByRequested()
+                    .get(requestedDependency)
+                    .orEmpty()
+                    .let(::addAll)
+            }
+        }.filter {
+            // Pre lenient resolve logic
+            if (!resolveWithLenientPSMResolutionScheme) return@filter true
+            /**
+             * Detect that platform compilation's resolvedDependenciesConfiguration resolved metadata variant as a fallback
+             *
+             * This likely means that the dependency is missing the target of the platform compilation and we must therefore not
+             * see this dependency in the resulting list.
+             *
+             * @see [UklibResolutionTestsWithMockComponents] and [KmpResolutionIT]
+             */
+            val platformCompilationResolvedToMetadataJarVariant = it.resolvedVariant.attributes.getAttribute(
+                KotlinPlatformType.attribute
+            ) == KotlinPlatformType.common || it.resolvedVariant.attributes.getAttribute(
+                Attribute.of(KotlinPlatformType.attribute.name, String::class.java)
+            ) == KotlinPlatformType.common.name
+
+            return@filter !platformCompilationResolvedToMetadataJarVariant
+        }.ifEmpty { return null }
 
         return resolvedPlatformDependencies.map { resolvedPlatformDependency ->
             val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
@@ -336,4 +364,3 @@ internal fun sortSourceSetsByDependsOnRelation(
 
 internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
-
