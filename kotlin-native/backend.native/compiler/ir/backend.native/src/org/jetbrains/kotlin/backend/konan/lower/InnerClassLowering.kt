@@ -67,19 +67,6 @@ internal class OuterThisLowering(val context: NativeBackendContext) : ClassLower
         irClass.transformChildrenVoid(Transformer(irClass, irClass))
     }
 
-    fun lower(irFunction: IrFunction) {
-        var parent = irFunction.parent
-        var irClass: IrClass? = null
-        while (parent !is IrPackageFragment) {
-            irClass = parent as? IrClass
-            if (irClass != null) break
-            parent = (parent as IrDeclaration).parent
-        }
-        if (irClass == null || !irClass.isInner) return
-
-        irFunction.body?.transformChildrenVoid(Transformer(irClass, irFunction))
-    }
-
     private inner class Transformer(val irClass: IrClass, val container: IrDeclaration) : IrElementTransformerVoidWithContext() {
         override fun visitClassNew(declaration: IrClass): IrStatement {
             // Skip nested.
