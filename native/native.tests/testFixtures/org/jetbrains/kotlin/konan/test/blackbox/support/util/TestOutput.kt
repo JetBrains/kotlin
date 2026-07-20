@@ -7,29 +7,15 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.test.grouping.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-class TestReport(
-    val passedTests: Collection<TestName>,
-    val failedTests: Collection<TestName>,
-    val ignoredTests: Collection<TestName>
-) {
-    fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
-
-    override fun toString(): String = """
-        TestReport:
-         * Passed:  $passedTests
-         * Failed:  $failedTests
-         * Ignored: $ignoredTests
-    """.trimIndent()
-}
-
 interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
-    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport<TestName>?)
 
     companion object {
         val NO_FILTERING = object : TestOutputFilter {
@@ -77,9 +63,9 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
-    val passedTests = mutableListOf<TestName>()
-    val failedTests = mutableListOf<TestName>()
-    val ignoredTests = mutableListOf<TestName>()
+    val passedTests = mutableSetOf<TestName>()
+    val failedTests = mutableSetOf<TestName>()
+    val ignoredTests = mutableSetOf<TestName>()
 
     val nonTestOutput = StringBuilder()
     val errors = mutableListOf<String>()

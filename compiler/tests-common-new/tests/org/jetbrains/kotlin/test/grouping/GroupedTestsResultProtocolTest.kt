@@ -115,6 +115,119 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given multiple outputs when parseMerged then outcomes are merged and block detection is preserved`() {
+        val outputWithFailed = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.FAILED}|msg|details")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+        val outputWithPassed = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|other|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(outputWithPassed, outputWithFailed))
+
+        assertTrue(result.sawStructuredBlock)
+        assertFalse(result.outcomes.getValue("id").passed)
+        assertTrue(result.outcomes.getValue("other").passed)
+    }
+
+    @Test
+    fun `given partial structured output merged with another output when parseMerged then failures still win`() {
+        val partialFailedOutput = buildString {
+            appendLine("prefix")
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.FAILED}|fromException|partial")
+            appendLine("suffix")
+        }
+        val completePassedOutput = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|other|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(completePassedOutput, partialFailedOutput))
+
+        assertTrue(result.sawStructuredBlock)
+        assertFalse(result.outcomes.getValue("id").passed)
+        assertEquals("fromException", result.outcomes.getValue("id").message)
+        assertEquals("partial", result.outcomes.getValue("id").details)
+        assertTrue(result.outcomes.getValue("other").passed)
+    }
+
+    @Test
+    fun `given parsed batch result when toTestReport then passed and failed ids are split`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|passed|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|failed|${GroupedTestsResultProtocol.FAILED}|msg|details")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val testReport = GroupedTestsResultProtocol.parseMerged(listOf(output)).toTestReport()
+
+        assertFalse(testReport.isEmpty())
+        assertEquals(setOf("passed"), testReport.passedTests)
+        assertEquals(setOf("failed"), testReport.failedTests)
+        assertTrue(testReport.ignoredTests.isEmpty())
+    }
+
+    @Test
+    fun `given expected ids and test report when findMissingResults then missing ids are returned`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|present|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val testReport = GroupedTestsResultProtocol.parseMerged(listOf(output)).toTestReport()
+        val missing = TestRunChecks.findMissingResults(listOf("present", "missing"), testReport)
+
+        assertEquals(listOf("missing"), missing)
+    }
+
+    @Test
+    fun `given reported id not expected when findExcessiveResults then it is returned`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|expected|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|extra|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val testReport = GroupedTestsResultProtocol.parseMerged(listOf(output)).toTestReport()
+        val excessive = TestRunChecks.findExcessiveResults(listOf("expected"), testReport)
+
+        assertEquals(listOf("extra"), excessive)
+    }
+
+    @Test
+    fun `given empty report when checkNonEmpty then it fails`() {
+        val emptyReport = GroupedTestsResultProtocol.parseMerged(emptyList()).toTestReport()
+
+        assertTrue(emptyReport.isEmpty())
+        assertTrue(TestRunChecks.checkNonEmpty(emptyReport) is TestRunChecks.Result.Failed)
+    }
+
+    @Test
+    fun `given structured block without test lines when parseMerged then report is empty but block is seen`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertTrue(result.sawStructuredBlock)
+        assertTrue(result.outcomes.isEmpty())
+        assertTrue(TestRunChecks.checkNonEmpty(result.toTestReport()) is TestRunChecks.Result.Failed)
+    }
+
+    @Test
     fun `given escaped message and details when parse then values are unescaped and whitespace is preserved`() {
         val output = buildString {
             appendLine(GroupedTestsResultProtocol.BEGIN)
@@ -128,5 +241,27 @@ class GroupedTestsResultProtocolTest {
         assertFalse(outcome.passed)
         assertEquals("|\\\n\r| ", outcome.message)
         assertEquals("|\\\n\r| ", outcome.details)
+    }
+
+    @Test
+    fun `given unknown escape sequence in fields when parse then backslash and following char are preserved verbatim`() {
+        // A well-formed driver only ever emits \\, \p, \n, \r. An unknown sequence such as `\q` is therefore
+        // malformed input; the parser does not drop or reinterpret it — it passes both the backslash and the
+        // following char through unchanged, so no information is silently lost. This test pins that behavior.
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            // message: `pre\qpost` (pure unknown escape); details: `\p\q\n` (known `\p`, unknown `\q`, known `\n`).
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.FAILED}|pre\\qpost|\\p\\q\\n")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parse(output)
+        val outcome = result.getValue("id")
+
+        assertFalse(outcome.passed)
+        // Unknown `\q` is left intact.
+        assertEquals("pre\\qpost", outcome.message)
+        // Known escapes around it are still decoded (`\p` -> `|`, `\n` -> newline); only the unknown `\q` survives raw.
+        assertEquals("|\\q\n", outcome.details)
     }
 }

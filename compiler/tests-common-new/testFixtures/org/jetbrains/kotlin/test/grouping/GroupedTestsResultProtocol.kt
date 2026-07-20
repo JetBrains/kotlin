@@ -51,6 +51,31 @@ object GroupedTestsResultProtocol {
     data class Outcome(val id: String, val passed: Boolean, val message: String?, val details: String?)
 
     /**
+     * Aggregated parse result over one or more VM outputs.
+     *
+     * [sawStructuredBlock] is `true` when at least one output contained a [BEGIN] sentinel line, even if no
+     * valid per-test lines were parsed.
+     */
+    data class ParsedBatchResult(
+        val outcomes: Map<String, Outcome>,
+        val sawStructuredBlock: Boolean,
+    ) {
+        /**
+         * The per-test pass/fail status as a shared [TestReport], keyed by the stable `ProxyLauncher_<hash>` id.
+         * The raw [outcomes] (messages, stack traces) stay on this result — [TestReport] carries only status sets,
+         * so verification via [TestRunChecks] is decoupled from the wire protocol.
+         */
+        fun toTestReport(): TestReport<String> {
+            val passedTests = LinkedHashSet<String>()
+            val failedTests = LinkedHashSet<String>()
+            for (entry in outcomes.entries) {
+                if (entry.value.passed) passedTests += entry.key else failedTests += entry.key
+            }
+            return TestReport(passedTests = passedTests, failedTests = failedTests, ignoredTests = emptySet())
+        }
+    }
+
+    /**
      * Returns `true` if [output] contains a [BEGIN] sentinel line, using exactly the same line matching as
      * [parse]. Callers must use this instead of a raw `contains(BEGIN)` substring check so that block detection
      * and block parsing never disagree: a substring check could report a block that [parse] then refuses to
@@ -72,12 +97,19 @@ object GroupedTestsResultProtocol {
      */
     fun parse(output: String): Map<String, Outcome> {
         val result = LinkedHashMap<String, Outcome>()
+        parseInto(output, result)
+        return result
+    }
+
+    private fun parseInto(output: String, destination: LinkedHashMap<String, Outcome>): Boolean {
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
+        var sawStructuredBlock = false
         for (rawLine in output.lines()) {
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
                     insideBlock = true
+                    sawStructuredBlock = true
                     continue
                 }
 
@@ -103,13 +135,30 @@ object GroupedTestsResultProtocol {
                 message = unescape(parts[2]).ifEmpty { null },
                 details = unescape(parts[3]).ifEmpty { null },
             )
-            val existing = result[id]
+            val existing = destination[id]
             // Keep a failure over a pass, so a per-test failure on any VM is reported.
             if (existing == null || (existing.passed && !passed)) {
-                result[id] = outcome
+                destination[id] = outcome
             }
         }
-        return result
+        return sawStructuredBlock
+    }
+
+    /**
+     * Parses and merges multiple VM outputs using the same failure-wins semantics as [parse].
+     */
+    fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
+        var sawStructuredBlock = false
+        val merged = LinkedHashMap<String, Outcome>()
+
+        for (output in outputs) {
+            sawStructuredBlock = parseInto(output, merged) || sawStructuredBlock
+        }
+
+        return ParsedBatchResult(
+            outcomes = merged,
+            sawStructuredBlock = sawStructuredBlock,
+        )
     }
 
     /** Reverses the escaping applied by the generated driver's `__kgtiEscape`. */

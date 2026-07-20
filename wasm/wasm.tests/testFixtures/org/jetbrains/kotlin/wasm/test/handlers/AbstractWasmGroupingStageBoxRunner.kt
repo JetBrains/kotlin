@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.grouping.TestReport
+import org.jetbrains.kotlin.test.grouping.TestRunChecks
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 
 /**
@@ -109,14 +111,16 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // partial block from a VM that crashed mid-batch is still recovered.
         val texts = buildList {
             addAll(collectedOutputs)
-            exceptions.forEach { throwable -> throwable.message?.let(::add) }
+            exceptions.forEach { throwable -> addAll(collectExceptionTexts(throwable)) }
         }
 
-        val results = mergeResults(texts.map { GroupedTestsResultProtocol.parse(it) })
-        val sawStructuredBlock = results.isNotEmpty() || texts.any { GroupedTestsResultProtocol.containsBeginSentinel(it) }
+        val parsedBatchResult = GroupedTestsResultProtocol.parseMerged(texts)
+        val results = parsedBatchResult.outcomes
+        val testReport = parsedBatchResult.toTestReport()
+        val sawStructuredBlock = parsedBatchResult.sawStructuredBlock
 
         if (sawStructuredBlock) {
-            attributeStructuredResults(results, exceptions, texts)
+            attributeStructuredResults(results, testReport, exceptions, texts)
             return
         }
 
@@ -131,24 +135,6 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
     }
 
-    /**
-     * Merges per-VM result maps into one, keyed by test id. A `FAILED` outcome wins over a `PASSED` one, so a
-     * per-test failure on any engine (the batch is run on several VMs) is never masked.
-     */
-    private fun mergeResults(
-        perVm: List<Map<String, GroupedTestsResultProtocol.Outcome>>,
-    ): Map<String, GroupedTestsResultProtocol.Outcome> {
-        val merged = LinkedHashMap<String, GroupedTestsResultProtocol.Outcome>()
-        for (map in perVm) {
-            for ([id, outcome] in map) {
-                val existing = merged[id]
-                if (existing == null || (existing.passed && !outcome.passed)) {
-                    merged[id] = outcome
-                }
-            }
-        }
-        return merged
-    }
 
     /**
      * Attributes structured per-test results back to the individual grouping inputs via their
@@ -160,10 +146,33 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      */
     private fun attributeStructuredResults(
         results: Map<String, GroupedTestsResultProtocol.Outcome>,
+        testReport: TestReport<String>,
         exceptions: List<Throwable>,
         texts: List<String>,
     ) {
         var anyFailureAttributed = false
+        val expectedIds = testServices.groupingStageInputs.map { input ->
+            computeProxyLauncherClassName(input.testServices.testInfo)
+        }
+        val nonEmptyCheck = TestRunChecks.checkNonEmpty(testReport)
+        val nonEmptyFailureReason = (nonEmptyCheck as? TestRunChecks.Result.Failed)?.reason
+        val excessiveIds = TestRunChecks.findExcessiveResults(expectedIds, testReport)
+
+        if (excessiveIds.isNotEmpty()) {
+            testServices.groupingStageInputs.first().catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
+                throw AssertionError(
+                    """
+                    Sanity check failed: grouped batch reported unexpected test ids: $excessiveIds.
+                    Expected ids: $expectedIds
+                    This indicates protocol/report desynchronization (results for tests that were not part of this batch).
+                    Collected outputs:
+                    """.trimIndent() + "\n" + texts.joinToString("\n")
+                )
+            }
+            anyFailureAttributed = true
+        }
+
+        val missingIds = TestRunChecks.findMissingResults(expectedIds, testReport).toSet()
         for (input in testServices.groupingStageInputs) {
             // Every grouped test is driven via the launcher's `ProxyLauncher_*.runTest()` (asserting `box() == "OK"`),
             // so it must have a `box()`. Tests without one must be isolated — they are driven by a custom JS entry
@@ -177,10 +186,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
             val outcome = results[id]
             when {
-                outcome == null -> {
+                id in missingIds -> {
                     input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
                         throw AssertionError(
                             """
+                            ${nonEmptyFailureReason?.let { "$it\n" } ?: ""}
                             Sanity check failed: no per-test result was reported for '$id' in the grouped batch.
                             The test was expected to run as part of the batch, but produced no '${GroupedTestsResultProtocol.LINE_PREFIX}' line.
                             This typically indicates the test was silently skipped (e.g. a stripped ProxyLauncher class),
@@ -191,7 +201,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     }
                     anyFailureAttributed = true
                 }
-                !outcome.passed -> {
+                id in testReport.failedTests && outcome != null -> {
                     input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
                         throw AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n"))
                     }
@@ -205,6 +215,20 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         if (!anyFailureAttributed && exceptions.isNotEmpty()) {
             throw exceptions.first()
         }
+    }
+
+    private fun collectExceptionTexts(throwable: Throwable): List<String> {
+        val texts = mutableListOf<String>()
+        var current: Throwable? = throwable
+        while (current != null) {
+            current.message?.let { message ->
+                if (message !in texts) {
+                    texts += message
+                }
+            }
+            current = current.cause
+        }
+        return texts
     }
 
     /**

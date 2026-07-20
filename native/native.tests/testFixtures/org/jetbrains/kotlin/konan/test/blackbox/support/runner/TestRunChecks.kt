@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.grouping.TestReport
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
@@ -205,7 +205,7 @@ sealed interface TestRunCheck {
             } else Result.Passed
         }
 
-        private fun TestReport.checkDisabled() {
+        private fun TestReport<TestName>.checkDisabled() {
             Assumptions.assumeFalse(
                 ignoredTests.isNotEmpty() && passedTests.isEmpty(),
                 "Test case is disabled"
