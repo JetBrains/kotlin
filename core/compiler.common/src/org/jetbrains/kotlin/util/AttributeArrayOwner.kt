@@ -28,75 +28,54 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
     @Suppress("UNCHECKED_CAST")
     constructor() : this(EmptyArrayMap as ArrayMap<T>)
 
+    // The map implementation is chosen by its concrete type rather than by size, because an ArrayMapImpl that has
+    // shrunk (via removeComponent) can hold as few as 2 entries, so size no longer implies the implementation.
+    @Suppress("UNCHECKED_CAST")
     final override fun registerComponent(keyQualifiedName: String, value: T) {
         val id = typeRegistry.getId(keyQualifiedName)
-        when (arrayMap.size) {
-            0 -> {
-                val map = arrayMap
-                if (map !is EmptyArrayMap) {
-                    throw IllegalStateException(buildDiagnosticMessage(map, expectedSize = 0, expectedImplementation = "EmptyArrayMap"))
-                }
+        // Every transition publishes a fresh map so concurrent readers always observe a fully-populated instance
+        // (see the class documentation for the thread-safety contract). Only ArrayMapImpl is mutated in place.
+        when (val map = arrayMap) {
+            is EmptyArrayMap -> {
                 arrayMap = OneElementArrayMap(value, id)
-                return
             }
-
-            1 -> {
-                val mapSnapshot = arrayMap
-                val map = try {
-                    mapSnapshot as OneElementArrayMap<T>
-                } catch (e: ClassCastException) {
-                    throw IllegalStateException(
-                        buildDiagnosticMessage(mapSnapshot, expectedSize = 1, expectedImplementation = "OneElementArrayMap"),
-                        /*cause=*/e
-                    )
-                }
-                if (map.index == id) {
-                    arrayMap = OneElementArrayMap(value, id)
-                    return
+            is OneElementArrayMap<*> -> {
+                map as OneElementArrayMap<T>
+                arrayMap = if (map.index == id) {
+                    OneElementArrayMap(value, id)
                 } else {
-                    val newMap = ArrayMapImpl<T>()
-                    newMap[map.index] = map.value
-
-                    // the assigned map must have the old value to avoid problems in the concurrent scenario
-                    arrayMap = newMap
+                    TinyArrayMap(map.index, map.value, id, value)
                 }
             }
-        }
-
-        arrayMap[id] = value
-    }
-
-    private fun buildDiagnosticMessage(map: ArrayMap<T>, expectedSize: Int, expectedImplementation: String): String {
-        return buildString {
-            appendLine("Race condition happened, the size of ArrayMap is $expectedSize but it isn't an `$expectedImplementation`")
-            appendLine("Type: ${map::class.java}")
-            val content = buildString {
-                val services = typeRegistry.allValuesThreadUnsafeForRendering()
-                appendLine("[")
-                map.mapIndexed { index, value ->
-                    val service = services.entries.firstOrNull { it.value == index }
-                    appendLine("  $service[$index]: $value")
-                }
-                appendLine("]")
+            is TinyArrayMap<*> -> {
+                // TODO: Rewrite in terms of `hasKey` and move the `ArrayMapImpl` construction out of `withAddedOrReplaced`.
+                arrayMap = (map as TinyArrayMap<T>).withAddedOrReplaced(id, value)
             }
-            appendLine("Content: $content")
+            is ArrayMapImpl<*> -> {
+                (map as ArrayMapImpl<T>)[id] = value
+            }
+//            else -> TODO()
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     protected fun removeComponent(tClass: KClass<out K>) {
         val id = typeRegistry.getId(tClass)
         if (arrayMap[id] == null) return
-        @Suppress("UNCHECKED_CAST")
-        when (arrayMap.size) {
-            1 -> arrayMap = EmptyArrayMap as ArrayMap<T>
-            else -> {
-                val map = arrayMap as ArrayMapImpl<T>
+        when (val map = arrayMap) {
+            // Unreachable: an absent id returned above, so an empty map never reaches here.
+            is EmptyArrayMap -> {}
+            is OneElementArrayMap<*> -> arrayMap = EmptyArrayMap as ArrayMap<T>
+            is TinyArrayMap<*> -> arrayMap = (map as TinyArrayMap<T>).withRemoved(id) // TODO: Downgrade outside of `withRemoved`.
+            is ArrayMapImpl<*> -> {
+                map as ArrayMapImpl<T>
                 map.remove(id)
-                if (map.size == 1) {
+                if (map.size == 1) { // TODO: Maybe downgrade to tiny map after all.
                     (val index = key, val value) = map.entries().first()
                     arrayMap = OneElementArrayMap(value, index)
                 }
             }
+//            else -> TODO()
         }
     }
 }
