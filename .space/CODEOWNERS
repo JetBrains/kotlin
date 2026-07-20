@@ -296,7 +296,6 @@
 /generators/ReadMe.md "Kotlin Build Infrastructure"
 /generators/builtins/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
 /generators/evaluate/ "Kotlin Frontend"
-/generators/interpreter/ "Kotlin Common Backend"
 /generators/main/ "Kotlin Build Infrastructure"
 /generators/nativeInteropRuntime/ "Kotlin Native"
 /generators/protobuf/ "Kotlin Build Infrastructure"
