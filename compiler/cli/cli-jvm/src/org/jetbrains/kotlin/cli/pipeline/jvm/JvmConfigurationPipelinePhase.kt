@@ -123,8 +123,11 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
         fileMappingTracker = services[ICFileMappingTracker::class.java]
-        icMetadataTracker = services[ICJvmMetadataTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
+
+        if (arguments.multiPlatform && arguments.useMetadataOnIncrementalClasspath) {
+            icMetadataTracker = services[ICJvmMetadataTracker::class.java]
+        }
     }
 
     private fun CompilerConfiguration.setupModuleChunk(arguments: K2JVMCompilerArguments) {
@@ -139,7 +142,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
 
     private fun CompilerConfiguration.configureModuleChunk(
         arguments: K2JVMCompilerArguments,
-        buildFile: File?
+        buildFile: File?,
     ): ModuleChunk {
         val destination = arguments.destination?.let { File(it) }
 
