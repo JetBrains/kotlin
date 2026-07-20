@@ -120,7 +120,6 @@ object CompilerModules {
         ":compiler:ir.serialization.common",
         ":compiler:ir.backend.common",
         ":compiler:ir.actualization",
-        ":compiler:ir.interpreter",
         ":compiler:ir.inline",
         ":compiler:ir.validation",
     )
@@ -181,7 +180,6 @@ object CompilerModules {
         ":compiler:ir.backend.common",
         ":compiler:ir.backend.native",
         ":compiler:ir.actualization",
-        ":compiler:ir.interpreter",
         ":compiler:ir.inline",
         ":compiler:ir.validation",
     )

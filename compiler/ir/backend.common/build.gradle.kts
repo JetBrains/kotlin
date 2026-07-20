@@ -10,7 +10,6 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:ir.tree"))
-    api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.validation"))
     implementation(project(":compiler:resolution"))

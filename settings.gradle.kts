@@ -189,7 +189,6 @@ include(
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.native",
     ":compiler:ir.serialization.jklib",
-    ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
     ":compiler:backend.js",
@@ -831,7 +830,6 @@ project(":compiler:ir.serialization.jvm").projectDir = File("$rootDir/compiler/i
 project(":compiler:ir.serialization.js").projectDir = File("$rootDir/compiler/ir/serialization.js")
 project(":compiler:ir.serialization.native").projectDir = File("$rootDir/compiler/ir/serialization.native")
 project(":compiler:ir.serialization.jklib").projectDir = File("$rootDir/compiler/ir/serialization.jklib")
-project(":compiler:ir.interpreter").projectDir = File("$rootDir/compiler/ir/ir.interpreter")
 project(":kotlin-util-io").projectDir = File("$rootDir/compiler/util-io")
 project(":kotlin-util-klib").projectDir = File("$rootDir/compiler/util-klib")
 project(":kotlin-util-klib-metadata").projectDir = File("$rootDir/compiler/util-klib-metadata")

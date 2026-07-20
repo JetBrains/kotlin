@@ -142,7 +142,6 @@
 /compiler/ir/backend.native/ "Kotlin Native" "Kotlin Common Backend"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
 /compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend"
-/compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
 /compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
