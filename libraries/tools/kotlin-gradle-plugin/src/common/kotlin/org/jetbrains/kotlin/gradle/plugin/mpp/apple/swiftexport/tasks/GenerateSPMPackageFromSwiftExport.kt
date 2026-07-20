@@ -77,7 +77,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
         val modulesFile = swiftModulesFile.getFile().readText()
-        val swiftModules = SerializationTools.readFromJson<GradleSwiftExportModules>(modulesFile)
+        val swiftModules = SerializationTools.readFromJson(modulesFile)
         return swiftModules.modules
     }
 

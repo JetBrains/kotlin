@@ -30,7 +30,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test hierarchy SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(
+        val modules = SerializationTools.readFromJson(
             testJson("hierarchyJson").readText()
         )
         val hierarchyModules = GradleSwiftExportModules(hierarchyModules(), 1721919536167)
@@ -56,7 +56,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(
+        val modules = SerializationTools.readFromJson(
             testJson("nestedJson").readText()
         )
         val nestedModules = GradleSwiftExportModules(nestedModules(), 1721919536167)
