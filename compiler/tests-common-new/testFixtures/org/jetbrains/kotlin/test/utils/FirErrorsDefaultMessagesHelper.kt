@@ -60,7 +60,6 @@ private val lastCharExclusions = listOf(
     FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED.name,
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
-    FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
     IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
     IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING.name,
     "PUBLIC_ATOMICS_ARE_FORBIDDEN",
@@ -157,7 +156,6 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
         """\b(?:we|us|you(?!\s+have))\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses 'we', 'us' or 'you'.",
         setOf(
-            FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
             FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
             "PARCELABLE_TYPE_NOT_SUPPORTED",
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
@@ -172,7 +170,6 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
         """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses overly polite tone",
         setOf(
-            FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
             FirErrors.ERROR_SUPPRESSION.name,
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
             "REQUIRED_KOTLIN_TOO_HIGH",

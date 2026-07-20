@@ -2010,15 +2010,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AmbiguousCallWithImplicitContextReceiver::class
     }
 
-    interface ContextReceiversDeprecated : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = ContextReceiversDeprecated::class
-        val message: String
-    }
-
-    interface ContextClassOrConstructor : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = ContextClassOrConstructor::class
-    }
-
     interface CoroutineContextAsContextParameterIsReserved : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = CoroutineContextAsContextParameterIsReserved::class
     }

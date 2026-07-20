@@ -14,7 +14,6 @@ object CliFrontendDiagnostics : KtDiagnosticsContainer() {
     val NOT_AN_OPT_IN_REQUIREMENT_MARKER: KtSourcelessDiagnosticFactory by warningWithoutSource()
     val OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED: KtSourcelessDiagnosticFactory by warningWithoutSource()
     val OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
-    val CONTEXT_PARAMETERS_ARE_DEPRECATED: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val MISSING_DIAGNOSTIC_NAME: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val ERROR_SEVERITY_CHANGED: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
@@ -26,7 +25,6 @@ object CliFrontendDiagnostics : KtDiagnosticsContainer() {
             map.put(NOT_AN_OPT_IN_REQUIREMENT_MARKER, MESSAGE_PLACEHOLDER)
             map.put(OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED, MESSAGE_PLACEHOLDER)
             map.put(OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR, MESSAGE_PLACEHOLDER)
-            map.put(CONTEXT_PARAMETERS_ARE_DEPRECATED, MESSAGE_PLACEHOLDER)
             map.put(MISSING_DIAGNOSTIC_NAME, MESSAGE_PLACEHOLDER)
             map.put(ERROR_SEVERITY_CHANGED, MESSAGE_PLACEHOLDER)
         }

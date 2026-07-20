@@ -32,7 +32,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirExplicitApiDeclarationChecker,
         FirAnnotationChecker,
         FirPublishedApiChecker,
-        FirContextReceiversDeprecatedDeclarationChecker,
         FirOptInMarkedDeclarationChecker,
         FirExpectConsistencyChecker,
         FirOptionalExpectationDeclarationChecker,
