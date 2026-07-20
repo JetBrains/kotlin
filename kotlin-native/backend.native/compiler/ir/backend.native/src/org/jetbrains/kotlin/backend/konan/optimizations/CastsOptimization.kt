@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
@@ -39,7 +39,7 @@ import java.util.*
 
 internal val STATEMENT_ORIGIN_NO_CAST_NEEDED = IrStatementOriginImpl("NO_CAST_NEEDED")
 
-private fun IrSimpleFunction.isTrivialValGetter(context: Context) =
+private fun IrSimpleFunction.isTrivialValGetter(context: NativeBackendContext) =
         if (correspondingPropertySymbol?.owner?.isVar != false)
             false
         else
@@ -360,7 +360,7 @@ private object Predicates {
 private const val MAX_LOOPS_DEPTH = 5
 private const val MAX_LOOP_ITERATIONS = 10
 
-internal class CastsOptimization(val context: Context) : BodyLoweringPass {
+internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweringPass {
     private val not = context.irBuiltIns.booleanNotSymbol
     private val eqeq = context.irBuiltIns.eqeqSymbol
     private val eqeqeq = context.irBuiltIns.eqeqeqSymbol

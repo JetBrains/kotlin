@@ -67,7 +67,7 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
+    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
         val entryPoint = context.symbols.entryPoint?.owner
         val exported = if (entryPoint != null)
             listOf(moduleDFG.symbolTable.mapFunction(entryPoint))
@@ -127,7 +127,7 @@ internal object DevirtualizationAnalysis {
 
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
-    internal class DevirtualizationAnalysisImpl(val context: Context,
+    internal class DevirtualizationAnalysisImpl(val context: NativeBackendContext,
                                                 val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG) {
 
@@ -1587,7 +1587,7 @@ internal object DevirtualizationAnalysis {
 
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
-    fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
+    fun run(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,

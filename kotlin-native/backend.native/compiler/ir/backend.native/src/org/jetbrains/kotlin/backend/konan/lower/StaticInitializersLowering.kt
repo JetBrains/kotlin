@@ -71,7 +71,7 @@ internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean 
 
 internal var IrClass.clinitTriggerFunction: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
 
-internal class StaticInitializersLowering(val context: Context) : FileLoweringPass {
+internal class StaticInitializersLowering(val context: NativeBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {

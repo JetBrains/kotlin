@@ -21,16 +21,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 // TODO: Find a better home for this function than Context.
-internal fun Context.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
+internal fun NativeBackendContext.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
         getTypeConversionImpl(actualType.getInlinedClassNative(), expectedType.getInlinedClassNative())
 
-private fun Context.getTypeConversionImpl(
+private fun NativeBackendContext.getTypeConversionImpl(
         actualInlinedClass: IrClass?,
         expectedInlinedClass: IrClass?
 ): IrSimpleFunctionSymbol? {
@@ -65,7 +63,7 @@ private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
     return Pair(parent, classes.reversed().joinToString(".") { it.name.asString() })
 }
 
-internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
+internal fun NativeBackendContext.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
@@ -89,7 +87,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
     }
 }
 
-internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
+internal fun NativeBackendContext.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
@@ -113,7 +111,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
     }
 }
 
-internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
+internal fun NativeBackendContext.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
     val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)

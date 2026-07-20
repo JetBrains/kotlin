@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
-import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -343,7 +342,7 @@ internal object EscapeAnalysis {
     }
 
     private class InterproceduralAnalysis(
-            val context: Context,
+            val context: NativeBackendContext,
             val generationState: NativeGenerationState,
             val callGraph: CallGraph,
             val moduleDFG: ModuleDFG,
@@ -1791,7 +1790,7 @@ internal object EscapeAnalysis {
     }
 
     fun computeLifetimes(
-            context: Context,
+            context: NativeBackendContext,
             generationState: NativeGenerationState,
             moduleDFG: ModuleDFG,
             callGraph: CallGraph,

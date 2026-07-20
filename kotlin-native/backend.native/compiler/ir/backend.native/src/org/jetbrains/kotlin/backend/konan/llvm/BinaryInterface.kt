@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
@@ -154,7 +154,7 @@ fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(Konan
  * through the vtable/itable (via the trampoline) or directly for super calls and devirtualized calls.
  */
 internal fun IrSimpleFunction.computeSymbolName(
-        context: Context,
+        context: NativeBackendContext,
         forImplementation: Boolean,
         internalSymbolNameBuilder: () -> String? = { -> null },
 ): String = with(KonanBinaryInterface) {

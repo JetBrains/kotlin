@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 /**
  * Boxes and unboxes values of value types when necessary.
  */
-internal class Autoboxing(val context: Context) : FileLoweringPass {
+internal class Autoboxing(val context: NativeBackendContext) : FileLoweringPass {
 
     private val transformer = AutoboxingTransformer(context)
 
@@ -50,7 +50,7 @@ internal class Autoboxing(val context: Context) : FileLoweringPass {
 
 }
 
-private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTransformer(
+private class AutoboxingTransformer(val context: NativeBackendContext) : AbstractValueUsageTransformer(
         context.symbols,
         context.irBuiltIns
 ) {
@@ -286,7 +286,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
 }
 
-private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
+private class InlineClassTransformer(private val context: NativeBackendContext) : IrBuildingTransformer(context) {
 
     private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
@@ -627,7 +627,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
 private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
+private fun NativeBackendContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

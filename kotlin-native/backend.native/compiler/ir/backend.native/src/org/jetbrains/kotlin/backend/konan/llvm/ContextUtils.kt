@@ -9,7 +9,7 @@ import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -133,7 +133,7 @@ internal sealed class Lifetime(val slotType: SlotType) {
 internal interface ContextUtils : RuntimeAware {
     val generationState: NativeGenerationState
 
-    val context: Context
+    val context: NativeBackendContext
         get() = generationState.context
 
     override val runtime: Runtime

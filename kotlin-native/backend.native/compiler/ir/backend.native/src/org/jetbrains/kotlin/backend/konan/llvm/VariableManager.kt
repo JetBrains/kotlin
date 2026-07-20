@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.ir2string
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
-internal fun IrElement.needDebugInfo(context: Context) = context.shouldContainDebugInfo() || (this is IrVariable && this.isVar)
+internal fun IrElement.needDebugInfo(context: NativeBackendContext) = context.shouldContainDebugInfo() || (this is IrVariable && this.isVar)
 
 internal class VariableManager(val functionGenerationContext: FunctionGenerationContext) {
     internal interface Record {

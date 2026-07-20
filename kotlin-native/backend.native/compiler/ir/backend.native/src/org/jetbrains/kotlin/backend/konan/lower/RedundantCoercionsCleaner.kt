@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.isBox
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.*
@@ -55,7 +53,7 @@ import org.jetbrains.kotlin.ir.visitors.*
  *   - There might be also some casts in between matching box/unbox pair, the algorithm assumes that in the correct IR
  *     such casts are redundant and eliminates them.
  */
-internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPass {
+internal class RedundantCoercionsCleaner(val context: NativeBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(transformer, null)
     }

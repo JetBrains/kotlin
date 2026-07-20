@@ -118,7 +118,7 @@ internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGene
         op = { context, module -> IrValidationAfterLoweringPhase(context.context).lower(module) }
 )
 
-internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context, Unit>(
+internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<NativeBackendContext, Unit>(
         name = "FunctionsWithoutBoundCheckGenerator",
         op = { context, _ -> FunctionsWithoutBoundCheckGenerator(context).generate() }
 )
@@ -168,12 +168,12 @@ private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
 )
 
 private val postInlinePhase = createFileLoweringPhase(
-        { context: Context -> PostInlineLowering(context) },
+        { context: NativeBackendContext -> PostInlineLowering(context) },
         name = "PostInline",
 )
 
 private val contractsDslRemovePhase = createFileLoweringPhase(
-        { context: Context -> ContractsDslRemover(context) },
+        { context: NativeBackendContext -> ContractsDslRemover(context) },
         name = "RemoveContractsDsl",
 )
 
@@ -276,7 +276,7 @@ private val finallyBlocksPhase = createFileLoweringPhase(
 )
 
 private val testProcessorPhase = createFileLoweringPhase(
-        lowering = { context: Context -> TestProcessor(context, context.sourcesModules) },
+        lowering = { context: NativeBackendContext -> TestProcessor(context, context.sourcesModules) },
         name = "TestProcessor",
 )
 
@@ -389,7 +389,7 @@ private val typeOfProcessingLowering = createFileLoweringPhase(
 )
 
 private val specializeSharedVariableBoxes = createFileLoweringPhase(
-        lowering = { context: Context -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
+        lowering = { context: NativeBackendContext -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
         name = "SpecializeSharedVariableBoxes",
         prerequisite = setOf(sharedVariablesPhase),
 )
@@ -507,13 +507,13 @@ private val lowerCastsPhase = createFileLoweringPhase(
 
 private val computeTypesPhase = createFileLoweringPhase(
         name = "ComputeTypes",
-        lowering = { context: Context -> ComputeTypesPass(context) },
+        lowering = { context: NativeBackendContext -> ComputeTypesPass(context) },
         prerequisite = setOf(finallyBlocksPhase)
 )
 
 private val optimizeCastsPhase = createFileLoweringPhase(
         name = "OptimizeCasts",
-        lowering = { context: Context -> CastsOptimization(context) },
+        lowering = { context: NativeBackendContext -> CastsOptimization(context) },
 )
 
 private val expressionBodyTransformPhase = createFileLoweringPhase(
@@ -569,7 +569,7 @@ private val inventNamesForLocalClasses = createFileLoweringPhase(
 )
 
 private val inventNamesForLocalFunctions = createFileLoweringPhase(
-        lowering = { _: Context -> KlibInventNamesForLocalFunctions() },
+        lowering = { _: NativeBackendContext -> KlibInventNamesForLocalFunctions() },
         name = "InventNamesForLocalFunctions",
 )
 
@@ -703,7 +703,7 @@ private fun createFileLoweringPhase(
 }
 
 private fun createFileLoweringPhase(
-        lowering: (Context) -> FileLoweringPass,
+        lowering: (NativeBackendContext) -> FileLoweringPass,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
 ) = createFileLoweringPhaseImpl(
@@ -714,7 +714,7 @@ private fun createFileLoweringPhase(
 }
 
 private fun createFileLoweringPhase(
-        op: (context: Context, irFile: IrFile) -> Unit,
+        op: (context: NativeBackendContext, irFile: IrFile) -> Unit,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
 ) = createFileLoweringPhaseImpl(

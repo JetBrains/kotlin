@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.ir.builders.irBoolean
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -35,7 +35,7 @@ internal fun IrType.isSuperClassCastTo(dstClass: IrClass): Boolean =
         dstClass.isAny() || (this.classifierOrNull !is IrTypeParameterSymbol // Due to unsafe casts, see unchecked_cast8.kt as an example.
                 && this.isSubtypeOfClass(dstClass.symbol))
 
-internal class CastsLowering(val context: Context) : BodyLoweringPass {
+internal class CastsLowering(val context: NativeBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import kotlin.collections.plus
 
-internal class TestsInitializer(private val context: Context) : FileLoweringPass {
+internal class TestsInitializer(private val context: NativeBackendContext) : FileLoweringPass {
     private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {

@@ -56,7 +56,7 @@ internal class NativeGenerationState(
         config: NativeSecondStageCompilationConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
-        val context: Context,
+        val context: NativeBackendContext,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
@@ -135,7 +135,7 @@ internal class NativeGenerationState(
         isDisposed = true
     }
 
-    override val heldBackendContext: Context
+    override val heldBackendContext: NativeBackendContext
         get() = context
 
     override val llvmModule: LLVMModuleRef

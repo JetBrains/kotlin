@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.utils.mapEachBit
 import java.util.BitSet
 
-internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
+internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLoweringPass {
     private val unitType = context.irBuiltIns.unitType
 
     private fun IrClass.superClassesHierarchy(): List<IrClass> {

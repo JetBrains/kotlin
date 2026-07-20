@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal class ReifiedFunctionLowering(private val backendContext: Context) : FileLoweringPass, IrElementTransformerVoid() {
+internal class ReifiedFunctionLowering(private val backendContext: NativeBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
         val IrSimpleFunction.isReifiedInline: Boolean
             get() = isInline && typeParameters.any { it.isReified }

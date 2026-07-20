@@ -165,8 +165,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             config: NativeSecondStageCompilationConfig,
             frontendOutput: FrontendPhaseOutput.Full,
             linkKlibsOutput: LinkKlibsOutput,
-            additionalDataSetter: (Context) -> Unit = {}
-    ) = Context(
+            additionalDataSetter: (NativeBackendContext) -> Unit = {}
+    ) = NativeBackendContext(
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,

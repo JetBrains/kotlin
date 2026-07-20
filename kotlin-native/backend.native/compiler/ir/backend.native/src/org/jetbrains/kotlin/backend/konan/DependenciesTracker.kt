@@ -76,7 +76,7 @@ private sealed class FileOrigin {
 internal class DependenciesTrackerImpl(
         private val llvmModuleSpecification: LlvmModuleSpecification,
         private val config: NativeSecondStageCompilationConfig,
-        private val context: Context,
+        private val context: NativeBackendContext,
 ) : DependenciesTracker {
     private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
 

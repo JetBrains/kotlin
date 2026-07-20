@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
@@ -64,7 +64,7 @@ private fun getUniqueName(packageFragment: IrPackageFragment, fileName: String) 
 private val IrFile.uniqueName: String
     get() = getUniqueName(this, fileEntry.name)
 
-private fun IrDeclaration.getUniqueName(context: Context) =
+private fun IrDeclaration.getUniqueName(context: NativeBackendContext) =
         getUniqueName(this.getPackageFragment(), context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
 
 internal class InteropBridgesNameInventor(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {

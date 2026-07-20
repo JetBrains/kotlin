@@ -85,7 +85,7 @@ private class VariableValues {
     }
 }
 
-private class ExpressionValuesExtractor(val context: Context,
+private class ExpressionValuesExtractor(val context: NativeBackendContext,
                                         val returnableBlockValues: Map<IrReturnableBlock, List<IrExpression>>,
                                         val suspendableExpressionValues: Map<IrSuspendableExpression, List<IrSuspensionPoint>>) {
 

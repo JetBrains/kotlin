@@ -81,7 +81,7 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
     return linkKlibsOutput to additionalOutput
 }
 
-internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
         backendEngine.runAndMeasurePhase(functionsWithoutBoundCheck)
@@ -315,7 +315,7 @@ private data class BackendJobFragment(
         val performanceManager: PerformanceManager?,
 )
 
-private fun PhaseEngine<out Context>.splitIntoFragments(
+private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
         input: IrModuleFragment,
         mainPerfManager: PerformanceManager?,
 ): Sequence<BackendJobFragment> {

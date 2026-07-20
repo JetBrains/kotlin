@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.ir.IrElement
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
-internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
+internal fun NativeBackendContext.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
         irConstructor::loweredConstructorFunction.getOrSetIfNull {
             irFactory.buildFun {
                 name = irConstructor.name
@@ -74,7 +74,7 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 /**
  * Replaces constructor calls by (alloc + static call).
  */
-internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
+internal class ConstructorsLowering(private val context: NativeBackendContext) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
     private val createUninitializedInstance = context.symbols.createUninitializedInstance
     private val createUninitializedArray = context.symbols.createUninitializedArray
     private val createEmptyString = context.symbols.createEmptyString

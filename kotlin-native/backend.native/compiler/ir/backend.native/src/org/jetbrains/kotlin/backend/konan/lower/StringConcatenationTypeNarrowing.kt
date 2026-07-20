@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * - "if (arg==null) null else arg.toString()"  to pass to StringBuilder.append(String?)
  * - "if (arg==null) "null" else arg.toString()"  to pass to other methods as non-nullable String
  */
-internal class StringConcatenationTypeNarrowing(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
+internal class StringConcatenationTypeNarrowing(val context: NativeBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
 
     private val string = context.irBuiltIns.stringClass.owner
     private val stringBuilder = context.symbols.stringBuilder.owner

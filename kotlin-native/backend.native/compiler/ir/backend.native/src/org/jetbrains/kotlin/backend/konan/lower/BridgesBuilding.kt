@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.BridgeDirection
@@ -101,7 +101,7 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNa
         }
     }
 }
-internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
+internal class WorkersBridgesBuilding(val context: NativeBackendContext) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
     private val bridgesPolicy = context.config.bridgesPolicy
     val symbols = context.symbols
     lateinit var runtimeJobFunction: IrSimpleFunction
@@ -193,7 +193,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     }
 }
 
-internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
+internal class BridgesBuilding(val context: NativeBackendContext) : ClassLoweringPass {
     private val bridgesPolicy = context.config.bridgesPolicy
 
     override fun lower(irClass: IrClass) {
@@ -297,9 +297,9 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
     }
 }
 
-private fun Context.buildBridge(startOffset: Int, endOffset: Int,
-                                overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
-                                superQualifierSymbol: IrClassSymbol? = null): IrFunction {
+private fun NativeBackendContext.buildBridge(startOffset: Int, endOffset: Int,
+                                             overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
+                                             superQualifierSymbol: IrClassSymbol? = null): IrFunction {
     val target = targetSymbol.owner.target
     val bridge = bridgesSupport.getBridge(overriddenFunction)
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.annotations.exportedBridgeNonVirtualTargetMethod
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Rewrites the call to the target method inside a Swift Export forward bridge marked with
  * `@ExportedBridge(..., nonVirtualTargetMethod = "<method>")` so that every call to said method gets dispatched non-virtually,
  */
-internal class ExportedBridgeNonVirtualLowering(val context: Context) : FileLoweringPass {
+internal class ExportedBridgeNonVirtualLowering(val context: NativeBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         for (function in irFile.declarations.filterIsInstance<IrSimpleFunction>()) {
             val targetMethod = function.exportedBridgeNonVirtualTargetMethod ?: continue

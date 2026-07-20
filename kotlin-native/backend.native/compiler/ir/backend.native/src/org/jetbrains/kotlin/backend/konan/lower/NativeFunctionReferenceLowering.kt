@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLoweri
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.customNameInReflection
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 // distinguish between extension receiver and first argument. So we just store it in attribute of invoke function
 var IrFunction.isRestrictedSuspensionInvokeMethod by irFlag<IrFunction>(copyByDefault = true)
 
-internal class NativeFunctionReferenceLowering(val generationState: NativeGenerationState) : AbstractFunctionReferenceLowering<Context>(generationState.context) {
+internal class NativeFunctionReferenceLowering(val generationState: NativeGenerationState) : AbstractFunctionReferenceLowering<NativeBackendContext>(generationState.context) {
     companion object {
         private val DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL = IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 

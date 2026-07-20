@@ -460,7 +460,7 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val module: Module) {
+    class SymbolTable(val context: NativeBackendContext, val module: Module) {
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
@@ -64,7 +64,7 @@ internal object StaticInitializersOptimization {
 
     private val invalidContainerId = 0
 
-    private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph,
+    private class InterproceduralAnalysis(val context: NativeBackendContext, val callGraph: CallGraph,
                                           val rootSet: Set<IrSimpleFunction>) {
         fun analyze(): AnalysisResult {
             context.logMultiple {

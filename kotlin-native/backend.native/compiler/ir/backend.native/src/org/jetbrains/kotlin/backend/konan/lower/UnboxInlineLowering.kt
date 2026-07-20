@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
 import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -34,7 +34,7 @@ internal class UnboxInlineLowering(
 }
 
 private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrElementTransformerVoid() {
-    private val context = commonBackendContext as Context
+    private val context = commonBackendContext as NativeBackendContext
 
     private fun IrFunction.isEasyInlineableUnbox(): Boolean = !returnType.isNullable() && isUnbox()
 

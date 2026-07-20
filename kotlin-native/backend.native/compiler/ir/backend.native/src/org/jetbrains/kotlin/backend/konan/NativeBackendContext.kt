@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
 
-internal class Context(
+internal class NativeBackendContext(
         config: NativeSecondStageCompilationConfig,
         val sourcesModules: Set<ModuleDescriptor>,
         @OptIn(K1Deprecation::class)

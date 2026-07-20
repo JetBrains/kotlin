@@ -8,21 +8,17 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.isVirtualCall
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -38,7 +34,7 @@ internal class NativeAllFunctionInlining(generationState: NativeGenerationState)
         NativeInlineFunctionResolver(generationState, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
 )
 
-internal class PreCodegenFunctionInlining(val context: Context, val functionsToInline: Set<IrFunction>) {
+internal class PreCodegenFunctionInlining(val context: NativeBackendContext, val functionsToInline: Set<IrFunction>) {
     fun run(irFunction: IrSimpleFunction) {
         val irBuilder = context.createIrBuilder(irFunction.symbol)
         irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {

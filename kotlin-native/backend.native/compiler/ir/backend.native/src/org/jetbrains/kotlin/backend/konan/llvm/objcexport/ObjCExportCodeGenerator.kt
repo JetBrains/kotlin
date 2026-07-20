@@ -1676,7 +1676,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
     return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
 
-private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
+private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: NativeBackendContext): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
         method in it.getLowered().allOverriddenFunctions
     } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")

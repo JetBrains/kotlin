@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
  */
-internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
+internal class BuiltinOperatorLowering(val context: NativeBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
 
     private val irBuiltins = context.irBuiltIns
     private val symbols = context.symbols
