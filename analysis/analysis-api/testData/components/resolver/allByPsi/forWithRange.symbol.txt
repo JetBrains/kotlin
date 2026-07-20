@@ -7,6 +7,7 @@ KtPackageDirective(0,9): 'package f'
 KtNameReferenceExpression(8,9): 'f'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       f
@@ -50,6 +51,7 @@ KtConstantExpression(39,40): '1'
 KtOperationReferenceExpression(40,43): '..<'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange

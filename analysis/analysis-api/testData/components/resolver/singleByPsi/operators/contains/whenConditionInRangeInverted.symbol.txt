@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(177,180): '!in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean

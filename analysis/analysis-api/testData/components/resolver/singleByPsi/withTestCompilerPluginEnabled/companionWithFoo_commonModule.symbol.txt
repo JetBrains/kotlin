@@ -1,6 +1,7 @@
 KtNameReferenceExpression(172,175): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/WithGeneratedCompanion.Companion.foo(<dispatch receiver>: test.WithGeneratedCompanion.Companion): kotlin.Int

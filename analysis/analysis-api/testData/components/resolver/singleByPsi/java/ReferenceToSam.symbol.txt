@@ -1,6 +1,7 @@
 KtNameReferenceExpression(83,94): 'setListener'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaTest.SomeJavaClass.setListener(<dispatch receiver>: JavaTest.SomeJavaClass, listener: JavaTest.SAMInterface!): kotlin.Unit

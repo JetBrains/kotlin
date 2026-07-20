@@ -43,6 +43,7 @@ KtUserType(19,20): 'T'
 KtNameReferenceExpression(19,20): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -75,6 +76,7 @@ KtUserType(43,44): 'T'
 KtNameReferenceExpression(43,44): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -98,6 +100,7 @@ KtUserType(51,57): 'String'
 KtNameReferenceExpression(51,57): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -133,6 +136,7 @@ KtParenthesizedExpression(68,71): '(i)'
 KtNameReferenceExpression(69,70): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -162,6 +166,7 @@ KtUserType(94,95): 'T'
 KtNameReferenceExpression(94,95): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -185,6 +190,7 @@ KtUserType(104,107): 'Int'
 KtNameReferenceExpression(104,107): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -214,6 +220,7 @@ KtValueArgumentName(116,117): 'i'
 KtNameReferenceExpression(116,117): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -231,6 +238,7 @@ KtParenthesizedExpression(122,125): '(i)'
 KtNameReferenceExpression(123,124): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -263,6 +271,7 @@ KtUserType(142,154): 'A<(((Int)))>'
 KtNameReferenceExpression(142,143): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -289,6 +298,7 @@ KtUserType(147,150): 'Int'
 KtNameReferenceExpression(147,150): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -354,6 +364,7 @@ KtUserType(214,217): 'Int'
 KtNameReferenceExpression(214,217): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -383,6 +394,7 @@ KtValueArgumentName(227,228): 'i'
 KtNameReferenceExpression(227,228): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -397,6 +409,7 @@ KtParenthesizedExpression(232,239): '(value)'
 KtNameReferenceExpression(233,238): 'value'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       value: kotlin.Int
@@ -426,6 +439,7 @@ KtUserType(266,272): 'String'
 KtNameReferenceExpression(266,272): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -455,6 +469,7 @@ KtValueArgumentName(282,283): 'i'
 KtNameReferenceExpression(282,283): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -475,6 +490,7 @@ KtConstantExpression(288,289): '5'
 KtOperationReferenceExpression(292,294): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(295,298): 'Int'
@@ -492,6 +508,7 @@ KtUserType(295,298): 'Int'
 KtNameReferenceExpression(295,298): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(27,31): 'util'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       java.util

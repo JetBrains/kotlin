@@ -1,6 +1,7 @@
 KtLabelReferenceExpression(67,69): '@b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_LABEL: Unresolved label.>

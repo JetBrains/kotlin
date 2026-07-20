@@ -1,6 +1,7 @@
 KtNameReferenceExpression(22,26): 'java'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       java

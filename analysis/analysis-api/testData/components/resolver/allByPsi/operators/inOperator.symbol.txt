@@ -40,6 +40,7 @@ KtUserType(53,56): 'Int'
 KtNameReferenceExpression(53,56): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -60,6 +61,7 @@ KtUserType(59,66): 'Boolean'
 KtNameReferenceExpression(59,66): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -89,6 +91,7 @@ KtCallExpression(102,113): 'Container()'
 KtNameReferenceExpression(102,111): 'Container'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Container
@@ -109,6 +112,7 @@ KtConstantExpression(118,119): '1'
 KtOperationReferenceExpression(120,122): 'in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
@@ -117,6 +121,7 @@ KtOperationReferenceExpression(120,122): 'in'
 KtNameReferenceExpression(123,124): 'c'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       val c: Container
@@ -134,6 +139,7 @@ KtConstantExpression(129,130): '2'
 KtOperationReferenceExpression(131,134): '!in'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
@@ -142,6 +148,7 @@ KtOperationReferenceExpression(131,134): '!in'
 KtNameReferenceExpression(135,136): 'c'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       val c: Container

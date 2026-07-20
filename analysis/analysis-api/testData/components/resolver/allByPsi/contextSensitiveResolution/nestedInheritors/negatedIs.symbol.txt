@@ -43,6 +43,7 @@ KtUserType(120,126): 'Simple'
 KtNameReferenceExpression(120,126): 'Simple'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Simple
@@ -75,6 +76,7 @@ KtUserType(144,150): 'Simple'
 KtNameReferenceExpression(144,150): 'Simple'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Simple
@@ -104,6 +106,7 @@ KtUserType(177,183): 'Simple'
 KtNameReferenceExpression(177,183): 'Simple'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Simple
@@ -115,6 +118,7 @@ KtWhenExpression(187,325): 'when(s) {'
 KtNameReferenceExpression(192,193): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       s: Simple
@@ -141,6 +145,7 @@ KtUserType(205,209): 'Left'
 KtNameReferenceExpression(205,209): 'Left'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Simple.Left
@@ -166,6 +171,7 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
 KtOperationReferenceExpression(231,232): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
@@ -173,6 +179,7 @@ KtOperationReferenceExpression(231,232): '!'
 KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'USELESS_IS_CHECK'.>
@@ -194,6 +201,7 @@ KtPrefixExpression(248,250): '!>'
 KtOperationReferenceExpression(248,249): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
@@ -201,6 +209,7 @@ KtOperationReferenceExpression(248,249): '!'
 KtOperationReferenceExpression(250,253): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(254,262): 'Right<!>'
@@ -216,6 +225,7 @@ KtUserType(254,262): 'Right<!>'
 KtNameReferenceExpression(254,259): 'Right'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
@@ -249,6 +259,7 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
 KtOperationReferenceExpression(285,286): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
@@ -256,6 +267,7 @@ KtOperationReferenceExpression(285,286): '!'
 KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'REDUNDANT_ELSE_IN_WHEN'.>
@@ -274,6 +286,7 @@ KtPrefixExpression(308,310): '!>'
 KtOperationReferenceExpression(308,309): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>

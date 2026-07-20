@@ -2,6 +2,7 @@
   KtNameReferenceExpression(192,195): 'foo'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>
@@ -11,6 +12,7 @@
   KtNameReferenceExpression(211,214): 'foo'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>
@@ -20,6 +22,7 @@
   KtNameReferenceExpression(329,332): 'foo'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>

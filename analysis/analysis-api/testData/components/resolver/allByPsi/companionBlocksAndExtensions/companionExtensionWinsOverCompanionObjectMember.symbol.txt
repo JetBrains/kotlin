@@ -7,6 +7,7 @@ KtPackageDirective(51,63): 'package test'
 KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -60,6 +61,7 @@ KtUserType(144,145): 'C'
 KtNameReferenceExpression(144,145): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -89,6 +91,7 @@ KtDotQualifiedExpression(177,185): 'C.same()'
 KtNameReferenceExpression(177,178): 'C'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C.Companion
@@ -103,6 +106,7 @@ KtCallExpression(179,185): 'same()'
 KtNameReferenceExpression(179,183): 'same'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/same(<extension receiver>: test.C): kotlin.String

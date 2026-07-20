@@ -7,6 +7,7 @@ KtPackageDirective(51,63): 'package test'
 KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -39,6 +40,7 @@ KtUserType(97,98): 'C'
 KtNameReferenceExpression(97,98): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -65,6 +67,7 @@ KtUserType(107,110): 'Int'
 KtNameReferenceExpression(107,110): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -85,6 +88,7 @@ KtUserType(113,114): 'C'
 KtNameReferenceExpression(113,114): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -99,6 +103,7 @@ KtCallExpression(117,120): 'C()'
 KtNameReferenceExpression(117,118): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -125,6 +130,7 @@ KtDotQualifiedExpression(140,149): 'C.plus(1)'
 KtNameReferenceExpression(140,141): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -139,6 +145,7 @@ KtCallExpression(142,149): 'plus(1)'
 KtNameReferenceExpression(142,146): 'plus'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C

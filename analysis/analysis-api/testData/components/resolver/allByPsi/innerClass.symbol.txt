@@ -7,6 +7,7 @@ KtPackageDirective(0,9): 'package r'
 KtNameReferenceExpression(8,9): 'r'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       r
@@ -51,6 +52,7 @@ KtUserType(54,57): 'Int'
 KtNameReferenceExpression(54,57): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -86,6 +88,7 @@ KtUserType(80,83): 'Int'
 KtNameReferenceExpression(80,83): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -121,6 +124,7 @@ KtUserType(86,90): 'Base'
 KtNameReferenceExpression(86,90): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       r/A.Base
@@ -135,6 +139,7 @@ KtValueArgument(91,92): 'x'
 KtNameReferenceExpression(91,92): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int

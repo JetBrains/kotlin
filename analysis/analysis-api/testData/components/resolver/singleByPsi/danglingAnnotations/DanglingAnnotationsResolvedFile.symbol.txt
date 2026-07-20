@@ -1,6 +1,7 @@
 KtNameReferenceExpression(49,56): 'JvmName'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/jvm/JvmName

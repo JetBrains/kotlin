@@ -1,6 +1,7 @@
 KtNameReferenceExpression(16,26): '`$$result`'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val $$result: kotlin.Int

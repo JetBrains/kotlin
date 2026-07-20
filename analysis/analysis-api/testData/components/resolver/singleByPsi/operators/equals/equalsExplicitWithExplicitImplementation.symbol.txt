@@ -1,6 +1,7 @@
 KtNameReferenceExpression(119,125): 'equals'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean

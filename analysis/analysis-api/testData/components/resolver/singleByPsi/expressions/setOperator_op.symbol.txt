@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(105,106): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: kotlin.Int): kotlin.Unit
