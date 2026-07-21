@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -44,7 +43,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
     }
 
     override val klib get() = error("'klib' is not available for ${this::class.java}")
-    override val kind get() = IrModuleDeserializerKind.SYNTHETIC
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
     private val symbolTable = linker.symbolTable
     private val declaredClasses = mutableMapOf<IdSignature.CommonSignature, IrClass?>()

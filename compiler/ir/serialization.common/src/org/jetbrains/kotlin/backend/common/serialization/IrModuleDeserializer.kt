@@ -81,10 +81,6 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     }
 }
 
-enum class IrModuleDeserializerKind {
-    CURRENT, DESERIALIZED, SYNTHETIC
-}
-
 abstract class IrModuleDeserializer(
     val libraryAbiVersion: KotlinAbiVersion,
 ) {
@@ -135,8 +131,6 @@ abstract class IrModuleDeserializer(
     abstract val moduleFragment: IrModuleFragment
 
     open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
-
-    abstract val kind: IrModuleDeserializerKind
 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
 
@@ -276,7 +270,6 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
-    override val kind get() = delegate.kind
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()

@@ -172,9 +172,6 @@ class JKlibIrLinker(
         }
 
         override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-
-        override val kind
-            get() = IrModuleDeserializerKind.SYNTHETIC
     }
     private inner class JKlibModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,

@@ -11,7 +11,6 @@ import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -84,7 +83,6 @@ internal class KonanInteropModuleDeserializer(
 
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
-    override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
     private var externalIrPackageFragment: IrExternalPackageFragment? = null
     private var typeDefinitionsIrFile: IrFile? = null
