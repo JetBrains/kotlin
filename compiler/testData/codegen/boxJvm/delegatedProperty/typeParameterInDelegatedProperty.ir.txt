@@ -41,8 +41,9 @@ FILE fqName:test fileName:/typeParameterInDelegatedProperty.kt
           CALL 'public open fun getValue (t: kotlin.Any?, p: kotlin.reflect.KProperty<*>): kotlin.Any? declared in test.property$delegate.<no name provided>' type=T of test.<get-property> origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:property$delegate type:test.property$delegate.<no name provided><T of test.<get-property>> visibility:private [final,static] declared in test' type=test.property$delegate.<no name provided><T of test.<get-property>> origin=null
             ARG t: GET_VAR '<this>: T of test.<get-property> declared in test.<get-property>' type=T of test.<get-property> origin=null
-            ARG p: PROPERTY_REFERENCE 'public final property: T of test.<get-property> declared in test' field=null getter='public final fun <get-property> <T> (<this>: T of test.<get-property>): T of test.<get-property> declared in test' setter=null type=kotlin.reflect.KProperty1<T of test.<get-property>, T of test.<get-property>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              TYPE_ARG 1: T of test.<get-property>
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<T of test.<get-property>, T of test.<get-property>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final property: T of test.<get-property> declared in test'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:property visibility:local modality:FINAL returnType:T of test.<get-property>
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:T of test.<get-property>
   PROPERTY name:property2 visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:property2$delegate type:test.IDelegate<T of test.<get-property2>> visibility:private [final,static]
       EXPRESSION_BODY
@@ -97,8 +98,9 @@ FILE fqName:test fileName:/typeParameterInDelegatedProperty.kt
           CALL 'public abstract fun getValue (t: T of test.IDelegate, p: kotlin.reflect.KProperty<*>): T of test.IDelegate declared in test.IDelegate' type=T of test.<get-property2> origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:property2$delegate type:test.IDelegate<T of test.<get-property2>> visibility:private [final,static] declared in test' type=test.IDelegate<T of test.<get-property2>> origin=null
             ARG t: GET_VAR '<this>: T of test.<get-property2> declared in test.<get-property2>' type=T of test.<get-property2> origin=null
-            ARG p: PROPERTY_REFERENCE 'public final property2: T of test.<get-property2> declared in test' field=null getter='public final fun <get-property2> <T> (<this>: T of test.<get-property2>): T of test.<get-property2> declared in test' setter=null type=kotlin.reflect.KProperty1<T of test.<get-property2>, T of test.<get-property2>> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              TYPE_ARG 1: T of test.<get-property2>
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<T of test.<get-property2>, T of test.<get-property2>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final property2: T of test.<get-property2> declared in test'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:property2 visibility:local modality:FINAL returnType:T of test.<get-property2>
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:T of test.<get-property2>
   CLASS INTERFACE name:IDelegate modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.IDelegate<T of test.IDelegate>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

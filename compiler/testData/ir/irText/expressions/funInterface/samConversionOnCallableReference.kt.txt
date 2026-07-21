@@ -11,31 +11,43 @@ fun foo1(vararg xs: Int): Int {
 }
 
 fun testSamConstructor(): KRunnable {
-  return ::foo0 /*-> KRunnable */
+  return KFunction0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
+      foo0()
+    }
+  )
+ /*-> KRunnable */
 }
 
 fun testSamConversion() {
-  use(r = ::foo0 /*-> KRunnable */)
+  use(r = KFunction0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
+      foo0()
+    }
+  )
+ /*-> KRunnable */)
 }
 
 fun testSamConversionOnAdapted() {
-  use(r = { // BLOCK
-    local fun foo1() {
+  use(r = Function0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
       foo1() /*~> Unit */
     }
-
-    ::foo1 /*-> KRunnable */
-  })
+  )
+ /*-> KRunnable */)
 }
 
 fun testSamCosntructorOnAdapted(): KRunnable {
-  return { // BLOCK
-    local fun foo1() {
+  return Function0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
       foo1() /*~> Unit */
     }
-
-    ::foo1
-  } /*-> KRunnable */
+  )
+ /*-> KRunnable */
 }
 
 fun use(r: KRunnable) {

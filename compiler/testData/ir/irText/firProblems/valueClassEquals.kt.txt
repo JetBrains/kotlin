@@ -1,5 +1,11 @@
 val equals: KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>
-  field = Z::equals
+  field = KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>(
+    /* bound = */ [],
+    /* invoke = */    local operator fun(p0: Z, p1: @ParameterName(name = "other") Any?): Boolean {
+      return p0.equals(other = p1)
+    }
+  )
+
   get
 
 @JvmInline
@@ -34,3 +40,4 @@ value class Z {
   }
 
 }
+

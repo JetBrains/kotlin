@@ -222,47 +222,14 @@ class AdapterGenerator(
         }
     }
 
-    internal fun generateAdaptedCallableReference(
-        callableReferenceAccess: FirCallableReferenceAccess,
-        explicitReceiverExpression: IrExpression?,
-        adapteeSymbol: IrFunctionSymbol,
-        type: IrSimpleType
-    ): IrExpression {
-        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-            val context = AdaptedCallableReferenceContext(callableReferenceAccess, type, explicitReceiverExpression)
-            val irAdapterFunction = context.buildCallableReferenceAdapterFunction(startOffset, endOffset, adapteeSymbol, isForRichReference = false)
-
-            require(irAdapterFunction.typeParameters.isEmpty()) {
-                "Internal error: function adapter ${irAdapterFunction.symbol} " +
-                        "has unexpected type parameters: ${irAdapterFunction.typeParameters.map { it.symbol }}\n" +
-                        "They should already be used to determine exact return type and value parameters types"
-            }
-            val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, type, irAdapterFunction.symbol, typeArgumentsCount = 0,
-                null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
-            ).apply {
-                context.boundReceiver?.let {
-                    arguments[0] = it
-                }
-
-                reflectionTarget = adapteeSymbol
-            }
-            IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
-                statements.add(irAdapterFunction)
-                statements.add(irAdapterRef)
-            }
-        }
-    }
-
     private fun AdaptedCallableReferenceContext.buildCallableReferenceAdapterFunction(
         startOffset: Int,
         endOffset: Int,
         adapteeSymbol: IrFunctionSymbol,
-        isForRichReference: Boolean = true,
         isSetter: Boolean = false,
         isForDelegate: Boolean = false,
     ): IrSimpleFunction {
-        val irAdapterFunction = createAdapterFunctionForCallableReference(startOffset, endOffset, isForRichReference, isSetter)
+        val irAdapterFunction = createAdapterFunctionForCallableReference(startOffset, endOffset, isSetter)
         val irCall = createAdapteeCallForCallableReference(adapteeSymbol, irAdapterFunction, isSetter)
 
         if (!isForDelegate) {
@@ -293,7 +260,6 @@ class AdapterGenerator(
     private fun AdaptedCallableReferenceContext.createAdapterFunctionForCallableReference(
         startOffset: Int,
         endOffset: Int,
-        isForRichReference: Boolean,
         isSetter: Boolean,
     ): IrSimpleFunction {
         val parameterTypes = adaptedType.arguments.dropLast(1).map { it.typeOrNull ?: builtins.anyNType }
@@ -343,7 +309,7 @@ class AdapterGenerator(
                             Name.identifier("receiver"),
                             it.type,
                             IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                            if (isForRichReference) IrParameterKind.Regular else IrParameterKind.ExtensionReceiver,
+                            IrParameterKind.Regular,
                         )
                     }
                 }

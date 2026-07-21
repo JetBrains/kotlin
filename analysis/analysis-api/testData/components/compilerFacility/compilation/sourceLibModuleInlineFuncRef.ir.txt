@@ -4,8 +4,15 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
       BLOCK_BODY
         VAR name:ref type:kotlin.reflect.KFunction0<kotlin.String> [val]
-          FUNCTION_REFERENCE 'public final fun getInline (): kotlin.String [inline] declared in com.example.common.OtherModule' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-            ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.common.OtherModule' type=com.example.common.OtherModule origin=null
+          RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun getInline (): kotlin.String [inline] declared in com.example.common.OtherModule'
+            overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 [fake_override,operator] declared in kotlin.reflect.KFunction0
+            bound receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.common.OtherModule' type=com.example.common.OtherModule origin=null
+            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:getInline visibility:local modality:FINAL returnType:kotlin.String [inline]
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:com.example.common.OtherModule
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun getInline (receiver: com.example.common.OtherModule): kotlin.String [inline] declared in home.Greeting'
+                  CALL 'public final fun getInline (): kotlin.String [inline] declared in com.example.common.OtherModule' type=kotlin.String origin=null
+                    ARG <this>: GET_VAR 'receiver: com.example.common.OtherModule declared in home.Greeting.getInline' type=com.example.common.OtherModule origin=ADAPTED_FUNCTION_REFERENCE
         CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.jvmLib' type=kotlin.Unit origin=null
           ARG text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
             ARG <this>: STRING_CONCATENATION type=kotlin.String

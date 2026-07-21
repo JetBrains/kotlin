@@ -14,7 +14,19 @@ fun test1(): String {
 // FILE: platform.kt
 
 fun box(): String {
-  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "test1", */ that = ::test1), to<String, KFunction0<String>>(/* <this> = "test2", */ that = ::test2)])
+  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "test1", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return test1()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "test2", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return test2()
+    }
+  )
+)])
 }
 
 fun explain(value: Any): String? {
@@ -31,3 +43,4 @@ fun test2(): String {
     }
   }
 }
+

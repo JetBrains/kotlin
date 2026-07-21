@@ -60,13 +60,39 @@ FILE fqName:<root> fileName:/Derived.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               ARG arg0: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-                ARG <this>: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-                  ARG 1: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
+                ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final a: kotlin.String declared in <root>.Derived'
+                  bound receiver: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.String
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun a (receiver: <root>.Derived): kotlin.String declared in <root>.box'
+                        CALL 'public final fun <get-a> (): kotlin.String declared in <root>.Derived' type=kotlin.String origin=null
+                          ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+                    BLOCK_BODY
+                      CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                        ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
               ARG arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-              ARG <this>: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-                ARG 1: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
+              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final a: kotlin.String declared in <root>.Derived'
+                bound receiver: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.String
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun a (receiver: <root>.Derived): kotlin.String declared in <root>.box'
+                      CALL 'public final fun <get-a> (): kotlin.String declared in <root>.Derived' type=kotlin.String origin=null
+                        ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+                  BLOCK_BODY
+                    CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
         ARG <set-?>: CONST String type=kotlin.String value="12"

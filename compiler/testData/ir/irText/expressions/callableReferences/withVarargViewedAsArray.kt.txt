@@ -18,38 +18,50 @@ fun sum(vararg args: Int): Int {
 }
 
 fun testArrayAndDefaults() {
-  useStringArray(fn = { // BLOCK
-    local fun zap(p0: Array<out String>) {
+  useStringArray(fn = Function1<Array<out String>, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Array<out String>) {
       zap(b = [*p0])
     }
-
-    ::zap
-  })
-  useStringArray(fn = { // BLOCK
-    local fun zapGeneric(p0: Array<out String>) {
+  )
+)
+  useStringArray(fn = Function1<Array<out String>, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Array<out String>) {
       zapGeneric<String>(b = [*p0])
     }
-
-    ::zapGeneric
-  })
+  )
+)
 }
 
 fun testArrayAsVararg() {
-  useArray(fn = ::nsum)
+  useArray(fn = KFunction1<@ParameterName(name = "args") Array<out Number>, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "args") Array<out Number>): Int {
+      return nsum(args = [*p0])
+    }
+  )
+)
 }
 
 fun testPlainArgs() {
-  usePlainArgs(fn = { // BLOCK
-    local fun sum(p0: Int, p1: Int): Int {
+  usePlainArgs(fn = Function2<Int, Int, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Int, p1: Int): Int {
       return sum(args = [p0, p1])
     }
-
-    ::sum
-  })
+  )
+)
 }
 
 fun testPrimitiveArrayAsVararg() {
-  usePrimitiveArray(fn = ::sum)
+  usePrimitiveArray(fn = KFunction1<@ParameterName(name = "args") IntArray, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "args") IntArray): Int {
+      return sum(args = [*p0])
+    }
+  )
+)
 }
 
 fun useArray(fn: Function1<Array<Int>, Int>) {

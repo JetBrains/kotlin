@@ -2,10 +2,16 @@ class IdeWizard {
   var projectTemplate: Int? /* by */
     field = <this>.setting<Int, SettingType<Int>>(reference = SettingReference<Int, SettingType<Int>>(t = SettingType<Int>(type = 42::class), v = 42))
     get(): Int? {
-      return <this>.#projectTemplate$delegate.getValue(thisRef = <this>, property = IdeWizard::projectTemplate)
+      return <this>.#projectTemplate$delegate.getValue(thisRef = <this>, property = KMutableProperty1<IdeWizard, Int?>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: IdeWizard): Int?        /* setter = */        local fun(p0: IdeWizard, value: Int?)      )
+)
     }
     set(<set-?>: Int?) {
-      return <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = IdeWizard::projectTemplate, value = <set-?>)
+      return <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = KMutableProperty1<IdeWizard, Int?>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: IdeWizard): Int?        /* setter = */        local fun(p0: IdeWizard, value: Int?)      )
+, value = <set-?>)
     }
 
   constructor() /* primary */ {
@@ -74,3 +80,4 @@ class SettingType<out V : Any> {
   }
 
 }
+
