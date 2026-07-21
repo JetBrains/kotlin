@@ -876,7 +876,7 @@ class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
             className = "TestClass",
         )
 
-        assertEquals(newBytecode.sanitizeOffsets(), oldBytecode.sanitizeOffsets())
+        assertEquals(oldBytecode.sanitizeOffsets(), newBytecode.sanitizeOffsets())
     }
 
     @Test
