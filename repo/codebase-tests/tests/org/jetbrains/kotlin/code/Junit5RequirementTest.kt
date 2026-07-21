@@ -1,0 +1,58 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.code
+
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
+import org.junit.jupiter.api.parallel.ResourceLock
+
+/**
+ * This test will scan over all .class files produced by this repository.
+ * Classes, which contain methods annotated with `@org.junit.Test` will be reported as failure,
+ * ensuring that no junit4 tests are present.
+ */
+class Junit5RequirementTest {
+
+    private val junit4TestAnnotationDesc = "Lorg/junit/Test;"
+    private val junit3TestCaseName = "junit/framework/TestCase"
+
+    @Test
+    fun `no junit4 annotations or junit3 TestCase is used`() {
+        val violations = mutableListOf<String>()
+
+        forEachCompileClass { _, node ->
+
+            /* Check for junit3 TestCase */
+            if (node.superName == junit3TestCaseName) {
+                violations.add(buildString {
+                    appendLine("${node.name}: Inherits from junit3 'TestCase'")
+                })
+            }
+
+            /* Check for junit4 test annotation */
+            node.methods.forEach { methodNode ->
+                (methodNode.visibleAnnotations.orEmpty())
+                    .forEach { annotationNode ->
+                        if (annotationNode.desc == junit4TestAnnotationDesc) {
+                            violations.add(buildString {
+                                appendLine("${node.name}.${methodNode.name} is using a junit4 'Test' annotation")
+                                appendLine("  - junit4 is not supported anymore, please migrate to junit5")
+                            })
+                        }
+                    }
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            fail(buildString {
+                appendLine("Found ${violations.size} violation(s)")
+                violations.forEach { violation ->
+                    appendLine(violation.prependIndent("  "))
+                }
+            })
+        }
+    }
+}
