@@ -86,7 +86,6 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                             SwiftImportTestExecutionRole.OWNER,
                         )
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),
@@ -104,7 +103,6 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                             SwiftImportTestExecutionRole.JOINER,
                         )
                         swiftPMDependencies {
-                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("sharedLock")
                             swiftPackage(
                                 url = url(sharedRepo.url),
                                 version = exact("1.0.0"),

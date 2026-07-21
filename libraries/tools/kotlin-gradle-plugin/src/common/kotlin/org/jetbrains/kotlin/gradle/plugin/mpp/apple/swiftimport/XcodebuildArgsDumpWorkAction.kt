@@ -94,14 +94,14 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
     override fun execute() {
         logger.info("Starting xcodebuild dump ${parameters.xcodebuildExecutionFingerprint.orNull?.let { "(bucket ${it})" }}}")
         val errorFile = parameters.errorFile.get().asFile
-        if (parameters.coordinationEnabled.get()) {
-            if (parameters.testExecutionService.isPresent) {
-                parameters.testExecutionService.get().beforeXcodebuildOwnerWorkerStarted()
-            }
-            parameters.fingerprintCoordinationService.get().markXcodeDumpStarted(
-                key = parameters.xcodebuildExecutionFingerprint.get(),
-            )
+
+        if (parameters.testExecutionService.isPresent) {
+            parameters.testExecutionService.get().beforeXcodebuildOwnerWorkerStarted()
         }
+        parameters.fingerprintCoordinationService.get().markXcodeDumpStarted(
+            key = parameters.xcodebuildExecutionFingerprint.get(),
+        )
+
         errorFile.delete()
         try {
             doExecute()
