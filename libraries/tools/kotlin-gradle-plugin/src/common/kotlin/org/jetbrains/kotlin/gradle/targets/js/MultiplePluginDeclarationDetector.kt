@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginInMultipleProjectsHolder
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 
 internal class MultiplePluginDeclarationDetector
 private constructor() {
@@ -17,6 +18,8 @@ private constructor() {
     )
 
     fun detect(project: Project) {
+        if (project.isProjectIsolationEnabled) return
+
         pluginInMultipleProjectsHolder
             .addProject(project)
 
