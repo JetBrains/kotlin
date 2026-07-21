@@ -92,7 +92,7 @@ class CodegenMetadataTests : AbstractCodegenTest() {
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         val delegates = main.invoke(null)
 
-        assertEquals(delegates, listOf("foo", "fooComposable"))
+        assertEquals(listOf("foo", "fooComposable"), delegates)
     }
 
     companion object {

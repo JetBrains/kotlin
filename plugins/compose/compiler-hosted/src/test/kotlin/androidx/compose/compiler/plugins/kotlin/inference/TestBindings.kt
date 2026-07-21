@@ -155,9 +155,9 @@ class TestBindings {
         cBindings.onChange { cChanges++ }
 
         fun expect(a: Int, b: Int, c: Int) {
-            assertEquals(aChanges, a)
-            assertEquals(bChanges, b)
-            assertEquals(cChanges, c)
+            assertEquals(a, aChanges)
+            assertEquals(b, bChanges)
+            assertEquals(c, cChanges)
         }
 
         val aOpen = aBindings.open()

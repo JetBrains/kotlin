@@ -48,7 +48,7 @@ class JvmCompositionTests {
     @Composable
     private fun rememberWFunctionReference(ref: () -> Int): Int {
         val remembered = remember(ref) { ref() }
-        assertEquals(remembered, 0)
+        assertEquals(0, remembered)
         return remembered
     }
 
