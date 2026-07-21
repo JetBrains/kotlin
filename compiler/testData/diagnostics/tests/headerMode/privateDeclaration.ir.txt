@@ -1,0 +1,300 @@
+FILE fqName:<root> fileName:/privateDeclaration.kt
+  CLASS CLASS name:TestClass modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass
+    PROPERTY name:publicProperty visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:publicProperty type:kotlin.String visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-publicProperty> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        correspondingProperty: PROPERTY name:publicProperty visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-publicProperty> (): kotlin.String declared in <root>.TestClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicProperty type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-publicProperty>' type=<root>.TestClass origin=null
+    PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-publicBackingField> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        correspondingProperty: PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-publicBackingField> (): kotlin.String declared in <root>.TestClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-publicBackingField>' type=<root>.TestClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-publicBackingField> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<set-publicBackingField>' type=<root>.TestClass origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.TestClass.<set-publicBackingField>' type=kotlin.String origin=null
+    PROPERTY name:usedPropertyByInline visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:usedPropertyByInline type:kotlin.String visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-usedPropertyByInline> visibility:private modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        correspondingProperty: PROPERTY name:usedPropertyByInline visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-usedPropertyByInline> (): kotlin.String declared in <root>.TestClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedPropertyByInline type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-usedPropertyByInline>' type=<root>.TestClass origin=null
+    PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-usedBackingFieldByInline> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        correspondingProperty: PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-usedBackingFieldByInline> (): kotlin.Int declared in <root>.TestClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-usedBackingFieldByInline>' type=<root>.TestClass origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-usedBackingFieldByInline> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<set-usedBackingFieldByInline>' type=<root>.TestClass origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestClass.<set-usedBackingFieldByInline>' type=kotlin.Int origin=null
+    PROPERTY name:aliasUser visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:aliasUser type:kotlin.String visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aliasUser> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+        correspondingProperty: PROPERTY name:aliasUser visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-aliasUser> (): kotlin.String declared in <root>.TestClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aliasUser type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-aliasUser>' type=<root>.TestClass origin=null
+    CLASS CLASS name:InlineChain modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.InlineChain
+      CONSTRUCTOR visibility:public returnType:<root>.TestClass.InlineChain [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:used visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass.InlineChain
+        BLOCK_BODY
+    CLASS CLASS name:KeptPrivateInner modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.KeptPrivateInner
+      CONSTRUCTOR visibility:public returnType:<root>.TestClass.KeptPrivateInner [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CLASS CLASS name:MixedClass modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.MixedClass
+      CONSTRUCTOR visibility:public returnType:<root>.TestClass.MixedClass [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:used visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass.MixedClass
+        BLOCK_BODY
+    CLASS CLASS name:NestedMixedOuter modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.NestedMixedOuter
+      CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.NestedMixedOuter.Nested
+        CONSTRUCTOR visibility:public returnType:<root>.TestClass.NestedMixedOuter.Nested [primary]
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+          overridden:
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          overridden:
+            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+          overridden:
+            public open fun toString (): kotlin.String declared in kotlin.Any
+        FUN name:used visibility:public modality:FINAL returnType:kotlin.Unit
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass.NestedMixedOuter.Nested
+          BLOCK_BODY
+      CONSTRUCTOR visibility:public returnType:<root>.TestClass.NestedMixedOuter [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CLASS CLASS name:PublicInnerClass modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.PublicInnerClass
+      CONSTRUCTOR visibility:public returnType:<root>.TestClass.PublicInnerClass [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CLASS OBJECT name:MixedCompanion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.MixedCompanion
+      CONSTRUCTOR visibility:private returnType:<root>.TestClass.MixedCompanion [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:used visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass.MixedCompanion
+        BLOCK_BODY
+    CLASS OBJECT name:PublicCompanion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.PublicCompanion
+      CONSTRUCTOR visibility:private returnType:<root>.TestClass.PublicCompanion [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CLASS OBJECT name:UsedByInlineCompanion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.UsedByInlineCompanion
+      CONSTRUCTOR visibility:private returnType:<root>.TestClass.UsedByInlineCompanion [primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN name:companionFun visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass.UsedByInlineCompanion
+        BLOCK_BODY
+    CONSTRUCTOR visibility:public returnType:<root>.TestClass [primary]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:privateInlineChainMiddle visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'public final fun used (): kotlin.Unit declared in <root>.TestClass.InlineChain' type=kotlin.Unit origin=null
+          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TestClass.InlineChain' type=<root>.TestClass.InlineChain origin=null
+    FUN name:privateNonInlineMiddle visibility:private modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+    FUN name:provideInner visibility:public modality:FINAL returnType:<root>.TestClass.KeptPrivateInner
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+    FUN name:publicBrokenChainStart visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'private final fun privateNonInlineMiddle (): kotlin.Unit declared in <root>.TestClass' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.publicBrokenChainStart' type=<root>.TestClass origin=IMPLICIT_ARGUMENT
+    FUN name:publicFunction visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+    FUN name:publicInlineChainStart visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'private final fun privateInlineChainMiddle (): kotlin.Unit declared in <root>.TestClass' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.publicInlineChainStart' type=<root>.TestClass origin=IMPLICIT_ARGUMENT
+    FUN name:useMixed visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'public final fun used (): kotlin.Unit declared in <root>.TestClass.MixedClass' type=kotlin.Unit origin=null
+          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TestClass.MixedClass' type=<root>.TestClass.MixedClass origin=null
+        CALL 'public final fun used (): kotlin.Unit declared in <root>.TestClass.MixedCompanion' type=kotlin.Unit origin=null
+          ARG <this>: GET_OBJECT 'CLASS OBJECT name:MixedCompanion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]' type=<root>.TestClass.MixedCompanion
+    FUN name:useNestedMixed visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'public final fun used (): kotlin.Unit declared in <root>.TestClass.NestedMixedOuter.Nested' type=kotlin.Unit origin=null
+          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TestClass.NestedMixedOuter.Nested' type=<root>.TestClass.NestedMixedOuter.Nested origin=null
+    FUN name:usedByInline visibility:private modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+    FUN name:witnessForCompanion visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'public final fun companionFun (): kotlin.Unit declared in <root>.TestClass.UsedByInlineCompanion' type=kotlin.Unit origin=null
+          ARG <this>: GET_OBJECT 'CLASS OBJECT name:UsedByInlineCompanion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]' type=<root>.TestClass.UsedByInlineCompanion
+    FUN name:witnessForField visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'private final fun <set-usedBackingFieldByInline> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.TestClass' type=kotlin.Unit origin=EQ
+          ARG <this>: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.witnessForField' type=<root>.TestClass origin=IMPLICIT_ARGUMENT
+          ARG <set-?>: CONST Int type=kotlin.Int value=42
+    FUN name:witnessForFunction visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        CALL 'private final fun usedByInline (): kotlin.Unit declared in <root>.TestClass' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.witnessForFunction' type=<root>.TestClass origin=IMPLICIT_ARGUMENT
+    FUN name:witnessForProperty visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
+      BLOCK_BODY
+        VAR name:x type:kotlin.String [val]
+          CALL 'private final fun <get-usedPropertyByInline> (): kotlin.String declared in <root>.TestClass' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.witnessForProperty' type=<root>.TestClass origin=IMPLICIT_ARGUMENT
+  FUN name:topLevelKept visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
