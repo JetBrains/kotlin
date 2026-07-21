@@ -421,7 +421,7 @@ kotlin {
                 optIn("kotlin.io.path.ExperimentalPathApi")
             }
             dependencies {
-                implementation(kotlinTest("junit"))
+                implementation(kotlinTest("junit5"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -430,14 +430,14 @@ kotlin {
 
         val jvmLongRunningTest by getting {
             dependencies {
-                implementation(kotlinTest("junit"))
+                implementation(kotlinTest("junit5"))
             }
             kotlin.srcDir("jvm/testLongRunning")
         }
 
         val jvmRecursiveDeletionTest by getting {
             dependencies {
-                implementation(kotlinTest("junit"))
+                implementation(kotlinTest("junit5"))
             }
             kotlin.srcDir("jdk7/recursiveDeletionTest")
         }
@@ -936,6 +936,10 @@ tasks {
         finalizedBy(jvmRecursiveDeletionTestCleanup)
     }
     check.configure { dependsOn(jvmRecursiveDeletionTest) }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 
