@@ -22,9 +22,9 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/testResources"
@@ -40,12 +40,10 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         )
     }
 
-    @JvmField
-    @Rule
-    val classesDirectory = TemporaryFolder()
+    @field:TempDir
+    lateinit var classesDirectory: File
 
-    @JvmField
-    @Rule
+    @RegisterExtension
     val goldenTransformRule = GoldenTransformRule()
 
     fun verifyCrossModuleComposeIrTransform(
@@ -65,7 +63,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             .also {
                 // Write the files to the class directory so they can be used by the next module
                 // and the application
-                it.writeToDir(classesDirectory.root)
+                it.writeToDir(classesDirectory)
             }
 
         verifyComposeIrTransform(
@@ -74,7 +72,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             "",
             validator = validator,
             dumpTree = dumpTree,
-            additionalPaths = listOf(classesDirectory.root)
+            additionalPaths = listOf(classesDirectory)
         )
     }
 
@@ -94,7 +92,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             .also {
                 // Write the files to the class directory so they can be used by the next module
                 // and the application
-                it.writeToDir(classesDirectory.root)
+                it.writeToDir(classesDirectory)
             }
 
         verifyGoldenComposeIrTransform(
@@ -102,7 +100,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             "",
             validator = validator,
             dumpTree = dumpTree,
-            additionalPaths = listOf(classesDirectory.root)
+            additionalPaths = listOf(classesDirectory)
         )
     }
 

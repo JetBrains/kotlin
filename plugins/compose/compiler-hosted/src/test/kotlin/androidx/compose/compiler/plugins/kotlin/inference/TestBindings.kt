@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.inference
 
-import org.junit.Assert.*
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

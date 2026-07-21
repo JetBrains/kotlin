@@ -21,7 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 
 abstract class AbstractMetricsTransformTest : AbstractIrTransformTest() {
     @OptIn(ExperimentalCompilerApi::class)

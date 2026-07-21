@@ -16,9 +16,9 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 /* ktlint-disable max-line-length */
 class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {

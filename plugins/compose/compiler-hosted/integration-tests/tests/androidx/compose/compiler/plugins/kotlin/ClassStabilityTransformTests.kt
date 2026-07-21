@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class ClassStabilityTransformTests : AbstractIrTransformTest() {
     @Test
@@ -2088,7 +2088,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             .also {
                 // Write the files to the class directory so they can be used by the next module
                 // and the application
-                it.writeToDir(classesDirectory.root)
+                it.writeToDir(classesDirectory)
             }
 
         val source = """
@@ -2105,7 +2105,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         """.trimIndent()
 
         val files = listOf(SourceFile("Test.kt", source))
-        return compileToIr(files, additionalPaths + classesDirectory.root, updateConfiguration = {
+        return compileToIr(files, additionalPaths + classesDirectory, updateConfiguration = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
         })
     }

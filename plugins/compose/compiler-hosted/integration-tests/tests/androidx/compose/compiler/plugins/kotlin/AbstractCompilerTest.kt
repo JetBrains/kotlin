@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.junit.After
-import org.junit.BeforeClass
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import java.io.File
 import java.net.URLClassLoader
 
@@ -56,7 +54,7 @@ abstract class AbstractCompilerTest {
         }
 
         @JvmStatic
-        @BeforeClass
+        @BeforeAll
         fun setSystemProperties() {
             System.setProperty("idea.home", homeDir)
             System.setProperty("user.dir", homeDir)
@@ -77,7 +75,7 @@ abstract class AbstractCompilerTest {
 
     private val testRootDisposable = Disposer.newDisposable()
 
-    @After
+    @AfterEach
     fun disposeTestRootDisposable() {
         disposeRootInWriteAction(testRootDisposable)
     }

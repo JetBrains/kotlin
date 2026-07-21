@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.Classpath
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
     @Test

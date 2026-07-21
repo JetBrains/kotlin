@@ -21,8 +21,8 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.File
 
 abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {

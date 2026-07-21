@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * We're strongly considering supporting try-catch-finally blocks in the future.

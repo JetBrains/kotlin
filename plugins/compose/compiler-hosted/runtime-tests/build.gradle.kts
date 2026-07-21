@@ -31,7 +31,7 @@ kotlin {
     sourceSets {
         commonTest.dependencies {
             implementation(project(":kotlin-stdlib-common"))
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
 
         val jvmTest by getting {
