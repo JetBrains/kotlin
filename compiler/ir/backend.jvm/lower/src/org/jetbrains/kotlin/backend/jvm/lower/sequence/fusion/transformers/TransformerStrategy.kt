@@ -19,6 +19,8 @@ internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWith
             when (sequenceTransformer) {
                 is SequenceTransformer.Map -> MapStrategy(sequenceTransformer, builderWithParent)
                 is SequenceTransformer.Filter -> FilterStrategy(sequenceTransformer, builderWithParent)
+                is SequenceTransformer.Take -> TakeStrategy(sequenceTransformer, builderWithParent)
+                is SequenceTransformer.TakeWhile -> TakeWhileStrategy(sequenceTransformer, builderWithParent)
             }
     }
 }

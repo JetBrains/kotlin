@@ -25,6 +25,11 @@ internal sealed class MapPredicateCall {
     class NonIndexed(val predicate: MapPredicate) : MapPredicateCall()
 }
 
+sealed class TakeType {
+    object Take : TakeType()
+    object Drop : TakeType()
+}
+
 internal sealed class SequenceTransformer {
     class Map(
         val predicateCall: MapPredicateCall,
@@ -39,6 +44,20 @@ internal sealed class SequenceTransformer {
         val predicateCall: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression,
         val startOffset: Int,
         val endOffset: Int,
+    ) : SequenceTransformer()
+
+    class Take(
+        val argument: IrExpression,
+        val startOffset: Int,
+        val endOffset: Int,
+        val takeType: TakeType,
+    ) : SequenceTransformer()
+
+    class TakeWhile(
+        val predicateCall: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression,
+        val startOffset: Int,
+        val endOffset: Int,
+        val takeType: TakeType,
     ) : SequenceTransformer()
 }
 

@@ -45,6 +45,10 @@ internal const val MAP_NOT_NULL_INDEXED = "mapIndexedNotNull"
 internal const val FILTER = "filter"
 internal const val FILTER_NOT = "filterNot"
 internal const val FILTER_NOT_NULL = "filterNotNull"
+internal const val TAKE = "take"
+internal const val TAKE_WHILE = "takeWhile"
+internal const val DROP = "drop"
+internal const val DROP_WHILE = "dropWhile"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
@@ -220,6 +224,55 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         expression.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
     }
 
+    private fun matchWithTake(
+        call: IrCall,
+        takeType: TakeType,
+    ) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val argumentExpression = call.arguments.getOrNull(1) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        if (!isSafeToLower(argumentExpression)) return
+        val transformers =
+            listOf(
+                SequenceTransformer.Take(
+                    argumentExpression,
+                    call.startOffset,
+                    call.endOffset,
+                    takeType
+                )
+            ) + receiverData.transformers
+        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
+    private fun matchWithTakeWhile(
+        call: IrCall,
+        takeType: TakeType,
+    ) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val predicate = call.arguments.getOrNull(1) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val predicateCall = { builderWithParent: IrBuilderWithParent ->
+            val builder = builderWithParent.first
+            { sequenceElement: IrValueDeclaration ->
+                builder.callPredicate(
+                    predicate,
+                    builderWithParent.second,
+                    builder.irGet(sequenceElement)
+                )
+            }
+        }
+        val transformers =
+            listOf(
+                SequenceTransformer.TakeWhile(
+                    predicateCall,
+                    call.startOffset,
+                    call.endOffset,
+                    takeType
+                )
+            ) + receiverData.transformers
+        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
     private fun matchWithGenerateSequence(expression: IrCall) {
         val results = when (expression.arguments.size) {
             1 -> {
@@ -330,6 +383,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER -> matchWithFilter(expression, FilterVersion.Filter)
             FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
+            TAKE -> matchWithTake(expression, TakeType.Take)
+            TAKE_WHILE -> matchWithTakeWhile(expression, TakeType.Take)
+            DROP -> matchWithTake(expression, TakeType.Drop)
+            DROP_WHILE -> matchWithTakeWhile(expression, TakeType.Drop)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)
