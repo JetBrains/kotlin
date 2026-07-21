@@ -232,19 +232,19 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
         assertEquals<PrettyPrint<Map<String, Set<String>>>>(
             mutableMapOf(
                 "jsCompileClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
                 ),
                 "jsRuntimeClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-implementation:1.0",
                     "test:top-level-runtimeOnly:1.0",
                 ),
                 "jsTestCompileClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
@@ -252,7 +252,7 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                     "test:top-level-test-implementation:1.0",
                 ),
                 "jsTestRuntimeClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-implementation:1.0",
                     "test:top-level-runtimeOnly:1.0",
@@ -260,19 +260,19 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                     "test:top-level-test-runtimeOnly:1.0",
                 ),
                 "jvmCompileClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
                 ),
                 "jvmRuntimeClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-implementation:1.0",
                     "test:top-level-runtimeOnly:1.0",
                 ),
                 "jvmTestCompileClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
@@ -280,7 +280,7 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                     "test:top-level-test-implementation:1.0",
                 ),
                 "jvmTestRuntimeClasspath" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-implementation:1.0",
                     "test:top-level-runtimeOnly:1.0",
@@ -288,13 +288,13 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                     "test:top-level-test-runtimeOnly:1.0",
                 ),
                 "linuxX64CompileKlibraries" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
                 ),
                 "linuxX64TestCompileKlibraries" to mutableSetOf(
-                    "root project :",
+                    "root project 'test'",
                     "test:top-level-api:1.0",
                     "test:top-level-implementation:1.0",
                     "test:top-level-test-compileOnly:1.0",

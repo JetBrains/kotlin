@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.util.applyKotlinAndroidPlugin
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.defaultFilteredDiagnostics
 import kotlin.test.Test
 
 class SourceSetsAccessInAndroidExtensionTest {
@@ -25,7 +26,9 @@ class SourceSetsAccessInAndroidExtensionTest {
             androidLibrary {}
         }
         project.evaluate()
-        project.assertNoDiagnostics()
+        project.assertNoDiagnostics(
+            filterDiagnosticIds = defaultFilteredDiagnostics + KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin
+        )
     }
 
     @Test

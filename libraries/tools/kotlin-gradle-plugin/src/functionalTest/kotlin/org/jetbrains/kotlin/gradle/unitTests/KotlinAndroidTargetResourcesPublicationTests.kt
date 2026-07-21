@@ -116,7 +116,12 @@ class KotlinAndroidTargetResourcesPublicationTests {
     private fun mppProjectWithAndroidTarget(
         configure: LibraryExtension.(Unit) -> (Unit) = { },
     ): ProjectInternal {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPP(
+            projectBuilder = {
+                // Fixme: KT-87883
+                System.setProperty("org.gradle.project.android.sourceset.disallowProvider", "false")
+            }
+        ) {
             plugins.apply("com.android.library")
             kotlin {
                 @Suppress("DEPRECATION")

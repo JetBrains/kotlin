@@ -6,8 +6,3 @@ Please change the structure of the your project and move the usage of 'com.andro
 Read more: https://kotl.in/kmp-project-structure-migration
 Please change the structure of your project and move the usage of 'com.android.application' into a separate subproject.
 See https://kotl.in/gradle/agp-new-kmp for more details.
-----
-[NoComposeCompilerPluginAppliedWarning | WARNING] Compose Compiler Plugin Not Applied
-The Compose compiler plugin is now a part of Kotlin.
-Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.
-Learn more about this at https://kotl.in/compose-plugin

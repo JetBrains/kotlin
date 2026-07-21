@@ -96,8 +96,8 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         assertEquals<PrettyPrint<List<TestUnresolvedKmpDependency>>>(
             mutableListOf(
                 TestUnresolvedKmpDependency(
-                    displayName = "project :directProducer",
-                    resolvedMetadataComponentIdentifier = "project :directProducer",
+                    displayName = "project ':directProducer'",
+                    resolvedMetadataComponentIdentifier = "project ':directProducer'",
                     resolvedVariants = mutableListOf(
                         TestUnresolvedKmpDependency.ResolvedVariant(
                             compilationName = "iosArm64Main",
@@ -181,8 +181,8 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         assertEquals<PrettyPrint<List<TestUnresolvedKmpDependency>>>(
             mutableListOf(
                 TestUnresolvedKmpDependency(
-                    displayName = "project :directProducer",
-                    resolvedMetadataComponentIdentifier = "project :directProducer",
+                    displayName = "project ':directProducer'",
+                    resolvedMetadataComponentIdentifier = "project ':directProducer'",
                     resolvedVariants = mutableListOf(
                     ),
                     unresolvedComponents = mutableListOf(

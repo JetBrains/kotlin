@@ -1,24 +1,24 @@
 appleMain
-  project :lib
+  project ':lib'
 appleTest
-  project :lib
+  project ':lib'
 commonMain
-  project :lib
+  project ':lib'
 commonTest
-  project :lib
+  project ':lib'
 iosArm64Main
-  project :lib
+  project ':lib'
 iosArm64Test
-  project :lib
+  project ':lib'
 iosMain
-  project :lib
+  project ':lib'
 iosTest
-  project :lib
+  project ':lib'
 jvmMain
-  project :lib
+  project ':lib'
 jvmTest
-  project :lib
+  project ':lib'
 nativeMain
-  project :lib
+  project ':lib'
 nativeTest
-  project :lib
+  project ':lib'

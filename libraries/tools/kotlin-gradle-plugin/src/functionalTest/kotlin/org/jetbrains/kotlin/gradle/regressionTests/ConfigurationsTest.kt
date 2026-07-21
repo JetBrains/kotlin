@@ -536,8 +536,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         assertFalse(isTestDependencyPresent("debugUnitTestCompileClasspath"))
         assertFalse(isTestDependencyPresent("debugUnitTestRuntimeClasspath"))
         assertFalse(isTestDependencyPresent("releaseRuntimeClasspath"))
-        assertFalse(isTestDependencyPresent("releaseUnitTestCompileClasspath"))
-        assertFalse(isTestDependencyPresent("releaseUnitTestRuntimeClasspath"))
     }
 
     // See KT-55751
