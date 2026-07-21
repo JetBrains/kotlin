@@ -33,6 +33,9 @@ private const val LAST_OR_NULL = KOTLIN_SEQUENCES_PREFIX + "lastOrNull"
 private const val INDEX_OF = KOTLIN_SEQUENCES_PREFIX + "indexOf"
 private const val INDEX_OF_FIRST = KOTLIN_SEQUENCES_PREFIX + "indexOfFirst"
 private const val INDEX_OF_LAST = KOTLIN_SEQUENCES_PREFIX + "indexOfLast"
+private const val FILTER_TO = KOTLIN_SEQUENCES_PREFIX + "filterTo"
+private const val FILTER_NOT_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotTo"
+private const val FILTER_NOT_NULL_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotNullTo"
 
 /**
  * Each strategy has 3 parts:
@@ -83,6 +86,9 @@ internal fun createConsumerStrategy(
         INDEX_OF -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOf)
         INDEX_OF_FIRST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfFirst)
         INDEX_OF_LAST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfLast)
+        FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
+        FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
+        FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
         else -> null
     }
 }
