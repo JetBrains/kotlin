@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.codegen.state
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorAdapter
+import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
+import org.jetbrains.kotlin.backend.jvm.extensions.DelegatingClassBuilderAdapter
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
-import org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
-import java.lang.reflect.InvocationTargetException
 
 class GenerationState(
     val project: Project,
@@ -75,9 +76,18 @@ class GenerationState(
             if (classBuilderMode.generateBodies) OptimizationClassBuilderFactory(builderFactory, this) else builderFactory,
             this
         ).let {
-            loadClassBuilderInterceptors().fold(it) { classBuilderFactory: ClassBuilderFactory, extension ->
-                extension.interceptClassBuilderFactory(classBuilderFactory)
-            }
+            configuration.getCompilerExtensions(ClassGeneratorExtension)
+                .fold(it) { classBuilderFactory: ClassBuilderFactory, extension ->
+                    object : DelegatingClassBuilderFactory(classBuilderFactory) {
+                        override fun newClassBuilder(origin: IrClass?): DelegatingClassBuilder {
+                            val classBuilder = classBuilderFactory.newClassBuilder(origin)
+                            return DelegatingClassBuilderAdapter(
+                                extension.generateClass(ClassGeneratorAdapter(classBuilder), origin),
+                                classBuilder
+                            )
+                        }
+                    }
+                }
         },
         configuration.getCompilerExtensions(ClassFileFactoryFinalizerExtension),
     )
@@ -89,19 +99,4 @@ class GenerationState(
     lateinit var isDeclarationGeneratedForCompilerPlugin: (IrDeclaration) -> Boolean
 
     val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
-
-    @Suppress("UNCHECKED_CAST")
-    private fun loadClassBuilderInterceptors(): List<ClassGeneratorExtensionAdapter> {
-        val adapted = try {
-            // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
-            Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
-                .getDeclaredMethod("getExtensions", CompilerConfiguration::class.java)
-                .invoke(null, configuration) as List<ClassGeneratorExtensionAdapter>
-        } catch (e: InvocationTargetException) {
-            // Unwrap and rethrow any exception that happens. It's important e.g. in case of ProcessCanceledException.
-            throw e.targetException
-        }
-
-        return adapted
-    }
 }
