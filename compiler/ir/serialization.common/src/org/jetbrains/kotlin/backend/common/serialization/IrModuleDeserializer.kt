@@ -136,8 +136,6 @@ abstract class IrModuleDeserializer(
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer = error("Unsupported")
-
     open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
         return this.fileDeserializers().flatMap {
             it.getAllMatchingSignatures(callableId, signatureKind)
@@ -284,10 +282,6 @@ class IrModuleDeserializerWithBuiltIns(
         syntheticFunctionClassGenerator.typeSystem = IrTypeSystemContextImpl(irBuiltIns)
         @OptIn(UnstableBuiltInsApi::class)
         irBuiltIns.functionFactory = syntheticFunctionClassGenerator
-    }
-
-    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
-        return delegate.signatureDeserializerForFile(fileName)
     }
 
     override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
