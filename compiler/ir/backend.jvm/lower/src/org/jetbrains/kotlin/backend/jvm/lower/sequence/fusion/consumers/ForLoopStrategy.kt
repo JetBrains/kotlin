@@ -24,13 +24,12 @@ internal class ForLoopStrategy(
     override fun getInitialDeclarations(): List<IrVariable> = emptyList()
 
     override fun getConsumerBuilder(): ConsumerBodyBuilder = { sequenceElement ->
-        val results = updateLoopVariableInBody(data.builder, loopData.loopVariable, loopData.loopBody, loopData.loop, data.parent)
+        val [body, loop] = updateLoopVariableInBody(data.builder, loopData.loopVariable, loopData.loopBody, loopData.loop, data.parent)
         data.builder.irReturnableBlock(data.context.irBuiltIns.booleanType) {
             val newLoopVariable = loopData.loopVariable
             newLoopVariable.initializer = irGet(sequenceElement)
             +newLoopVariable
-            val preparedBody = results.first(newLoopVariable)
-            val loop = results.second
+            val preparedBody = body(newLoopVariable)
             preparedBody.rebindJumps(
                 loop,
                 { IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, returnableBlockSymbol, irFalse()) },

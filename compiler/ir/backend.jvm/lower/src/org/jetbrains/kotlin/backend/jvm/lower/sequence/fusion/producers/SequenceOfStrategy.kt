@@ -35,14 +35,20 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
  * If we know that a sequence is a transformation of sequenceOf to which we know the arguments to,
  * we transform a loop into a block evaluating the loop body on each element of the sequence.
  * ```
- * val seq = sequenceOf(1, 2).map { it - 1 }
+ * val seq = sequenceOf(7, 5).map { it - 1 }
  * for (el in seq) println(el)
  * ```
  * becomes
  * ```
- * {
- * println({ it - 1 }(1))
- * println({ it - 1 }(2))
+ * var n = 0
+ * while(n < 2) {
+ *     // Importantly, this generates the TABLESWITCH JVM instruction, not LOOKUPSWITCH
+ *     val currentElement = when (n) {
+ *         0 -> 7
+ *         1 -> 5
+ *         else -> throw NoBranchMatchedException
+ *     }
+ *     println(currentElement)
  * }
  * ```
  * */

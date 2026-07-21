@@ -36,7 +36,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
                 }
                 irBlock {
                     if (map.isIndexed) {
-                        +builder.increment(mapIndexedVariable)
+                        +increment(mapIndexedVariable)
                     }
                     if (map.isNotNull) {
                         val mapResultVariable = scope.createTemporaryVariable(mappedFunctionCall, nameHint = "mapResult")
@@ -50,7 +50,6 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
                             sequenceReplacement.mainBodyBuilder(mapResultVariable),
                         )
                     } else {
-                        // TODO: this declaration could be removed possibly
                         val mapResultVariable = scope.createTemporaryVariable(mappedFunctionCall, nameHint = "mapResult")
                         +mapResultVariable
                         +sequenceReplacement.mainBodyBuilder(mapResultVariable)

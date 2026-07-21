@@ -28,38 +28,38 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
     override fun addTransformerToBodyBuilder(
         sequenceReplacement: SequenceReplacement,
     ): SequenceReplacement {
-        val builder = builderWithParent.first
-        val takeVariable = builder.scope.createTemporaryVariable(
-            builder.irInt(0),
-            isMutable = true,
-            nameHint = "takeVar"
-        )
-        val takeArgumentVariable = builder.scope.createTemporaryVariable(
-            take.argument.deepCopyWithSymbols(builderWithParent.second),
-            nameHint = "takeArgument",
-        )
-        val classifier = takeVariable.type.classifierOrNull
-        val lessThanSymbol = builder.context.irBuiltIns.lessFunByOperandType[classifier]
-            ?: error("No lessThan function found for type ${takeVariable.type}")
-        val lessOrEqualSymbol = builder.context.irBuiltIns.lessOrEqualFunByOperandType[classifier]
-            ?: error("No lessOrEqual function found for type ${takeVariable.type}")
-        val exceptionClass = builder.context.irBuiltIns.illegalArgumentExceptionSymbol.owner
+        val [builder, parent] = builderWithParent
+        with(builder) {
+            val takeVariable = scope.createTemporaryVariable(
+                irInt(0),
+                isMutable = true,
+                nameHint = "takeVar"
+            )
+            val takeArgumentVariable = scope.createTemporaryVariable(
+                take.argument.deepCopyWithSymbols(parent),
+                nameHint = "takeArgument",
+            )
+            val classifier = takeVariable.type.classifierOrNull
+            val lessThanSymbol = context.irBuiltIns.lessFunByOperandType[classifier]
+                ?: error("No lessThan function found for type ${takeVariable.type}")
+            val lessOrEqualSymbol = context.irBuiltIns.lessOrEqualFunByOperandType[classifier]
+                ?: error("No lessOrEqual function found for type ${takeVariable.type}")
+            val exceptionClass = context.irBuiltIns.illegalArgumentExceptionSymbol.owner
 
-        val throwExpression = builder.irThrow(
-            builder.irCall(exceptionClass).apply {
-                arguments[0] = builder.irString("Requested element count is less than zero.")
-            }
-        )
-        val checkIfNegative = builder.irIfThen(
-            type = builder.context.irBuiltIns.unitType,
-            builder.irCall(lessThanSymbol).apply {
-                arguments[0] = builder.irGet(takeArgumentVariable)
-                arguments[1] = builder.irInt(0)
-            },
-            throwExpression
-        )
-        val mainBodyBuilder =
-            with(builder) {
+            val throwExpression = irThrow(
+                irCall(exceptionClass).apply {
+                    arguments[0] = irString("Requested element count is less than zero.")
+                }
+            )
+            val checkIfNegative = irIfThen(
+                type = context.irBuiltIns.unitType,
+                irCall(lessThanSymbol).apply {
+                    arguments[0] = irGet(takeArgumentVariable)
+                    arguments[1] = irInt(0)
+                },
+                throwExpression
+            )
+            val mainBodyBuilder =
                 { sequenceVariable: IrValueDeclaration ->
                     irBlock {
                         +builder.increment(takeVariable)
@@ -91,9 +91,9 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
                         }
                     }
                 }
-            }
-        val initialDeclarations = sequenceReplacement.initialDeclarations + takeVariable + takeArgumentVariable + checkIfNegative
-        val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+            val initialDeclarations = sequenceReplacement.initialDeclarations + takeVariable + takeArgumentVariable + checkIfNegative
+            val finalExpression = sequenceReplacement.finalExpression
+            return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        }
     }
 }

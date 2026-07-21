@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
 internal class FirstNotNullOfStrategy(data: ConsumerData, expression: IrCall, isOrNull: Boolean) :
-    FirstLastStrategy(data, expression, true, isOrNull) {
+    FirstLastStrategy(data, expression, isFirst = true, isOrNull, isFind = false) {
     val builder = data.builder
 
     override fun getConsumerBuilder(): ConsumerBodyBuilder? {
