@@ -168,7 +168,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             additionalDataSetter: (NativeBackendContext) -> Unit = {}
     ) = NativeBackendContext(
             config,
-            frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
             linkKlibsOutput.irBuiltIns,
             linkKlibsOutput.irModules,
