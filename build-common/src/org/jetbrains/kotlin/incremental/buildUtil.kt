@@ -108,7 +108,8 @@ fun updateIncrementalCache(
     generatedFiles: Iterable<GeneratedFile>,
     cache: IncrementalJvmCache,
     changesCollector: ChangesCollector,
-    javaChangesTracker: JavaClassesTrackerImpl?
+    javaChangesTracker: JavaClassesTrackerImpl?,
+    jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
     for (generatedFile in generatedFiles) {
         when {
@@ -122,6 +123,10 @@ fun updateIncrementalCache(
 
     javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
+    }
+
+    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveMetadataToCache(moduleName, metadata)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)

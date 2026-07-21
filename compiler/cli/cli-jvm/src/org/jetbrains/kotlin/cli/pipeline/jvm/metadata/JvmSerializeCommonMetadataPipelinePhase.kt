@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifa
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataInMemorySerializationArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
 import org.jetbrains.kotlin.config.commonFragmentsOutputDir
+import org.jetbrains.kotlin.config.icMetadataTracker
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
@@ -46,11 +48,22 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
                 sourceFiles = input.sourceFiles,
             )
 
-            val destinationDir = outputDir.resolve(output.session.moduleData.name.asStringStripSpecialMarkers())
+            val moduleName = output.session.moduleData.name.asStringStripSpecialMarkers()
+            val destinationDir = outputDir.resolve(moduleName)
+
+            val serializedMetadata = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
+
+            configuration.icMetadataTracker?.let { metadataTracker ->
+                serializedMetadata.firMetadata.fragments.flatten().forEach { firFile ->
+                    // Fragments without a source path come from content generated for compiler plugins. We intentionally
+                    // don't track them: IC always marks such generated files as dirty before compilation, so their
+                    // metadata is regenerated on every round and never needs to be restored from the cache.
+                    firFile.path?.let { metadataTracker.report(moduleName, File(it), firFile.content) }
+                }
+            }
 
             val metadataInMemory =
-                MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
-                    .mergeMetadataHeader(loadPreviousMetadataHeader(destinationDir.toPath()))
+                serializedMetadata.mergeMetadataHeader(loadPreviousMetadataHeader(destinationDir.toPath()))
 
             JvmMetadataKlibFileWriterPhase.writeToDisc(
                 metadataInMemory,
