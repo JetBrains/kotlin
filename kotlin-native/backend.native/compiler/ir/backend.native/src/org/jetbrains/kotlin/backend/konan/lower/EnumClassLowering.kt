@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -66,6 +67,7 @@ internal class EnumsSupport(
 
 internal val DECLARATION_ORIGIN_ENUM = IrDeclarationOriginImpl("ENUM")
 
+@PhasePrerequisites(EnumConstructorsLowering::class, NativeFunctionReferenceLowering::class)
 internal class NativeEnumWhenLowering(private val generationState: NativeGenerationState) : EnumWhenLowering(generationState.context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
         // The ordinal is baked into the caller's bitcode as a constant, so the lowered IR
@@ -77,8 +79,9 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
     }
 }
 
-internal class EnumUsageLowering(val context: NativeBackendContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
-    private val enumsSupport = context.enumsSupport
+@PhasePrerequisites(EnumClassLowering::class)
+internal class EnumUsageLowering(val context: NativeGenerationState) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+    private val enumsSupport = context.context.enumsSupport
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile, data = null)
@@ -153,8 +156,9 @@ internal class EnumUsageLowering(val context: NativeBackendContext) : IrTransfor
 
 }
 
-internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweringPass {
-    private val enumsSupport = context.enumsSupport
+@PhasePrerequisites(EnumWhenLowering::class)
+internal class EnumClassLowering(val context: NativeGenerationState) : FileLoweringPass {
+    private val enumsSupport = context.context.enumsSupport
     private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries

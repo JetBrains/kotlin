@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -41,16 +43,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-internal class InteropLowering(val context: NativeBackendContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+@PhasePrerequisites(LocalClassesInInlineLambdasLowering::class)
+internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         // TODO: merge these lowerings.
-        InteropLoweringPart1(context, fileLowerState).lower(irFile)
-        InteropLoweringPart2(context, fileLowerState).lower(irFile)
+        InteropLoweringPart1(generationState.context, generationState.fileLowerState).lower(irFile)
+        InteropLoweringPart2(generationState.context, generationState.fileLowerState).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        InteropLoweringPart1(context, fileLowerState).lower(irBody, container)
-        InteropLoweringPart2(context, fileLowerState).lower(irBody, container)
+        InteropLoweringPart1(generationState.context, generationState.fileLowerState).lower(irBody, container)
+        InteropLoweringPart2(generationState.context, generationState.fileLowerState).lower(irBody, container)
     }
 
     companion object {

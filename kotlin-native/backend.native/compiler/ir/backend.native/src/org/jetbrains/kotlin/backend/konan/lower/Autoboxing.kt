@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLink
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageStatus
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
@@ -39,13 +40,14 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 /**
  * Boxes and unboxes values of value types when necessary.
  */
-internal class Autoboxing(val context: NativeBackendContext) : FileLoweringPass {
+@PhasePrerequisites(BridgesBuilding::class, NativeSuspendFunctionsLowering::class, GenericCallsReturnTypeEraser::class)
+internal class Autoboxing(val context: NativeGenerationState) : FileLoweringPass {
 
-    private val transformer = AutoboxingTransformer(context)
+    private val transformer = AutoboxingTransformer(context.context)
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(transformer)
-        irFile.transform(InlineClassTransformer(context), data = null)
+        irFile.transform(InlineClassTransformer(context.context), data = null)
     }
 
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.builders.*
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
  */
-internal class BuiltinOperatorLowering(val context: NativeBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
+@PhasePrerequisites(NativeDefaultParameterInjector::class, NativeSingleAbstractMethodLowering::class, NativeEnumWhenLowering::class)
+internal class BuiltinOperatorLowering(val context: NativeGenerationState) : FileLoweringPass, IrBuildingTransformer(context) {
 
     private val irBuiltins = context.irBuiltIns
     private val symbols = context.symbols

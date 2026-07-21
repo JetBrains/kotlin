@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 /**
  * Transforms `Array(size) { index -> value }` into a loop.
  */
+@PhasePrerequisites(UpgradeCallableReferences::class)
 class ArrayConstructorLowering(private val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(ArrayConstructorTransformer(context, container as IrSymbolOwner))

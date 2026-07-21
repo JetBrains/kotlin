@@ -176,8 +176,8 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
 /**
  * Adds accessors to private entities.
  */
-internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileLoweringPass {
-    private val cachesAbiSupport = context.cachesAbiSupport
+internal class ExportCachesAbiVisitor(val context: NativeGenerationState) : FileLoweringPass {
+    private val cachesAbiSupport = context.context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(visitor)
