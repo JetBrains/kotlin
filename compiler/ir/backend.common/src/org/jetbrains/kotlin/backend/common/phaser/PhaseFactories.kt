@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -18,18 +19,20 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.lang.reflect.ParameterizedType
 
 fun <Context : LoweringContext> createFilePhases(
-    vararg phases: ((Context) -> FileLoweringPass)?
+    vararg phases: ((Context) -> FileLoweringPass)?,
+    actions: Set<Action<IrElement, Context>> = DEFAULT_IR_ACTIONS,
 ): List<NamedCompilerPhase<Context, IrFile, IrFile>> {
     return phases.filterNotNull().map { phase ->
-        FileLoweringPhase(phase.extractReturnTypeArgument(), phase)
+        FileLoweringPhase(phase.extractReturnTypeArgument(), phase, actions)
     }
 }
 
 fun <Context : LoweringContext> createModulePhases(
-    vararg phases: ((Context) -> ModuleLoweringPass)?
+    vararg phases: ((Context) -> ModuleLoweringPass)?,
+    actions: Set<Action<IrElement, Context>> = DEFAULT_IR_ACTIONS,
 ): List<NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
     return phases.filterNotNull().map { phase ->
-        ModuleLoweringPhase(phase.extractReturnTypeArgument(), phase)
+        ModuleLoweringPhase(phase.extractReturnTypeArgument(), phase, actions)
     }
 }
 
@@ -52,7 +55,8 @@ private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
 private class FileLoweringPhase<Context : LoweringContext>(
     loweringClass: Class<out FileLoweringPass>,
     createLoweringPass: (Context) -> FileLoweringPass,
-) : LoweringPhase<Context, IrFile, FileLoweringPass>(loweringClass, createLoweringPass) {
+    actions: Set<Action<IrElement, Context>>,
+) : LoweringPhase<Context, IrFile, FileLoweringPass>(loweringClass, createLoweringPass, actions) {
     override fun phaseBody(context: Context, input: IrFile): IrFile {
         createLoweringPass(context).lower(input)
         return input
@@ -62,7 +66,8 @@ private class FileLoweringPhase<Context : LoweringContext>(
 private class ModuleLoweringPhase<Context : LoweringContext>(
     loweringClass: Class<out ModuleLoweringPass>,
     createLoweringPass: (Context) -> ModuleLoweringPass,
-) : LoweringPhase<Context, IrModuleFragment, ModuleLoweringPass>(loweringClass, createLoweringPass) {
+    actions: Set<Action<IrElement, Context>>,
+) : LoweringPhase<Context, IrModuleFragment, ModuleLoweringPass>(loweringClass, createLoweringPass, actions) {
     override fun phaseBody(context: Context, input: IrModuleFragment): IrModuleFragment {
         createLoweringPass(context).lower(input)
         return input
@@ -72,10 +77,11 @@ private class ModuleLoweringPhase<Context : LoweringContext>(
 abstract class LoweringPhase<Context : LoweringContext, Input : IrElement, Pass : ModuleLoweringPass>(
     val loweringClass: Class<out Pass>,
     protected val createLoweringPass: (Context) -> Pass,
+    actions: Set<Action<IrElement, Context>>,
 ) : NamedCompilerPhase<Context, Input, Input>(
     loweringClass.simpleName,
-    preactions = DEFAULT_IR_ACTIONS,
-    postactions = DEFAULT_IR_ACTIONS.map { f ->
+    preactions = actions,
+    postactions = actions.map { f ->
         fun(actionState: ActionState, data: Pair<Input, Input>, context: Context) = f(actionState, data.second, context)
     }.toSet(),
 ) {
