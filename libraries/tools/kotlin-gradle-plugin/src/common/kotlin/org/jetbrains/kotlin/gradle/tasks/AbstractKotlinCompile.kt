@@ -70,31 +70,58 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         cacheOnlyIfEnabledForKotlin()
     }
 
+    /**
+     * Injected [ProjectLayout] to access project directories like the build directory.
+     */
     @get:Inject
     internal abstract val projectLayout: ProjectLayout
 
+    /**
+     * Injected [FileSystemOperations] for file-level operations like snapshots and cleaning.
+     */
     @get:Inject
     internal abstract val fileSystemOperations: FileSystemOperations
 
+    /**
+     * Output directory for cacheable build artifacts (e.g., ABI snapshots).
+     * Usually points to `build/kotlin/taskName`.
+     */
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:OutputDirectory
     internal open val taskBuildCacheableOutputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
+    /**
+     * Directory for local state that should not be cached (e.g., incremental compilation caches).
+     * Usually points to `build/kotlin/taskName/localState`.
+     */
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal abstract val taskBuildLocalStateDirectory: DirectoryProperty
 
+    /**
+     * The compiler options used for this task (language version, API version, etc.).
+     * These are configured via the task's `compilerOptions` DSL.
+     */
     @get:Nested
     abstract val compilerOptions: KotlinCommonCompilerOptions
 
+    /**
+     * The file where incremental compilation history is stored.
+     * Derived from [taskBuildLocalStateDirectory].
+     */
     @get:Internal
     internal val buildHistoryFile
         get() = taskBuildLocalStateDirectory.file("build-history.bin")
 
-    // indicates that task should compile kotlin incrementally if possible
-    // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
-    // todo: deprecate and remove (we may need to design api for configuring IC)
-    // don't rely on it to check if IC is enabled, use isIncrementalCompilationEnabled instead
+    /**
+     * Indicates that the task should compile Kotlin incrementally if possible.
+     * This is an internal flag used to enable/disable IC for the task.
+     *
+     * Indicates that task should compile kotlin incrementally if possible
+     * it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
+     * todo: deprecate and remove (we may need to design api for configuring IC)
+     * don't rely on it to check if IC is enabled, use isIncrementalCompilationEnabled instead
+     */
     @get:Internal
     var incremental: Boolean = false
         set(value) {
@@ -106,7 +133,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal open fun isIncrementalCompilationEnabled(): Boolean =
         this@AbstractKotlinCompile.incremental
 
-    // This allows us to treat friendPaths as Input rather than InputFiles
+    /**
+     * A set of normalized, relative paths to 'friend' modules (modules that can see `internal` symbols).
+     * This allows us to treat friendPaths as Input rather than InputFiles for better cache performance.
+     */
     @get:Input
     internal val friendPathsSet: Provider<Set<String>>
         get() {
@@ -120,15 +150,25 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         }
 
+    /**
+     * Configures the explicit API mode (strict, warning, or disabled).
+     * Value comes from `kotlin.explicitApi` project property or DSL.
+     */
     @get:Input
     @get:Optional
     abstract val explicitApiMode: Property<ExplicitApiMode>
 
+    /**
+     * Internal flag to suppress warnings about free compiler arguments being modified at execution time.
+     */
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 
     internal fun reportingSettings() = buildMetricsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
+    /**
+     * Settings for multi-module incremental compilation, including the build history file location.
+     */
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile.get().asFile, useModuleDetection.get())
@@ -141,9 +181,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     // TODO: replace with objects.property and introduce task configurator
     internal var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
+    /**
+     * The directory where the Java compilation task puts its outputs.
+     * Used to coordinate between Kotlin and Java compilation in joint projects.
+     */
     @get:Internal
     internal val javaOutputDir: DirectoryProperty = objectFactory.directoryProperty()
 
+    /**
+     * Source files from the 'common' source set in multiplatform projects.
+     * These are treated as incremental inputs.
+     */
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:Incremental
@@ -151,32 +199,55 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    /**
+     * The location of the ABI snapshot file used for incremental compilation.
+     * Located in [taskBuildCacheableOutputDirectory].
+     */
     @get:Internal
     val abiSnapshotFile
         get() = taskBuildCacheableOutputDirectory.file(ABI_SNAPSHOT_FILE_NAME)
 
+    /**
+     * The relative path of the ABI snapshot file, used as a task input for caching purposes.
+     */
     @get:Input
     val abiSnapshotRelativePath: Property<String> = objectFactory.property(String::class.java).value(
         //TODO update to support any jar changes
         "$name/${ABI_SNAPSHOT_FILE_NAME}"
     )
 
+    /**
+     * Names of source sets that are considered 'friends' for this compilation.
+     */
     @get:Internal
     internal val friendSourceSets = objectFactory.listProperty(String::class.java)
 
+    /**
+     * Controls the logging level for the compiler arguments passed to the daemon.
+     */
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
+    /**
+     * Internal provider that encapsulates task information for the [GradleCompilerRunner].
+     */
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
         .property(
             objectFactory.newInstance<GradleCompileTaskProvider>(this, project, incrementalModuleInfoProvider)
         )
 
+    /**
+     * The toolchain used for compilation, determining the JDK and compiler version.
+     */
     @get:Internal
     internal open val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
         .propertyWithNewInstance({ null })
 
+    /**
+     * The runner responsible for invoking the Kotlin compiler (daemon, in-process, etc.).
+     * Its configuration depends on the execution strategy and metrics settings.
+     */
     @get:Internal
     internal val compilerRunner: Provider<GradleCompilerRunner> =
         objectFactory.propertyWithConvention(
@@ -213,18 +284,30 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         )
 
-    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
+    /**
+     * Feature toggle for experimental incremental compilation in multiplatform projects.
+     * See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform].
+     */
     @get:Internal
     internal abstract val enableUnsafeIncrementalCompilationForMultiplatform: Property<Boolean>
 
-    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableMonotonousIncrementalCompileSetExpansion] */
+    /**
+     * Feature toggle for an IC optimization that monotonous expands the compile set.
+     * See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableMonotonousIncrementalCompileSetExpansion].
+     */
     @get:Internal
     internal abstract val enableMonotonousIncrementalCompileSetExpansion: Property<Boolean>
 
-    /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
+    /**
+     * Task outputs that should not be included in [TaskOutputsBackup].
+     * See [TaskOutputsBackup.outputsToRestore] for more information.
+     */
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
+    /**
+     * Internal flag to enable separate KMP compilation (experimental).
+     */
     @get:Input
     internal abstract val separateKmpCompilation: Property<Boolean>
 

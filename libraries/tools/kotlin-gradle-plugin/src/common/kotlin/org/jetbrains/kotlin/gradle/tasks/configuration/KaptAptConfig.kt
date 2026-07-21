@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -56,7 +55,7 @@ internal class KaptAptConfig : BaseKaptConfig<KaptAptTask> {
         kaptGenerateStubsTask: TaskProvider<KaptGenerateStubsTask>,
     ) : super(compilation) {
         configureTask { task ->
-            val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesDestinationDir)
+            val kotlinSourceDir = objectFactory.fileCollection().from(task.kotlinSourcesOutputDir)
             if (ext is KaptExtension) {
                 val nonAndroidDslOptions = getNonAndroidDslApOptions(ext, project, kotlinSourceDir)
                 task.kaptPluginOptions.add(nonAndroidDslOptions.toCompilerPluginOptions())
@@ -86,10 +85,10 @@ internal class KaptAptConfig : BaseKaptConfig<KaptAptTask> {
                 .matching { it.include("**/*.java") }
                 .filter {
                     it.exists() &&
-                            !isAncestor(task.destinationDir.get().asFile, it) &&
-                            !isAncestor(task.classesDir.get().asFile, it)
+                            !isAncestor(task.sourcesOutputDir.get().asFile, it) &&
+                            !isAncestor(task.classesOutputDir.get().asFile, it)
                 }
-            task.source.from(kaptSources).disallowChanges()
+            task.allJavaSources.from(kaptSources).disallowChanges()
         }
         project.configurations.findResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
             ?: project.configurations.createResolvable(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {

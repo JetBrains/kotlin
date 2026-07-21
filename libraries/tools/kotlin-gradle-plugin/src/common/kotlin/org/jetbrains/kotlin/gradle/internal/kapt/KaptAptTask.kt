@@ -91,7 +91,7 @@ abstract class KaptAptTask @Inject constructor(
     @get:Incremental
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    override val source: ConfigurableFileCollection = objectFactory.fileCollection()
+    override val allJavaSources: ConfigurableFileCollection = objectFactory.fileCollection()
 
     override fun skipCondition(): Boolean = annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty()
 
@@ -209,7 +209,7 @@ abstract class KaptAptTask @Inject constructor(
 
             @Suppress("DEPRECATION_ERROR")
             val changedFiles = listOf(
-                source,
+                allJavaSources,
                 internalNonAbiClasspath,
                 internalAbiClasspath,
                 classpathStructure
@@ -454,8 +454,8 @@ abstract class KaptAptTask @Inject constructor(
                 this[KaptCompilerPlugin.AptPhase.COMPILED_SOURCES_DIR] = compiledSources.files.map(File::toPath)
                 this[KaptCompilerPlugin.AptPhase.INCREMENTAL_CACHE] = incAptCache.orNull?.asFile?.toPath()
                 this[KaptCompilerPlugin.AptPhase.CLASSPATH_CHANGES] = classpathChanges.toList()
-                this[KaptCompilerPlugin.AptPhase.SOURCE_OUTPUT_DIR] = destinationDir.get().asFile.toPath()
-                this[KaptCompilerPlugin.AptPhase.CLASS_OUTPUT_DIR] = classesDir.get().asFile.toPath()
+                this[KaptCompilerPlugin.AptPhase.SOURCE_OUTPUT_DIR] = sourcesOutputDir.get().asFile.toPath()
+                this[KaptCompilerPlugin.AptPhase.CLASS_OUTPUT_DIR] = classesOutputDir.get().asFile.toPath()
                 this[KaptCompilerPlugin.AptPhase.ANNOTATION_PROCESSORS] = annotationProcessorFqNames.get()
                 this[KaptCompilerPlugin.AptPhase.ANNOTATION_PROCESSOR_CLASSPATH] = this@KaptAptTask.kaptClasspath.files.map(File::toPath)
                 this[KaptCompilerPlugin.AptPhase.APT_OPTIONS] = getAnnotationProcessorOptions()

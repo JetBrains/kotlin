@@ -52,6 +52,10 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
+    /**
+     * JVM-specific compiler options (e.g., [jvmTarget]).
+     * These are configured via the task's `compilerOptions` DSL.
+     */
     final override val compilerOptions: KotlinJvmCompilerOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory,
@@ -59,6 +63,10 @@ abstract class KotlinCompile @Inject constructor(
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR") KotlinJvmCompileDsl {
 
+    /**
+     * Legacy Kotlin options, now deprecated in favor of [compilerOptions].
+     * Delegates all calls to [compilerOptions].
+     */
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
         message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
@@ -69,6 +77,9 @@ abstract class KotlinCompile @Inject constructor(
         compilerOptions
     )
 
+    /**
+     * Describes the structure of a multiplatform project (fragments, refines relations) for the K2 compiler.
+     */
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
@@ -80,6 +91,10 @@ abstract class KotlinCompile @Inject constructor(
     @get:Optional
     var javaPackagePrefix: String? = null
 
+    /**
+     * Whether to use precise tracking of Java source changes for incremental compilation.
+     * When enabled, the compiler tracks which Kotlin files depend on which Java symbols.
+     */
     @get:Input
     var usePreciseJavaTracking: Boolean = true
         set(value) {
@@ -87,17 +102,29 @@ abstract class KotlinCompile @Inject constructor(
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
 
+    /**
+     * The classpath for the compilation, including all library dependencies.
+     */
     @get:Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
     abstract override val libraries: ConfigurableFileCollection
 
+    /**
+     * Whether to use the FIR (K2) based incremental compilation runner.
+     */
     @get:Input
     internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    /**
+     * Properties related to the classpath snapshots based incremental compilation feature.
+     */
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
     /** Properties related to the classpath snapshots based incremental compilation feature. */
     abstract class ClasspathSnapshotProperties {
+        /**
+         * The collection of classpath snapshots for dependencies, used for incremental compilation.
+         */
         @get:Classpath
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
@@ -122,24 +149,48 @@ abstract class KotlinCompile @Inject constructor(
     final override val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
         .propertyWithNewInstance({ compilerOptions })
 
+    /**
+     * Provider for the [KotlinJavaToolchain] used by this task.
+     * Derived from [defaultKotlinJavaToolchain].
+     */
     final override val kotlinJavaToolchainProvider: Provider<out KotlinJavaToolchain> = defaultKotlinJavaToolchain
 
+    /**
+     * The target compatibility of the associated Java compilation task.
+     * Used for validating that Kotlin and Java targets are consistent.
+     */
     @get:Internal
     internal abstract val associatedJavaCompileTaskTargetCompatibility: Property<String>
 
+    /**
+     * The name of the associated Java compilation task.
+     */
     @get:Internal
     internal abstract val associatedJavaCompileTaskName: Property<String>
 
 
+    /**
+     * Files defining Kotlin script configurations.
+     */
     @get:Internal
     internal val scriptDefinitions: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    /**
+     * Whether the `kotlin-dsl` plugin is applied to the project.
+     * Affects default compiler arguments and validation.
+     */
     @get:Internal
     internal val kotlinDslPluginIsPresent: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    /**
+     * The version of the Kotlin compiler being used.
+     */
     @get:Internal
     internal abstract val kotlinCompilerVersion: Property<KotlinToolingVersion>
 
+    /**
+     * Supported file extensions for Kotlin scripts, derived from [scriptDefinitions].
+     */
     @get:Input
     @get:Optional
     internal val scriptExtensions: SetProperty<String> = objectFactory.setPropertyWithLazyValue {
@@ -160,8 +211,14 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
+    /**
+     * Internal collection of script source files before filtering.
+     */
     private val scriptSourceFiles = objectFactory.fileCollection()
 
+    /**
+     * The script files to be compiled, filtered by [scriptExtensions].
+     */
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
@@ -180,11 +237,8 @@ abstract class KotlinCompile @Inject constructor(
     override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty
 
     /**
-     * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
-     * With properties api it is not possible to update property value after task configuration is finished.
-     *
-     * Marking it as `@Internal` as anyway on the configuration phase, when Gradle does task inputs snapshot,
-     * this input will always be empty.
+     * Workaround for plugins that add 'freeCompilerArgs' during the task execution phase.
+     * This is internal because it doesn't participate in task input snapshotting at configuration time.
      */
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
@@ -389,6 +443,9 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
+    /**
+     * Root directory of the project, used for resolving relative paths in incremental compilation.
+     */
     private val projectRootDir = project.rootDir
 
     override fun callCompilerAsync(
@@ -484,6 +541,9 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
+    /**
+     * Internal collection of Java source files before filtering.
+     */
     private val javaSourceFiles = objectFactory.fileCollection()
 
     private fun javaFilesPatternFilter(patternFilterable: PatternFilterable) {
@@ -492,6 +552,9 @@ abstract class KotlinCompile @Inject constructor(
         )
     }
 
+    /**
+     * The Java source files to be compiled (for joint Kotlin/Java compilation).
+     */
     @get:Incremental
     @get:InputFiles
     @get:IgnoreEmptyDirectories

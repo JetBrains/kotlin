@@ -67,25 +67,8 @@ abstract class BaseKaptTask @Inject constructor(
     @get:Internal
     override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
 
-//    /* Used as input as empty kapt classpath should not trigger stub generation, but a non-empty one should. */
-//    @Input
-//    fun getIfKaptClasspathIsPresent() = !kaptClasspath.isEmpty
-
     @get:Input
     abstract val verbose: Property<Boolean>
-
-//    /**
-//     * Changes in this additional sources will trigger stubs regeneration,
-//     * but the sources themselves will not be used to find kapt annotations and generate stubs.
-//     */
-//    @get:InputFiles
-//    @get:IgnoreEmptyDirectories
-//    @get:NormalizeLineEndings
-//    @get:PathSensitive(PathSensitivity.RELATIVE)
-//    @get:Incremental
-//    abstract val additionalSources: ConfigurableFileCollection
-
-    override fun skipCondition(): Boolean = sources.isEmpty && javaSources.isEmpty
 
     // Task need to run even if there is no Kotlin sources, but only Java
     @get:Incremental
