@@ -6,17 +6,23 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
-import androidx.compose.compiler.plugins.kotlin.lower.fastForEach
+import com.intellij.util.containers.orNull
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.platform.engine.TestExecutionResult
+import org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL
+import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
+import org.junit.platform.launcher.TestExecutionListener
+import org.junit.platform.launcher.TestIdentifier
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
+import org.junit.platform.launcher.core.LauncherFactory
 import java.io.File
-import java.lang.reflect.InvocationTargetException
 
 private const val RUNTIME_TEST_ROOT = "plugins/compose/compiler-hosted/runtime-tests/src"
 
@@ -32,25 +38,46 @@ class RuntimeTestsK2 {
         dynamicContainer(
             description,
             classes.map { cls ->
-                cls.methods
-                    .filter { it.isAnnotationPresent(BeforeAll::class.java) }
-                    .forEach { it.invoke(null) }
-                dynamicContainer(
-                    cls.simpleName,
-                    cls.methods
-                        .filter { it.isAnnotationPresent(Test::class.java) }
-                        .map { method ->
-                            dynamicTest("${method.name} [${cls.simpleName}]$description") {
-                                try {
-                                    method.invoke(cls.getDeclaredConstructor().newInstance())
-                                } catch (e: InvocationTargetException) {
-                                    throw e.targetException
-                                }
-                            }
-                        }
-                )
+                val testOutcomes = executeTestsFromClass(cls)
+                val dynamicTests = forwardTestOutcomesAsDynamicTests(testOutcomes)
+                dynamicContainer(cls.simpleName, dynamicTests.stream())
             }
         )
+    }
+}
+
+private fun executeTestsFromClass(testClass: Class<*>): List<TestOutcome> {
+    val launcher = LauncherFactory.create()
+    val request = LauncherDiscoveryRequestBuilder.request().selectors(selectClass(testClass)).build()
+    val listener = RecordingExecutionListener()
+
+    launcher.execute(request, listener)
+
+    return listener.testOutcomes
+}
+
+private fun forwardTestOutcomesAsDynamicTests(testOutcomes: List<TestOutcome>): List<DynamicTest> =
+    testOutcomes.map { (testName, testResult) ->
+        dynamicTest(testName) {
+            if (testResult.status != SUCCESSFUL) {
+                throw testResult.throwable.orNull() ?: AssertionError("Test failed")
+            }
+        }
+    }
+
+private data class TestOutcome(
+    val testName: String,
+    val testResult: TestExecutionResult,
+)
+
+private class RecordingExecutionListener : TestExecutionListener {
+    val testOutcomes = mutableListOf<TestOutcome>()
+
+    override fun executionFinished(identifier: TestIdentifier, result: TestExecutionResult) {
+        when {
+            identifier.isTest -> testOutcomes.add(TestOutcome(identifier.displayName, result))
+            result.status != SUCCESSFUL -> testOutcomes.add(TestOutcome("[initialization]", result))
+        }
     }
 }
 
