@@ -8,10 +8,10 @@ package samples.text
 import samples.*
 import kotlin.test.*
 
-@RunWith(Enclosed::class)
 class HexFormats {
 
-    class HexFormatClass {
+    @Nested
+    inner class HexFormatClass {
         @Sample
         fun hexFormatBuilderFunction() {
             // Specifying format options for numeric values.
@@ -74,7 +74,8 @@ class HexFormats {
         }
     }
 
-    class ByteArrays {
+    @Nested
+    inner class ByteArrays {
         @Sample
         fun bytesPerLine() {
             val data = ByteArray(7) { it.toByte() }
@@ -232,7 +233,8 @@ class HexFormats {
         }
     }
 
-    class Numbers {
+    @Nested
+    inner class Numbers {
         @Sample
         fun numberHexFormat() {
             val numberHexFormat = HexFormat {
@@ -361,7 +363,8 @@ class HexFormats {
         }
     }
 
-    class Extensions {
+    @Nested
+    inner class Extensions {
         @Sample
         fun byteArrayToHexString() {
             val data = byteArrayOf(0xDE.toByte(), 0x2D, 0x02, 0xC0.toByte(), 0x5C, 0x0E)

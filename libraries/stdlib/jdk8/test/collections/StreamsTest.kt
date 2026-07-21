@@ -17,7 +17,7 @@
 package kotlin.jdk8.streams.test
 
 import kotlin.streams.*
-import org.junit.Test
+import kotlin.test.Test
 import java.util.stream.*
 import kotlin.test.*
 

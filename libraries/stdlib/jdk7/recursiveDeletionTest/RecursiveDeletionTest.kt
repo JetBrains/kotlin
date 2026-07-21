@@ -5,7 +5,7 @@
 
 package test.jdk7
 
-import org.junit.AssumptionViolatedException
+import org.opentest4j.TestAbortedException
 import java.io.IOException
 import java.nio.file.Paths
 import kotlin.io.path.*
@@ -59,7 +59,7 @@ class RecursiveDeletionTest {
             // While the condition seems too generic, it is unlikely the test will fail with an IOException
             // like FileAlreadyExistsException as the symlink name should be random enough.
             if (e is UnsupportedOperationException || e is IOException || e is SecurityException) {
-                throw AssumptionViolatedException("FileSystem does not support symbolic links", e)
+                throw TestAbortedException("FileSystem does not support symbolic links", e)
             }
             throw e
         }

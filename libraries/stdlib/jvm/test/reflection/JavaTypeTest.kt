@@ -5,7 +5,6 @@
 
 package test.reflection
 
-import org.junit.Test
 import java.lang.reflect.*
 import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
@@ -13,6 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import kotlin.test.Test
 
 @Suppress(
     "unused", "UNUSED_VARIABLE", "ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "RedundantInnerClassModifier", "NAME_SHADOWING",

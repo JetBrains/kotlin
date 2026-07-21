@@ -2,9 +2,9 @@ package samples.collections
 
 import samples.*
 
-@RunWith(Enclosed::class)
 class Builders {
-    class Lists {
+    @Nested
+    inner class Lists {
         @Sample
         fun buildListSample() {
             val x = listOf('b', 'c')
@@ -32,7 +32,8 @@ class Builders {
         }
     }
 
-    class Sets {
+    @Nested
+    inner class Sets {
         @Sample
         fun buildSetSample() {
             val x = setOf('a', 'b')
@@ -60,7 +61,8 @@ class Builders {
         }
     }
 
-    class Maps {
+    @Nested
+    inner class Maps {
         @Sample
         fun buildMapSample() {
             val x = mapOf('b' to 2, 'c' to 3)

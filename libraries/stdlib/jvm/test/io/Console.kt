@@ -7,7 +7,7 @@
 
 package test.io
 
-import org.junit.Test
+import kotlin.test.Test
 import java.nio.charset.Charset
 import kotlin.random.Random
 import kotlin.random.nextInt

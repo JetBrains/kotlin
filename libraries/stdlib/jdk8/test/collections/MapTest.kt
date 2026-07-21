@@ -16,7 +16,7 @@
 
 package kotlin.jdk8.collections.test
 
-import org.junit.Test
+import kotlin.test.Test
 import java.util.function.BiFunction
 import kotlin.test.*
 import kotlin.jdk8.collections.*
