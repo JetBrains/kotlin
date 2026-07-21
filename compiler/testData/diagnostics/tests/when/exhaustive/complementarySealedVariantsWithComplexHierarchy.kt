@@ -19,7 +19,7 @@ data object I : H, F
 fun check(a: A) {
     require(a is D || a is H)
 
-    <!NO_ELSE_IN_WHEN!>when<!> (a) {
+    when (a) {
         is E -> println("E")
         is F -> println("F")
 
