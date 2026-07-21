@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -25,7 +24,7 @@ import kotlin.test.fail
 
 
 abstract class MultiplatformExtensionTest {
-    protected val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
+    protected val project: ProjectInternal = buildProject {  }
     protected lateinit var kotlin: KotlinMultiplatformExtension
 
     @BeforeTest

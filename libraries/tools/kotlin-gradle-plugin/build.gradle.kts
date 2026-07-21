@@ -738,9 +738,12 @@ tasks.withType<Test>().configureEach {
 dependencies {
     val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
     val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
+    val runtimeOnly = project.configurations.getByName(functionalTestSourceSet.runtimeOnlyConfigurationName)
 
-    implementation(libs.android.gradle.plugin.gradle)
-    implementation(libs.android.gradle.plugin.gradle.api)
+    compileOnly(libs.android.gradle.plugin.gradle)
+    compileOnly(libs.android.gradle.plugin.gradle.api)
+    runtimeOnly(libs.android.gradle.plugin.gradle.latest)
+    runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
     compileOnly(libs.android.tools.common)
     implementation(gradleKotlinDsl())
     implementation(project(":kotlin-gradle-plugin-tcs-android"))

@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExten
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-
-
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
@@ -35,6 +33,11 @@ fun buildProject(
     configureProject: Project.() -> Unit = {},
 ): ProjectInternal = ProjectBuilder
     .builder()
+    .also {
+        // These two lines are required for AGP 9+ to work with current KGP in tests
+        System.setProperty("org.gradle.project.android.builtInKotlin", "false")
+        System.setProperty("org.gradle.project.android.newDsl", "false")
+    }
     .apply(projectBuilder)
     .build()
     .also {
