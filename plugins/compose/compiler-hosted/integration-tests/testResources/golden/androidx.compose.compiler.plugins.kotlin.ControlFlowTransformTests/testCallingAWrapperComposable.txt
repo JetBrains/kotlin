@@ -40,18 +40,24 @@ fun Test(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%1773251756: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C<A()>:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%1773251756: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<A()>:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            A(%composer, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      A(%composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
 }

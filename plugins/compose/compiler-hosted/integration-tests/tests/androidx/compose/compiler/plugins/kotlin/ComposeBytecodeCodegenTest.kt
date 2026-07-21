@@ -761,7 +761,7 @@ class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
             """,
             validate = { bytecode ->
                 val invokeMethod = run {
-                    val staticLambdaFunctionRegex = Regex("private final static lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
+                    val staticLambdaFunctionRegex = Regex("private final static _get_lambda.*lambda%0[\\S\\s]*?\\v\\v", RegexOption.MULTILINE)
                     val matches = staticLambdaFunctionRegex.findAll(bytecode)
                     matches.single().value
                 }

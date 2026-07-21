@@ -39,6 +39,9 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -384,7 +387,6 @@ class ComposableTargetAnnotationsTransformer(
         get() = when (this) {
             is IrFunctionExpression -> function.isComposable
             is IrCall -> isComposableSingletonGetter() || hasTransformedLambda
-            is IrGetField -> symbol.owner.initializer?.findTransformedLambda() != null
             else -> false
         }
 
@@ -394,15 +396,27 @@ class ComposableTargetAnnotationsTransformer(
             else -> false
         }
 
-    private fun IrElement.findTransformedLambda(): IrFunctionExpression? =
-        when (this) {
-            is IrCall -> targetArguments.firstNotNullOfOrNull { it?.findTransformedLambda() }
-            is IrGetField -> symbol.owner.initializer?.findTransformedLambda()
-            is IrBody -> statements.firstNotNullOfOrNull { it.findTransformedLambda() }
-            is IrReturn -> value.findTransformedLambda()
-            is IrFunctionExpression -> if (isTransformedLambda) this else null
-            else -> null
-        }
+    private fun IrElement.findTransformedLambda(): IrFunctionExpression? {
+        var result: IrFunctionExpression? = null
+        acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                if (result == null) {
+                    element.acceptChildrenVoid(this)
+                }
+            }
+
+            override fun visitFunctionExpression(expression: IrFunctionExpression) {
+                if (result == null) {
+                    if (expression.isTransformedLambda) {
+                        result = expression
+                    } else {
+                        super.visitFunctionExpression(expression)
+                    }
+                }
+            }
+        })
+        return result
+    }
 
     internal fun IrElement.transformedLambda(): IrFunctionExpression =
         findTransformedLambda() ?: error("Could not find the lambda for ${dump()}")

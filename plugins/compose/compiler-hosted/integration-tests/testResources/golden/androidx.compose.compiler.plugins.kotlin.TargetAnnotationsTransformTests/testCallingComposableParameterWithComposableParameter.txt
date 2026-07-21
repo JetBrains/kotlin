@@ -41,18 +41,24 @@ fun Test(decorator: Function3<@[ParameterName(name = 'content')] Function2<Compo
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%1254334145: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C<Text("...>:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%1254334145: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<Text("...>:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Text("Some text", %composer, 0b0110)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Text("Some text", %composer, 0b0110)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
 }

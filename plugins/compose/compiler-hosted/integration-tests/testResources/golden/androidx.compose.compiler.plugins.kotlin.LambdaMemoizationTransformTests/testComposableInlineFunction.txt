@@ -57,34 +57,46 @@ fun Inlined(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerEnd(%composer)
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%-193164677: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%-193164677: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
-  val lambda%1918458719: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%1918458719: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
   val lambda-2: Function2<Composer, Int, Unit>
     get() {
       return lambda%1918458719
