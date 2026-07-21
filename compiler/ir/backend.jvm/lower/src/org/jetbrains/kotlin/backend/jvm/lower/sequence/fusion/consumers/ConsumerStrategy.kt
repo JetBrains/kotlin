@@ -29,6 +29,9 @@ private const val FIRST_NOT_NULL_OF_OR_NULL = "firstNotNullOfOrNull"
 private const val FIRST_OR_NULL = "firstOrNull"
 private const val LAST = "last"
 private const val LAST_OR_NULL = "lastOrNull"
+private const val FILTER_TO = "filterTo"
+private const val FILTER_NOT_TO = "filterNotTo"
+private const val FILTER_NOT_NULL_TO = "filterNotNullTo"
 
 /**
  * Each strategy has 3 parts:
@@ -73,6 +76,9 @@ internal fun createConsumerStrategy(
         FIRST_NOT_NULL_OF_OR_NULL -> FirstNotNullOfStrategy(data, expression, isOrNull = true)
         LAST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = false)
         LAST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false)
+        FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
+        FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
+        FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
         else -> null
     }
 }
