@@ -79,7 +79,6 @@ Java classes have implicit inheritance:
 |------|---------|
 | `parse.kt` | KMP parser invocation |
 | `JavaLightTree.kt` | Flat-array AST (`JavaLightNode` value class), `childrenCache` memoizes child lists |
-| `JavaSourceFileReader.kt` | VFS-backed file reads |
 
 ### Indexing & class finding
 | File | Purpose |
@@ -96,14 +95,14 @@ Java classes have implicit inheritance:
 | `JavaScopeResolver.kt` | Local-class / type-parameter scope lookup (`findLocalClassCache`) |
 | `JavaImportResolver.kt` | Single-type + on-demand import handling, JLS priority |
 | `JavaInheritedClassResolver.kt` | Inherited-inner-class resolution, aggregated-inner handling |
-| `JavaSupertypeGraph.kt` | Cross-file supertype graph, `supertypeCache`, `inheritedInnerClassesCache` |
+| `JavaTypeResolver.kt` | Name→`ClassId` ladder, `directSupertypeClassIds` (the single supertype walk) |
 
 ### Utilities
-| File | Purpose |
-|------|---------|
-| `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape) |
+| File | Purpose                                                        |
+|------|----------------------------------------------------------------|
+| `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape)    |
 | `ConstantEvaluator.kt` | Java field initializer constant evaluation (JLS §15.29 subset) |
-| `utils.kt` | Misc shared helpers, `computeTypeParameters` factory |
+| `utils.kt` | Misc shared helpers, `computeTypeParameters` factory, `readJavaSourceFileText` — UTF-8 `.java` file reads |
 
 ## Reference Implementations
 
