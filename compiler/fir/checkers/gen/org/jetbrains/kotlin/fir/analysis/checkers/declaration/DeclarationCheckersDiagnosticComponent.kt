@@ -145,9 +145,7 @@ class DeclarationCheckersDiagnosticComponent(
     ) {
         for (checker in this) {
             try {
-                context(context, reporter) {
-                    checker.check(element)
-                }
+                checker.check(element, context = context, reporter = reporter)
             } catch (e: Exception) {
                 rethrowExceptionWithDetails("Exception in declaration checkers", e) {
                     withFirEntry("element", element)

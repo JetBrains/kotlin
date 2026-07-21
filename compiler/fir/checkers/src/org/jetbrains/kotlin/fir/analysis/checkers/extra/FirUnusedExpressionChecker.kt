@@ -42,9 +42,7 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
         ) {
             if (!data.isUnused()) return
             if (expression.hasSideEffect()) return
-            context(context, reporter) {
-                reportUnused(expression, expression.source)
-            }
+            reportUnused(expression, expression.source, context = context, reporter = reporter)
         }
     }
 }

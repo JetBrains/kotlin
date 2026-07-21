@@ -281,9 +281,7 @@ class ExpressionCheckersDiagnosticComponent(
     ) {
         for (checker in this) {
             try {
-                context(context, reporter) {
-                    checker.check(element)
-                }
+                checker.check(element, context = context, reporter = reporter)
             } catch (e: Exception) {
                 rethrowExceptionWithDetails("Exception in expression checkers", e) {
                     withFirEntry("element", element)
