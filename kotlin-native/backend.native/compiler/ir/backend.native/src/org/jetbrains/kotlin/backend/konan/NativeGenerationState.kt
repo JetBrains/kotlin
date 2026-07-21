@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
@@ -21,6 +24,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -63,7 +68,7 @@ internal class NativeGenerationState(
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicNativeBackendPhaseContext(config), LoweringContext, BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -140,4 +145,23 @@ internal class NativeGenerationState(
 
     override val llvmModule: LLVMModuleRef
         get() = llvm.module
+
+    override val configuration: CompilerConfiguration
+        get() = context.configuration
+
+    override val symbols: PreSerializationSymbols
+        get() = context.symbols
+
+    override val irBuiltIns: IrBuiltIns
+        get() = context.irBuiltIns
+
+    override val irFactory: IrFactory
+        get() = context.irFactory
+
+    override val sharedVariablesManager: SharedVariablesManager
+        get() = context.sharedVariablesManager
+
+    override fun log(message: String) {
+        super<BasicNativeBackendPhaseContext>.log(message)
+    }
 }

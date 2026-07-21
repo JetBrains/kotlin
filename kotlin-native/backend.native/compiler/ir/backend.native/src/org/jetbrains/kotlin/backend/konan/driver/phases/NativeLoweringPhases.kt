@@ -54,7 +54,16 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(
             context.fileLowerState = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
                 performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
-                    runPhase(lowering, loweredFile)
+                    try {
+                        runPhase(lowering, loweredFile)
+                    } catch (e: CompilationException) {
+                        e.initializeFileDetails(loweredFile)
+                        throw e
+                    } catch (e: KotlinExceptionWithAttachments) {
+                        throw e
+                    } catch (e: Throwable) {
+                        throw e.wrapWithCompilationException("Internal error in file lowering", loweredFile, null)
+                    }
                 }
             }
         }
@@ -139,34 +148,6 @@ private val annotationImplementationPhase = createFileLoweringPhase(
 )
 
 
-private val upgradeCallableReferencesPhase = createFileLoweringPhase(
-        ::UpgradeCallableReferences,
-        name = "UpgradeCallableReferences",
-)
-
-private val arrayConstructorPhase = createFileLoweringPhase(
-        ::ArrayConstructorLowering,
-        name = "ArrayConstructor",
-        prerequisite = setOf(upgradeCallableReferencesPhase)
-)
-
-private val lateinitPhase = createFileLoweringPhase(
-        ::LateinitLowering,
-        name = "Lateinit",
-)
-
-private val sharedVariablesPhase = createFileLoweringPhase(
-        ::SharedVariablesLowering,
-        name = "SharedVariables",
-        prerequisite = setOf(lateinitPhase)
-)
-
-private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
-        ::LocalClassesInInlineLambdasLowering,
-        name = "ExtractLocalClassesFromInlineBodies",
-        prerequisite = setOf(sharedVariablesPhase),
-)
-
 private val postInlinePhase = createFileLoweringPhase(
         { context: NativeBackendContext -> PostInlineLowering(context) },
         name = "PostInline",
@@ -228,7 +209,7 @@ private val localFunctionsPhase = createFileLoweringPhase(
             LocalDeclarationPopupLowering(context).lower(irFile)
         },
         name = "LocalFunctions",
-        prerequisite = setOf(sharedVariablesPhase, inventNamesForInteropBridgesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
+        prerequisite = setOf(/*sharedVariablesPhase, */inventNamesForInteropBridgesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
 )
 
 private val tailrecPhase = createFileLoweringPhase(
@@ -273,11 +254,6 @@ private val finallyBlocksPhase = createFileLoweringPhase(
         { context, irFile -> FinallyBlocksLowering(context, context.irBuiltIns.throwableType).lower(irFile) },
         name = "FinallyBlocks",
         prerequisite = setOf(initializersPhase, localFunctionsPhase, tailrecPhase)
-)
-
-private val testProcessorPhase = createFileLoweringPhase(
-        lowering = { context: NativeBackendContext -> TestProcessor(context) },
-        name = "TestProcessor",
 )
 
 private val initTestsPhase = createFileLoweringPhase(
@@ -351,26 +327,6 @@ private val builtinOperatorPhase = createFileLoweringPhase(
 )
 
 /**
- * The first phase of inlining (inline only private functions).
- */
-private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
-        lowering = ::NativePrivateFunctionInlining,
-        name = "InlineOnlyPrivateFunctions",
-)
-
-private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
-        ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-        name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-        prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
-)
-
-private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
-        lowering = ::SyntheticAccessorLowering,
-        name = "SyntheticAccessorGeneration",
-        prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase),
-)
-
-/**
  * The second phase of inlining (inline all functions).
  */
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
@@ -391,7 +347,7 @@ private val typeOfProcessingLowering = createFileLoweringPhase(
 private val specializeSharedVariableBoxes = createFileLoweringPhase(
         lowering = { context: NativeBackendContext -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
         name = "SpecializeSharedVariableBoxes",
-        prerequisite = setOf(sharedVariablesPhase),
+        //prerequisite = setOf(sharedVariablesPhase),
 )
 
 private val interopPhase = createFileLoweringPhase(
@@ -399,7 +355,7 @@ private val interopPhase = createFileLoweringPhase(
             InteropLowering(generationState.context, generationState.fileLowerState)
         },
         name = "Interop",
-        prerequisite = setOf(extractLocalClassesFromInlineBodies)
+        //prerequisite = setOf(extractLocalClassesFromInlineBodies)
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
@@ -587,19 +543,14 @@ private val objectClassesPhase = createFileLoweringPhase(
         name = "ObjectClasses",
 )
 
-private val assertionWrapperPhase = createFileLoweringPhase(
-        lowering = ::NativeAssertionWrapperLowering,
-        name = "AssertionWrapperLowering",
-)
-
 private val assertionRemoverPhase = createFileLoweringPhase(
         lowering = ::NativeAssertionRemoverLowering,
         name = "AssertionRemoverLowering",
-        prerequisite = setOf(assertionWrapperPhase),
+        //prerequisite = setOf(assertionWrapperPhase),
 )
 
 internal val redundantCastsRemoverPhase = createFileLoweringPhase(
-        lowering = ::RedundantCastsRemoverLowering,
+        lowering = { context: NativeBackendContext -> RedundantCastsRemoverLowering(context) },
         name = "RedundantCastsRemoverLowering",
         prerequisite = setOf(inlineAllFunctionsPhase),
 )
@@ -610,17 +561,18 @@ internal val constEvaluationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
-internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-        testProcessorPhase,
-        upgradeCallableReferencesPhase,
-        assertionWrapperPhase,
-        lateinitPhase,
-        sharedVariablesPhase,
-        extractLocalClassesFromInlineBodies,
-        arrayConstructorPhase,
-        inlineOnlyPrivateFunctionsPhase,
-        outerThisSpecialAccessorInInlineFunctionsPhase,
-        syntheticAccessorGenerationPhase,
+internal fun getLoweringsUpToAndIncludingSyntheticAccessors() = createFilePhases(
+        ::TestProcessor,
+        ::UpgradeCallableReferences,
+        ::NativeAssertionWrapperLowering,
+        ::LateinitLowering,
+        ::SharedVariablesLowering,
+        ::LocalClassesInInlineLambdasLowering,
+        ::ArrayConstructorLowering,
+        ::NativePrivateFunctionInlining,
+        ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+        ::SyntheticAccessorLowering,
+        actions = getDefaultIrActions(),
 )
 
 internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
