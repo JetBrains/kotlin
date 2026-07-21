@@ -1,0 +1,25 @@
+[project]
+name = "member-extension-analysis"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "ruff>=0.15.22",
+    "types-pyyaml>=6.0.12.20260518",
+]
+
+[tool.mypy]
+files = ["analyze_member_extension_two_phase_inference.py"]
+strict = true
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "RUF", "SIM", "UP", "W"]

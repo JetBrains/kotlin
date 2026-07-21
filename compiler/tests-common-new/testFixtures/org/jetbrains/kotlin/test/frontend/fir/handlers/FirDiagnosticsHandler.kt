@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMemberExtensionTwoPhaseInferenceChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -669,6 +670,14 @@ enum class KmpCompilationMode {
 }
 
 open class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
+    init {
+        // The experimental member-extension checker defaults to compact per-callable summaries (for large-project
+        // scans). In tests we want the full per-call comparison inline instead, so switch it to per-call mode.
+        // This service is constructed before any module is analyzed, so the flag is set in time for every runner
+        // (including the CLI-pipeline-based phased runners).
+        FirMemberExtensionTwoPhaseInferenceChecker.emitPerCallDiagnostics = true
+    }
+
     val reporterForLTSyntaxErrors = DiagnosticsCollectorImpl()
 
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()

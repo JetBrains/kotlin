@@ -82,18 +82,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
         val normalInference = normalInference(expression, symbol)
         val twoPhaseInference = analyzeOrIgnore(expression, symbol)
-        // Captured types produced by separate inference runs require alpha-equivalence rather than equalTypes.
-        // Keep this disabled until that comparison is implemented.
-        if (assertInferredTypesEqual &&
-            twoPhaseInference is AnalysisResult.Success &&
-            twoPhaseInference.outcome == TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED
-        ) {
-            require(inferredTypesEqual(twoPhaseInference.inferredConeTypes, normalInference.inferredConeTypes)) {
-                "Two-phase inference produced different types for ${symbol.callableId}: " +
-                        "${twoPhaseInference.inferredTypes}, normal inference: ${normalInference.inferredTypes}"
-            }
-        }
-
         val diagnostic = DiagnosticData(
             callableId = symbol.callableId.asSingleFqName().asString(),
             signature = buildSignature(
@@ -106,8 +94,12 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         )
 
         val source = expression.calleeReference.source ?: expression.source ?: return
-        recordCall(context.session, source, context, diagnostic)
-        if (diagnostic.twoPhaseInference.shouldReportDirectly()) {
+        // Per-call mode reports every comparison. Summary mode records every call, but still reports
+        // errors and unsuccessful two-phase inference results individually.
+        if (!emitPerCallDiagnostics) {
+            recordCall(context.session, source, context, diagnostic)
+        }
+        if (emitPerCallDiagnostics || diagnostic.twoPhaseInference.shouldReportDirectly()) {
             reporter.reportOn(
                 source,
                 FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE,
@@ -150,9 +142,12 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         diagnostic: DiagnosticData,
     ) {
         synchronized(statisticsBySession) {
+            val key = diagnostic.callableId to diagnostic.signature
             val statistics = (statisticsBySession[session] ?: return)
-                .getOrPut(diagnostic.callableId) { CallableStatistics(diagnostic.callableId, source, context) }
-            statistics.record(diagnostic.twoPhaseInference)
+                .getOrPut(key) {
+                    CallableStatistics(diagnostic.callableId, diagnostic.signature, source, context)
+                }
+            statistics.record(diagnostic)
         }
     }
 
@@ -281,7 +276,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             return AnalysisResult.Success(
                 outcome = TwoPhaseOutcome.RECEIVER_INFERENCE_FAILED,
                 inferredTypes = finalTypes,
-                inferredConeTypes = finalConeTypes,
                 receiverPhaseFixed = receiverNames,
                 receiverPhaseUnfixed = unfixedReceiverVariables.map { it.typeParameterSymbol.name.asString() },
                 argumentPhaseFixed = emptyList(),
@@ -331,7 +325,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
                 TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_FAILED
             },
             inferredTypes = finalTypes,
-            inferredConeTypes = finalConeTypes,
             receiverPhaseFixed = receiverNames,
             receiverPhaseUnfixed = emptyList(),
             argumentPhaseFixed = argumentNames,
@@ -521,7 +514,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         )
         return NormalInferenceData(
             inferredTypes,
-            inferredConeTypes = inferredTypeByParameter.mapKeys { it.key.name.asString() },
             receiverComparison,
             receiverTypeParameters,
             receiverParameters = declaredReceiverType?.let { receiverParameters(it) }.orEmpty(),
@@ -547,7 +539,9 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         // Missing receiver information should not discard the selected parameter names. Keep them in
         // the JSON and explicitly mark their comparison unavailable instead.
         if (actualReceiverType == null || declaredReceiverType == null) {
-            return receiverTypeParameters.associate { it.name.asString() to ReceiverComparison(null, null, "unavailable") }
+            return receiverTypeParameters.associate {
+                it.name.asString() to ReceiverComparison(null, null, ReceiverRelation.UNAVAILABLE)
+            }
         }
 
         val typeContext = context.session.typeContext
@@ -619,34 +613,18 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     }
 
     context(context: CheckerContext)
-    private fun inferredTypesEqual(
-        first: Map<String, ConeKotlinType>,
-        second: Map<String, ConeKotlinType>,
-    ): Boolean {
-        if (first.keys != second.keys) return false
-        return first.entries.all { entry ->
-            AbstractTypeChecker.equalTypes(
-                context.session.typeContext,
-                entry.value,
-                second.getValue(entry.key),
-                stubTypesEqualToAnything = false,
-            )
-        }
-    }
-
-    context(context: CheckerContext)
-    private fun compareReceiverTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): String {
-        if (actualType == null || inferredType == null) return "unavailable"
+    private fun compareReceiverTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): ReceiverRelation {
+        if (actualType == null || inferredType == null) return ReceiverRelation.UNAVAILABLE
         val typeContext = context.session.typeContext
         if (AbstractTypeChecker.equalTypes(typeContext, actualType, inferredType, stubTypesEqualToAnything = false)) {
-            return "exact"
+            return ReceiverRelation.EXACT
         }
         return when {
             AbstractTypeChecker.isSubtypeOf(typeContext, actualType, inferredType, stubTypesEqualToAnything = false) ->
-                "over_approximated"
+                ReceiverRelation.OVER_APPROXIMATED
             AbstractTypeChecker.isSubtypeOf(typeContext, inferredType, actualType, stubTypesEqualToAnything = false) ->
-                "under_approximated"
-            else -> "incomparable"
+                ReceiverRelation.UNDER_APPROXIMATED
+            else -> ReceiverRelation.INCOMPARABLE
         }
     }
 
@@ -704,7 +682,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
     private data class NormalInferenceData(
         val inferredTypes: Map<String, String>,
-        val inferredConeTypes: Map<String, ConeKotlinType>,
         val receiver: ReceiverComparison,
         val receiverTypeParameters: Map<String, ReceiverComparison>,
         val receiverParameters: Map<String, String>,
@@ -720,13 +697,21 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     private data class ReceiverComparison(
         val actualType: String?,
         val inferredType: String?,
-        val relation: String,
+        val relation: ReceiverRelation,
     ) {
         fun toJson(): String = jsonObject(
             "actualType" to actualType?.toJsonString().orJsonNull(),
             "inferredType" to inferredType?.toJsonString().orJsonNull(),
-            "relation" to relation.toJsonString(),
+            "relation" to relation.serializedName.toJsonString(),
         )
+    }
+
+    private enum class ReceiverRelation(val serializedName: String) {
+        EXACT("exact"),
+        OVER_APPROXIMATED("over_approximated"),
+        UNDER_APPROXIMATED("under_approximated"),
+        INCOMPARABLE("incomparable"),
+        UNAVAILABLE("unavailable"),
     }
 
     private sealed interface AnalysisResult {
@@ -735,7 +720,6 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         data class Success(
             val outcome: TwoPhaseOutcome,
             val inferredTypes: Map<String, String>,
-            val inferredConeTypes: Map<String, ConeKotlinType>,
             val receiverPhaseFixed: List<String>,
             val receiverPhaseUnfixed: List<String>,
             val argumentPhaseFixed: List<String>,
@@ -766,6 +750,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
     private class CallableStatistics(
         val callableId: String,
+        val signature: String,
         val source: AbstractKtSourceElement,
         val context: DiagnosticContext,
     ) {
@@ -774,10 +759,22 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         private var inapplicableCalls: Int = 0
         private var failedCalls: Int = 0
         private var errorCalls: Int = 0
+        private var exactReceiverRelations: Int = 0
+        private var overApproximatedReceiverRelations: Int = 0
+        private var underApproximatedReceiverRelations: Int = 0
+        private var incomparableReceiverRelations: Int = 0
+        private var unavailableReceiverRelations: Int = 0
 
-        fun record(result: AnalysisResult) {
+        fun record(diagnostic: DiagnosticData) {
             totalCalls++
-            when (result) {
+            when (diagnostic.normalInference.receiver.relation) {
+                ReceiverRelation.EXACT -> exactReceiverRelations++
+                ReceiverRelation.OVER_APPROXIMATED -> overApproximatedReceiverRelations++
+                ReceiverRelation.UNDER_APPROXIMATED -> underApproximatedReceiverRelations++
+                ReceiverRelation.INCOMPARABLE -> incomparableReceiverRelations++
+                ReceiverRelation.UNAVAILABLE -> unavailableReceiverRelations++
+            }
+            when (val result = diagnostic.twoPhaseInference) {
                 is AnalysisResult.Error -> errorCalls++
                 is AnalysisResult.Success -> when (result.outcome) {
                     TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED -> successfulCalls++
@@ -789,12 +786,20 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
         fun toJson(): String = jsonObject(
             "callableId" to callableId.toJsonString(),
+            "signature" to signature.toJsonString(),
             "summary" to jsonObject(
                 "totalCalls" to totalCalls.toString(),
                 "successfulCalls" to successfulCalls.toString(),
                 "inapplicableCalls" to inapplicableCalls.toString(),
                 "failedCalls" to failedCalls.toString(),
                 "errorCalls" to errorCalls.toString(),
+                "receiverRelations" to jsonObject(
+                    ReceiverRelation.EXACT.serializedName to exactReceiverRelations.toString(),
+                    ReceiverRelation.OVER_APPROXIMATED.serializedName to overApproximatedReceiverRelations.toString(),
+                    ReceiverRelation.UNDER_APPROXIMATED.serializedName to underApproximatedReceiverRelations.toString(),
+                    ReceiverRelation.INCOMPARABLE.serializedName to incomparableReceiverRelations.toString(),
+                    ReceiverRelation.UNAVAILABLE.serializedName to unavailableReceiverRelations.toString(),
+                ),
             ),
         )
     }
@@ -836,9 +841,20 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         is AnalysisResult.Success -> outcome != TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED
     }
 
-    private val assertInferredTypesEqual = java.lang.Boolean.getBoolean(
-        "kotlin.member.extension.assert.inferred.types.equal"
+    /**
+     * When `true`, a detailed [FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE] diagnostic is reported for every
+     * analyzed call. When `false` (the default), successful calls are represented only in aggregated
+     * [FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY] diagnostics produced via [reportSummaries], while
+     * errors and unsuccessful inference results are also reported individually.
+     *
+     * Tests enable per-call mode (see [FirDiagnosticCollectorService]) so that each call's inference comparison is
+     * visible inline; large-project scans keep the default summary mode to avoid emitting one diagnostic per call.
+     * It may also be enabled via the `kotlin.member.extension.emit.per.call.diagnostics` system property.
+     */
+    @Volatile
+    var emitPerCallDiagnostics: Boolean = java.lang.Boolean.getBoolean(
+        "kotlin.member.extension.emit.per.call.diagnostics"
     )
 
-    private val statisticsBySession = mutableMapOf<FirSession, MutableMap<String, CallableStatistics>>()
+    private val statisticsBySession = mutableMapOf<FirSession, MutableMap<Pair<String, String>, CallableStatistics>>()
 }

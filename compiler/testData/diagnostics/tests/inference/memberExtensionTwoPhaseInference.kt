@@ -6,6 +6,13 @@ class Source<T>
 class Sink<T>
 class Covariant<out T>
 
+open class Container<T>
+class SpecificContainer : Container<String>()
+
+fun <T> Container<T>.acceptExact(arg: T) {}
+
+fun <T> Covariant<T>.acceptCovariant(arg: T) {}
+
 fun <T> Box<T>.receiverOnly(): T = value
 
 fun Box<String>.noTypeParameters() {}
@@ -35,28 +42,30 @@ fun <T, R> Function1<T, R>.functionReceiver() {}
 fun <T> Box<T>.withDefault(value: Int = 0) {}
 
 fun <T> projectedArrayReceiver(array: Array<out T>) {
-    array.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"copyInvariant\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>copyInvariant<!>(0, 0)
+    array.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"copyInvariant\", \"signature\":\"<T> Array<T>.(Int, Int)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"CapturedType(out T)\"}, \"receiver\":{\"actualType\":\"Array<out T>\", \"inferredType\":\"Array<CapturedType(out T)>\", \"relation\":\"under_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"CapturedType(out T)\", \"inferredType\":\"CapturedType(out T)\", \"relation\":\"incomparable\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"CapturedType(out T)\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>copyInvariant<!>(0, 0)
 }
 
 fun <K, V> MutableMap<K, V>.lookupInvariant(key: K) {}
 
 fun <K, V, M : MutableMap<in K, V>> upperBoundReceiver(destination: M, key: K) {
-    destination.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"lookupInvariant\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>lookupInvariant<!>(key)
+    destination.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"lookupInvariant\", \"signature\":\"<K, V> MutableMap<K, V>.(K)\", \"normalInference\":{\"inferredTypes\":{\"K\":\"CapturedType(in K)\", \"V\":\"V\"}, \"receiver\":{\"actualType\":\"M\", \"inferredType\":\"MutableMap<CapturedType(in K), V>\", \"relation\":\"incomparable\"}, \"receiverTypeParameters\":{\"K\":{\"actualType\":\"CapturedType(in K)\", \"inferredType\":\"CapturedType(in K)\", \"relation\":\"incomparable\"}, \"V\":{\"actualType\":\"V\", \"inferredType\":\"V\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"K\":\"invariant\", \"V\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"K\":\"CapturedType(in K)\", \"V\":\"V\"}, \"receiverPhaseFixed\":[\"K\", \"V\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>lookupInvariant<!>(key)
 }
 
 fun stringLength(value: String): Int = value.length
 
 operator fun <T> Box<T>.plus(other: Box<T>): Box<T> = this
 
+operator fun <T> Source<T>.plus(other: Source<T>): Source<T> = this
+
 infix fun <T> Box<T>.merge(other: Box<T>) {}
 
 fun testAllVariablesFixedFromReceiver(box: Box<String>) {
-    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"receiverOnly\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>receiverOnly<!>()
-    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"boundedReceiver\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>boundedReceiver<!>()
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"receiverOnly\", \"signature\":\"<T> Box<T>.()\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>receiverOnly<!>()
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"boundedReceiver\", \"signature\":\"<T : CharSequence> Box<T>.()\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>boundedReceiver<!>()
 }
 
 fun testReceiverParameterVariance(function: (String) -> Int) {
-    function.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"functionReceiver\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>functionReceiver<!>()
+    function.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"functionReceiver\", \"signature\":\"<T, R> (T) -> R.()\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiver\":{\"actualType\":\"(String) -> Int\", \"inferredType\":\"(String) -> Int\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}, \"R\":{\"actualType\":\"Int\", \"inferredType\":\"Int\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"P1\":\"contravariant\", \"R\":\"covariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiverPhaseFixed\":[\"R\", \"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>functionReceiver<!>()
 }
 
 fun testExtensionsWithoutReceiverTypeParametersAreIgnored(box: Box<String>) {
@@ -65,39 +74,52 @@ fun testExtensionsWithoutReceiverTypeParametersAreIgnored(box: Box<String>) {
 }
 
 fun testUnsupportedAnalysisIsReported(box: Box<String>) {
-    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"withDefault\", \"signature\":\"<T> Box<T>.(Int)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"error\", \"reason\":\"default, missing, or extra arguments\"}}"), MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"withDefault\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":0, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":1}}")!>withDefault<!>()
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"withDefault\", \"signature\":\"<T> Box<T>.(Int)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"error\", \"reason\":\"default, missing, or extra arguments\"}}")!>withDefault<!>()
 }
 
 fun testNotAllVariablesFixedFromReceiver(box: Box<String>) {
-    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"needsArgument\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>needsArgument<!>(42)
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"needsArgument\", \"signature\":\"<T, R> Box<T>.(R)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[\"R\"]}}")!>needsArgument<!>(42)
 }
 
 fun testTwoStageInferenceSucceeds(source: Source<String>, sink: Sink<String>) {
-    source.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"combine\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>combine<!>(sink)
+    source.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"combine\", \"signature\":\"<T, R> Source<T>.(Sink<R>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\", \"R\":\"String\"}, \"receiver\":{\"actualType\":\"Source<String>\", \"inferredType\":\"Source<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\", \"R\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[\"R\"]}}")!>combine<!>(sink)
 }
 
 fun testTwoStageInferenceFails(source: Source<String>, sink: Sink<Int>) {
-    source.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"reject\", \"signature\":\"<T> Source<T>.(Sink<T>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Source<String>\", \"inferredType\":\"Source<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"inapplicable\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}"), MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"reject\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":0, \"inapplicableCalls\":1, \"failedCalls\":0, \"errorCalls\":0}}")!>reject<!>(<!ARGUMENT_TYPE_MISMATCH("Sink<Int>; Sink<String>")!>sink<!>)
+    source.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"reject\", \"signature\":\"<T> Source<T>.(Sink<T>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Source<String>\", \"inferredType\":\"Source<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"inapplicable\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>reject<!>(<!ARGUMENT_TYPE_MISMATCH("Sink<Int>; Sink<String>")!>sink<!>)
 }
 
 fun testReceiverOverApproximation() {
-    "".<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"approximation\", \"signature\":\"<T> T.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"Any\"}, \"receiver\":{\"actualType\":\"String\", \"inferredType\":\"Any\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"Any\", \"relation\":\"over_approximated\"}}, \"receiverParameters\":{}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"inapplicable\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}"), MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"approximation\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":0, \"inapplicableCalls\":1, \"failedCalls\":0, \"errorCalls\":0}}")!>approximation<!>(Any())
+    "".<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"approximation\", \"signature\":\"<T> T.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"Any\"}, \"receiver\":{\"actualType\":\"String\", \"inferredType\":\"Any\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"Any\", \"relation\":\"over_approximated\"}}, \"receiverParameters\":{}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"inapplicable\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>approximation<!>(Any())
 }
 
-fun testOperatorAndInfixCalls(box: Box<String>) {
-    box <!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"plus\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>+<!> box
-    box <!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"merge\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>merge<!> box
+fun testOperatorAndInfixCalls(box: Box<String>, source: Source<String>) {
+    box <!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"plus\", \"signature\":\"<T> Box<T>.(Box<T>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>+<!> box
+    source <!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"plus\", \"signature\":\"<T> Source<T>.(Source<T>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Source<String>\", \"inferredType\":\"Source<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>+<!> source
+    box <!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"merge\", \"signature\":\"<T> Box<T>.(Box<T>)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>merge<!> box
 }
 
 fun testPostponedArguments(box: Box<String>) {
-    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"transform\", \"summary\":{\"totalCalls\":2, \"successfulCalls\":2, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>transform<!> { it.length }
-    box.transform(::stringLength)
-    "".<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"linkedByBound\", \"summary\":{\"totalCalls\":1, \"successfulCalls\":1, \"inapplicableCalls\":0, \"failedCalls\":0, \"errorCalls\":0}}")!>linkedByBound<!> { null }
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"transform\", \"signature\":\"<T, R> Box<T>.((T) -> R)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[\"R\"]}}")!>transform<!> { it.length }
+    box.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"transform\", \"signature\":\"<T, R> Box<T>.((T) -> R)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiver\":{\"actualType\":\"Box<String>\", \"inferredType\":\"Box<String>\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\", \"R\":\"Int\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[\"R\"]}}")!>transform<!>(::stringLength)
+    "".<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"linkedByBound\", \"signature\":\"<C : R, R> C.(() -> R)\", \"normalInference\":{\"inferredTypes\":{\"C\":\"String\", \"R\":\"String?\"}, \"receiver\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}, \"receiverTypeParameters\":{\"C\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"C\":\"String\", \"R\":\"String?\"}, \"receiverPhaseFixed\":[\"C\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[\"R\"]}}")!>linkedByBound<!> { null }
 }
 
 fun testNestedReceiverTypeParameterApproximation(values: Set<Covariant<String>>, argument: CharSequence) {
-    values.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY("{\"callableId\":\"nestedReceiver\", \"summary\":{\"totalCalls\":2, \"successfulCalls\":1, \"inapplicableCalls\":1, \"failedCalls\":0, \"errorCalls\":0}}")!>nestedReceiver<!>("")
+    values.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"nestedReceiver\", \"signature\":\"<T> Iterable<Covariant<T>>.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"Set<Covariant<String>>\", \"inferredType\":\"Iterable<Covariant<String>>\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"covariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>nestedReceiver<!>("")
     values.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"nestedReceiver\", \"signature\":\"<T> Iterable<Covariant<T>>.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"CharSequence\"}, \"receiver\":{\"actualType\":\"Set<Covariant<String>>\", \"inferredType\":\"Iterable<Covariant<CharSequence>>\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"CharSequence\", \"relation\":\"over_approximated\"}}, \"receiverParameters\":{\"T\":\"covariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"inapplicable\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>nestedReceiver<!>(argument)
+}
+
+// Receiver over-approximated (Set/SpecificContainer is a proper subtype of the declared receiver type),
+// yet two-phase inference still succeeds because the receiver-derived type parameter is exact.
+fun testReceiverClassOverApproximatedButSuccessful(specific: SpecificContainer) {
+    specific.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"acceptExact\", \"signature\":\"<T> Container<T>.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"String\"}, \"receiver\":{\"actualType\":\"SpecificContainer\", \"inferredType\":\"Container<String>\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"String\", \"inferredType\":\"String\", \"relation\":\"exact\"}}, \"receiverParameters\":{\"T\":\"invariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"String\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>acceptExact<!>("")
+}
+
+// Receiver type PARAMETER over-approximated (String widened to Number via an explicit type argument on a
+// covariant receiver), yet two-phase inference still succeeds because the argument fits the widened type.
+fun testReceiverTypeParameterOverApproximatedButSuccessful(covariant: Covariant<Int>) {
+    covariant.<!MEMBER_EXTENSION_TWO_PHASE_INFERENCE("{\"callableId\":\"acceptCovariant\", \"signature\":\"<T> Covariant<T>.(T)\", \"normalInference\":{\"inferredTypes\":{\"T\":\"Number\"}, \"receiver\":{\"actualType\":\"Covariant<Int>\", \"inferredType\":\"Covariant<Number>\", \"relation\":\"over_approximated\"}, \"receiverTypeParameters\":{\"T\":{\"actualType\":\"Int\", \"inferredType\":\"Number\", \"relation\":\"over_approximated\"}}, \"receiverParameters\":{\"T\":\"covariant\"}}, \"twoPhaseInference\":{\"result\":\"success\", \"outcome\":\"successful\", \"inferredTypes\":{\"T\":\"Number\"}, \"receiverPhaseFixed\":[\"T\"], \"receiverPhaseUnfixed\":[], \"argumentPhaseFixed\":[]}}")!>acceptCovariant<!><Number>(2)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
