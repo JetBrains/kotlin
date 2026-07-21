@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.ir.IrElement
@@ -74,7 +75,7 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 /**
  * Replaces constructor calls by (alloc + static call).
  */
-internal class ConstructorsLowering(private val context: NativeBackendContext) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
+internal class ConstructorsLowering(private val context: NativeGenerationState) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
     private val createUninitializedInstance = context.symbols.createUninitializedInstance
     private val createUninitializedArray = context.symbols.createUninitializedArray
     private val createEmptyString = context.symbols.createEmptyString
@@ -112,7 +113,7 @@ internal class ConstructorsLowering(private val context: NativeBackendContext) :
         if (constructedClass.isInlined())
             return null
 
-        val loweredConstructorFunction = context.getLoweredConstructorFunction(constructor)
+        val loweredConstructorFunction = context.context.getLoweredConstructorFunction(constructor)
         if (body != null) {
             loweredConstructorFunction.body = body as IrBlockBody
             body.setDeclarationsParent(loweredConstructorFunction)
@@ -150,7 +151,7 @@ internal class ConstructorsLowering(private val context: NativeBackendContext) :
                         val callee = expression.symbol.owner
                         if (callee.constructedClass.isAny() || callee.constructedClass.isExternalObjCClass())
                             irComposite { }
-                        else irCall(this@ConstructorsLowering.context.getLoweredConstructorFunction(callee),
+                        else irCall(this@ConstructorsLowering.context.context.getLoweredConstructorFunction(callee),
                                 origin = LOWERED_DELEGATING_CONSTRUCTOR_CALL
                         ).apply {
                             dispatchReceiver = irGet(loweredConstructorFunction.dispatchReceiverParameter!!)
@@ -169,7 +170,7 @@ internal class ConstructorsLowering(private val context: NativeBackendContext) :
         val constructor = expression.symbol.owner
         require(constructor.parameters.none { it.kind == IrParameterKind.ExtensionReceiver }) { "A constructor call cannot have the extension receiver: ${expression.render()}" }
         val constructedType = constructor.constructedClassType
-        val loweredConstructorFunction = context.getLoweredConstructorFunction(constructor)
+        val loweredConstructorFunction = context.context.getLoweredConstructorFunction(constructor)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
         return when {
             constructor.constructedClass.isObjCClass() -> {
@@ -210,7 +211,7 @@ internal class ConstructorsLowering(private val context: NativeBackendContext) :
 
         val instance = expression.arguments[0]
         val constructorCall = expression.arguments[1] as IrConstructorCall
-        val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner)
+        val loweredConstructorFunction = context.context.getLoweredConstructorFunction(constructorCall.symbol.owner)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
         return irBuilder.irCall(loweredConstructorFunction).apply {
             dispatchReceiver = instance

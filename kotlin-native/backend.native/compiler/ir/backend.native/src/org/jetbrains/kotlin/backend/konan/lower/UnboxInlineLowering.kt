@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
 import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * So, the snippets `CALL 'public final fun <T-unbox> (IrExpression)` are transformed to 'GET_FIELD(IrExpression, backing_field)'.
  */
 internal class UnboxInlineLowering(
-        private val context: CommonBackendContext,
+        private val context: NativeGenerationState,
 ) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -33,9 +34,7 @@ internal class UnboxInlineLowering(
     }
 }
 
-private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrElementTransformerVoid() {
-    private val context = commonBackendContext as NativeBackendContext
-
+private class AccessorInliner(private val context: NativeGenerationState) : IrElementTransformerVoid() {
     private fun IrFunction.isEasyInlineableUnbox(): Boolean = !returnType.isNullable() && isUnbox()
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -48,7 +47,7 @@ private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrEl
 
     private fun tryInlineUnbox(call: IrCall): IrExpression? {
         val returnClass = call.type.getClass()!!
-        val singleStatement = context.getUnboxFunction(returnClass).body?.statements?.singleOrNull()
+        val singleStatement = context.context.getUnboxFunction(returnClass).body?.statements?.singleOrNull()
         return if (singleStatement is IrReturn) {
             val retVal = singleStatement.value
             if (retVal is IrGetField) {

@@ -259,7 +259,7 @@ private class ScopeWithCounter(val irElement: IrElement) {
     val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
 }
 
-class KlibInventNamesForLocalFunctions(
+open class KlibInventNamesForLocalFunctions(
     override val suggestUniqueNames: Boolean = true,
 ) : InventNamesForLocalFunctions() {
     override val compatibilityModeForInlinedLocalDelegatedPropertyAccessors get() = false

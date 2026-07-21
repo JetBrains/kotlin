@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * This lowering pass replaces [IrStringConcatenation]s with StringBuilder appends.
  */
+@PhasePrerequisites(FlattenStringConcatenationLowering::class, ForLoopsLowering::class)
 class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)

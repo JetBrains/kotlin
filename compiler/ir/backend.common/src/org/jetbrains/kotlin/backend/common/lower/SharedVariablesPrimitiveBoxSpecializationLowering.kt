@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * of primitive types.
  */
 @PhasePrerequisites(SharedVariablesLowering::class)
-class SharedVariablesPrimitiveBoxSpecializationLowering(
+open class SharedVariablesPrimitiveBoxSpecializationLowering(
     private val context: CommonBackendContext,
     private val symbols: BackendKlibSymbols,
 ) : BodyLoweringPass {
