@@ -34,9 +34,15 @@ class DelegateProvider {
 
 class Host {
   val testMember: String /* by */
-    field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = Host::testMember)
+    field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = KProperty1<Host, String>(
+      /* bound = */ [],
+      /* getter = */      local fun(p0: Host): String    )
+)
     get(): String {
-      return <this>.#testMember$delegate.getValue(thisRef = <this>, property = Host::testMember)
+      return <this>.#testMember$delegate.getValue(thisRef = <this>, property = KProperty1<Host, String>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: Host): String      )
+)
     }
 
   constructor() /* primary */ {
@@ -46,3 +52,4 @@ class Host {
   }
 
 }
+

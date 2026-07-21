@@ -25,7 +25,12 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:projectTemplate$delegate type:<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> visibility:private [final] declared in <root>.IdeWizard' type=<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
                 receiver: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<get-projectTemplate>' type=<root>.IdeWizard origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<get-projectTemplate>' type=<root>.IdeWizard origin=null
-              ARG property: PROPERTY_REFERENCE 'public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard' field=null getter='public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' setter='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Int?
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int?
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-projectTemplate> visibility:public modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IdeWizard
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int?
@@ -36,7 +41,12 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:projectTemplate$delegate type:<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> visibility:private [final] declared in <root>.IdeWizard' type=<root>.IdeWizard.setting.<no name provided><kotlin.Int, <root>.SettingType<kotlin.Int>> origin=null
                 receiver: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>' type=<root>.IdeWizard origin=null
-              ARG property: PROPERTY_REFERENCE 'public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard' field=null getter='public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' setter='public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Int?
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int?
               ARG value: GET_VAR '<set-?>: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>' type=kotlin.Int? origin=null
     CONSTRUCTOR visibility:public returnType:<root>.IdeWizard [primary]
       BLOCK_BODY

@@ -32,7 +32,13 @@ FILE fqName:<root> fileName:/reflectGetOnNullableTypeAlias.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:backRefProp type:kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? [val]
-        PROPERTY_REFERENCE 'public final bar: kotlin.String declared in <root>.Foo' field=null getter='public final fun <get-bar> (): kotlin.String declared in <root>.Foo' setter=null type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.String> origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.String> origin=null reflectionTarget='public final bar: kotlin.String declared in <root>.Foo'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.Foo): kotlin.String declared in <root>.box'
+                CALL 'public final fun <get-bar> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.box.bar' type=<root>.Foo origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

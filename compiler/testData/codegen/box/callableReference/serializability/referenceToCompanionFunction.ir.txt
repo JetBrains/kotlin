@@ -107,23 +107,65 @@ FILE fqName:<root> fileName:/referenceToCompanionFunction.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:ref1 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in <root>.Some.Companion' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun foo (): kotlin.String declared in <root>.Some.Companion'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Some.Companion
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.Some.Companion): kotlin.String declared in <root>.box'
+                CALL 'public final fun foo (): kotlin.String declared in <root>.Some.Companion' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Some.Companion declared in <root>.box.foo' type=<root>.Some.Companion origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:ref2 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public open fun bar (): kotlin.String declared in <root>.Some.Companion' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public open fun bar (): kotlin.String declared in <root>.Some.Companion'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Some.Companion
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (receiver: <root>.Some.Companion): kotlin.String declared in <root>.box'
+                CALL 'public open fun bar (): kotlin.String declared in <root>.Some.Companion' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Some.Companion declared in <root>.box.bar' type=<root>.Some.Companion origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:ref3 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in <root>.Some.Companion' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun foo (): kotlin.String declared in <root>.Some.Companion'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Some.Companion
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.Some.Companion): kotlin.String declared in <root>.box'
+                CALL 'public final fun foo (): kotlin.String declared in <root>.Some.Companion' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Some.Companion declared in <root>.box.foo' type=<root>.Some.Companion origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:ref4 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public open fun bar (): kotlin.String declared in <root>.Some.Companion' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public open fun bar (): kotlin.String declared in <root>.Some.Companion'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<root>.Base]' type=<root>.Some.Companion
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Some.Companion
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (receiver: <root>.Some.Companion): kotlin.String declared in <root>.box'
+                CALL 'public open fun bar (): kotlin.String declared in <root>.Some.Companion' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Some.Companion declared in <root>.box.bar' type=<root>.Some.Companion origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:ref5 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in <root>.Singleton' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Singleton modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Singleton
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun foo (): kotlin.String declared in <root>.Singleton'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Singleton modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Singleton
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Singleton
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.Singleton): kotlin.String declared in <root>.box'
+                CALL 'public final fun foo (): kotlin.String declared in <root>.Singleton' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Singleton declared in <root>.box.foo' type=<root>.Singleton origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:ref6 type:kotlin.reflect.KFunction0<kotlin.String> [val]
-        FUNCTION_REFERENCE 'public open fun bar (): kotlin.String declared in <root>.Singleton' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Singleton modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Singleton
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public open fun bar (): kotlin.String declared in <root>.Singleton'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Singleton modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Singleton
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Singleton
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (receiver: <root>.Singleton): kotlin.String declared in <root>.box'
+                CALL 'public open fun bar (): kotlin.String declared in <root>.Singleton' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Singleton declared in <root>.box.bar' type=<root>.Singleton origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:result type:kotlin.String [val]
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS

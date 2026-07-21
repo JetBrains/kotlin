@@ -43,18 +43,19 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:testArrayAndDefaults visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL returnType:kotlin.Unit
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget='public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Array<out kotlin.String>
             BLOCK_BODY
               CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                   SPREAD_ELEMENT
                     GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun zap (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults' type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>
       CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zapGeneric visibility:local modality:FINAL returnType:kotlin.Unit
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget='public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zapGeneric visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Array<out kotlin.String>
             BLOCK_BODY
               CALL 'public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -62,16 +63,25 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                 ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                   SPREAD_ELEMENT
                     GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zapGeneric' type=kotlin.Array<out kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun zapGeneric (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults' type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>
   FUN name:testArrayAsVararg visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useArray (fn: kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "args")] kotlin.Array<out kotlin.Number>, kotlin.Int> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "args")] kotlin.Array<out kotlin.Number>, kotlin.Int> origin=null reflectionTarget='public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:nsum visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "args")] kotlin.Array<out kotlin.Number>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun nsum (p0: @[ParameterName(name = "args")] kotlin.Array<out kotlin.Number>): kotlin.Int declared in <root>.testArrayAsVararg'
+                CALL 'public final fun nsum (vararg args: kotlin.Number): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  ARG args: VARARG type=kotlin.Array<out kotlin.Number> varargElementType=kotlin.Number
+                    SPREAD_ELEMENT
+                      GET_VAR 'p0: @[ParameterName(name = "args")] kotlin.Array<out kotlin.Number> declared in <root>.testArrayAsVararg.nsum' type=@[ParameterName(name = "args")] kotlin.Array<out kotlin.Number> origin=null
   FUN name:testPlainArgs visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePlainArgs (fn: kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:sum visibility:local modality:FINAL returnType:kotlin.Int
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=null [vararg_conversion] reflectionTarget='public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 declared in kotlin.Function2
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:sum visibility:local modality:FINAL returnType:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Int
             BLOCK_BODY
@@ -80,11 +90,19 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                   ARG args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
                     GET_VAR 'p1: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun sum (p0: kotlin.Int, p1: kotlin.Int): kotlin.Int declared in <root>.testPlainArgs' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>
   FUN name:testPrimitiveArrayAsVararg visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "args")] kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "args")] kotlin.IntArray, kotlin.Int> origin=null reflectionTarget='public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:sum visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "args")] kotlin.IntArray
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun sum (p0: @[ParameterName(name = "args")] kotlin.IntArray): kotlin.Int declared in <root>.testPrimitiveArrayAsVararg'
+                CALL 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  ARG args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    SPREAD_ELEMENT
+                      GET_VAR 'p0: @[ParameterName(name = "args")] kotlin.IntArray declared in <root>.testPrimitiveArrayAsVararg.sum' type=@[ParameterName(name = "args")] kotlin.IntArray origin=null
   FUN name:useArray visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>
     BLOCK_BODY

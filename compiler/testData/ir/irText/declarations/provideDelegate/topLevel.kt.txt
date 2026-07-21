@@ -1,7 +1,13 @@
 val testTopLevel: String /* by */
-  field = DelegateProvider(value = "OK").provideDelegate(thisRef = null, property = ::testTopLevel)
+  field = DelegateProvider(value = "OK").provideDelegate(thisRef = null, property = KProperty0<String>(
+    /* bound = */ [],
+    /* getter = */    local fun(): String  )
+)
   get(): String {
-    return #testTopLevel$delegate.getValue(thisRef = null, property = ::testTopLevel)
+    return #testTopLevel$delegate.getValue(thisRef = null, property = KProperty0<String>(
+      /* bound = */ [],
+      /* getter = */      local fun(): String    )
+)
   }
 
 class Delegate {

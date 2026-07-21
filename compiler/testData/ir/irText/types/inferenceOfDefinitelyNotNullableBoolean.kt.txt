@@ -14,9 +14,13 @@ val x: Boolean /* by */
   }
 )
   get(): Boolean {
-    return getValue<Boolean>(/* <this> = #x$delegate, */ thisRef = null, property = ::x)
+    return getValue<Boolean>(/* <this> = #x$delegate, */ thisRef = null, property = KProperty0<Boolean>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Boolean    )
+)
   }
 
 fun main() {
   println(message = <get-x>())
 }
+

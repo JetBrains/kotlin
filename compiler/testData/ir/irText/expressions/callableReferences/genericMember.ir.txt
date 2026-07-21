@@ -2,7 +2,13 @@ FILE fqName:<root> fileName:/genericMember.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null reflectionTarget='public final fun foo (): kotlin.Unit declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<kotlin.String>
+            BLOCK_BODY
+              CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                ARG <this>: GET_VAR 'p0: <root>.A<kotlin.String> declared in <root>.test1.foo' type=<root>.A<kotlin.String> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -11,7 +17,13 @@ FILE fqName:<root> fileName:/genericMember.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: kotlin.Int declared in <root>.A' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null reflectionTarget='public final bar: kotlin.Int declared in <root>.A'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.A<kotlin.String>): kotlin.Int declared in <root>.test2'
+                CALL 'public final fun <get-bar> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A<kotlin.String> declared in <root>.test2.bar' type=<root>.A<kotlin.String> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY

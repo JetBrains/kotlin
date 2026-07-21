@@ -1,13 +1,37 @@
 val <T : Any?> Value<T>.additionalText: Int /* by */
-  field = DVal(kmember = Value::text)
+  field = DVal(kmember = KMutableProperty1<Value<T>, String?>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: Value<T>): String? {
+      return p0.<get-text>()
+    }
+    /* setter = */    local fun(p0: Value<T>, value: String?) {
+      p0.<set-text>(<set-?> = value)
+    }
+  )
+)
   get(): Int {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>() */)
+    return #additionalText$delegate.getValue(t = <this>, p = KProperty1<Value<T>, Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(p0: Value<T>): Int    )
+)
   }
 
 val <T : Any?> Value<T>.additionalValue: Int /* by */
-  field = DVal(kmember = Value::value)
+  field = DVal(kmember = KMutableProperty1<Value<T>, T>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: Value<T>): T {
+      return p0.<get-value>()
+    }
+    /* setter = */    local fun(p0: Value<T>, value: T) {
+      p0.<set-value>(<set-?> = value)
+    }
+  )
+)
   get(): Int {
-    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>() */)
+    return #additionalValue$delegate.getValue(t = <this>, p = KProperty1<Value<T>, Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(p0: Value<T>): Int    )
+)
   }
 
 var recivier: Any?
@@ -21,7 +45,16 @@ var value2: Any?
   set
 
 val barRef: KMutableProperty1<String?, String?>
-  field = ::bar/*<String?>() */
+  field = KMutableProperty1<String?, String?>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: String?): String? {
+      return <get-bar><String?>(/* <this> = p0 */)
+    }
+    /* setter = */    local fun(p0: String?, value: String?) {
+      <set-bar><String?>(/* <this> = p0, */ value = value)
+    }
+  )
+
   get
 
 class DVal {

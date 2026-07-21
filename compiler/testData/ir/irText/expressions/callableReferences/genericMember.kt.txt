@@ -1,9 +1,21 @@
 val test1: KFunction1<A<String>, Unit>
-  field = A::foo
+  field = KFunction1<A<String>, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: A<String>) {
+      p0.foo()
+    }
+  )
+
   get
 
 val test2: KProperty1<A<String>, Int>
-  field = A::bar
+  field = KProperty1<A<String>, Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: A<String>): Int {
+      return p0.<get-bar>()
+    }
+  )
+
   get
 
 class A<T : Any?> {

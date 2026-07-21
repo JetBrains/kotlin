@@ -97,7 +97,16 @@ FILE fqName:<root> fileName:/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt
           TYPE_ARG (of class) T2: kotlin.Int
           ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
       VAR name:aliasedInner type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> [val]
-        FUNCTION_REFERENCE 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget=<same>
+        RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget='public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<init> visibility:local modality:FINAL returnType:<root>.Foo.Inner<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "p")] kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <init> (p0: <root>.Foo<kotlin.String>, p1: @[ParameterName(name = "p")] kotlin.String): <root>.Foo.Inner<kotlin.String> declared in <root>.box'
+                CONSTRUCTOR_CALL 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=<root>.Foo.Inner<kotlin.String> origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.Foo<kotlin.String> declared in <root>.box.<init>' type=<root>.Foo<kotlin.String> origin=null
+                  ARG p: GET_VAR 'p1: @[ParameterName(name = "p")] kotlin.String declared in <root>.box.<init>' type=@[ParameterName(name = "p")] kotlin.String origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

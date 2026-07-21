@@ -2,18 +2,27 @@ val test1: Int /* by */
   field = Cell(value = 1)
   @A(x = "test1.get")
   get(): Int {
-    return #test1$delegate.getValue(thisRef = null, kProp = ::test1)
+    return #test1$delegate.getValue(thisRef = null, kProp = KProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int    )
+)
   }
 
 var test2: Int /* by */
   field = Cell(value = 2)
   @A(x = "test2.get")
   get(): Int {
-    return #test2$delegate.getValue(thisRef = null, kProp = ::test2)
+    return #test2$delegate.getValue(thisRef = null, kProp = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+)
   }
   @A(x = "test2.set")
   set(@A(x = "test2.set.param") <set-?>: Int) {
-    return #test2$delegate.setValue(thisRef = null, kProp = ::test2, newValue = <set-?>)
+    return #test2$delegate.setValue(thisRef = null, kProp = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+, newValue = <set-?>)
   }
 
 open annotation class A : Annotation {
@@ -50,3 +59,4 @@ class Cell {
   }
 
 }
+

@@ -12,7 +12,13 @@ class Foo {
 }
 
 fun box(): String {
-  val backRefProp: KProperty1<Foo, Any?>? = Foo::bar
+  val backRefProp: KProperty1<Foo, Any?>? = KProperty1<Foo, String>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: Foo): String {
+      return p0.<get-bar>()
+    }
+  )
+
   when {
     EQEQ(arg0 = backRefProp, arg1 = null).not() -> { // BLOCK
       return backRefProp /*as KProperty1<Foo, Any?> */.get(receiver = Foo()) as String

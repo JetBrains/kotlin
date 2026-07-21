@@ -2,5 +2,12 @@ fun foo() {
 }
 
 fun test(): KFunction0<Unit> {
-  return CHECK_NOT_NULL<KFunction0<Unit>>(arg0 = ::foo)
+  return CHECK_NOT_NULL<KFunction0<Unit>>(arg0 = KFunction0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
+      foo()
+    }
+  )
+)
 }
+

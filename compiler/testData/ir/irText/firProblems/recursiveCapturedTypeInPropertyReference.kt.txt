@@ -6,7 +6,13 @@ abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
   }
 
   fun foo(list: List<Any>) {
-    val result: List<AbstractSymbol<*>> = map<Recursive<*>, AbstractSymbol<*>>(/* <this> = filterIsInstance<Recursive<*>>(/* <this> = list */), */ transform = Recursive::symbol)
+    val result: List<AbstractSymbol<*>> = map<Recursive<*>, AbstractSymbol<*>>(/* <this> = filterIsInstance<Recursive<*>>(/* <this> = list */), */ transform = KProperty1<Recursive<*>, AbstractSymbol<out Any>>(
+      /* bound = */ [],
+      /* getter = */      local fun(p0: Recursive<*>): AbstractSymbol<out Any> {
+        return p0.<get-symbol>()
+      }
+    )
+)
   }
 
 }

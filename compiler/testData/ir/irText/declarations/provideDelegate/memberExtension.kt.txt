@@ -1,8 +1,14 @@
 object Host {
   val String.plusK: String /* by */
-    field = <this>.provideDelegate(/* <this> = "K", */ host = <this>, p = Host::plusK)
+    field = <this>.provideDelegate(/* <this> = "K", */ host = <this>, p = KProperty2<Host, String, String>(
+      /* bound = */ [],
+      /* getter = */      local fun(p0: Host, p1: String): String    )
+)
     get(): String {
-      return <this>.#plusK$delegate.getValue(receiver = <this>, p = Host::plusK)
+      return <this>.#plusK$delegate.getValue(receiver = <this>, p = KProperty2<Host, String, String>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: Host, p1: String): String      )
+)
     }
 
   val ok: String

@@ -26,33 +26,33 @@ class Outer {
 }
 
 fun testConstructor(): Any {
-  return use(fn = { // BLOCK
-    local fun <init>(p0: Int): C {
+  return use(fn = Function1<Int, C>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Int): C {
       return C(xs = [p0])
     }
-
-    ::<init>
-  })
+  )
+)
 }
 
 fun testInnerClassConstructor(outer: Outer): Any {
-  return use(fn = { // BLOCK
-    local fun Outer.<init>(p0: Int): Inner {
+  return use(fn = Function1<Int, Inner>(
+    /* bound = */ [outer],
+    /* invoke = */    local fun(receiver: Outer, p0: Int): Inner {
       return receiver.Inner(xs = [p0])
     }
-
-    ::<init>/*(receiver = outer) */
-  })
+  )
+)
 }
 
 fun testInnerClassConstructorCapturingOuter(): Any {
-  return use(fn = { // BLOCK
-    local fun Outer.<init>(p0: Int): Inner {
+  return use(fn = Function1<Int, Inner>(
+    /* bound = */ [Outer()],
+    /* invoke = */    local fun(receiver: Outer, p0: Int): Inner {
       return receiver.Inner(xs = [p0])
     }
-
-    ::<init>/*(receiver = Outer()) */
-  })
+  )
+)
 }
 
 fun use(fn: Function1<Int, Any>): Any {
