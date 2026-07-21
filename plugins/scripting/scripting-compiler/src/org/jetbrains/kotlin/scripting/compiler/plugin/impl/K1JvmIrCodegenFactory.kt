@@ -100,7 +100,7 @@ class K1JvmIrCodegenFactory(
     @K1Deprecation
     fun convertToIr(state: GenerationState, files: Collection<KtFile>, bindingContext: BindingContext): BackendInput = with(state) {
         convertToIr(
-            files, configuration, module, diagnosticReporter, bindingContext, config.languageVersionSettings, ignoreErrors,
+            files, configuration, module, diagnosticReporter, bindingContext, config.languageVersionSettings,
             skipBodies = !classBuilderMode.generateBodies
         )
     }
@@ -114,7 +114,6 @@ class K1JvmIrCodegenFactory(
         diagnosticReporter: DiagnosticReporter,
         bindingContext: BindingContext,
         languageVersionSettings: LanguageVersionSettings,
-        ignoreErrors: Boolean,
         skipBodies: Boolean,
     ): BackendInput {
         val enableIdSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
@@ -130,7 +129,7 @@ class K1JvmIrCodegenFactory(
             }
         val psi2ir = Psi2IrTranslator(
             languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors, skipBodies),
+            Psi2IrConfiguration(ignoreErrors = false, skipBodies),
             configuration::checkNoUnboundSymbols
         )
         val psi2irContext = psi2ir.createGeneratorContext(

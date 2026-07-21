@@ -41,7 +41,6 @@ class GenerationState(
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
     val jvmBackendClassResolver: JvmBackendClassResolver,
-    val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
