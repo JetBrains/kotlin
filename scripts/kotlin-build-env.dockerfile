@@ -39,6 +39,8 @@ RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21
 
 RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
+RUN curl https://download.java.net/java/early_access/valhalla/27/1/openjdk-27-jep401ea3+1-1_linux-x64_bin.tar.gz | tar -xz -C /usr/lib/jvm
+
 # New naming conventions
 ENV JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
@@ -57,6 +59,8 @@ ENV JDK_11_0=$JDK11 \
     JDK_17_0=$JDK17 \
     JDK_21_0=$JDK21 \
     JDK_25_0=$JDK25
+
+ENV JDK_VALHALLA=/usr/lib/jvm/jdk-27
 
 ENV JAVA_HOME=$JDK_17_0
 ENV PATH="$PATH:$JAVA_HOME/bin"
