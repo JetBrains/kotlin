@@ -8,11 +8,9 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
-import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
-@PublishedApi
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
 internal fun <T> getContinuation(): Continuation<T> =
@@ -24,9 +22,13 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T =
     argument as T
 
 @PublishedApi
-@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
+internal suspend inline fun getCoroutineContext(): CoroutineContext =
+    getCoroutineContextImpl()
+
+@PublishedApi
+internal suspend fun getCoroutineContextImpl(): CoroutineContext =
+    getContinuation<Any?>().context
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
