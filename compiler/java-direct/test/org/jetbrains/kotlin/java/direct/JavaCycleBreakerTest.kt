@@ -128,15 +128,17 @@ class JavaCycleBreakerTest {
     // Because that module has compiler plugins enabled, the candidate is probed through
     // `FirExtensionDeclarationsSymbolProvider` -> `FirNestedClassifierScopeImpl`, which forces
     // `FirJavaClass.declarations` — a PUBLICATION lazy that re-runs on same-thread re-entrance
-    // (KT-74097). Materialising those declarations re-converts the same `@Deprecated` field
-    // (`convertJavaFieldToFir` / `setAnnotationsFromJava`), which re-resolves the very same
-    // candidate `ClassId` -> a self-cycle. `cycleSafeClassLikeSymbol` marks the ClassId in-flight
-    // on the first probe, so the second (re-entrant) probe short-circuits to `null` and resolution
-    // falls back to `java.lang.Deprecated` instead of crashing with a StackOverflowError.
+    // (KT-74097). Materialising those declarations used to re-convert the same `@Deprecated` enum
+    // entry's annotations eagerly (`convertJavaFieldToFir`'s enum-entry arm), re-resolving the very
+    // same candidate `ClassId` -> a self-cycle. Enum-entry annotations are now deferred via
+    // `FirLazyJavaAnnotationList`, like every other Java member, so materialising declarations no
+    // longer triggers that eager resolution; `cycleSafeClassLikeSymbol` marking the ClassId
+    // in-flight is now defense-in-depth against the PUBLICATION-lazy re-entrance in general, rather
+    // than the only thing preventing this specific crash.
     //
-    // The test below reproduces that re-entrance with a minimal stub provider rather than the heavy
-    // full-pipeline module: the stub's lookup calls back into `cycleSafeClassLikeSymbol` for the
-    // same ClassId, standing in for the declarations-materialisation re-entrance above.
+    // The test below reproduces the re-entrance shape with a minimal stub provider rather than the
+    // heavy full-pipeline module: the stub's lookup calls back into `cycleSafeClassLikeSymbol` for
+    // the same ClassId, standing in for a declarations-materialisation re-entrance in general.
 
     @OptIn(SessionConfiguration::class)
     @Test
