@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import kotlinx.validation.api.ClassBinarySignature
-import kotlinx.validation.api.dump
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.fail
+import kotlinx.validation.api.*
 import java.io.File
-import java.util.*
+import java.util.LinkedList
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.fail
 
 private val OVERWRITE_EXPECTED_OUTPUT = System.getProperty("overwrite.output")?.toBoolean() ?: false // use -Doverwrite.output=true
 

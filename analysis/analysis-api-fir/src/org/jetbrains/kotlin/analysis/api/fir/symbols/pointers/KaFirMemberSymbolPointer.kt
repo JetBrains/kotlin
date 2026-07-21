@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
@@ -62,10 +64,11 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
         other.isStatic == isStatic && other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }
 
-internal inline fun <reified T : KaSymbol> KaSession.createOwnerPointer(symbol: KaSymbol): KaSymbolPointer<T> {
-    val containingSymbol = symbol.containingDeclaration
-        ?: errorWithAttachment("Non-null containingDeclaration is expected for a member declaration for `${symbol::class}`, expecting `${T::class}` type of owner") {
-            withSymbolAttachment("child", this@createOwnerPointer, symbol)
+context(sessionOwner: KaFirSymbol<*>)
+internal inline fun <reified T : KaSymbol> KaSymbol.createOwnerPointer(): KaSymbolPointer<T> {
+    val containingSymbol = context(sessionOwner.analysisSession) { this.containingDeclaration }
+        ?: errorWithAttachment("Non-null containingDeclaration is expected for a member declaration for `${this@createOwnerPointer::class}`, expecting `${T::class}` type of owner") {
+            withSymbolAttachment("child", sessionOwner.analysisSession, this@createOwnerPointer)
         }
 
     requireIsInstance<T>(containingSymbol)

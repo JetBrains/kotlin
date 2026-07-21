@@ -1,12 +1,15 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.canBeOperator
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -27,7 +30,7 @@ abstract class AbstractCanBeOperatorTest : AbstractAnalysisApiBasedTest() {
 
             buildString {
                 appendLine("FUNCTION:")
-                appendLine("  ${symbolRenderer.render(this@copyAwareAnalyzeForTest, functionSymbol)}")
+                appendLine("  ${symbolRenderer.render(useSiteSession, functionSymbol)}")
                 appendLine("CAN_BE_OPERATOR:")
                 appendLine("  $canBeOperator")
             }

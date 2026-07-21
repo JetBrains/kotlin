@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.util.parentOfType
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator

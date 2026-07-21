@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule

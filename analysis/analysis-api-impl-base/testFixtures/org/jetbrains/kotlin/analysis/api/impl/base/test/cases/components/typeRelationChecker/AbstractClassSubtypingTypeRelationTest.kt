@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
+import org.jetbrains.kotlin.analysis.api.symbols.findClassLike
+import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -28,7 +30,8 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(ClassSubtypingTestDirectives)
 
-    override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
         val type = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
         val classId = ClassId.fromString(
             testServices.moduleStructure.allDirectives.singleValue(ClassSubtypingTestDirectives.SUPERCLASS_ID)
@@ -44,7 +47,8 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
         }
     }
 
-    protected abstract fun KaSession.checkIsSubtype(type: KaType, classId: ClassId): Boolean
+    context(_: KaSession)
+    protected abstract fun checkIsSubtype(type: KaType, classId: ClassId): Boolean
 }
 
 private object ClassSubtypingTestDirectives : SimpleDirectivesContainer() {
@@ -63,7 +67,8 @@ private object ClassSubtypingTestDirectives : SimpleDirectivesContainer() {
 }
 
 abstract class AbstractClassIdSubtypingTypeRelationTest : AbstractClassSubtypingTypeRelationTest() {
-    override fun KaSession.checkIsSubtype(type: KaType, classId: ClassId): Boolean = type.isSubtypeOf(classId, errorTypePolicy)
+    context(_: KaSession)
+    override fun checkIsSubtype(type: KaType, classId: ClassId): Boolean = type.isSubtypeOf(classId, errorTypePolicy)
 }
 
 abstract class AbstractNonLenientClassIdSubtypingTypeRelationTest : AbstractClassIdSubtypingTypeRelationTest() {
@@ -79,7 +84,8 @@ abstract class AbstractLenientClassIdSubtypingTypeRelationTest : AbstractClassId
 }
 
 abstract class AbstractClassSymbolSubtypingTypeRelationTest : AbstractClassSubtypingTypeRelationTest() {
-    override fun KaSession.checkIsSubtype(type: KaType, classId: ClassId): Boolean {
+    context(_: KaSession)
+    override fun checkIsSubtype(type: KaType, classId: ClassId): Boolean {
         val symbol = findClassLike(classId) ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
         return type.isSubtypeOf(symbol, errorTypePolicy)
     }

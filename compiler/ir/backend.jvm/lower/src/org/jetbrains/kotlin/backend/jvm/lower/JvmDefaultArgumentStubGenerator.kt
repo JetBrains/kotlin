@@ -31,7 +31,10 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     skipExternalMethods = false
 ) {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
+        if (declaration is IrFunction &&
+            declaration !is IrConstructor &&
+            declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        ) return null
         return super.transformFlat(declaration)
     }
 

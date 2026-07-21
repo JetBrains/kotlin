@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.metadata.*
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.metadataProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.supportsMetadata
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -152,18 +152,6 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
 
     private fun MetadataArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(kotlinToolchain.supportsMetadata(), "Test requires Metadata BTA support")
-        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
-
-        assumeTrue(
-            compilerVersion >= KotlinToolingVersion(introducedVersion),
-            "Test requires compiler version >= $introducedVersion"
-        )
-
-        if (removedVersion != null) {
-            assumeTrue(
-                compilerVersion < KotlinToolingVersion(removedVersion),
-                "Test requires compiler version < $removedVersion"
-            )
-        }
+        assumeArgumentAvailable()
     }
 }

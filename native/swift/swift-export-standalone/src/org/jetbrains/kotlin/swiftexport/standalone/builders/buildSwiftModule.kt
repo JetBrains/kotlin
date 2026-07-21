@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.loader.KlibLoader

@@ -44,7 +44,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
         get() = withValidityAssertion { false }
 
     override val origin: KaSymbolOrigin
-        get() = super<KaSyntheticJavaPropertySymbol>.origin
+        get() = withValidityAssertion { KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
     override val initializer: KaInitializerValue? get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
 
@@ -96,7 +96,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol> = withValidityAssertion {
         KaFirJavaSyntheticPropertySymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             propertyName = name,
             isSynthetic = firSymbol is SyntheticSymbol,
             originalSymbol = this

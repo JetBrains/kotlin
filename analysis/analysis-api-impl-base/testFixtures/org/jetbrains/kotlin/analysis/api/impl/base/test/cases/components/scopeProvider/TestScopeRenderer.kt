@@ -84,7 +84,7 @@ internal object TestScopeRenderer {
         scope: KaScope,
         printer: PrettyPrinter,
         printPretty: Boolean,
-        additionalSymbolInfo: KaSession.(KaSymbol) -> String? = { null }
+        additionalSymbolInfo: context(KaSession) (KaSymbol) -> String? = { null }
     ) {
         renderScopeMembers(scope, printer, printPretty, additionalSymbolInfo)
     }

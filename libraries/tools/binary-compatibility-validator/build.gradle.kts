@@ -20,6 +20,7 @@ dependencies {
         runtimeOnly(kotlin("compiler-embeddable", bootstrapKotlinVersion))
     }
 
+    testImplementation(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(kotlinStdlib())

@@ -168,7 +168,6 @@ fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
 
 private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL: Map<LanguageVersion, KlibAbiCompatibilityLevel> =
     buildMap {
-        this[LanguageVersion.KOTLIN_2_3] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
         this[LanguageVersion.KOTLIN_2_4] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_4
         this[LanguageVersion.KOTLIN_2_5] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_5
 

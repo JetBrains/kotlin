@@ -99,7 +99,8 @@ internal class SymbolLightConstructor private constructor(
     override fun getReturnType(): PsiType? = null
 
     companion object {
-        internal fun KaSession.createConstructors(
+        context(_: KaSession)
+        internal fun createConstructors(
             lightClass: SymbolLightClassBase,
             declarations: Sequence<KaConstructorSymbol>,
             result: MutableList<PsiMethod>,

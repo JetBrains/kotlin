@@ -9,6 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
+import org.jetbrains.kotlin.analysis.api.components.resolveToCall
+import org.jetbrains.kotlin.analysis.api.components.returnType
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.types.isUnitType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -51,15 +55,17 @@ internal class KaFirExpressionInformationProvider(
             return compilerMissingCases.map { it.toKaWhenMissingCase() }
         }
 
-    override fun isUsedAsExpression(expression: KtExpression): Boolean =
-        expression.withPsiValidityAssertion { isUsed(expression, null) }
-
-    override fun isUsedAsResultOfLambda(expression: KtExpression): Boolean =
-        expression.withPsiValidityAssertion {
-            val additionalInfoCollector = AdditionalInfoCollector()
-                .also { collector -> isUsed(expression, collector) }
-            additionalInfoCollector.isUsedAsResultOfLambda
+    override fun isUsedAsExpression(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
+        context(analysisSession) {
+            isUsed(expression, null)
         }
+    }
+
+    override fun isUsedAsResultOfLambda(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
+        val additionalInfoCollector = AdditionalInfoCollector()
+            .also { collector -> context(analysisSession) { isUsed(expression, collector) } }
+        additionalInfoCollector.isUsedAsResultOfLambda
+    }
 
     override fun isStableForSmartCasting(expression: KtExpression): Boolean =
         expression.withPsiValidityAssertion {
@@ -89,9 +95,10 @@ internal class KaFirExpressionInformationProvider(
      *
      * The methods are _conservative_, erring on the side of answering `true`.
      */
+    context(session: KaSession)
     private fun isUsed(
         psiElement: PsiElement,
-        additionalElementUsageInfoContext: AdditionalInfoCollector?
+        additionalElementUsageInfoContext: AdditionalInfoCollector?,
     ): Boolean = when (psiElement) {
         /**
          * DECLARATIONS
@@ -153,10 +160,11 @@ internal class KaFirExpressionInformationProvider(
             doesParentUseChild(psiElement.parent, psiElement, additionalElementUsageInfoContext)
     }
 
+    context(session: KaSession)
     private fun doesParentUseChild(
         parent: PsiElement,
         child: PsiElement,
-        additionalInfoCollector: AdditionalInfoCollector?
+        additionalInfoCollector: AdditionalInfoCollector?,
     ): Boolean = when (parent) {
         /**
          * NON-EXPRESSION PARENTS
@@ -273,13 +281,12 @@ internal class KaFirExpressionInformationProvider(
         // Lambdas do not use their expression-blocks if they are inferred
         // to be of the Unit type
         is KtFunctionLiteral ->
-            (parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)).also { value ->
+            (parent.bodyBlockExpression == child && !returnsUnit(parent)).also { value ->
                 additionalInfoCollector?.isUsedAsResultOfLambda = value
             }
 
         /** See [doesNamedFunctionUseBody] */
-        is KtNamedFunction ->
-            analysisSession.doesNamedFunctionUseBody(parent, child)
+        is KtNamedFunction -> doesNamedFunctionUseBody(parent, child)
 
         // Function parameter declarations use their default value expressions.
         is KtParameter ->
@@ -317,7 +324,7 @@ internal class KaFirExpressionInformationProvider(
         // Calls use only the callee directly -- arguments are wrapped in a
         // KtValueArgument container
         is KtCallExpression ->
-            parent.calleeExpression == child && analysisSession.doesCallExpressionUseCallee(child)
+            parent.calleeExpression == child && doesCallExpressionUseCallee(child)
 
         // Collection literals use each of its constituent expressions.
         is KtCollectionLiteralExpression ->
@@ -471,7 +478,8 @@ private val KtResolvable.canReferenceCallable: Boolean
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
-private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
+context(_: KaSession)
+private fun doesCallExpressionUseCallee(callee: PsiElement): Boolean {
     return callee !is KtReferenceExpression || isVariableAccessCall(callee)
 }
 
@@ -489,30 +497,27 @@ private fun doesPropertyAccessorUseBody(propertyAccessor: KtPropertyAccessor, bo
  *  - the function body is a block e.g., `fun foo(): Int { return bar }` or
  *  - the function itself returns Unit
  */
-private fun KaSession.doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
+context(session: KaSession)
+private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
     // The body is a block expression e.g., fun foo(): Int { return bar }
-    namedFunction.bodyBlockExpression == body ->
-        false
+    namedFunction.bodyBlockExpression == body -> false
     // Note that `namedFunction.hasBlockBody() == false` means the function definition uses `=` e.g., fun foo() = bar
-    !returnsUnit(namedFunction) ->
-        true
-    namedFunction.bodyExpression == body ->
-        (body as KtExpression).expressionType?.isUnitType == true
+    !returnsUnit(namedFunction) -> true
+    namedFunction.bodyExpression == body -> (body as KtExpression).expressionType?.isUnitType == true
+    else -> false
+}
+
+
+context(session: KaSession)
+private fun isVariableAccessCall(reference: KtReferenceExpression): Boolean = when (val resolution = reference.resolveToCall()) {
+    is KaSuccessCallInfo ->
+        resolution.call is KaVariableAccessCall
     else ->
         false
 }
 
-
-private fun KaSession.isVariableAccessCall(reference: KtReferenceExpression): Boolean =
-    when (val resolution = reference.resolveToCall()) {
-        is KaSuccessCallInfo ->
-            resolution.call is KaVariableAccessCall
-        else ->
-            false
-    }
-
-private fun KaSession.returnsUnit(declaration: KtDeclarationWithReturnType): Boolean =
-    declaration.returnType.isUnitType
+context(session: KaSession)
+private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.isUnitType
 
 internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
     is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase

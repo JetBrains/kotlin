@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaClassInitializerSymbol : KaDeclarationSymbol {
+    abstract override fun createPointer(): KaSymbolPointer<KaClassInitializerSymbol>
+
+    //region Implementation details
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
@@ -28,6 +31,5 @@ public abstract class KaClassInitializerSymbol : KaDeclarationSymbol {
     @KaExperimentalApi
     @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaClassInitializerSymbol>
+    //endregion
 }

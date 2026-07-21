@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,11 @@ import com.intellij.psi.PsiType
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -50,7 +52,7 @@ internal class SymbolLightFieldForObject private constructor(
         isCompanion = isCompanion,
     )
 
-    private inline fun <T> withObjectDeclarationSymbol(crossinline action: KaSession.(KaNamedClassSymbol) -> T): T =
+    private inline fun <T> withObjectDeclarationSymbol(crossinline action: context(KaSession) (KaNamedClassSymbol) -> T): T =
         objectSymbolPointer.withSymbol(ktModule, action)
 
     override fun getName(): String = name

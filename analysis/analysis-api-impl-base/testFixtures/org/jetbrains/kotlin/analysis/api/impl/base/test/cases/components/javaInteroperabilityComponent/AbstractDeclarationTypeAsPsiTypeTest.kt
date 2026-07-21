@@ -1,13 +1,17 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KaCompilationTarget
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget
+import org.jetbrains.kotlin.analysis.api.compilation.compile
+import org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.components.returnType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.TestAllowedErrorFilter
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.dumpClassFiles
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest.Directives.RENDER_CLASS_DUMP
@@ -55,7 +59,7 @@ abstract class AbstractDeclarationTypeAsPsiTypeTest : AbstractAnalysisApiBasedTe
                     val mode = testServices.moduleStructure.allDirectives.singleOrZeroValue(TYPE_MAPPING_MODE) ?: KaTypeMappingMode.DEFAULT
                     val psiType = kaType.asPsiType(psiContext, allowErrorTypes = false, mode = mode)
 
-                    appendLine("${KaType::class.simpleName}: ${kaType.render(useSiteSession)}")
+                    appendLine("${KaType::class.simpleName}: ${kaType.render()}")
                     appendLine("${PsiType::class.simpleName}: ${psiType?.render()}")
 
                     if (mainModule.testModule.directives.contains(RENDER_CLASS_DUMP)) {

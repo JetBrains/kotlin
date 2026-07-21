@@ -6,8 +6,8 @@
 package org.jetbrains.abi.tools.test
 
 import org.jetbrains.abi.tools.test.api.*
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class NonPublicMarkersTest : BaseKotlinGradleTest() {
 

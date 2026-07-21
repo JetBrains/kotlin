@@ -57,6 +57,7 @@ class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArt
                 compileLongAsBigInt = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives,
                 implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
                 exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
+                exportUntypedAsUnknown = JsEnvironmentConfigurationDirectives.EXPORT_UNTYPED_AS_UNKNOWN in module.directives,
                 dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
             )
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)

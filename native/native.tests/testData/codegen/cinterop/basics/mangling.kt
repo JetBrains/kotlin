@@ -1,5 +1,4 @@
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
-// ^^^ KT-86026 TODO: Rework testdata to move functions/globals definitions from .def/.h into separate source files
+// KT-86026 TODO: Rework testdata to move functions/globals definitions from .def/.h into separate source files
 
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop

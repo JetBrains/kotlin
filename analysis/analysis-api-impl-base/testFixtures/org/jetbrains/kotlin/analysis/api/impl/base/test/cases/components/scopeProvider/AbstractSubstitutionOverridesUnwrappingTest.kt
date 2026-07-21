@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeP
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolsData
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,7 +24,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest() {
 
-    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
+    context(_: KaSession)
+    override fun collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declarationUnderCaret = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtClassLikeDeclaration>(ktFile)
         val classSymbolUnderCaret = declarationUnderCaret.symbol as KaClassLikeSymbol
 
@@ -31,8 +34,9 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest(
         return SymbolsData(classSymbolUnderCaret.memberScope.declarations.toList())
     }
 
-    override fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
-        return KaDebugRenderer().renderForSubstitutionOverrideUnwrappingTest(this@renderSymbolForComparison, symbol)
+    context(analysisSession: KaSession)
+    override fun renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
+        return KaDebugRenderer().renderForSubstitutionOverrideUnwrappingTest(analysisSession, symbol)
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

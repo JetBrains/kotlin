@@ -7,9 +7,9 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import org.junit.jupiter.api.Assertions.assertNotSame
-import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 
 class InternerTest {
 

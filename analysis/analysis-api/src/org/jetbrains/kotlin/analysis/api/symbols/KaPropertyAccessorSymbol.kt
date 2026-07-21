@@ -16,26 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
  * of a property.
  */
 public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
-    override val isExtension: Boolean get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean get() = withValidityAssertion { false }
-
-    @KaExperimentalApi
-    final override val isCompanion: Boolean get() = withValidityAssertion { false }
-
-    /**
-     * Property accessors cannot have the `actual` modifier in valid code. This modifier is not propagated from containing declarations (the
-     * associated property) as for `expect` modifiers.
-     */
-    final override val isActual: Boolean get() = withValidityAssertion { false }
-
-    @KaExperimentalApi
-    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
-
-    final override val contextParameters: List<KaContextParameterSymbol> get() = withValidityAssertion { emptyList() }
-
-    final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
-
     /**
      * Whether the accessor is implicitly generated.
      */
@@ -123,9 +103,27 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
     @Deprecated("Use `isCustom` instead", ReplaceWith("isCustom"))
     public abstract val hasBody: Boolean
 
-    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
-
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyAccessorSymbol>
+
+    //region Implementation details
+    @KaExperimentalApi
+    final override val isCompanion: Boolean get() = withValidityAssertion { false }
+
+    /**
+     * Property accessors cannot have the `actual` modifier in valid code. This modifier is not propagated from containing declarations (the
+     * associated property) as for `expect` modifiers.
+     */
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+
+    final override val contextParameters: List<KaContextParameterSymbol> get() = withValidityAssertion { emptyList() }
+
+    final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
+
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.PROPERTY }
+    //endregion
 }
 
 /**
@@ -135,13 +133,15 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
+    abstract override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol>
+
+    //region Implementation details
     final override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { emptyList() }
 
     final override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol>
+    //endregion
 }
 
 /**
@@ -156,8 +156,10 @@ public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
      */
     public abstract val parameter: KaValueParameterSymbol
 
+    abstract override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol>
+
+    //region Implementation details
     final override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { listOf(parameter) }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol>
+    //endregion
 }

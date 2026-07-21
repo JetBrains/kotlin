@@ -11,6 +11,8 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -79,10 +81,10 @@ internal class SymbolLightAccessorMethod private constructor(
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
         get() = if (isGetter) getter!! else setter!!
 
-    private inline fun <T> withPropertySymbol(crossinline action: KaSession.(KaPropertySymbol) -> T): T =
+    private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T =
         containingPropertySymbolPointer.withSymbol(ktModule, action)
 
-    private inline fun <T> withAccessorSymbol(crossinline action: KaSession.(KaPropertyAccessorSymbol) -> T): T =
+    private inline fun <T> withAccessorSymbol(crossinline action: context(KaSession) (KaPropertyAccessorSymbol) -> T): T =
         propertyAccessorSymbolPointer.withSymbol(ktModule, action)
 
     private fun String.abiName() = if (isGetter) getterName(this) else setterName(this)
@@ -428,7 +430,8 @@ internal class SymbolLightAccessorMethod private constructor(
         context(context: Context)
         private val property: KaPropertySymbol get() = context.property
 
-        internal fun KaSession.createPropertyAccessors(
+        context(_: KaSession)
+        internal fun createPropertyAccessors(
             lightClass: SymbolLightClassBase,
             result: MutableList<PsiMethod>,
             declaration: KaPropertySymbol,
@@ -474,8 +477,8 @@ internal class SymbolLightAccessorMethod private constructor(
             }
         }
 
-        context(context: Context)
-        private fun KaSession.produceSymbolLightAccessorMethodIfNeeded(
+        context(context: Context, _: KaSession)
+        private fun produceSymbolLightAccessorMethodIfNeeded(
             accessor: KaPropertyAccessorSymbol,
             result: MutableList<PsiMethod>,
         ) {
@@ -591,8 +594,8 @@ internal class SymbolLightAccessorMethod private constructor(
         /**
          * Whether a light class potentially can be generated for the given accessor symbol
          */
-        context(context: Context)
-        private fun KaSession.lightAccessorCanExist(accessorSymbol: KaPropertyAccessorSymbol): Boolean = when {
+        context(context: Context, _: KaSession)
+        private fun lightAccessorCanExist(accessorSymbol: KaPropertyAccessorSymbol): Boolean = when {
             context.staticsFromCompanion && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
             isHiddenByDeprecation(property) -> false
             isHiddenOrSynthetic(accessorSymbol) -> false

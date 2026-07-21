@@ -12,16 +12,16 @@ import com.intellij.psi.AbstractFileViewProvider
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.TestWithDisposable
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.*
@@ -605,7 +605,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     protected fun <E : KtElement, R> copyAwareAnalyzeForTest(
         contextElement: E,
         danglingFileResolutionMode: KaDanglingFileResolutionMode = KaDanglingFileResolutionMode.IGNORE_SELF,
-        action: KaSession.(E) -> R,
+        action: context(KaSession) (E) -> R,
     ): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
@@ -616,6 +616,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
                     "The copied file should have the same original file as the original file" +
                             " (original file: '$originalContainingFile', copied file: '$fileCopy')."
                 }
+
                 action(getDependentElementFromFile(contextElement, fileCopy))
             }
         } else {
@@ -644,7 +645,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      *
      * If the test supports dependent analysis, [copyAwareAnalyzeForTest] should be used instead.
      */
-    protected fun <R> analyzeForTest(contextElement: KtElement, action: KaSession.() -> R): R {
+    protected fun <R> analyzeForTest(contextElement: KtElement, action: context(KaSession) () -> R): R {
         check(!configurator.analyseInDependentSession) {
             "The `analyzeForTest` function should not be used in tests which support dependent analysis mode." +
                     " Use `copyAwareAnalyzeForTest` instead."

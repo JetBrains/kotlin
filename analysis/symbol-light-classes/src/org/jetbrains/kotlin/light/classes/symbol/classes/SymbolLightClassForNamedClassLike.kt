@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
@@ -51,7 +52,8 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         return containingClass ?: containingFile
     }
 
-    protected fun KaSession.addMethodsFromCompanionIfNeeded(
+    context(session: KaSession)
+    protected fun addMethodsFromCompanionIfNeeded(
         result: MutableList<PsiMethod>,
         classSymbol: KaNamedClassSymbol,
     ) {
@@ -72,7 +74,8 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
 
     internal val isSealed: Boolean get() = withClassSymbol { it.modality == KaSymbolModality.SEALED }
 
-    internal fun KaSession.addFieldsFromCompanionIfNeeded(
+    context(session: KaSession)
+    internal fun addFieldsFromCompanionIfNeeded(
         result: MutableList<PsiField>,
         classSymbol: KaNamedClassSymbol,
         nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -95,7 +98,8 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
             }
     }
 
-    protected fun KaSession.addCompanionObjectFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    context(session: KaSession)
+    protected fun addCompanionObjectFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         val companionObjectSymbols: List<KaNamedClassSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
             it.namedClassSymbol
         } ?: classSymbol.companionObject?.let(::listOf)

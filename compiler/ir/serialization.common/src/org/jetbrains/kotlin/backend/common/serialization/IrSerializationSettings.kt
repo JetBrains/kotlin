@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.klibRelativePathBases

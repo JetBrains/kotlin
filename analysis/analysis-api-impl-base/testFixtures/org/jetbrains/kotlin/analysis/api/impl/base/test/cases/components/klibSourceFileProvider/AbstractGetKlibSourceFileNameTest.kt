@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
+import org.jetbrains.kotlin.analysis.api.symbols.findTopLevelCallables
+import org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure

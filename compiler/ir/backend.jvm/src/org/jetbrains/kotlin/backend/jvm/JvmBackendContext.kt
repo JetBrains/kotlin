@@ -107,12 +107,10 @@ class JvmBackendContext(
             defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)
         }
 
-        state.reportDuplicateClassNameError = { origin1, internalName, origin2 ->
-            val declaration1 = origin1.declaration as IrClass
-            val declaration2 = origin2.declaration as IrClass
-            diagnosticReporter.at(declaration1).report(
+        state.reportDuplicateClassNameError = { class1, internalName, class2 ->
+            diagnosticReporter.at(class1).report(
                 JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName,
-                listOf(declaration1, declaration2).joinToString { it.name.asString() },
+                listOf(class1, class2).joinToString { it.name.asString() },
             )
         }
 

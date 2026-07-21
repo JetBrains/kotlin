@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.records
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue

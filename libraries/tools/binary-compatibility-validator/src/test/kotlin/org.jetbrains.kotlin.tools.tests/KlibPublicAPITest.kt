@@ -8,19 +8,13 @@
 package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.ExperimentalBCVApi
-import kotlinx.validation.api.klib.KlibDump
-import kotlinx.validation.api.klib.KlibDumpFilters
-import kotlinx.validation.api.klib.mergeFromKlib
-import kotlinx.validation.api.klib.saveTo
-import org.junit.jupiter.api.Assertions.assertTrue
+import kotlinx.validation.api.klib.*
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 import java.io.File
-import kotlin.io.path.Path
-import kotlin.io.path.absolute
-import kotlin.io.path.createParentDirectories
-import kotlin.io.path.writeText
+import kotlin.io.path.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class KlibPublicAPITest {
 

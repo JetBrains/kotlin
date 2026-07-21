@@ -8,32 +8,34 @@ package org.jetbrains.kotlin.abi.tools.impl
 import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.abi.tools.impl.klib.TargetHierarchy
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class KlibTargetHierarchyTest {
     @Test
     fun testHierarchy() {
-        assertIterableEquals(listOf("linuxArm64", "linux", "native", "all"),
+        assertContentEquals(listOf("linuxArm64", "linux", "native", "all"),
             hierarchyFrom("linuxArm64"))
 
-        assertIterableEquals(listOf("js", "all"),
+        assertContentEquals(listOf("js", "all"),
             hierarchyFrom("js"))
 
-        assertIterableEquals(listOf("iosArm64", "ios", "apple", "native", "all"),
+        assertContentEquals(listOf("iosArm64", "ios", "apple", "native", "all"),
             hierarchyFrom("iosArm64"))
 
-        assertIterableEquals(listOf("androidNative", "native", "all"),
+        assertContentEquals(listOf("androidNative", "native", "all"),
             hierarchyFrom("androidNative"))
 
-        assertIterableEquals(listOf("unknown"), hierarchyFrom("unknown"))
+        assertContentEquals(listOf("unknown"), hierarchyFrom("unknown"))
     }
 
     @Test
     fun testTargetsList() {
         assertEquals(setOf("linuxX64"), TargetHierarchy.targets("linuxX64"))
         assertEquals(setOf("macosX64", "macosArm64"), TargetHierarchy.targets("macos"))
-        assertEquals(emptySet<String>(), TargetHierarchy.targets("unknown"))
+        assertEquals(emptySet(), TargetHierarchy.targets("unknown"))
     }
 
     @Test
@@ -49,7 +51,7 @@ class KlibTargetHierarchyTest {
     @Test
     fun testAllTargetsAreMapped() {
         val notMappedTargets = KonanTarget.predefinedTargets.keys.subtract(KlibTarget.supportedKonanNames())
-        assertEquals(emptySet<String>(), notMappedTargets,
+        assertEquals(emptySet(), notMappedTargets,
             "Following targets are not mapped: $notMappedTargets")
     }
 

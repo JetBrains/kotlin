@@ -33,10 +33,10 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val warmupsParam = project.findProperty("warmups")?.toString()
-val iterationsParam = project.findProperty("iterations")?.toString()
-val includePattern = project.findProperty("include")?.toString()
-val sizeParam = project.findProperty("size")?.toString()
+val warmupsParam = providers.gradleProperty("warmups").orNull
+val iterationsParam = providers.gradleProperty("iterations").orNull
+val includePattern = providers.gradleProperty("include").orNull
+val sizeParam = providers.gradleProperty("size").orNull
 
 benchmark {
     configurations {

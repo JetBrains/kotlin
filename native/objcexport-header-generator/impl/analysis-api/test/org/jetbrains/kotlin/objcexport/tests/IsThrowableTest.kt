@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.export.utilities.isThrowable
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getPropertyOrFail
@@ -26,7 +28,8 @@ class IsThrowableTest(
         )
 
         analyze(file) {
-            assertFalse(isThrowable(getClassOrFail(file, "Throwable")))
+            val session = useSiteSession
+            assertFalse(session.isThrowable(session.getClassOrFail(file, "Throwable")))
         }
     }
 
@@ -39,7 +42,8 @@ class IsThrowableTest(
         )
 
         analyze(file) {
-            val isThrowable = isThrowable(getPropertyOrFail(file, "foo").returnType.expandedSymbol)
+            val session = useSiteSession
+            val isThrowable = session.isThrowable(session.getPropertyOrFail(file, "foo").returnType.expandedSymbol)
             assertTrue(isThrowable)
         }
     }

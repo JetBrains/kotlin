@@ -9,7 +9,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
-import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
@@ -110,7 +109,7 @@ class ClassCodegen private constructor(
     private val jvmMethodSignatureClashDetector = JvmMethodSignatureClashDetector(this)
     private val jvmFieldSignatureClashDetector = JvmFieldSignatureClashDetector(this)
 
-    private val visitor = state.factory.newVisitor(irClass.descriptorOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
+    private val visitor = state.factory.newVisitor(irClass, type, irClass.fileParent.loadSourceFilesInfo()).apply {
         val signature = typeMapper.mapClassSignature(irClass, type, state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
@@ -384,7 +383,7 @@ class ClassCodegen private constructor(
         val fieldName = field.name.asString()
         val flags = field.computeFieldFlags(context, config.languageVersionSettings)
         val fv = visitor.newField(
-            field.descriptorOrigin, flags, fieldName, fieldType.descriptor,
+            field, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst)?.value
         )
 
@@ -460,7 +459,7 @@ class ClassCodegen private constructor(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
-        val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
+        val mv = with(node) { visitor.newMethod(method, access, name, desc, signature, exceptions.toTypedArray()) }
         val smapCopyingVisitor = SourceMapCopyingMethodVisitor(classSMAP, smap, mv)
 
         if (method.hasContinuation()) {

@@ -172,6 +172,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
     val HEADER_MODE by directive("Enable header mode")
+    val FIR_AGGRESSIVE_PRUNING by valueDirective("Enable/disable FIR aggressive pruning: 'true' or 'false'", parser = String::toBoolean)
     val IDE_MODE by directive("Enable ide mode")
 
 

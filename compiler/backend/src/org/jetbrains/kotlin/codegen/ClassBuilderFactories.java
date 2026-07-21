@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.ir.declarations.IrClass;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 
@@ -36,7 +37,7 @@ public class ClassBuilderFactories {
 
         @NotNull
         @Override
-        public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
+        public ClassBuilder newClassBuilder(@Nullable IrClass origin) {
             return new TraceBuilder(new BinaryClassWriter());
         }
 
@@ -66,7 +67,7 @@ public class ClassBuilderFactories {
 
         @NotNull
         @Override
-        public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
+        public ClassBuilder newClassBuilder(@Nullable IrClass origin) {
             return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
         }
 

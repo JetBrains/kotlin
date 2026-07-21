@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,9 +10,14 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.allSupertypes
+import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
@@ -182,7 +187,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
 
-    private fun KaSession.addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    context(session: KaSession)
+    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol): Unit = with(session) {
         if (!classSymbol.isData) return
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
@@ -195,7 +201,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
     }
 
-    private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
+    context(_: KaSession)
+    private fun createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
         // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
         val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
         createSimpleMethods(
@@ -209,7 +216,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         )
     }
 
-    private fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
+    context(session: KaSession)
+    private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>): Unit = with(session) {
         if (!classSymbol.isData && !classSymbol.isInline) return
 
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
@@ -227,7 +235,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 
-    private fun KaSession.addDelegatesToInterfaceMethods(
+    context(session: KaSession)
+    private fun addDelegatesToInterfaceMethods(
         result: MutableList<PsiMethod>,
         classSymbol: KaNamedClassSymbol,
         allSupertypes: List<KaClassType>
@@ -325,7 +334,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         )
     }
 
-    private fun KaSession.addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    context(session: KaSession)
+    private fun addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (!isEnum) return
 
         classSymbol.staticDeclaredMemberScope.callables

@@ -33,6 +33,6 @@ internal class KaFirEnumEntryInitializerSymbol(
      */
     override fun createPointer(): KaSymbolPointer<KaFirEnumEntryInitializerSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaFirEnumEntryInitializerSymbol>(this)
-            ?: KaFirEnumEntryInitializerSymbolPointer(analysisSession.createOwnerPointer(this), this)
+            ?: KaFirEnumEntryInitializerSymbolPointer(createOwnerPointer(), this)
     }
 }

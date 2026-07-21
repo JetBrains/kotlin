@@ -128,41 +128,67 @@ abstract class AbstractAtomicfuTransformer(
         }
     }
 
+    internal class DeclarationsWorklist {
+        private val toRemove: MutableList<IrDeclaration> = mutableListOf()
+        private val toInsertOrdered: MutableList<OrderedInsertion> = mutableListOf()
+
+        private data class OrderedInsertion(val toInsert: IrDeclaration, val before: IrDeclaration)
+
+        fun removeDeclaration(declaration: IrDeclaration) {
+            toRemove.add(declaration)
+        }
+
+        fun insertBefore(toInsert: IrDeclaration, before: IrDeclaration) {
+            toInsertOrdered.add(OrderedInsertion(toInsert, before))
+        }
+
+        fun applyUpdates(declarations: MutableList<IrDeclaration>) {
+            toInsertOrdered.forEach { (toInsert, before) ->
+                val idx = declarations.indexOf(before)
+                check(idx >= 0) {
+                    "Declaration was not found: ${before.render()}\nIt is required to insert ${toInsert.render()}"
+                }
+                declarations.add(idx, toInsert)
+            }
+            declarations.removeAll(toRemove)
+        }
+    }
+
     abstract inner class AtomicPropertiesTransformer : IrTransformer<IrFunction?>() {
 
         override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
-            val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
+            val worklist = DeclarationsWorklist()
             declaration.declarations.withIndex().filter { it.value.isAtomicfuTypeProperty() }.forEach {
-                transformAtomicProperty(it.value as IrProperty, it.index, declarationsToBeRemoved)
+                transformAtomicProperty(it.value as IrProperty, it.index, worklist)
             }
-            declaration.declarations.removeAll(declarationsToBeRemoved)
+            worklist.applyUpdates(declaration.declarations)
             return super.visitClass(declaration, data)
         }
 
         override fun visitFile(declaration: IrFile, data: IrFunction?): IrFile {
-            val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
+            val worklist = DeclarationsWorklist()
             declaration.declarations.withIndex().filter { it.value.isAtomicfuTypeProperty() }.forEach {
-                transformAtomicProperty(it.value as IrProperty, it.index, declarationsToBeRemoved)
+                transformAtomicProperty(it.value as IrProperty, it.index, worklist)
             }
-            declaration.declarations.removeAll(declarationsToBeRemoved)
+            worklist.applyUpdates(declaration.declarations)
             return super.visitFile(declaration, data)
         }
 
-        private fun transformAtomicProperty(atomicfuProperty: IrProperty, index: Int, declarationsToBeRemoved: MutableList<IrDeclaration>) {
+        private fun transformAtomicProperty(atomicfuProperty: IrProperty, index: Int, worklist: DeclarationsWorklist) {
             if (atomicfuProperty.backingField == null) {
                 error("Atomic property should have a backing field: ${atomicfuProperty.render()}" + CONSTRAINTS_MESSAGE)
             }
             val parentContainer = atomicfuProperty.parents.firstIsInstance<IrDeclarationContainer>()
             val atomicHandler = createAtomicHandler(atomicfuProperty, parentContainer)?.also {
                 registerAtomicHandler(atomicfuProperty, it, index, parentContainer)
-                declarationsToBeRemoved.add(atomicfuProperty)
+                worklist.removeDeclaration(atomicfuProperty)
             }
             if (atomicHandler == null) {
                 if (atomicfuProperty.isDelegatedToAtomic()) {
-                    parentContainer.transformDelegatedAtomic(atomicfuProperty)
+                    parentContainer.transformDelegatedAtomic(atomicfuProperty, worklist)
                 }
                 if (atomicfuProperty.isTrace()) {
-                    declarationsToBeRemoved.add(atomicfuProperty)
+                    worklist.removeDeclaration(atomicfuProperty)
                 }
             }
         }
@@ -199,7 +225,7 @@ abstract class AbstractAtomicfuTransformer(
          *
          * NOTE: Delegation to atomic factory and mutable delegation properties will soon be deprecated: https://github.com/Kotlin/kotlinx-atomicfu/issues/463
          */
-        private fun IrDeclarationContainer.transformDelegatedAtomic(atomicProperty: IrProperty) {
+        private fun IrDeclarationContainer.transformDelegatedAtomic(atomicProperty: IrProperty, worklist: DeclarationsWorklist) {
             val parentContainer = this
             val getDelegate = atomicProperty.backingField?.initializer?.expression
             require(getDelegate is IrCall) {
@@ -215,7 +241,9 @@ abstract class AbstractAtomicfuTransformer(
                 getDelegate.isAtomicFactoryCall() -> {
                     val delegateVolatileField = with(atomicfuSymbols.createBuilder(atomicProperty.symbol)) {
                         buildVolatileField(atomicProperty, parentContainer).also {
-                            declarations.add(it)
+                            // The field has to be inserted before the property declaration to ensure that
+                            // the field initialization will happen before the property accesses.
+                            worklist.insertBefore(toInsert = it, before = atomicProperty)
                         }
                     }
                     atomicProperty.getter?.delegateToVolatileAccessors(delegateVolatileField)

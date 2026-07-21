@@ -28,6 +28,7 @@ dependencies {
         }
     }
     implementation(libs.kotlinx.serialization.json)
+    testImplementation(kotlin("test-junit5", coreDepsVersion))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

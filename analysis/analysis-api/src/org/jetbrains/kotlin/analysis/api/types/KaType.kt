@@ -468,6 +468,10 @@ public abstract class KaDefinitelyNotNullType : KaType {
      */
     public abstract val original: KaType
 
+    @KaExperimentalApi
+    public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
+
+    //region Implementation details
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
@@ -475,9 +479,7 @@ public abstract class KaDefinitelyNotNullType : KaType {
     )
     @Suppress("DEPRECATION_ERROR")
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
-
-    @KaExperimentalApi
-    public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
+    //endregion
 }
 
 /**

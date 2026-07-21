@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.ir.declarations.IrField;
+import org.jetbrains.kotlin.ir.declarations.IrFunction;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.*;
 import org.jetbrains.org.objectweb.asm.commons.FieldRemapper;
@@ -50,7 +51,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public FieldVisitor newField(
-            @NotNull JvmDeclarationOrigin origin,
+            @Nullable IrField origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
@@ -96,7 +97,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public MethodVisitor newMethod(
-            @NotNull JvmDeclarationOrigin origin,
+            @Nullable IrFunction origin,
             int access,
             @NotNull String name,
             @NotNull String desc,

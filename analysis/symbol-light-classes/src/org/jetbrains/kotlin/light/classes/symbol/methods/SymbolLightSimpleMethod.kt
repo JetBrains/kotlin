@@ -11,9 +11,10 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -191,7 +192,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
         withFunctionSymbol { it.isOverride }
     }
 
-    private fun KaSession.isVoidType(type: KaType): Boolean {
+    context(session: KaSession)
+    private fun isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
         return expandedType.isUnitType && !expandedType.isMarkedNullable
     }
@@ -228,7 +230,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
          * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
          *  * inside the containing class
          */
-        internal fun KaSession.createSimpleMethods(
+        context(_: KaSession)
+        internal fun createSimpleMethods(
             containingClass: SymbolLightClassBase,
             result: MutableList<PsiMethod>,
             functionSymbol: KaNamedFunctionSymbol,

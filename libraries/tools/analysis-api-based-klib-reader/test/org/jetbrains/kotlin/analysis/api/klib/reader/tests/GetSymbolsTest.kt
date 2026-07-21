@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.analysis.api.klib.reader.tests
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -232,7 +233,7 @@ class GetSymbolsTest {
 
         // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
         return analyze(mainModule) {
-            block(this, libraryModule)
+            useSiteSession.block(libraryModule)
         }
     }
 }

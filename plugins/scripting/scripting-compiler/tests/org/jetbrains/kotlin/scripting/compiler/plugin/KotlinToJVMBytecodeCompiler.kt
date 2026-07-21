@@ -249,7 +249,6 @@ internal object KotlinToJVMBytecodeCompiler {
                 diagnosticsReporter,
                 result.bindingContext,
                 configuration.languageVersionSettings,
-                ignoreErrors = false,
                 skipBodies = false,
             )
         }

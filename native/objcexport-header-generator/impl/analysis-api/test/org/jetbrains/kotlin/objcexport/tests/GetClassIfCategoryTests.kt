@@ -1,11 +1,18 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.objcexport.getClassIfCategory
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.jetbrains.kotlin.export.test.getPropertyOrFail
+import org.jetbrains.kotlin.objcexport.getClassIfCategory
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNull
@@ -28,12 +35,13 @@ class GetClassIfCategoryTests(
         )
 
         analyze(file) {
-            val fooClass = file.getClassOrFail("Foo", this)
+            val session = useSiteSession
+            val fooClass = file.getClassOrFail("Foo", session)
 
-            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberFoo", this)))
-            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberBarExtension", this)))
-            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberStringExtension", this)))
-            assertNull(getClassIfCategory(getPropertyOrFail(fooClass, "prop")))
+            assertNull(session.getClassIfCategory(fooClass.getFunctionOrFail("memberFoo", session)))
+            assertNull(session.getClassIfCategory(fooClass.getFunctionOrFail("memberBarExtension", session)))
+            assertNull(session.getClassIfCategory(fooClass.getFunctionOrFail("memberStringExtension", session)))
+            assertNull(session.getClassIfCategory(session.getPropertyOrFail(fooClass, "prop")))
         }
     }
 
@@ -46,8 +54,9 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(getClassIfCategory(file.getFunctionOrFail("topLevelFoo", this)))
-            assertNull(getClassIfCategory(file.getPropertyOrFail("prop", this)))
+            val session = useSiteSession
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("topLevelFoo", session)))
+            assertNull(session.getClassIfCategory(file.getPropertyOrFail("prop", session)))
         }
     }
 
@@ -60,7 +69,8 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
+            val session = useSiteSession
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("foo", session)))
         }
     }
 
@@ -73,7 +83,8 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
+            val session = useSiteSession
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("foo", session)))
         }
     }
 
@@ -87,7 +98,8 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
+            val session = useSiteSession
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("foo", session)))
         }
     }
 
@@ -102,10 +114,11 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(getClassIfCategory(file.getFunctionOrFail("anyFoo", this)))
-            assertNull(getClassIfCategory(file.getFunctionOrFail("listFoo", this)))
-            assertNull(getClassIfCategory(file.getFunctionOrFail("stringFoo", this)))
-            assertNull(getClassIfCategory(file.getFunctionOrFail("fooFun", this)))
+            val session = useSiteSession
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("anyFoo", session)))
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("listFoo", session)))
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("stringFoo", session)))
+            assertNull(session.getClassIfCategory(file.getFunctionOrFail("fooFun", session)))
         }
     }
 
@@ -118,9 +131,9 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-
-            val foo = checkNotNull(getClassIfCategory(file.getClassOrFail("Foo", this).defaultType))
-            val bar = checkNotNull(getClassIfCategory(file.getFunctionOrFail("bar", this)))
+            val session = useSiteSession
+            val foo = checkNotNull(session.getClassIfCategory(file.getClassOrFail("Foo", session).defaultType))
+            val bar = checkNotNull(session.getClassIfCategory(file.getFunctionOrFail("bar", session)))
 
             assertEquals("Foo", foo.name?.identifier)
             assertEquals("Foo", bar.name?.identifier)

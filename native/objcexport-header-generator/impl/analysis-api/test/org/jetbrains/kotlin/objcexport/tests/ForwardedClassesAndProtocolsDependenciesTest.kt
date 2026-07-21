@@ -1,7 +1,13 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.*
@@ -79,9 +85,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
 
     private fun translateClassesAndProtocols(file: KtFile): ObjCHeader {
         return analyze(file) {
-            val kaSession = this
             withKtObjCExportSession(KtObjCExportConfiguration()) {
-                with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
+                with(ObjCExportContext(analysisSession = useSiteSession, exportSession = this)) {
                     translateToObjCHeader(listOf(KtObjCExportFile(file)))
                 }
             }

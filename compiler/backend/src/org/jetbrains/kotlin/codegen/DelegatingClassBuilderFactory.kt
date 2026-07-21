@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrClass
 
 abstract class DelegatingClassBuilderFactory(
     protected val delegate: ClassBuilderFactory
 ) : ClassBuilderFactory by delegate {
-    abstract override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder
+    abstract override fun newClassBuilder(origin: IrClass?): DelegatingClassBuilder
 
     override fun asBytes(builder: ClassBuilder?): ByteArray? {
         return delegate.asBytes((builder as DelegatingClassBuilder).delegate)

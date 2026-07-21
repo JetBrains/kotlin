@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.prettyPrintSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
-import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.scopes.*
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType

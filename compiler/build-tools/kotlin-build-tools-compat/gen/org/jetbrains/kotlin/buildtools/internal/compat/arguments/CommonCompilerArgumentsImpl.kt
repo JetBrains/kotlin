@@ -183,7 +183,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_COMPILER_PLUGIN in this) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN) ?: emptyArray()}
     try { if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     try { if (X_CONTEXT_PARAMETERS in this) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_PARAMETERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (X_CONTEXT_RECEIVERS in this) { arguments.contextReceivers = get(X_CONTEXT_RECEIVERS)}
+    try { if (X_CONTEXT_RECEIVERS in this) { arguments.setUsingReflection("contextReceivers", get(X_CONTEXT_RECEIVERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_CONTEXT_SENSITIVE_RESOLUTION in this) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_SENSITIVE_RESOLUTION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     try { if (X_DATA_FLOW_BASED_EXHAUSTIVENESS in this) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DATA_FLOW_BASED_EXHAUSTIVENESS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
     try { if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
@@ -273,7 +273,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_COMPILER_PLUGIN] = arguments.pluginConfigurations } catch (_: NoSuchMethodError) {  }
     try { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
     try { this[X_CONTEXT_PARAMETERS] = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_RECEIVERS] = arguments.contextReceivers } catch (_: NoSuchMethodError) {  }
+    try { this[X_CONTEXT_RECEIVERS] = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
     try { this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
     try { this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
     try { this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.directJavaActualization } catch (_: NoSuchMethodError) {  }

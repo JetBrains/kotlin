@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BidirectionalBridge
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.providers.impl.StandaloneSirTypeNamer

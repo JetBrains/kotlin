@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,7 +58,7 @@ internal class SymbolLightTypeParameter private constructor(
 
     private val ktModule: KaModule get() = parent.ktModule
 
-    private inline fun <T> withTypeParameterSymbol(crossinline action: KaSession.(KaTypeParameterSymbol) -> T): T =
+    private inline fun <T> withTypeParameterSymbol(crossinline action: context(KaSession) (KaTypeParameterSymbol) -> T): T =
         typeParameterSymbolPointer.withSymbol(ktModule, action)
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> get() = invalidAccess()

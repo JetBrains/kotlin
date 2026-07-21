@@ -22,6 +22,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
+    to.callableReferencesToContextual = from.callableReferencesToContextual
     to.checkPhaseConditions = from.checkPhaseConditions
     to.collectionLiterals = from.collectionLiterals
     to.commonSources = from.commonSources.copyOf()
@@ -29,7 +30,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.companionBlocksAndExtensions = from.companionBlocksAndExtensions
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
-    to.contextReceivers = from.contextReceivers
     to.contextSensitiveResolution = from.contextSensitiveResolution
     to.dataFlowBasedExhaustiveness = from.dataFlowBasedExhaustiveness
     to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
@@ -52,6 +52,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.explicitBackingFields = from.explicitBackingFields
     to.explicitContextArguments = from.explicitContextArguments
     to.explicitReturnTypes = from.explicitReturnTypes
+    to.firAggressivePruning = from.firAggressivePruning
     to.fragmentDependencies = from.fragmentDependencies.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
     to.fragmentIncrementalClasspath = from.fragmentIncrementalClasspath.copyOf()

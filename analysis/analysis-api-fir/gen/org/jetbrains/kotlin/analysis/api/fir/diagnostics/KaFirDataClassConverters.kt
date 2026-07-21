@@ -3129,12 +3129,6 @@ private fun KaDiagnosticConverterBuilder.addConversions70() {
             token,
         )
     }
-    add(FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR) { firDiagnostic ->
-        ContextClassOrConstructorImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES) { firDiagnostic ->
         ExpectActualIncompatibleContextParameterNamesImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -5818,13 +5812,6 @@ private fun KaDiagnosticConverterBuilder.addConversions128() {
         CompilerRequiredAnnotationAmbiguityImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.CONTEXT_RECEIVERS_DEPRECATED) { firDiagnostic ->
-        ContextReceiversDeprecatedImpl(
-            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

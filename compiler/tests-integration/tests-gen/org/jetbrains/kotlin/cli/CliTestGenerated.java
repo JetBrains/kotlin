@@ -1681,6 +1681,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("callableReferenceToContextual.args")
+    public void testCallableReferenceToContextual() {
+      run("callableReferenceToContextual.args");
+    }
+
+    @Test
     @TestMetadata("compatqualDefault.args")
     public void testCompatqualDefault() {
       run("compatqualDefault.args");

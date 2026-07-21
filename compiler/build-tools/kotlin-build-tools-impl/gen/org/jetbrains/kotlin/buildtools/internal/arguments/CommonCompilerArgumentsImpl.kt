@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_RETURNS_RESULT_OF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_DEFAULT_TARGET
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_TARGET_ALL
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_CALLABLE_REFERENCES_TO_CONTEXTUAL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_CHECK_PHASE_CONDITIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COLLECTION_LITERALS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COMMON_SOURCES
@@ -77,6 +78,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_API
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_CONTEXT_ARGUMENTS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FIR_AGGRESSIVE_PRUNING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
@@ -214,6 +216,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
     if (X_ANNOTATION_TARGET_ALL in this) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)}
+    if (X_CALLABLE_REFERENCES_TO_CONTEXTUAL in this) { arguments.callableReferencesToContextual = get(X_CALLABLE_REFERENCES_TO_CONTEXTUAL)}
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
     if (X_COLLECTION_LITERALS in this) { arguments.collectionLiterals = get(X_COLLECTION_LITERALS)}
     if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES) ?: emptyArray()}
@@ -223,7 +226,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_COMPILER_PLUGIN_ORDER in this) { arguments.pluginOrderConstraints = get(X_COMPILER_PLUGIN_ORDER) ?: emptyArray()}
     if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)}
     if (X_CONTEXT_PARAMETERS in this) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS)}
-    if (X_CONTEXT_RECEIVERS in this) { arguments.contextReceivers = get(X_CONTEXT_RECEIVERS)}
+    try { if (X_CONTEXT_RECEIVERS in this) { arguments.setUsingReflection("contextReceivers", get(X_CONTEXT_RECEIVERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_CONTEXT_SENSITIVE_RESOLUTION in this) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION)}
     if (X_DATA_FLOW_BASED_EXHAUSTIVENESS in this) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)}
     if (X_DETAILED_PERF in this) { arguments.detailedPerf = get(X_DETAILED_PERF)}
@@ -244,6 +247,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
     if (X_EXPLICIT_BACKING_FIELDS in this) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS)}
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
+    if (X_FIR_AGGRESSIVE_PRUNING in this) { arguments.firAggressivePruning = get(X_FIR_AGGRESSIVE_PRUNING)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
@@ -328,6 +332,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
+    try { this[X_CALLABLE_REFERENCES_TO_CONTEXTUAL] = arguments.callableReferencesToContextual } catch (_: NoSuchMethodError) {  }
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
     try { this[X_COLLECTION_LITERALS] = arguments.collectionLiterals } catch (_: NoSuchMethodError) {  }
     try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
@@ -337,7 +342,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_COMPILER_PLUGIN_ORDER] = arguments.pluginOrderConstraints } catch (_: NoSuchMethodError) {  }
     try { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
     try { this[X_CONTEXT_PARAMETERS] = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_RECEIVERS] = arguments.contextReceivers } catch (_: NoSuchMethodError) {  }
+    try { this[X_CONTEXT_RECEIVERS] = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
     try { this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
     try { this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
     try { this[X_DETAILED_PERF] = arguments.detailedPerf } catch (_: NoSuchMethodError) {  }
@@ -358,6 +363,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
+    try { this[X_FIR_AGGRESSIVE_PRUNING] = arguments.firAggressivePruning } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_INCREMENTAL_CLASSPATH] = arguments.fragmentIncrementalClasspath } catch (_: NoSuchMethodError) {  }
@@ -441,6 +447,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
     if (X_ANNOTATION_TARGET_ALL in this) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)}
+    if (X_CALLABLE_REFERENCES_TO_CONTEXTUAL in this) { arguments.callableReferencesToContextual = get(X_CALLABLE_REFERENCES_TO_CONTEXTUAL)}
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
     if (X_COLLECTION_LITERALS in this) { arguments.collectionLiterals = get(X_COLLECTION_LITERALS)}
     if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES) ?: emptyArray()}
@@ -450,7 +457,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_COMPILER_PLUGIN_ORDER in this) { arguments.pluginOrderConstraints = get(X_COMPILER_PLUGIN_ORDER) ?: emptyArray()}
     if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)}
     if (X_CONTEXT_PARAMETERS in this) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS)}
-    if (X_CONTEXT_RECEIVERS in this) { arguments.contextReceivers = get(X_CONTEXT_RECEIVERS)}
+    try { if (X_CONTEXT_RECEIVERS in this) { arguments.setUsingReflection("contextReceivers", get(X_CONTEXT_RECEIVERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_CONTEXT_SENSITIVE_RESOLUTION in this) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION)}
     if (X_DATA_FLOW_BASED_EXHAUSTIVENESS in this) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)}
     if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)}
@@ -467,6 +474,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
     if (X_EXPLICIT_BACKING_FIELDS in this) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS)}
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
+    if (X_FIR_AGGRESSIVE_PRUNING in this) { arguments.firAggressivePruning = get(X_FIR_AGGRESSIVE_PRUNING)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
@@ -585,6 +593,9 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_ANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ANNOTATION_TARGET_ALL")
 
+    public val X_CALLABLE_REFERENCES_TO_CONTEXTUAL: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CALLABLE_REFERENCES_TO_CONTEXTUAL")
+
     public val X_CHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS")
 
@@ -674,6 +685,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS")
+
+    public val X_FIR_AGGRESSIVE_PRUNING: CommonCompilerArgument<Boolean?> =
+        CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING")
 
     public val X_FRAGMENT_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENT_DEPENDENCY")

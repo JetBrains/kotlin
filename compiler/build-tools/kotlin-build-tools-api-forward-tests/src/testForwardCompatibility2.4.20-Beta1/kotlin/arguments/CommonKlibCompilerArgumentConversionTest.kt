@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.commonklib.*
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.*
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jsProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.wasmProject
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -184,18 +184,6 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
 
     private fun CommonKlibArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
-        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
-
-        assumeTrue(
-            compilerVersion >= KotlinToolingVersion(introducedVersion),
-            "Test requires compiler version >= $introducedVersion"
-        )
-
-        if (removedVersion != null) {
-            assumeTrue(
-                compilerVersion < KotlinToolingVersion(removedVersion),
-                "Test requires compiler version < $removedVersion"
-            )
-        }
+        assumeArgumentAvailable()
     }
 }

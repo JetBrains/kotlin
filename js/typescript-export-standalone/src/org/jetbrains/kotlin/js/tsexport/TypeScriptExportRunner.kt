@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.js.tsexport
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
@@ -26,6 +26,7 @@ public data class TypeScriptExportConfig(
     public val implementableInterfaces: Boolean,
     public val exportableSuspendLambdas: Boolean,
     public val dataClassCopyRespectsConstructorVisibility: Boolean,
+    public val exportUntypedAsUnknown: Boolean,
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>

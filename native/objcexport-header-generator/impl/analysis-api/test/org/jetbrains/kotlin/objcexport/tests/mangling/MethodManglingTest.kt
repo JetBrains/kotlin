@@ -1,14 +1,20 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport.tests.mangling
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.KtObjCExportConfiguration
 import org.jetbrains.kotlin.objcexport.ObjCExportContext
 import org.jetbrains.kotlin.objcexport.mangling.mangleObjCMethods
-import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.translateToObjCExportStub
 import org.jetbrains.kotlin.objcexport.withKtObjCExportSession
 import org.junit.jupiter.api.Test
@@ -101,10 +107,10 @@ class MethodManglingTest(
     private fun doTest(@Language("kotlin") code: String, run: ObjCExportContext.(KaClassSymbol) -> Unit) {
         val file = inlineSourceCodeAnalysis.createKtFile(code.trimMargin())
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
-            val kaSession = this
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
             withKtObjCExportSession(KtObjCExportConfiguration()) {
-                with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
+                with(ObjCExportContext(analysisSession = session, exportSession = this)) {
                     run(foo)
                 }
             }

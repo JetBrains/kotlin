@@ -12,9 +12,8 @@ public final class MyClass {
     public method <init>(): void
     public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt): void
-    public synthetic method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="3") p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
-    private method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="3") p1: int): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic deprecated method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getProperty(): kotlin.UInt
     public final method getProperty-pVg5ArA(): int

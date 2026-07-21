@@ -280,7 +280,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
         return KaFirMemberFunctionSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             signature = FirCallableSignature.createSignature(firSymbol),
             isStatic = firSymbol.isStatic,
@@ -324,7 +324,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
                 if (matchesAccessor) {
                     return KaFirJavaSyntheticPropertyAccessorFunctionSymbolPointer(
-                        ownerPointer = analysisSession.createOwnerPointer(this),
+                        ownerPointer = createOwnerPointer(),
                         propertyName = propertyName,
                         isGetter = accessorKind == KaSyntheticJavaPropertyAccessorKind.GETTER,
                         originalSymbol = this

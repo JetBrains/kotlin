@@ -2410,17 +2410,6 @@ internal class AmbiguousCallWithImplicitContextReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousCallWithImplicitContextReceiver
 
-internal class ContextReceiversDeprecatedImpl(
-    override val message: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextReceiversDeprecated
-
-internal class ContextClassOrConstructorImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextClassOrConstructor
-
 internal class CoroutineContextAsContextParameterIsReservedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

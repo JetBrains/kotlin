@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
@@ -54,14 +54,16 @@ private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: Cl
     }
 }
 
-internal fun KaSession.isHiddenByDeprecation(symbol: KaAnnotatedSymbol): Boolean {
+context(session: KaSession)
+internal fun isHiddenByDeprecation(symbol: KaAnnotatedSymbol): Boolean {
     val deprecation = symbol.deprecation
     return deprecation?.level == KaDeprecationLevel.HIDDEN &&
             // see KT-80649
             !symbol.annotations.contains(JvmStandardClassIds.Annotations.Java.Deprecated)
 }
 
-internal fun KaSession.isHiddenOrSynthetic(symbol: KaAnnotatedSymbol): Boolean {
+context(_: KaSession)
+internal fun isHiddenOrSynthetic(symbol: KaAnnotatedSymbol): Boolean {
     return isHiddenByDeprecation(symbol) || symbol.hasJvmSyntheticAnnotation()
 }
 
@@ -86,7 +88,8 @@ internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardCl
 
 internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
-internal fun KaSession.suppressWildcardMode(
+context(_: KaSession)
+internal fun suppressWildcardMode(
     symbol: KaDeclarationSymbol,
     declarationFilter: (KaDeclarationSymbol) -> Boolean = { true },
 ): Boolean? = getContainingSymbolsWithSelf(symbol).firstNotNullOfOrNull { symbol ->
@@ -109,7 +112,8 @@ internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandard
 
 internal fun KaAnnotatedSymbol.findAnnotation(classId: ClassId): KaAnnotation? = annotations[classId].firstOrNull()
 
-internal fun KaSession.computeThrowsList(
+context(session: KaSession)
+internal fun computeThrowsList(
     symbol: KaAnnotatedSymbol,
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
@@ -151,7 +155,8 @@ internal fun KaSession.computeThrowsList(
 }
 
 @KaImplementationDetail
-fun KaSession.annotateByKtType(
+context(session: KaSession)
+fun annotateByKtType(
     psiType: PsiType,
     ktType: KaType,
     annotationParent: PsiElement,

@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -121,7 +121,8 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
  * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
  * inside the containing class
  */
-internal fun KaSession.createMethods(
+context(_: KaSession)
+internal fun createMethods(
     lightClass: SymbolLightClassBase,
     declarations: Sequence<KaCallableSymbol>,
     result: MutableList<PsiMethod>,
@@ -133,7 +134,8 @@ internal fun KaSession.createMethods(
         it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null
     }
 
-    fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
+    context(_: KaSession)
+    fun handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
             is KaNamedFunctionSymbol -> createSimpleMethods(
                 containingClass = lightClass,
@@ -162,11 +164,11 @@ internal fun KaSession.createMethods(
 
     // Regular members
     regularMembers.forEach {
-        this@createMethods.handleDeclaration(it)
+        handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
-        this@createMethods.handleDeclaration(it)
+        handleDeclaration(it)
     }
 }
 
@@ -186,7 +188,8 @@ internal fun interface LightMethodCreator {
 }
 
 /** @see LightMethodCreator */
-internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
+context(_: KaSession)
+internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
     declaration: T,
     methodIndexBase: Int,
     lightMethodCreator: LightMethodCreator,
@@ -526,7 +529,8 @@ private fun PsiElement.hasBackingField(): Boolean {
     return hasInitializer() || getter?.takeIf { it.hasBody() } == null || setter?.takeIf { it.hasBody() } == null && isVar
 }
 
-internal fun KaSession.createInheritanceList(
+context(session: KaSession)
+internal fun createInheritanceList(
     lightClass: SymbolLightClassForClassLike<*>,
     forExtendsList: Boolean,
     superTypes: List<KaType>,
@@ -607,7 +611,8 @@ internal fun KaSession.createInheritanceList(
     return listBuilder
 }
 
-internal fun KaSession.createInnerClasses(
+context(session: KaSession)
+internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
     manager: PsiManager,
     containingClass: SymbolLightClassBase,
@@ -645,7 +650,12 @@ internal fun KaSession.createInnerClasses(
     return result
 }
 
-internal fun KaSession.checkIsInheritor(classOrObject: KtClassOrObject, superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+context(session: KaSession)
+internal fun checkIsInheritor(
+    classOrObject: KtClassOrObject,
+    superClassOrigin: KtClassOrObject,
+    checkDeep: Boolean,
+): Boolean {
     if (classOrObject == superClassOrigin) return false
     if (superClassOrigin is KtEnumEntry) {
         return false // enum entry cannot have inheritors
@@ -686,7 +696,8 @@ internal fun KaSession.checkIsInheritor(classOrObject: KtClassOrObject, superCla
 internal val KaDeclarationSymbol.hasReifiedParameters: Boolean
     get() = typeParameters.any { it.isReified }
 
-internal fun KaSession.addPropertyBackingFields(
+context(session: KaSession)
+internal fun addPropertyBackingFields(
     lightClass: SymbolLightClassBase,
     result: MutableList<PsiField>,
     containerSymbol: KaDeclarationContainerSymbol,
@@ -732,7 +743,8 @@ internal fun KaSession.addPropertyBackingFields(
  * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  * @param skipReturnTypeCheck whether to skip the return type of the callable symbol during the check
  */
-internal fun KaSession.hasValueClassInSignature(
+context(_: KaSession)
+internal fun hasValueClassInSignature(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean = false,
     valueParameterPickMask: BitSet? = null,
@@ -753,7 +765,8 @@ internal fun KaSession.hasValueClassInSignature(
     return false
 }
 
-internal fun KaSession.hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
+context(_: KaSession)
+internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
     val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
     val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
     // Only explicitly declared types can be checked to avoid contract violations
@@ -778,7 +791,8 @@ internal fun hasMangledNameDueValueClassesInSignature(
     else -> !isTopLevel
 }
 
-internal fun KaSession.typeForValueClass(type: KaType): Boolean {
+context(session: KaSession)
+internal fun typeForValueClass(type: KaType): Boolean {
     val symbol = type.expandedSymbol as? KaNamedClassSymbol ?: return false
     return symbol.isInline
 }

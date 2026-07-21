@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -44,9 +43,6 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
 
     override val superTypes: List<KaType>
         get() = withValidityAssertion { createSuperTypes() }
-
-    override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>()?.let { return it }

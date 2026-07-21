@@ -15,17 +15,14 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParamete
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -67,15 +64,6 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override val isCrossinline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
-
-    override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
-            FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility.asKaSymbolVisibility
-        }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
     override val isNoinline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.NOINLINE_KEYWORD) ?: firSymbol.isNoinline }
@@ -151,7 +139,7 @@ internal class KaFirValueParameterSymbol private constructor(
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
         return KaFirValueParameterSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             index = index,
             originalSymbol = this

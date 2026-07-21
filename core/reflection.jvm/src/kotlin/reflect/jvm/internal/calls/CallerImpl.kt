@@ -51,37 +51,27 @@ internal sealed class CallerImpl<out M : Member>(
     }
 
     class AccessorForHiddenConstructor(
-        constructor: ReflectConstructor<*>,
-        private val hasBoxingMarker: Boolean,
+        constructor: ReflectConstructor<*>
     ) : CallerImpl<ReflectConstructor<*>>(
         constructor, constructor.declaringClass,
-        constructor.genericParameterTypes.dropLast(if (hasBoxingMarker) 2 else 1)
+        constructor.genericParameterTypes.dropLast()
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return if (hasBoxingMarker) {
-                member.newInstance(*args, null, null)
-            } else {
-                member.newInstance(*args, null)
-            }
+            return member.newInstance(*args, null)
         }
     }
 
     class AccessorForHiddenBoundConstructor(
         constructor: ReflectConstructor<*>,
-        private val boundReceiver: Any?,
-        private val hasBoxingMarker: Boolean,
+        private val boundReceiver: Any?
     ) : CallerImpl<ReflectConstructor<*>>(
         constructor, constructor.declaringClass,
-        constructor.genericParameterTypes.dropFirstAndLast(if (hasBoxingMarker) 2 else 1)
+        constructor.genericParameterTypes.dropFirstAndLast()
     ), BoundCaller {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return if (hasBoxingMarker) {
-                member.newInstance(boundReceiver, *args, null, null)
-            } else {
-                member.newInstance(boundReceiver, *args, null)
-            }
+            return member.newInstance(boundReceiver, *args, null)
         }
     }
 
@@ -256,11 +246,11 @@ internal sealed class CallerImpl<out M : Member>(
             if (size <= 1) emptyArray() else copyOfRange(1, size) as Array<T>
 
         @Suppress("UNCHECKED_CAST")
-        inline fun <reified T> Array<out T>.dropLast(amountToDrop: Int): Array<T> =
-            if (size <= amountToDrop) emptyArray() else copyOfRange(0, size - amountToDrop) as Array<T>
+        inline fun <reified T> Array<out T>.dropLast(): Array<T> =
+            if (size <= 1) emptyArray() else copyOfRange(0, size - 1) as Array<T>
 
         @Suppress("UNCHECKED_CAST")
-        inline fun <reified T> Array<out T>.dropFirstAndLast(amountToDropLast: Int): Array<T> =
-            if (size <= 1 + amountToDropLast) emptyArray() else copyOfRange(1, size - amountToDropLast) as Array<T>
+        inline fun <reified T> Array<out T>.dropFirstAndLast(): Array<T> =
+            if (size <= 2) emptyArray() else copyOfRange(1, size - 1) as Array<T>
     }
 }

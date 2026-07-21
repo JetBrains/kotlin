@@ -792,19 +792,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
-        name = "Xcontext-receivers"
-        description = "Enable experimental context receivers.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ContextReceivers))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
-        )
-    }
-
-
-    compilerArgument {
         name = "Xcontext-parameters"
         description = "Enable experimental context parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -826,6 +813,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+
+    compilerArgument {
+        name = "Xcallable-references-to-contextual"
+        description = "Enable callable references to contextual declarations.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.CallableReferencesToContextual))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -1394,6 +1394,17 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xfir-aggressive-pruning"
+        compilerName = "firAggressivePruning"
+        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20
         )
     }
 

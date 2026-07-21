@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule

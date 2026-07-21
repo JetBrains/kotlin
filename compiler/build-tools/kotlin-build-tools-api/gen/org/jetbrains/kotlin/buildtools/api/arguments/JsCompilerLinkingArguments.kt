@@ -216,6 +216,16 @@ public interface JsCompilerLinkingArguments : JsCompilerArguments,
         JsCompilerLinkingArgument("X_ES_LONG_AS_BIGINT", KotlinReleaseVersion(2, 2, 20))
 
     /**
+     * Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_TS_EXPORT_UNTYPED_AS_UNKNOWN: JsCompilerLinkingArgument<Boolean> =
+        JsCompilerLinkingArgument("X_TS_EXPORT_UNTYPED_AS_UNKNOWN", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Perform additional optimizations on the generated JS code.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -176,12 +175,6 @@ class MemoizedInlineClassReplacements(
                         else ->
                             createStaticReplacement(it)
                     }
-
-                it is IrConstructor &&
-                        !it.constructedClass.isInlineClass &&
-                        it.parameters.any { parameter -> parameter.type.isInlineClassType() } &&
-                        !it.isFromJava() ->
-                    getReplacementForRegularClassConstructor(it)
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
                 it is IrSimpleFunction && it.needsReplacement -> createMethodReplacement(it)
@@ -364,62 +357,6 @@ class MemoizedInlineClassReplacements(
         }
         name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
     }
-
-    private fun IrConstructor.replaceCopiedDefaultValuesWithStubsFrom(source: IrConstructor) {
-        for ([sourceParameter, replacementParameter] in source.parameters.zip(parameters)) {
-            val sourceDefault = sourceParameter.defaultValue ?: continue
-            // The replacement can be requested from another file before the source default expression is lowered.
-            // Keep the parameter defaultable, but do not keep the early deep copy made by copyFunctionSignatureFrom.
-            replacementParameter.defaultValue = factory.createExpressionBody(
-                IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, replacementParameter.type, "Default Stub").apply {
-                    attributeOwnerId = sourceDefault.expression
-                }
-            )
-        }
-    }
-
-    // When we expose regular class constructors, we add another constructor with BoxingMarker parameter
-    // to be called from Kotlin, while original constructor is to be called from Java.
-    fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? {
-        if (constructor.isFromJava()) return null
-        if (constructor.constructedClass.isInlineClass) return null
-        if (constructor.parameters.none { it.type.isInlineClassType() }) return null
-        if (!constructor.shouldBeExposedByAnnotationOrFlag(context)) return null
-
-        return constructor.factory.buildConstructor {
-            updateFrom(constructor)
-            isPrimary = constructor.isPrimary
-        }.apply {
-            parent = constructor.parent
-
-            if (constructor.metadata != null) {
-                metadata = constructor.metadata
-                constructor.metadata = null
-
-                // Propagate implicit @JvmExposeBoxed to metadata.
-                // This metadata is copied to synthetic constructor, which is not accessible from Java.
-                // Which might look contradictory, but otherwise there is no way to distinguish
-                // exposed constructor from non-exposed one if the constructor comes from another module.
-                // So, the metadata with annotation is on the synthetic constructor, but
-                // the annotation on bytecode is on the exposed constructor, which is expected to be called from Java.
-                if (!constructor.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-                    context.irPluginContext
-                        ?.metadataDeclarationRegistrar
-                        ?.addMetadataVisibleAnnotationsToElement(this, createJvmExposeBoxedAnnotation(this, context))
-                }
-            }
-            copyFunctionSignatureFrom(constructor)
-            replaceCopiedDefaultValuesWithStubsFrom(constructor)
-            annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
-            body = constructor.body?.patchDeclarationParents(this)
-
-            addValueParameter {
-                name = Name.identifier("\$boxingMarker")
-                origin = JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
-                type = context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable()
-            }
-        }
-    }
 }
 
 // In some scenarios, compiler mangles calls to stdlib using new mangling scheme, however, stdlib is compiled using the old mangling scheme.
@@ -462,15 +399,8 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
     }
     // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
     // or -Xjvm-expose-boxed is specified. Add the annotation.
-    return this + createJvmExposeBoxedAnnotation(declaration, context)
-}
-
-private fun createJvmExposeBoxedAnnotation(
-    declaration: IrDeclaration,
-    context: JvmBackendContext,
-): IrAnnotationImpl {
     val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
-    return IrAnnotationImpl.fromSymbolOwner(
+    return this + IrAnnotationImpl.fromSymbolOwner(
         constructor.owner.returnType,
         constructor
     ).apply {

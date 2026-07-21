@@ -22,11 +22,15 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
+import org.jetbrains.kotlin.analysis.api.scopes.fileScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -61,7 +65,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(SymbolTestDirectives)
 
-    abstract fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
+    context(_: KaSession)
+    abstract fun collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         testServices.moduleStructure.allDirectives.suppressIf(
@@ -451,13 +456,15 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
+    context(analysisSession: KaSession)
+    protected open fun renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
         val renderer = KaDebugRenderer(
             renderExtra = true,
             renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES },
             renderIsPublicApi = RENDER_IS_PUBLIC_API in directives
         )
-        return with(renderer) { render(useSiteSession, symbol) }
+
+        return renderer.render(analysisSession, symbol)
     }
 }
 
@@ -588,7 +595,8 @@ private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     }
 }
 
-private fun <S : KaSymbol> KaSession.restoreSymbol(pointer: KaSymbolPointer<S>, disablePsiBasedLogic: Boolean): S? {
+context(_: KaSession)
+private fun <S : KaSymbol> restoreSymbol(pointer: KaSymbolPointer<S>, disablePsiBasedLogic: Boolean): S? {
     val symbol = pointer.restoreSymbol() ?: return null
     if (disablePsiBasedLogic) {
         symbol.dropBackingPsi()

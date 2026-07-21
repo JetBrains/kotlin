@@ -204,6 +204,17 @@ default: 'param-property' in language version 2.4+, 'first-only-warn' in languag
         }
 
     @Argument(
+        value = "-Xcallable-references-to-contextual",
+        description = "Enable callable references to contextual declarations.",
+    )
+    @Enables(LanguageFeature.CallableReferencesToContextual)
+    var callableReferencesToContextual: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xcheck-phase-conditions",
         description = "Check pre- and postconditions of IR lowering phases.",
     )
@@ -303,17 +314,6 @@ Multiple constraints can be specified by repeating this option. Cycles in constr
     )
     @Enables(LanguageFeature.ContextParameters)
     var contextParameters: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xcontext-receivers",
-        description = "Enable experimental context receivers.",
-    )
-    @Enables(LanguageFeature.ContextReceivers)
-    var contextReceivers: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -535,6 +535,16 @@ Use the 'warning' level to issue warnings instead of errors.""",
     )
     @Enables(LanguageFeature.ExplicitContextArguments)
     var explicitContextArguments: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xfir-aggressive-pruning",
+        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.",
+    )
+    var firAggressivePruning: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

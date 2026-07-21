@@ -200,6 +200,12 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     }
 
     @Test
+    @TestMetadata("PlusMinus.kt")
+    public void testPlusMinus() {
+      run("PlusMinus.kt");
+    }
+
+    @Test
     @TestMetadata("ScopeTest.kt")
     public void testScopeTest() {
       run("ScopeTest.kt");
@@ -255,6 +261,12 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     @TestMetadata("DelegatedPropertiesTest.kt")
     public void testDelegatedPropertiesTest() {
       run("DelegatedPropertiesTest.kt");
+    }
+
+    @Test
+    @TestMetadata("InitializationOrderTest.kt")
+    public void testInitializationOrderTest() {
+      run("InitializationOrderTest.kt");
     }
   }
 

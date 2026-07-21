@@ -506,6 +506,15 @@
       "type": "org.jetbrains.kotlin.com.intellij.codeInsight.multiverse.MultiverseEnabler"
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.concurrency.VarHandleWrapperImpl",
+      "methods": [
+        {
+          "name": "useVarHandlesInConcurrentCollections",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.java.syntax.JavaSyntaxBundle"
     },
     {

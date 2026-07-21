@@ -42,11 +42,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -1056,7 +1054,7 @@ abstract class AbstractComposeLowering(
 
         // If a type is immutable, then calls to its constructor are static if all of
         // the provided arguments are static.
-        if (symbol.owner.parentAsClass.hasAnnotationSafe(ComposeFqNames.Immutable)) {
+        if (symbol.owner.parentAsClass.hasAnnotation(ComposeFqNames.Immutable)) {
             return areAllArgumentsStatic(fileContainingDependent)
         }
         return false
@@ -1816,9 +1814,6 @@ abstract class AbstractComposeLowering(
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
-
-fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
-    annotations.any { it.isAnnotationWithEqualFqName(fqName) }
 
 // workaround for KT-45361
 val IrAnnotation.annotationClass

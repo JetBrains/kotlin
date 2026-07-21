@@ -54,4 +54,15 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
+
+    compilerArgument {
+        name = "Xcontext-receivers"
+        description = "Enable experimental context receivers.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

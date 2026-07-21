@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.KlibDump
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 private val rawLinuxDump = """
     // Rendering settings:
@@ -191,42 +191,42 @@ class KlibDumpTest {
         }
         assertEquals("", dump)
 
-        assertThrows<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             AbiToolsImpl.loadKlibDump(tmpFolder.newFile())
         }
     }
 
     @Test
     fun loadFromNonExistingFile() {
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             AbiToolsImpl.loadKlibDump(tmpFolder.resolve(UUID.randomUUID().toString()))
         }
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             AbiToolsImpl.createKlibDump().merge(tmpFolder.resolve(UUID.randomUUID().toString()))
         }
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             AbiToolsImpl.loadKlibDump(tmpFolder.resolve(UUID.randomUUID().toString()))
         }
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             AbiToolsImpl.createKlibDump().mergeFromKlib(tmpFolder.resolve(UUID.randomUUID().toString()))
         }
     }
 
     @Test
     fun loadKlibFromNonKlib() {
-        assertThrows<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder) }
-        assertThrows<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder.newFile()) }
+        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder) }
+        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder.newFile()) }
 
-        assertThrows<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder) } }
-        assertThrows<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder.newFile()) } }
+        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder) } }
+        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder.newFile()) } }
     }
 
     @Test
     fun loadFromDirectory() {
-        assertThrows<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             AbiToolsImpl.loadKlibDump(tmpFolder)
         }
-        assertThrows<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             AbiToolsImpl.createKlibDump().merge(tmpFolder)
         }
     }
@@ -312,7 +312,7 @@ class KlibDumpTest {
 
     @Test
     fun loadMultitargetDumpUsingCustomName() {
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             val dump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
             dump.setCustomName("abc")
         }
@@ -418,11 +418,11 @@ class KlibDumpTest {
     fun mergeDumpsWithIntersectingTargets() {
         val mergedDump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
 
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             mergedDump.merge(rawMultitargetDump)
         }
 
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             mergedDump.merge(mergedLinuxDump)
         }
     }
@@ -516,7 +516,7 @@ class KlibDumpTest {
     fun inferOutOfThinAir() {
         val unsupportedTarget = KlibTarget.parse("iosArm64")
 
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             AbiToolsImpl.createKlibDump().inferAbiForUnsupportedTarget(AbiToolsImpl.createKlibDump(), unsupportedTarget)
         }
     }
@@ -524,14 +524,14 @@ class KlibDumpTest {
     @Test
     fun inferFromSelf() {
         val dump = AbiToolsImpl.loadKlibDump(mergedLinuxDump)
-        assertThrows<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             dump.inferAbiForUnsupportedTarget(AbiToolsImpl.createKlibDump(), dump.targets.first())
         }
     }
 
     @Test
     fun inferFromIntersectingDumps() {
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             AbiToolsImpl.loadKlibDump(mergedLinuxDump).merge(mergedMultitargetDump)
         }
     }

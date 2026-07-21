@@ -44,7 +44,8 @@ internal enum class JvmExposeBoxedMode {
  * @see JvmExposeBoxedMode
  * @see hasJvmExposeBoxedAnnotation
  */
-internal fun KaSession.jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): JvmExposeBoxedMode {
+context(_: KaSession)
+internal fun jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): JvmExposeBoxedMode {
     if (callableSymbol.hasJvmExposeBoxedAnnotation()) {
         return JvmExposeBoxedMode.EXPLICIT
     }

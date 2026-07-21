@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.abi.tools.impl
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.jetbrains.kotlin.abi.tools.impl.filtering.compileMatcher
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class FiltersMatcherTests {
 

@@ -59,6 +59,7 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
 internal fun KGPBaseTest.publishMultiplatformLibrary(
     gradleVersion: GradleVersion,
     projectName: String = "multiplatformLibrary",
+    libraryVersion: String = "1.0",
     configure: KotlinMultiplatformExtension.() -> Unit = {
         iosArm64()
         sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
@@ -73,7 +74,7 @@ internal fun KGPBaseTest.publishMultiplatformLibrary(
     buildScriptInjection {
         project.applyMultiplatform(configure)
     }
-}.publish(publisherConfiguration = PublisherConfiguration())
+}.publish(publisherConfiguration = PublisherConfiguration(version = libraryVersion))
 
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
     listOf(

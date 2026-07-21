@@ -21,6 +21,7 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly(kotlin("stdlib", coreDepsVersion))
 
+    testImplementation(kotlin("test-junit5", coreDepsVersion))
     testImplementation(platform(libs.junit.bom))
     testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)

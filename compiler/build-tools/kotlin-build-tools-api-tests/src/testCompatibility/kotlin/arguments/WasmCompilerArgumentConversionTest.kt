@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.NullableWasmCo
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.KLIB
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.WasmArgumentOperationKind.LINKING
+import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -149,18 +149,6 @@ internal class WasmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     private fun WasmArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
-        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
-
-        assumeTrue(
-            compilerVersion >= KotlinToolingVersion(introducedVersion),
-            "Test requires compiler version >= $introducedVersion"
-        )
-
-        if (removedVersion != null) {
-            assumeTrue(
-                compilerVersion < KotlinToolingVersion(removedVersion),
-                "Test requires compiler version < $removedVersion"
-            )
-        }
+        assumeArgumentAvailable()
     }
 }

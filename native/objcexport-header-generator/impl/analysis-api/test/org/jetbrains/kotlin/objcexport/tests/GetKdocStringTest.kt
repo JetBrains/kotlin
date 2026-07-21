@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.export.utilities.getKDocString
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
@@ -28,7 +29,8 @@ class GetKdocStringTest(
         )
 
         analyze(ktFile) {
-            val foo = ktFile.getClassOrFail("Foo", this)
+            val session = useSiteSession
+            val foo = ktFile.getClassOrFail("Foo", session)
             assertEquals(
                 """
                     /**
@@ -52,7 +54,8 @@ class GetKdocStringTest(
         )
 
         analyze(ktFile) {
-            val foo = ktFile.getFunctionOrFail("foo", this)
+            val session = useSiteSession
+            val foo = ktFile.getFunctionOrFail("foo", session)
             assertEquals(
                 """
                     /**

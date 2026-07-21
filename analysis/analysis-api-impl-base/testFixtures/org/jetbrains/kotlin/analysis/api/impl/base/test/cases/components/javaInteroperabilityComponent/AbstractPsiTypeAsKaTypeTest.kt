@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.render
+import org.jetbrains.kotlin.analysis.api.javaInterop.asKaType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -40,7 +41,7 @@ abstract class AbstractPsiTypeAsKaTypeTest : AbstractAnalysisApiBasedTest() {
                     testServices.assertions.assertNotNull(psiType)
                     val kaType = psiType!!.asKaType(useSitePosition ?: psiDeclaration)!!
                     appendLine("${PsiType::class.simpleName}: ${psiType.render()}")
-                    appendLine("${KaType::class.simpleName}: ${kaType.render(useSiteSession)}")
+                    appendLine("${KaType::class.simpleName}: ${kaType.render()}")
                 }
             }
         }

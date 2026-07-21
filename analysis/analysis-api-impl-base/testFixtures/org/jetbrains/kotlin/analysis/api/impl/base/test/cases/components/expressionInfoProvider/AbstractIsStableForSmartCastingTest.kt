@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.expressions.isStableForSmartCasting
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider

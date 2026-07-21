@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -20,8 +21,9 @@ class GetObjCDocumentedAnnotationsTest(
     fun `test - no annotation present`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.isNotEmpty())
                 fail("Expected no 'ObjC Documented Annotation present, Found. $objCDocumentedAnnotations")
         }
@@ -41,8 +43,9 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")
 
@@ -67,8 +70,9 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")
 

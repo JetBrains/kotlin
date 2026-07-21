@@ -1,6 +1,3 @@
-error: experimental context receivers are superseded by context parameters.
-Remove the '-Xcontext-receivers' compiler argument and migrate to the new syntax.
-
-See the context parameters proposal for more details: https://kotl.in/context-parameters
 warning: the argument '-Xcontext-parameters' is redundant for the current language version 2.5.
-COMPILATION_ERROR
+warning: the argument '-Xcontext-receivers' was removed in Kotlin $ABI_VERSION$. It has no effect.
+OK

@@ -45,21 +45,21 @@ internal class DescriptorKType(
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
                 if (KotlinBuiltIns.isArray(type)) {
-                    val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
+                    val argument = type.arguments.singleOrNull()?.type ?: return jClass.kotlin
                     // Make the array element type nullable to make sure that `kotlin.Array<Int>` is mapped to `[Ljava/lang/Integer;`
                     // instead of `[I`. Also, `kotlin.Array<T>`, where `T` is a type parameter and `T : Int`, should be mapped to
                     // `[Ljava/lang/Integer;`.
                     val elementClassifier =
                         convert(argument.makeNullable())
                             ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
-                    return KClassImpl(elementClassifier.jvmErasure.javaObjectType.createArrayType())
+                    return elementClassifier.jvmErasure.javaObjectType.createArrayType().kotlin
                 }
 
                 if (!TypeUtils.isNullableType(type)) {
-                    return KClassImpl(jClass.primitiveByWrapper ?: jClass)
+                    return (jClass.primitiveByWrapper ?: jClass).kotlin
                 }
 
-                return KClassImpl(jClass)
+                return jClass.kotlin
             }
             is TypeParameterDescriptor -> return KTypeParameterImpl(descriptor.toContainer(), descriptor)
             else -> return null

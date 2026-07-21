@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
-import java.io.File
-import kotlin.io.walk
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import java.io.File
+import kotlin.test.Test
 
 class CasesPublicAPITest {
 

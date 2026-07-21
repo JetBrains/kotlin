@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.compilation.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule

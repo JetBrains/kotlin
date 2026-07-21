@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmAnalysisFlags.strictMetadataVersionSemantics
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.org.objectweb.asm.Type
@@ -39,11 +39,11 @@ class ClassFileFactory(
     private val sourceFiles: MutableSet<File> = HashSet()
     val packagePartRegistry: PackagePartRegistry = PackagePartRegistry()
 
-    fun newVisitor(origin: JvmDeclarationOrigin, asmType: Type, sourceFiles: List<File>): ClassBuilder {
+    fun newVisitor(origin: IrClass?, asmType: Type, sourceFiles: List<File>): ClassBuilder {
         val answer = builderFactory.newClassBuilder(origin)
         val classFileName = asmType.internalName + ".class"
         generators[classFileName] = ClassBuilderAndSourceFileList(answer, sourceFiles)
-        if (origin.declaration?.let(generationState.isDeclarationGeneratedForCompilerPlugin) == true) {
+        if (origin != null && generationState.isDeclarationGeneratedForCompilerPlugin(origin)) {
             generatedForCompilerPluginSources.addAll(sourceFiles)
         }
         return answer

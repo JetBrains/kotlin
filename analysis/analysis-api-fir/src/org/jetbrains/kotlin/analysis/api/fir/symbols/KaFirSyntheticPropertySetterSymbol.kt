@@ -38,6 +38,9 @@ internal class KaFirSyntheticPropertySetterSymbol(
     override val isInline: Boolean
         get() = withValidityAssertion { false }
 
+    override val isExpect: Boolean
+        get() = withValidityAssertion { false }
+
     override val isOverride: Boolean
         get() = withValidityAssertion {
             firSymbol.isOverride || firSymbol.fir.propertySymbol.isOverride
@@ -84,7 +87,7 @@ internal class KaFirSyntheticPropertySetterSymbol(
         get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
-        KaBasePropertySetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this), this)
+        KaBasePropertySetterSymbolPointer(propertySymbolPointer = createOwnerPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

@@ -25,6 +25,7 @@ where advanced options include:
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xsuspend-lambda-exporting Enable exporting suspend lambdas to JavaScript/TypeScript.
+  -Xts-export-untyped-as-unknown Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
@@ -128,6 +129,8 @@ where advanced options include:
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xcallable-references-to-contextual
+                             Enable callable references to contextual declarations.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcollection-literals      Enable experimental language support for collection literals.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
@@ -145,7 +148,6 @@ where advanced options include:
   -Xconsistent-data-class-copy-visibility
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-parameters       Enable experimental context parameters.
-  -Xcontext-receivers        Enable experimental context receivers.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xdata-flow-based-exhaustiveness
                              Enable `when` exhaustiveness improvements that rely on data-flow analysis.
@@ -182,6 +184,7 @@ where advanced options include:
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
   -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
+  -Xfir-aggressive-pruning   Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.

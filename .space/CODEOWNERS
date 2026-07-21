@@ -142,7 +142,6 @@
 /compiler/ir/backend.native/ "Kotlin Native" "Kotlin Common Backend"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
 /compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend"
-/compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
 /compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
@@ -209,7 +208,6 @@
 /compiler/testData/diagnostics/irInliner/ "Kotlin Common Backend"
 /compiler/testData/diagnostics/testsWithAnyBackend/ "Kotlin Common Backend"
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
-/compiler/testData/ir/interpreter/ "Kotlin Common Backend"
 /compiler/testData/ir/irText/ "Kotlin Compiler"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
@@ -298,7 +296,6 @@
 /generators/ReadMe.md "Kotlin Build Infrastructure"
 /generators/builtins/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
 /generators/evaluate/ "Kotlin Frontend"
-/generators/interpreter/ "Kotlin Common Backend"
 /generators/main/ "Kotlin Build Infrastructure"
 /generators/nativeInteropRuntime/ "Kotlin Native"
 /generators/protobuf/ "Kotlin Build Infrastructure"

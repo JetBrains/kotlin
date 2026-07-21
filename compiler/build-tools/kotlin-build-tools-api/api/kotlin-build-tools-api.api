@@ -471,6 +471,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_ALLOW_RETURNS_RESULT_OF Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ANNOTATION_DEFAULT_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ANNOTATION_TARGET_ALL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_CALLABLE_REFERENCES_TO_CONTEXTUAL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_CHECK_PHASE_CONDITIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_COLLECTION_LITERALS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_COMPANION_BLOCKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -496,6 +497,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_EXPLICIT_API Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_BACKING_FIELDS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_CONTEXT_ARGUMENTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_FIR_AGGRESSIVE_PRUNING Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE_TYPE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_IGNORE_CONST_OPTIMIZATION_ERRORS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -837,6 +839,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_OPTIMIZE_GENERATED_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
+	public static final field X_TS_EXPORT_UNTYPED_AS_UNKNOWN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;)Ljava/lang/Object;
 }
 

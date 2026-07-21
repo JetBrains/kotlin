@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 
 class ExtrasSerializableTest {
 

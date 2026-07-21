@@ -10,6 +10,20 @@ package org.jetbrains.kotlin.cli.common.arguments
 @Deprecated("This class exists solely to facilitate detailed error reporting.", level = DeprecationLevel.ERROR)
 class RemovedCompilerArguments {
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xcontext-receivers",
+        description = "Enable experimental context receivers.",
+        removedVersion = "2.5.0",
+    )
+    var contextReceivers: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.",
         level = DeprecationLevel.ERROR,
     )

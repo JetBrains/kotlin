@@ -10,10 +10,14 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability
+import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -30,7 +34,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    private inline fun <T> withReceiverSymbol(crossinline action: KaSession.(KaReceiverParameterSymbol) -> T): T =
+    private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 
     companion object {

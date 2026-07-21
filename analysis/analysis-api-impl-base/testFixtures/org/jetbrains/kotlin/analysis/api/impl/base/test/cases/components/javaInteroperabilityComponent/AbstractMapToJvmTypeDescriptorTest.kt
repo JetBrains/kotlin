@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
+import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider

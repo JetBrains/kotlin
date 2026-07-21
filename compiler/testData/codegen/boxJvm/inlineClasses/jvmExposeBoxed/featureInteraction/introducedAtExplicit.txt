@@ -10,9 +10,8 @@ public final class MyClass {
     private final field property: int
     public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) @kotlin.jvm.JvmExposeBoxed method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed method <init>(@kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p0: kotlin.UInt): void
-    public synthetic method <init>(@kotlin.IntroducedAt(version="3") p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    private method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
-    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method <init>(@kotlin.IntroducedAt(version="3") p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getProperty-pVg5ArA(): int
 }
 

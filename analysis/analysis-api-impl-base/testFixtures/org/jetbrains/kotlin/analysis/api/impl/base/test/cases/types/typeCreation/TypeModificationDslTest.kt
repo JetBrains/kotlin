@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreatio
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.copy
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiExecutionTestEnvironment
 import org.jetbrains.kotlin.analysis.test.framework.base.AnalysisApiTestEnvironmentStorage
@@ -101,7 +99,7 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @TestMetadata("classType/boxedArrayWithStringTypeArgument.kt")
     fun `classType boxedArrayWithStringTypeArgument +addTypeArgument`() = test<KaClassType> { type ->
         type.copy {
-            typeArgument(starTypeProjection())
+            typeArgument(typeCreator.starTypeProjection())
         }
     }
 
@@ -194,7 +192,7 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @TestMetadata("functionType/fourIntValueParameters.kt")
     fun `functionType fourIntValueParameters +addReceiver`() = test<KaFunctionType> { type ->
         type.copy {
-            receiverType = classType(StandardClassIds.String)
+            receiverType = typeCreator.classType(StandardClassIds.String)
         }
     }
 
@@ -226,7 +224,7 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @TestMetadata("functionType/basicFunWithIntReturnType.kt")
     fun `functionType basicFunWithIntReturnType +addContextParameter`() = test<KaFunctionType> { type ->
         type.copy {
-            contextParameter(classType(StandardClassIds.String))
+            contextParameter(typeCreator.classType(StandardClassIds.String))
         }
     }
 
@@ -242,7 +240,7 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
     @TestMetadata("functionType/basicFunWithIntReturnType.kt")
     fun `functionType basicFunWithIntReturnType +changeReturnType`() = test<KaFunctionType> { type ->
         type.copy {
-            returnType = classType(StandardClassIds.String)
+            returnType = typeCreator.classType(StandardClassIds.String)
         }
     }
 
@@ -302,7 +300,7 @@ abstract class AbstractTypeModificationDslTestBase(testDirPathString: String) : 
     @AnalysisApiTestEnvironmentStorage
     private lateinit var environment: AnalysisApiExecutionTestEnvironment
 
-    protected fun <T : KaType> test(block: KaSession.(T) -> Any?) {
+    protected fun <T : KaType> test(block: context(KaSession) (T) -> Any?) {
         val testMethodName = environment.testServices.testInfo.methodName
         val [directoryName, testDataFileName, modificationName] = TEST_NAME_REGEX.matchEntire(testMethodName)?.destructured
             ?: error("Expected test name format: 'directoryName testDataFileName +modificationName'")

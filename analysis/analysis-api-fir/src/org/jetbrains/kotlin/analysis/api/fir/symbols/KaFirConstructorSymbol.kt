@@ -139,18 +139,18 @@ internal class KaFirConstructorSymbol private constructor(
 
         when {
             firSymbol.isTypeAliasedConstructor -> KaFirTypeAliasedConstructorMemberPointer(
-                ownerPointer = analysisSession.createOwnerPointer(this),
+                ownerPointer = createOwnerPointer(),
                 signature = FirCallableSignature.createSignature(firSymbol),
                 originalSymbol = this,
             )
 
             firSymbol.isPrimary -> KaFirPrimaryConstructorSymbolPointer(
-                ownerPointer = analysisSession.createOwnerPointer(this),
+                ownerPointer = createOwnerPointer(),
                 originalSymbol = this,
             )
 
             else -> KaFirSecondaryConstructorSymbolPointer(
-                ownerPointer = analysisSession.createOwnerPointer(this),
+                ownerPointer = createOwnerPointer(),
                 signature = FirCallableSignature.createSignature(firSymbol),
                 originalSymbol = this,
             )

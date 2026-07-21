@@ -33,6 +33,7 @@ abstract class AbstractScopeTestBase : AbstractSymbolByFqNameTest() {
         }
     }
 
-    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData =
+    context(_: KaSession)
+    override fun collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData =
         SymbolsData(getSymbolsFromScope(getScope(ktFile, testServices)).toList())
 }

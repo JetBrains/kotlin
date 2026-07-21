@@ -5,7 +5,6 @@
 
 package kotlin.reflect.jvm.internal
 
-import java.lang.reflect.Constructor
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.Modality
@@ -98,15 +97,9 @@ private fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>): An
 
 internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
     val parameters = parameters
+    val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
 
-    val hasBoxingMarker = isConstructor &&
-            ((caller.member as? Constructor<*>)?.let { isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(it) } == true)
-
-    val parameterSize = parameters.size + (if (isSuspend) 1 else 0) + (if (hasBoxingMarker) 1 else 0)
-
-    val parametersWithAllocatedBitInMask =
-        parameters.count { it.kind == KParameter.Kind.VALUE || it.kind == KParameter.Kind.CONTEXT } +
-                (if (hasBoxingMarker) 1 else 0)
+    val parametersWithAllocatedBitInMask = parameters.count { it.kind == KParameter.Kind.VALUE || it.kind == KParameter.Kind.CONTEXT }
     val maskSize = (parametersWithAllocatedBitInMask + Integer.SIZE - 1) / Integer.SIZE
 
     // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
@@ -141,18 +134,11 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
         }
     }
 
-    val regularParameterSize = parameters.size + if (isSuspend) 1 else 0
-
-    val hasBoxingMarker = isConstructor &&
-            ((caller.member as? Constructor<*>)?.let { isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(it) } == true)
-
-    val defaultParameterSize = regularParameterSize + (if (hasBoxingMarker) 1 else 0)
+    val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
 
     val arguments = getAbsentArguments().apply {
         if (isSuspend) {
             this[parameters.size] = continuationArgument
-        } else if (hasBoxingMarker) {
-            this[parameters.size] = null
         }
     }
 
@@ -165,7 +151,7 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
                 arguments[parameter.index] = args[parameter]
             }
             parameter.isOptional -> {
-                val maskIndex = defaultParameterSize + (valueParameterIndex / Integer.SIZE)
+                val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
                 arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
                 anyOptional = true
             }
@@ -182,7 +168,7 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
     if (!anyOptional) {
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {
-            caller.call(arguments.copyOf(regularParameterSize)) as R
+            caller.call(arguments.copyOf(parameterSize)) as R
         }
     }
 

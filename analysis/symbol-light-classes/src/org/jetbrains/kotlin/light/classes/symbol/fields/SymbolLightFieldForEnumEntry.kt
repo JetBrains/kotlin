@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
@@ -32,7 +33,7 @@ internal class SymbolLightFieldForEnumEntry(
     private val enumEntryName: String,
     containingClass: SymbolLightClassForClassOrObject,
 ) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
-    internal inline fun <T> withEnumEntrySymbol(crossinline action: KaSession.(KaEnumEntrySymbol) -> T): T =
+    internal inline fun <T> withEnumEntrySymbol(crossinline action: context(KaSession) (KaEnumEntrySymbol) -> T): T =
         analyzeForLightClasses(ktModule) {
             action(enumEntry.symbol)
         }

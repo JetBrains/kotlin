@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseContextParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseUnrestorableSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
@@ -45,15 +41,6 @@ internal class KaFirContextParameterSymbol private constructor(
     override val name: Name
         get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
 
-    override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
-            FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility.asKaSymbolVisibility
-        }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
-
     override val returnType: KaType
         get() = withValidityAssertion { firSymbol.returnType(builder) }
 
@@ -74,7 +61,7 @@ internal class KaFirContextParameterSymbol private constructor(
         }
 
         return KaBaseContextParameterSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             index = index,
             originalSymbol = this,

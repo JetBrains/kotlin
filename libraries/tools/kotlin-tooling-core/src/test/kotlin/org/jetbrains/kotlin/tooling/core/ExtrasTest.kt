@@ -2,9 +2,7 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNull
+import kotlin.test.*
 
 class ExtrasTest {
 
@@ -182,9 +180,9 @@ class ExtrasTest {
         assertEquals(extrasKeyOf<Int>(), extrasKeyOf<Int>())
         assertEquals(extrasKeyOf<List<String>>(), extrasKeyOf<List<String>>())
         assertEquals(extrasKeyOf<Int>("a"), extrasKeyOf<Int>("a"))
-        assertNotEquals(extrasKeyOf<Int>(), extrasKeyOf<String>())
-        assertNotEquals(extrasKeyOf<Int>("a"), extrasKeyOf<Int>())
-        assertNotEquals(extrasKeyOf<Int>("a"), extrasKeyOf<Int>("b"))
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>(), extrasKeyOf<String>())
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>("a"), extrasKeyOf<Int>())
+        assertNotEquals<Extras.Key<*>>(extrasKeyOf<Int>("a"), extrasKeyOf<Int>("b"))
     }
 
     @Test

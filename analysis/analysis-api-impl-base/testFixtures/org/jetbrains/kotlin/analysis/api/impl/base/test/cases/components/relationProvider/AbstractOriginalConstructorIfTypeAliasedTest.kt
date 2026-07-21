@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -31,13 +33,13 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
                 prettyPrint {
                     appendLine("Resolved constructor:")
                     withIndent {
-                        appendLine(symbolRenderer.render(this@copyAwareAnalyzeForTest, referencedConstructor))
+                        appendLine(symbolRenderer.render(useSiteSession, referencedConstructor))
                     }
                     appendLine()
                     appendLine("Original constructor if type aliased:")
                     withIndent {
                         append("")
-                        appendLine(originalConstructor?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }.toString())
+                        appendLine(originalConstructor?.let { symbolRenderer.render(useSiteSession, it) }.toString())
                     }
                 }
             }

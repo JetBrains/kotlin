@@ -45,6 +45,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.callableReferencesToContextual) {
+        put(LanguageFeature.CallableReferencesToContextual, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.collectionLiterals) {
         put(LanguageFeature.CollectionLiterals, LanguageFeature.State.ENABLED)
     }
@@ -64,10 +68,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.contextParameters) {
         put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.contextReceivers) {
-        put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.contextSensitiveResolution) {

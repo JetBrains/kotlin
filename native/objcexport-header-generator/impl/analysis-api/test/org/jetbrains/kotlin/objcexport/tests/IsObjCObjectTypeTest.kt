@@ -1,14 +1,16 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -20,8 +22,9 @@ class IsObjCObjectTypeTest(
     fun `test - simple class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
-            assertFalse(isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
+            assertFalse(session.isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
         }
     }
 
@@ -34,8 +37,9 @@ class IsObjCObjectTypeTest(
         )
 
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
-            assertTrue(isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
+            assertTrue(session.isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
         }
     }
 
@@ -50,8 +54,9 @@ class IsObjCObjectTypeTest(
         )
 
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
-            assertTrue(isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
+            assertTrue(session.isObjCObjectType(fooSymbol.memberScope.constructors.single().returnType))
         }
     }
 }

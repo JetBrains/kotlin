@@ -46,7 +46,7 @@
 
         <kotlin.bootstrap.version>2.5.0-dev-498</kotlin.bootstrap.version>
         <surefire-version>3.5.5</surefire-version>
-        <maven.version>3.9.12</maven.version>
+        <maven.version>3.9.16</maven.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
 
         <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>

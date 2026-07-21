@@ -72,6 +72,9 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
      */
     public abstract val isReified: Boolean
 
+    abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
+
+    //region Implementation details
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
@@ -81,8 +84,7 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     @KaExperimentalApi
     @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
+    //endregion
 }
 
 /**
@@ -113,11 +115,6 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
 @OptIn(KaImplementationDetail::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol {
-    final override val modality: KaSymbolModality
-        get() = withValidityAssertion { KaSymbolModality.FINAL }
-
-    final override val isExternal: Boolean get() = withValidityAssertion { false }
-
     /**
      * The type this type alias expands to, which is the right-hand side of the `typealias` declaration. The type alias's [typeParameters]
      * will be contained in the resulting [KaType] unless they're unused.
@@ -125,6 +122,13 @@ public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol {
     public abstract val expandedType: KaType
 
     abstract override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol>
+
+    //region Implementation details
+    final override val modality: KaSymbolModality
+        get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
+    //endregion
 }
 
 /**
@@ -181,8 +185,12 @@ public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerS
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
+    abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
+
+    //region Implementation details
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
     final override val classId: ClassId? get() = withValidityAssertion { null }
+    final override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
@@ -196,8 +204,7 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     final override val name: Name? get() = withValidityAssertion { null }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
+    //endregion
 }
 
 /**

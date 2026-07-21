@@ -114,4 +114,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val IC_CACHE_DIRECTORY by key<String>(throwOnNull = false)
     val IC_FILES_TO_LOAD by key<Set<String>>(throwOnNull = false)
     val ADDITIONAL_EXPORTED_DECLARATION_NAMES by key<Set<FqName>>()
+
+    val EXPORT_UNTYPED_AS_UNKNOWN by key<Boolean>()
 }

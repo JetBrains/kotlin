@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.translation
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllClassifiers
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule

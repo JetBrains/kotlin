@@ -1,0 +1,24 @@
+private val unusedPrivateProperty: String
+  private get
+
+private val privatePropertyReferencedByNonInline: String
+  private get
+
+private val privatePropertyReferencedByInline: String
+  private get
+
+private fun privateFunReferencedByInline(): String {
+}
+
+private fun privateFunReferencedByNonInline(): String {
+}
+
+inline fun publicInlineFun(): String {
+  return privateFunReferencedByInline().plus(other = <get-privatePropertyReferencedByInline>())
+}
+
+fun publicNonInlineFun(): String {
+}
+
+private fun unusedPrivateFun(): String {
+}

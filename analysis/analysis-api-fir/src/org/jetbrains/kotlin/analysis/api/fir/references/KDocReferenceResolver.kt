@@ -11,17 +11,16 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
-import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
+import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getContextElementOrSelf
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getNestedScopePossiblyContainingShortName
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.*
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
-import org.jetbrains.kotlin.analysis.api.types.defaultType
-import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -143,7 +142,8 @@ internal object KDocReferenceResolver {
      *
      * Knows about the [ResolveResult.receiverClassReference] field and uses it in case it's not empty.
      */
-    private fun KaSession.findParentSymbol(resolveResult: ResolveResult, goBackSteps: Int, selectedFqName: FqName): KaSymbol? {
+    context(_: KaSession)
+    private fun findParentSymbol(resolveResult: ResolveResult, goBackSteps: Int, selectedFqName: FqName): KaSymbol? {
         return if (resolveResult.receiverClassReference != null) {
             findParentSymbol(resolveResult.receiverClassReference, goBackSteps - 1, selectedFqName)
         } else {
@@ -160,7 +160,8 @@ internal object KDocReferenceResolver {
      * @param selectedFqName The fully qualified name of the selected package.
      * @return The [goBackSteps]-th parent [KaSymbol]
      */
-    private fun KaSession.findParentSymbol(symbol: KaSymbol, goBackSteps: Int, selectedFqName: FqName): KaSymbol? {
+    context(_: KaSession)
+    private fun findParentSymbol(symbol: KaSymbol, goBackSteps: Int, selectedFqName: FqName): KaSymbol? {
         if (symbol !is KaDeclarationSymbol && symbol !is KaPackageSymbol) return null
 
         if (symbol is KaDeclarationSymbol) {
@@ -173,7 +174,8 @@ internal object KDocReferenceResolver {
     /**
      * N.B. Works only for [KaClassSymbol] parents chain.
      */
-    private fun KaSession.goToNthParent(symbol: KaDeclarationSymbol, steps: Int): KaDeclarationSymbol? {
+    context(_: KaSession)
+    private fun goToNthParent(symbol: KaDeclarationSymbol, steps: Int): KaDeclarationSymbol? {
         var currentSymbol = symbol
 
         repeat(steps) {
@@ -239,7 +241,8 @@ internal object KDocReferenceResolver {
      *
      * This resolution algorithm is implemented according to KEEP-0389 "Streamline ambiguous KDoc links".
      */
-    private fun KaSession.resolveKdocFqName(
+    context(_: KaSession)
+    private fun resolveKdocFqName(
         fqName: FqName,
         contextElement: KtElement,
         containedTagSectionIfSubject: KDocKnownTag?
@@ -255,7 +258,8 @@ internal object KDocReferenceResolver {
      * Retrieves symbols from the [contextElement] by [fqName].
      * Note that this search is performed only when [fqName] is short one, e.g., contains just a single segment.
      */
-    private fun KaSession.handleContextDeclarations(
+    context(_: KaSession)
+    private fun handleContextDeclarations(
         fqName: FqName,
         contextElement: KtElement,
         containedTagSectionIfSubject: KDocKnownTag?
@@ -331,7 +335,8 @@ internal object KDocReferenceResolver {
     /**
      * If [name] equals to `this`, returns a receiver of the callable context declaration, if any.
      */
-    private fun KaSession.getExtensionReceiverSymbolByThisQualifier(
+    context(_: KaSession)
+    private fun getExtensionReceiverSymbolByThisQualifier(
         name: Name,
         contextElement: KtElement,
     ): List<KaSymbol> {
@@ -363,7 +368,8 @@ internal object KDocReferenceResolver {
      *
      * Otherwise, only the context declaration itself is considered.
      */
-    private fun KaSession.getSymbolsFromContextDeclaration(
+    context(_: KaSession)
+    private fun getSymbolsFromContextDeclaration(
         name: Name,
         contextElement: KtElement,
         contextDeclarationHandlingMode: ContextDeclarationHandlingMode,
@@ -449,7 +455,8 @@ internal object KDocReferenceResolver {
     /**
      * Returns all scopes that are visible from the given [position] for the further declaration retrieval.
      */
-    private fun KaSession.getVisibleScopes(
+    context(_: KaSession)
+    private fun getVisibleScopes(
         position: KtElement
     ): List<KaScope> {
         val containingFile = position.containingKtFile
@@ -471,7 +478,8 @@ internal object KDocReferenceResolver {
         return localScopeContextScopes + outerClassScopes + globalScopeContextScopes
     }
 
-    private fun KaSession.findSymbolsInScopes(
+    context(_: KaSession)
+    private fun findSymbolsInScopes(
         fqName: FqName,
         contextElement: KtElement,
         visibleResolutionScopes: List<KaScope>,
@@ -573,7 +581,8 @@ internal object KDocReferenceResolver {
      * which then returns `foo.bar` package scope.
      * Then [getNestedScopePossiblyContainingShortName] is called for the rest of the [fqName] chain starting from the package scope.
      */
-    private fun KaSession.getLongestExistingPackageScope(fqName: FqName): KaScope? {
+    context(_: KaSession)
+    private fun getLongestExistingPackageScope(fqName: FqName): KaScope? {
         val fqNameSegments = fqName.pathSegments().map { it.toString() }
         for (numberOfPackageSegments in fqNameSegments.size - 1 downTo 1) {
             val packageName = FqName.fromSegments(fqNameSegments.take(numberOfPackageSegments))
@@ -587,7 +596,8 @@ internal object KDocReferenceResolver {
     /**
      * Retrieves all outer declarations for [contextElement] and returns a list of their member scopes.
      */
-    private fun KaSession.getOuterClassScopesForPosition(contextElement: KtElement): Collection<KaScope> {
+    context(_: KaSession)
+    private fun getOuterClassScopesForPosition(contextElement: KtElement): Collection<KaScope> {
         val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
             ?: return emptyList()
         val scopeList = mutableListOf<KaScope>()
@@ -604,7 +614,8 @@ internal object KDocReferenceResolver {
         return scopeList
     }
 
-    private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
+    context(_: KaSession)
+    private fun getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
         listOfNotNull(
             // Regular `combinedMemberScope` doesn't include any synthetic Java properties.
             // But these properties are available through the dedicated synthetic type scope
@@ -613,7 +624,8 @@ internal object KDocReferenceResolver {
             getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
 
-    private fun KaSession.getCompanionObjectMemberScope(symbol: KaDeclarationContainerSymbol): KaScope? {
+    context(_: KaSession)
+    private fun getCompanionObjectMemberScope(symbol: KaDeclarationContainerSymbol): KaScope? {
         val namedClassSymbol = symbol as? KaNamedClassSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
         return companionSymbol.memberScope
@@ -627,7 +639,8 @@ internal object KDocReferenceResolver {
      * with the current segment's name in the current scope. When suitable declaration containers for the current segment are calculated,
      * proceeds with a composite member scope of these containers and the next [fqName] segment.
      */
-    private fun KaSession.getNestedScopePossiblyContainingShortName(fqName: FqName, scope: KaScope): KaScope? {
+    context(_: KaSession)
+    private fun getNestedScopePossiblyContainingShortName(fqName: FqName, scope: KaScope): KaScope? {
         if (fqName.isOneSegmentFQN()) {
             return scope
         }
@@ -649,7 +662,8 @@ internal object KDocReferenceResolver {
         return finalScope
     }
 
-    private fun KaSession.applyScopeReduction(fqName: FqName, scopes: List<KaScope>): List<KaScope> {
+    context(_: KaSession)
+    private fun applyScopeReduction(fqName: FqName, scopes: List<KaScope>): List<KaScope> {
         return scopes.mapNotNull { getNestedScopePossiblyContainingShortName(fqName, it) }
     }
 
@@ -668,7 +682,8 @@ internal object KDocReferenceResolver {
      * It does not try to resolve fully qualified or member functions, because they are dealt
      * with by the other parts of [KDocReferenceResolver].
      */
-    private fun KaSession.getTypeQualifiedExtensions(
+    context(_: KaSession)
+    private fun getTypeQualifiedExtensions(
         fqName: FqName,
         visibleScopes: List<KaScope>,
     ): List<ResolveResult> {

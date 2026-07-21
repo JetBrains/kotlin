@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicArray
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.VolatilePropertyReference
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.VOLATILE
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
-import java.util.concurrent.atomic.AtomicInteger
 
 abstract class AbstractAtomicfuIrBuilder(
     protected val irBuiltIns: IrBuiltIns,
@@ -61,11 +61,20 @@ abstract class AbstractAtomicfuIrBuilder(
      *                                                 }
      *                                             }
      */
-    abstract fun irCallFunction (
+    abstract fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
         arguments: List<IrExpression?>,
         valueType: IrType
     ): IrCall
+
+    protected fun irUnaryMinus(value: IrExpression?): IrExpression? {
+        if (value == null) return null
+        val klass = value.type.getClass() ?: error("No class found for type ${value.type}: ${value.dump()}")
+        val unaryMinus = klass.functions.single {
+            it.name == OperatorNameConventions.UNARY_MINUS && it.hasShape(dispatchReceiver = true)
+        }.symbol
+        return irCallFunction(unaryMinus, listOf(value), value.type)
+    }
 
     protected fun invokeFunctionOnAtomicHandlerClass(
         getAtomicHandler: IrExpression,
@@ -78,11 +87,17 @@ abstract class AbstractAtomicfuIrBuilder(
         val functionSymbol = when (functionName) {
             "get", "<get-value>", "getValue" -> atomicHandlerClassSymbol.getSimpleFunction("get")
             "set", "<set-value>", "setValue", "lazySet" -> atomicHandlerClassSymbol.getSimpleFunction("set")
+            "plusAssign", "minusAssign" -> atomicHandlerClassSymbol.getSimpleFunction("getAndAdd")
             else -> atomicHandlerClassSymbol.getSimpleFunction(functionName)
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
+        val modifiedArgs = if (functionName == "minusAssign") {
+            valueArguments.dropLast(1) + irUnaryMinus(valueArguments.last())
+        } else {
+            valueArguments
+        }
         return irCallFunction(
             functionSymbol,
-            listOf(getAtomicHandler) + valueArguments,
+            listOf(getAtomicHandler) + modifiedArgs,
             valueType
         )
     }

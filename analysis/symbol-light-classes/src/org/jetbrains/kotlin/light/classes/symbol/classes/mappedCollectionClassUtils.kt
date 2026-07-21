@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -71,7 +70,8 @@ private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
  *
  * @see processPossiblyMappedCollectionMethod
  */
-internal fun KaSession.processOwnDeclarationsMappedCollectionMethodsAware(
+context(_: KaSession)
+internal fun processOwnDeclarationsMappedCollectionMethodsAware(
     containingClass: SymbolLightClassForClassOrObject,
     callableDeclarations: Sequence<KaCallableSymbol>,
     allSupertypes: List<KaClassType>,
@@ -149,7 +149,8 @@ internal fun hasCollectionSupertype(allSupertypes: Iterable<KaClassType>): Boole
  *
  * @see tryToMapKotlinCollectionMethodToJavaMethod
  */
-internal fun KaSession.processPossiblyMappedCollectionMethod(
+context(_: KaSession)
+internal fun processPossiblyMappedCollectionMethod(
     containingClass: SymbolLightClassForClassOrObject,
     ownFunction: KaNamedFunctionSymbol,
     kotlinCollectionFunction: KaNamedFunctionSymbol,
@@ -233,7 +234,8 @@ internal fun KaSession.processPossiblyMappedCollectionMethod(
  * @see generateJavaCollectionMethodStubs
  * @see mapKotlinCollectionClassToJava
  */
-internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
+context(session: KaSession)
+internal fun generateJavaCollectionMethodStubsIfNeeded(
     containingClass: SymbolLightClassForClassOrObject,
     classSymbol: KaNamedClassSymbol,
     allSupertypes: List<KaClassType>,
@@ -257,7 +259,8 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
  * This avoids stopping at `Collection` when the same class also inherits from ex. `List`, so light classes
  * can generate the richer `List` stub set.
  */
-private fun KaSession.findClosestMappedCollectionSupertype(allSupertypes: List<KaClassType>): KaClassType? {
+context(session: KaSession)
+private fun findClosestMappedCollectionSupertype(allSupertypes: List<KaClassType>): KaClassType? {
     val mappedSupertypes = allSupertypes.filter { mapKotlinCollectionClassToJava(it.classId) != null }
 
     return mappedSupertypes.firstOrNull { candidate ->
@@ -267,7 +270,8 @@ private fun KaSession.findClosestMappedCollectionSupertype(allSupertypes: List<K
     }
 }
 
-private fun KaSession.isFirstNonInterfaceSubtypeOfCollection(classSymbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+private fun isFirstNonInterfaceSubtypeOfCollection(classSymbol: KaClassSymbol): Boolean {
     return classSymbol.superTypes.none { directSupertype ->
         val supertypeSymbol = directSupertype.expandedSymbol ?: return@none false
         if (supertypeSymbol.classKind == KaClassKind.INTERFACE) return@none false
@@ -282,11 +286,12 @@ private fun mapKotlinCollectionClassToJava(classId: ClassId): ClassId? {
     }?.javaClass
 }
 
-private fun KaSession.createPsiSubstitutor(
+context(session: KaSession)
+private fun createPsiSubstitutor(
     javaCollection: PsiClass,
     kotlinCollection: KaClassType,
     containingClass: SymbolLightClassForClassOrObject,
-): PsiSubstitutor {
+): PsiSubstitutor = with(session) {
     val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
         javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
             val psiType = typeArgument.type?.asPsiType(
@@ -300,7 +305,8 @@ private fun KaSession.createPsiSubstitutor(
     return PsiSubstitutor.createSubstitutor(substitutionMap)
 }
 
-private fun KaSession.generateJavaCollectionMethodStubs(
+context(session: KaSession)
+private fun generateJavaCollectionMethodStubs(
     containingClass: SymbolLightClassForClassOrObject,
     javaCollectionPsiClass: PsiClass,
     kotlinCollectionSymbol: KaClassSymbol,
@@ -474,7 +480,8 @@ private fun PsiMethod.wrap(
     providedSignature = signature
 )
 
-private fun KaSession.tryToMapKotlinCollectionMethodToJavaMethod(
+context(_: KaSession)
+private fun tryToMapKotlinCollectionMethodToJavaMethod(
     kotlinCollectionFunction: KaNamedFunctionSymbol,
     allSupertypes: List<KaClassType>,
 ): PsiMethod? {
@@ -505,16 +512,20 @@ private fun KaSession.tryToMapKotlinCollectionMethodToJavaMethod(
     return javaClass?.findMatchingMethod()
 }
 
-private fun KaSession.getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? =
+context(_: KaSession)
+private fun getJavaCollectionClass(allSupertypes: List<KaClassType>): PsiClass? =
     getJavaPsiClass(allSupertypes, kotlinClassId = StandardClassIds.Collection)
 
-private fun KaSession.getJavaListClass(allSupertypes: List<KaClassType>): PsiClass? =
+context(_: KaSession)
+private fun getJavaListClass(allSupertypes: List<KaClassType>): PsiClass? =
     getJavaPsiClass(allSupertypes, kotlinClassId = StandardClassIds.List)
 
-private fun KaSession.getJavaMapClass(allSupertypes: List<KaClassType>): PsiClass? =
+context(_: KaSession)
+private fun getJavaMapClass(allSupertypes: List<KaClassType>): PsiClass? =
     getJavaPsiClass(allSupertypes, kotlinClassId = StandardClassIds.Map)
 
-private fun KaSession.getJavaPsiClass(allSupertypes: List<KaClassType>, kotlinClassId: ClassId): PsiClass? {
+context(session: KaSession)
+private fun getJavaPsiClass(allSupertypes: List<KaClassType>, kotlinClassId: ClassId): PsiClass? {
     val kotlinCollection = allSupertypes.find { it.classId == kotlinClassId } ?: return null
     val javaClassId = mapKotlinCollectionClassToJava(kotlinCollection.classId) ?: return null
     val javaCollectionSymbol = findClass(javaClassId) ?: return null
@@ -524,5 +535,6 @@ private fun KaSession.getJavaPsiClass(allSupertypes: List<KaClassType>, kotlinCl
 internal fun KaCallableSymbol.isFromKotlinCollectionsPackage(): Boolean =
     callableId?.packageName?.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) == true
 
-private fun KaSession.findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? =
+context(session: KaSession)
+private fun findOverriddenCollectionSymbol(symbol: KaNamedFunctionSymbol): KaNamedFunctionSymbol? =
     symbol.allOverriddenSymbols.find { it.isFromKotlinCollectionsPackage() } as? KaNamedFunctionSymbol

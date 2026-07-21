@@ -42,6 +42,9 @@ internal class KaFirPropertyGetterSymbol(
     override val isExpect: Boolean
         get() = isExpectImpl
 
+    override val isExtension: Boolean
+        get() = withValidityAssertion { false }
+
     override val isNotDefault: Boolean
         get() = withValidityAssertion { true }
 

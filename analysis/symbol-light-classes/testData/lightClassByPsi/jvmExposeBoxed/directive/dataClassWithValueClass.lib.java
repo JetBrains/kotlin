@@ -29,7 +29,7 @@ public final class MyDataClass /* one.MyDataClass*/ {
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();//  toString()
 
-  private  MyDataClass(java.lang.String, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(java.lang.String, kotlin.jvm.internal.BoxingConstructorMarker)
+  private  MyDataClass(java.lang.String);//  .ctor(java.lang.String)
 
   public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 

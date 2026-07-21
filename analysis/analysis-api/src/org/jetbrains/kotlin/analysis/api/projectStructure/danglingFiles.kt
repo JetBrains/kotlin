@@ -141,7 +141,7 @@ public val KaModule.baseContextModuleOrSelf: KaModule
 /**
  * Whether the [KtFile] is a *dangling* file.
  *
- * @see org.jetbrains.kotlin.analysis.api.analyzeCopy
+ * @see org.jetbrains.kotlin.analysis.api.session.analyzeCopy
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public val KtFile.isDangling: Boolean

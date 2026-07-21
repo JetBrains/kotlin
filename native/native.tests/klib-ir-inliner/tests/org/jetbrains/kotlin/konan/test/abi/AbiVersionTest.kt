@@ -27,10 +27,10 @@ class AbiVersionTest {
     }
 
     @Test
-    fun `Each ABI version since 2_3 is reflected in KlibAbiCompatibilityLevel`() {
+    fun `Each ABI version since 2_4 is reflected in KlibAbiCompatibilityLevel`() {
         fun KotlinAbiVersion.next() = KotlinAbiVersion(major, minor + 1, patch)
 
-        val coveredAbiVersions: List<KotlinAbiVersion> = generateSequence(ABI_VERSION_2_3) { it.next() }
+        val coveredAbiVersions: List<KotlinAbiVersion> = generateSequence(ABI_VERSION_2_4) { it.next() }
             .takeWhileInclusive { it != KotlinAbiVersion.CURRENT }
             .toList()
 
@@ -57,6 +57,6 @@ class AbiVersionTest {
     }
 
     companion object {
-        private val ABI_VERSION_2_3 = KotlinAbiVersion(2, 3, 0)
+        private val ABI_VERSION_2_4 = KotlinAbiVersion(2, 4, 0)
     }
 }

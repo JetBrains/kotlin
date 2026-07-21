@@ -206,13 +206,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_EB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVERS_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
@@ -1862,13 +1860,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER,
             "With implicit context receivers, the call is ambiguous. Specify the receiver explicitly.",
-        )
-        map.put(CONTEXT_RECEIVERS_DEPRECATED, "{0}", STRING)
-        map.put(CONTEXT_CLASS_OR_CONSTRUCTOR,
-            """
-            Contextual classes and constructors are deprecated and will not be supported when context parameters are enabled. Consider migrating to regular parameters.
-            
-            See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
         )
         map.put(
             COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED,

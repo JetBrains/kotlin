@@ -47,7 +47,7 @@ internal class KaFirBackingFieldSymbol private constructor(
         get() = withValidityAssertion { true }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
+        get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
 
     override val isVal: Boolean
         get() = withValidityAssertion { backingOwningProperty.isVal }

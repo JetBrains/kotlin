@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider
 
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction
+import org.jetbrains.kotlin.analysis.api.symbols.samConstructor
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -33,10 +37,10 @@ abstract class AbstractFunctionalInterfaceFunctionTest : AbstractAnalysisApiBase
 
                 buildString {
                     appendLine("CLASS:")
-                    appendLine("  ${symbolRenderer.render(this@copyAwareAnalyzeForTest, classSymbol)}")
+                    appendLine("  ${symbolRenderer.render(useSiteSession, classSymbol)}")
                     appendLine()
                     appendLine("FUNCTIONAL INTERFACE FUNCTION:")
-                    appendLine("  ${functionalInterfaceFunction?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
+                    appendLine("  ${functionalInterfaceFunction?.let { symbolRenderer.render(useSiteSession, it) }}")
                 }
             }
         }

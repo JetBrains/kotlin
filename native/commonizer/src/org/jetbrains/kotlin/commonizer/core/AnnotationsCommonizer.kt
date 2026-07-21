@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.utils.COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID
 import org.jetbrains.kotlin.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.commonizer.utils.OBJC_NAME_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.commonizer.utils.isObjCInteropCallableAnnotation
 
 private typealias Annotations = Map<CirEntityId, CirAnnotation>
@@ -24,6 +25,7 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
         return buildList {
             addAll(commonizedObjcCallableAnnotation(first, second))
             commonizedDeprecatedAnnotation(firstAnnotations, secondAnnotations)?.let { add(it) }
+            commonizedObjCNameAnnotation(firstAnnotations, secondAnnotations)?.let { add(it) }
             addAll(commonizedSimpleAnnotations(firstAnnotations, secondAnnotations))
         }.distinct()
     }
@@ -82,6 +84,12 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
         val firstDeprecation = first[DEPRECATED_ANNOTATION_CLASS_ID] ?: return null
         val secondDeprecation = second[DEPRECATED_ANNOTATION_CLASS_ID] ?: return null
         return DeprecationAnnotationCommonizer.commonize(firstDeprecation, secondDeprecation)
+    }
+
+    private fun commonizedObjCNameAnnotation(first: Annotations, second: Annotations): CirAnnotation? {
+        val firstObjCName = first[OBJC_NAME_ANNOTATION_CLASS_ID] ?: return null
+        val secondObjCName = second[OBJC_NAME_ANNOTATION_CLASS_ID] ?: return null
+        return ObjCNameAnnotationCommonizer.commonize(firstObjCName, secondObjCName)
     }
 
     private val objCCallableAnnotation = CirAnnotation.createInterned(

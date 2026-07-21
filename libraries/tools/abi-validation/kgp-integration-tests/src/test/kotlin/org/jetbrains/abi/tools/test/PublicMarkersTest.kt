@@ -6,9 +6,9 @@
 package org.jetbrains.abi.tools.test
 
 import org.jetbrains.abi.tools.test.api.*
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
+import kotlin.test.Ignore
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class PublicMarkersTest : BaseKotlinGradleTest() {
 
@@ -44,7 +44,7 @@ class PublicMarkersTest : BaseKotlinGradleTest() {
     }
 
     // Public markers are not supported in KLIB ABI dumps
-    @Disabled // filters should be aligned with jvm
+    @Ignore // filters should be aligned with jvm
     @Test
     fun testPublicMarkersForNativeTargets() {
         val runner = test {

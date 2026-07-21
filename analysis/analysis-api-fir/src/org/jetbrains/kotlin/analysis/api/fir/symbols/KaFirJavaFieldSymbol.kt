@@ -50,7 +50,7 @@ internal class KaFirJavaFieldSymbol(
     override val isCompanion: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = withValidityAssertion {
-        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic, this)
+        KaFirJavaFieldSymbolPointer(createOwnerPointer(), name, firSymbol.isStatic, this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

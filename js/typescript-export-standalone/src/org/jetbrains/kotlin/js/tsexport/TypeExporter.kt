@@ -54,6 +54,9 @@ internal class TypeExporter(
 
     context(_: KaSession)
     private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
+        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.isAnyType))
+            return Primitive.Unknown
+
         if (type is KaDynamicType || type in currentlyProcessedTypes)
             return Primitive.Any
 

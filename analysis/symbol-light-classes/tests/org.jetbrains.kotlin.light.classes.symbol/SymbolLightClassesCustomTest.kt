@@ -9,8 +9,9 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.api.components.directDiagnostics
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase

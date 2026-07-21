@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
+import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
+import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -32,7 +34,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         builder.useDirectives(Directives)
     }
 
-    open fun <R> analyzeSymbolElement(element: KtElement, testServices: TestServices, action: KaSession.() -> R): R {
+    open fun <R> analyzeSymbolElement(element: KtElement, testServices: TestServices, action: context(KaSession) () -> R): R {
         return analyzeForTest(element, action)
     }
 
@@ -87,7 +89,8 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     context(session: KaSession)
     open fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? = null
 
-    private fun KaSession.tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
+    context(session: KaSession)
+    private fun tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
         element.tryResolveSymbols()
     } else {
         null
