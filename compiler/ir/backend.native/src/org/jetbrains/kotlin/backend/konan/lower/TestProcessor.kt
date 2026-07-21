@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.name.Name
 
 class TestProcessor(
     private val context: LoweringContext,
-    private val sourcesModules: Set<ModuleDescriptor>? = null,
 ) : FileLoweringPass {
     companion object {
         val TEST_SUITE_CLASS by IrDeclarationOriginImpl.Regular
@@ -69,6 +69,8 @@ class TestProcessor(
             val COMPANION_KINDS = listOf(BEFORE_CLASS, AFTER_CLASS)
         }
     }
+
+    private val sourcesModules: Set<ModuleDescriptor>? = context.configuration.sourcesModules
 
     private val symbols = context.symbols as PreSerializationNativeSymbols
 

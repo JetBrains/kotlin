@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeseri
 import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -47,7 +46,6 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
 
 internal class NativeBackendContext(
         config: NativeSecondStageCompilationConfig,
-        val sourcesModules: Set<ModuleDescriptor>,
         @OptIn(K1Deprecation::class)
         val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
