@@ -36,8 +36,9 @@ dependencies {
 
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 
-    val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
-    if (asyncProfilerClasspath != null) {
+    // Used by modularized-tests
+    if (project.extra.has("fir.bench.async.profiler.classpath")) {
+        val asyncProfilerClasspath = project.extra.get("fir.bench.async.profiler.classpath") as String
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
     }
 }
@@ -64,8 +65,9 @@ projectTests {
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
-        val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String
-        if (argsExt != null) {
+        // Used by modularized-tests
+        if (project.extra.has("fir.modularized.jvm.args")) {
+            val argsExt = project.extra.get("fir.modularized.jvm.args") as String
             val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
             this.jvmArgs(paramRegex.findAll(argsExt).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
