@@ -118,7 +118,7 @@ kotlin {
             api(kotlinTest())
         }
         jvmTest.dependencies {
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
     }
 }

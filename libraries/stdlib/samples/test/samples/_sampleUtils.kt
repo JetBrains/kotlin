@@ -18,8 +18,7 @@ package samples
 
 import kotlin.test.assertEquals
 
-typealias Sample = org.junit.Test
-typealias RunWith = org.junit.runner.RunWith
-typealias Enclosed = org.junit.experimental.runners.Enclosed
+typealias Sample = org.junit.jupiter.api.Test
+typealias Nested = org.junit.jupiter.api.Nested
 
 fun assertPrints(expression: Any?, expectedOutput: String) = assertEquals(expectedOutput, expression.toString())

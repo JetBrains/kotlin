@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":core:descriptors.jvm"))
     compileOnly(intellijCore())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:ir.backend.common")))
 }
 

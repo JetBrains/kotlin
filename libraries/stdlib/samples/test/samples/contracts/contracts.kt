@@ -83,10 +83,10 @@ inline fun callsInPlaceUnknownContract(block: () -> Unit) {
     block()
 }
 
-@RunWith(Enclosed::class)
 class Contracts {
 
-    class Initialization {
+    @Nested
+    inner class Initialization {
 
         @Sample
         @kotlin.contracts.ExperimentalContracts
@@ -135,7 +135,8 @@ class Contracts {
         }
     }
 
-    class Smartcasts {
+    @Nested
+    inner class Smartcasts {
         @Sample
         @kotlin.contracts.ExperimentalContracts
         fun continueWithNotNull() {

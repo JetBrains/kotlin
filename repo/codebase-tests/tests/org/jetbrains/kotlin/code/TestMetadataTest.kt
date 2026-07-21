@@ -55,7 +55,7 @@ class TestMetadataTest {
             println("Checked: $checkedAnnotations '@TestMetadata' annotations on $checkedClasses classes")
         }
 
-        forEachCompileClass { file, classNode ->
+        forEachCompiledClass { file, classNode ->
             checkedClasses.incrementAndFetch()
             classNode.visibleAnnotations?.forEach { annotation ->
                 if (annotation.desc == testMetadataAnnotationDesc) {

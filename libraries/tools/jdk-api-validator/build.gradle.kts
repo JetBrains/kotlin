@@ -17,7 +17,7 @@ dependencies {
     implementation("org.codehaus.mojo:animal-sniffer:1.21")
     implementation(kotlinStdlib())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
@@ -31,6 +31,7 @@ val collectSignatures by tasks.registering(Sync::class) {
 }
 
 tasks.test {
+    useJUnitPlatform()
     systemProperty("kotlinVersion", project.version)
     addDirectoryProperty("signaturesDirectory") {
         fileProvider(collectSignatures.map { it.destinationDir })

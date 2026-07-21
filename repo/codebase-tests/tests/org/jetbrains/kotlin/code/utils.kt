@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.code
 
+import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.nio.file.Path
@@ -12,10 +13,14 @@ import kotlin.io.path.*
 
 private val root = Path("")
 
-internal fun forEachCompileClass(
+private val rootAbsolute = root.absolute()
+
+internal fun forEachCompiledClass(
     action: (file: Path, ClassNode) -> Unit,
 ) {
-    root.walk()
+    root.toFile().absoluteFile.walkTopDown()
+        .onEnter { !it.toPath().isGitIgnored() }
+        .map { it.toPath().relativeTo(rootAbsolute) }
         .filter { it.extension == "class" }
         .filter { it.pathString.contains("build/classes") }
         .filterNot { it.pathString.contains("/fakes/") }

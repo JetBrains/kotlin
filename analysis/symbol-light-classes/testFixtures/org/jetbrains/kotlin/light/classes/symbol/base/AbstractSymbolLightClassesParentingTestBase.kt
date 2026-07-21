@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.AssertionsService
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import java.lang.reflect.Method
 import java.nio.file.Path
 
@@ -48,7 +48,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
     }
 
     protected fun createLightElementsVisitor(directives: RegisteredDirectives, assertions: AssertionsService): JavaElementVisitor {
-        Assume.assumeFalse("The test is not supported", Directives.IGNORE_PARENTING_CHECK in directives)
+        Assumptions.assumeFalse(Directives.IGNORE_PARENTING_CHECK in directives, "The test is not supported")
 
         // drop after KT-56882
         val ignoreDecompiledClasses = isTestAgainstCompiledCode

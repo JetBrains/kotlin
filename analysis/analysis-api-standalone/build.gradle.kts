@@ -32,7 +32,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit5"))
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testFixturesApi(platform(libs.junit.bom))

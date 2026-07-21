@@ -7,13 +7,17 @@ plugins {
 
 dependencies {
     api(project(":kotlin-stdlib-jdk8"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 }
 
 sourceSets {
     "test" {
         kotlin.srcDir("test")
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.compileTestKotlin {

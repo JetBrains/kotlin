@@ -34,7 +34,7 @@ dependencies {
     implementation(libs.jackson.dataformat.yaml)
     implementation(libs.jackson.module.kotlin)
 
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
     testImplementation(project(":native:unsafe-mem"))
     testCppRuntime(project(":kotlin-native:libclangInterop"))
     testCppRuntime(project(":kotlin-native:Interop:Runtime"))
@@ -88,5 +88,6 @@ tasks.withType<Test>().configureEach {
     // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
     // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    useJUnitPlatform()
 }
 

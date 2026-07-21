@@ -46,7 +46,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
 
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))

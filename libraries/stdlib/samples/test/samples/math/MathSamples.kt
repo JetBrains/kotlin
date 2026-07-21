@@ -9,9 +9,9 @@ import samples.*
 import kotlin.math.*
 import kotlin.test.*
 
-@RunWith(Enclosed::class)
 class MathSamples {
-    class Doubles {
+    @Nested
+    inner class Doubles {
         @Sample
         fun floor() {
             assertPrints(floor(3.14159), "3.0")
@@ -605,7 +605,8 @@ class MathSamples {
         }
     }
 
-    class Floats {
+    @Nested
+    inner class Floats {
         @Sample
         fun floor() {
             assertPrints(floor(3.14159f), "3.0")
@@ -1200,7 +1201,8 @@ class MathSamples {
         }
     }
 
-    class Longs {
+    @Nested
+    inner class Longs {
         @Sample
         fun abs() {
             assertPrints(abs(42L), "42")
@@ -1241,7 +1243,8 @@ class MathSamples {
         }
     }
 
-    class Ints {
+    @Nested
+    inner class Ints {
         @Sample
         fun abs() {
             assertPrints(abs(42), "42")

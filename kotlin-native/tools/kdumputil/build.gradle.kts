@@ -12,7 +12,11 @@ version = "1.0.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit5"))
+}
+
+tasks.test.configure {
+    useJUnitPlatform()
 }
 
 application {

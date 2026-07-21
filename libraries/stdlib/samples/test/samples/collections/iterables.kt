@@ -18,10 +18,10 @@ package samples.collections
 
 import samples.*
 
-@RunWith(Enclosed::class)
 class Iterables {
 
-    class Building {
+    @Nested
+    inner class Building {
 
         @Sample
         fun iterable() {
@@ -43,7 +43,8 @@ class Iterables {
 
     }
 
-    class Operations {
+    @Nested
+    inner class Operations {
 
         @Sample
         fun flattenIterable() {

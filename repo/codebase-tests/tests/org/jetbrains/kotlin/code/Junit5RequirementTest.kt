@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.code
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
-import org.junit.jupiter.api.parallel.ResourceLock
 
 /**
  * This test will scan over all .class files produced by this repository.
@@ -19,11 +18,21 @@ class Junit5RequirementTest {
     private val junit4TestAnnotationDesc = "Lorg/junit/Test;"
     private val junit3TestCaseName = "junit/framework/TestCase"
 
+    /*
+    Packages listed here are not checked, as they have a valid reason for still using junit5
+     */
+    private val packageWhitelist = listOf(
+        "kotlin/test" // We still ship a junit4 variant
+    )
+
     @Test
     fun `no junit4 annotations or junit3 TestCase is used`() {
         val violations = mutableListOf<String>()
 
-        forEachCompileClass { _, node ->
+        forEachCompiledClass { _, node ->
+            packageWhitelist.forEach { packageName ->
+                if (node.name.startsWith(packageName)) return@forEachCompiledClass
+            }
 
             /* Check for junit3 TestCase */
             if (node.superName == junit3TestCaseName) {
