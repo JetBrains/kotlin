@@ -31,7 +31,7 @@ class DurableKeyTests {
 
     private fun DurableKeyVisitor.assertDuplicate(prefix: String, expected: String) {
         val [key, success] = buildPath(prefix)
-        assertEquals(key, expected)
+        assertEquals(expected, key)
         assert(!success) { "Expected duplicate, but wasn't: $key" }
     }
 
