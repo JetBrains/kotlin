@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -25,11 +27,22 @@ private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.cl
 private val FirProperty.resolvedVisibility: EffectiveVisibility
     get() = publishedApiEffectiveVisibility ?: effectiveVisibility
 
-object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
+object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
-        if (!declaration.effectiveVisibility.publicApi && declaration.resolvedVisibility.publicApi) {
+        if (!declaration.resolvedVisibility.privateApi &&
+            (declaration.isCompanionBlockMember || declaration.isCompanionExtension)
+        ) {
+            // Companion block's properties and companion extension properties will be supported in the plugin
+            // at the same exact time they become available for our users,
+            // and it's a chance to make things right from the beginning and support only private properties.
+            reporter.reportOn(
+                declaration.source,
+                AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN,
+                declaration.source.text.toString()
+            )
+        } else if (!declaration.effectiveVisibility.publicApi && declaration.resolvedVisibility.publicApi) {
             reporter.reportOn(
                 declaration.source,
                 AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN,
