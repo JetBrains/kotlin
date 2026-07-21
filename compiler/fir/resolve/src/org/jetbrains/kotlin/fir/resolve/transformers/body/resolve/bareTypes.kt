@@ -5,17 +5,29 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleBareInferenceFailed
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.canHaveUndefinedNullability
+import org.jetbrains.kotlin.types.model.makeDefinitelyNotNullOrNotNull
+import org.jetbrains.kotlin.types.model.replaceType
+import org.jetbrains.kotlin.types.model.withNullability
+import kotlin.collections.forEach
 
+
+context(onDiagnostic: (ConeDiagnostic) -> Unit)
 fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
     originalType.lowerBoundIfFlexible().fullyExpandedType().let {
         if (it !== originalType) return computeRepresentativeTypeForBareType(type, it)
@@ -28,8 +40,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     }
 
     session.typeApproximator.approximateToSuperType(
-        originalType,
-        TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        originalType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
     )?.let {
         return computeRepresentativeTypeForBareType(type, it)
     }
@@ -48,18 +59,125 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
             castClass.defaultType(), originalClassLookupTag,
         ).firstOrNull() as? ConeClassLikeType ?: return null
 
-        if (originalType.isMarkedNullable)
-            correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
-        else
-            correspondingSupertype
+        if (originalType.isMarkedNullable) correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
+        else correspondingSupertype
     }
 
-    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
-    val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
-    if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution)) return null
+    val substitution = trySimpleInference(castClass, originalType, superTypeWithParameters, onDiagnostic) ?: run {
+        onDiagnostic(
+            ConeSimpleBareInferenceFailed(
+                "originalType: $originalType; castClass: ${castClass.defaultType()}, superTypeWithParameters: $superTypeWithParameters"
+            )
+        )
+        tryLegacyInference(castClass, originalType, superTypeWithParameters)
+    } ?: return null
 
     val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
     return expandedCastType.withArguments(newArguments.toTypedArray())
+}
+
+
+private fun BodyResolveComponents.tryLegacyInference(
+    castClass: FirRegularClass,
+    originalType: ConeKotlinType,
+    superTypeWithParameters: ConeClassLikeType,
+): Map<FirTypeParameterSymbol, ConeTypeProjection>? {
+    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+    val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
+    if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution)) return null
+    return substitution
+}
+
+data class SimpleInferenceStats(
+    val containingArguments: Int,
+    val directInheritance: Int,
+    val isSameConstraints: Boolean?,
+    val isSameVariance: Boolean?,
+    val isOriginalUnconstrained: Boolean?,
+    val originalStr: String?,
+    val childConstraint: String?,
+    val parentConstraint: String?,
+)
+
+private fun BodyResolveComponents.trySimpleInference(
+    castClass: FirRegularClass,
+    originalType: ConeKotlinType,
+    superTypeWithParameters: ConeClassLikeType,
+    onDiagnostic: (ConeDiagnostic) -> Unit,
+): Map<FirTypeParameterSymbol, ConeTypeProjection>? {
+    val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
+    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+    val originalArguments = originalType.typeArguments
+    val supertypeArguments = superTypeWithParameters.typeArguments
+
+    typeParameters.forEach { typeParameter ->
+        val containingArguments = supertypeArguments.zip(supertypeArguments.indices).filter { [argumentType, idx] ->
+            argumentType.type?.contains { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == typeParameter } ?: false
+        }
+
+        val directInheritanceArguments = containingArguments.filter { [argumentType, idx] ->
+            val argType = if (argumentType is ConeFlexibleType) {
+                argumentType.lowerBound
+            } else {
+                argumentType
+            }
+            argType is ConeTypeParameterType && argType.lookupTag.typeParameterSymbol == typeParameter
+        }
+
+        if (directInheritanceArguments.size != 1) {
+            val stats = SimpleInferenceStats(containingArguments.size, directInheritanceArguments.size, null, null, null, null, null, null)
+            onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
+            return@forEach
+        }
+
+        val [_, idx] = directInheritanceArguments.single()
+        val originalInstantiation = originalType.fullyExpandedType().typeArguments[idx]
+        val originalTypeParameter = originalType.fullyExpandedType().classLikeLookupTagIfAny!!.toClassSymbol()!!.typeParameterSymbols[idx]
+        val (areBoundsEqual, boundsA, boundsB) = areBoundsEqual(originalTypeParameter.toConeType(), typeParameter.toConeType())
+
+        val isSameVariance = originalTypeParameter.variance == typeParameter.variance
+        val isOriginalUnconstrained =
+            originalInstantiation.isStarProjection || (originalInstantiation is ConeTypeParameterType && areBoundsEqual(
+                originalInstantiation, originalTypeParameter.toConeType()
+            ).areBoundsEqual)
+        val originalStr = originalInstantiation.toString()
+
+        val stats = SimpleInferenceStats(
+            containingArguments.size,
+            directInheritanceArguments.size,
+            areBoundsEqual,
+            isSameVariance,
+            isOriginalUnconstrained,
+            originalStr,
+            boundsA,
+            boundsB
+        )
+
+        onDiagnostic(ConeSimpleBareInferenceFailed(data = stats))
+    }
+
+    for (i in originalArguments.indices) {
+        val originalArgument = originalArguments[i]
+        val preSupertypeArgument = supertypeArguments[i]
+        val supertypeArgument = if (preSupertypeArgument is ConeFlexibleType) preSupertypeArgument.lowerBound else preSupertypeArgument
+        val typeParameterType = supertypeArgument as? ConeTypeParameterType ?: continue
+        if (typeParameterType.isMarkedNullable) return null
+        val typeParameterSymbol = typeParameterType.lookupTag.typeParameterSymbol
+        if (typeParameterSymbol !in typeParameters || typeParameterSymbol in substitution) return null
+        substitution[typeParameterSymbol] = originalArgument
+    }
+    if (substitution.size != typeParameters.size) return null
+    return substitution
+}
+
+
+data class AreBoundsEqualResult(val areBoundsEqual: Boolean, val boundsA: String, val boundsB: String)
+
+private fun BodyResolveComponents.areBoundsEqual(a: ConeTypeParameterType, b: ConeTypeParameterType): AreBoundsEqualResult {
+    val aBounds = a.collectUpperBounds(session.typeContext)
+    val bBounds = b.collectUpperBounds(session.typeContext)
+    val areBoundsEqual = aBounds.size == bBounds.size && aBounds.all { bBounds.contains(it) }
+    return AreBoundsEqualResult(areBoundsEqual, aBounds.joinToString(", "), bBounds.joinToString(", "))
 }
 
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
