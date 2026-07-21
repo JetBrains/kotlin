@@ -34,39 +34,10 @@ object ClasspathEntrySnapshotter {
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
-                && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
+                && !unixStyleRelativePath.equals(MODULE_INFO_CLASS, ignoreCase = true)
                 && !isPackageInfoClassPath(unixStyleRelativePath)
                 && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
-
-    private fun isModuleInfoClassPath(unixStyleRelativePath: String): Boolean {
-        val path = unixStyleRelativePath.lowercase()
-        if (path == "module-info.class") return true
-        if (!path.startsWith("meta-inf/versions/") || !path.endsWith("/module-info.class")) return false
-        val version = path.removePrefix("meta-inf/versions/").removeSuffix("/module-info.class")
-        return version.toIntOrNull() != null
-    }
-
-    private fun isPackageInfoClassPath(unixStyleRelativePath: String): Boolean {
-        val path = unixStyleRelativePath.lowercase()
-        return path == "package-info.class" || path.endsWith("/package-info.class")
-    }
-
-    /**
-     * Paths must already be sorted (as [DirectoryOrJarReader.getUnixStyleRelativePaths] returns them) so the result is stable;
-     * each path is folded in alongside its bytes, so relocating a file (e.g. between multi-release version dirs) also counts as a change.
-     */
-    private fun combinedContentHash(reader: DirectoryOrJarReader, paths: List<String>): Long? =
-        paths.takeIf { it.isNotEmpty() }?.let {
-            val buffer = ByteArrayOutputStream()
-            DataOutputStream(buffer).use { out ->
-                for (path in paths) {
-                    out.writeUTF(path)
-                    out.write(reader.readBytes(path))
-                }
-            }
-            buffer.toByteArray().hashToLong()
-        }
 
     fun snapshot(
         classpathEntry: File,
@@ -94,17 +65,61 @@ object ClasspathEntrySnapshotter {
                 directoryOrJarReader,
                 directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
             )
-            val packageInfoHash = combinedContentHash(
-                directoryOrJarReader,
-                directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
-            )
+            val packageInfoHashes = directoryOrJarReader
+                .getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
+                .groupBy { packageNameOfPackageInfo(it) }
+                .mapValues { combinedContentHash(directoryOrJarReader, it.value)!! }
             return ClasspathEntrySnapshot(
                 classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
                 moduleInfoHash = moduleInfoHash,
-                packageInfoHash = packageInfoHash,
+                packageInfoHashes = packageInfoHashes,
             )
         }
     }
+
+    private fun isModuleInfoClassPath(unixStyleRelativePath: String): Boolean {
+        if (unixStyleRelativePath.equals(MODULE_INFO_CLASS, ignoreCase = true)) return true
+        val prefix = "meta-inf/versions/"
+        val suffix = "/$MODULE_INFO_CLASS"
+        if (unixStyleRelativePath.length < prefix.length + suffix.length
+            || !unixStyleRelativePath.startsWith(prefix, ignoreCase = true)
+            || !unixStyleRelativePath.endsWith(suffix, ignoreCase = true)
+        ) return false
+        val version = unixStyleRelativePath.substring(prefix.length, unixStyleRelativePath.length - suffix.length)
+        return version.toIntOrNull() != null
+    }
+
+    private fun isPackageInfoClassPath(unixStyleRelativePath: String): Boolean =
+        unixStyleRelativePath.equals(PACKAGE_INFO_CLASS, ignoreCase = true)
+                || unixStyleRelativePath.endsWith("/$PACKAGE_INFO_CLASS", ignoreCase = true)
+
+    private fun packageNameOfPackageInfo(unixStyleRelativePath: String): String {
+        var path = unixStyleRelativePath
+        if (path.startsWith("META-INF/versions/", ignoreCase = true)) {
+            // Drop the "META-INF/versions/<n>/" prefix (three path segments) to get the logical package path.
+            path = path.substringAfter('/').substringAfter('/').substringAfter('/', missingDelimiterValue = "")
+        }
+        return path.removeSuffix(PACKAGE_INFO_CLASS).removeSuffix("/").replace('/', '.')
+    }
+
+    /**
+     * Paths must already be sorted (as [DirectoryOrJarReader.getUnixStyleRelativePaths] returns them) so the result is stable;
+     * each path is folded in alongside its bytes, so relocating a file (e.g. between multi-release version dirs) also counts as a change.
+     */
+    private fun combinedContentHash(reader: DirectoryOrJarReader, paths: List<String>): Long? =
+        paths.takeIf { it.isNotEmpty() }?.let {
+            val buffer = ByteArrayOutputStream()
+            DataOutputStream(buffer).use { out ->
+                for (path in paths) {
+                    out.writeUTF(path)
+                    out.write(reader.readBytes(path))
+                }
+            }
+            buffer.toByteArray().hashToLong()
+        }
+
+    private const val MODULE_INFO_CLASS = "module-info.class"
+    private const val PACKAGE_INFO_CLASS = "package-info.class"
 }
 
 private sealed interface DirectoryOrJarReader : Closeable {
