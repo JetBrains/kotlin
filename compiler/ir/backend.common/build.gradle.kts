@@ -19,12 +19,16 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     compileOnly(intellijCore())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+
+tasks.test.configure {
+    useJUnitPlatform()
+}
 
 sourceSets {
     "main" { projectDefault() }
