@@ -9,7 +9,6 @@ package androidx.compose.compiler.test
 import androidx.compose.runtime.*
 import androidx.compose.runtime.mock.*
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.experimental.categories.Category
 import kotlin.test.Test
 
 // This class is on top of the file to avoid handling order when loading generated classes
@@ -20,7 +19,7 @@ private interface FunctionRefInterface {
     }
 }
 
-@Category(SmokeTest::class)
+@SmokeTest
 class FunctionReferenceTests {
     @Test
     fun functionReference() = compositionTest {

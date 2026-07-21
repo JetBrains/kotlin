@@ -17,22 +17,15 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ValueSource
 
-@RunWith(Parameterized::class)
+@ParameterizedClass(name = "pausableEnabled = {0}")
+@ValueSource(booleans = [false, true])
 class ComposePausableCompositionTests(
-    private val pausableEnabled: Boolean
+    private val pausableEnabled: Boolean,
 ) : AbstractControlFlowTransformTests() {
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "pausableEnabled = {0}")
-        fun data() = arrayOf<Any>(
-            arrayOf(false),
-            arrayOf(true),
-        )
-    }
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)

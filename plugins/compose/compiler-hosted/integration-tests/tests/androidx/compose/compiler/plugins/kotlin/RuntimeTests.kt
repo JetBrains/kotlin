@@ -9,29 +9,52 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.fastForEach
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runner.Runner
-import org.junit.runners.BlockJUnit4ClassRunner
-import org.junit.runners.Suite
-import org.junit.runners.model.FrameworkMethod
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.DynamicContainer.dynamicContainer
+import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest.dynamicTest
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import java.io.File
-import kotlin.test.Ignore
+import java.lang.reflect.InvocationTargetException
 
 private const val RUNTIME_TEST_ROOT = "plugins/compose/compiler-hosted/runtime-tests/src"
 
 /**
  * Takes Compose tests from runtime-tests module and runs them on compiler + plugin built from source.
  */
-@RunWith(RuntimeTestsK2.RuntimeTestRunner::class)
+@SmokeTest
 class RuntimeTestsK2 {
-    class RuntimeTestRunner(cls: Class<*>) : Suite(
-        cls,
-        createRuntimeRunners()
-    )
+    @TestFactory
+    fun runtimeTests(): List<DynamicNode> = createRuntimeTestClasses().map { variant ->
+        val description = variant.first
+        val classes = variant.second
+        dynamicContainer(
+            description,
+            classes.map { cls ->
+                cls.methods
+                    .filter { it.isAnnotationPresent(BeforeAll::class.java) }
+                    .forEach { it.invoke(null) }
+                dynamicContainer(
+                    cls.simpleName,
+                    cls.methods
+                        .filter { it.isAnnotationPresent(Test::class.java) }
+                        .map { method ->
+                            dynamicTest("${method.name} [${cls.simpleName}]$description") {
+                                try {
+                                    method.invoke(cls.getDeclaredConstructor().newInstance())
+                                } catch (e: InvocationTargetException) {
+                                    throw e.targetException
+                                }
+                            }
+                        }
+                )
+            }
+        )
+    }
 }
 
-private fun createRuntimeRunners(): List<Runner> {
+private fun createRuntimeTestClasses(): List<Pair<String, List<Class<*>>>> {
     AbstractCompilerTest.setSystemProperties()
     val compilers = mutableListOf(
         RuntimeTestCompiler(sourceInformation = false, optimizeNonSkippingGroups = false),
@@ -41,27 +64,22 @@ private fun createRuntimeRunners(): List<Runner> {
     )
 
     val iterator = compilers.iterator()
-    val result = mutableListOf<Runner>()
+    val result = mutableListOf<Pair<String, List<Class<*>>>>()
     while (iterator.hasNext()) {
         val compiler = iterator.next()
         val classes = compiler.compileRuntimeClasses()
         val description = compiler.description
         compiler.disposeTestRootDisposable()
         iterator.remove()
-        classes.fastForEach { result.add(FirVariantRunner(it, description)) }
+        result.add(description to classes)
     }
     return result
 }
 
-private class FirVariantRunner(private val cls: Class<*>, val type: String) : BlockJUnit4ClassRunner(cls) {
-    override fun testName(method: FrameworkMethod): String =
-        "${method.name} [${cls.simpleName}]$type"
-}
 
 private val runtimeTestSourceRoot = File(RUNTIME_TEST_ROOT)
 private val runtimeTestFiles = runtimeTestSourceRoot.walk().toSet()
 
-@Ignore
 private class RuntimeTestCompiler(
     private val sourceInformation: Boolean,
     private val optimizeNonSkippingGroups: Boolean,

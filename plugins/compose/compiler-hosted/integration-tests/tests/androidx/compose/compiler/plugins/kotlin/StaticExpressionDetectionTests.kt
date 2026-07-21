@@ -23,9 +23,9 @@ import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
 
 class StaticExpressionDetectionTests : AbstractIrTransformTest() {
     @Test
@@ -372,16 +372,16 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
     ) {
         val maskedActual = actual and ChangedParameterEncoding.Mask
         if (ChangedParameterEncoding.values().none { it.bits == maskedActual }) {
-            fail(
+            fail<Unit>(
                 "$message\nThe actual %changed flags contained an illegal encoding: " +
                         "0b${maskedActual.toString(radix = 2)}"
             )
         }
 
         assertEquals(
-            message,
             expected.bits.toString(radix = 2).padStart(length = 3, '0'),
-            maskedActual.toString(radix = 2).padStart(length = 3, '0')
+            maskedActual.toString(radix = 2).padStart(length = 3, '0'),
+            message,
         )
     }
 

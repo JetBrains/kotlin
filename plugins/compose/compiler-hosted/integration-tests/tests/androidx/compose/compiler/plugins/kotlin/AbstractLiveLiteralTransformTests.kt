@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 
 abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
     @OptIn(ExperimentalCompilerApi::class)

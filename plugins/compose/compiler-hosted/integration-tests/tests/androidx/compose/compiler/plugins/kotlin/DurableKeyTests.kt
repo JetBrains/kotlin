@@ -17,9 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class DurableKeyTests : TestCase() {
+class DurableKeyTests {
     private fun visit(block: DurableKeyVisitor.() -> Unit) = DurableKeyVisitor().block()
 
     private fun DurableKeyVisitor.assertKey(prefix: String, expected: String) {
@@ -34,12 +35,14 @@ class DurableKeyTests : TestCase() {
         assert(!success) { "Expected duplicate, but wasn't: $key" }
     }
 
+    @Test
     fun testBasic() = visit {
         enter("a") {
             assertKey("b", "b/a")
         }
     }
 
+    @Test
     fun testBasicNonSiblings() = visit {
         enter("a") {
             assertKey("b", "b/a")
@@ -47,6 +50,7 @@ class DurableKeyTests : TestCase() {
         }
     }
 
+    @Test
     fun testSiblings() = visit {
         siblings("a") {
             enter("b") { assertKey("i", "i/b/a") }
@@ -56,6 +60,7 @@ class DurableKeyTests : TestCase() {
         }
     }
 
+    @Test
     fun testNestedSiblings() = visit {
         siblings("a") {
             siblings {
@@ -65,6 +70,7 @@ class DurableKeyTests : TestCase() {
         }
     }
 
+    @Test
     fun testDuplicateFailure() = visit {
         siblings("a") {
             enter("b") { assertKey("i", "i/b/a") }

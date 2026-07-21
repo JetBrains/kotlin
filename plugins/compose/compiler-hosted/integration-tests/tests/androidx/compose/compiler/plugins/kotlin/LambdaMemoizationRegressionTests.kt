@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * This test merely ensures that code gen changes are evaluated against potentially

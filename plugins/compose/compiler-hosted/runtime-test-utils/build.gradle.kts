@@ -29,7 +29,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
             // external deps
             implementation(composeRuntime()) { isTransitive = false }
             implementation(composeRuntimeAnnotations()) { isTransitive = false }

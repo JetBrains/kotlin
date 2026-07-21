@@ -18,9 +18,9 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import java.io.FileNotFoundException
 
 class StabilityConfigurationParserTests {

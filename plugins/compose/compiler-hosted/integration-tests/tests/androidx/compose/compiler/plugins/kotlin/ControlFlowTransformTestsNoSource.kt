@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
     override fun CompilerConfiguration.updateConfiguration() {

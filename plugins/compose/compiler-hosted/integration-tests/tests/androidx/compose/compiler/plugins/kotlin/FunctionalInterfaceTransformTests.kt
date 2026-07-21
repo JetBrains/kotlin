@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FunctionalInterfaceTransformTests : AbstractControlFlowTransformTests() {
     @Test
