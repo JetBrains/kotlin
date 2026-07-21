@@ -47,6 +47,27 @@ embedded.isTransitive = false
 
 configurations.getByName("compileOnly").extendsFrom(embedded)
 
+val bundle = configurations.dependencyScope("bundle")
+configurations {
+    resolvable("bundleClasses") {
+        extendsFrom(bundle)
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.CLASSES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        isTransitive = false
+    }
+    resolvable("bundleResources") {
+        extendsFrom(bundle)
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        isTransitive = false
+    }
+}
 dependencies {
     api(kotlinStdlib())
 
@@ -79,6 +100,8 @@ dependencies {
     // protobuf-generated classes because then we would not be able to pass protobuf obtained from descriptors to kotlin-metadata.
     compileOnly(project(":kotlin-metadata-jvm", "unshaded"))
     compileOnly(project(":kotlin-metadata"))
+    bundle(project(":kotlin-metadata"))
+    bundle(project(":kotlin-metadata-jvm"))
 }
 
 if (kotlinBuildProperties.includeJava9) {
@@ -166,12 +189,11 @@ val reflectShadowJar = tasks.register<ShadowJar>("reflectShadowJar") {
     if (kotlinBuildProperties.includeJava9) {
         from(sourceSets["java9"].output)
     }
-    from(project(":kotlin-metadata").sourceSets["main"].output) {
+    from(project.configurations.named("bundleClasses")) {
         exclude("META-INF/metadata.kotlin_module")
-    }
-    from(project(":kotlin-metadata-jvm").sourceSets["main"].output) {
         exclude("META-INF/metadata.jvm.kotlin_module")
     }
+    from(project.configurations.named("bundleResources").get())
     exclude("**/*.proto")
     exclude("org/jetbrains/annotations/Nls*.class")
 
