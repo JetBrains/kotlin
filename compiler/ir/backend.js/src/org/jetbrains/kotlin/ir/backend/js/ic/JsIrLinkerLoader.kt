@@ -207,7 +207,6 @@ internal class JsIrLinkerLoader(
             })
         }
 
-        linker.init(null)
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings)
 

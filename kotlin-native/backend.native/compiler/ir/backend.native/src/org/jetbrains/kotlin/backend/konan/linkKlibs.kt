@@ -98,7 +98,6 @@ internal fun LinkKlibsContext.linkKlibs(
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
     val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
 
-    irLinker.init(null)
     ExternalDependenciesGenerator(irLinker.symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 

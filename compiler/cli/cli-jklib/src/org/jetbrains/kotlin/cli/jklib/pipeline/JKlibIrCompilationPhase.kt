@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.container.get
@@ -171,7 +170,6 @@ object JKlibIrCompilationPhase :
             linker = linker,
         )
 
-        linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
         linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
