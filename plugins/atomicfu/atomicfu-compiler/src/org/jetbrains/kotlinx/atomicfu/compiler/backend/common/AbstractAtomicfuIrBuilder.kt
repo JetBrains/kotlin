@@ -327,7 +327,10 @@ abstract class AbstractAtomicfuIrBuilder(
             type = kPropertyClass.defaultType.substitute(substitutionMap),
             symbol = property.symbol,
             typeArgumentsCount = 0,
-            field = backingField.symbol,
+            // Referring a field may violate visibility checks,
+            // but at the same time the field is not needed anywhere down the pipeline,
+            // so we can use value null here. See KT-85180.
+            field = null,
             getter = property.getter?.symbol,
             setter = property.setter?.symbol
         ).apply {
