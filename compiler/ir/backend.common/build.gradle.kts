@@ -1,6 +1,7 @@
 plugins {
     id("common-configuration")
     id("test-federation-convention")
+    id("project-tests-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
@@ -18,12 +19,16 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     compileOnly(intellijCore())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+
+projectTests {
+    testTask()
+}
 
 sourceSets {
     "main" { projectDefault() }
