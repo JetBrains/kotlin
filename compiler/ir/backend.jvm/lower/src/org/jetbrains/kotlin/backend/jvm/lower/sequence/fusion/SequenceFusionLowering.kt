@@ -159,9 +159,8 @@ internal fun isSequenceType(context: JvmBackendContext, element: IrElement): Boo
     return type.isSubtypeOfClass(sequenceSymbol)
 }
 
-private fun lookupForLoopVariable(loopBody: IrBlock): IrVariable = loopBody.statements.filterIsInstance<IrVariable>()
+private fun lookupForLoopVariable(loopBody: IrBlock): IrVariable? = loopBody.statements.filterIsInstance<IrVariable>()
     .singleOrNull { it.origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE }
-    ?: error("No variable with origin FOR_LOOP_VARIABLE found inside a FOR_LOOP origin while")
 
 internal fun getPredicateArgument(expression: IrCall, argument: Int): IrExpression? {
     val predicate = expression.arguments.getOrNull(argument)
@@ -184,7 +183,7 @@ internal fun gatherLoopData(block: IrBlock, parent: IrDeclarationParent): LoopDa
     val blockCopy = block.deepCopyWithSymbols(parent)
     val loop = blockCopy.statements[1] as? IrWhileLoop ?: return null
     val body = loop.body as? IrBlock ?: return null
-    val loopVariable = lookupForLoopVariable(body)
+    val loopVariable = lookupForLoopVariable(body) ?: return null
     body.statements.remove(loopVariable)
     return LoopData(loop, loopVariable, body)
 }

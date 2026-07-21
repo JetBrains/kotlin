@@ -36,6 +36,11 @@ private const val INDEX_OF_LAST = KOTLIN_SEQUENCES_PREFIX + "indexOfLast"
 private const val FILTER_TO = KOTLIN_SEQUENCES_PREFIX + "filterTo"
 private const val FILTER_NOT_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotTo"
 private const val FILTER_NOT_NULL_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotNullTo"
+private const val TO_LIST = KOTLIN_SEQUENCES_PREFIX + "toList"
+private const val TO_MUTABLE_LIST = KOTLIN_SEQUENCES_PREFIX + "toMutableList"
+private const val TO_SET = KOTLIN_SEQUENCES_PREFIX + "toSet"
+private const val TO_MUTABLE_SET = KOTLIN_SEQUENCES_PREFIX + "toMutableSet"
+private const val TO_COLLECTION = KOTLIN_SEQUENCES_PREFIX + "toCollection"
 
 /**
  * Each strategy has 3 parts:
@@ -66,6 +71,12 @@ internal data class ConsumerData(
     val sequenceData: SequenceData,
 )
 
+internal sealed class CollectionVersion {
+    object List : CollectionVersion()
+    object Set : CollectionVersion()
+    object Collection : CollectionVersion()
+}
+
 internal fun createConsumerStrategy(
     expression: IrCall,
     functionFQName: String,
@@ -89,6 +100,11 @@ internal fun createConsumerStrategy(
         FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
         FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
         FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
+        TO_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List)
+        TO_MUTABLE_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List)
+        TO_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set)
+        TO_MUTABLE_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set)
+        TO_COLLECTION -> ToCollectionStrategy(data, expression, CollectionVersion.Collection)
         else -> null
     }
 }

@@ -916,6 +916,25 @@ class JvmSymbols(
             throw AssertionError("Array type expected: ${arrayType.render()}")
     }
 
+    val arrayList: IrClassSymbol = createClass(FqName("java.util.ArrayList"))
+    val arrayListConstructor: IrConstructorSymbol = irFactory.buildConstructor {
+        name = Name.special("<init>")
+        returnType = arrayList.owner.defaultType
+        visibility = DescriptorVisibilities.PUBLIC
+    }.apply {
+        parent = arrayList.owner
+    }.symbol
+
+    val linkedHashSet: IrClassSymbol = createClass(FqName("java.util.LinkedHashSet"))
+
+    val linkedHashSetConstructor: IrConstructorSymbol = irFactory.buildConstructor {
+        name = Name.special("<init>")
+        returnType = linkedHashSet.owner.defaultType
+        visibility = DescriptorVisibilities.PUBLIC
+    }.apply {
+        parent = linkedHashSet.owner
+    }.symbol
+
     private val javaLangInteger: IrClassSymbol = createJavaPrimitiveClassWithUnsignedUtils(FqName("java.lang.Integer"), irBuiltIns.intType)
 
     val compareUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("compareUnsigned")
