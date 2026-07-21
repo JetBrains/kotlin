@@ -516,8 +516,45 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             inferredTypes,
             receiverComparison,
             receiverTypeParameters,
+            receiverTypeConstructorApproximated = receiverTypeConstructorApproximated(
+                actualReceiverType,
+                declaredReceiverType,
+                symbol.typeParameterSymbols.toSet(),
+            ),
             receiverParameters = declaredReceiverType?.let { receiverParameters(it) }.orEmpty(),
         )
+    }
+
+    context(context: CheckerContext)
+    private fun receiverTypeConstructorApproximated(
+        actualReceiverType: ConeKotlinType?,
+        declaredReceiverType: ConeKotlinType?,
+        receiverTypeParameters: Set<FirTypeParameterSymbol>,
+    ): Boolean {
+        if (actualReceiverType == null || declaredReceiverType == null) return false
+
+        val declaredLowerBound = declaredReceiverType.lowerBoundIfFlexible()
+        val declaredTypeParameter = declaredLowerBound.lookupTagIfAny?.toTypeParameterSymbol()
+        if (declaredTypeParameter in receiverTypeParameters) return false
+
+        val typeContext = context.session.typeContext
+        val actualLowerBound = actualReceiverType.lowerBoundIfFlexible()
+        val constructorsMatch =
+            actualLowerBound.typeConstructor(typeContext) == declaredLowerBound.typeConstructor(typeContext)
+        val actualAsDeclaredType = if (constructorsMatch) {
+            actualLowerBound
+        } else {
+            AbstractTypeChecker.findCorrespondingSupertypes(
+                typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+                actualLowerBound,
+                declaredLowerBound.typeConstructor(typeContext),
+            ).firstOrNull() as? ConeKotlinType ?: return false
+        }
+
+        if (!constructorsMatch) return true
+        return actualAsDeclaredType.typeArguments.zip(declaredLowerBound.typeArguments).any { argumentPair ->
+            receiverTypeConstructorApproximated(argumentPair.first.type, argumentPair.second.type, receiverTypeParameters)
+        }
     }
 
     context(context: CheckerContext)
@@ -684,12 +721,14 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val inferredTypes: Map<String, String>,
         val receiver: ReceiverComparison,
         val receiverTypeParameters: Map<String, ReceiverComparison>,
+        val receiverTypeConstructorApproximated: Boolean,
         val receiverParameters: Map<String, String>,
     ) {
         fun toJson(): String = jsonObject(
             "inferredTypes" to inferredTypes.toJson(),
             "receiver" to receiver.toJson(),
             "receiverTypeParameters" to receiverTypeParameters.toJson { it.toJson() },
+            "receiverTypeConstructorApproximated" to receiverTypeConstructorApproximated.toString(),
             "receiverParameters" to receiverParameters.toJson(),
         )
     }
@@ -771,7 +810,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         fun record(diagnostic: DiagnosticData) {
             totalCalls++
             val receiverTypeConstructorApproximated =
-                diagnostic.normalInference.receiver.relation == TypeRelation.OVER_APPROXIMATED
+                diagnostic.normalInference.receiverTypeConstructorApproximated
             val receiverTypeParameterApproximated = diagnostic.normalInference.receiverTypeParameters.values.any {
                 it.relation == TypeRelation.OVER_APPROXIMATED
             }
@@ -864,7 +903,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
      * [FirErrors.MEMBER_EXTENSION_TWO_PHASE_INFERENCE_SUMMARY] diagnostics produced via [reportSummaries], while
      * errors and unsuccessful inference results are also reported individually.
      *
-     * Tests enable per-call mode (see [FirDiagnosticCollectorService]) so that each call's inference comparison is
+     * Tests enable per-call mode through `FirDiagnosticCollectorService` so that each call's inference comparison is
      * visible inline; large-project scans keep the default summary mode to avoid emitting one diagnostic per call.
      * It may also be enabled via the `kotlin.member.extension.emit.per.call.diagnostics` system property.
      */
