@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.*
 plugins {
     id("common-configuration")
     id("test-federation-convention")
+    id("test-inputs-check-v2")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
 }
@@ -39,7 +40,7 @@ kotlin {
             // JVM-specific tests and their dependencies:
             compilations["test"].defaultSourceSet {
                 dependencies {
-                    implementation(kotlinTest("junit"))
+                    implementation(kotlinTest("junit5"))
                 }
             }
 
@@ -53,4 +54,8 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

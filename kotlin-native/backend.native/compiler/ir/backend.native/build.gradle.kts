@@ -53,7 +53,11 @@ dependencies {
     implementation(project(":kotlinx-metadata-klib"))
     compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
+}
+
+projectTests {
+    testTask()
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
