@@ -55,8 +55,20 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
         }
 
         // Made lazy to break a class initialization cycle. See KT-82886
-        val deprecatedTargets by lazy { setOf(LINUX_ARM32_HFP, WATCHOS_X64, TVOS_X64, MACOS_X64) }
-        val toleratedDeprecatedTargets by lazy { setOf(LINUX_ARM32_HFP, WATCHOS_X64, TVOS_X64, MACOS_X64) }
+        val deprecatedTargets by lazy {
+            setOf(
+                LINUX_ARM32_HFP,
+                WATCHOS_X64, TVOS_X64, MACOS_X64,
+                ANDROID_X64, ANDROID_X86, ANDROID_ARM32, ANDROID_ARM64,
+            )
+        }
+        val toleratedDeprecatedTargets by lazy {
+            setOf(
+                LINUX_ARM32_HFP,
+                WATCHOS_X64, TVOS_X64, MACOS_X64,
+                ANDROID_X64, ANDROID_X86, ANDROID_ARM32, ANDROID_ARM64,
+            )
+        }
     }
 
     override fun equals(other: Any?): Boolean {

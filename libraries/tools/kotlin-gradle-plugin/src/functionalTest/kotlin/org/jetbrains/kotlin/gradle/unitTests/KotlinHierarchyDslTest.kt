@@ -41,12 +41,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidNativeMain", "appleMain", "linuxMain", "mingwMain"),
+            stringSetOf("appleMain", "linuxMain", "mingwMain"),
             kotlin.dependingSourceSetNames("nativeMain")
         )
 
         assertEquals(
-            stringSetOf("androidNativeTest", "appleTest", "linuxTest", "mingwTest"),
+            stringSetOf("appleTest", "linuxTest", "mingwTest"),
             kotlin.dependingSourceSetNames("nativeTest")
         )
 
@@ -121,16 +121,6 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidNativeArm32Main", "androidNativeArm64Main", "androidNativeX64Main", "androidNativeX86Main"),
-            kotlin.dependingSourceSetNames("androidNativeMain")
-        )
-
-        assertEquals(
-            stringSetOf("androidNativeArm32Test", "androidNativeArm64Test", "androidNativeX64Test", "androidNativeX86Test"),
-            kotlin.dependingSourceSetNames("androidNativeTest")
-        )
-
-        assertEquals(
             stringSetOf("jsMain", "wasmJsMain"),
             kotlin.dependingSourceSetNames("webMain")
         )
@@ -154,11 +144,6 @@ class KotlinHierarchyDslTest {
             commonMain
                 ├── jvmMain
                 ├── nativeMain
-                │   ├── androidNativeMain
-                │   │   ├── androidNativeArm32Main
-                │   │   ├── androidNativeArm64Main
-                │   │   ├── androidNativeX64Main
-                │   │   └── androidNativeX86Main
                 │   ├── appleMain
                 │   │   ├── iosMain
                 │   │   │   ├── iosArm64Main
@@ -192,11 +177,6 @@ class KotlinHierarchyDslTest {
             commonTest
                 ├── jvmTest
                 ├── nativeTest
-                │   ├── androidNativeTest
-                │   │   ├── androidNativeArm32Test
-                │   │   ├── androidNativeArm64Test
-                │   │   ├── androidNativeX64Test
-                │   │   └── androidNativeX86Test
                 │   ├── appleTest
                 │   │   ├── iosTest
                 │   │   │   ├── iosArm64Test
@@ -572,11 +552,6 @@ class KotlinHierarchyDslTest {
                         commonMain,
                         jvmMain,
                         nativeMain,
-                        androidNativeMain,
-                        androidNativeArm32Main,
-                        androidNativeArm64Main,
-                        androidNativeX64Main,
-                        androidNativeX86Main,
                         appleMain,
                         iosMain,
                         iosArm64Main,
@@ -605,11 +580,6 @@ class KotlinHierarchyDslTest {
                         commonTest,
                         jvmTest,
                         nativeTest,
-                        androidNativeTest,
-                        androidNativeArm32Test,
-                        androidNativeArm64Test,
-                        androidNativeX64Test,
-                        androidNativeX86Test,
                         appleTest,
                         iosTest,
                         iosArm64Test,

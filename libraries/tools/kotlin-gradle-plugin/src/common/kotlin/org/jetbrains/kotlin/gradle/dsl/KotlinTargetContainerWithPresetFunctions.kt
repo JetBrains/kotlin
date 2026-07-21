@@ -93,68 +93,104 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
      */
     fun androidTarget(configure: Action<KotlinAndroidTarget>) = androidTarget { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun androidNativeX64(
         name: String = "androidNativeX64",
         configure: KotlinNativeTarget.() -> Unit = { }
     ): KotlinNativeTarget
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX64() = androidNativeX64("androidNativeX64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX64(name: String) = androidNativeX64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX64(
         name: String,
         configure: Action<KotlinNativeTarget>
     ) = androidNativeX64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX64(configure: Action<KotlinNativeTarget>) = androidNativeX64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun androidNativeX86(
         name: String = "androidNativeX86",
         configure: KotlinNativeTarget.() -> Unit = { }
     ): KotlinNativeTarget
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX86() = androidNativeX86("androidNativeX86") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX86(name: String) = androidNativeX86(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX86(
         name: String,
         configure: Action<KotlinNativeTarget>
     ) = androidNativeX86(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeX86(configure: Action<KotlinNativeTarget>) = androidNativeX86 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun androidNativeArm32(
         name: String = "androidNativeArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
     ): KotlinNativeTarget
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm32() = androidNativeArm32("androidNativeArm32") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm32(name: String) = androidNativeArm32(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm32(
         name: String,
         configure: Action<KotlinNativeTarget>
     ) = androidNativeArm32(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm32(configure: Action<KotlinNativeTarget>) = androidNativeArm32 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun androidNativeArm64(
         name: String = "androidNativeArm64",
         configure: KotlinNativeTarget.() -> Unit = { }
     ): KotlinNativeTarget
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm64() = androidNativeArm64("androidNativeArm64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm64(name: String) = androidNativeArm64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm64(
         name: String,
         configure: Action<KotlinNativeTarget>
     ) = androidNativeArm64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun androidNativeArm64(configure: Action<KotlinNativeTarget>) = androidNativeArm64 { configure.execute(this) }
 
     fun iosArm64(
@@ -510,6 +546,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun androidNativeX64(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
@@ -521,6 +558,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun androidNativeX86(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
@@ -532,6 +570,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun androidNativeArm32(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
@@ -543,6 +582,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun androidNativeArm64(
         name: String,
         configure: KotlinNativeTarget.() -> Unit
