@@ -535,6 +535,7 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
                 sourceSets[j].sourceRoots.toSet()
             ).forEach {
                 val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                    .toString().split("/").filterNot { part -> part == ".." }.joinToString("/")
                 replacementsSources.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
                     temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
                 replacementsSources.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
@@ -546,6 +547,7 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
                 sourceSets[j].samples.toSet()
             ).forEach {
                 val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                    .toString().split("/").filterNot { part -> part == ".." }.joinToString("/")
                 replacementsSamples.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
                     temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
                 replacementsSamples.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
@@ -584,12 +586,14 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
             temporaryDirectory.toFile().deleteRecursively()
             replacementsSamples.forEach { (_, replacements) ->
                 replacements.forEach { (original, replacement) ->
+                    println("Replacing $original with $replacement")
                     // copy files
                     original.copyRecursively(replacement, overwrite = true)
                 }
             }
             replacementsSources.forEach { (_, replacements) ->
                 replacements.forEach { (original, replacement) ->
+                    println("Replacing $original with $replacement")
                     // copy files
                     original.copyRecursively(replacement, overwrite = true)
                 }
