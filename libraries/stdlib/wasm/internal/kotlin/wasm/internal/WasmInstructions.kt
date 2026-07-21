@@ -499,10 +499,6 @@ internal fun wasm_i64_trunc_sat_f32_s(a: Float): Long =
 internal fun wasm_i64_trunc_sat_f64_s(a: Double): Long =
     implementedAsIntrinsic
 
-@WasmOp(WasmOp.I32_LOAD)
-internal fun wasm_i32_load(x: Int): Int =
-    implementedAsIntrinsic
-
 @WasmOp(WasmOp.I32_LOAD8_S)
 internal fun wasm_i32_load8_s(x: Int): Byte =
     implementedAsIntrinsic
@@ -513,6 +509,10 @@ internal fun wasm_i32_load16_s(x: Int): Short =
 
 @WasmOp(WasmOp.I32_LOAD16_U)
 internal fun wasm_i32_load16_u(x: Int): Int =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I32_LOAD)
+internal fun wasm_i32_load(x: Int): Int =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I64_LOAD)
