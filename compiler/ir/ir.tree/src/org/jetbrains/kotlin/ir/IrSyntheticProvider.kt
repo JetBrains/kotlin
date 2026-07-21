@@ -236,11 +236,6 @@ class IrSyntheticProvider(
 
         val signature = signatureComputer(function)
         val symbol = symbolTable.referenceSimpleFunction(signature)
-        // TODO KT-84836 Drop this check. Symbol is bound because we use old `IrBuiltInsOverDescriptors`. It should be replaced with `IrBuiltInsOverLinker`
-        if (symbol.isBound) {
-            parent.declarations.remove(function)
-            return symbol
-        }
         function.acquireSymbol(symbol)
         return symbol
     }
