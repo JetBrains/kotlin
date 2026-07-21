@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.CompilationMode
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
-import java.io.File
 
 internal interface ImpactedFilesDeterminer {
     fun determineChangedAndImpactedSymbols(): ChangesEither
@@ -30,16 +29,10 @@ internal class JvmSourcesToCompileCalculator(
     private val dirtyFilesProvider: DirtyFilesProvider,
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) {
-    private fun DeterminableFiles.Known.findFullRebuildReasonOnSpecificFilesChange(): BuildAttribute? {
-        modified.forEach { fullRebuildOnSpecificFilesChangeReasons[it.name]?.let { reason -> return reason } }
-        removed.forEach { fullRebuildOnSpecificFilesChangeReasons[it.name]?.let { reason -> return reason } }
-        return null
-    }
-
     private fun calculateSourcesToCompileImpl(
         impactedFilesDeterminer: ImpactedFilesDeterminer,
     ): CompilationMode {
-        changedFiles.findFullRebuildReasonOnSpecificFilesChange()?.let { return CompilationMode.Rebuild(it) }
+        changedFiles.findRebuildReasonByFileName()?.let { return CompilationMode.Rebuild(it) }
 
         val changedAndImpactedSymbols = impactedFilesDeterminer.determineChangedAndImpactedSymbols()
 
@@ -56,6 +49,9 @@ internal class JvmSourcesToCompileCalculator(
             }
         }
     }
+
+    private fun DeterminableFiles.Known.findRebuildReasonByFileName(): BuildAttribute? =
+        (modified + removed).firstNotNullOfOrNull { rebuildReasonsByFileName[it.name] }
 
     private fun calculateSourcesToCompileWithKnownChanges(
         changedFiles: DeterminableFiles.Known,
@@ -103,7 +99,7 @@ internal class JvmSourcesToCompileCalculator(
     }
 
     companion object {
-        private val fullRebuildOnSpecificFilesChangeReasons: Map<String, BuildAttribute> = mapOf(
+        private val rebuildReasonsByFileName: Map<String, BuildAttribute> = mapOf(
             "module-info.java" to BuildAttribute.MODULE_INFO_CHANGED,
             "package-info.java" to BuildAttribute.PACKAGE_INFO_CHANGED,
         )

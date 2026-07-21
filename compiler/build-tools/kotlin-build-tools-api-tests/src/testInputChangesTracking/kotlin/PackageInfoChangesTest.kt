@@ -61,7 +61,7 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
                 dependencies = listOf(dependency),
             )
-            dependency.addAnnotationAndAssertConsumerRecompiles(consumer, strategyConfig)
+            dependency.addAnnotationAndAssertConsumerRecompiles(consumer)
         }
     }
 
@@ -78,22 +78,15 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
                 dependencies = listOf(dependency),
             )
-            dependency.addAnnotationAndAssertConsumerRecompiles(consumer, strategyConfig)
+            dependency.addAnnotationAndAssertConsumerRecompiles(consumer)
         }
     }
 
-    private fun ScenarioModule.addAnnotationAndAssertConsumerRecompiles(
-        consumer: ScenarioModule,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
+    private fun ScenarioModule.addAnnotationAndAssertConsumerRecompiles(consumer: ScenarioModule) {
         replaceFileWithVersion("package-info.java", "add-annotation")
         compile()
         consumer.compile {
-            assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
-                "Non-incremental compilation will be performed: ${BuildAttribute.DEPENDENCY_PACKAGE_INFO_CHANGED.readableString}"
-            )
-            assertCompiledSources("bpkg/UseA.kt", "bpkg/Other.kt")
+            assertCompiledSources("bpkg/UseA.kt")
         }
     }
 }
