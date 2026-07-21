@@ -108,6 +108,21 @@ fun Project.configureJavaCompile() {
 
 val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
 
+// These modules are compiled with "-Xreturn-value-checker=full" flag
+// As a result, we can end up with a mix of "full" and "check" modes, which
+// produces warnings and may result in using the wrong mode, as it currently
+// depends on the order of these flags
+val projectsWithReturnValueCheckerFull = setOf(
+    ":kotlin-stdlib",
+    ":kotlin-test",
+    ":kotlin-stdlib-js-ir-minimal-for-test",
+    ":kotlin-stdlib-jvm-minimal-for-test",
+    ":kotlin-stdlib-jklib-for-test",
+    ":kotlin-power-assert-runtime",
+    ":kotlin-native:Interop:Runtime",
+    ":kotlin-native:runtime",
+)
+
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val kotlinLanguageVersion: Provider<String> = project.providers.gradleProperty("kotlinLanguageVersion")
@@ -136,6 +151,7 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
                             project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
                         },
+                        "-Xreturn-value-checker=check".takeUnless { project.path in projectsWithReturnValueCheckerFull },
                     )
                 }
 
