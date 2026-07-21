@@ -239,9 +239,6 @@ abstract class KotlinIrLinker(
         }
     }
 
-    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
-        CurrentModuleDeserializer(moduleFragment)
-
     fun clear() {
         irInterner.reset()
     }
