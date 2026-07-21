@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/atomicFuUncheckedCast.kt
             ARG arg0: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=<root>.Box origin=GET_ARRAY_ELEMENT
               ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Array<<root>.Box> origin=GET_ARRAY_ELEMENT
                 ARG <this>: CALL 'public final fun <get-value> (): T of <root>.AtomicRef declared in <root>.AtomicRef' type=kotlin.Array<kotlin.Array<<root>.Box>> origin=GET_PROPERTY
-                  ARG <this>: TYPE_OP type=<root>.AtomicRef<kotlin.Array<kotlin.Array<<root>.Box>>> origin=IMPLICIT_CAST typeOperand=<root>.AtomicRef<kotlin.Array<kotlin.Array<<root>.Box>>>
+                  ARG <this>: TYPE_OP type=<root>.AtomicRef<out kotlin.Any?> origin=IMPLICIT_CAST typeOperand=<root>.AtomicRef<out kotlin.Any?>
                     GET_VAR 'bs: <root>.AtomicRef<kotlin.Any?> declared in <root>.test' type=<root>.AtomicRef<kotlin.Any?> origin=null
                 ARG index: CONST Int type=kotlin.Int value=0
               ARG index: CONST Int type=kotlin.Int value=1

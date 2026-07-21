@@ -132,7 +132,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType,
     ): IrExpression {
-        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = true)
+        return insertCastForIntersectionTypeOrNull(argumentType, expectedType)
         // When we generate an implicit this receiver, we assign it the type of the IR declaration.
         // However, dataframe generates FIR and IR anonymous functions with different receiver types
         // and then relies on the fact that FIR2IR generates an implicit cast from the one to the other.
@@ -146,28 +146,21 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType,
     ): IrExpression {
-        return insertCastForIntersectionTypeOrNull(argumentType, expectedType, forReceiver = false)
+        return insertCastForIntersectionTypeOrNull(argumentType, expectedType)
             ?: this
     }
 
     private fun IrExpression.insertCastForIntersectionTypeOrNull(
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType,
-        forReceiver: Boolean,
     ): IrExpression? {
         val argumentTypeLowerBound = argumentType.lowerBoundIfFlexible()
         if (argumentTypeLowerBound !is ConeIntersectionType) return null
 
         val approximatedExpectedType = expectedType.approximateForIrOrSelf()
 
-        // An intersection type like `Foo<Any?> & Foo<Bar>` is approximated to `Foo<out Any?>`.
-        // However, atomic-fu relies on the fact that receivers don't have projections in their type arguments.
-        // See plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/UncheckedCastTest.kt
-        // TODO(KT-77692) Remove if fixed on the plugin side.
-        if (!forReceiver) {
-            val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
-            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return null
-        }
+        val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
+        if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return null
 
         return argumentTypeLowerBound.intersectedTypes
             .firstOrNull { it.isSubtypeOf(approximatedExpectedType, session) }
