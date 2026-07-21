@@ -22,73 +22,24 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irBoolean
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetObjectValue
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isBoolean
-import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.starProjectedType
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.types.typeWithArguments
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.hasShape
-import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.simpleFunctions
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import kotlin.collections.plus
 
 class TestProcessor(
     private val context: LoweringContext,
@@ -396,37 +347,28 @@ class TestProcessor(
         objectSymbol: IrClassSymbol,
         owner: IrClass,
         getterName: Name,
-    ): IrSimpleFunction =
-        context.irFactory.createSimpleFunction(
-            owner.startOffset,
-            owner.endOffset,
-            TEST_SUITE_GENERATED_MEMBER,
-            getterName,
-            DescriptorVisibilities.PROTECTED,
-            isInline = false,
-            isExpect = false,
-            objectSymbol.starProjectedType,
-            Modality.FINAL,
-            IrSimpleFunctionSymbolImpl(),
-            isTailrec = false,
-            isSuspend = false,
-            isOperator = false,
-            isInfix = false,
-        ).apply {
-            parent = owner
+    ) = context.irFactory.buildFun {
+        startOffset = owner.startOffset
+        endOffset = owner.endOffset
+        origin = TEST_SUITE_GENERATED_MEMBER
+        name = getterName
+        visibility = DescriptorVisibilities.PROTECTED
+        returnType = objectSymbol.starProjectedType
+    }.apply {
+        parent = owner
 
-            val superFunction = baseClassSuite.simpleFunctions()
-                .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
+        val superFunction = baseClassSuite.simpleFunctions()
+            .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
 
-            parameters += createDispatchReceiverParameterWithClassParent()
-            overriddenSymbols += superFunction.symbol
+        parameters += createDispatchReceiverParameterWithClassParent()
+        overriddenSymbols += superFunction.symbol
 
-            body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
-                +irReturn(
-                    irGetObjectValue(objectSymbol.typeWithArguments(emptyList()), objectSymbol)
-                )
-            }
+        body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
+            +irReturn(
+                irGetObjectValue(objectSymbol.typeWithArguments(emptyList()), objectSymbol)
+            )
         }
+    }
 
     /**
      * Builds a method in `[testSuite]` class with name `[getterName]`
@@ -436,36 +378,27 @@ class TestProcessor(
         classSymbol: IrClassSymbol,
         owner: IrClass,
         getterName: Name,
-    ): IrSimpleFunction =
-        context.irFactory.createSimpleFunction(
-            owner.startOffset,
-            owner.endOffset,
-            TEST_SUITE_GENERATED_MEMBER,
-            getterName,
-            DescriptorVisibilities.PROTECTED,
-            isInline = false,
-            isExpect = false,
-            classSymbol.starProjectedType,
-            Modality.FINAL,
-            IrSimpleFunctionSymbolImpl(),
-            isTailrec = false,
-            isSuspend = false,
-            isOperator = false,
-            isInfix = false,
-        ).apply {
-            parent = owner
+    ) = context.irFactory.buildFun {
+        startOffset = owner.startOffset
+        endOffset = owner.endOffset
+        origin = TEST_SUITE_GENERATED_MEMBER
+        name = getterName
+        visibility = DescriptorVisibilities.PROTECTED
+        returnType = classSymbol.starProjectedType
+    }.apply {
+        parent = owner
 
-            val superFunction = baseClassSuite.simpleFunctions()
-                .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
+        val superFunction = baseClassSuite.simpleFunctions()
+            .single { it.name == getterName && it.hasShape(dispatchReceiver = true) }
 
-            parameters += createDispatchReceiverParameterWithClassParent()
-            overriddenSymbols += superFunction.symbol
+        parameters += createDispatchReceiverParameterWithClassParent()
+        overriddenSymbols += superFunction.symbol
 
-            body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
-                val constructor = classSymbol.owner.constructors.single { it.parameters.isEmpty() }
-                +irReturn(irCall(constructor))
-            }
+        body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
+            val constructor = classSymbol.owner.constructors.single { it.parameters.isEmpty() }
+            +irReturn(irCall(constructor))
         }
+    }
 
     private val baseClassSuiteConstructor = baseClassSuite.constructors.single {
         it.hasShape(
@@ -489,60 +422,54 @@ class TestProcessor(
         owner: IrClass,
         functions: Collection<TestFunction>,
         ignored: Boolean,
-    ): IrConstructor =
-        context.irFactory.createConstructor(
-            testSuite.owner.startOffset,
-            testSuite.owner.endOffset,
-            TEST_SUITE_GENERATED_MEMBER,
-            Name.special("<init>"),
-            DescriptorVisibilities.PUBLIC,
-            isInline = false,
-            isExpect = false,
-            testSuite.starProjectedType,
-            IrConstructorSymbolImpl(),
-            isPrimary = true,
-        ).apply {
-            parent = owner
+    ) = context.irFactory.buildConstructor {
+        startOffset = testSuite.owner.startOffset
+        endOffset = testSuite.owner.endOffset
+        origin = TEST_SUITE_GENERATED_MEMBER
+        returnType = testSuite.starProjectedType
+        isPrimary = true
+    }.apply {
+        parent = owner
 
-            fun IrClass.getFunction(name: String, predicate: (IrSimpleFunction) -> Boolean) =
-                simpleFunctions().single { it.name.asString() == name && predicate(it) }
+        fun IrClass.getFunction(name: String, predicate: (IrSimpleFunction) -> Boolean) =
+            simpleFunctions().single { it.name.asString() == name && predicate(it) }
 
-            val registerTestCase = baseClassSuite.getFunction("registerTestCase") {
-                it.parameters.size == 4
-                        && it.parameters[1].type.isString()    // name: String
-                        && it.parameters[2].type.isFunction()  // function: testClassType.() -> Unit
-                        && it.parameters[3].type.isBoolean()   // ignored: Boolean
-            }
-            val baseClassSuiteSubstitutor = IrTypeSubstitutor(
-                baseClassSuite.typeParameters.map { it.symbol },
-                listOf(testClassType, testCompanionType),
-            )
-            val registerTestCaseReturnType = baseClassSuiteSubstitutor.substitute(registerTestCase.returnType)
-            val registerFunction = baseClassSuite.getFunction("registerFunction") {
-                it.parameters.size == 3
-                        && it.parameters[1].type.isTestFunctionKind()  // kind: TestFunctionKind
-                        && it.parameters[2].type.isFunction()          // function: () -> Unit
-            }
-
-            val irBuilder = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset)
-            body = irBuilder.irBlockBody {
-                +irDelegatingConstructorCall(baseClassSuiteConstructor).apply {
-                    typeArguments[0] = testClassType
-                    typeArguments[1] = testCompanionType
-
-                    arguments[0] = irString(suiteName)
-                    arguments[1] = irBoolean(ignored)
-                }
-                generateFunctionRegistration(
-                    testSuite.owner.thisReceiver!!,
-                    registerTestCase,
-                    registerFunction,
-                    functions,
-                    this@apply,
-                    registerTestCaseReturnType,
-                )
-            }
+        val registerTestCase = baseClassSuite.getFunction("registerTestCase") {
+            it.parameters.size == 4
+                    && it.parameters[1].type.isString()    // name: String
+                    && it.parameters[2].type.isFunction()  // function: testClassType.() -> Unit
+                    && it.parameters[3].type.isBoolean()   // ignored: Boolean
         }
+        val baseClassSuiteSubstitutor = IrTypeSubstitutor(
+            baseClassSuite.typeParameters.map { it.symbol },
+            listOf(testClassType, testCompanionType),
+        )
+        val registerTestCaseReturnType = baseClassSuiteSubstitutor.substitute(registerTestCase.returnType)
+        val registerFunction = baseClassSuite.getFunction("registerFunction") {
+            it.parameters.size == 3
+                    && it.parameters[1].type.isTestFunctionKind()  // kind: TestFunctionKind
+                    && it.parameters[2].type.isFunction()          // function: () -> Unit
+        }
+
+        val irBuilder = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset)
+        body = irBuilder.irBlockBody {
+            +irDelegatingConstructorCall(baseClassSuiteConstructor).apply {
+                typeArguments[0] = testClassType
+                typeArguments[1] = testCompanionType
+
+                arguments[0] = irString(suiteName)
+                arguments[1] = irBoolean(ignored)
+            }
+            generateFunctionRegistration(
+                testSuite.owner.thisReceiver!!,
+                registerTestCase,
+                registerFunction,
+                functions,
+                this@apply,
+                registerTestCaseReturnType,
+            )
+        }
+    }
 
     private val IrClass.ignored: Boolean get() = annotations.hasAnnotation(IGNORE_FQ_NAME)
 
@@ -556,53 +483,48 @@ class TestProcessor(
         testCompanion: IrClass?,
         irFile: IrFile,
         functions: Collection<TestFunction>,
-    ): IrClass {
-        return context.irFactory.createClass(
-            testClass.startOffset,
-            testClass.endOffset,
-            TEST_SUITE_CLASS,
-            testClass.name.synthesizeSuiteClassName(),
-            DescriptorVisibilities.PRIVATE,
-            IrClassSymbolImpl(),
-            ClassKind.CLASS,
-            Modality.FINAL,
-        ).apply {
-            irFile.addChild(this)
-            createThisReceiverParameter()
+    ) = context.irFactory.buildClass {
+        startOffset = testClass.startOffset
+        endOffset = testClass.endOffset
+        origin = TEST_SUITE_CLASS
+        name = testClass.name.synthesizeSuiteClassName()
+        visibility = DescriptorVisibilities.PRIVATE
+    }.apply {
+        irFile.addChild(this)
+        createThisReceiverParameter()
 
-            val testClassType = testClass.defaultType
-            val testCompanionType = if (testClass.kind == ClassKind.OBJECT) {
-                testClassType
-            } else {
-                testCompanion?.defaultType ?: context.irBuiltIns.nothingType
-            }
-
-            val constructor = buildClassSuiteConstructor(
-                suiteName, testClassType, testCompanionType, symbol, this, functions, testClass.ignored
-            )
-
-            val instanceGetter: IrFunction
-            val companionGetter: IrFunction?
-
-            if (testClass.kind == ClassKind.OBJECT) {
-                instanceGetter = buildObjectGetter(testClass.symbol, this, INSTANCE_GETTER_NAME)
-                companionGetter = buildObjectGetter(testClass.symbol, this, COMPANION_GETTER_NAME)
-            } else {
-                instanceGetter = buildInstanceGetter(testClass.symbol, this, INSTANCE_GETTER_NAME)
-                companionGetter = testCompanion?.let {
-                    buildObjectGetter(it.symbol, this, COMPANION_GETTER_NAME)
-                }
-            }
-
-            declarations += constructor
-            declarations += instanceGetter
-            companionGetter?.let { declarations += it }
-
-            superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
-            addFakeOverrides(
-                (context as? NativePreSerializationLoweringContext)?.typeSystem ?: (context as CommonBackendContext).typeSystem
-            )
+        val testClassType = testClass.defaultType
+        val testCompanionType = if (testClass.kind == ClassKind.OBJECT) {
+            testClassType
+        } else {
+            testCompanion?.defaultType ?: context.irBuiltIns.nothingType
         }
+
+        val constructor = buildClassSuiteConstructor(
+            suiteName, testClassType, testCompanionType, symbol, this, functions, testClass.ignored
+        )
+
+        val instanceGetter: IrFunction
+        val companionGetter: IrFunction?
+
+        if (testClass.kind == ClassKind.OBJECT) {
+            instanceGetter = buildObjectGetter(testClass.symbol, this, INSTANCE_GETTER_NAME)
+            companionGetter = buildObjectGetter(testClass.symbol, this, COMPANION_GETTER_NAME)
+        } else {
+            instanceGetter = buildInstanceGetter(testClass.symbol, this, INSTANCE_GETTER_NAME)
+            companionGetter = testCompanion?.let {
+                buildObjectGetter(it.symbol, this, COMPANION_GETTER_NAME)
+            }
+        }
+
+        declarations += constructor
+        declarations += instanceGetter
+        companionGetter?.let { declarations += it }
+
+        superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
+        addFakeOverrides(
+            (context as? NativePreSerializationLoweringContext)?.typeSystem ?: (context as CommonBackendContext).typeSystem
+        )
     }
     //endregion
 
