@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -682,6 +683,60 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertOutputContains("Could not find ${multiplatformLibrary.rootCoordinate}")
+            }
+        }
+    }
+
+    @DisplayName("embedSwiftExport overrides the version of an external dependency defined in Swift Export DSL with highest on classpath")
+    @GradleTest
+    fun testSwiftExportDSLWithExternalDependencyVersionResolution(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Publish dependencies
+        val multiplatformLibraryV1 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "1.0")
+        val multiplatformLibraryV2 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "2.0") {
+            iosArm64()
+            sourceSets.commonMain.get().compileSource("class FooV2")
+        }
+
+        project(
+            "empty",
+            gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            addPublishedProjectToRepositories(multiplatformLibraryV1)
+            addPublishedProjectToRepositories(multiplatformLibraryV2)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    with(swiftExport) {
+                        @OptIn(ExperimentalSwiftExportDsl::class)
+                        export(multiplatformLibraryV1.rootCoordinate)
+                    }
+                    sourceSets.commonMain {
+                        dependencies {
+                            implementation(multiplatformLibraryV2.rootCoordinate)
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val librarySwiftPath = projectPath
+                    .resolve("build/SwiftExport/iosArm64/Debug/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
+                assertFileExists(librarySwiftPath)
+                assertContains(
+                    librarySwiftPath.readText(),
+                    "public final class FooV2"
+                )
             }
         }
     }
