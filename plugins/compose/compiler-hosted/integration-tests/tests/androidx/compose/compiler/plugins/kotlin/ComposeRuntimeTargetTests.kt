@@ -6,11 +6,8 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 import kotlin.test.Test
 
-@RunWith(JUnit4::class)
 class ComposeRuntimeTargetTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(

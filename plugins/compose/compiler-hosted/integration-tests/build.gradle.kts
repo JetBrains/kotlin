@@ -35,6 +35,7 @@ dependencies {
     // junit
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.intellij.fastutil)
@@ -45,7 +46,7 @@ dependencies {
     testImplementation(project(":kotlin-stdlib-common"))
     testImplementation(project(":kotlin-reflect"))
     testImplementation(project(":kotlin-metadata-jvm"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:ir.backend.common"))
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:cli-base"))

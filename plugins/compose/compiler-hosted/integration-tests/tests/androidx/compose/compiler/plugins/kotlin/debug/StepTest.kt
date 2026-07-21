@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.debug
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class StepTest : AbstractDebuggerTest() {
     @Test

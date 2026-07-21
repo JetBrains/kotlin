@@ -22,8 +22,8 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class RunComposableTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {

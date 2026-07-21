@@ -6,23 +6,19 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ValueSource
 
-@RunWith(Parameterized::class)
+@ParameterizedClass(name = "optimize = {0}")
+@ValueSource(booleans = [false, true])
 class OptimizeNonSkippingGroupsTests(
-    private val optimizeNonSkippingGroups: Boolean
+    private val optimizeNonSkippingGroups: Boolean,
 ) : AbstractControlFlowTransformTests() {
+
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(optimizeNonSkippingGroups)))
-    }
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "optimize = {0}")
-        fun data() = arrayOf<Any>(false, true)
     }
 
     // Regression test for b/405541364

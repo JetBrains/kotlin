@@ -8,11 +8,8 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 import kotlin.test.Test
 
-@RunWith(JUnit4::class)
 class ComposeLambdaClassCodegenTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(JVMConfigurationKeys.LAMBDAS, JvmClosureGenerationScheme.CLASS)

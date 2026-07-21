@@ -17,14 +17,13 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.Test
-import org.junit.experimental.categories.Category
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
-@Category(SmokeTest::class)
+@SmokeTest
 class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
 
     @Test
