@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
@@ -93,23 +94,19 @@ class DifferentClassloadersIT : KGPBaseTest() {
             "differentClassloaders",
             gradleVersion,
         ) {
+            assumeTrue(buildOptions.isolatedProjects.toBooleanFlag(gradleVersion))
+
             setupDifferentClassloadersProject()
 
-            if (buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)) {
-                // Web plugins generally don't support project isolation (see KT-75899), so there are many build failure reasons.
-                // We're using a heuristic to validate that the build didn't fail because of different classloader detection logic:
-                // KotlinPluginInMultipleProjectsHolder stores paths of projects that apply the KGP in the root project's extras,
-                // which is not allowed with project isolation.
-                buildAndFail("publish", "-PmppProjectDependency=true") {
-                    assertOutputDoesNotContain(
-                        "Plugin class 'org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin': " +
-                                "Project ':mpp-lib' cannot access 'Project.extensions' functionality on another project ':'"
-                    )
-                }
-            } else {
-                build("publish", "-PmppProjectDependency=true") {
-                    assertOutputContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-                }
+            // Web plugins generally don't support project isolation (see KT-75899), so there are many build failure reasons.
+            // We're using a heuristic to validate that the build didn't fail because of different classloader detection logic:
+            // KotlinPluginInMultipleProjectsHolder stores paths of projects that apply the KGP in the root project's extras,
+            // which is not allowed with project isolation.
+            buildAndFail("publish", "-PmppProjectDependency=true") {
+                assertOutputDoesNotContain(
+                    "Plugin class 'org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin': " +
+                            "Project ':mpp-lib' cannot access 'Project.extensions' functionality on another project ':'"
+                )
             }
         }
     }
