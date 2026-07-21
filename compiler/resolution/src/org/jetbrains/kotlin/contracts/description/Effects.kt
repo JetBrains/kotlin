@@ -71,3 +71,12 @@ class ReturnsResultOfEffectDeclaration(val variableReference: VariableReference)
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
 }
+
+/**
+ * Effect which specifies that subroutine returns the value of the specified parameter [variableReference] as-is.
+ */
+@K1Deprecation
+class ReturnsParameterEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitReturnsParameterEffectDeclaration(this, data)
+}

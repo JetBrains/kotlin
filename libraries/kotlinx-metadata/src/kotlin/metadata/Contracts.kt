@@ -139,6 +139,14 @@ public enum class KmEffectType {
      * Referenced lambda is stored in the [KmEffect.constructorArguments].
      */
     RETURNS_RESULT_OF,
+
+    /**
+     * Represents `returnsParameter` contract effect:
+     * a situation when a function returns the value of the specified parameter (or receiver) as-is.
+     *
+     * Referenced parameter is stored in the [KmEffect.constructorArguments].
+     */
+    RETURNS_PARAMETER,
 }
 
 /**

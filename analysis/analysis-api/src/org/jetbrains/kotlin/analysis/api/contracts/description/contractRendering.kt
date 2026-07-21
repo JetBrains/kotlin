@@ -38,6 +38,9 @@ internal fun Context.renderKaContractEffectDeclaration(value: KaContractEffectDe
             is KaContractReturnsResultOfEffectDeclaration -> {
                 appendProperty(value::valueParameterReference, ::renderKaContractParameterValue, endWithNewLine)
             }
+            is KaContractReturnsParameterEffectDeclaration -> {
+                appendProperty(value::valueParameterReference, ::renderKaContractParameterValue, endWithNewLine)
+            }
             is KaContractReturnsContractEffectDeclaration -> {
                 when (value) {
                     is KaContractReturnsNotNullEffectDeclaration, is KaContractReturnsSuccessfullyEffectDeclaration -> Unit

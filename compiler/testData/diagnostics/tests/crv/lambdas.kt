@@ -19,6 +19,13 @@ fun stringLambdaReturns(l: () -> String): String {
     return l()
 }
 
+fun nestedParam() {
+    stringLambdaReturns({
+        <!RETURN_VALUE_NOT_USED!>stringF<!>()
+        stringF()
+     }).<!RETURN_VALUE_NOT_USED!>length<!>
+}
+
 fun main() {
     stringLambda {
         <!RETURN_VALUE_NOT_USED!>stringF<!>() // unused because not the last statement

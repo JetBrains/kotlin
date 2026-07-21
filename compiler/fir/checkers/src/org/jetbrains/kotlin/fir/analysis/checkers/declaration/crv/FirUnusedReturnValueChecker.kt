@@ -43,8 +43,15 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             // Special case for `x[y] = z` assigment:
             if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return
 
-            // returnsResultOf contracts:
-            if (resolvedSymbol != null && hasContractAndCanBeIgnored(expression, resolvedSymbol, data)) return
+            // returnsResultOf/returnsParameter contracts:
+            if (resolvedSymbol != null) {
+                // If either of contracts is present, we don't need to report the function itself.
+                // However, they both should work correctly, so no short-cutting.
+                val hasReturnsResultOf = hasContractAndCanBeIgnored(expression, resolvedSymbol, data)
+                val indicesOfReturnsParameter = resolvedSymbol.indicesOfReturnsParameter().toSet()
+                if (indicesOfReturnsParameter.isNotEmpty()) visitor.returnsParameterIndices = indicesOfReturnsParameter
+                if (hasReturnsResultOf || indicesOfReturnsParameter.isNotEmpty()) return
+            }
         }
 
         // Special case for `condition() || throw/return` or `condition() && throw/return`:
@@ -144,6 +151,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) : UsageVisitorBase(context, reporter) {
+        var returnsParameterIndices: Set<Int>? = null
         val returnsToCheck: MutableMap<FirReturnExpression, FirFunctionCall> = hashMapOf()
 
         override fun checkExpression(expression: FirExpression, data: UsageState) {
@@ -154,6 +162,23 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             }
 
             checkIfExpressionUnused(expression, data, context = context, reporter = reporter)
+        }
+
+        override fun visitFunctionCall(functionCall: FirFunctionCall, data: UsageState) {
+            // FirFunctionCall is handled separately because some parameters should be propagating in case of returnsParameter() contract.
+            // However, the main logic of checkExpression should still be called because contracts are processed together in checkIfExpressionUnused.
+            if (functionCall.source != null) checkExpression(functionCall, data)
+
+            val storedIndices = returnsParameterIndices.orEmpty()
+            returnsParameterIndices = null
+
+            functionCall.annotations.forEach { it.accept(this, UsageState.Used) }
+            // No need to visit dispatchReceiver, extensionReceiver, or contextArguments because they are implicit (or duplicated in explicitReceiver).
+            val explicitReceiver = functionCall.explicitReceiver
+            explicitReceiver?.accept(this, if (-1 in storedIndices) data else UsageState.Used)
+            functionCall.arguments.forEachIndexed { index, argument ->
+                argument.accept(this, if (index in storedIndices) data else UsageState.Used)
+            }
         }
 
         override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: UsageState) {

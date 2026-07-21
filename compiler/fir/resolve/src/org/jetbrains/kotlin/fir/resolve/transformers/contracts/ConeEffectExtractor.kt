@@ -46,6 +46,7 @@ class ConeEffectExtractor(
         private val LAMBDA_ARGUMENT_NAME = Name.identifier("lambda")
         private val OTHER_ARGUMENT_NAME = Name.identifier("other")
         private val TARGET_ARGUMENT_NAME = Name.identifier("target")
+        private val VALUE_ARGUMENT_NAME = Name.identifier("value")
     }
 
     private fun ConeContractDescriptionError.asElement(): KtErroneousContractElement<ConeKotlinType, ConeDiagnostic> {
@@ -131,6 +132,15 @@ class ConeEffectExtractor(
                         "-Xallow-returns-result-of",
                         "-Xreturn-value-checker"
                     ).asElement()
+                }
+            }
+
+            ContractsDslNames.RETURNS_PARAMETER -> {
+                if (session.languageVersionSettings.rvcEnabledOrStable()) {
+                    val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(VALUE_ARGUMENT_NAME)
+                    ConeReturnsParameterDeclaration(reference)
+                } else {
+                    ConeContractDescriptionError.RequiresLanguageFeature("-Xreturn-value-checker").asElement()
                 }
             }
 

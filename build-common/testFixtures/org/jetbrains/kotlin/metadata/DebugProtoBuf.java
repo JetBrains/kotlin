@@ -42687,6 +42687,14 @@ public final class DebugProtoBuf {
        * </pre>
        */
       RETURNS_RESULT_OF(3, 3),
+      /**
+       * <code>RETURNS_PARAMETER = 4;</code>
+       *
+       * <pre>
+       * ReturnsParameter(callable: ParameterReference)
+       * </pre>
+       */
+      RETURNS_PARAMETER(4, 4),
       ;
 
       /**
@@ -42722,6 +42730,14 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public static final int RETURNS_RESULT_OF_VALUE = 3;
+      /**
+       * <code>RETURNS_PARAMETER = 4;</code>
+       *
+       * <pre>
+       * ReturnsParameter(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int RETURNS_PARAMETER_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -42732,6 +42748,7 @@ public final class DebugProtoBuf {
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
           case 3: return RETURNS_RESULT_OF;
+          case 4: return RETURNS_PARAMETER;
           default: return null;
         }
       }
@@ -47021,7 +47038,7 @@ public final class DebugProtoBuf {
       "a.Class\022B\n\017file_annotation\030\005 \003(\0132).org.j" +
       "etbrains.kotlin.metadata.Annotation*\005\010d\020" +
       "\310\001\"A\n\010Contract\0225\n\006effect\030\001 \003(\0132%.org.jet" +
-      "brains.kotlin.metadata.Effect\"\217\005\n\006Effect" +
+      "brains.kotlin.metadata.Effect\"\246\005\n\006Effect" +
       "\022E\n\013effect_type\030\001 \001(\01620.org.jetbrains.ko",
       "tlin.metadata.Effect.EffectType\022N\n\033effec" +
       "t_constructor_argument\030\002 \003(\0132).org.jetbr" +
@@ -47031,34 +47048,35 @@ public final class DebugProtoBuf {
       "kind\030\004 \001(\01624.org.jetbrains.kotlin.metada" +
       "ta.Effect.InvocationKind\022Q\n\016condition_ki" +
       "nd\030\005 \001(\01629.org.jetbrains.kotlin.metadata" +
-      ".Effect.EffectConditionKind\"Z\n\nEffectTyp" +
+      ".Effect.EffectConditionKind\"q\n\nEffectTyp" +
       "e\022\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RE",
-      "TURNS_NOT_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\"" +
-      "G\n\016InvocationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014E" +
-      "XACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"]\n\023Effe" +
-      "ctConditionKind\022\030\n\024CONCLUSION_CONDITION\020" +
-      "\000\022\025\n\021RETURNS_CONDITION\020\001\022\025\n\021HOLDSIN_COND" +
-      "ITION\020\002\"\245\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010" +
-      "\022!\n\031value_parameter_reference\030\002 \001(\005\022O\n\016c" +
-      "onstant_value\030\003 \001(\01627.org.jetbrains.kotl" +
-      "in.metadata.Expression.ConstantValue\022=\n\020" +
-      "is_instance_type\030\004 \001(\0132#.org.jetbrains.k",
-      "otlin.metadata.Type\022!\n\023is_instance_type_" +
-      "id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and_argument\030\006 \003(\0132).o" +
-      "rg.jetbrains.kotlin.metadata.Expression\022" +
-      ">\n\013or_argument\030\007 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.Expression\".\n\rConstantValue" +
-      "\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022Compi" +
-      "lerPluginData\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014" +
-      "\n\004data\030\002 \002(\014*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004O" +
-      "PEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisib" +
-      "ility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROT",
-      "ECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004" +
-      "\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION" +
-      "\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n" +
-      "\013SYNTHESIZED\020\003*L\n\021ReturnValueStatus\022\017\n\013U" +
-      "NSPECIFIED\020\000\022\014\n\010MUST_USE\020\001\022\030\n\024EXPLICITLY" +
-      "_IGNORABLE\020\002B\017B\rDebugProtoBuf"
+      "TURNS_NOT_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\022" +
+      "\025\n\021RETURNS_PARAMETER\020\004\"G\n\016InvocationKind" +
+      "\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\r" +
+      "AT_LEAST_ONCE\020\002\"]\n\023EffectConditionKind\022\030" +
+      "\n\024CONCLUSION_CONDITION\020\000\022\025\n\021RETURNS_COND" +
+      "ITION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"\245\003\n\nExpre" +
+      "ssion\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_paramet" +
+      "er_reference\030\002 \001(\005\022O\n\016constant_value\030\003 \001" +
+      "(\01627.org.jetbrains.kotlin.metadata.Expre" +
+      "ssion.ConstantValue\022=\n\020is_instance_type\030",
+      "\004 \001(\0132#.org.jetbrains.kotlin.metadata.Ty" +
+      "pe\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n" +
+      "\014and_argument\030\006 \003(\0132).org.jetbrains.kotl" +
+      "in.metadata.Expression\022>\n\013or_argument\030\007 " +
+      "\003(\0132).org.jetbrains.kotlin.metadata.Expr" +
+      "ession\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FAL" +
+      "SE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPluginData\022\027\n\t" +
+      "plugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010M" +
+      "odality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT" +
+      "\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL",
+      "\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC" +
+      "\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMe" +
+      "mberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRI" +
+      "DE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003*L\n" +
+      "\021ReturnValueStatus\022\017\n\013UNSPECIFIED\020\000\022\014\n\010M" +
+      "UST_USE\020\001\022\030\n\024EXPLICITLY_IGNORABLE\020\002B\017B\rD" +
+      "ebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
