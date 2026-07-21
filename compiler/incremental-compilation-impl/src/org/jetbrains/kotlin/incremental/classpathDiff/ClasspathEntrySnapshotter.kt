@@ -52,6 +52,15 @@ object ClasspathEntrySnapshotter {
         return path == "package-info.class" || path.endsWith("/package-info.class")
     }
 
+    private fun packageNameOfPackageInfo(unixStyleRelativePath: String): String {
+        var path = unixStyleRelativePath
+        if (path.startsWith("META-INF/versions/", ignoreCase = true)) {
+            // Drop the "META-INF/versions/<n>/" prefix (three path segments) to get the logical package path.
+            path = path.substringAfter('/').substringAfter('/').substringAfter('/', missingDelimiterValue = "")
+        }
+        return path.removeSuffix("package-info.class").removeSuffix("/").replace('/', '.')
+    }
+
     /**
      * Paths must already be sorted (as [DirectoryOrJarReader.getUnixStyleRelativePaths] returns them) so the result is stable;
      * each path is folded in alongside its bytes, so relocating a file (e.g. between multi-release version dirs) also counts as a change.
@@ -94,14 +103,14 @@ object ClasspathEntrySnapshotter {
                 directoryOrJarReader,
                 directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
             )
-            val packageInfoHash = combinedContentHash(
-                directoryOrJarReader,
-                directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
-            )
+            val packageInfoHashes = directoryOrJarReader
+                .getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
+                .groupBy { packageNameOfPackageInfo(it) }
+                .mapValues { combinedContentHash(directoryOrJarReader, it.value)!! }
             return ClasspathEntrySnapshot(
                 classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
                 moduleInfoHash = moduleInfoHash,
-                packageInfoHash = packageInfoHash,
+                packageInfoHashes = packageInfoHashes,
             )
         }
     }

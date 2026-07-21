@@ -44,7 +44,6 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java changed"),
     PACKAGE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "a package-info.java changed"),
     DEPENDENCY_MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java in a dependency changed"),
-    DEPENDENCY_PACKAGE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "package-info.java in a dependency changed"),
     ;
 
     companion object {

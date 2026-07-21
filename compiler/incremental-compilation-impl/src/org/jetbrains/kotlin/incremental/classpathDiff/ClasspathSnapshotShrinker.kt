@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findRea
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasses
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
+import org.jetbrains.kotlin.incremental.storage.LinkedHashMapExternalizer
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.LongExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
+import org.jetbrains.kotlin.incremental.storage.StringExternalizer
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
 
@@ -303,9 +305,9 @@ internal fun shrinkAndSaveClasspathSnapshot(
             )
         }
         reporter.measure(SAVE_CURRENT_PACKAGE_INFO_HASHES) {
-            ListExternalizer(LongExternalizer).saveToFile(
+            LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.previousPackageInfoHashesFile,
-                lazyClasspathSnapshot.getCurrentPackageInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed).toList()
+                LinkedHashMap(lazyClasspathSnapshot.getCurrentPackageInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed))
             )
         }
     }
