@@ -105,13 +105,13 @@ class CallAndReferenceGenerator(
 
             fun convertReferenceToRegularProperty(propertySymbol: FirPropertySymbol): IrExpression? {
                 val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrPropertySymbol ?: return null
-                val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(irPropertySymbol)
+                val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(irPropertySymbol)!!
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
 
                 // TODO(KT-86453) drop else branch and always generate rich reference
-                return if (referencedPropertyGetterSymbol != null && propertySymbol.hasContextParameters) {
+                return if (propertySymbol.hasContextParameters) {
                     adapterGenerator.generateRichPropertyReference(
                         callableReferenceAccess,
                         type,
@@ -123,14 +123,10 @@ class CallAndReferenceGenerator(
                         isForDelegate,
                     )
                 } else {
-                    val backingFieldSymbol = when {
-                        referencedPropertyGetterSymbol != null -> null
-                        else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
-                    }
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, irPropertySymbol,
                         typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                        field = backingFieldSymbol,
+                        field = null,
                         getter = referencedPropertyGetterSymbol,
                         setter = referencedPropertySetterSymbol,
                         origin = origin
@@ -179,7 +175,6 @@ class CallAndReferenceGenerator(
             }
 
             fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression {
-                val field = fieldSymbol.fir
                 val irPropertySymbol = fieldSymbol.toSymbolForCall() as IrPropertySymbol
                 val irFieldSymbol = declarationStorage.findBackingFieldOfProperty(irPropertySymbol)!!
                 return IrPropertyReferenceImpl(
@@ -187,8 +182,8 @@ class CallAndReferenceGenerator(
                     irPropertySymbol,
                     typeArgumentsCount = 0,
                     field = irFieldSymbol,
-                    getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(irPropertySymbol) },
-                    setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
+                    getter = null,
+                    setter = null,
                     origin
                 )
                     .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
