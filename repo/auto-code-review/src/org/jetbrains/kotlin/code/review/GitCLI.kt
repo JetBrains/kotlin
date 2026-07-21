@@ -41,7 +41,7 @@ object GitCLI : LocalGit {
     private const val DIFF_MINUS_MINUS_GIT = "diff --git "
 
     override suspend fun getDiff(from: GitSHA1, to: GitWorkingTree): GitDiff {
-        val diffText = gitOutput(tree = to, "diff", from.sha1)
+        val diffText = gitOutput(tree = to, "diff", "--default-prefix", from.sha1)
         val diffLines = ArrayDeque(diffText.lines())
 
         val changedFiles = mutableListOf<GitDiff.ChangedFile>()
