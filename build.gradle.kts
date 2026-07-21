@@ -205,7 +205,7 @@ val publishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = 
 }
 val localPublishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("localPublishedMark")
 val localPublishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = configurations.resolvable("localPublishedMarkClasspath").apply {
-    configure { extendsFrom(publishedMark) }
+    configure { extendsFrom(localPublishedMark) }
 }
 dependencies {
     allprojects.forEach { p ->
