@@ -45,7 +45,7 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
-                implementation(kotlinTest("junit"))
+                implementation(kotlinTest("junit5"))
             }
             kotlin {
                 srcDir("jvm/test")
