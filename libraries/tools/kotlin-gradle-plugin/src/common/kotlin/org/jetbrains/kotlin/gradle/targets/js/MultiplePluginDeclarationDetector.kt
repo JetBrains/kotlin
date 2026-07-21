@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginInMultipleProjectsHolder
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
@@ -16,9 +17,13 @@ private constructor() {
     private val pluginInMultipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
         trackPluginVersionsSeparately = false
     )
+    private val logger by lazy { Logging.getLogger(MultiplePluginDeclarationDetector::class.java) }
 
     fun detect(project: Project) {
-        if (project.isProjectIsolationEnabled) return
+        if (project.isProjectIsolationEnabled) {
+            logger.info(MULTIPLE_PLUGIN_DETECTION_DISABLED_WITH_PROJECT_ISOLATION_INFO)
+            return
+        }
 
         pluginInMultipleProjectsHolder
             .addProject(project)
@@ -54,3 +59,6 @@ private constructor() {
         }
     }
 }
+
+const val MULTIPLE_PLUGIN_DETECTION_DISABLED_WITH_PROJECT_ISOLATION_INFO = "MultiplePluginDeclarationDetector is disabled because " +
+        "project isolation is enabled."
