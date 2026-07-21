@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
@@ -35,7 +34,7 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 
     protected fun createRemappingClassBuilderViaFactory(inliningContext: InliningContext): ClassBuilder {
         val classBuilder = state.factory.newVisitor(
-            JvmDeclarationOrigin.NO_ORIGIN,
+            null,
             Type.getObjectType(transformationInfo.newClassName),
             listOfNotNull(inliningContext.callSiteInfo.file)
         )
@@ -72,7 +71,7 @@ class WhenMappingTransformer(
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 return if (name == fieldNode.name) {
-                    classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
+                    classBuilder.newField(null, access, name, desc, signature, value)
                 } else {
                     null
                 }
@@ -102,7 +101,7 @@ class WhenMappingTransformer(
 
         val transformedClinit = cutOtherMappings(clinit)
         val result = classBuilder.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN, transformedClinit.access, transformedClinit.name, transformedClinit.desc,
+            null, transformedClinit.access, transformedClinit.name, transformedClinit.desc,
             transformedClinit.signature, transformedClinit.exceptions.toTypedArray()
         )
         transformedClinit.accept(result)

@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -25,7 +28,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
 
     override fun getClassBuilderMode(): ClassBuilderMode = builderMode
 
-    override fun newClassBuilder(origin: JvmDeclarationOrigin): AbstractClassBuilder.Concrete {
+    override fun newClassBuilder(origin: IrClass?): AbstractClassBuilder.Concrete {
         val classNode = ClassNode()
         compiledClasses += classNode
         saveOrigin(classNode, origin)
@@ -34,7 +37,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
 
     private inner class OriginCollectingClassBuilder(val classNode: ClassNode) : AbstractClassBuilder.Concrete(classNode) {
         override fun newField(
-            origin: JvmDeclarationOrigin,
+            origin: IrField?,
             access: Int,
             name: String,
             desc: String,
@@ -47,7 +50,7 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
         }
 
         override fun newMethod(
-            origin: JvmDeclarationOrigin,
+            origin: IrFunction?,
             access: Int,
             name: String,
             desc: String,
@@ -66,10 +69,9 @@ internal class OriginCollectingClassBuilderFactory(private val builderMode: Clas
         }
     }
 
-    private fun saveOrigin(node: Any, origin: JvmDeclarationOrigin) {
-        val declaration = origin.declaration
-        if (declaration != null) {
-            origins[node] = KaptIrOrigin(declaration)
+    private fun saveOrigin(node: Any, origin: IrDeclaration?) {
+        if (origin != null) {
+            origins[node] = KaptIrOrigin(origin)
         }
     }
 

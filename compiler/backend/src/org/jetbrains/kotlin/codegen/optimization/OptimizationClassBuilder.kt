@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 class OptimizationClassBuilder(private val delegate: ClassBuilder, private val generationState: GenerationState) :
@@ -28,7 +28,7 @@ class OptimizationClassBuilder(private val delegate: ClassBuilder, private val g
     public override fun getDelegate(): ClassBuilder = delegate
 
     override fun newMethod(
-        origin: JvmDeclarationOrigin,
+        origin: IrFunction?,
         access: Int,
         name: String,
         desc: String,

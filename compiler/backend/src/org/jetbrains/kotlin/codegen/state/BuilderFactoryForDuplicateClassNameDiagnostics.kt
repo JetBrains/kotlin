@@ -18,23 +18,27 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassNameCollectionClassBuilderFactory
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import java.util.concurrent.ConcurrentHashMap
 
 class BuilderFactoryForDuplicateClassNameDiagnostics(
     builderFactory: ClassBuilderFactory,
     private val state: GenerationState,
 ) : ClassNameCollectionClassBuilderFactory(builderFactory) {
-    private val className = ConcurrentHashMap<String, JvmDeclarationOrigin>()
+    private val className = ConcurrentHashMap<String, Any>()
 
-    override fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin) {
-        val another = className.getOrPut(internalName) { origin }
+    override fun handleClashingNames(internalName: String, origin: IrClass?) {
+        val another = className.getOrPut(internalName) { origin ?: NO_ORIGIN }.takeUnless { it === NO_ORIGIN } as IrClass?
         // Allow clashing classes if they are originated from the same source element. For example, this happens during inlining anonymous
         // objects. In JVM IR, this also happens for anonymous classes in default arguments of tailrec functions, because default arguments
         // are deep-copied (see JvmTailrecLowering).
-        if (origin.declaration?.attributeOwnerId != another.declaration?.attributeOwnerId) {
+        if (origin != null && another != null && origin.attributeOwnerId != another.attributeOwnerId) {
             state.reportDuplicateClassNameError(origin, internalName, another)
             state.reportDuplicateClassNameError(another, internalName, origin)
         }
+    }
+
+    private companion object {
+        val NO_ORIGIN = Any()
     }
 }

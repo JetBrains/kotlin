@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -138,9 +137,7 @@ class CoroutineTransformer(
     }
 
     private fun createNewMethodFrom(node: MethodNode, name: String): MethodVisitor {
-        return classBuilder.newMethod(
-            JvmDeclarationOrigin.NO_ORIGIN, node.access, name, node.desc, node.signature, ArrayUtil.toStringArray(node.exceptions)
-        )
+        return classBuilder.newMethod(null, node.access, name, node.desc, node.signature, ArrayUtil.toStringArray(node.exceptions))
     }
 
     fun replaceFakesWithReals(node: MethodNode) {

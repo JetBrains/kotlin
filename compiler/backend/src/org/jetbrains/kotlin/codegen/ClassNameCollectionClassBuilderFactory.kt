@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrClass
 
 abstract class ClassNameCollectionClassBuilderFactory(delegate: ClassBuilderFactory) : DelegatingClassBuilderFactory(delegate) {
-    protected abstract fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin)
+    protected abstract fun handleClashingNames(internalName: String, origin: IrClass?)
 
-    override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+    override fun newClassBuilder(origin: IrClass?): DelegatingClassBuilder {
         return ClassNameCollectionClassBuilder(origin, delegate.newClassBuilder(origin))
     }
 
     private inner class ClassNameCollectionClassBuilder(
-        private val classCreatedFor: JvmDeclarationOrigin,
+        private val classCreatedFor: IrClass?,
         private val delegate: ClassBuilder,
     ) : DelegatingClassBuilder() {
         override fun getDelegate() = delegate

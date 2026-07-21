@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -36,11 +35,10 @@ class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorEx
     override fun interceptClassBuilderFactory(
         interceptedFactory: ClassBuilderFactory,
     ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
-        override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+        override fun newClassBuilder(origin: IrClass?): DelegatingClassBuilder {
             val classBuilder = interceptedFactory.newClassBuilder(origin)
-            val irClass = origin.declaration as? IrClass
             return DelegatingClassBuilderAdapter(
-                extension.generateClass(ClassGeneratorAdapter(classBuilder), irClass),
+                extension.generateClass(ClassGeneratorAdapter(classBuilder), origin),
                 classBuilder
             )
         }
@@ -49,20 +47,18 @@ class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorEx
 
 private class ClassGeneratorAdapter(val builder: ClassBuilder) : ClassGenerator {
     override fun defineClass(
-        version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
+        version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>,
     ) {
         builder.defineClass(version, access, name, signature, superName, interfaces)
     }
 
-    override fun newField(
-        declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?
-    ): FieldVisitor =
-        builder.newField(JvmDeclarationOrigin(declaration), access, name, desc, signature, value)
+    override fun newField(declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor =
+        builder.newField(declaration, access, name, desc, signature, value)
 
     override fun newMethod(
-        declaration: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
+        declaration: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?,
     ): MethodVisitor =
-        builder.newMethod(JvmDeclarationOrigin(declaration), access, name, desc, signature, exceptions)
+        builder.newMethod(declaration, access, name, desc, signature, exceptions)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         builder.newRecordComponent(name, desc, signature)
@@ -99,15 +95,13 @@ private class DelegatingClassBuilderAdapter(
         generator.defineClass(version, access, name, signature, superName, interfaces)
     }
 
-    override fun newField(
-        origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, value: Any?
-    ): FieldVisitor =
-        generator.newField(origin.declaration as? IrField, access, name, desc, signature, value)
+    override fun newField(origin: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor =
+        generator.newField(origin, access, name, desc, signature, value)
 
     override fun newMethod(
-        origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
+        origin: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?,
     ): MethodVisitor =
-        generator.newMethod(origin.declaration as? IrFunction, access, name, desc, signature, exceptions)
+        generator.newMethod(origin, access, name, desc, signature, exceptions)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         generator.newRecordComponent(name, desc, signature)

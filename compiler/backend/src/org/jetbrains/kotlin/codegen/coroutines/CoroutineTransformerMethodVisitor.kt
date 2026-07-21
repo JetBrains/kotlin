@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransfor
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -890,8 +889,7 @@ class CoroutineTransformerMethodVisitor(
             val [type, maxIndex] = entry
             for (index in (initialVarsCountByType[type]?.plus(1) ?: 0)..maxIndex) {
                 classBuilderForCoroutineState.newField(
-                    JvmDeclarationOrigin.NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                    type.fieldNameForVar(index), type.descriptor, null, null
+                    null, AsmUtil.NO_FLAG_PACKAGE_PRIVATE, type.fieldNameForVar(index), type.descriptor, null, null,
                 )
             }
         }
