@@ -24,6 +24,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(kotlinTest("junit5"))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(toolsJar())
