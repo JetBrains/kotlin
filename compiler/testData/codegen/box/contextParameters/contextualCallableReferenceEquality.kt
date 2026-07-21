@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: JVM_IR
 // ^KT-86452, KT-87390
 
 import kotlin.reflect.KFunction

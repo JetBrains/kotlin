@@ -241,7 +241,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                     makeValueParameter("flags", context.irBuiltIns.intType),
                     makeValueParameter("arity", context.irBuiltIns.intType),
                     makeValueParameter("id", context.irBuiltIns.stringType),
-                    makeValueParameter("receiver", context.irBuiltIns.anyNType),
+                    makeValueParameter("boundValueCount", context.irBuiltIns.intType),
                     makeValueParameter("name", context.irBuiltIns.stringType),
                 )
             }
@@ -254,7 +254,6 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
     private fun IrBuilderWithScope.getExtraConstructorArgument(
         parameter: IrValueParameter,
         reference: IrRichFunctionReference,
-        receiverTemp: IrVariable?,
     ): IrExpression {
         val linkerError = reference.getLinkageErrorIfAny(backendContext)
         val reflectionTargetSymbol = reference.reflectionTargetSymbol
@@ -278,13 +277,8 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                     "id" -> {
                         reference.getId(backendContext).toIrConst(context.irBuiltIns.stringType)
                     }
-                    "receiver" -> {
-                        // Use the temporary variable if provided, otherwise null
-                        if (receiverTemp != null) {
-                            irGet(receiverTemp)
-                        } else {
-                            irNull()
-                        }
+                    "boundValueCount" -> {
+                        reference.boundValues.size.toIrConst(context.irBuiltIns.intType)
                     }
                     "name" -> {
                         name.toIrConst(context.irBuiltIns.stringType)
@@ -565,6 +559,10 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             postprocessInvoke(this, functionReference.secondFunctionInterface)
         }
 
+        if (fields.isNotEmpty()) {
+            addBoundValueAtOverride(functionReferenceClass, fields)
+        }
+
         val superInterfaceClass = superInterfaceType.classOrFail.owner
 
         functionReferenceClass.addFakeOverrides(
@@ -582,62 +580,22 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         constructor: IrConstructor,
         irBuilder: DeclarationIrBuilder,
         bridgedFunction: IrSimpleFunction,
-    ): IrExpression {
-        val boundReceiverIndex = if (reference.reflectionTargetSymbol != null) {
-            val boundReceiverParameters = reference.invokeFunction.parameters.filter {
-                // This is a total hack, but by the time we get to IR,
-                // apparently coerced to unit function references already
-                // have introduced receiver parameters (as `receiver', and
-                // not as `<this>' like everywhere else. This makes things
-                // fairly brittle.
-                val name = it.name.asString()
-                name == "<this>" || name == "receiver"
+    ): IrExpression =
+        irBuilder.irCallConstructor(constructor.symbol, emptyList()).apply {
+            origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+            arguments[0] = IrRawFunctionReferenceImpl(
+                startOffset = reference.startOffset,
+                endOffset = reference.endOffset,
+                type = reference.type,
+                symbol = bridgedFunction.symbol,
+            )
+            for ((index, value) in reference.boundValues.withIndex()) {
+                arguments[index + 1] = value
             }
-            require(boundReceiverParameters.size <= 1) { "Code generation for references with more than one bound receiver is not supported yet" }
-            if (boundReceiverParameters.isEmpty())
-                null
-            else
-                reference.invokeFunction.parameters.indexOf(boundReceiverParameters.first())
-        } else {
-            null
+            for (index in (reference.boundValues.size + 1) until arguments.size) {
+                arguments[index] = irBuilder.getExtraConstructorArgument(constructor.parameters[index], reference)
+            }
         }
-
-        fun DeclarationIrBuilder.buildConstructorCall(receiverTemp: IrVariable?) =
-            irCallConstructor(constructor.symbol, emptyList()).apply {
-                origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
-                arguments[0] = IrRawFunctionReferenceImpl(
-                    startOffset = reference.startOffset,
-                    endOffset = reference.endOffset,
-                    type = reference.type,
-                    symbol = bridgedFunction.symbol,
-                )
-                for ((index, value) in reference.boundValues.withIndex()) {
-                    arguments[index + 1] = if (receiverTemp != null && index == boundReceiverIndex) {
-                        irGet(receiverTemp)
-                    } else {
-                        value
-                    }
-                }
-                for (index in (reference.boundValues.size + 1) until arguments.size) {
-                    arguments[index] = getExtraConstructorArgument(
-                        constructor.parameters[index],
-                        reference,
-                        receiverTemp
-                    )
-                }
-            }
-
-        return if (boundReceiverIndex != null) {
-            // Create a temporary for the receiver to avoid duplicate IR nodes
-            irBuilder.irBlock {
-                val receiverTemp = irTemporary(reference.boundValues[boundReceiverIndex], nameHint = "receiver")
-                +irBuilder.buildConstructorCall(receiverTemp)
-            }
-        } else {
-            // No receiver reuse needed, use simple constructor call
-            irBuilder.buildConstructorCall(null)
-        }
-    }
 
     private fun IrBuilderWithScope.irUnit() =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
@@ -806,6 +764,48 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
     }
 
+    private fun addBoundValueAtOverride(functionReferenceClass: IrClass, fields: List<IrField>) {
+        val overridden = functionReferenceClass.superTypes.mapNotNull { superType ->
+            superType.getClass()
+                ?.declarations
+                ?.filterIsInstance<IrSimpleFunction>()
+                ?.singleOrNull { it.name.asString() == "boundValueAt" }
+                ?.symbol
+        }
+        if (overridden.isEmpty()) return
+
+        val function = functionReferenceClass.addFunction {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier("boundValueAt")
+            origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+            returnType = overridden[0].owner.returnType
+        }
+        function.parameters += function.createDispatchReceiverParameterWithClassParent()
+        overridden[0].owner.parameters
+            .filter { it.kind == IrParameterKind.Regular }
+            .forEach { function.parameters += it.copyTo(function) }
+        function.overriddenSymbols += overridden
+        function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+            +irReturn(irBoundValueAt(function, fields))
+        }
+    }
+
+    private fun IrBuilderWithScope.irBoundValueAt(function: IrFunction, fields: List<IrField>): IrExpression {
+        val dispatchReceiver = function.dispatchReceiverParameter!!
+        fun boundValue(field: IrField) = irGetField(irGet(dispatchReceiver), field)
+
+        if (fields.size == 1) {
+            return boundValue(fields[0])
+        }
+
+        val indexParameter = function.parameters.single { it.kind == IrParameterKind.Regular }
+        val branches = (0..<fields.lastIndex).map { index ->
+            irBranch(irEquals(irGet(indexParameter), irInt(index)), boundValue(fields[index]))
+        } + irElseBranch(boundValue(fields.last()))
+        return irWhen(context.irBuiltIns.anyNType, branches)
+    }
+
     private fun generateSuperClassConstructorCall(
         irBuilder: IrBuilderWithScope,
         constructor: IrConstructor,
@@ -827,7 +827,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                     arguments[0] = getConstructorArg("flags")
                     arguments[1] = getConstructorArg("arity")
                     arguments[2] = getConstructorArg("id")
-                    arguments[3] = getConstructorArg("receiver")
+                    arguments[3] = getConstructorArg("boundValueCount")
                     arguments[4] = getConstructorArg("name")
                 }
             }
