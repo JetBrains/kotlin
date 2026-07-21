@@ -21,14 +21,9 @@ fun myFunc() {
 package main
 
 class App {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
+  constructor() /* primary */
 
   fun run() {
-    myFunc()
   }
 
 }

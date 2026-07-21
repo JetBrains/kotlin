@@ -1,0 +1,153 @@
+public final class A : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final static java.lang.String access$funE$funF() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funB() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final int funD() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funE() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final static java.lang.String funE$funF() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final boolean isNotNull(java.lang.Object value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class B$DefaultImpls : java/lang/Object {
+    public static java.lang.String funA(B $this) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public abstract interface B : java/lang/Object {
+    public static java.lang.String access$funA$jd(B $this) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public abstract java.lang.String funB()
+}
+
+public final class C$D : java/lang/Object {
+    final C this$0
+
+    public void <init>(C this$0) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class C : java/lang/Object, B {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String funB() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class E : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class F : E {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String funA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 class A(val a: String, val b: Int) {
     constructor(e: String): this(e, 0) {

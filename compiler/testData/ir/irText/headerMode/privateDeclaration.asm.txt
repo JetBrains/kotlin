@@ -1,0 +1,323 @@
+public final class PrivateDeclarationKt : java/lang/Object {
+    public final static void topLevelKept() {
+          ACONST_NULL
+          ATHROW
+    }
+}
+
+final class TestClass$InlineChain : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void used() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class TestClass$KeptPrivateInner : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class TestClass$MixedClass : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void used() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class TestClass$MixedCompanion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void used() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class TestClass$NestedMixedOuter$Nested : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void used() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class TestClass$NestedMixedOuter : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class TestClass$PublicCompanion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class TestClass$PublicInnerClass : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+final class TestClass$UsedByInlineCompanion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void companionFun() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class TestClass : java/lang/Object {
+    private final static TestClass$MixedCompanion MixedCompanion
+
+    public final static TestClass$PublicCompanion PublicCompanion
+
+    private final static TestClass$UsedByInlineCompanion UsedByInlineCompanion
+
+    private final java.lang.String aliasUser
+
+    private java.lang.String publicBackingField
+
+    private final java.lang.String publicProperty
+
+    private int usedBackingFieldByInline
+
+    private final java.lang.String usedPropertyByInline
+
+    static void <clinit>() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final static TestClass$MixedCompanion access$getMixedCompanion$p() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static TestClass$UsedByInlineCompanion access$getUsedByInlineCompanion$p() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String access$getUsedPropertyByInline$p(TestClass $this) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final static void access$setUsedBackingFieldByInline$p(TestClass $this, int <set-?>) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final static void access$usedByInline(TestClass $this) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getAliasUser() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getPublicBackingField() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getPublicProperty() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final void privateBrokenChainStart() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final void privateInlineChainMiddle() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final void privateInlineChainStart() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final void privateNonInlineMiddle() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final TestClass$KeptPrivateInner provideInner() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void publicFunction() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void setPublicBackingField(java.lang.String <set-?>) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void useMixed() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void useNestedMixed() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    private final void usedByInline() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void witnessForCompanion() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void witnessForField() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void witnessForFunction() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final void witnessForProperty() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

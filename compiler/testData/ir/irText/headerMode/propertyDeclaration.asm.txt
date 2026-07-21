@@ -1,0 +1,108 @@
+public final class PropertyDeclarationKt : java/lang/Object {
+    private final static java.lang.String a
+
+    private final static java.lang.String b
+
+    private final static boolean d
+
+    private final static java.lang.String e
+
+    private static int f
+
+    private final static kotlin.Lazy h$delegate
+
+    public final static int i
+
+    private final static java.lang.Object j
+
+    private final static kotlin.jvm.functions.Function1 k
+
+    private final static kotlin.jvm.functions.Function1 l
+
+    static void <clinit>() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String foo() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getA() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getB() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getC() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static boolean getD() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getE() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static int getF() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static int getG() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getH() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.Object getJ() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static kotlin.jvm.functions.Function1 getK() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static kotlin.jvm.functions.Function1 getL() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getM() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getN() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    private final static java.lang.String h_delegate$lambda$0() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static void setF(int value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

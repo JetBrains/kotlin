@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
 // FIR_DUMP
 // Public property with explicit type
 val a: String = "A"
