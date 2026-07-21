@@ -558,6 +558,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleGetExpectsForActualByMarkerT
     }
 
     @Test
+    @TestMetadata("expectString.kt")
+    public void testExpectString() {
+      run("expectString.kt");
+    }
+
+    @Test
     @TestMetadata("println.kt")
     public void testPrintln() {
       run("println.kt");
