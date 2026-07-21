@@ -307,6 +307,7 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
+        if (componentsStorage.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) return
         Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltIns)
             .generateBodiesForClassesWithSyntheticDataClassMembers(generatedDataValueClassSyntheticFunctions, symbolTable)
     }
