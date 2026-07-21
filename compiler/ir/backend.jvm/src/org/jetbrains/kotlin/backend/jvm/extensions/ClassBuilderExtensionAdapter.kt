@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -58,12 +57,12 @@ private class ClassGeneratorAdapter(val builder: ClassBuilder) : ClassGenerator 
     override fun newField(
         declaration: IrField?, access: Int, name: String, desc: String, signature: String?, value: Any?
     ): FieldVisitor =
-        builder.newField(declaration.wrapToOrigin(), access, name, desc, signature, value)
+        builder.newField(JvmDeclarationOrigin(declaration), access, name, desc, signature, value)
 
     override fun newMethod(
         declaration: IrFunction?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
     ): MethodVisitor =
-        builder.newMethod(declaration.wrapToOrigin(), access, name, desc, signature, exceptions)
+        builder.newMethod(JvmDeclarationOrigin(declaration), access, name, desc, signature, exceptions)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         builder.newRecordComponent(name, desc, signature)
@@ -132,6 +131,3 @@ private class DelegatingClassBuilderAdapter(
         generator.done(generateSmapCopyToAnnotation)
     }
 }
-
-private fun IrDeclaration?.wrapToOrigin(): JvmDeclarationOrigin =
-    this?.descriptorOrigin ?: JvmDeclarationOrigin.NO_ORIGIN

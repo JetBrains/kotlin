@@ -7,7 +7,5 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 enum class JvmDeclarationOriginKind {
     OTHER,
-    PACKAGE_PART,
     DELEGATION,
-    INLINE_VERSION_OF_SUSPEND_FUN,
 }
