@@ -595,7 +595,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
-        if (builder.visibility == null) return
+        val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(setterName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
@@ -617,7 +617,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     )
                 ),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
-                visibility = builder.visibility,
+                visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = {
                     BuilderGeneratorKey(BuilderDeclarationType.Setter)
@@ -696,7 +696,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
-        val visibility = builder.visibility ?: return
+        val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             builderSymbol.createJavaMethod(
