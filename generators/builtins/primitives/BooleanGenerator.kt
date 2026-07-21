@@ -274,7 +274,6 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     override fun ClassBuilder.generateAdditionalMethods() {
         method {
             expectActual = ExpectActualModifier.Unspecified
-            annotations += "PublishedApi"
             annotations += "WasmNoOpCast"
             signature {
                 visibility = MethodVisibility.INTERNAL

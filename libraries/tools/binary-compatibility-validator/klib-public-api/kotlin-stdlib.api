@@ -2201,9 +2201,6 @@ final class kotlin/Boolean : kotlin/Comparable<kotlin/Boolean> { // kotlin/Boole
 
     // Targets: [native]
     final fun equals(kotlin/Boolean): kotlin/Boolean // kotlin/Boolean.equals|equals(kotlin.Boolean){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final fun toInt(): kotlin/Int // kotlin/Boolean.toInt|toInt(){}[0]
 }
 
 final class kotlin/BooleanArray { // kotlin/BooleanArray|null[0]

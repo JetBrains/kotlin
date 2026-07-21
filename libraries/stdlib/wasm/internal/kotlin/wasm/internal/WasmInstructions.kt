@@ -515,10 +515,6 @@ internal fun wasm_i32_load16_s(x: Int): Short =
 internal fun wasm_i32_load16_u(x: Int): Int =
     implementedAsIntrinsic
 
-@WasmOp(WasmOp.I32_LOAD)
-internal fun wasm_i32_load(x: Int): Int =
-    implementedAsIntrinsic
-
 @WasmOp(WasmOp.I64_LOAD)
 internal fun wasm_i64_load(x: Int): Long =
     implementedAsIntrinsic
