@@ -242,13 +242,6 @@ abstract class KotlinIrLinker(
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
         CurrentModuleDeserializer(moduleFragment)
 
-    override fun init(moduleFragment: IrModuleFragment?) {
-        if (moduleFragment != null) {
-            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
-            registerModuleDeserializer(moduleFragment.name.asString(), currentModuleDeserializer)
-        }
-    }
-
     fun clear() {
         irInterner.reset()
     }

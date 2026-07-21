@@ -169,8 +169,6 @@ fun loadIrForSingleModule(
     check(mainFragment != null)
     check(stdlibFragment != null)
 
-    irLinker.init(null)
-
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
@@ -240,8 +238,6 @@ private fun getIrModuleInfoForKlib(
         filesToLoad = configuration[JSConfigurationKeys.IC_FILES_TO_LOAD],
         mapping = mapping
     )
-
-    irLinker.init(null)
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
