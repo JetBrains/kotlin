@@ -1,0 +1,5 @@
+/AtomicFunctionReferences.kt:7:9: warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/AtomicFunctionReferences.kt:11:17: error: Taking a reference to an atomic member or extension function is prohibited: `'a::incrementAndGet'`.
+
+/AtomicFunctionReferences.kt:13:18: error: Taking a reference to an atomic member or extension function is prohibited: `'a::inc'`.

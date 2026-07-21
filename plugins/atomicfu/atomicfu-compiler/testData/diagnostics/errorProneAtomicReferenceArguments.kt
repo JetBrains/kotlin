@@ -14,7 +14,7 @@ value class Foo(val value: UInt)
 import kotlinx.atomicfu.*
 
 fun testTypealiasedKotlin(bar: Foo) {
-    val foo = atomic<Any>(Foo(1u))
+    <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> foo = atomic<Any>(Foo(1u))
     foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 

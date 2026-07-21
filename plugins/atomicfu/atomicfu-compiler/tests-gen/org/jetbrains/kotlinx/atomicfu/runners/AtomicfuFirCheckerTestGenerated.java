@@ -28,6 +28,12 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("AtomicFunctionReferences.kt")
+  public void testAtomicFunctionReferences() {
+    run("AtomicFunctionReferences.kt");
+  }
+
+  @Test
   @TestMetadata("CheckAtomicVisibilityTest.kt")
   public void testCheckAtomicVisibilityTest() {
     run("CheckAtomicVisibilityTest.kt");
@@ -49,5 +55,23 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   @TestMetadata("errorProneAtomicReferenceArguments.kt")
   public void testErrorProneAtomicReferenceArguments() {
     run("errorProneAtomicReferenceArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("IllegalContextForAtomics.kt")
+  public void testIllegalContextForAtomics() {
+    run("IllegalContextForAtomics.kt");
+  }
+
+  @Test
+  @TestMetadata("IllegalFunctions.kt")
+  public void testIllegalFunctions() {
+    run("IllegalFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("NoBackingField.kt")
+  public void testNoBackingField() {
+    run("NoBackingField.kt");
   }
 }
