@@ -235,35 +235,6 @@ class JKlibIrLinker(
         }
     }
 
-    override fun createCurrentModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-    ): IrModuleDeserializer = JvmCurrentModuleDeserializer(moduleFragment)
-
-    private inner class JvmCurrentModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-    ) : CurrentModuleDeserializer(moduleFragment) {
-        override fun declareIrSymbol(symbol: IrSymbol) {
-            val descriptor = symbol.descriptor
-
-            if (descriptor.isJavaDescriptor()) {
-                // Wrap java declaration with lazy ir
-                if (symbol is IrFieldSymbol) {
-                    declareJavaFieldStub(symbol)
-                } else {
-                    stubGenerator.generateMemberStub(descriptor)
-                }
-                return
-            }
-
-            if (descriptor.isCleanDescriptor()) {
-                stubGenerator.generateMemberStub(descriptor)
-                return
-            }
-
-            super.declareIrSymbol(symbol)
-        }
-    }
-
     override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
         super.postProcess(irBuiltIns, inOrAfterLinkageStep)
         if (inOrAfterLinkageStep) {

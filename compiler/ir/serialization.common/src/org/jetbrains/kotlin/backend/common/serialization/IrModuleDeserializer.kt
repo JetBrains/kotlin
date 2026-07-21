@@ -303,26 +303,6 @@ class IrModuleDeserializerWithBuiltIns(
     }
 }
 
-open class CurrentModuleDeserializer(
-    override val moduleFragment: IrModuleFragment,
-) : IrModuleDeserializer(KotlinAbiVersion.CURRENT) {
-    override val klib get() = error("'klib' is not available for ${this::class.java}")
-
-    override fun contains(idSig: IdSignature): Boolean = false // TODO:
-
-    override fun getDefinedPackageNames(): Set<FqName> = emptySet()
-
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): Nothing =
-        error("Unreachable execution: there could not be back-links (sig: $idSig)")
-
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing =
-        error("Unreachable execution: there could not be back-links (sig: $idSig)")
-
-    override fun declareIrSymbol(symbol: IrSymbol) = Unit
-
-    override val kind get() = IrModuleDeserializerKind.CURRENT
-}
-
 fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
     return DFS.topologicalOrder(moduleDependencies.keys) { m ->
         moduleDependencies.getValue(m)
