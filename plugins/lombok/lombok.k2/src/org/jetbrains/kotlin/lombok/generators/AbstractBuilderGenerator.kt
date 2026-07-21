@@ -485,28 +485,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     // toBuilder() is always an instance method, so the class type parameters are
                     // already provided by the dispatch receiver. The method must not introduce its
                     // own independent type parameters — otherwise call-site inference would fail.
-                    @OptIn(SymbolInternals::class)
-                    val builderType = createBuilderType(entitySymbol.typeParameterSymbols.map { it.fir })
-                    if (containingClassSymbol.hasJavaOrigin) {
-                        containingClassSymbol.createJavaMethod(
-                            name,
-                            valueParameters = emptyList(),
-                            returnTypeRef = builderType.toFirResolvedTypeRef(),
-                            visibility = visibility,
-                            modality = Modality.OPEN,
-                            methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name)),
-                        ).symbol
-                    } else {
-                        createMemberFunction(
-                            owner = containingClassSymbol,
-                            key = BuilderGeneratorKey(BuilderDeclarationType.ToBuilder),
-                            name = name,
-                            returnType = builderType,
-                        ) {
-                            modality = Modality.OPEN
-                            this.visibility = visibility
-                        }.symbol
-                    }
+                    createJavaOrKotlinMemberFunction(
+                        owner = containingClassSymbol,
+                        name = name,
+                        valueParameters = emptyList(),
+                        returnTypeRef = @OptIn(SymbolInternals::class) createBuilderType(entitySymbol.typeParameterSymbols.map { it.fir }).toFirResolvedTypeRef(),
+                        visibility = visibility,
+                        modality = Modality.OPEN,
+                        createKey = {
+                            BuilderGeneratorKey(BuilderDeclarationType.ToBuilder)
+                        }
+                    )
                 }
             }
         }
@@ -609,29 +598,31 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         if (builder.visibility == null) return
 
         addIfNonClashing(setterName, existingFunctionNames) {
-            if (builderSymbol.hasJavaOrigin) {
-                builderSymbol.createJavaMethod(
-                    name = it,
-                    valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
-                    returnTypeRef = builderType.toFirResolvedTypeRef(),
-                    modality = Modality.OPEN,
-                    visibility = builder.visibility
-                ).symbol
-            } else {
-                createMemberFunction(
-                    owner = builderSymbol,
-                    key = BuilderGeneratorKey(BuilderDeclarationType.Setter),
-                    name = fieldName,
-                    returnType = builderType,
-                ) {
-                    valueParameter(
+            createJavaOrKotlinMemberFunction(
+                owner = builderSymbol,
+                name = it,
+                valueParameters = listOf(
+                    ConeLombokValueParameter(
                         name = fieldName,
-                        type = substitutor.substituteOrSelf(item.returnTypeRef.coneType),
+                        // For Kotlin, `item.returnTypeRef` is already resolved, and its type directly references the
+                        // entity class's type-parameter symbols, which differ from the builder's own copied symbols
+                        // (see `extractTypeParametersMapping`), so we must substitute them explicitly.
+                        // For Java, `item.returnTypeRef` is an `FirJavaTypeRef` that resolves type variables
+                        // by name via the owning declaration's `javaTypeParameterStack`, which is populated with the
+                        // builder's copied type parameters (see `populateTypeParametersMapping`), so no substitution is needed.
+                        typeRef = if (builderSymbol.hasJavaOrigin)
+                            item.returnTypeRef
+                        else
+                            substitutor.substituteOrSelf(item.returnTypeRef.coneType).toFirResolvedTypeRef()
                     )
-                    modality = Modality.OPEN
-                    visibility = builder.visibility
-                }.symbol
-            }
+                ),
+                returnTypeRef = builderType.toFirResolvedTypeRef(),
+                visibility = builder.visibility,
+                modality = Modality.OPEN,
+                createKey = {
+                    BuilderGeneratorKey(BuilderDeclarationType.Setter)
+                }
+            )
         }
     }
 
