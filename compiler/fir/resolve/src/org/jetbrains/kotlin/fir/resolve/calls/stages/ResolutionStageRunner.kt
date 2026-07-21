@@ -38,11 +38,9 @@ class ResolutionStageRunner {
                 else it.resolutionSequence
             }
             while (candidate.passedStages < resolutionSequence.size) {
-                context(context, sink) {
-                    val nextStage = resolutionSequence[candidate.passedStages++]
-                    inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
-                    nextStage.check(candidate)
-                }
+                val nextStage = resolutionSequence[candidate.passedStages++]
+                inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
+                nextStage.check(candidate, sink = sink, context = context)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
             override val context: CoroutineContext

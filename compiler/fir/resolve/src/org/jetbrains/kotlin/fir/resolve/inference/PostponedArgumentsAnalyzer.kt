@@ -242,9 +242,7 @@ class PostponedArgumentsAnalyzer(
 
         val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
 
-        context(resolutionContext, outerCallsContext) {
-            runCollectionLiteralResolution(atom, precalculatedBounds)
-        }
+        runCollectionLiteralResolution(atom, precalculatedBounds, context = resolutionContext, outerCandidateContext = outerCallsContext)
     }
 
     fun analyzeLambda(
