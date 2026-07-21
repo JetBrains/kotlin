@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -33,9 +33,9 @@ class NativeCompilerPluginTransitiveClasspathIT : KGPBaseTest() {
             "nativeCompilerPluginTransitiveClassPath",
             gradleVersion
         ) {
-            buildAndFail(":app:compileKotlinNative") {
+            build(":app:compileKotlinNative") {
                 assertOutputContains(
-                    "ClassNotFoundException: test.helper.CompilerPluginHelper"
+                    "Compiler plugin transitive dependency is available"
                 )
             }
         }

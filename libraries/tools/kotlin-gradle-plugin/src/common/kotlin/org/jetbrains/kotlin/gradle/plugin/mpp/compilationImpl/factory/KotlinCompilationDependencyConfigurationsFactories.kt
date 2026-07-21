@@ -207,7 +207,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
 
         if (target.platformType == KotlinPlatformType.native) {
             extendsFrom(target.project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
-            isTransitive = false
         } else {
             extendsFrom(target.project.commonKotlinPluginClasspath)
         }
