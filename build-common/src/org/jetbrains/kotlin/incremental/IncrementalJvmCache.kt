@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.incremental.storage.ByteArrayExternalizer
 import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.InlinePropertyAccessor
@@ -63,6 +64,7 @@ open class IncrementalJvmCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
         private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
+        private const val METADATA_MAP = "metadata"
 
         private const val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -84,6 +86,8 @@ open class IncrementalJvmCache(
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
 
+    private val metadataMap = registerMap(MetadataMap(METADATA_MAP.storageFile, icContext))
+
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
     protected open fun debugLog(message: String) {}
@@ -104,6 +108,14 @@ open class IncrementalJvmCache(
 
     fun isMultifileFacade(className: JvmClassName): Boolean =
         className in multifileFacadeToParts
+
+    override fun markDirty(removedAndCompiledSources: Collection<File>) {
+        super.markDirty(removedAndCompiledSources)
+
+        for (fragmentName in metadataMap.keys) {
+            metadataMap.remove(fragmentName, removedAndCompiledSources)
+        }
+    }
 
     override fun getClassFilePath(internalClassName: String): String {
         return toSystemIndependentName(File(outputDir, "$internalClassName.class").normalize().absolutePath)
@@ -127,6 +139,10 @@ open class IncrementalJvmCache(
 
     open fun saveFileToCache(generatedClass: GeneratedJvmClass, changesCollector: ChangesCollector) {
         saveClassToCache(KotlinClassInfo.createFrom(generatedClass.outputClass), generatedClass.sourceFiles, changesCollector)
+    }
+
+    fun saveMetadataToCache(fragmentName: String, metadata: Map<File, ByteArray>) {
+        metadataMap.append(fragmentName, metadata)
     }
 
     /**
@@ -370,6 +386,9 @@ open class IncrementalJvmCache(
     override fun getModuleMappingData(): ByteArray? {
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
+
+    override fun getMetadata(fragmentName: String): Map<File, ByteArray> =
+        metadataMap[fragmentName] ?: emptyMap()
 
     private inner class ProtoMap(
         storageFile: File,
@@ -636,6 +655,55 @@ open class IncrementalJvmCache(
 
         override fun dumpValue(value: Map<InlineFunctionOrAccessor, Long>): String =
             value.mapKeys { it.key.jvmMethodSignature.asString() }.dumpMap { java.lang.Long.toHexString(it) }
+    }
+
+    private inner class MetadataMap(
+        storageFile: File,
+        icContext: IncrementalCompilationContext,
+    ) : BasicStringMap<Map<File, ByteArray>>(
+        storageFile,
+        MapExternalizer(icContext.fileDescriptorForSourceFiles, ByteArrayExternalizer),
+        icContext,
+    ) {
+        operator fun get(key: String, file: File): ByteArray? = storage[key]?.get(file)
+
+        @Synchronized
+        fun append(key: String, entries: Map<File, ByteArray>) {
+            if (entries.isEmpty()) return
+
+            val merged = storage[key]?.let { HashMap(it) } ?: HashMap(entries.size)
+            merged.putAll(entries)
+
+            storage[key] = merged
+
+            for ([file, _] in entries) {
+                debugLog("[$key] Saved metadata for file: ${file.path}")
+            }
+        }
+
+        @Synchronized
+        fun remove(key: String, files: Collection<File>) {
+            val inner = storage[key] ?: return
+
+            val filesToRemove = files.filterTo(hashSetOf()) { it in inner }
+            if (filesToRemove.isEmpty()) return
+
+            val merged = HashMap(inner).apply { keys.removeAll(filesToRemove) }
+
+            if (merged.isEmpty()) {
+                storage.remove(key)
+            } else {
+                storage[key] = merged
+            }
+
+            for (file in filesToRemove) {
+                debugLog("[$key] Removed metadata for file: ${file.path}")
+            }
+        }
+
+        override fun dumpValue(value: Map<File, ByteArray>): String =
+            value.entries.sortedBy { it.key.path }
+                .joinToString(", ", "{", "}") { "${it.key} -> ${java.lang.Long.toHexString(it.value.md5())}" }
     }
 
     private fun KotlinClassInfo.scopeFqName() = when (classKind) {

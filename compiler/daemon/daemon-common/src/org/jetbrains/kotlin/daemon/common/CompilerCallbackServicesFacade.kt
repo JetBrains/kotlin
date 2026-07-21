@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.daemon.common
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
+import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
@@ -64,6 +65,9 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
+
+    @Throws(RemoteException::class)
+    fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray>
 
     @Throws(RemoteException::class)
     fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
