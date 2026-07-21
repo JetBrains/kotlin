@@ -261,6 +261,18 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xts-export-untyped-as-unknown"
+        compilerName = "exportUntypedAsUnknown"
+        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
         name = "Xenable-implementing-interfaces-from-typescript"
         compilerName = "allowImplementableInterfacesExporting"
         description = "Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.".asReleaseDependent()

@@ -197,6 +197,9 @@ object JSConfigurationKeys {
     @JvmField
     val ADDITIONAL_EXPORTED_DECLARATION_NAMES = CompilerConfigurationKey.create<Set<FqName>>("ADDITIONAL_EXPORTED_DECLARATION_NAMES")
 
+    @JvmField
+    val EXPORT_UNTYPED_AS_UNKNOWN = CompilerConfigurationKey.create<Boolean>("EXPORT_UNTYPED_AS_UNKNOWN")
+
 }
 
 var CompilerConfiguration.wasmCompilation: Boolean
@@ -394,4 +397,8 @@ var CompilerConfiguration.icFilesToLoad: Set<String>
 var CompilerConfiguration.additionalExportedDeclarationNames: Set<FqName>
     get() = getSet(JSConfigurationKeys.ADDITIONAL_EXPORTED_DECLARATION_NAMES)
     set(value) { put(JSConfigurationKeys.ADDITIONAL_EXPORTED_DECLARATION_NAMES, value) }
+
+var CompilerConfiguration.exportUntypedAsUnknown: Boolean
+    get() = getBoolean(JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
+    set(value) { put(JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN, value) }
 

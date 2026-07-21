@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ES6_MODE
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPORT_UNTYPED_AS_UNKNOWN
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT
@@ -83,6 +84,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(SAFE_EXTERNAL_BOOLEAN, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN)
         register(SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)
         register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
+        register(EXPORT_UNTYPED_AS_UNKNOWN, JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -125,6 +127,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         if (GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
             configuration.generateStrictImplicitExport = true
         }
+
         val tsCompilationStrategy = module.directives[TS_COMPILATION_STRATEGY].lastOrNull() ?: TsCompilationStrategy.NONE
         if (GENERATE_DTS_FROM_IR in module.directives && tsCompilationStrategy != TsCompilationStrategy.NONE) {
             configuration.generateDts = true

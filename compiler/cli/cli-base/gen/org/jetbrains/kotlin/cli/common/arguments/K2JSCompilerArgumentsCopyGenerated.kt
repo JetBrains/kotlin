@@ -14,6 +14,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.allowExportingSuspendLambdas = from.allowExportingSuspendLambdas
     to.allowImplementableInterfacesExporting = from.allowImplementableInterfacesExporting
     to.compileLongAsBigInt = from.compileLongAsBigInt
+    to.exportUntypedAsUnknown = from.exportUntypedAsUnknown
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.generatePolyfills = from.generatePolyfills
     to.irBuildCache = from.irBuildCache

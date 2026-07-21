@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
+import org.jetbrains.kotlin.js.config.exportUntypedAsUnknown
 import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.*
@@ -947,6 +948,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         shouldCalculateExportedSupertypeForImplicit: Boolean = true,
         inlineClassesShouldBeUnboxed: Boolean = false,
     ): ExportedType {
+        if (context.configuration.exportUntypedAsUnknown && (type is IrDynamicType || type.isAny() || type.isNullableAny()))
+            return ExportedType.Primitive.Unknown
+
         if (type is IrDynamicType || type in currentlyProcessedTypes)
             return ExportedType.Primitive.Any
 
