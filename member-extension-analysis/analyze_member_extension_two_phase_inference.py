@@ -10,7 +10,7 @@ import random
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Literal, NotRequired, TypedDict, cast
+from typing import Literal, TypedDict, cast
 
 import yaml
 
@@ -29,6 +29,7 @@ class NormalInference(TypedDict):
     inferredTypes: dict[str, str]
     receiver: ReceiverComparison
     receiverTypeParameters: dict[str, ReceiverComparison]
+    receiverTypeConstructorApproximated: bool
     receiverParameters: dict[str, str]
 
 
@@ -64,15 +65,15 @@ class CallableSummary(TypedDict):
     inapplicableCalls: int
     failedCalls: int
     errorCalls: int
-    receiverTypeConstructorApproximatedCalls: NotRequired[int]
-    receiverTypeParameterApproximatedCalls: NotRequired[int]
-    receiverTypeConstructorAndParameterApproximatedCalls: NotRequired[int]
-    receiverRelations: NotRequired[dict[str, int]]
+    receiverTypeConstructorApproximatedCalls: int
+    receiverTypeParameterApproximatedCalls: int
+    receiverTypeConstructorAndParameterApproximatedCalls: int
+    receiverRelations: dict[str, int]
 
 
 class SummaryDiagnostic(DiagnosticMetadata):
     callableId: str
-    signature: NotRequired[str]
+    signature: str
     summary: CallableSummary
 
 
@@ -88,6 +89,7 @@ class AnalysisSummary(TypedDict):
     receiverApproximations: dict[str, int]
     errorReasons: dict[str, int]
     topCallables: dict[str, int]
+    topSignatures: dict[str, int]
     malformed: list[str]
 
 
@@ -101,6 +103,7 @@ class Arguments(argparse.Namespace):
     inputs: list[Path]
     json: bool
     inapplicable_csv: bool
+    signature_summary_csv: bool
     sample_over_approximated_successful: int
     sample_inapplicable: int
     sample_failed: int
@@ -125,7 +128,8 @@ def load_diagnostics(
 
     for input_path in input_paths:
         try:
-            document: object = yaml.safe_load(input_path.read_text(errors="replace"))
+            with input_path.open() as input_file:
+                document: object = yaml.load(input_file, Loader=yaml.CSafeLoader)
         except yaml.YAMLError as error:
             malformed.append(f"{input_path}: invalid YAML: {error}")
             continue
@@ -133,50 +137,56 @@ def load_diagnostics(
             malformed.append(f"{input_path}: YAML document is not a mapping")
             continue
         document = cast(dict[str, object], document)
-        entries = document.get("compilation-diagnostics-log")
-        if not isinstance(entries, list):
-            malformed.append(f"{input_path}: compilation-diagnostics-log is not a list")
+        entries_by_compilation = document.get("compilation-diagnostics-log")
+        if not isinstance(entries_by_compilation, dict):
+            malformed.append(f"{input_path}: compilation-diagnostics-log is not a mapping")
             continue
 
-        for index, entry in enumerate(entries, start=1):
-            entry_location = f"{input_path}: diagnostic {index}"
-            if not isinstance(entry, dict):
-                malformed.append(f"{entry_location}: diagnostic is not a mapping")
-                continue
-            entry = cast(dict[str, object], entry)
-            name = entry.get("name")
-            if name not in (CALL_DIAGNOSTIC_NAME, SUMMARY_DIAGNOSTIC_NAME):
-                continue
-            message = entry.get("message")
-            location = entry.get("location")
-            if not isinstance(message, str) or not isinstance(location, str):
-                malformed.append(f"{entry_location}: location or message is not a string")
+        for compilation_name, entries in entries_by_compilation.items():
+            compilation_location = f"{input_path}: {compilation_name}"
+            if not isinstance(compilation_name, str) or not isinstance(entries, list):
+                malformed.append(f"{compilation_location}: compilation name or diagnostics list has an invalid type")
                 continue
 
-            marker = f"{name}:"
-            marker_start = message.find(marker)
-            if marker_start < 0:
-                malformed.append(f"{entry_location}: diagnostic marker not found in message")
-                continue
-            object_start = message.find("{", marker_start + len(marker))
-            if object_start < 0:
-                malformed.append(f"{entry_location}: JSON object not found")
-                continue
-            try:
-                value, _ = decoder.raw_decode(message[object_start:])
-            except json.JSONDecodeError as error:
-                malformed.append(f"{entry_location}: {error.msg}")
-                continue
-            if isinstance(value, dict):
-                value = cast(dict[str, object], value)
-                value["_inputPath"] = str(input_path)
-                value["_location"] = location
-                if name == SUMMARY_DIAGNOSTIC_NAME:
-                    summaries.append(cast(SummaryDiagnostic, value))
+            for index, entry in enumerate(entries, start=1):
+                entry_location = f"{compilation_location}: diagnostic {index}"
+                if not isinstance(entry, dict):
+                    malformed.append(f"{entry_location}: diagnostic is not a mapping")
+                    continue
+                entry = cast(dict[str, object], entry)
+                name = entry.get("name")
+                if name not in (CALL_DIAGNOSTIC_NAME, SUMMARY_DIAGNOSTIC_NAME):
+                    continue
+                message = entry.get("message")
+                location = entry.get("location")
+                if not isinstance(message, str) or not isinstance(location, str):
+                    malformed.append(f"{entry_location}: location or message is not a string")
+                    continue
+
+                marker = f"{name}:"
+                marker_start = message.find(marker)
+                if marker_start < 0:
+                    malformed.append(f"{entry_location}: diagnostic marker not found in message")
+                    continue
+                object_start = message.find("{", marker_start + len(marker))
+                if object_start < 0:
+                    malformed.append(f"{entry_location}: JSON object not found")
+                    continue
+                try:
+                    value, _ = decoder.raw_decode(message[object_start:])
+                except json.JSONDecodeError as error:
+                    malformed.append(f"{entry_location}: {error.msg}")
+                    continue
+                if isinstance(value, dict):
+                    value = cast(dict[str, object], value)
+                    value["_inputPath"] = compilation_location
+                    value["_location"] = location
+                    if name == SUMMARY_DIAGNOSTIC_NAME:
+                        summaries.append(cast(SummaryDiagnostic, value))
+                    else:
+                        diagnostics.append(cast(CallDiagnostic, value))
                 else:
-                    diagnostics.append(cast(CallDiagnostic, value))
-            else:
-                malformed.append(f"{entry_location}: diagnostic payload is not an object")
+                    malformed.append(f"{entry_location}: diagnostic payload is not an object")
 
     return diagnostics, summaries, malformed
 
@@ -191,8 +201,8 @@ def summarize(
     receiver_relations: Counter[str] = Counter()
     receiver_approximations: Counter[str] = Counter()
     callables: Counter[str] = Counter()
+    signatures: Counter[tuple[str, str]] = Counter()
     error_reasons: Counter[str] = Counter()
-    inputs_with_summary_receiver_relations: set[str] = set()
 
     for summary_diagnostic in summaries:
         summary = summary_diagnostic["summary"]
@@ -201,22 +211,24 @@ def summarize(
         failed = summary["failedCalls"]
         errors = summary["errorCalls"]
         callables[summary_diagnostic["callableId"]] += summary["totalCalls"]
+        signatures[summary_diagnostic["callableId"], summary_diagnostic["signature"]] += summary["totalCalls"]
         result_kinds["success"] += successful + inapplicable + failed
         result_kinds["error"] += errors
         outcomes["successful"] += successful
         outcomes["inapplicable"] += inapplicable
         outcomes["failed"] += failed
-        if "receiverRelations" in summary:
-            receiver_relations.update(summary["receiverRelations"])
-            inputs_with_summary_receiver_relations.add(summary_diagnostic["_inputPath"])
-        if "receiverTypeConstructorApproximatedCalls" in summary:
-            receiver_approximations["type constructor"] += summary["receiverTypeConstructorApproximatedCalls"]
-            receiver_approximations["type parameter"] += summary["receiverTypeParameterApproximatedCalls"]
-            receiver_approximations["both"] += summary["receiverTypeConstructorAndParameterApproximatedCalls"]
+        receiver_relations.update(summary["receiverRelations"])
+        receiver_approximations["receiverTypeConstructorApproximatedCalls"] += summary[
+            "receiverTypeConstructorApproximatedCalls"
+        ]
+        receiver_approximations["receiverTypeParameterApproximatedCalls"] += summary[
+            "receiverTypeParameterApproximatedCalls"
+        ]
+        receiver_approximations["receiverTypeConstructorAndParameterApproximatedCalls"] += summary[
+            "receiverTypeConstructorAndParameterApproximatedCalls"
+        ]
 
     for call_diagnostic in diagnostics:
-        if call_diagnostic["_inputPath"] not in inputs_with_summary_receiver_relations:
-            receiver_relations[call_diagnostic["normalInference"]["receiver"]["relation"]] += 1
         result = call_diagnostic["twoPhaseInference"]
         if result["result"] == "error":
             error_reasons[result["reason"]] += 1
@@ -233,6 +245,10 @@ def summarize(
         "receiverApproximations": dict(receiver_approximations.items()),
         "errorReasons": dict(error_reasons.most_common()),
         "topCallables": dict(callables.most_common(25)),
+        "topSignatures": {
+            f"{callable_id} {signature}": count
+            for (callable_id, signature), count in signatures.most_common(25)
+        },
         "malformed": malformed,
     }
 
@@ -272,26 +288,19 @@ def inapplicable_diagnostics(diagnostics: list[CallDiagnostic]) -> list[CallDiag
     ]
 
 
-def print_top_over_approximated_callables(summaries: list[SummaryDiagnostic], count: int) -> bool:
+def print_top_over_approximated_callables(summaries: list[SummaryDiagnostic], count: int) -> None:
     totals: Counter[str] = Counter()
     over_approximated: Counter[str] = Counter()
-    unsupported_count = 0
+    signature_totals: Counter[tuple[str, str]] = Counter()
+    signature_over_approximated: Counter[tuple[str, str]] = Counter()
     for diagnostic in summaries:
         summary = diagnostic["summary"]
-        if "receiverRelations" not in summary:
-            unsupported_count += 1
-            continue
         callable_id = diagnostic["callableId"]
+        signature_key = callable_id, diagnostic["signature"]
         totals[callable_id] += summary["totalCalls"]
         over_approximated[callable_id] += summary["receiverRelations"].get("over_approximated", 0)
-
-    if unsupported_count:
-        print(
-            f"Cannot calculate over-approximated percentages: {unsupported_count} summary diagnostics do not contain "
-            "receiverRelations. Regenerate those reports with the updated compiler.",
-            file=sys.stderr,
-        )
-        return False
+        signature_totals[signature_key] += summary["totalCalls"]
+        signature_over_approximated[signature_key] += summary["receiverRelations"].get("over_approximated", 0)
 
     rows = [
         (matching * 100.0 / totals[callable_id], matching, totals[callable_id], callable_id)
@@ -305,7 +314,19 @@ def print_top_over_approximated_callables(summaries: list[SummaryDiagnostic], co
         print("  (none)")
     for percentage, matching, total, callable_id in rows[:count]:
         print(f"  {percentage:7.2f}%  {matching:6}/{total:<6}  {callable_id}")
-    return True
+
+    signature_rows = [
+        (matching * 100.0 / signature_totals[key], matching, signature_totals[key], key)
+        for key, matching in signature_over_approximated.items()
+        if matching > 0 and signature_totals[key] > 0
+    ]
+    signature_rows.sort(key=lambda row: (-row[0], -row[1], row[3]))
+
+    print("\nTop signatures by percentage of over-approximated receivers:")
+    if not signature_rows:
+        print("  (none)")
+    for percentage, matching, total, (callable_id, signature) in signature_rows[:count]:
+        print(f"  {percentage:7.2f}%  {matching:6}/{total:<6}  {callable_id} {signature}")
 
 
 def as_call_site(diagnostic: CallDiagnostic) -> CallSite:
@@ -338,27 +359,15 @@ def print_samples(heading: str, samples: list[CallSite]) -> None:
 
 
 def print_inapplicable_csv(
-    diagnostics: list[CallDiagnostic],
     summaries: list[SummaryDiagnostic],
 ) -> None:
     total_calls: Counter[tuple[str, str]] = Counter()
     inapplicable_calls: Counter[tuple[str, str]] = Counter()
-    legacy_total_calls: Counter[str] = Counter()
-    legacy_inapplicable_calls: Counter[str] = Counter()
     for diagnostic in summaries:
         callable_id = diagnostic["callableId"]
-        signature = diagnostic.get("signature")
-        if signature is None:
-            legacy_total_calls[callable_id] += diagnostic["summary"]["totalCalls"]
-            legacy_inapplicable_calls[callable_id] += diagnostic["summary"]["inapplicableCalls"]
-        else:
-            key = callable_id, signature
-            total_calls[key] += diagnostic["summary"]["totalCalls"]
-            inapplicable_calls[key] += diagnostic["summary"]["inapplicableCalls"]
-
-    signatures: dict[str, set[str]] = {}
-    for call_diagnostic in inapplicable_diagnostics(diagnostics):
-        signatures.setdefault(call_diagnostic["callableId"], set()).add(call_diagnostic["signature"])
+        key = callable_id, diagnostic["signature"]
+        total_calls[key] += diagnostic["summary"]["totalCalls"]
+        inapplicable_calls[key] += diagnostic["summary"]["inapplicableCalls"]
 
     rows: list[tuple[float, int, str, str]] = []
     for (callable_id, signature), total in total_calls.items():
@@ -368,18 +377,63 @@ def print_inapplicable_csv(
         percentage = count * 100.0 / total
         rows.append((percentage, total, callable_id, signature))
 
-    for callable_id, count in legacy_inapplicable_calls.items():
-        total = legacy_total_calls[callable_id]
-        if count == 0 or total == 0:
-            continue
-        percentage = count * 100.0 / total
-        for signature in signatures.get(callable_id, {""}):
-            rows.append((percentage, total, callable_id, signature))
-
     writer = csv.writer(sys.stdout, lineterminator="\n")
     writer.writerow(("callableId", "signature", "inapplicablePercent", "totalCalls"))
     for percentage, total, callable_id, signature in sorted(rows, key=lambda row: (-row[0], row[2], row[3])):
         writer.writerow((callable_id, signature, f"{percentage:.6f}", total))
+
+
+def print_signature_summary_csv(summaries: list[SummaryDiagnostic]) -> None:
+    total_calls: Counter[tuple[str, str]] = Counter()
+    constructor_approximated_calls: Counter[tuple[str, str]] = Counter()
+    parameter_approximated_calls: Counter[tuple[str, str]] = Counter()
+    constructor_and_parameter_approximated_calls: Counter[tuple[str, str]] = Counter()
+    inapplicable_calls: Counter[tuple[str, str]] = Counter()
+
+    for diagnostic in summaries:
+        key = diagnostic["callableId"], diagnostic["signature"]
+        summary = diagnostic["summary"]
+        total_calls[key] += summary["totalCalls"]
+        constructor_approximated_calls[key] += summary["receiverTypeConstructorApproximatedCalls"]
+        parameter_approximated_calls[key] += summary["receiverTypeParameterApproximatedCalls"]
+        constructor_and_parameter_approximated_calls[key] += summary[
+            "receiverTypeConstructorAndParameterApproximatedCalls"
+        ]
+        inapplicable_calls[key] += summary["inapplicableCalls"]
+
+    writer = csv.writer(sys.stdout, lineterminator="\n")
+    writer.writerow(
+        (
+            "callableId",
+            "signature",
+            "totalCalls",
+            "receiverTypeConstructorApproximatedCalls",
+            "receiverTypeParameterApproximatedCalls",
+            "receiverTypeConstructorAndParameterApproximatedCalls",
+            "memberExtensionInferenceInapplicable",
+            "memberExtensionInferenceInapplicableFraction",
+        )
+    )
+    rows = [
+        (inapplicable_calls[key] / total, total, key)
+        for key, total in total_calls.items()
+        if total > 0
+    ]
+    rows.sort(key=lambda row: (-row[0], -row[1], row[2]))
+    for inapplicable_fraction, _total, (callable_id, signature) in rows:
+        key = callable_id, signature
+        writer.writerow(
+            (
+                callable_id,
+                signature,
+                total_calls[key],
+                constructor_approximated_calls[key],
+                parameter_approximated_calls[key],
+                constructor_and_parameter_approximated_calls[key],
+                inapplicable_calls[key],
+                f"{inapplicable_fraction:.6f}",
+            )
+        )
 
 
 def print_detailed_call_sites(heading: str, call_sites: list[CallSite]) -> None:
@@ -413,7 +467,12 @@ def main() -> None:
     parser.add_argument(
         "--inapplicable-csv",
         action="store_true",
-        help=("Output CSV rows with per-signature call totals and inapplicable percentages."),
+        help="Output CSV rows with per-signature call totals and inapplicable percentages.",
+    )
+    parser.add_argument(
+        "--signature-summary-csv",
+        action="store_true",
+        help="Output aggregate call, approximation, and inapplicability counts for every callable signature.",
     )
     parser.add_argument(
         "--sample-over-approximated-successful",
@@ -474,10 +533,12 @@ def main() -> None:
         or args.top_over_approximated_callables
         or args.inapplicable_details
     )
-    if args.json and (text_report_requested or args.inapplicable_csv):
+    if args.json and (text_report_requested or args.inapplicable_csv or args.signature_summary_csv):
         parser.error("--json cannot be combined with other report modes")
-    if args.inapplicable_csv and text_report_requested:
-        parser.error("--inapplicable-csv cannot be combined with sampling or call-site report options")
+    if args.inapplicable_csv and args.signature_summary_csv:
+        parser.error("--inapplicable-csv and --signature-summary-csv cannot be combined")
+    if (args.inapplicable_csv or args.signature_summary_csv) and text_report_requested:
+        parser.error("CSV modes cannot be combined with sampling or call-site report options")
 
     input_paths = [resolve_input_path(path) for path in args.inputs]
     diagnostics, diagnostic_summaries, malformed = load_diagnostics(input_paths)
@@ -495,7 +556,10 @@ def main() -> None:
         print(json.dumps(summary, indent=2, sort_keys=True))
         return
     if args.inapplicable_csv:
-        print_inapplicable_csv(diagnostics, diagnostic_summaries)
+        print_inapplicable_csv(diagnostic_summaries)
+        return
+    if args.signature_summary_csv:
+        print_signature_summary_csv(diagnostic_summaries)
         return
     if args.inapplicable_details:
         call_sites = [
@@ -518,6 +582,7 @@ def main() -> None:
         ("Receiver approximations", summary["receiverApproximations"]),
         ("Error reasons", summary["errorReasons"]),
         ("Top callables", summary["topCallables"]),
+        ("Top signatures", summary["topSignatures"]),
     ):
         print(f"\n{heading}:")
         if not values:
@@ -533,15 +598,19 @@ def main() -> None:
         print_samples("Random receiver-inference failures", failed_samples)
     if args.top_inapplicable_callables:
         counts = Counter(diagnostic["callableId"] for diagnostic in failures)
+        signature_counts = Counter((diagnostic["callableId"], diagnostic["signature"]) for diagnostic in failures)
         print("\nTop callables by inapplicable two-phase results:")
         if not counts:
             print("  (none)")
         for callable_id, count in counts.most_common(args.top_inapplicable_callables):
             print(f"  {count:6}  {callable_id}")
-    if args.top_over_approximated_callables and not print_top_over_approximated_callables(
-        diagnostic_summaries, args.top_over_approximated_callables
-    ):
-        raise SystemExit(1)
+        print("\nTop signatures by inapplicable two-phase results:")
+        if not signature_counts:
+            print("  (none)")
+        for (callable_id, signature), count in signature_counts.most_common(args.top_inapplicable_callables):
+            print(f"  {count:6}  {callable_id} {signature}")
+    if args.top_over_approximated_callables:
+        print_top_over_approximated_callables(diagnostic_summaries, args.top_over_approximated_callables)
 
 
 if __name__ == "__main__":
