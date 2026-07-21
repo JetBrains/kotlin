@@ -36,12 +36,12 @@ internal sealed class SequenceTransformer {
 
     class Take(
         val argument: IrExpression,
-        val takeType: TakeOrDrop,
+        val takeOrDrop: TakeOrDrop,
     ) : SequenceTransformer()
 
     class TakeWhile(
         val predicateCall: UnaryPredicate,
-        val takeType: TakeOrDrop,
+        val takeOrDrop: TakeOrDrop,
     ) : SequenceTransformer()
 }
 

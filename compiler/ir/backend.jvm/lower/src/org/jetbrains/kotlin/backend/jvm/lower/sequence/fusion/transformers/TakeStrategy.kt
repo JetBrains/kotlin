@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irIfThenElse
 import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -64,7 +63,7 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
                 { sequenceVariable: IrValueDeclaration ->
                     irBlock {
                         +builder.increment(takeVariable)
-                        when (take.takeType) {
+                        when (take.takeOrDrop) {
                             TakeOrDrop.Take -> {
                                 val condition = irCall(lessOrEqualSymbol).apply {
                                     arguments[0] = irGet(takeVariable)

@@ -22,6 +22,17 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private const val FOR_EACH = KOTLIN_SEQUENCES_PREFIX + "forEach"
 private const val FOR_EACH_INDEXED = KOTLIN_SEQUENCES_PREFIX + "forEachIndexed"
+internal const val FIND = KOTLIN_SEQUENCES_PREFIX + "find"
+internal const val FIND_LAST = KOTLIN_SEQUENCES_PREFIX + "findLast"
+private const val FIRST = KOTLIN_SEQUENCES_PREFIX + "first"
+private const val FIRST_NOT_NULL_OF = KOTLIN_SEQUENCES_PREFIX + "firstNotNullOf"
+private const val FIRST_NOT_NULL_OF_OR_NULL = KOTLIN_SEQUENCES_PREFIX + "firstNotNullOfOrNull"
+private const val FIRST_OR_NULL = KOTLIN_SEQUENCES_PREFIX + "firstOrNull"
+private const val LAST = KOTLIN_SEQUENCES_PREFIX + "last"
+private const val LAST_OR_NULL = KOTLIN_SEQUENCES_PREFIX + "lastOrNull"
+private const val INDEX_OF = KOTLIN_SEQUENCES_PREFIX + "indexOf"
+private const val INDEX_OF_FIRST = KOTLIN_SEQUENCES_PREFIX + "indexOfFirst"
+private const val INDEX_OF_LAST = KOTLIN_SEQUENCES_PREFIX + "indexOfLast"
 
 /**
  * Each strategy has 3 parts:
@@ -60,6 +71,18 @@ internal fun createConsumerStrategy(
     return when (functionFQName) {
         FOR_EACH -> ForEachStrategy(data, expression, false)
         FOR_EACH_INDEXED -> ForEachStrategy(data, expression, true)
+        // find is equivalent to firstOrNull with a predicate argument
+        FIND -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = true)
+        FIND_LAST -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false)
+        FIRST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = true)
+        FIRST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = true)
+        FIRST_NOT_NULL_OF -> FirstNotNullOfStrategy(data, expression, isOrNull = false)
+        FIRST_NOT_NULL_OF_OR_NULL -> FirstNotNullOfStrategy(data, expression, isOrNull = true)
+        LAST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = false)
+        LAST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false)
+        INDEX_OF -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOf)
+        INDEX_OF_FIRST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfFirst)
+        INDEX_OF_LAST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfLast)
         else -> null
     }
 }
