@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: JVM_IR
 // ^KT-86452, KT-87390
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native,Wasm-JS:2.4
 // ^^^ KT-87445 is fixed in 2.5.0-Beta1

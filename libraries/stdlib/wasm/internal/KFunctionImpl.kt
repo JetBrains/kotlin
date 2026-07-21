@@ -9,30 +9,39 @@ import kotlin.reflect.KFunction
 import kotlin.internal.throwIrLinkageError
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
-// Old version to be removed once bootstrap compiler gets updated.
 @UsedFromCompilerGeneratedCode
-internal abstract class KFunctionImpl(val flags: Int, val arity: Int, val id: String) {
-    protected open fun computeReceiver(): Any? = null
+internal abstract class KFunctionImpl<out R>(val flags: Int, val arity: Int, val id: String, val boundValueCount: Int, override val name: String) : KFunction<R> {
+    open fun boundValueAt(index: Int): Any? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return other is KFunctionImpl &&
-                this.flags == other.flags &&
-                this.arity == other.arity &&
-                this.id == other.id &&
-                this.computeReceiver() == other.computeReceiver()
+        if (other !is KFunctionImpl<*>) return false
+        if (this.flags != other.flags || this.arity != other.arity ||
+            this.id != other.id || this.boundValueCount != other.boundValueCount
+        ) return false
+
+        repeat(boundValueCount) { index ->
+            if (boundValueAt(index) != other.boundValueAt(index)) return false
+        }
+
+        return true
     }
 
     override fun hashCode(): Int {
         var result = flags
         result = 31 * result + arity
         result = 31 * result + id.hashCode()
-        result = 31 * result + computeReceiver().hashCode()
+
+        repeat(boundValueCount) { index ->
+            result = 31 * result + boundValueAt(index).hashCode()
+        }
+        // name does not need to be hashed explicitly, since id is a
+        // hash of fqName which contains name.
         return result
     }
 }
 
-// To be renamed to KFunctionImpl after bootstrap.
+// Old (contrary to its name) version to be removed once bootstrap compiler gets updated.
 @UsedFromCompilerGeneratedCode
 internal abstract class KFunctionImplNew<out R>(val flags: Int, val arity: Int, val id: String, val receiver: Any?, override val name: String) : KFunction<R> {
     override fun equals(other: Any?): Boolean {

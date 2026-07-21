@@ -52,8 +52,8 @@ class BackendWasmSymbols(
         val isSupportedInterface by CallableIds.isSupportedInterface.functionSymbol()
         val getInterfaceVTable by CallableIds.getInterfaceVTable.functionSymbol()
         val wasmGetInterfaceVTableBodyImpl by CallableIds.wasmGetInterfaceVTableBodyImpl.functionSymbol()
-        // XXX To be changed after bootstrap.
-        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImplNew.classSymbolOrNull() ?: ClassIds.KFunctionImpl.classSymbol()
+        // XXX Drop fallback to KFunctionImplNew (now it is older than KFunctionImpl) after bootstrap.
+        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbolOrNull() ?: ClassIds.KFunctionImplNew.classSymbol()
         val kFunctionErrorImpl: IrClassSymbol = ClassIds.KFunctionErrorImpl.classSymbol()
     }
 
