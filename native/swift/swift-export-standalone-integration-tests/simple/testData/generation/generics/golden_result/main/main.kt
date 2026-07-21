@@ -441,11 +441,25 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
+public fun __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
+    val __box = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
+        { arg0: Box<*> ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val _result = run { produceBoxStar(__box) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
 public fun __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
     val __box = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
-        { arg0: Box<kotlin.Any?> ->
+        { arg0: Box<*> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }

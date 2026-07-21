@@ -113,6 +113,8 @@ NSArray<id> * __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Option
 
 void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
 
+_Bool __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
+
 _Bool __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
 
 void * __root___returnBFun();

@@ -1049,7 +1049,7 @@ internal sealed interface Bridge {
             private fun List<Pair<String, KotlinToSwiftBridge>>?.defineArgs(typeNamer: SirTypeNamer): String = this?.let { args ->
                 " ${
                     args.joinToString { [name, bridge] ->
-                        "${name}: ${typeNamer.kotlinFqName(bridge.swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+                        "${name}: ${typeNamer.kotlinFqName(bridge.swiftType, SirTypeNamer.KotlinNameType.FQN)}"
                     }
                 } ->"
             } ?: ""

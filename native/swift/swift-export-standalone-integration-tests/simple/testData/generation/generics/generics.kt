@@ -118,6 +118,8 @@ fun produceCtxBox(box: context(Box<String>) () -> Unit): Unit = TODO() // unsupp
 
 fun produceBoxUpperBound(box: (Box<Any?>) -> Unit): Unit = TODO()
 
+fun produceBoxStar(box: (Box<*>) -> Unit): Unit = TODO()
+
 typealias BFun = (B<*>) -> Unit
 
 fun returnBFun(): BFun = TODO()

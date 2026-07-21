@@ -340,6 +340,18 @@ public func foo(
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
+public func produceBoxStar(
+    box: @escaping (main.Box) -> Swift.Void
+) -> Swift.Void {
+    return { __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
+        let originalBlock: (main.Box) -> Swift.Void = box
+        return { (arg0: Swift.UnsafeMutableRawPointer) in
+            let _arg0: main.Box = main.Box.__createClassWrapper(externalRCRef: arg0)
+            let _result = originalBlock(_arg0)
+            return { _result; return true }()
+        }
+    }()); return () }()
+}
 public func produceBoxUpperBound(
     box: @escaping (main.Box) -> Swift.Void
 ) -> Swift.Void {
