@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
+import org.jetbrains.kotlin.backend.common.lower.StringConcatenationLowering
 import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -34,7 +36,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * - "if (arg==null) null else arg.toString()"  to pass to StringBuilder.append(String?)
  * - "if (arg==null) "null" else arg.toString()"  to pass to other methods as non-nullable String
  */
-internal class StringConcatenationTypeNarrowing(val context: NativeBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
+@PhasePrerequisites(StringConcatenationLowering::class)
+internal class StringConcatenationTypeNarrowing(val context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
 
     private val string = context.irBuiltIns.stringClass.owner
     private val stringBuilder = context.symbols.stringBuilder.owner

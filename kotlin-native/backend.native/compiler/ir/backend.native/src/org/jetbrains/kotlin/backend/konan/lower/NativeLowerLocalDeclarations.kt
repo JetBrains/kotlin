@@ -5,13 +5,24 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
+import org.jetbrains.kotlin.backend.common.lower.KlibInventNamesForLocalFunctions
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
+import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.name.Name
+
+@PhasePrerequisites(SharedVariablesLowering::class, LocalDelegatedPropertiesLowering::class, InteropBridgesNameInventor::class)
+internal class NativeLocalDeclarationsLowering(context: LoweringContext) : LocalDeclarationsLowering(context)
+
+internal class NativeKlibInventNamesForLocalFunctions(@Suppress("unused") context: NativeGenerationState) : KlibInventNamesForLocalFunctions()
 
 internal var IrClass.hasSyntheticNameToBeHiddenInReflection by irFlag(copyByDefault = true)
 

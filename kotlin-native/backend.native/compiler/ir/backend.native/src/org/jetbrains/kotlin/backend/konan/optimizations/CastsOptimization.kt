@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
@@ -360,7 +361,7 @@ private object Predicates {
 private const val MAX_LOOPS_DEPTH = 5
 private const val MAX_LOOP_ITERATIONS = 10
 
-internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweringPass {
+internal class CastsOptimization(val context: NativeGenerationState) : BodyLoweringPass {
     private val not = context.irBuiltIns.booleanNotSymbol
     private val eqeq = context.irBuiltIns.eqeqSymbol
     private val eqeqeq = context.irBuiltIns.eqeqeqSymbol
@@ -1418,7 +1419,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             val callee = expression.symbol.owner
             val correspondingProperty = callee.correspondingPropertySymbol?.owner
             val backingField = correspondingProperty?.backingField
-            return if (backingField != null && callee.isTrivialValGetter(context)) {
+            return if (backingField != null && callee.isTrivialValGetter(context.context)) {
                 val receiverResult = expression.dispatchReceiver?.accept(this, data)
                 val phantomVariable = if (receiverResult == null) {
                     topLevelPropertyPhantomVariables.getOrPut(correspondingProperty) {
