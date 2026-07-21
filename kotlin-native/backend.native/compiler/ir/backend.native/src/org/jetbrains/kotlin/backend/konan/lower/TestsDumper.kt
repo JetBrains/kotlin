@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
+import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -27,8 +28,11 @@ internal class TestsDumper(private val context: NativeBackendContext) : FileLowe
     private val baseClassSuite = symbols.baseClassSuite
     private val topLevelSuite = symbols.topLevelSuite
 
+    private val sourcesModules = context.configuration.sourcesModules
+            ?: error("sourcesModules must have been set in the configuration by the frontend phase")
+
     private fun shouldProcessFile(irFile: IrFile): Boolean =
-            irFile.moduleDescriptor in context.sourcesModules // Process test annotations in source libraries too.
+            irFile.moduleDescriptor in sourcesModules // Process test annotations in source libraries too.
 
     override fun lower(irFile: IrFile) {
         val testDumpFile = context.config.testDumpFile ?: return

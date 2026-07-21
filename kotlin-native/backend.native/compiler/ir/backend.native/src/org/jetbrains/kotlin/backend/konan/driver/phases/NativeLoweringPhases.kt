@@ -276,7 +276,7 @@ private val finallyBlocksPhase = createFileLoweringPhase(
 )
 
 private val testProcessorPhase = createFileLoweringPhase(
-        lowering = { context: NativeBackendContext -> TestProcessor(context, context.sourcesModules) },
+        lowering = { context: NativeBackendContext -> TestProcessor(context) },
         name = "TestProcessor",
 )
 
