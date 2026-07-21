@@ -138,7 +138,7 @@ internal class CompilationSpecificPluginPath {
     }
 
     @Test
-    fun `native plugin configuration should not be transitive`() {
+    fun `native plugin configuration should be transitive`() {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm()
@@ -150,7 +150,7 @@ internal class CompilationSpecificPluginPath {
             .configurations
             .getByName(pluginClassPathConfiguration("linuxX64", "main"))
 
-        assertFalse(nativeConfig.isTransitive)
+        assertTrue(nativeConfig.isTransitive)
     }
 
     @Test
