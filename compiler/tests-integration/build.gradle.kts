@@ -23,7 +23,7 @@ dependencies {
     testFixturesApi(kotlinStdlib())
 
     testFixturesApi(kotlinTest())
-    testCompileOnly(kotlinTest("junit"))
+    testCompileOnly(kotlinTest("junit5"))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)

@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.reflect.KClass
-import kotlin.test.junit.JUnitAsserter.fail
+import kotlin.test.fail
 
 class ReflectionIntegrationTest {
     private lateinit var testInfo: TestInfo
