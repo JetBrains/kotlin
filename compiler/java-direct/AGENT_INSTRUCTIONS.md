@@ -1,7 +1,7 @@
 # Java-Direct: Agent Instructions
 
-**Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). No
-known won't-fix.
+**Current status**: full box + phased suite green, 2839/2839 (100%) — see
+`ITERATION_RESULTS.md` for the authoritative per-suite counts. No known won't-fix.
 The module is feature-complete on the `JavaUsingAst*` suite. Active work is
 optimization, **PSI-removal Phase 3** (source-only PSI/AST switch — see
 `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`), and closing the IJ-FP
@@ -16,8 +16,7 @@ resolver-unification residue have landed.
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
 `JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
-`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`,
-`JavaSupertypeLoopChecker.kt`.
+`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
 ---
@@ -217,30 +216,26 @@ test regresses:
   `FirSession.symbolProvider` consumer in `compiler/java-direct/.../resolution/` —
   funnel every probe through `FirSession.cycleSafeClassLikeSymbol` (the builtins-filtered
   class-existence probe `tryResolve` in `JavaTypeResolver.kt` is layered directly on top of it).
-  - **Why the guard and not "just make the annotations lazy" (reviewer Q on `JavaCycleBreakerTest`,
-    KT-74097).** A recurring reviewer suggestion is to stop resolving annotations eagerly while
-    `FirJavaClass.declarations` is materialised — "we already have `FirLazyJavaAnnotationList` for
-    that." The hint correctly names the *trigger*: regular Java members (`FirJavaField` /
-    `FirJavaMethod`, params, type params) already defer annotations via `FirLazyJavaAnnotationList`,
-    but the **enum-entry arm** of `convertJavaFieldToFir` (`buildEnumEntry` in `FirJavaFacade.kt`)
-    resolves them *eagerly* (`setAnnotationsFromJava` + `replaceDeprecationsProvider(... getDeprecationsProviderFromAnnotations ...)`),
-    which re-resolves the very in-flight `ClassId` (the `@Deprecated` enum constant in the
-    `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git` reproducer) → the self-cycle. It is
-    **not** a local `java-direct` fix, for three reasons: (1) `FirLazyJavaAnnotationList` is a
-    Java-declaration-specific slot (`FirJavaField`/`FirJavaMethod`); a `FirEnumEntry` is a generic
-    `FirVariable` whose `annotations` are set eagerly via `replaceAnnotations`, so there is no
-    drop-in lazy slot — it would need a new lazy mechanism or a Java-specific enum-entry node;
-    (2) `convertJavaFieldToFir` / `buildEnumEntry` live in the shared `fir-jvm` module, so switching
-    enum-entry annotations to lazy is a compiler-wide change with ordering knock-ons (deprecation
-    info is forced right there and is often needed early); (3) even if applied, laziness removes only
-    *this* trigger, not the cycle class — the guard protects the resolution chokepoint itself and
-    bounds re-entrant probes from *any* path, whereas laziness merely defers the same self-referential
-    lookup to whenever the annotation is finally forced. So the `cycleSafeClassLikeSymbol` guard stays
-    as the self-contained, defense-in-depth fix; making enum entries defer annotations like other Java
-    members (or fixing the PUBLICATION-lazy re-entrance itself) is an **upstream follow-up under
-    KT-74097**, not a replacement for the guard.
-- **`JavaSupertypeLoopChecker.guarded(classId)`** bounds supertype walks against
-  cycles. When a helper both *enters* the guard and *calls another helper that
+  - **Why the guard survives lazy annotations (reviewer Q on `JavaCycleBreakerTest`, KT-74097).**
+    All Java annotations reachable while `FirJavaClass.declarations` is materialised are now
+    deferred — members and enum entries via `FirLazyJavaAnnotationList`, enum-entry deprecations
+    additionally via `FirJavaLazyDeprecationsProvider` (`FirJavaFacade.kt`).
+    That removed the only known crashing trigger (the `@Deprecated` enum constant in
+    `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git`), so the guard is now genuine
+    defense-in-depth — but it is **not** dead code, and the cycle class is still reachable:
+    (1) the `declarations` lazy reads `FirJavaClass.typeParameters`, whose bound enhancement calls
+    `extractDefaultQualifiers`, which iterates the **class's own** `annotations` (and the outer
+    class's, through a raw `getClassLikeSymbolByClassId`) — the same self-referential shape, for any
+    generic Java class with an unqualified annotation name; (2) the enum-entry arm still resolves its
+    `returnTypeRef` eagerly, as `SignatureEnhancement` requires a `FirResolvedTypeRef` there;
+    (3) three of the five `cycleSafeClassLikeSymbol` call sites involve no annotation at all
+    (const-field values, `@Target`/TYPE_USE lookup, type-argument substitution) — the guard protects
+    the chokepoint, not one annotation path. Making the `declarations` lazy stop reading
+    `typeParameters`, and the enum-entry `returnTypeRef` lazy, are **upstream follow-ups under
+    KT-74097** (shared `fir-jvm`, need both regression gates), not replacements for the guard.
+- **`cycleGuardedSupertypeWalk(classId, default) { ... }`** (`JavaModelSessionAccess.kt`,
+  backed by `JavaModelSupertypeWalkGuard`) bounds supertype walks against cycles.
+  When a helper both *enters* the guard and *calls another helper that
   re-enters with the same `classId`*, the inner call returns `emptyList()`
   silently (cf. archived 2026-05-08 `findInheritedNestedClass` double-guard fix).
   Hoist the supertype lookup *out* of the guard region instead.
@@ -354,6 +349,10 @@ When profiling java-direct code paths:
 | `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). **The tracked next step** — but re-baseline first: its code references are stale (see the doc's status banner). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix. |
+| `implDocs/RESOLUTION_SCHEMA.md` | Structural map of the `resolution/` package — entities and scenarios; companion to `RESOLUTION_PIPELINE.md`. |
+| `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` | Review of the binary/source finder divide — open recommendations for the current branch. |
+| `implDocs/PERFORMANCE_REVIEW_2026_07_20.md` | Performance review — landed low-risk fixes and the riskier follow-up candidates. |
+| `implDocs/PARSING_IMPROVEMENTS.md` | Parsing-pipeline improvement backlog (analysis only, unimplemented). |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
 | `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
 | `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_07_13.md` is the most recent log archive. |
@@ -362,27 +361,50 @@ When profiling java-direct code paths:
 
 ## Source Comment Conventions
 
-Comments in `compiler/java-direct/src/` are reviewed alongside the code. Write them
-for a future reader of the **merged** module, not as a development journal — this avoids
-a recurring cleanup pass before review. Apply these rules when adding or editing any
-comment or KDoc:
+These rules apply to **every** source comment or KDoc you add or edit — in
+`compiler/java-direct/src/` and, with extra strictness, in shared compiler modules.
+Comments are reviewed alongside the code; write them for a future reader of the
+**merged** module (an experienced compiler developer), not as a development journal.
 
+**The default is no comment.** Human-maintained compiler code averages ~3% comment lines;
+LLM-authored changes on this branch peaked near 25% and required a full cleanup pass.
+Before writing a comment, pass this gate — a comment is justified only when it:
+
+1. explains **why** a non-obvious decision was made, or how a genuinely difficult piece
+   works when words do it better or shorter than the code itself; or
+2. briefly states an **API contract** that saves the reader a detour into the
+   implementation; or
+3. records a **real trap** (a regression guard, a cycle hazard), ideally with a
+   KT-issue or testData reference.
+
+Everything else — delete. When in doubt, delete. Specific prohibitions:
+
+- **Don't comment the obvious.** If the code says it, or an experienced compiler developer
+  sees it at a glance, no comment. This includes restating a function's body in prose and
+  `@param` entries that paraphrase the parameter name/type (document only non-obvious
+  parameter contracts, or none).
+- **No counterfactuals.** Do not describe hypothetical alternatives, rejected designs, or
+  the previous implementation ("rather than X", "unlike the old Y", "the legacy path
+  returned…"). Exception: the alternative is a real trap a maintainer is likely to fall
+  into — then one terse sentence.
+- **No caller inventories.** Don't enumerate call sites, users, or anything a one-level
+  usages search reveals ("used by X, Y and Z", line numbers in other files).
+- **One fact, one place.** State a fact at the declaration site only; a use site gets at
+  most a short cross-reference, never a repeat of the explanation.
 - **No references to `implDocs/` docs.** They are transient and must never be mentioned
   in source comments — not by filename, not by section number (`§6.x`), not by stage/phase
-  label (`Stage 2`, `Phase 3`, `pre-§6.5`). Put the explanation itself in the comment.
-- **Describe the current state only.** The module is unmerged, so comments must not narrate
-  past or superseded attempts ("used to live behind…", "the old first-segment shortcut",
-  "before the … cleanup", "now deleted `BinaryJavaClassFinder`", dated history). Drop the
-  history; keep what is true today.
+  label (`Stage 2`, `Phase 3`, `pre-§6.5`). Put the (brief) explanation itself in the comment.
+- **Describe the current state only.** No narration of past or superseded attempts
+  ("used to live behind…", "before the … cleanup", "now deleted …", dated history).
 - **Avoid `javac-wrapper` / `TreeBased*` references** (the module is obsolete and being
-  removed). Keep only genuinely useful `javac` / PSI / JLS parity notes that aid understanding.
-- **Don't restate what a one-level usages search reveals** (callers, single call sites, line
-  numbers in other files) unless it is essential for understanding.
-- **Don't duplicate comments on declaration and use sites.** Prefer a declaration-site comment;
-  if the use site needs a note, keep it to a short cross-reference rather than repeating the
-  full explanation.
-- **Prefer bulleted lists over prose** for multi-point explanatory comments; omit trivial
-  information and introductory filler sentences.
+  removed). Keep only genuinely useful `javac` / PSI / JLS parity notes.
+- **Keep it short.** 1–3 lines is the norm. A multi-paragraph comment is acceptable only
+  for a genuinely tricky invariant that cannot be compressed — and even then, cut filler
+  ("Note that", "It is worth mentioning") and prefer bullets over prose.
+
+Self-check before finishing any change: reread the diff's comment lines alone. If a
+comment would survive neither the gate above nor a reviewer asking "what does this tell
+me that the code doesn't?", remove it.
 
 ---
 
@@ -405,7 +427,24 @@ Keep the working doc set small — these files are read into context every sessi
 
 ---
 
-*Last updated: 2026-07-13 (docs cleanup: archived the iteration log →
+*Last updated: 2026-07-29 (re-derived the KT-74097 guard rationale after enum-entry annotations went
+lazy: the guard is now defense-in-depth rather than the sole crash preventer, but the cycle class is
+still reachable through the class's own annotations (type-parameter bound enhancement →
+`extractDefaultQualifiers`) and through the three non-annotation `cycleSafeClassLikeSymbol` call
+sites; dropped the two disproven "no drop-in lazy slot" / "compiler-wide change" arguments. Fixed the
+stale `JavaSupertypeLoopChecker` name — the code is `cycleGuardedSupertypeWalk` /
+`JavaModelSupertypeWalkGuard` in `JavaModelSessionAccess.kt` — in the key-files list and Critical
+Patterns.)*
+
+*Previously: 2026-07-28 (rewrote Source Comment Conventions after a branch-wide comment
+cleanup: added the "default is no comment" gate (why-decisions, API contracts, real traps
+only), the ~3% density baseline vs the ~25% this branch's LLM-authored comments reached,
+and explicit bans on counterfactual "rather than" phrasing, caller inventories, obvious
+`@param` restatements and multi-site duplication; extended the rules to shared compiler
+modules; added the missing living docs — `RESOLUTION_SCHEMA`, `BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22`,
+`PERFORMANCE_REVIEW_2026_07_20`, `PARSING_IMPROVEMENTS` — to the reference table.)*
+
+*Previously: 2026-07-13 (docs cleanup: archived the iteration log →
 `implDocs/archive/ITERATION_RESULTS_2026_07_13.md` and reset the live log to its template;
 moved the landed `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06`, `MODEL_SIDE_OUTER_ARG_RECOVERY_2026_06_10`
 and `REVIEW_MD_RESPONSES_2026_07_08` docs (plus the raw `review.md` and the resolved `r*_3_*`

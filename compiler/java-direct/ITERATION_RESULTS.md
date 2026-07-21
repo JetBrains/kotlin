@@ -36,6 +36,367 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-31 — Unit tests use JUnit asserters; lightweight scan of malformed package names
+- **Change**: reviewer follow-up on `JavaParsingLightweightScannerTest`. Every raw Kotlin
+  `assert(...)` in the module's unit tests (a no-op without `-ea`) is now a JUnit assertion —
+  `assertEquals`/`assertTrue`/`assertFalse`/`assertNull`/`assertSame` and the contract-carrying
+  `org.junit.jupiter.api.assertNotNull`, which let the following `!!` go. Messages that only
+  restated expected/actual are dropped. New scanner tests: a package name split across a line
+  and a block comment (`package builder // c \n . /* c */ subpackage;`), `package com.123;`, and
+  `class 456 {}` with and without a well-formed sibling. `extractFileInfoLightweight` now joins
+  identifier segments instead of appending identifiers and dots verbatim, so a malformed name
+  degrades to its valid prefix (`com`) rather than the stray-dot `com.`.
+- **Files**: `util/JavaSourceIndex.kt` (+3/−3); all 10 unit test files under `test/` (~440
+  assertions rewritten), `JavaParsingLightweightScannerTest.kt` +4 tests.
+- **Tests**: unit tests 121/121 green (12 classes); box + phased green (2795 executed, 0
+  failures, 0 errors).
+- **Result**: green.
+
+### 2026-07-31 — Lazy enum-entry annotations without the fragile mutable list
+- **Change**: the previous schema let `FirLazyJavaAnnotationMutableList` sit in
+  `FirEnumEntryImpl`'s `MutableOrEmptyList` slot, and depended on nothing but `isEmpty` being
+  called before the list materialised. Instead `FirEnumEntryImpl.annotations` is now a plain
+  `var annotations: List<FirAnnotation>` whose `replace` installs the given list as is, so
+  `FirJavaFacade` can install a `FirLazyJavaAnnotationList` (same class the members use) via
+  `replaceAnnotations` after `buildEnumEntry`. The only cost is `transformAnnotations`, which
+  maps into a new list instead of transforming in place.
+- **Files**: `fir-jvm/.../FirJavaFacade.kt`, `fir-jvm/.../enhancement/FirJavaAnnotationList.kt`
+  (−29, `FirLazyJavaAnnotationMutableList` deleted); FIR tree generator: new
+  `ListField.isAssignableList` + `useAssignableList("annotations")` on `impl(enumEntry)`;
+  `FirEnumEntryImpl`/`FirEnumEntryBuilder` regenerated. The builder-side `var`-list support in
+  `generators/tree-generator-common` is reverted — those files are identical to master again.
+- **Tests**: box + phased green (2795 executed, 0 failures, 0 errors); `JavaParsingTest` and
+  `JavaCycleBreakerTest` green; both regression gates green
+  (`PhasedJvmDiagnosticLightTreeTestGenerated.*`, `*CompileKotlinAgainstKotlin*`).
+- **Result**: green; enum entries and members now share one lazy annotation list class.
+
+### 2026-07-31 — Delete `JavaSupertypeGraph`: the duplicated supertype-reference resolver was test-only
+- **Change**: answers the reviewer's standing objection to `resolveSupertypeReference` ("we partly
+  repeat type resolution logic here"). `JavaSupertypeGraph` re-derived import lookup, star-import
+  candidates and package/class splits from the AST, and returned an empty list for any dotted
+  supertype — an unspecified under-approximation. Repo-wide, its two entry points
+  (`LeanJavaClassFinder.getDirectSupertypes` / `collectInheritedInnerClasses`) had **no production
+  callers**: the test fake in `JavaParsingTestBase` implemented both as empty, and only
+  `JavaParsingClassFinderTest` invoked the real ones. Production already resolves the first
+  supertype level through the class's own `JavaResolutionContext`
+  (`resolveInheritedInnerClassToClassId`) and deeper levels through `directSupertypeClassIds`.
+- **Files**: `util/JavaSupertypeGraph.kt` (−270, deleted), `JavaClassFinderOverAstImpl.kt`,
+  `resolution/LeanJavaClassFinder.kt`, `resolution/JavaModelSessionAccess.kt` (KDoc),
+  `implDocs/ARCHITECTURE.md`, `test/JavaParsingTestBase.kt`, `test/JavaParsingClassFinderTest.kt`.
+- **Test rework**: `JavaParsingClassFinderTest` re-pointed at the real path — the `B<String>.C` case is
+  now a *positive* assertion (the inherited `a.B.C.N` must resolve; it previously only asserted the
+  wrongly-truncated `a.B` was absent), plus a new same-level multi-supertype test covering the
+  single-match and ambiguous-decline arms of `walkSupertypeClassIds`. Two graph-only tests
+  (`testGetDirectSupertypesUsesCache`, `testDiamondInheritanceInnerClasses`) were dropped: they
+  asserted the deleted cache, and the transitive/grandparent case they gestured at is already
+  covered end-to-end by `qualifiedInheritedNestedClassInOwnImplementsClause.kt`.
+- **Tests**: `JavaParsing*` unit tests green (`JavaParsingClassFinderTest` 12/12); full box +
+  phased green (2795 executed, 0 failures, 0 errors).
+- **Result**: green; per-representation duplicate removed, one supertype walk remains.
+
+### 2026-07-31 — Box guards for the JLS accessibility check, incl. a genuinely *binary* Java supertype
+- **Change**: complements the phased guard below with two box tests. Unlike diagnostics tests
+  (which hard-code `DependencyKind.Source`), a codegen `// MODULE: lib` dependency is really
+  compiled: `JavaCompilerFacade.compileJavaFiles` javac-compiles `lib`'s `.java` into `lib`'s output
+  dir, and `JvmEnvironmentConfigurator.registerModuleDependencies` puts that dir on `main`'s
+  classpath — so `main` reads `a.Base` as a **binary** Java class through
+  `FirBackedJavaClassAdapter`, i.e. the exact shape of the IJ-FP `testIntellij_exceptionAnalyzer`
+  regression. So a box test *can* express what a phased test cannot.
+- **Files**: `testData/codegen/box/javaDirect/packagePrivateInheritedNestedClassNotVisibleAcrossPackages.kt`
+  (source arm, single module) and
+  `testData/codegen/boxJvm/javaDirect/packagePrivateInheritedNestedClassFromBinaryModule.kt`
+  (adapter arm, `lib` → `main`) — both new; no generator change needed.
+- **Tests**: full `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` green
+  (2795 executed, 0 failures, 0 errors); shared-data gate green in
+  `Fir{LightTree,Psi}BlackBoxCodegenTestGenerated$Box{,Jvm}$JavaDirect`.
+- **Result**: green; non-vacuity verified with two probes — forcing
+  `FirBackedJavaClassAdapter.visibility` to `Visibilities.Public` fails *only* the binary-module
+  test, while short-circuiting `isInheritedNestedClassAccessible` to `true` fails *both*. Both
+  probes reverted (`git diff` on `src` empty). Box data needs no golden file, so rule 5/6 concerns
+  about shared diagnostic data do not apply.
+
+### 2026-07-31 — Phased guard for the adapter's JLS accessibility check (via `// MODULE`)
+- **Change**: the `FirBackedJavaClassAdapter.visibility` arm of `isInheritedNestedClassAccessible`
+  (2026-07-14, IJ-FP `testIntellij_exceptionAnalyzer`) had no small-test guard: the adapter is only
+  consulted for classes outside the module's own Java source index, and a phased test always gets
+  Java as sources. `// MODULE: lib` / `// MODULE: main(lib)` closes that gap — a dependency module's
+  Java class is not in `main`'s `JavaSourceRoot` set (`JavaDirectFacadeBuilder.kt:40`), so
+  `classifierAdapterFor` returns the adapter exactly as it does for binary Java.
+- **Files**: `testData/diagnostics/tests/jvm/javaDirect/packagePrivateInheritedNestedClassFromOtherModule.kt` (new).
+- **Tests**: new test green in `JavaUsingAstPhasedTestGenerated` and in both PSI gates
+  (`PhasedJvmDiagnostic{LightTree,Psi}TestGenerated`); full `JavaUsingAstPhasedTestGenerated`
+  re-run green, 0 FAILED.
+- **Result**: green; non-vacuity verified — forcing `visibility` back to `Visibilities.Public`
+  makes it fail ("Actual data differs"). Note: diagnostics tests hard-code
+  `DependencyKind.Source`, so this is *not* a compiled-jar dependency; a genuinely binary
+  Java dependency still needs `PROVIDE_JAVA_AS_BINARIES` (foreign-annotations roots only) or a
+  box test.
+
+### 2026-07-30 — Binary index remeasured on `KotlinFullPipelineTestsGenerated`; not the M1 0.5%
+- **Change**: `JavaClassFinderOverBinaryIndex` no longer builds an `FqName` per lookup: the top-level
+  cache is now two-level, keyed by the `classId`'s own `packageFqName` + outermost class `Name`
+  (new `FqName.topLevelName()`), so the string concatenation, `pathSegments()` list, `FqName`/
+  `FqNameUnsafe` pair and re-hash are gone from the hot path (378994 lookups, ~1.5M objects per
+  corpus). Paired in-run A/B: **631 -> 465 ns per hit lookup (-26%)**, but only ~54 ms per corpus.
+- **Measured** (413-module FP corpus, JDK 8 launcher, 8 GB heap, M5 Max): the whole binary finder is
+  **9.47 s = 0.99%** of 958 s of compilation, of which 72% is `readBinaryJavaClass` on 69617 class
+  files — work master does through the same reader — 18% `knownClassNamesInPackage` (2.05M name
+  strings, 35306 traversals), 5% top-level index traversals. Allocation/GC with `-Xjava-direct`
+  on vs off is **identical** (216-221 GB per corpus, 112-119 young GCs, 8-9 full GCs), so extra
+  garbage is not the mechanism. The regression does not reproduce here: two A/B batches disagree on
+  the sign (±4%), i.e. developer-machine wall time cannot resolve 0.5%.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt`, review doc §12 (method, tables, and seven ranked
+  strategies for locating the gap on the mini), this file. All harnesses removed.
+- **Tests**: java-direct box+phased green; full `KotlinFullPipelineTestsGenerated` (413 modules)
+  green.
+- **Result**: index exonerated as the carrier of the M1 delta; see §12.5 for next steps.
+
+### 2026-07-30 — `TopLevelClassFiles` shape: measured, holder kept
+- **Change**: comment-only. Benchmarked the merged cache's value shape (holder object vs two-element
+  array vs `SmartList`-style encoded slot vs the pre-merge two maps) on the real workload from §10
+  (1469/1615 finders, 19k/12k cached keys, 77k/42k lookups per suite). The **whole** cache costs
+  <1 ms and ~1.4 MB per full suite; the spread between shapes is ~0.15 ms/suite (~0.1 µs per
+  compilation). The array is not faster — it is the slowest single-map variant on a 20× corpus
+  (26.7 ms vs 23.4 ms) and loses the type/names; the encoded slot saves 33% of the allocation but
+  trades the scoped/unscoped distinction for an unchecked encoding. Kept the named holder, added a
+  KDoc pointer to `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §11.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt` (KDoc +5), review doc §11, this file.
+- **Tests**: java-direct box+phased green (no behaviour change).
+- **Result**: won't-fix by measurement — see §11.
+
+### 2026-07-30 — One top-level-class cache in the binary finder; roll back two no-op shared-file diffs
+- **Change**: (1) `JavaClassFinderOverBinaryIndex` had two `FqName -> VirtualFile?` maps differing
+  only in `firstOrNull { it in scope }` vs `firstOrNull()`. Measured over both suites (3084 finder
+  instances): 69–75% of scoped keys were also in the all-scope map, **every** shared key had an
+  identical value, and no lookup ever saw >1 candidate or a candidate outside `scope`
+  (`multiCandidate=0`, `noCandidateInScope=0`) — see
+  `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §10. Replaced by one
+  `FqName -> TopLevelClassFiles(anywhere, inScope)` cache filled in a single index pass, which keeps
+  the two answers distinct while dropping ~12k redundant index lookups per suite (−39%).
+  (2) Reverted `FirJvmConflictsChecker` + the `FirSession.getJavaClassLikeSymbolByClassId` forwarder
+  and `FirDirectJavaActualDeclarationExtractor` to master: master already bypassed the composite
+  provider, so both diffs were pure restyling, and no fixture covers the Kotlin-vs-*binary*-Java
+  redeclaration case the checker's comment described.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt` (−12/+15); reverted `FirJvmConflictsChecker.kt`,
+  `fir-jvm/JavaSymbolProvider.kt`, `FirDirectJavaActualDeclarationExtractor.kt` (shared-file diff
+  vs master for these three is now zero).
+- **Tests**: java-direct box+phased green, `PhasedJvmDiagnosticLightTreeTestGenerated` green,
+  `FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*` green.
+- **Result**: green.
+
+### 2026-07-29 — Fail-safe finder dispatch: identify the source scope, default to binary
+- **Change**: `createJavaDirectJavaFacadeBuilder` now takes `javaSourcesScope` instead of
+  `librariesScope` and dispatches `scope === javaSourcesScope -> JavaClassFinderOverAstImpl`, every
+  other scope -> `JavaClassFinderOverBinaryIndex` over *that* scope. Previously the single
+  whitelisted case was the library scope, so any new binary scope (IC output,
+  HMPP-fragment classpath) would silently have been answered by the source AST finder. Memo map is
+  now an `IdentityHashMap` keyed by the scope object (was `System.identityHashCode` + ct.sym flag in
+  a data class — collision-prone with several scopes in play); the `CliVirtualFileFinderFactory`
+  lookup is hoisted out of the lambda. Also routed the HMPP-common library session
+  (`JvmFrontendPipelinePhase.kt:397`) through `javaDirectFacade`: it already asks for
+  `context.librariesScope`, so it reuses the *same* memoized binary finder, and it is a literal
+  no-op when `useJavaDirect` is off. The IC precompiled-binaries provider still constructs the PSI
+  facade deliberately — it has no test coverage (see the 2026-07-29 review notes).
+- **Files**: `JavaDirectFacadeBuilder.kt` (−13/+16), `JvmFrontendPipelinePhase.kt` (2 lines),
+  `implDocs/ARCHITECTURE.md` §3.
+- **Tests**: java-direct box+phased 2792/2792, `PhasedJvmDiagnosticLightTreeTestGenerated`
+  10988/10991 (3 pre-existing skips).
+- **Result**: green. The green java-direct suite is now itself evidence the source branch is taken:
+  if the scope identity failed to match, the source session would receive the binary finder and
+  every Java-source test would fail.
+
+### 2026-07-29 — Express binary/source sidedness by wiring, not by two lookup vocabularies
+- **Change**: dropped both parallel APIs added by the divide commit. (1) Removed the source-only
+  probes `isInSourceIndex` / `hasPackageInSources` / `sourceClassNamesInPackage` from
+  `JavaClassFinder` + `FirJavaFacade`; every production finder is already single-sided by
+  construction, so `JavaSymbolProvider` is back on `hasTopLevelClassOf` / `hasPackage` /
+  `knownClassNamesInPackage` (this restores a real AST-index gate on java-direct, where
+  `isInSourceIndex` was a constant `true`, and re-enables the facade caches). (2) Deleted the
+  `JvmBinaryClassFinderInputs` seam: `JvmBinaryClassFinderInputsOverIndex` became
+  `JavaClassFinderOverBinaryIndex : JavaClassFinder`, absorbing `LibraryJavaClassFinder` /
+  `BinaryPackageInfoJavaPackage`, so `JvmClassFileBasedSymbolProvider` has one input
+  (`javaFacade`), no `?:` fallbacks and no flag awareness. The `packagePartProvider` fallback in
+  `hasPackage` (for `@file:JvmPackageName`) is now unconditional.
+- **Files**: `JavaClassFinder.kt`, `FirJavaFacade.kt`, `JavaSymbolProvider.kt`,
+  `JvmClassFileBasedSymbolProvider.kt`, `FirJvmSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectFacadeBuilder.kt`, +`JavaClassFinderOverBinaryIndex.kt`,
+  −`JvmBinaryClassFinderInputs.kt`, −`JvmBinaryClassFinderInputsOverIndex.kt`.
+- **Tests**: java-direct box+phased 2792/2792, `PhasedJvmDiagnosticLightTreeTestGenerated`
+  10991/10991, `FirLightTreeBlackBoxCodegenTestGenerated` (full) 10643/10643 incl.
+  `CompileKotlinAgainstKotlin`.
+- **Result**: green. See the superseded banner in
+  `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md`.
+
+### 2026-07-29 — Re-derive the KT-74097 guard rationale after enum-entry annotations went lazy
+- **Change**: re-traced whether the lazy Java annotation lists retire any cycle breaker. They do
+  not: they removed the only known crashing trigger (`@Deprecated` enum constant,
+  `testIntellij_vcs_git`), demoting `cycleSafeClassLikeSymbol` to genuine defense-in-depth, but the
+  cycle class stays reachable — the `declarations` lazy reads `FirJavaClass.typeParameters`, whose
+  bound enhancement iterates the *class's own* annotations via `extractDefaultQualifiers` (plus a raw
+  outer-class `getClassLikeSymbolByClassId`); the enum-entry `returnTypeRef` is still eager because
+  `SignatureEnhancement` requires a resolved ref; and 3 of 5 guard call sites carry no annotation
+  (const-field values, `@Target`, type-argument substitution). The other breakers
+  (`cycleGuardedSupertypeWalk`, supertype memoization, local `visited` sets) are annotation-agnostic.
+  Docs/comments updated accordingly; also fixed the stale `JavaSupertypeLoopChecker` name (the code
+  is `cycleGuardedSupertypeWalk` / `JavaModelSupertypeWalkGuard`).
+- **Files**: `resolution/JavaModelSessionAccess.kt`, `test/.../JavaCycleBreakerTest.kt` (comments
+  only), `AGENT_INSTRUCTIONS.md`.
+- **Tests**: not run — comment/docs-only, verified via `git diff` that no code line changed.
+- **Result**: green (no code changes).
+
+### 2026-07-29 — Clamp the lightweight scanner's brace/paren balance at zero
+- **Change**: review of `extractFileInfoLightweight` against its production ancestor
+  `SingleJavaFileRootsIndex.JavaSourceClassIdReader` (cli-base). Unmatched closers drove the
+  balances negative, so `atTypeDeclaration()` (`== 0`) stopped firing and every top-level type
+  after a stray `}`/`)` was lost — for a stray `}` before the file's namesake class the file is
+  dropped from the index entirely (`tryBuildFileEntry` requires the base name). Now clamped,
+  mirroring `Kotlin.flex`'s `if (lBraceCount == 0) popState() else lBraceCount--`; no-op on
+  well-formed input. Also dropped a dangling KDoc, the redundant `if (at(SEMICOLON)) advance()`
+  (the class-scan loop skips it anyway) and mapped an empty package name to `null`.
+  Divergences from the ancestor are intentional and stay: the `break@loop` on a non-`package`
+  token (upstream appends the first class name to the package on a missing `;`), no `isPackageInfo`
+  arm (`JavaPackageIndexer` routes `package-info.java` to `JavaPackageInfoIndexer` first), and
+  `when (lexer.getTokenType())` instead of four `at()` calls. `getTokenType()` itself is a cached
+  field read (`JavaLexer.locateToken`: `if (myTokenType != null) return`), so repeated calls need
+  no hoisting; `getTokenText()` is the allocating one, and it is only reached at balance 0.
+- **Files**: `util/JavaSourceIndex.kt` (+7/−12); `JavaParsingLightweightScannerTest.kt` (+47, 2 tests).
+- **Tests**: `JavaParsing*` 16/16; box+phased 2792 executed / 0 FAILED. Both new tests fail
+  without the clamp (`got [Broken]`, `got [Foo]`).
+- **Result**: green (error-tolerance fix).
+
+### 2026-07-29 — Delete the `JavaSourceFileReader` abstraction; read via `File.readText`
+- **Change**: after the `VirtualFile`→`File` switch the interface had a single implementation
+  (`DefaultJavaSourceFileReader`), `walkSourceRoots` had no callers (it served the deleted eager
+  `buildIndex`), and no production or test call site ever substituted a reader — the parameter was
+  threaded through four collaborators for nothing. Replaced by one internal
+  `readJavaSourceFileText(File): String?`; the reader parameter is gone from `JavaClassCache`,
+  `JavaPackageIndexer`, `JavaPackageInfoIndexer`, `JavaSupertypeGraph`,
+  `JavaClassFinderOverAstImpl` and `extractFileInfoLightweight`. Content is now read with
+  `File.readText()` instead of `String(readBytes(), UTF_8)`: measured over 1503 repo `.java` files
+  (37 MB, interleaved rounds, 7 samples) the medians are 46 ms vs 48 ms — ~2 ms of pure read time
+  per full corpus, i.e. negligible against lexing/parsing.
+- **Files**: deleted `util/JavaSourceFileReader.kt` (−57), added `util/javaSourceFileText.kt` (+19);
+  `JavaClassCache.kt`, `JavaClassFinderOverAstImpl.kt`, `JavaPackageIndexer.kt`,
+  `JavaPackageInfoIndexer.kt`, `util/JavaSourceIndex.kt`, `util/JavaSupertypeGraph.kt`; tests
+  `JavaParsingTestBase.kt`, `JavaParsingLightweightScannerTest.kt`; `implDocs/ARCHITECTURE.md`.
+- **Tests**: `JavaParsing*` green; box+phased 2790 executed / 0 FAILED.
+- **Result**: green (behaviour-preserving simplification).
+
+### 2026-07-28 — Replace `FirJavaEnumEntry` with `buildEnumEntry` + lazy `MutableList` annotations
+- **Change**: review follow-up on the 2026-07-21 KT-74097 fix — the hand-written `FirJavaEnumEntry`
+  duplicated `FirEnumEntryImpl` (~180 LoC) just to host a lazy annotation slot. The tree generator
+  gained a per-field opt-in (`LeafBuilder.listFieldsWithVar` + `useVarForListField` DSL in
+  `AbstractBuilderConfigurator`; configured only for `builder(enumEntry)` in the FIR
+  `BuilderConfigurator`), so default builder generation is unchanged and only
+  `FirEnumEntryBuilder.annotations` becomes `var`. The enum-entry arm of
+  `convertJavaFieldToFir` uses plain `buildEnumEntry` with a new
+  `FirLazyJavaAnnotationMutableList` — an `AbstractMutableList` composing a plain
+  `FirLazyJavaAnnotationList` (conversion reused via `toMutableList()` on first mutable access;
+  only the 5 abstract members are overridden; cheap `isEmpty` keeps `toMutableOrEmpty()` from
+  forcing conversion) — and `FirJavaLazyDeprecationsProvider`. `FirJavaEnumEntry` deleted.
+- **Files**: `generators/tree-generator-common/.../Builder.kt`, `AbstractBuilderPrinter.kt`,
+  `config/AbstractBuilderConfigurator.kt`, `fir/tree/tree-generator/.../BuilderConfigurator.kt`,
+  regenerated `fir/tree/gen/.../builder/FirEnumEntryBuilder.kt` (single-line `val`→`var`),
+  `fir-jvm/.../FirJavaFacade.kt`, `FirJavaAnnotationList.kt`, `javaAnnotationsMapping.kt`;
+  deleted `FirJavaEnumEntry.kt`.
+- **Tests**: box+phased green (0 FAILED); PSI gate + `CompileKotlinAgainstKotlin` gate green
+  (shared fir-jvm + fir-tree edits).
+- **Result**: green (behaviour-preserving simplification; laziness retained).
+
+### 2026-07-28 — Comment-style cleanup of the binary/source-divide branch
+- **Change**: rewrote/deleted LLM-verbose comments added since the divide commit (added
+  comment lines ~290 → ~125): dropped restatements of obvious code, caller inventories,
+  counterfactual "rather than" phrasing, per-`@param` chatter, `Stage`/`§`/`implDocs`
+  references in shared `fir-jvm` sources; kept short why-notes, API contracts, and
+  regression/testData guards. Codified the rules in `AGENT_INSTRUCTIONS.md` →
+  *Source Comment Conventions* ("default is no comment" gate, ~3% density baseline).
+- **Files**: comment-only edits across ~20 files in `cli-base`, `cli-jvm`, `fir-jvm`,
+  `frontend.common.jvm`, `core/compiler.common.jvm`, `java-direct/{src,test}`; docs:
+  `AGENT_INSTRUCTIONS.md` (conventions rewrite, reference-table refresh, stale status header).
+- **Tests**: not run — comment-only change, verified via `git diff` that no code line changed.
+- **Result**: green (no code changes).
+
+### 2026-07-27 — Make Java-source package directory descent case-sensitive
+- **Change**: `JavaPackageIndexer`'s per-package directory descent used `File(dir, segment).isDirectory`
+  (added 2026-07-21 when the source path moved from `VirtualFile` to `java.io.File`), which is
+  case-insensitive on macOS/Windows. A sibling source dir (`syntax/logger`, `platform/ml/session`)
+  was wrongly accepted as package `Logger`/`Session`, so nested-class imports like
+  `com.intellij.platform.syntax.Logger.Attachment` mis-split into a package prefix and reported
+  `UNRESOLVED_IMPORT`. Descent now matches against the parent's real child names via `File.list()`
+  (case-sensitive), mirroring the binary index / PSI VFS `findChild`.
+- **Files**: `JavaPackageIndexer.kt` (new `descendDirectoriesCaseSensitive`, used by
+  `findPackageDirectories` + `findPackageDirectoryUnder`).
+- **Tests**: box+phased green (0 FAILED); `IntelliJFullPipelineTestsGenerated.testIntellij_platform_syntax`
+  and `testIntellij_platform_ml` now pass with java-direct on.
+- **Result**: regression fixed.
+
+### 2026-07-22 — Gate the binary seam on `useJavaDirect`; delete dead finder; dedup the ASM binary reader
+- **Change**: applied `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §4.1/§4.2/§4.7.
+  §4.1: the binary deserializer seam is now gated on `configuration.useJavaDirect` in
+  `prepareJvmSessions` — ON uses `JvmBinaryClassFinderInputsOverIndex`, OFF returns `null` so the
+  deserializer falls back to the PSI `FirJavaFacade` binary reader (both source and binary now share
+  one flag). §4.2: removed dead `CombinedJavaClassFinder.kt` (no references). §4.7: extracted the
+  shared `readBinaryJavaClass` core (caching + inner-class dispatch + `ClassifierResolutionContext`)
+  into `frontend.common.jvm`; both `JvmBinaryClassFinderInputsOverIndex` and the binary branch of
+  `KotlinCliJavaFileManagerImpl` delegate to it. Investigated §4.1's "turn off PSI finder creation":
+  not doable now — `KotlinCliJavaFileManagerImpl` still backs JPMS `module-info` resolution
+  (`ClasspathRootsResolver` → `JavaModuleInfo.read` → `findClass`) regardless of the flag, and its
+  PSI class-loading branch is already inert by default (`usePsiClassFilesReading=false`).
+- **Files**: `cli-jvm/.../JvmFrontendPipelinePhase.kt`, `cli-base/.../KotlinCliJavaFileManagerImpl.kt`,
+  `frontend.common.jvm/.../classFiles/BinaryJavaClassReader.kt` (new),
+  `JvmBinaryClassFinderInputsOverIndex.kt`; deleted `CombinedJavaClassFinder.kt`.
+- **Tests**: box+phased green (0 FAILED); PSI (`PhasedJvmDiagnosticLightTreeTestGenerated`) 0 fail,
+  `CompileKotlinAgainstKotlin` 0 fail (shared-pipeline + file-manager edits), `KotlinCliJavaFileManagerTest` 7/7.
+- **Result**: green (behaviour-preserving refactor + flag-gated seam).
+
+### 2026-07-21 — Thread `java.io.File` through the Java-source indexing path (drop internal `VirtualFile`)
+- **Change**: the module no longer relies on `com.intellij.openapi.vfs.VirtualFile` for its own
+  source-file representation/reading; source roots are consumed as `java.io.File` (the CLI's
+  `JavaSourceRoot.file` is already a `File`, so the old VFS-resolution step is removed). Per-package
+  directory descent uses `File(dir, segment)`/`listFiles()`; content is read via `readBytes()`
+  decoded as UTF-8 (unchanged charset). Binary-class-finder/CLI wiring stays on `VirtualFile`
+  intentionally (external contract).
+- **Files**: `JavaDirectFacadeBuilder.kt`, `JavaPackageIndexer.kt`, `JavaPackageInfoIndexer.kt`,
+  `util/JavaSourceFileReader.kt`, `util/JavaSourceIndex.kt`; tests `JavaParsingTestBase.kt`,
+  `JavaParsingClassFinderTest.kt`, `JavaParsingLightweightScannerTest.kt`.
+- **Tests**: box+phased green (0 FAILED); `JavaParsing*` green.
+- **Result**: green. Watch-point: a missing source root now drops later in the pipeline
+  (`isDirectory`/`isFile`) rather than at VFS resolution — equivalent end behaviour.
+
+### 2026-07-21 — Defer Java enum-entry annotations via `FirLazyJavaAnnotationList` (KT-74097)
+- **Change**: the enum-entry arm of `convertJavaFieldToFir` resolved annotations eagerly while
+  materialising `FirJavaClass.declarations`, which could re-enter the same in-flight `ClassId`
+  (self-cycle). New `FirJavaEnumEntry` (mirrors `FirJavaField`) backs `annotations`/
+  `deprecationsProvider` with `FirLazyJavaAnnotationList`, so no eager resolution happens while
+  `declarations` is built. Removed the now-dead `setAnnotationsFromJava`; the
+  `cycleSafeClassLikeSymbol` guard is now defense-in-depth, not the sole crash preventer.
+- **Files**: `fir-jvm/.../declarations/FirJavaEnumEntry.kt` (new), `fir-jvm/.../FirJavaFacade.kt`,
+  `fir-jvm/.../javaAnnotationsMapping.kt`, `JavaCycleBreakerTest.kt` (comment).
+- **Tests**: box+phased green; PSI (`PhasedJvmDiagnosticLightTreeTestGenerated`) +
+  `CompileKotlinAgainstKotlin` gates green (shared fir-jvm edit).
+- **Result**: green.
+
+### 2026-07-21 — Reuse AST name extraction in `JavaSupertypeGraph` (drop `splitCanonicalFqName`)
+- **Change**: supertype-reference name splitting no longer re-implements type-resolution via the
+  generic-bracket-aware `splitCanonicalFqName` text scan; it reuses the AST-based
+  `extractReferenceNameParts` (extracted from `JavaClassifierTypeOverAst` into `JavaTypeOverAst`),
+  reading `JAVA_CODE_REFERENCE` identifier segments directly. The generic-argument edge case
+  (`a.B<String>.C`) is preserved.
+- **Files**: `util/JavaSupertypeGraph.kt`, `model/JavaTypeOverAst.kt`.
+- **Tests**: box+phased green (0 FAILED); `JavaParsing*` green.
+- **Result**: green.
+
+### 2026-07-21 — Scan Java-lexer tokens in `JavaSourceIndex`; exclude comment/bad tokens from the light-tree root
+- **Change**: `extractFileInfoLightweight` scans the Java-lexer token stream
+  (`JavaSyntaxDefinition.createLexer`) instead of regex/comment-stripping to find the package name
+  and top-level type names, using brace/paren balance for nesting; removed
+  `PACKAGE_REGEX`/`DECLARATION_REGEX`, manual comment stripping, and the now-unused reader
+  `openLineReader`. `JavaLightTree` synthetic-root children now also exclude comments (root-only,
+  each declaration keeps its `DOC_COMMENT` for `@deprecated`) and `BAD_CHARACTER`.
+- **Files**: `util/JavaSourceIndex.kt`, `util/JavaSourceFileReader.kt`, `parse/JavaLightTree.kt`.
+- **Tests**: `JavaParsing*` (incl. lightweight scanner) green; box+phased green (0 FAILED).
+- **Result**: green.
+
 ### 2026-07-20 — Perf review: memoize recomputed reads in the Java-source model
 - **Change**: the model layer recomputed pure, AST-derived values on every access. Converted the
   hot ones to `by lazy(PUBLICATION)` (same precedent as `supertypes`/`typeParameters`): class

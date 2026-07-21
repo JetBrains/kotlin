@@ -129,16 +129,13 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
         if (!usePsiClassFilesReading && (virtualFile.extension == "class" || virtualFile.extension == "sig")) {
-            // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class.
-            //
+            // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
             // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
-            // as a key in cache.
-            // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary.
+            // as a key in cache
+            // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary
             // When it become wrong because we introduce the modules into CLI, it's worth to consider
-            // having different KotlinCliJavaFileManagerImpl's for different modules.
-            //
-            // Cross-references read from the bytecode signature are resolved against `allScope`, not the request's
-            // `searchScope`, so a reference from one binary class to another resolves across the whole classpath.
+            // having different KotlinCliJavaFileManagerImpl's for different modules
+            // Cross-references from bytecode signatures resolve against `allScope`, not the request `searchScope`.
             return readBinaryJavaClass(
                 classId = classId,
                 topLevelVirtualFile = virtualFile,

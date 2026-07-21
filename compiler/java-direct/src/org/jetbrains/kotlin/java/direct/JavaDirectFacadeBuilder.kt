@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
@@ -42,17 +41,14 @@ fun createJavaDirectSourceJavaFacadeBuilder(
     librariesScope: AbstractProjectFileSearchScope,
     binaryClassFinderInputsBuilder: (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?,
 ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
-    val localFs = projectEnvironment.knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
-
     val sourceRootEntries: List<JavaSourceRootEntry> =
         configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
             .filterIsInstance<JavaSourceRoot>()
-            .mapNotNull { javaRoot ->
-                val vFile = localFs.findFileByPath(javaRoot.file.path) ?: return@mapNotNull null
+            .map { javaRoot ->
                 val prefix =
                     if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
                     else FqName(javaRoot.packagePrefix!!)
-                JavaSourceRootEntry(vFile, prefix)
+                JavaSourceRootEntry(javaRoot.file, prefix)
             }
             .toList()
 
