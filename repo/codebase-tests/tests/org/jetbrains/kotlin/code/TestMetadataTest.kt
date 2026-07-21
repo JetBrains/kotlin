@@ -6,22 +6,20 @@
 package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.testFederation.*
-import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.junit.jupiter.api.fail
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
 import kotlin.test.Test
 import kotlin.time.Clock
 
 @OptIn(ExperimentalAtomicApi::class)
 class TestMetadataTest {
 
-    val root = Path("")
-    val absoluteRoot = root.absolute()
+    private val absoluteRoot = Path("").absolute()
 
     private val testMetadataAnnotationDesc = "Lorg/jetbrains/kotlin/test/TestMetadata;"
     private val smokeTestAnnotationDesc = Type.getDescriptor(SmokeTest::class.java)
@@ -57,58 +55,50 @@ class TestMetadataTest {
             println("Checked: $checkedAnnotations '@TestMetadata' annotations on $checkedClasses classes")
         }
 
-        root.walk()
-            .filter { it.extension == "class" }
-            .filter { it.pathString.contains("build/classes") }
-            .filterNot { it.pathString.contains("/fakes/") }
-            .filterNot { it.pathString.contains("/.") }
-            .forEach { file ->
-                val classNode = ClassNode()
-                ClassReader(file.readBytes()).accept(classNode, ClassReader.SKIP_CODE and ClassReader.SKIP_DEBUG)
-                checkedClasses.incrementAndFetch()
-
-                classNode.visibleAnnotations?.forEach { annotation ->
-                    if (annotation.desc == testMetadataAnnotationDesc) {
-                        checkedAnnotations.incrementAndFetch()
-                        val now = Clock.System.now()
-                        if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
-                            lastProgressPrinted = now
-                            printProgress()
-                        }
-                        val metadataPath = annotation.values.zipWithNext().toMap().getValue("value").toString()
-                        val metadataDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, Path(metadataPath)))
-                        val testDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, file))
-
-                        /* Check if the metadata is living in the same domains as the test */
-                        if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
-
-                        /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
-                        if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty()) return@forEach
-
-                        /* Check if the test is marked as SmokeTest and therefore always runs */
-                        if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
-
-                        /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
-                        if (classNode.visibleAnnotations.any { annotation ->
-                                metadataDomains.any { metadataDomain ->
-                                    annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
-                                }
-                            }) return@forEach
-
-                        violations.add(buildString {
-                            appendLine("${file.name}: ${testDomains.joinToString(", ") { it.domain.name }}")
-                            appendLine("@TestMetadata(\"$metadataPath\"): ${metadataDomains.joinToString(", ") { it.domain.name }}")
-                            appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
-                            appendLine("""   Solutions:""")
-                            metadataDomains.forEach { metadataDomain ->
-                                appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
-                                appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
-                            }
-                            appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
-                        })
+        forEachCompiledClass { file, classNode ->
+            checkedClasses.incrementAndFetch()
+            classNode.visibleAnnotations?.forEach { annotation ->
+                if (annotation.desc == testMetadataAnnotationDesc) {
+                    checkedAnnotations.incrementAndFetch()
+                    val now = Clock.System.now()
+                    if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
+                        lastProgressPrinted = now
+                        printProgress()
                     }
+                    val metadataPath = annotation.values.zipWithNext().toMap().getValue("value").toString()
+                    val metadataDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, Path(metadataPath)))
+                    val testDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, file))
+
+                    /* Check if the metadata is living in the same domains as the test */
+                    if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
+
+                    /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
+                    if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty()) return@forEach
+
+                    /* Check if the test is marked as SmokeTest and therefore always runs */
+                    if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
+
+                    /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
+                    if (classNode.visibleAnnotations.any { annotation ->
+                            metadataDomains.any { metadataDomain ->
+                                annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
+                            }
+                        }) return@forEach
+
+                    violations.add(buildString {
+                        appendLine("${classNode.name}: ${testDomains.joinToString(", ") { it.domain.name }}")
+                        appendLine("@TestMetadata(\"$metadataPath\"): ${metadataDomains.joinToString(", ") { it.domain.name }}")
+                        appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
+                        appendLine("""   Solutions:""")
+                        metadataDomains.forEach { metadataDomain ->
+                            appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
+                            appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
+                        }
+                        appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
+                    })
                 }
             }
+        }
 
         printProgress()
 

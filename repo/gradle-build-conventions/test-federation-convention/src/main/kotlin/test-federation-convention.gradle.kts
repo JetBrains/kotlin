@@ -1,5 +1,3 @@
-@file:OptIn(TemporaryTestFederationApi::class)
-
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.testFederation.*
