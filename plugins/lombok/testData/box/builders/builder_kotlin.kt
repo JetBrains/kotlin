@@ -1,9 +1,13 @@
 // FIR_DUMP
 
 import lombok.Builder
+import lombok.AccessLevel
 
-@Builder(toBuilder = true)
+@Builder(toBuilder = true, access = AccessLevel.PROTECTED)
 class User(val name: String, val age: Int, val info: String?)
+
+@Builder(access = AccessLevel.PRIVATE)
+class AccessLevelPrivate(val x: Int)
 
 fun box(): String {
     val user = User.builder()
