@@ -65,7 +65,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         builderDeclaration: FirDeclaration,
         existingFunctionNames: Set<Name>,
     ) {
-        if (builder.visibility == null) return
+        val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
             val builderTypeArguments = builderSymbol.typeParameterSymbols.map { typeParameter -> typeParameter.toConeType() }.toTypedArray()
@@ -96,7 +96,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 name = name,
                 valueParameters = emptyList(),
                 returnTypeRef = returnTypeRef,
-                visibility = builder.visibility,
+                visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = {
                     BuilderGeneratorKey(BuilderDeclarationType.Build)

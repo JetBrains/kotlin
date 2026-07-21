@@ -25,21 +25,21 @@ FILE: builder_kotlin.kt
         }
 
         protected/*protected and package*/ open class UserBuilder : R|kotlin/Any| {
-            protected/*protected and package*/ open fun build(): R|User|
+            public open fun build(): R|User|
 
-            protected/*protected and package*/ open fun name(name: R|kotlin/String|): R|User.UserBuilder|
+            public open fun name(name: R|kotlin/String|): R|User.UserBuilder|
 
             private final var name: R|kotlin/String|
                 private get(): R|kotlin/String|
                 private set(value: R|kotlin/String|): R|kotlin/Unit|
 
-            protected/*protected and package*/ open fun age(age: R|kotlin/Int|): R|User.UserBuilder|
+            public open fun age(age: R|kotlin/Int|): R|User.UserBuilder|
 
             private final var age: R|kotlin/Int|
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            protected/*protected and package*/ open fun info(info: R|kotlin/String?|): R|User.UserBuilder|
+            public open fun info(info: R|kotlin/String?|): R|User.UserBuilder|
 
             private final var info: R|kotlin/String?|
                 private get(): R|kotlin/String?|
