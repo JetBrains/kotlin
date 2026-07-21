@@ -23,7 +23,7 @@ internal class TakeWhileStrategy(val takeWhile: SequenceTransformer.TakeWhile, b
             with(builder) {
                 irBlock {
                     val filterResultVariable = irTemporary(takeWhile.predicateCall(builderWithParent)(sequenceVariable))
-                    when (takeWhile.takeType) {
+                    when (takeWhile.takeOrDrop) {
                         TakeOrDrop.Take -> +irIfThenElse(
                             context.irBuiltIns.booleanType,
                             irGet(filterResultVariable),
