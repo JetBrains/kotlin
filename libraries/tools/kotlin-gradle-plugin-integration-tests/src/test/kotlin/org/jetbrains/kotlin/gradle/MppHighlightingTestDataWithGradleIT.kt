@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.io.path.*
@@ -241,9 +242,10 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
                 }
 
         override fun provideArguments(
+            parameters: ParameterDeclarations,
             context: ExtensionContext,
         ): Stream<out Arguments> {
-            val gradleVersions = super.provideArguments(context)
+            val gradleVersions = super.provideArguments(parameters, context)
                 .map { it.get().first() as GradleVersion }
                 .toList()
 
