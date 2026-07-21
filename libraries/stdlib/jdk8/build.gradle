@@ -44,7 +44,7 @@ dependencies {
     moduleTestApi project(':kotlin-stdlib')
     moduleTestApi project(':kotlin-stdlib-jdk7')
     moduleTestCompileOnly project
-    moduleTestApi RepoDependencies.kotlinTest(project, "junit")
+    moduleTestApi RepoDependencies.kotlinTest(project, "junit5")
     moduleTestApi "org.ow2.asm:asm:9.0"
 }
 
