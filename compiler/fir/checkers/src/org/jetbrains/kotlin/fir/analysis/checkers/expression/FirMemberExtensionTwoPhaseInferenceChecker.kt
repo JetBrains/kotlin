@@ -504,7 +504,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val receiverComparison = ReceiverComparison(
             actualType = actualReceiverType?.renderReadable(),
             inferredType = inferredReceiverType?.renderReadable(),
-            relation = compareReceiverTypes(actualReceiverType, inferredReceiverType),
+            relation = compareTypes(actualReceiverType, inferredReceiverType),
         )
         val receiverTypeParameters = compareReceiverTypeParameters(
             actualReceiverType,
@@ -540,7 +540,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         // the JSON and explicitly mark their comparison unavailable instead.
         if (actualReceiverType == null || declaredReceiverType == null) {
             return receiverTypeParameters.associate {
-                it.name.asString() to ReceiverComparison(null, null, ReceiverRelation.UNAVAILABLE)
+                it.name.asString() to ReceiverComparison(null, null, TypeRelation.UNAVAILABLE)
             }
         }
 
@@ -592,7 +592,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             typeParameter.name.asString() to ReceiverComparison(
                 actualType = receiverDerivedType?.renderReadable(),
                 inferredType = inferredType?.renderReadable(),
-                relation = compareReceiverTypes(receiverDerivedType, inferredType),
+                relation = compareTypes(receiverDerivedType, inferredType),
             )
         }
     }
@@ -613,18 +613,18 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     }
 
     context(context: CheckerContext)
-    private fun compareReceiverTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): ReceiverRelation {
-        if (actualType == null || inferredType == null) return ReceiverRelation.UNAVAILABLE
+    private fun compareTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): TypeRelation {
+        if (actualType == null || inferredType == null) return TypeRelation.UNAVAILABLE
         val typeContext = context.session.typeContext
         if (AbstractTypeChecker.equalTypes(typeContext, actualType, inferredType, stubTypesEqualToAnything = false)) {
-            return ReceiverRelation.EXACT
+            return TypeRelation.EXACT
         }
         return when {
             AbstractTypeChecker.isSubtypeOf(typeContext, actualType, inferredType, stubTypesEqualToAnything = false) ->
-                ReceiverRelation.OVER_APPROXIMATED
+                TypeRelation.OVER_APPROXIMATED
             AbstractTypeChecker.isSubtypeOf(typeContext, inferredType, actualType, stubTypesEqualToAnything = false) ->
-                ReceiverRelation.UNDER_APPROXIMATED
-            else -> ReceiverRelation.INCOMPARABLE
+                TypeRelation.UNDER_APPROXIMATED
+            else -> TypeRelation.INCOMPARABLE
         }
     }
 
@@ -697,7 +697,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     private data class ReceiverComparison(
         val actualType: String?,
         val inferredType: String?,
-        val relation: ReceiverRelation,
+        val relation: TypeRelation,
     ) {
         fun toJson(): String = jsonObject(
             "actualType" to actualType?.toJsonString().orJsonNull(),
@@ -706,7 +706,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         )
     }
 
-    private enum class ReceiverRelation(val serializedName: String) {
+    private enum class TypeRelation(val serializedName: String) {
         EXACT("exact"),
         OVER_APPROXIMATED("over_approximated"),
         UNDER_APPROXIMATED("under_approximated"),
@@ -759,6 +759,9 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         private var inapplicableCalls: Int = 0
         private var failedCalls: Int = 0
         private var errorCalls: Int = 0
+        private var receiverTypeConstructorApproximatedCalls: Int = 0
+        private var receiverTypeParameterApproximatedCalls: Int = 0
+        private var receiverTypeConstructorAndParameterApproximatedCalls: Int = 0
         private var exactReceiverRelations: Int = 0
         private var overApproximatedReceiverRelations: Int = 0
         private var underApproximatedReceiverRelations: Int = 0
@@ -767,12 +770,22 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
         fun record(diagnostic: DiagnosticData) {
             totalCalls++
+            val receiverTypeConstructorApproximated =
+                diagnostic.normalInference.receiver.relation == TypeRelation.OVER_APPROXIMATED
+            val receiverTypeParameterApproximated = diagnostic.normalInference.receiverTypeParameters.values.any {
+                it.relation == TypeRelation.OVER_APPROXIMATED
+            }
+            if (receiverTypeConstructorApproximated) receiverTypeConstructorApproximatedCalls++
+            if (receiverTypeParameterApproximated) receiverTypeParameterApproximatedCalls++
+            if (receiverTypeConstructorApproximated && receiverTypeParameterApproximated) {
+                receiverTypeConstructorAndParameterApproximatedCalls++
+            }
             when (diagnostic.normalInference.receiver.relation) {
-                ReceiverRelation.EXACT -> exactReceiverRelations++
-                ReceiverRelation.OVER_APPROXIMATED -> overApproximatedReceiverRelations++
-                ReceiverRelation.UNDER_APPROXIMATED -> underApproximatedReceiverRelations++
-                ReceiverRelation.INCOMPARABLE -> incomparableReceiverRelations++
-                ReceiverRelation.UNAVAILABLE -> unavailableReceiverRelations++
+                TypeRelation.EXACT -> exactReceiverRelations++
+                TypeRelation.OVER_APPROXIMATED -> overApproximatedReceiverRelations++
+                TypeRelation.UNDER_APPROXIMATED -> underApproximatedReceiverRelations++
+                TypeRelation.INCOMPARABLE -> incomparableReceiverRelations++
+                TypeRelation.UNAVAILABLE -> unavailableReceiverRelations++
             }
             when (val result = diagnostic.twoPhaseInference) {
                 is AnalysisResult.Error -> errorCalls++
@@ -793,12 +806,16 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
                 "inapplicableCalls" to inapplicableCalls.toString(),
                 "failedCalls" to failedCalls.toString(),
                 "errorCalls" to errorCalls.toString(),
+                "receiverTypeConstructorApproximatedCalls" to receiverTypeConstructorApproximatedCalls.toString(),
+                "receiverTypeParameterApproximatedCalls" to receiverTypeParameterApproximatedCalls.toString(),
+                "receiverTypeConstructorAndParameterApproximatedCalls" to
+                        receiverTypeConstructorAndParameterApproximatedCalls.toString(),
                 "receiverRelations" to jsonObject(
-                    ReceiverRelation.EXACT.serializedName to exactReceiverRelations.toString(),
-                    ReceiverRelation.OVER_APPROXIMATED.serializedName to overApproximatedReceiverRelations.toString(),
-                    ReceiverRelation.UNDER_APPROXIMATED.serializedName to underApproximatedReceiverRelations.toString(),
-                    ReceiverRelation.INCOMPARABLE.serializedName to incomparableReceiverRelations.toString(),
-                    ReceiverRelation.UNAVAILABLE.serializedName to unavailableReceiverRelations.toString(),
+                    TypeRelation.EXACT.serializedName to exactReceiverRelations.toString(),
+                    TypeRelation.OVER_APPROXIMATED.serializedName to overApproximatedReceiverRelations.toString(),
+                    TypeRelation.UNDER_APPROXIMATED.serializedName to underApproximatedReceiverRelations.toString(),
+                    TypeRelation.INCOMPARABLE.serializedName to incomparableReceiverRelations.toString(),
+                    TypeRelation.UNAVAILABLE.serializedName to unavailableReceiverRelations.toString(),
                 ),
             ),
         )

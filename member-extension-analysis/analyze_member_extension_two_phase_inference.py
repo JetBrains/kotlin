@@ -64,6 +64,9 @@ class CallableSummary(TypedDict):
     inapplicableCalls: int
     failedCalls: int
     errorCalls: int
+    receiverTypeConstructorApproximatedCalls: NotRequired[int]
+    receiverTypeParameterApproximatedCalls: NotRequired[int]
+    receiverTypeConstructorAndParameterApproximatedCalls: NotRequired[int]
     receiverRelations: NotRequired[dict[str, int]]
 
 
@@ -82,6 +85,7 @@ class AnalysisSummary(TypedDict):
     resultKinds: dict[str, int]
     outcomes: dict[str, int]
     receiverRelations: dict[str, int]
+    receiverApproximations: dict[str, int]
     errorReasons: dict[str, int]
     topCallables: dict[str, int]
     malformed: list[str]
@@ -185,8 +189,10 @@ def summarize(
     result_kinds: Counter[str] = Counter()
     outcomes: Counter[str] = Counter()
     receiver_relations: Counter[str] = Counter()
+    receiver_approximations: Counter[str] = Counter()
     callables: Counter[str] = Counter()
     error_reasons: Counter[str] = Counter()
+    inputs_with_summary_receiver_relations: set[str] = set()
 
     for summary_diagnostic in summaries:
         summary = summary_diagnostic["summary"]
@@ -200,9 +206,17 @@ def summarize(
         outcomes["successful"] += successful
         outcomes["inapplicable"] += inapplicable
         outcomes["failed"] += failed
+        if "receiverRelations" in summary:
+            receiver_relations.update(summary["receiverRelations"])
+            inputs_with_summary_receiver_relations.add(summary_diagnostic["_inputPath"])
+        if "receiverTypeConstructorApproximatedCalls" in summary:
+            receiver_approximations["type constructor"] += summary["receiverTypeConstructorApproximatedCalls"]
+            receiver_approximations["type parameter"] += summary["receiverTypeParameterApproximatedCalls"]
+            receiver_approximations["both"] += summary["receiverTypeConstructorAndParameterApproximatedCalls"]
 
     for call_diagnostic in diagnostics:
-        receiver_relations[call_diagnostic["normalInference"]["receiver"]["relation"]] += 1
+        if call_diagnostic["_inputPath"] not in inputs_with_summary_receiver_relations:
+            receiver_relations[call_diagnostic["normalInference"]["receiver"]["relation"]] += 1
         result = call_diagnostic["twoPhaseInference"]
         if result["result"] == "error":
             error_reasons[result["reason"]] += 1
@@ -216,6 +230,7 @@ def summarize(
         "resultKinds": dict(result_kinds.most_common()),
         "outcomes": dict(outcomes.most_common()),
         "receiverRelations": dict(receiver_relations.most_common()),
+        "receiverApproximations": dict(receiver_approximations.items()),
         "errorReasons": dict(error_reasons.most_common()),
         "topCallables": dict(callables.most_common(25)),
         "malformed": malformed,
@@ -500,6 +515,7 @@ def main() -> None:
         ("Result kinds", summary["resultKinds"]),
         ("Outcomes", summary["outcomes"]),
         ("Receiver relations", summary["receiverRelations"]),
+        ("Receiver approximations", summary["receiverApproximations"]),
         ("Error reasons", summary["errorReasons"]),
         ("Top callables", summary["topCallables"]),
     ):
