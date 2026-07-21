@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -127,60 +125,35 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         // The checker reports the partial-override error or the "both already exist" warning.
         if (hasUserDeclaredEqualsOrHashCode(declaredScope)) return null
 
-        val equalsSymbol: FirNamedFunctionSymbol
-        val hashCodeSymbol: FirNamedFunctionSymbol
-
-        if (classSymbol.hasJavaOrigin) {
-            equalsSymbol = classSymbol.createJavaMethod(
-                name = EQUALS_NAME,
-                valueParameters = listOf(ConeLombokValueParameter(OTHER, session.builtinTypes.nullableAnyType)),
-                returnTypeRef = session.builtinTypes.booleanType,
-                visibility = Visibilities.Public,
-                modality = Modality.OPEN,
-            ).symbol
-
-            hashCodeSymbol = classSymbol.createJavaMethod(
-                name = HASHCODE_NAME,
-                returnTypeRef = session.builtinTypes.intType,
-                valueParameters = emptyList(),
-                visibility = Visibilities.Public,
-                modality = Modality.OPEN,
-            ).symbol
-        } else {
+        val key by lazy(LazyThreadSafetyMode.NONE) {
             val propertyInfos = computePropertiesToInclude(annotation, declaredScope)
-            val key = EqualsAndHashCodeGeneratorKey(
+
+            EqualsAndHashCodeGeneratorKey(
                 propertyInfos = propertyInfos,
                 callSuper = annotation.callSuper == CallSuperMode.Call,
             )
-
-            equalsSymbol = createMemberFunction(
-                owner = classSymbol,
-                key = key,
-                name = EQUALS_NAME,
-                returnType = StandardTypes.Boolean,
-            ) {
-                modality = Modality.OPEN
-                status {
-                    isOverride = true
-                    isOperator = true
-                }
-                valueParameter(OTHER, StandardTypes.NullableAny)
-                withGeneratedDefaultBody()
-            }.symbol
-
-            hashCodeSymbol = createMemberFunction(
-                owner = classSymbol,
-                key = key,
-                name = HASHCODE_NAME,
-                returnType = StandardTypes.Int,
-            ) {
-                modality = Modality.OPEN
-                status {
-                    isOverride = true
-                }
-                withGeneratedDefaultBody()
-            }.symbol
         }
+
+        val equalsSymbol = createJavaOrKotlinMemberFunction(
+            owner = classSymbol,
+            name = EQUALS_NAME,
+            valueParameters = listOf(ConeLombokValueParameter(OTHER, session.builtinTypes.nullableAnyType)),
+            returnTypeRef = session.builtinTypes.booleanType,
+            visibility = Visibilities.Public,
+            modality = Modality.OPEN,
+            isOverride = true,
+            createKey = { key },
+        )
+        val hashCodeSymbol = createJavaOrKotlinMemberFunction(
+            owner = classSymbol,
+            name = HASHCODE_NAME,
+            valueParameters = emptyList(),
+            returnTypeRef = session.builtinTypes.intType,
+            visibility = Visibilities.Public,
+            modality = Modality.OPEN,
+            isOverride = true,
+            createKey = { key },
+        )
 
         return EqualsAndHashCodeMembers(equalsSymbol, hashCodeSymbol)
     }

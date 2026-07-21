@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -64,6 +66,53 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
         returns(true) implies (this@isSuitableJavaClass is FirRegularClassSymbol)
     }
     return (this is FirRegularClassSymbol) && origin == FirDeclarationOrigin.Java.Source
+}
+
+context(extension: FirExtension)
+fun createJavaOrKotlinMemberFunction(
+    owner: FirClassSymbol<*>,
+    name: Name,
+    valueParameters: List<ConeLombokValueParameter>,
+    returnTypeRef: FirTypeRef,
+    visibility: Visibility,
+    modality: Modality,
+    createKey: () -> GeneratedDeclarationKey,
+    isStatic: Boolean = false,
+    symbol: FirNamedFunctionSymbol? = null,
+    typeParameters: Collection<FirTypeParameter> = emptyList(),
+    isOverride: Boolean = false,
+): FirNamedFunctionSymbol {
+    return if (owner.hasJavaOrigin) {
+        owner.createJavaMethod(
+            name = name,
+            valueParameters = valueParameters,
+            returnTypeRef = returnTypeRef,
+            visibility = visibility,
+            modality = modality,
+            isStatic = isStatic,
+            methodSymbol = symbol,
+            methodTypeParameters = typeParameters,
+            isOverride = isOverride,
+        ).symbol
+    } else {
+        extension.createMemberFunction(
+            owner = owner,
+            key = createKey(),
+            name = name,
+            returnType = returnTypeRef.coneType
+        ) {
+            this@createMemberFunction.modality = modality
+            this@createMemberFunction.visibility = visibility
+
+            for (parameter in valueParameters) {
+                valueParameter(parameter.name, parameter.typeRef.coneType)
+            }
+
+            status {
+                this@status.isOverride = isOverride
+            }
+        }.symbol
+    }
 }
 
 fun FirClassSymbol<*>.createJavaMethod(
