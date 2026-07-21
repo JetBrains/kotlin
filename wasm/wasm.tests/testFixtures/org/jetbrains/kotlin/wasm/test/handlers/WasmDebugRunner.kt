@@ -33,10 +33,10 @@ open class WasmDebugRunner(testServices: TestServices, includeLocalVariableInfor
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             val artifacts = modulesToArtifact.values.single() as WasmCompilationSetsBinaryArtifact
+            // run debug tests only in dev (non-DCE) compilation, as DCE:
+            // - is not a supported debug mode in general, and
+            // - can slightly degrade source maps, which can lead to different stepping behavior between dev and dce, which doesn't work with unified EXPECTATIONS blocks
             processCompilationSet(artifacts.compilation, "dev")
-            artifacts.dceCompilation?.let {
-                processCompilationSet(it, "dce")
-            }
         }
     }
 }
