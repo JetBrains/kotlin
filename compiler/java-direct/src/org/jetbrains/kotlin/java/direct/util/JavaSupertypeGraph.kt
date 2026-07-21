@@ -12,13 +12,13 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.JavaClassCache
 import org.jetbrains.kotlin.java.direct.JavaPackageIndexer
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.model.extractReferenceNameParts
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaImportResolver
 import org.jetbrains.kotlin.java.direct.resolution.JavaImports
 import org.jetbrains.kotlin.java.direct.resolution.getImports
-import org.jetbrains.kotlin.load.java.structure.impl.splitCanonicalFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -57,10 +57,8 @@ internal class JavaSupertypeGraph(
         return supertypeCache.computeIfAbsent(classId) {
             val packageFqName = classId.packageFqName
 
-            // Fast path: use the cached JavaClassOverAst's AST node directly.
-            // IMPORTANT: we read raw JAVA_CODE_REFERENCE text from the node, NOT classifierQualifiedName,
-            // because the latter triggers full classifier resolution, which could recurse back into
-            // this same computation for another class in the hierarchy.
+            // Fast path via cached AST. Read identifier segments, not classifierQualifiedName —
+            // the latter resolves classifiers and can recurse into this hierarchy walk.
             val cachedClass = classCache[classId]
             if (cachedClass is JavaClassOverAst) {
                 val imports = with(cachedClass.resolutionContext) { getImports() }
@@ -156,10 +154,7 @@ internal class JavaSupertypeGraph(
             }
     }
 
-    /**
-     * Extracts supertype [ClassId]s from extends/implements clauses of an AST node.
-     * Uses raw text from JAVA_CODE_REFERENCE nodes — no type resolution involved.
-     */
+    /** Supertype [ClassId]s from extends/implements via AST name parts (no type resolution). */
     private fun extractSupertypeRefsFromNode(
         tree: JavaLightTree,
         classNode: JavaLightNode,
@@ -169,12 +164,12 @@ internal class JavaSupertypeGraph(
         val supertypes = mutableListOf<ClassId>()
         tree.findChildByType(classNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
             tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, imports))
+                supertypes.addAll(resolveSupertypeReference(tree, ref, packageFqName, imports))
             }
         }
         tree.findChildByType(classNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
             tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypes.addAll(resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, imports))
+                supertypes.addAll(resolveSupertypeReference(tree, ref, packageFqName, imports))
             }
         }
         return supertypes
@@ -201,15 +196,14 @@ internal class JavaSupertypeGraph(
      * ambiguous package/class splits.
      */
     private fun resolveSupertypeReference(
-        ref: String,
+        tree: JavaLightTree,
+        ref: JavaLightNode,
         packageFqName: FqName,
         imports: JavaImports = JavaImports.EMPTY,
     ): List<ClassId> {
-        // splitCanonicalFqName treats a '.' inside a generic argument list as part of that
-        // segment, not a separator, so a reference with type arguments on a non-final segment
-        // (`a.B<String>.C`) is correctly recognised as dotted and delegated below.
-        val segments = ref.splitCanonicalFqName()
-        val simpleName = segments.singleOrNull()?.substringBefore('<')?.trim()
+        // AST segments keep generics off non-final parts (`a.B<String>.C`) as a dotted ref.
+        val segments = tree.extractReferenceNameParts(ref)
+        val simpleName = segments.singleOrNull()
 
         if (simpleName != null) {
             // Same-package source class — resolves to the in-module ClassId.

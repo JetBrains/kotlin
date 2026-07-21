@@ -128,15 +128,11 @@ class JavaCycleBreakerTest {
     // Because that module has compiler plugins enabled, the candidate is probed through
     // `FirExtensionDeclarationsSymbolProvider` -> `FirNestedClassifierScopeImpl`, which forces
     // `FirJavaClass.declarations` — a PUBLICATION lazy that re-runs on same-thread re-entrance
-    // (KT-74097). Materialising those declarations re-converts the same `@Deprecated` field
-    // (`convertJavaFieldToFir` / `setAnnotationsFromJava`), which re-resolves the very same
-    // candidate `ClassId` -> a self-cycle. `cycleSafeClassLikeSymbol` marks the ClassId in-flight
-    // on the first probe, so the second (re-entrant) probe short-circuits to `null` and resolution
-    // falls back to `java.lang.Deprecated` instead of crashing with a StackOverflowError.
+    // (KT-74097). Materialising declarations can trigger re-entrant symbol lookup for the same
+    // ClassId (e.g. via PUBLICATION-lazy re-entrance). `cycleSafeClassLikeSymbol` marks the
+    // ClassId in-flight to break the cycle.
     //
-    // The test below reproduces that re-entrance with a minimal stub provider rather than the heavy
-    // full-pipeline module: the stub's lookup calls back into `cycleSafeClassLikeSymbol` for the
-    // same ClassId, standing in for the declarations-materialisation re-entrance above.
+    // The test below reproduces this re-entrance shape using a minimal stub provider.
 
     @OptIn(SessionConfiguration::class)
     @Test

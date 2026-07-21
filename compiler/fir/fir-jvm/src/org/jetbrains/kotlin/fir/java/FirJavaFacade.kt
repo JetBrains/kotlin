@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
@@ -508,7 +507,7 @@ private fun convertJavaFieldToFir(
     val returnType = javaField.type
     val fakeSource = javaField.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
     return when {
-        javaField.isEnumEntry -> buildEnumEntry {
+        javaField.isEnumEntry -> buildJavaEnumEntry {
             source = javaField.toSourceElement()
             this.moduleData = moduleData
             symbol = FirEnumEntrySymbol(fieldId)
@@ -520,16 +519,12 @@ private fun convertJavaFieldToFir(
             ).apply {
                 isStatic = javaField.isStatic
             }
-            isLocal = false
             returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
                 .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            origin = javaOrigin(javaField.isFromSource)
+            isFromSource = javaField.isFromSource
+            annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
         }.apply {
             containingClassForStaticMemberAttr = classId.toLookupTag()
-            // TODO: check if this works properly with annotations that take the enum class as an argument
-            setAnnotationsFromJava(session, fakeSource, javaField)
-            replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true))
         }
         else -> buildJavaField {
             this.containingClassSymbol = containingClassSymbol

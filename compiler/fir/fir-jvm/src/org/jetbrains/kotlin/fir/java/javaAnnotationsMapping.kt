@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -138,15 +137,6 @@ internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
     override val classId: ClassId get() = JvmStandardClassIds.Annotations.Java.Deprecated
     override fun resolve(): JavaClass? = null
-}
-
-internal fun FirAnnotationContainer.setAnnotationsFromJava(
-    session: FirSession, source: KtSourceElement?,
-    javaAnnotationOwner: JavaAnnotationOwner,
-) {
-    val annotations = mutableListOf<FirAnnotation>()
-    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotation(session, source) }
-    replaceAnnotations(annotations)
 }
 
 internal fun JavaValueParameter.toFirValueParameter(

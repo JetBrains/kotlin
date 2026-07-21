@@ -36,6 +36,54 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-21 — Thread `java.io.File` through the Java-source indexing path (drop internal `VirtualFile`)
+- **Change**: the module no longer relies on `com.intellij.openapi.vfs.VirtualFile` for its own
+  source-file representation/reading; source roots are consumed as `java.io.File` (the CLI's
+  `JavaSourceRoot.file` is already a `File`, so the old VFS-resolution step is removed). Per-package
+  directory descent uses `File(dir, segment)`/`listFiles()`; content is read via `readBytes()`
+  decoded as UTF-8 (unchanged charset). Binary-class-finder/CLI wiring stays on `VirtualFile`
+  intentionally (external contract).
+- **Files**: `JavaDirectFacadeBuilder.kt`, `JavaPackageIndexer.kt`, `JavaPackageInfoIndexer.kt`,
+  `util/JavaSourceFileReader.kt`, `util/JavaSourceIndex.kt`; tests `JavaParsingTestBase.kt`,
+  `JavaParsingClassFinderTest.kt`, `JavaParsingLightweightScannerTest.kt`.
+- **Tests**: box+phased green (0 FAILED); `JavaParsing*` green.
+- **Result**: green. Watch-point: a missing source root now drops later in the pipeline
+  (`isDirectory`/`isFile`) rather than at VFS resolution — equivalent end behaviour.
+
+### 2026-07-21 — Defer Java enum-entry annotations via `FirLazyJavaAnnotationList` (KT-74097)
+- **Change**: the enum-entry arm of `convertJavaFieldToFir` resolved annotations eagerly while
+  materialising `FirJavaClass.declarations`, which could re-enter the same in-flight `ClassId`
+  (self-cycle). New `FirJavaEnumEntry` (mirrors `FirJavaField`) backs `annotations`/
+  `deprecationsProvider` with `FirLazyJavaAnnotationList`, so no eager resolution happens while
+  `declarations` is built. Removed the now-dead `setAnnotationsFromJava`; the
+  `cycleSafeClassLikeSymbol` guard is now defense-in-depth, not the sole crash preventer.
+- **Files**: `fir-jvm/.../declarations/FirJavaEnumEntry.kt` (new), `fir-jvm/.../FirJavaFacade.kt`,
+  `fir-jvm/.../javaAnnotationsMapping.kt`, `JavaCycleBreakerTest.kt` (comment).
+- **Tests**: box+phased green; PSI (`PhasedJvmDiagnosticLightTreeTestGenerated`) +
+  `CompileKotlinAgainstKotlin` gates green (shared fir-jvm edit).
+- **Result**: green.
+
+### 2026-07-21 — Reuse AST name extraction in `JavaSupertypeGraph` (drop `splitCanonicalFqName`)
+- **Change**: supertype-reference name splitting no longer re-implements type-resolution via the
+  generic-bracket-aware `splitCanonicalFqName` text scan; it reuses the AST-based
+  `extractReferenceNameParts` (extracted from `JavaClassifierTypeOverAst` into `JavaTypeOverAst`),
+  reading `JAVA_CODE_REFERENCE` identifier segments directly. The generic-argument edge case
+  (`a.B<String>.C`) is preserved.
+- **Files**: `util/JavaSupertypeGraph.kt`, `model/JavaTypeOverAst.kt`.
+- **Tests**: box+phased green (0 FAILED); `JavaParsing*` green.
+- **Result**: green.
+
+### 2026-07-21 — Scan Java-lexer tokens in `JavaSourceIndex`; exclude comment/bad tokens from the light-tree root
+- **Change**: `extractFileInfoLightweight` scans the Java-lexer token stream
+  (`JavaSyntaxDefinition.createLexer`) instead of regex/comment-stripping to find the package name
+  and top-level type names, using brace/paren balance for nesting; removed
+  `PACKAGE_REGEX`/`DECLARATION_REGEX`, manual comment stripping, and the now-unused reader
+  `openLineReader`. `JavaLightTree` synthetic-root children now also exclude comments (root-only,
+  each declaration keeps its `DOC_COMMENT` for `@deprecated`) and `BAD_CHARACTER`.
+- **Files**: `util/JavaSourceIndex.kt`, `util/JavaSourceFileReader.kt`, `parse/JavaLightTree.kt`.
+- **Tests**: `JavaParsing*` (incl. lightweight scanner) green; box+phased green (0 FAILED).
+- **Result**: green.
+
 ### 2026-07-20 — Perf review: memoize recomputed reads in the Java-source model
 - **Change**: the model layer recomputed pure, AST-derived values on every access. Converted the
   hot ones to `by lazy(PUBLICATION)` (same precedent as `supertypes`/`typeParameters`): class
