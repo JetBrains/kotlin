@@ -1,2 +1,1 @@
 expected symbols:
-expect class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence
