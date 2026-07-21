@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstrain
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.doUnify
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isRaw
+import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -74,9 +76,23 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val receiverParameterType = symbol.receiverParameterSymbol?.resolvedType ?: return
         val typeParameters = symbol.typeParameterSymbols
         val receiverMentionsTypeParameter = receiverParameterType.contains {
-            it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol in typeParameters
+            it.lookupTagIfAny?.toTypeParameterSymbol() in typeParameters
         }
         if (!receiverMentionsTypeParameter) return
+
+        val normalInference = normalInference(expression, symbol)
+        val twoPhaseInference = analyzeOrIgnore(expression, symbol)
+        // Captured types produced by separate inference runs require alpha-equivalence rather than equalTypes.
+        // Keep this disabled until that comparison is implemented.
+        if (assertInferredTypesEqual &&
+            twoPhaseInference is AnalysisResult.Success &&
+            twoPhaseInference.outcome == TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED
+        ) {
+            require(inferredTypesEqual(twoPhaseInference.inferredConeTypes, normalInference.inferredConeTypes)) {
+                "Two-phase inference produced different types for ${symbol.callableId}: " +
+                        "${twoPhaseInference.inferredTypes}, normal inference: ${normalInference.inferredTypes}"
+            }
+        }
 
         val diagnostic = DiagnosticData(
             callableId = symbol.callableId.asSingleFqName().asString(),
@@ -85,8 +101,8 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
                 receiverParameterType,
                 symbol.valueParameterSymbols.map { it.resolvedReturnType }
             ),
-            normalInference = normalInference(expression, symbol),
-            twoPhaseInference = analyzeOrIgnore(expression, symbol),
+            normalInference = normalInference,
+            twoPhaseInference = twoPhaseInference,
         )
 
         val source = expression.calleeReference.source ?: expression.source ?: return
@@ -224,7 +240,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             val freshVariable = freshVariables[index]
             freshVariable.takeIf {
                 receiverParameterType.contains { type ->
-                    type is ConeTypeParameterType && type.lookupTag.typeParameterSymbol == typeParameter
+                    type.lookupTagIfAny?.toTypeParameterSymbol() == typeParameter
                 }
             }
         }
@@ -248,18 +264,24 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
             it.typeConstructor !in completionContext.fixedTypeVariables
         }
         val receiverNames = receiverPhase.toPhaseNames(freshVariableByName)
+        fun collectFinalConeTypes(): Map<String, ConeKotlinType> = freshVariables.mapNotNull { variable ->
+            val type = completionContext.fixedTypeVariables[variable.typeConstructor]?.asCone() ?: return@mapNotNull null
+            variable.typeParameterSymbol.name.asString() to type
+        }.toMap()
 
         // Receiver fixation is a hard phase boundary. If any receiver-mentioned variable could not be
         // fixed, arguments must not get a chance to infer it: that would no longer model receiver-first
         // inference. Return immediately with the `failed` outcome instead of running phase 2.
         if (system.hasContradiction || unfixedReceiverVariables.isNotEmpty()) {
+            val finalConeTypes = collectFinalConeTypes()
             val finalTypes = freshVariables.associate { variable ->
-                val type = completionContext.fixedTypeVariables[variable.typeConstructor]
-                variable.typeParameterSymbol.name.asString() to (type?.asCone()?.renderReadable() ?: "<not fixed>")
+                val name = variable.typeParameterSymbol.name.asString()
+                name to (finalConeTypes[name]?.renderReadable() ?: "<not fixed>")
             }
             return AnalysisResult.Success(
                 outcome = TwoPhaseOutcome.RECEIVER_INFERENCE_FAILED,
                 inferredTypes = finalTypes,
+                inferredConeTypes = finalConeTypes,
                 receiverPhaseFixed = receiverNames,
                 receiverPhaseUnfixed = unfixedReceiverVariables.map { it.typeParameterSymbol.name.asString() },
                 argumentPhaseFixed = emptyList(),
@@ -294,9 +316,10 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         // constraints were added). A contradiction means that the receiver-phase choices and argument
         // constraints cannot all hold at once.
         val argumentPhase = completionContext.fixReadyVariables(freshVariables)
+        val finalConeTypes = collectFinalConeTypes()
         val finalTypes = freshVariables.associate { variable ->
-            val type = completionContext.fixedTypeVariables[variable.typeConstructor]
-            variable.typeParameterSymbol.name.asString() to (type?.asCone()?.renderReadable() ?: "<not fixed>")
+            val name = variable.typeParameterSymbol.name.asString()
+            name to (finalConeTypes[name]?.renderReadable() ?: "<not fixed>")
         }
         val argumentNames = argumentPhase.toPhaseNames(freshVariableByName)
         val allVariablesFixed = freshVariables.all { it.typeConstructor in completionContext.fixedTypeVariables }
@@ -308,6 +331,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
                 TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_FAILED
             },
             inferredTypes = finalTypes,
+            inferredConeTypes = finalConeTypes,
             receiverPhaseFixed = receiverNames,
             receiverPhaseUnfixed = emptyList(),
             argumentPhaseFixed = argumentNames,
@@ -497,6 +521,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         )
         return NormalInferenceData(
             inferredTypes,
+            inferredConeTypes = inferredTypeByParameter.mapKeys { it.key.name.asString() },
             receiverComparison,
             receiverTypeParameters,
             receiverParameters = declaredReceiverType?.let { receiverParameters(it) }.orEmpty(),
@@ -515,7 +540,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         // complete type tree, so type parameters nested inside other type arguments are included.
         val receiverTypeParameters = typeParameters.filter { typeParameter ->
             declaredReceiverType?.contains {
-                it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == typeParameter
+                it.lookupTagIfAny?.toTypeParameterSymbol() == typeParameter
             } == true
         }
 
@@ -594,6 +619,22 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
     }
 
     context(context: CheckerContext)
+    private fun inferredTypesEqual(
+        first: Map<String, ConeKotlinType>,
+        second: Map<String, ConeKotlinType>,
+    ): Boolean {
+        if (first.keys != second.keys) return false
+        return first.entries.all { entry ->
+            AbstractTypeChecker.equalTypes(
+                context.session.typeContext,
+                entry.value,
+                second.getValue(entry.key),
+                stubTypesEqualToAnything = false,
+            )
+        }
+    }
+
+    context(context: CheckerContext)
     private fun compareReceiverTypes(actualType: ConeKotlinType?, inferredType: ConeKotlinType?): String {
         if (actualType == null || inferredType == null) return "unavailable"
         val typeContext = context.session.typeContext
@@ -663,6 +704,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
     private data class NormalInferenceData(
         val inferredTypes: Map<String, String>,
+        val inferredConeTypes: Map<String, ConeKotlinType>,
         val receiver: ReceiverComparison,
         val receiverTypeParameters: Map<String, ReceiverComparison>,
         val receiverParameters: Map<String, String>,
@@ -693,6 +735,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         data class Success(
             val outcome: TwoPhaseOutcome,
             val inferredTypes: Map<String, String>,
+            val inferredConeTypes: Map<String, ConeKotlinType>,
             val receiverPhaseFixed: List<String>,
             val receiverPhaseUnfixed: List<String>,
             val argumentPhaseFixed: List<String>,
@@ -792,6 +835,10 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         is AnalysisResult.Error -> true
         is AnalysisResult.Success -> outcome != TwoPhaseOutcome.RECEIVER_FIXED_ARGUMENTS_SUCCEEDED
     }
+
+    private val assertInferredTypesEqual = java.lang.Boolean.getBoolean(
+        "kotlin.member.extension.assert.inferred.types.equal"
+    )
 
     private val statisticsBySession = mutableMapOf<FirSession, MutableMap<String, CallableStatistics>>()
 }
