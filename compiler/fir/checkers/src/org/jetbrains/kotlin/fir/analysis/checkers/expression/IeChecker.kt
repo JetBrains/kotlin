@@ -174,7 +174,7 @@ object IeChecker : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
         superParameter: FirTypeParameterSymbol,
         superSubstitutor: ConeSubstitutor,
     ): Boolean {
-        if (subParameter.variance != superParameter.variance) return false
+//        if (subParameter.variance != superParameter.variance) return false
         val subBounds = subParameter.nonTrivialBounds(ConeSubstitutor.Empty)
         val superBounds = superParameter.nonTrivialBounds(superSubstitutor)
         return subBounds == superBounds
