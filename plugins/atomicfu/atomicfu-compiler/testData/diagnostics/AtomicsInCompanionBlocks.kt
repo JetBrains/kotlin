@@ -15,18 +15,18 @@ public class PublicComanionHolder {
 
 internal class InternalComanionHolder {
     companion {
-        <!PUBLIC_ATOMICS_ARE_FORBIDDEN!>public<!> val pa = atomic(0)
+        public val pa = atomic(0)
         internal val pi = atomic(0)
-        @PublishedApi <!PUBLISHED_API_ATOMICS_ARE_FORBIDDEN!>internal<!> val pip = atomic(0)
+        @PublishedApi internal val pip = atomic(0)
         private val pp = atomic(0)
     }
 }
 
 private class PrivateComanionHolder {
     companion {
-        <!PUBLIC_ATOMICS_ARE_FORBIDDEN!>public<!> val pa = atomic(0)
+        public val pa = atomic(0)
         internal val pi = atomic(0)
-        @PublishedApi <!PUBLISHED_API_ATOMICS_ARE_FORBIDDEN!>internal<!> val pip = atomic(0)
+        @PublishedApi internal val pip = atomic(0)
         private val pp = atomic(0)
     }
 }
