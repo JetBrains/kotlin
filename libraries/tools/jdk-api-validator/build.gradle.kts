@@ -4,6 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     id("kotlin")
     id("test-inputs-check-v2")
+    id("project-tests-convention")
 }
 
 val signature = configurations.create("signature")
@@ -17,7 +18,7 @@ dependencies {
     implementation("org.codehaus.mojo:animal-sniffer:1.21")
     implementation(kotlinStdlib())
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
@@ -30,11 +31,13 @@ val collectSignatures = tasks.register("collectSignatures", Sync::class) {
     into(signaturesDirectory)
 }
 
-tasks.test {
-    systemProperty("kotlinVersion", project.version)
-    addDirectoryProperty("signaturesDirectory") {
-        fileProvider(collectSignatures.map { it.destinationDir })
+projectTests {
+    testTask {
+        systemProperty("kotlinVersion", project.version)
+        addDirectoryProperty("signaturesDirectory") {
+            fileProvider(collectSignatures.map { it.destinationDir })
+        }
+        withJvmStdlibAndReflect()
+        withReflectShadowJar()
     }
-    withJvmStdlibAndReflect()
-    withReflectShadowJar()
 }
