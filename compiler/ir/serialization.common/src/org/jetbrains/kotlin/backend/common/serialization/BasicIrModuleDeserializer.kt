@@ -41,7 +41,7 @@ abstract class BasicIrModuleDeserializer(
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
     private val deserializeTypeAliases: Boolean = false,
-) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
+) : IrModuleDeserializer(libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 

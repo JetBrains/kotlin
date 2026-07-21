@@ -124,7 +124,7 @@ class JKlibIrLinker(
 
     private inner class MetadataJVMModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+    ) : IrModuleDeserializer(KotlinAbiVersion.CURRENT) {
         override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
 
         override fun contains(idSig: IdSignature): Boolean = resolveDescriptor(idSig) != null

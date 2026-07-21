@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 internal class KonanForwardDeclarationModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
     private val linker: KonanIrLinker,
-) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.Companion.CURRENT) {
+) : IrModuleDeserializer(KotlinAbiVersion.Companion.CURRENT) {
     init {
         require(moduleDescriptor.isForwardDeclarationModule)
     }
