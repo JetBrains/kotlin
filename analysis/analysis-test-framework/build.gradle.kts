@@ -14,7 +14,7 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
 
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
     testFixturesImplementation(project(":compiler:psi:psi-api"))
     testFixturesApi(testFixtures(project(":compiler:psi:psi-api")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
