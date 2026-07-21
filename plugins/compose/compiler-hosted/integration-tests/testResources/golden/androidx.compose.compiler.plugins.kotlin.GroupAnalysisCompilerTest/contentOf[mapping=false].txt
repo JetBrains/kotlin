@@ -30,7 +30,7 @@ private fun contentOf(
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda_412467906_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 21 }
 }
 
@@ -51,7 +51,7 @@ TestKt {
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda_412467906_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 21 }
 }
 
@@ -72,7 +72,7 @@ TestKt {
 ========= FunctionMeta: true, OptimizeGroups: false =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda_412467906_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 21 }
 }
 
@@ -90,7 +90,7 @@ TestKt {
 ========= FunctionMeta: false, OptimizeGroups: false =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda_412467906_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 21 }
 }
 

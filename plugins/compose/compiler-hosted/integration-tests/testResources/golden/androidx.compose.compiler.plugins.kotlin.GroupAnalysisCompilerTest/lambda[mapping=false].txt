@@ -11,13 +11,13 @@ val a = @Composable {}
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda__486040309$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda__486040309_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 4 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposableSingletons$TestKt {
     file: Test.kt
-    lambda__486040309$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+    _get_lambda__486040309_$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 4 }
 }

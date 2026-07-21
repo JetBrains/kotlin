@@ -40,60 +40,84 @@ fun Foo(%composer: Composer?, %changed: Int) {
   }
 }
 internal object ComposableSingletons%TestKt {
-  val lambda%-901944135: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%-901944135: Function2<Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
-  val lambda%869170273: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: Int, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(it):Test.kt'")
-    if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%869170273: Function3<Int, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { it: Int, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "invalid source info at 1: 'CN(it):Test.kt'")
+          if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
-  val lambda%1917317994: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: String, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(it):Test.kt'")
-    if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%1917317994: Function3<String, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { it: String, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "invalid source info at 1: 'CN(it):Test.kt'")
+          if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
-  val lambda%-406468707: @[ExtensionFunctionType] Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
-    if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
+  val lambda%-406468707: @[ExtensionFunctionType] Function3<Int, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C:Test.kt")
+          if (%composer.shouldExecute(%changed and 0b00010001 != 0b00010000, %changed and 0b0001)) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Unit
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }
       }
-      Unit
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
-    } else {
-      %composer.skipToGroupEnd()
+      return field
     }
-  }
 }

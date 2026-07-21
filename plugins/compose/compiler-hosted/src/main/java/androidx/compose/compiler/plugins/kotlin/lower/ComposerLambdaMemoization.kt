@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
@@ -820,25 +822,32 @@ class ComposerLambdaMemoization(
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = Name.identifier(lambdaName)
-                type = lambdaType
+                type = lambdaType.makeNullable()
                 visibility = DescriptorVisibilities.PRIVATE
                 isStatic = context.platform.isJvm()
             }.also { f ->
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
-                f.initializer = DeclarationIrBuilder(context, clazz.symbol)
-                    .irExprBody(lambdaExpression.markIsTransformedLambda())
             }
             val getter = p.addGetter {
                 returnType = lambdaType
                 visibility = DescriptorVisibilities.INTERNAL
-                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
             }.also { fn ->
                 val thisParam = clazz.thisReceiver!!.copyTo(fn)
                 fn.parent = clazz
                 fn.parameters += thisParam
                 fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                    val backingField = p.backingField!!
+                    +irIf(
+                        condition = irEqualsNull(irGetField(irGet(thisParam), backingField)),
+                        body = irSetField(
+                            irGet(thisParam),
+                            backingField,
+                            lambdaExpression.markIsTransformedLambda()
+                        )
+                    )
+                    +irReturn(irGetField(irGet(thisParam), backingField))
                 }
             }
 
@@ -860,7 +869,7 @@ class ComposerLambdaMemoization(
                         fn.parent = clazz
                         fn.parameters += thisParam
                         fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                            +irReturn(irCall(getter))
+                            +irReturn(irCall(getter).apply { dispatchReceiver = irGet(thisParam) })
                         }
                     }
                 }
