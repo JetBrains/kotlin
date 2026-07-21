@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.junit.Rule
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.File
 
 abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
@@ -26,8 +26,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         return printPublicApi(asText(), relativePath)
     }
 
-    @JvmField
-    @Rule
+    @RegisterExtension
     val goldenTransformRule = GoldenTransformRule()
 
     protected fun checkApi(

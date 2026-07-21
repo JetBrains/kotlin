@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class ComposerParamTransformTests : AbstractIrTransformTest() {
     private fun composerParam(
@@ -284,9 +284,9 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                                 ComposeNames.ComposerParameter
                             ) {
                                 assertEquals(
-                                    "Composer unexpectedly captured",
                                     currentComposer,
-                                    value
+                                    value,
+                                    "Composer unexpectedly captured",
                                 )
                             }
                         }
@@ -758,10 +758,10 @@ private fun noZombieLocalClassSymbols(): (IrElement) -> Unit = { root ->
             val owner = cls.owner
             if (owner.isAnonymousObject || owner.isLocal) {
                 assertTrue(
+                    cls in declaredLocalClassSymbols,
                     "Type references local class '${owner.name}' that is not declared in " +
                             "the current IR file — likely a zombie symbol left by a deep copy " +
                             "in ComposerParamTransformer (CMP-9325)",
-                    cls in declaredLocalClassSymbols
                 )
             }
         }

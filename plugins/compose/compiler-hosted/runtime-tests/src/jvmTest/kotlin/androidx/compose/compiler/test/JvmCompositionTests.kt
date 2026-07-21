@@ -22,14 +22,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class JvmCompositionTests {
     companion object {
         @OptIn(ExperimentalCoroutinesApi::class)
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setupMainDispatcher() {
             Dispatchers.setMain(StandardTestDispatcher())

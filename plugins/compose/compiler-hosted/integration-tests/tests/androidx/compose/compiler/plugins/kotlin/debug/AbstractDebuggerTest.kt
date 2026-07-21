@@ -35,8 +35,11 @@ import com.sun.jdi.request.StepRequest
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.junit.*
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
@@ -53,7 +56,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         var proxyPort: Int = -1
 
         @JvmStatic
-        @BeforeClass
+        @BeforeAll
         fun startDebugProcess() {
             testServerProcess = startTestProcessServer()
             val [debuggerPort, _proxyPort] = testServerProcess.inputStream.bufferedReader().use {
@@ -67,7 +70,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         }
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun stopDebugProcess() {
             testServerProcess.destroy()
         }
@@ -111,7 +114,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
     private lateinit var methodEntryRequest: MethodEntryRequest
     private lateinit var methodExitRequest: MethodExitRequest
 
-    @Before
+    @BeforeEach
     fun createMethodEventsForTestClass() {
         val manager = virtualMachine.eventRequestManager()
         methodEntryRequest = manager.createMethodEntryRequest()
@@ -125,15 +128,14 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         methodExitRequest.enable()
     }
 
-    @After
+    @AfterEach
     fun deleteEventRequests() {
         virtualMachine.eventRequestManager()
             .deleteEventRequests(listOf(methodEntryRequest, methodExitRequest))
     }
 
-    @JvmField
-    @Rule
-    val outDirectory = TemporaryFolder()
+    @field:TempDir
+    lateinit var outDirectory: File
 
     private fun invokeRunnerMainInSeparateProcess(
         classLoader: URLClassLoader,
@@ -142,7 +144,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         val classPath = classLoader.extractUrls().toMutableList()
         classPath.addAll(defaultClassPath.map { it.toURI().toURL() })
         if (classLoader is GeneratedClassLoader) {
-            val outDir = outDirectory.root
+            val outDir = outDirectory
             classLoader.classFileFactory.writeAllTo(outDir)
             classPath.add(0, outDir.toURI().toURL())
         }

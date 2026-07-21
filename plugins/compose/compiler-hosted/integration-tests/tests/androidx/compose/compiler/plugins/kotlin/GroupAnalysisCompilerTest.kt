@@ -13,23 +13,16 @@ import androidx.compose.compiler.mapping.render
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
-import org.junit.Rule
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ValueSource
 
-@RunWith(Parameterized::class)
+@ParameterizedClass(name = "mapping={0}")
+@ValueSource(booleans = [true, false])
 class GroupAnalysisCompilerTest(
-    private val validateMapping: Boolean
+    private val validateMapping: Boolean,
 ) : AbstractCompilerTest() {
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "mapping={0}")
-        fun data() = arrayOf<Any>(
-            arrayOf(true),
-            arrayOf(false),
-        )
-    }
 
     @Test
     fun topLevelFunction() {
@@ -414,8 +407,7 @@ class GroupAnalysisCompilerTest(
         allowDuplicatedKeys = true
     )
 
-    @JvmField
-    @Rule
+    @RegisterExtension
     val goldenTransformRule = GoldenTransformRule()
 
     private fun groups(

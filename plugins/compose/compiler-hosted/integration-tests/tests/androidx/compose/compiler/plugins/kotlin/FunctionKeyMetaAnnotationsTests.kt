@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 /* ktlint-disable max-line-length */
 class FunctionKeyMetaAnnotationsTests : AbstractCodegenTest() {
 
-    @JvmField
-    @Rule
+    @RegisterExtension
     val goldenTransformRule = GoldenTransformRule()
 
     override fun CompilerConfiguration.updateConfiguration() {
