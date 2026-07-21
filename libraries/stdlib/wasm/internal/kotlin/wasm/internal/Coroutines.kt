@@ -18,17 +18,10 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 internal fun <T> getContinuation(): Continuation<T> =
     implementedAsIntrinsic
 
-@PublishedApi
 @Suppress("UNCHECKED_CAST")
 @UsedFromCompilerGeneratedCode
 internal suspend fun <T> returnIfSuspended(argument: Any?): T =
     argument as T
-
-@PublishedApi
-internal fun <T> interceptContinuationIfNeeded(
-    context: CoroutineContext,
-    continuation: Continuation<T>
-): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
 @PublishedApi
 @DoNotInlineOnFirstStage
@@ -37,7 +30,6 @@ internal suspend inline fun getCoroutineContext(): CoroutineContext = getContinu
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     f: (suspend () -> T),
@@ -48,7 +40,6 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
     f: (suspend R.() -> T),
@@ -60,7 +51,6 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
     f: (suspend R.(P) -> T),
@@ -71,7 +61,6 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
     implementedAsIntrinsic
 }
 
-@PublishedApi
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
