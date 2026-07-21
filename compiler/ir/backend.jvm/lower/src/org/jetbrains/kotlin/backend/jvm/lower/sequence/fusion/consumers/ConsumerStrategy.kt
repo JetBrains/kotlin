@@ -32,6 +32,11 @@ private const val LAST_OR_NULL = "lastOrNull"
 private const val FILTER_TO = "filterTo"
 private const val FILTER_NOT_TO = "filterNotTo"
 private const val FILTER_NOT_NULL_TO = "filterNotNullTo"
+private const val TO_LIST = "toList"
+private const val TO_MUTABLE_LIST = "toMutableList"
+private const val TO_SET = "toSet"
+private const val TO_MUTABLE_SET = "toMutableSet"
+private const val TO_COLLECTION = "toCollection"
 
 /**
  * Each strategy has 3 parts:
@@ -60,6 +65,12 @@ internal data class ConsumerData(
     val sequenceData: SequenceData,
 )
 
+internal sealed class CollectionVersion {
+    object List : CollectionVersion()
+    object Set : CollectionVersion()
+    object Collection : CollectionVersion()
+}
+
 internal fun createConsumerStrategy(
     expression: IrCall,
     functionName: String,
@@ -79,6 +90,11 @@ internal fun createConsumerStrategy(
         FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
         FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
         FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
+        TO_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List)
+        TO_MUTABLE_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List)
+        TO_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set)
+        TO_MUTABLE_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set)
+        TO_COLLECTION -> ToCollectionStrategy(data, expression, CollectionVersion.Collection)
         else -> null
     }
 }
