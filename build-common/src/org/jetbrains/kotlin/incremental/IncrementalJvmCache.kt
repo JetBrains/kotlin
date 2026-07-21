@@ -87,7 +87,7 @@ open class IncrementalJvmCache(
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
 
-    private val metadataMap = registerMap(MetadataMap(METADATA_MAP.storageFile, icContext))
+    private val metadataMap by lazy(LazyThreadSafetyMode.NONE) { registerMap(MetadataMap(METADATA_MAP.storageFile, icContext)) }
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
@@ -679,8 +679,8 @@ open class IncrementalJvmCache(
 
             storage[key] = merged
 
-            for ([file, _] in entries) {
-                debugLog("[$key] Saved metadata for file: ${file.path}")
+            for ([file, content] in entries) {
+                debugLog("[$key] Saved metadata for file: ${file.path}, size: ${content.size} bytes")
             }
         }
 
