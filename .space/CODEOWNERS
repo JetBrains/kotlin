@@ -433,6 +433,7 @@
 /native/commonizer-embeddable/ "Kotlin Frontend"
 /native/native.tests/ "Kotlin Native" "Kotlin Common Backend"
 /native/native.tests/cli-tests/ "Kotlin Native"
+/native/native.tests/cli-tests/testData/cli/native*Help.out "Kotlin Native" "Kotlin Frontend"
 /native/native.tests/driver/ "Kotlin Native"
 /native/native.tests/litmus-tests/ "Kotlin Native"
 /native/native.tests/stress/ "Kotlin Native"
