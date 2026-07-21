@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.AllJsCompilerArg
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.InvalidRawValueJsCompilerArgumentsBtaV2StrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.JsArgumentConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.NullableJsCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -134,18 +134,6 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
 
     private fun JsArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
-        val compilerVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
-
-        assumeTrue(
-            compilerVersion >= KotlinToolingVersion(introducedVersion),
-            "Test requires compiler version >= $introducedVersion"
-        )
-
-        if (removedVersion != null) {
-            assumeTrue(
-                compilerVersion < KotlinToolingVersion(removedVersion),
-                "Test requires compiler version < $removedVersion"
-            )
-        }
+        assumeArgumentAvailable()
     }
 }

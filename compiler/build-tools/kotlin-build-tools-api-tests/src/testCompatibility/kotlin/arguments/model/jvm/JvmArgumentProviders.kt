@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305.Mode
@@ -111,7 +112,7 @@ private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescri
 
 private val testBaseDir: Path = Paths.get("").toAbsolutePath()
 
-@OptIn(ExperimentalCompilerArgument::class)
+@OptIn(ExperimentalCompilerArgument::class, RemovedCompilerArgument::class)
 private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xabi-stability",
@@ -303,8 +304,6 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") },
     ),
-/*
-    // TODO: KT-87792 [BTA] Handle removed arguments in BTA tests
     JvmArgumentTestDescriptor(
         argumentName = "Xklib",
         argument = X_KLIB,
@@ -324,10 +323,10 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         ),
         invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
         runsNullableTest = true,
+        skipBtaV1 = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
-*/
     JvmArgumentTestDescriptor(
         argumentName = "Xjava-source-roots",
         argument = X_JAVA_SOURCE_ROOTS,
