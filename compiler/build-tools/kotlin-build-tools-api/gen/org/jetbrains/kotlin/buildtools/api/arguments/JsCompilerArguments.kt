@@ -7,6 +7,7 @@ import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 
 /**
  * @since 2.4.20
@@ -66,5 +67,20 @@ public interface JsCompilerArguments : CommonJsAndWasmArguments {
     @ExperimentalCompilerArgument
     public val X_SUSPEND_LAMBDA_EXPORTING: JsCompilerArgument<Boolean> =
         JsCompilerArgument("X_SUSPEND_LAMBDA_EXPORTING", KotlinReleaseVersion(2, 4, 20))
+
+    /**
+     * This option does nothing and is left for compatibility with the legacy backend.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.1.0.
+     *
+     * Removed in Kotlin version 2.3.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_TYPED_ARRAYS: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_TYPED_ARRAYS", KotlinReleaseVersion(1, 1, 3))
   }
 }

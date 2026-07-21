@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.CustomCompilerArgument
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.SSoTCompilerArgument
-import org.jetbrains.kotlin.buildtools.generator.drop
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 
 sealed interface ArgumentTransform {
@@ -272,23 +271,46 @@ internal class SyntheticArgumentInterface(
     val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
 )
 
+/**
+ * Looks up the merged argument level (actual + removed arguments) by name from [kotlinCompilerArguments].
+ *
+ * The synthetic KLIB-based interfaces must use the merged level rather than the raw `actual*Arguments`
+ * objects, otherwise removed arguments (declared in the separate `removed*Arguments` levels and combined
+ * only via `mergeWith` in `compilerArguments.kt`) would never reach the API generator.
+ */
+private fun findMergedLevel(name: String): KotlinCompilerArgumentsLevel {
+    fun search(level: KotlinCompilerArgumentsLevel): KotlinCompilerArgumentsLevel? {
+        if (level.name == name) return level
+        for (nested in level.nestedLevels) {
+            search(nested)?.let { return it }
+        }
+        return null
+    }
+    return search(kotlinCompilerArguments.topLevel) ?: error("Merged level $name is not found in kotlinCompilerArguments")
+}
+
 internal val syntheticArgumentInterfaces = buildList {
+    val commonKlibBasedArguments = findMergedLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments)
+    val commonJsAndWasmArguments = findMergedLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments)
+    val jsArguments = findMergedLevel(CompilerArgumentsLevelNames.jsArguments)
+    val wasmArguments = findMergedLevel(CompilerArgumentsLevelNames.wasmArguments)
+
     val commonKlibBasedCompilerArguments = SyntheticArgumentInterface(
         "CommonKlibBasedArguments",
-        actualCommonKlibBasedArguments,
+        commonKlibBasedArguments,
         emptyList(),
         "CommonKlibBasedArgumentsImpl",
     ).also(::add)
     val commonKlibBasedCompilerKlibArguments = SyntheticArgumentInterface(
         "CommonKlibBasedArgumentsKlibArguments",
-        actualCommonKlibBasedArguments,
+        commonKlibBasedArguments,
         listOf(commonKlibBasedCompilerArguments),
         "CommonKlibBasedArgumentsImpl",
         KotlinCompilerPhase.KLIB_COMPILATION
     ).also(::add)
     val commonKlibBasedCompilerLinkingArguments = SyntheticArgumentInterface(
         "CommonKlibBasedArgumentsLinkingArguments",
-        actualCommonKlibBasedArguments,
+        commonKlibBasedArguments,
         listOf(commonKlibBasedCompilerArguments),
         "CommonKlibBasedArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION
@@ -296,14 +318,14 @@ internal val syntheticArgumentInterfaces = buildList {
 
     val commonJsAndWasmCompilerArguments = SyntheticArgumentInterface(
         "CommonJsAndWasmArguments",
-        actualCommonJsAndWasmArguments,
+        commonJsAndWasmArguments,
         listOf(commonKlibBasedCompilerArguments),
         "CommonJsAndWasmArgumentsImpl",
     ).also(::add)
 
     val commonJsAndWasmCompilerKlibArguments = SyntheticArgumentInterface(
         "CommonJsAndWasmCompilerKlibArguments",
-        actualCommonJsAndWasmArguments,
+        commonJsAndWasmArguments,
         listOf(commonJsAndWasmCompilerArguments, commonKlibBasedCompilerKlibArguments),
         "CommonJsAndWasmArgumentsImpl",
         KotlinCompilerPhase.KLIB_COMPILATION
@@ -311,7 +333,7 @@ internal val syntheticArgumentInterfaces = buildList {
 
     val commonJsAndWasmCompilerLinkingArguments = SyntheticArgumentInterface(
         "CommonJsAndWasmCompilerLinkingArguments",
-        actualCommonJsAndWasmArguments,
+        commonJsAndWasmArguments,
         listOf(commonJsAndWasmCompilerArguments, commonKlibBasedCompilerLinkingArguments),
         "CommonJsAndWasmArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION
@@ -319,14 +341,14 @@ internal val syntheticArgumentInterfaces = buildList {
 
     val jsCompilerArguments = SyntheticArgumentInterface(
         "JsCompilerArguments",
-        actualJsArguments,
+        jsArguments,
         listOf(commonJsAndWasmCompilerArguments),
         "JsArgumentsImpl",
     ).also(::add)
 
     SyntheticArgumentInterface(
         "JsCompilerKlibArguments",
-        actualJsArguments,
+        jsArguments,
         listOf(jsCompilerArguments, commonJsAndWasmCompilerKlibArguments),
         "JsArgumentsImpl",
         KotlinCompilerPhase.KLIB_COMPILATION
@@ -334,7 +356,7 @@ internal val syntheticArgumentInterfaces = buildList {
 
     SyntheticArgumentInterface(
         "JsCompilerLinkingArguments",
-        actualJsArguments,
+        jsArguments,
         listOf(jsCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
         "JsArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION
@@ -342,14 +364,14 @@ internal val syntheticArgumentInterfaces = buildList {
 
     val wasmCompilerArguments = SyntheticArgumentInterface(
         "WasmCompilerArguments",
-        actualWasmArguments,
+        wasmArguments,
         listOf(commonJsAndWasmCompilerArguments),
         "WasmArgumentsImpl",
     ).also(::add)
 
     SyntheticArgumentInterface(
         "WasmCompilerKlibArguments",
-        actualWasmArguments,
+        wasmArguments,
         listOf(wasmCompilerArguments, commonJsAndWasmCompilerKlibArguments),
         "WasmArgumentsImpl",
         KotlinCompilerPhase.KLIB_COMPILATION
@@ -357,7 +379,7 @@ internal val syntheticArgumentInterfaces = buildList {
 
     SyntheticArgumentInterface(
         "WasmCompilerLinkingArguments",
-        actualWasmArguments,
+        wasmArguments,
         listOf(wasmCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
         "WasmArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION

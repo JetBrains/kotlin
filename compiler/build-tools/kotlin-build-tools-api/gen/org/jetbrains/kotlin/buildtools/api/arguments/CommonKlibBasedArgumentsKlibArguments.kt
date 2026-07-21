@@ -9,6 +9,7 @@ import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KlibIrInlinerMode
 
 /**
@@ -61,16 +62,16 @@ public interface CommonKlibBasedArgumentsKlibArguments : CommonKlibBasedArgument
 
   public companion object {
     /**
-     * Relativize all the paths stored in a klib using the given path prefixes.
-     * The supplied prefixes should be absolute paths to the directories containing the source code files.
-     * Note: The prefixes are applied in the same order as they are passed in this CLI argument.
+     * Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+     * Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+     * The only observable effect is that a custom ABI version is written to KLIB manifest file.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgumentsKlibArgument<List<Path>> =
-        CommonKlibBasedArgumentsKlibArgument("X_KLIB_RELATIVE_PATH_BASE", KotlinReleaseVersion(2, 0, 20))
+    public val X_KLIB_ABI_VERSION: CommonKlibBasedArgumentsKlibArgument<String?> =
+        CommonKlibBasedArgumentsKlibArgument("X_KLIB_ABI_VERSION", KotlinReleaseVersion(2, 2, 0))
 
     /**
      * Enable signature uniqueness checks.
@@ -99,16 +100,31 @@ public interface CommonKlibBasedArgumentsKlibArguments : CommonKlibBasedArgument
         CommonKlibBasedArgumentsKlibArgument("X_KLIB_IR_INLINER", KotlinReleaseVersion(2, 1, 20))
 
     /**
-     * Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
-     * Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
-     * The only observable effect is that a custom ABI version is written to KLIB manifest file.
+     * Normalize absolute paths in klibs.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.4.20.
+     *
+     * Removed in Kotlin version 2.5.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgumentsKlibArgument<Boolean> =
+        CommonKlibBasedArgumentsKlibArgument("X_KLIB_NORMALIZE_ABSOLUTE_PATH", KotlinReleaseVersion(2, 0, 20))
+
+    /**
+     * Relativize all the paths stored in a klib using the given path prefixes.
+     * The supplied prefixes should be absolute paths to the directories containing the source code files.
+     * Note: The prefixes are applied in the same order as they are passed in this CLI argument.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB_ABI_VERSION: CommonKlibBasedArgumentsKlibArgument<String?> =
-        CommonKlibBasedArgumentsKlibArgument("X_KLIB_ABI_VERSION", KotlinReleaseVersion(2, 2, 0))
+    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgumentsKlibArgument<List<Path>> =
+        CommonKlibBasedArgumentsKlibArgument("X_KLIB_RELATIVE_PATH_BASE", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Skip library compatibility checks for stdlib and kotlin.test library.

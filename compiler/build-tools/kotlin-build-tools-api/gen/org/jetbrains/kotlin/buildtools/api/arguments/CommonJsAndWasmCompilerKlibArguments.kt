@@ -61,17 +61,14 @@ public interface CommonJsAndWasmCompilerKlibArguments : CommonJsAndWasmArguments
 
   public companion object {
     /**
-     * Generate a packed klib into the directory specified by '-ir-output-dir'.
+     * Add a custom output name to the split .js files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Deprecated in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
-    public val X_IR_PRODUCE_KLIB_FILE: CommonJsAndWasmCompilerKlibArgument<Boolean?> =
-        CommonJsAndWasmCompilerKlibArgument("X_IR_PRODUCE_KLIB_FILE", KotlinReleaseVersion(1, 3, 70))
+    public val X_IR_PER_MODULE_OUTPUT_NAME: CommonJsAndWasmCompilerKlibArgument<String?> =
+        CommonJsAndWasmCompilerKlibArgument("X_IR_PER_MODULE_OUTPUT_NAME", KotlinReleaseVersion(1, 5, 30))
 
     /**
      * Generate an unpacked klib into the parent directory of the output JS file.
@@ -87,13 +84,16 @@ public interface CommonJsAndWasmCompilerKlibArguments : CommonJsAndWasmArguments
         CommonJsAndWasmCompilerKlibArgument("X_IR_PRODUCE_KLIB_DIR", KotlinReleaseVersion(1, 3, 70))
 
     /**
-     * Add a custom output name to the split .js files.
+     * Generate a packed klib into the directory specified by '-ir-output-dir'.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_PER_MODULE_OUTPUT_NAME: CommonJsAndWasmCompilerKlibArgument<String?> =
-        CommonJsAndWasmCompilerKlibArgument("X_IR_PER_MODULE_OUTPUT_NAME", KotlinReleaseVersion(1, 5, 30))
+    @DeprecatedCompilerArgument
+    public val X_IR_PRODUCE_KLIB_FILE: CommonJsAndWasmCompilerKlibArgument<Boolean?> =
+        CommonJsAndWasmCompilerKlibArgument("X_IR_PRODUCE_KLIB_FILE", KotlinReleaseVersion(1, 3, 70))
   }
 }
