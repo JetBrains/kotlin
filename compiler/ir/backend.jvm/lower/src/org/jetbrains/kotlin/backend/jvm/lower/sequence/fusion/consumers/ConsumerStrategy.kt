@@ -21,6 +21,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private const val FOR_EACH = "forEach"
+internal const val FIND = "find"
+internal const val FIND_LAST = "findLast"
+private const val FIRST = "first"
+private const val FIRST_NOT_NULL_OF = "firstNotNullOf"
+private const val FIRST_NOT_NULL_OF_OR_NULL = "firstNotNullOfOrNull"
+private const val FIRST_OR_NULL = "firstOrNull"
+private const val LAST = "last"
+private const val LAST_OR_NULL = "lastOrNull"
 
 /**
  * Each strategy has 3 parts:
@@ -56,6 +64,15 @@ internal fun createConsumerStrategy(
 ): ConsumerStrategy? {
     return when (functionName) {
         FOR_EACH -> ForEachStrategy(data, expression)
+        // find is equivalent to firstOrNull with a predicate argument
+        FIND -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = true)
+        FIND_LAST -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false)
+        FIRST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = true)
+        FIRST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = true)
+        FIRST_NOT_NULL_OF -> FirstNotNullOfStrategy(data, expression, isOrNull = false)
+        FIRST_NOT_NULL_OF_OR_NULL -> FirstNotNullOfStrategy(data, expression, isOrNull = true)
+        LAST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = false)
+        LAST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false)
         else -> null
     }
 }
