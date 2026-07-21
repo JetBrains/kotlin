@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.*
@@ -90,7 +91,9 @@ open class IncrementalJvmCache(
 
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory" } }
 
-    protected open fun debugLog(message: String) {}
+    protected open fun debugLog(message: String) {
+        icContext.reporter.debug { message }
+    }
 
     fun isTrackedFile(file: File) = sourceToClassesMap.contains(file)
 
