@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -87,7 +86,6 @@ enum class IrModuleDeserializerKind {
 }
 
 abstract class IrModuleDeserializer(
-    private val _moduleDescriptor: ModuleDescriptor?,
     val libraryAbiVersion: KotlinAbiVersion,
 ) {
     /**
@@ -163,7 +161,7 @@ class IrModuleDeserializerWithBuiltIns(
     mangler: KotlinMangler.IrMangler,
     onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val delegate: IrModuleDeserializer
-) : IrModuleDeserializer(delegate.moduleFragment.descriptor, delegate.libraryAbiVersion) {
+) : IrModuleDeserializer(delegate.libraryAbiVersion) {
 
     init {
         // TODO: figure out how it should work for K/N
@@ -308,7 +306,7 @@ class IrModuleDeserializerWithBuiltIns(
 
 open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
-) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(KotlinAbiVersion.CURRENT) {
     override val klib get() = error("'klib' is not available for ${this::class.java}")
 
     override fun contains(idSig: IdSignature): Boolean = false // TODO:

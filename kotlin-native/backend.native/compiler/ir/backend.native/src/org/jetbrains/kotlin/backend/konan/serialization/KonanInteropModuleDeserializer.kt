@@ -69,7 +69,7 @@ internal class KonanInteropModuleDeserializer(
         override val klib: KotlinLibrary,
         private val isLibraryCached: Boolean,
         private val linker: KonanIrLinker,
-) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
     init {
         require(klib.isCInteropLibrary())
     }
