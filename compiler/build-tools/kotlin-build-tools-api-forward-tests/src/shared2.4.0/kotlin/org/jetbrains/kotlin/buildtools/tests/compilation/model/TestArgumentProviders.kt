@@ -17,10 +17,11 @@ import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.util.stream.Stream
 
 class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 
@@ -43,7 +44,7 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
 }
 
 class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 
@@ -63,7 +64,7 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
 }
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 
@@ -81,7 +82,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
 }
 
 class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 
@@ -102,7 +103,7 @@ class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsP
 }
 
 class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 
@@ -124,7 +125,7 @@ class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : Arguments
 
 
 class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 

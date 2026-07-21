@@ -23,6 +23,7 @@ import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor
 import org.junit.jupiter.engine.discovery.DiscoverySelectorResolver
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext
+import org.junit.jupiter.engine.execution.LauncherStoreFacade
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory.createThrowableCollector
 import org.junit.platform.engine.*
 import org.junit.platform.engine.reporting.ReportEntry
@@ -87,7 +88,11 @@ class CompilerTestGroupingTestEngine : TestEngine {
     override fun execute(request: ExecutionRequest) {
         ExecutionContext(request.configurationParameters).use { ctx ->
             val synchronizedListener = SynchronizedEngineExecutionListener(request.engineExecutionListener)
-            val baseContext = JupiterEngineExecutionContext(synchronizedListener, getJupiterConfiguration(request))
+            val baseContext = JupiterEngineExecutionContext(
+                synchronizedListener,
+                getJupiterConfiguration(request),
+                LauncherStoreFacade(request.store),
+            )
             runBlocking(ctx.dispatcher) {
                 traverseClasses(request.rootTestDescriptor, baseContext) { context, classDescriptor ->
                     launch {
@@ -306,7 +311,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         val configuration = CachingJupiterConfiguration(
             DefaultJupiterConfiguration(
                 discoveryRequest.configurationParameters,
-                discoveryRequest.outputDirectoryProvider
+                discoveryRequest.outputDirectoryCreator
             )
         )
         val engineDescriptor = JupiterEngineDescriptor(uniqueId, configuration)

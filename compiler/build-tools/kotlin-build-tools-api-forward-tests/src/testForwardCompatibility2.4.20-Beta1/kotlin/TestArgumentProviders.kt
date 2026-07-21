@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.util.stream.Stream
 import kotlin.collections.map
 import kotlin.to
@@ -19,7 +20,7 @@ typealias CompilerExecutionStrategyConfiguration = Pair<KotlinToolchains, Execut
 
 class DefaultForwardCompatibilityExecutionPolicyAgnosticCompilationTestArgumentProvider :
     ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().map { Arguments.of(it) }.stream()
     }
 

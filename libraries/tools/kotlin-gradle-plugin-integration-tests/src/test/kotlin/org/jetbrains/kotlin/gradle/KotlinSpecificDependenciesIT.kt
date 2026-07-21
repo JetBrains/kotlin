@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.*
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.nio.file.Path
 import java.util.*
 import java.util.stream.Stream
@@ -786,9 +787,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     internal class GradleAndTestFrameworksArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(
+            parameters: ParameterDeclarations,
             context: ExtensionContext,
         ): Stream<out Arguments> {
-            val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+            val gradleVersions = super.provideArguments(parameters, context).map { it.get().first() as GradleVersion }.toList()
             return testFrameworks
                 .flatMap { testFramework ->
                     gradleVersions.map { it to testFramework }
