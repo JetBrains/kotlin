@@ -176,8 +176,6 @@ abstract class BasicIrModuleDeserializer(
         return fileDeserializer.symbolDeserializer.signatureDeserializer
     }
 
-    override val kind get() = IrModuleDeserializerKind.DESERIALIZED
-
     private inner class ModuleDeserializationState {
         /**
          * This is the queue of files containing top-level declarations to be deserialized. This is
