@@ -15,7 +15,7 @@ dependencies {
     testImplementation(kotlinStdlib())
 
     testImplementation(kotlinTest())
-    testCompileOnly(kotlinTest("junit"))
+    testCompileOnly(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
