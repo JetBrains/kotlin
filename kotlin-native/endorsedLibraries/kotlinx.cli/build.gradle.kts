@@ -40,7 +40,7 @@ kotlin {
             // JVM-specific tests and their dependencies:
             compilations["test"].defaultSourceSet {
                 dependencies {
-                    implementation(kotlinTest("junit"))
+                    implementation(kotlinTest("junit5"))
                 }
             }
 
@@ -54,4 +54,8 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
