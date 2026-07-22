@@ -2813,6 +2813,18 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("sourceMapEmbedSources.args")
+    public void testSourceMapEmbedSources() {
+      run("sourceMapEmbedSources.args");
+    }
+
+    @Test
+    @TestMetadata("sourceMapEmbedSourcesNever.args")
+    public void testSourceMapEmbedSourcesNever() {
+      run("sourceMapEmbedSourcesNever.args");
+    }
+
+    @Test
     @TestMetadata("wasmExtraHelp.args")
     public void testWasmExtraHelp() {
       run("wasmExtraHelp.args");

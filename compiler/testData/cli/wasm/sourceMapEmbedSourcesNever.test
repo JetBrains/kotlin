@@ -1,0 +1,7 @@
+// KT-87734: -source-map-embed-sources=never is accepted for Kotlin/Wasm
+// (the Kotlin Gradle plugin passes it by default for wasm targets) and
+// keeps source text out of the source map.
+// EXISTS: out.wasm
+// CONTAINS: out.wasm.map, "sourceMapEmbedSources.kt"
+// CONTAINS: out.wasm.map, "sourcesContent":[null
+// NOT_CONTAINS: out.wasm.map, var log
