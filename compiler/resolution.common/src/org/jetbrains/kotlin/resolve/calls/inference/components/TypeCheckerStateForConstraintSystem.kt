@@ -31,7 +31,10 @@ abstract class TypeCheckerStateForConstraintSystem(
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
-    abstract fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean)
+    abstract fun addUpperConstraint(
+        typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker,
+        isNoInfer: Boolean, isFromFlexible: Boolean = false,
+    )
 
     abstract fun addLowerConstraint(
         typeVariable: TypeConstructorMarker,
@@ -428,12 +431,16 @@ abstract class TypeCheckerStateForConstraintSystem(
     ): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
+        var isFromFlexible = false
+
         val simplifiedSuperType = if (typeVariable.isFlexible()) {
             if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable) {
                 // This is the legacy behavior typically disabled in K2 because the LF is turned off and has no sinceVersion.
                 superType.withNullability(true)
             } else if (superType.isRigidType()) {
-                createTrivialFlexibleTypeOrSelf(superType)
+                createTrivialFlexibleTypeOrSelf(superType).also {
+                    isFromFlexible = it is FlexibleTypeMarker
+                }
             } else {
                 superType
             }
@@ -443,7 +450,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             superType
         }
 
-        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer)
+        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer, isFromFlexible)
 
         if (typeVariableLowerBound.isMarkedNullable()) {
             if (simplifiedSuperType.anyBound(::isMyTypeVariable)) {
