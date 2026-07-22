@@ -43,6 +43,7 @@ internal var IrSuspensionPoint.visibleVariablesAtSuspensionPoint: List<IrVariabl
 /**
  * Saves/restores coroutines variables before/after suspension.
  */
+@PhasePrerequisites(NativeSuspendFunctionsLowering::class)
 internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
     private val context = generationState.context
     private val irFactory = context.irFactory
