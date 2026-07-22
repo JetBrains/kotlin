@@ -14,35 +14,37 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.fir.EqualsOverrideContract.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 
 /**
  * The entries are ordered from least trustworthy to most trustworthy.
  * `A` is more trustworthy than `B` iff the set of cases where we can rely on `A`
  * is a superset of that of `B`.
+ *
+ * The values determine how sure we are that implementation of `equals` which is called
+ * for a given class in LHS is "primitive", where primitive means that `returns(true)` implies
+ * that runtime types of LHS and RHS are the same. For example, final classes that don't override
+ * `equals` from `Any` have primitive `equals`.
+ *
+ * Note that for primitve `equals` we can deduce both
+ *  - `returns(true) implies (RHS is staticTypeOf(LHS))`
+ *  - `returns(true) implies (LHS is staticTypeOf(RHS))`
  */
 enum class EqualsOverrideContract {
     UNKNOWN,
     TRUSTED_FOR_EXHAUSTIVENESS,
-
-    /**
-     * You can think of it as:
-     * ```
-     * contract {
-     *     returns(true) implies (other is SelfType)
-     *     returns(false) implies (other !is SelfLiteralType)
-     * }
-     * ```
-     */
     SAFE_FOR_SMART_CAST,
 }
 
@@ -52,104 +54,122 @@ class FirEqualsOverrideContractCalculator(
 ) : SessionAndScopeSessionHolder {
 
     fun computeFor(type: ConeKotlinType): EqualsOverrideContract {
-        return computeForImpl(collectSymbolsForType(type, session), mutableSetOf())
+        // the best contract over intersection components: one successful component is enough
+        return collectSymbolsForType(type, session).maxOfOrNull { it.computeMinContractInSealedSubtree(mutableSetOf()) } ?: UNKNOWN
     }
 
-    private fun computeForImpl(
-        symbolsForType: List<FirClassSymbol<*>>,
-        visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
+    private fun FirClassSymbol<*>.computeMinContractInSealedSubtree(
+        symbolsAlreadyCheckedForExpect: MutableSet<FirClassifierSymbol<*>>
     ): EqualsOverrideContract {
-        val subtypesContract = symbolsForType
-            .maxOfOrNull { it.computeMinContractInSealedSubtree(visitedSymbols) }
-            ?: EqualsOverrideContract.UNKNOWN
+        return when {
+            isFinal -> computeOwnContract(symbolsAlreadyCheckedForExpect)
+            isSealed -> {
+                val ownContract = computeOwnContract(symbolsAlreadyCheckedForExpect).also { if (it == UNKNOWN) return it }
+                if (this !is FirRegularClassSymbol) return UNKNOWN
 
-        if (subtypesContract == EqualsOverrideContract.UNKNOWN) {
-            return EqualsOverrideContract.UNKNOWN
+                val sealedInheritorsContract =
+                    fir.getSealedClassInheritors(session).map {
+                        it.toSymbol() as? FirClassSymbol<*> ?: return UNKNOWN
+                    }.minOfOrNull { inheritor ->
+                        inheritor.computeMinContractInSealedSubtree(symbolsAlreadyCheckedForExpect).also { if (it == UNKNOWN) return it }
+                    }
+
+                minOf(
+                    TRUSTED_FOR_EXHAUSTIVENESS, // We could leave `SAFE_FOR_SMART_CAST`, but we choose to be conservative.
+                    ownContract,
+                    sealedInheritorsContract ?: SAFE_FOR_SMART_CAST,
+                )
+            }
+            else -> UNKNOWN
+        }
+    }
+
+    // Several notes:
+    //
+    // Strictly speaking, the default `equals()` of non-`data` objects, while safe for smartcasts,
+    // should not be trusted for exhaustiveness: if another instance of the same object pops up at
+    // runtime, it will not be equal to the instance denoted by the fqName of the object.
+    // But we choose not to emit any diagnostic, because sometimes "just adding `data` to the object"
+    // is not always possible, and we believe the probability of getting a second instance is low.
+    // Also, `object`s are an example of why `EqualsOverrideContract` is not really a total order.
+    //
+    // When the class belongs to a different module, "equals" contract might be changed without re-compilation
+    // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
+    // when different modules belong to a single project, so they're totally safe (see KT-50534)
+    private fun FirClassSymbol<*>.computeOwnContract(
+        symbolsAlreadyCheckedForExpect: MutableSet<FirClassifierSymbol<*>>,
+    ): EqualsOverrideContract {
+        if (hasExpectSupertype(symbolsAlreadyCheckedForExpect)) return UNKNOWN
+        if (isSmartcastPrimitive(classId)) return SAFE_FOR_SMART_CAST
+        when (classId) {
+            // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
+            StandardClassIds.Float, StandardClassIds.Double -> return UNKNOWN
         }
 
+        fun processor(function: FirNamedFunctionSymbol): EqualsOverrideContract {
+            if (function.isSubstitutionOrIntersectionOverride) {
+                return if (function is FirIntersectionCallableSymbol) {
+                    function.intersections
+                        .filterIsInstance<FirNamedFunctionSymbol>()
+                        .minOfOrNull { processor(it) } ?: SAFE_FOR_SMART_CAST
+                } else {
+                    processor(function.unwrapSubstitutionOverrides())
+                }
+            }
+
+            val declaringClassSymbol = function.getContainingClassSymbol() ?: return SAFE_FOR_SMART_CAST
+            // kotlin.Enum has `equals()`, but we know it's reasonable
+            if (declaringClassSymbol.classId == StandardClassIds.Any || declaringClassSymbol.classId == StandardClassIds.Enum) return SAFE_FOR_SMART_CAST
+            if (declaringClassSymbol !is FirClassSymbol) return UNKNOWN
+
+            return if (declaringClassSymbol.isInterface) {
+                SAFE_FOR_SMART_CAST
+            } else if (function.isGenerated || declaringClassSymbol.isTrustedDependency) {
+                // 1. If the symbol comes from a dependency, we decide to trust that it's sane.
+                // This is to avoid upsetting users who use carefully verified classes from a library,
+                // and because we can no longer check its origin.
+                // 2. We could conclude `SAFE_FOR_SMART_CAST` from `isGenerated`, but we choose to be conservative.
+                TRUSTED_FOR_EXHAUSTIVENESS
+            } else {
+                UNKNOWN
+            }
+        }
+
+        var minContract = SAFE_FOR_SMART_CAST
+
+        unsubstitutedScope(withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS)
+            .processFunctionsByName(OperatorNameConventions.EQUALS) {
+                if (it.isEquals(session)) {
+                    minContract = minOf(minContract, processor(it))
+                }
+            }
+
+        return minContract
+    }
+
+    private fun FirClassSymbol<*>.hasExpectSupertype(symbolsAlreadyCheckedForExpect: MutableSet<FirClassifierSymbol<*>>): Boolean {
         val superTypes = lookupSuperTypes(
-            symbolsForType,
+            listOf(this),
             lookupInterfaces = false,
             deep = true,
             session,
             substituteTypes = false,
-            visitedSymbols = visitedSymbols,
+            visitedSymbols = symbolsAlreadyCheckedForExpect,
         )
-        val superClassSymbols = superTypes.mapNotNull { it.fullyExpandedType().toRegularClassSymbol() }
-        val supertypesContract = superClassSymbols.minOfOrNull { it.computeOwnContract() }
-            ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
+        symbolsAlreadyCheckedForExpect.add(this)
+        if (isExpect) return true
 
-        return minOf(subtypesContract, supertypesContract)
-    }
-
-    private fun FirClassSymbol<*>.computeMinContractInSealedSubtree(
-        visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
-    ): EqualsOverrideContract {
-        fun FirClassSymbol<*>.computeInheritorsContract(): EqualsOverrideContract {
-            if (this !is FirRegularClassSymbol) return EqualsOverrideContract.UNKNOWN
-
-            val inheritors = fir.getSealedClassInheritors(session).map {
-                it.toSymbol() as? FirClassSymbol<*> ?: return EqualsOverrideContract.UNKNOWN
-            }
-
-            // Note that `sealed class` variants may have additional supertypes
-            return inheritors.minOfOrNull { computeForImpl(listOf(it), visitedSymbols) }
-                ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
+        for (superType in superTypes) {
+            if (superType.toClassSymbol()?.isExpect == true) return true
         }
 
-        return when {
-            isFinal -> computeOwnContract()
-            isSealed -> minOf(
-                EqualsOverrideContract.TRUSTED_FOR_EXHAUSTIVENESS, // We could leave `SAFE_FOR_SMART_CAST`, but we choose to be conservative.
-                computeOwnContract(),
-                computeInheritorsContract(),
-            )
-            else -> EqualsOverrideContract.UNKNOWN
-        }
-    }
-
-    private fun FirClassSymbol<*>.computeOwnContract(): EqualsOverrideContract {
-        if (resolvedStatus.isExpect) return EqualsOverrideContract.UNKNOWN
-        if (isSmartcastPrimitive(classId)) return EqualsOverrideContract.SAFE_FOR_SMART_CAST
-        when (classId) {
-            StandardClassIds.Any -> return EqualsOverrideContract.SAFE_FOR_SMART_CAST
-            // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
-            StandardClassIds.Float, StandardClassIds.Double -> return EqualsOverrideContract.UNKNOWN
-            // kotlin.Enum has `equals()`, but we know it's reasonable
-            StandardClassIds.Enum -> return EqualsOverrideContract.SAFE_FOR_SMART_CAST
-        }
-
-        // When the class belongs to a different module, "equals" contract might be changed without re-compilation
-        // But since we had such behavior in FE1.0, it might be too strict to prohibit it now, especially once there's a lot of cases
-        // when different modules belong to a single project, so they're totally safe (see KT-50534)
-
-        val ownerTag = this.toLookupTag()
-        val declaredEquals = this.unsubstitutedScope(
-            withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS
-        ).getFunctions(OperatorNameConventions.EQUALS).find {
-            !it.isSubstitutionOrIntersectionOverride && it.isEquals(session) && ownerTag.isRealOwnerOf(it)
-        }
-
-        // If the symbol comes from a dependency, we decide to trust that it's sane.
-        // This is to avoid upsetting users who use carefully verified classes from a library,
-        // and because we can no longer check its origin.
-        val isTrustedDependency = (isData || isInlineOrValue || classKind.isObject) && moduleData != session.moduleData
-
-        return when {
-            // Strictly speaking, the default `equals()` of non-`data` objects, while safe for smartcasts,
-            // should not be trusted for exhaustiveness: if another instance of the same object pops up at
-            // runtime, it will not be equal to the instance denoted by the fqName of the object.
-            // But we choose not to emit any diagnostic, because sometimes "just adding `data` to the object"
-            // is not always possible, and we believe the probability of getting a second instance is low.
-            // Also, `object`s are an example of why `EqualsOverrideContract` is not really a total order.
-            declaredEquals == null -> EqualsOverrideContract.SAFE_FOR_SMART_CAST
-            // We could conclude `SAFE_FOR_SMART_CAST` from `isGenerated`, but we choose to be conservative.
-            declaredEquals.isGenerated || isTrustedDependency -> EqualsOverrideContract.TRUSTED_FOR_EXHAUSTIVENESS
-            else -> EqualsOverrideContract.UNKNOWN
-        }
+        return false
     }
 
     private val FirNamedFunctionSymbol.isGenerated: Boolean get() = origin.generatedAnyMethod
+
+    private val FirClassSymbol<*>.isTrustedDependency: Boolean
+        get() = (isData || isInlineOrValue || classKind.isObject) && moduleData != session.moduleData
 }
 
 /**

@@ -17,7 +17,7 @@ fun <T> util(a: (T) -> Unit, b: (T) -> Unit, c: (T) -> Unit) = Unit
 fun test(x: Any?) {
     util({ it: B<CharSequence> -> }, { it: C<*> -> }, ) { it ->
         if (<!DEBUG_INFO_EXPRESSION_TYPE("example.B<kotlin.CharSequence> & example.C<*>")!>it<!> == x) {
-            x.c()
+            x.<!UNRESOLVED_REFERENCE!>c<!>()
         }
     }
 }
