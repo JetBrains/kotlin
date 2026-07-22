@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-57513, KT-58169
+// LANGUAGE: -StrictEquals
 
 fun string(foo: Any) {
     val string = ""

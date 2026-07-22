@@ -1,5 +1,6 @@
 // API_VERSION: 2.4
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -StrictEquals
 
 abstract class A {
     override fun equals(<!UNSUPPORTED_FEATURE!>@<!API_NOT_AVAILABLE!>EqualityBound<!>(A::class)<!> other: Any?): Boolean = true
