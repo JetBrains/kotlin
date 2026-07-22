@@ -35,7 +35,9 @@ interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescripto
 }
 
 @K1Deprecation
-interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
+interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor {
+    val companionExtensionClass: ClassDescriptor?
+}
 
 @K1Deprecation
 class DeserializedSimpleFunctionDescriptor(
@@ -56,6 +58,8 @@ class DeserializedSimpleFunctionDescriptor(
         source ?: SourceElement.NO_SOURCE
     ) {
 
+    override var companionExtensionClass: ClassDescriptor? = null
+
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
         original: FunctionDescriptor?,
@@ -69,6 +73,7 @@ class DeserializedSimpleFunctionDescriptor(
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         ).also {
             it.setHasStableParameterNames(hasStableParameterNames())
+            it.companionExtensionClass = companionExtensionClass
         }
     }
 }
@@ -97,6 +102,8 @@ class DeserializedPropertyDescriptor(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
 ) {
+    override var companionExtensionClass: ClassDescriptor? = null
+
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             newModality: Modality,
@@ -109,7 +116,9 @@ class DeserializedPropertyDescriptor(
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
             isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
-        )
+        ).also {
+            it.companionExtensionClass = companionExtensionClass
+        }
     }
 
     override fun isExternal() = Flags.IS_EXTERNAL_PROPERTY.get(proto.flags)
@@ -154,6 +163,8 @@ class DeserializedClassConstructorDescriptor(
     override fun isTailrec(): Boolean = false
 
     override fun isSuspend(): Boolean = false
+
+    override val companionExtensionClass: ClassDescriptor? get() = null
 }
 
 @K1Deprecation
