@@ -103,6 +103,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirAssignmentTypeMismatchChecker,
         FirInlineBodyVariableAssignmentChecker,
         FirParenthesizedLhsVariableAssignmentChecker,
+        FirStaticVariableAssignmentChecker
     )
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker> = setOf(

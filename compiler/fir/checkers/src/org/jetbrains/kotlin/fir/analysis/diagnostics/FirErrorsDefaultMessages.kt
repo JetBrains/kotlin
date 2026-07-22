@@ -693,6 +693,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
@@ -718,6 +720,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REASSIGNED_INSTANCED_STATIC_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REASSIGNED_STATIC_VAR_WITH_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
@@ -4020,6 +4024,22 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
+        )
+        map.put(
+            REASSIGNED_INSTANCED_STATIC_VAR,
+            "Reassignment of the static variable with an instance type, which can lead to static initialization issues when when invoking its instance functions which can create dependencies on other singletons."
+        )
+        map.put(
+            REASSIGNED_STATIC_VAR_WITH_SETTER,
+            "Reassignment of the static variable with a custom setter, which can lead to static initialization issues during its invocation as it can create dependencies on other singletons."
+        )
+        map.put(
+            POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR,
+            "Possible reassignment of the static variable with an instance type, which can lead to static initialization issues when invoking its instance functions which can create dependencies on other singletons."
+        )
+        map.put(
+            POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER,
+            "Possible reassignment of the static variable with a custom setter, which can lead to static initialization issues during its invocation as it can create dependencies on other singletons."
         )
     }
 }

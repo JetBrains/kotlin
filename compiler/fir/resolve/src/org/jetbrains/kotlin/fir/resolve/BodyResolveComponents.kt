@@ -51,6 +51,8 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val inlineFunction: FirFunction?
     abstract val context: BodyResolveContext
     abstract val resolutionContext: ResolutionContext
+
+    abstract val directClassInheritorsResolver: FirDirectClassInheritorsResolver
 }
 
 // --------------------------------------- Utils ---------------------------------------

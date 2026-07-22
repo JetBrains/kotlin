@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.getValue
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val context: BodyResolveContext
@@ -167,5 +168,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val resolutionContext: ResolutionContext
             get() = transformer.resolutionContext
+
+        override val directClassInheritorsResolver: FirDirectClassInheritorsResolver by lazy(LazyThreadSafetyMode.NONE) {
+            FirDirectClassInheritorsResolver(session)
+        }
     }
 }

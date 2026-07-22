@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
@@ -25,12 +29,22 @@ class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
 
 @AdapterForResolveProcessor
 class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
-    private val transformer = FirBodyResolveTransformer(
+    private val transformer = object : FirBodyResolveTransformer(
         session,
         phase = FirResolvePhase.BODY_RESOLVE,
         implicitTypeOnly = false,
         scopeSession = scopeSession
-    )
+    ) {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
+            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver.resolveRegularClass(this) }
+
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
+            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver.resolveTypeAlias(this) }
+
+        override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
+            super.transformAnonymousObject(anonymousObject, data)
+                .apply { if (anonymousObject.classKind.isEnumEntry) components.directClassInheritorsResolver.resolveAnonymousObject(this) }
+    }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element

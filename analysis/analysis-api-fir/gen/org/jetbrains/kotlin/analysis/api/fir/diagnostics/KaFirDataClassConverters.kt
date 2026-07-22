@@ -1780,6 +1780,12 @@ private fun KaDiagnosticConverterBuilder.addConversions35() {
             token,
         )
     }
+    add(FirErrors.REASSIGNED_STATIC_VAR_WITH_SETTER) { firDiagnostic ->
+        ReassignedStaticVarWithSetterImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions36() {
@@ -1999,6 +2005,12 @@ private fun KaDiagnosticConverterBuilder.addConversions40() {
     add(FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS) { firDiagnostic ->
         InefficientEqualsOverridingInValueClassImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER) { firDiagnostic ->
+        PossiblyReassignedStaticVarWithSetterImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2463,6 +2475,12 @@ private fun KaDiagnosticConverterBuilder.addConversions53() {
     }
     add(FirErrors.REDUNDANT_ELSE_IN_WHEN) { firDiagnostic ->
         RedundantElseInWhenImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REASSIGNED_INSTANCED_STATIC_VAR) { firDiagnostic ->
+        ReassignedInstancedStaticVarImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -3617,6 +3635,12 @@ private fun KaDiagnosticConverterBuilder.addConversions80() {
     }
     add(FirErrors.COMPANION_BLOCK_NESTED) { firDiagnostic ->
         CompanionBlockNestedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR) { firDiagnostic ->
+        PossiblyReassignedInstancedStaticVarImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

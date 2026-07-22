@@ -5792,6 +5792,26 @@ internal class CompanionExtensionNullableReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
 
+internal class ReassignedInstancedStaticVarImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReassignedInstancedStaticVar
+
+internal class ReassignedStaticVarWithSetterImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReassignedStaticVarWithSetter
+
+internal class PossiblyReassignedInstancedStaticVarImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyReassignedInstancedStaticVar
+
+internal class PossiblyReassignedStaticVarWithSetterImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyReassignedStaticVarWithSetter
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

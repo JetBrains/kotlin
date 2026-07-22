@@ -1142,5 +1142,11 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_RECEIVER_ANNOTATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_RECEIVER_ANNOTATED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
+    // Static Var Reassignment
+    val REASSIGNED_INSTANCED_STATIC_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("REASSIGNED_INSTANCED_STATIC_VAR", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val REASSIGNED_STATIC_VAR_WITH_SETTER: KtDiagnosticFactory0 = KtDiagnosticFactory0("REASSIGNED_STATIC_VAR_WITH_SETTER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER: KtDiagnosticFactory0 = KtDiagnosticFactory0("POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

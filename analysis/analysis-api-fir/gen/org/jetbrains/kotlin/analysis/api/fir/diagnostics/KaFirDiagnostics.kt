@@ -4825,6 +4825,22 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionExtensionNullableReceiver::class
     }
 
+    interface ReassignedInstancedStaticVar : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ReassignedInstancedStaticVar::class
+    }
+
+    interface ReassignedStaticVarWithSetter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ReassignedStaticVarWithSetter::class
+    }
+
+    interface PossiblyReassignedInstancedStaticVar : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PossiblyReassignedInstancedStaticVar::class
+    }
+
+    interface PossiblyReassignedStaticVarWithSetter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PossiblyReassignedStaticVarWithSetter::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

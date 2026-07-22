@@ -599,6 +599,12 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             checkAnnotationCallIsResolved(symbol, annotationCall)
             return annotationCall
         }
+
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
+            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver.resolveRegularClass(this) }
+
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
+            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver.resolveTypeAlias(this) }
     }
 
     /**
@@ -692,6 +698,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        transformer.components.directClassInheritorsResolver.resolveRegularClass(target)
     }
 
     private inline fun <T : FirElementWithResolveState> resolveMembersForControlFlowGraph(
@@ -830,8 +837,8 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
+            is FirTypeAlias -> transformer.components.directClassInheritorsResolver.resolveTypeAlias(target)
             is FirDanglingModifierList,
-            is FirTypeAlias,
             is FirReplSnippet,
                 -> {
                 // No bodies here

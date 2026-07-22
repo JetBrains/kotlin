@@ -564,7 +564,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     override fun transformAnonymousObject(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode,
-    ): FirStatement = declarationTransformation(
+    ): FirAnonymousObject = declarationTransformation(
         anonymousObject,
         data,
         FirDeclarationsResolveTransformer::transformAnonymousObject,

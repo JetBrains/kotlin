@@ -2452,6 +2452,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
+
+    val STATIC_VAR_REASSIGNMENT by object : DiagnosticGroup("Static Var Reassignment") {
+        val REASSIGNED_INSTANCED_STATIC_VAR by warning<PsiElement>()
+        val REASSIGNED_STATIC_VAR_WITH_SETTER by warning<PsiElement>()
+        val POSSIBLY_REASSIGNED_INSTANCED_STATIC_VAR by warning<PsiElement>()
+        val POSSIBLY_REASSIGNED_STATIC_VAR_WITH_SETTER by warning<PsiElement>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
