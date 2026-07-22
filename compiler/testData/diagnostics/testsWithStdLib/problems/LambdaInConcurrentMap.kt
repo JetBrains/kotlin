@@ -12,7 +12,7 @@ fun main() {
     val map = ConcurrentHashMap<String, Int>()
     map.forEachValue { v ->
         // expected v to be `Int` here, got `Int!`
-        v?.plus(2)
+        v<!UNNECESSARY_SAFE_CALL!>?.<!>plus(2)
         v.minus(2)
     }
 }

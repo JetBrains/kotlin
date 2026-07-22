@@ -13,8 +13,8 @@ fun foo() {
     concurrentHash.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     // Flexible types
-    concurrent.remove(null, 1)
-    concurrent.remove(null, null)
+    concurrent.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, 1)
+    concurrent.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     // @PurelyImplements
     concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, 1)

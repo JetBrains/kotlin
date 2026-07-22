@@ -23,8 +23,10 @@ object FakePureImplementationsProvider {
         StandardClassIds.MutableSet implementedWith fqNameListOf("java.util.HashSet", "java.util.TreeSet", "java.util.LinkedHashSet")
         StandardClassIds.MutableMap implementedWith fqNameListOf(
             "java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
-            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap"
+            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
+            "java.util.concurrent.ConcurrentMap"
         )
+        ClassId.topLevel(FqName("java.util.concurrent.ConcurrentMap")) implementedWith fqNameListOf("java.util.concurrent.ConcurrentHashMap")
         ClassId.topLevel(FqName("java.util.function.Function")) implementedWith fqNameListOf("java.util.function.UnaryOperator")
         ClassId.topLevel(FqName("java.util.function.BiFunction")) implementedWith fqNameListOf("java.util.function.BinaryOperator")
     }

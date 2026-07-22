@@ -3,7 +3,7 @@ FILE: LambdaInConcurrentMap.kt
     }
     public final fun main(): R|kotlin/Unit| {
         lval map: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/Int>| = R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String!|, R|kotlin/Int!|>()
-        R|<local>/map|.R|/forEachValue|<R|kotlin/String!|, R|kotlin/Int!|>(<L> = forEachValue@fun <anonymous>(v: R|kotlin/Int!|): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/map|.R|/forEachValue|<R|kotlin/String|, R|kotlin/Int|>(<L> = forEachValue@fun <anonymous>(v: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/v|?.{ $subj$.R|kotlin/Int.plus|(Int(2)) }
             R|<local>/v|.R|kotlin/Int.minus|(Int(2))
         }
