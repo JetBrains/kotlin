@@ -35,8 +35,18 @@ already-resolved supertype chains transitively when resolving inherited inner cl
 
 **Why callbacks**: Allows java-direct to handle its own resolution without affecting PSI-based or javac-wrapper implementations.
 
-### 3. Hybrid Class Finder
-`CombinedJavaClassFinder` tries source class finder first, falls back to binary class finder for JDK/library classes.
+### 3. Single-Sided Class Finders
+Every FIR session gets a `JavaClassFinder` that answers for exactly one side, so no use site has to
+ask for "only the source half": `JavaClassFinderOverAstImpl` for source sessions,
+`JavaClassFinderOverBinaryIndex` for binary sessions. `JavaDirectFacadeBuilder` picks one by scope
+identity and wraps it in a `FirJavaFacade`.
+
+The dispatch identifies the **source** scope (`scope === javaSourcesScope`, threaded from
+`JvmFrontendPipelinePhase.prepareJvmSessions`) and treats every other scope as binary, serving it
+with a `JavaClassFinderOverBinaryIndex` over that very scope. This fails safe: a scope the builder
+has never seen (IC output, an HMPP fragment classpath) can never be answered from sources. Binary
+finders are memoized in an `IdentityHashMap` keyed by the scope object, so the same scope reuses one
+finder and its caches, while distinct scopes stay isolated.
 
 ### 4. Resolution Context Pattern
 `JavaResolutionContext` encapsulates all resolution data (package, imports, type parameters, containing class). Passed through AST nodes. Use `withTypeParameters()`, `withContainingClass()` to extend scope.
@@ -79,15 +89,16 @@ Java classes have implicit inheritance:
 |------|---------|
 | `parse.kt` | KMP parser invocation |
 | `JavaLightTree.kt` | Flat-array AST (`JavaLightNode` value class), `childrenCache` memoizes child lists |
-| `JavaSourceFileReader.kt` | VFS-backed file reads |
 
 ### Indexing & class finding
 | File | Purpose |
 |------|---------|
 | `JavaClassFinderOverAstImpl.kt` | Source class finder, on-demand lookups over a built index |
-| `JavaSourceIndex.kt` | Source-tree indexing (files per package, class names per file) |
-| `CombinedJavaClassFinder.kt` | Source-first, binary-fallback hybrid |
-| `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder wiring |
+| `JavaPackageIndexer.kt` | Source-tree indexing (files per package, class names per file) |
+| `JavaPackageInfoIndexer.kt` | `package-info.java` parsing and package-annotation aggregation |
+| `JavaClassCache.kt` | `ClassId → JavaClass` memoization and on-demand file parsing |
+| `JavaClassFinderOverBinaryIndex.kt` | Binary class finder over `JvmDependenciesIndex` + ASM |
+| `JavaDirectFacadeBuilder.kt` | Per-session finder selection and `FirJavaFacade` wiring |
 
 ### Resolution
 | File | Purpose |
@@ -96,14 +107,14 @@ Java classes have implicit inheritance:
 | `JavaScopeResolver.kt` | Local-class / type-parameter scope lookup (`findLocalClassCache`) |
 | `JavaImportResolver.kt` | Single-type + on-demand import handling, JLS priority |
 | `JavaInheritedClassResolver.kt` | Inherited-inner-class resolution, aggregated-inner handling |
-| `JavaSupertypeGraph.kt` | Cross-file supertype graph, `supertypeCache`, `inheritedInnerClassesCache` |
+| `JavaTypeResolver.kt` | Name→`ClassId` ladder, `directSupertypeClassIds` (the single supertype walk) |
 
 ### Utilities
-| File | Purpose |
-|------|---------|
-| `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape) |
+| File | Purpose                                                        |
+|------|----------------------------------------------------------------|
+| `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape)    |
 | `ConstantEvaluator.kt` | Java field initializer constant evaluation (JLS §15.29 subset) |
-| `utils.kt` | Misc shared helpers, `computeTypeParameters` factory |
+| `utils.kt` | Misc shared helpers, `computeTypeParameters` factory, `readJavaSourceFileText` — UTF-8 `.java` file reads |
 
 ## Reference Implementations
 

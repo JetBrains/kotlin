@@ -31,7 +31,11 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.IdentityHashMap
 
 /**
- * Injects java-direct into FIR JVM sessions via `createJavaFacade`.
+ * Injects java-direct into FIR JVM sessions via `createJavaFacade` when `useJavaDirect` is set.
+ *
+ * Every session gets a single-sided [JavaClassFinder]. The source scope is the identified case
+ * (`scope === javaSourcesScope` reads `.java` files through [JavaClassFinderOverAstImpl]); every
+ * other scope is binary and is served by a [JavaClassFinderOverBinaryIndex] over that very scope.
  */
 fun createJavaDirectJavaFacadeBuilder(
     configuration: CompilerConfiguration,
@@ -49,13 +53,15 @@ fun createJavaDirectJavaFacadeBuilder(
             }
             .toList()
 
+    @Suppress("UnstableApiUsage")
     val virtualFileFinderFactory =
         VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
 
     val moduleImportedPackages = moduleImportedPackages(projectEnvironment)
     val perfManager = configuration.perfManager
 
-    // Indexed by search scope identity.
+    // Keyed by scope identity: distinct binary scopes must get distinct finders, and the same scope
+    // object must reuse its finder (and hence its caches).
     val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
 
     return { _, session, moduleData, scope ->
@@ -77,6 +83,11 @@ private fun moduleImportedPackages(projectEnvironment: VfsBasedProjectEnvironmen
     return JavaModuleImportedPackagesOverModuleGraph(moduleFinder)
 }
 
+/**
+ * A [JavaClassFinderOverBinaryIndex] over [scope], or an empty finder when no CLI
+ * `JvmDependenciesIndex` is available.
+ */
+@Suppress("UnstableApiUsage")
 private fun binaryClassFinder(
     virtualFileFinderFactory: CliVirtualFileFinderFactory?,
     scope: AbstractProjectFileSearchScope,
@@ -90,6 +101,7 @@ private fun binaryClassFinder(
     )
 }
 
+/** Answers nothing; used when the CLI dependencies index is unavailable. */
 private object EmptyJavaClassFinder : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? = null
 

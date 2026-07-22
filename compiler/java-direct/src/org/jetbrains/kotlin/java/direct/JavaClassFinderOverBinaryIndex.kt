@@ -24,12 +24,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Binary-side [JavaClassFinder] over the CLI [JvmDependenciesIndex], used by the java-direct library session.
- *
- * [scope] is the part of the binary classpath of the compilation this session may see. It is different from the whole classpath
- * during an incremental compilation only: the output directory of the previous build is the scope of the precompiled binaries
- * session and is subtracted from the scope of the library session. See `IncrementalJavaClassFromPreviousOutputTest` for more details.
+ * Binary-side [JavaClassFinder] over the CLI [JvmDependenciesIndex], used by the java-direct
+ * library session. Kotlin `@Metadata` classes are filtered out by
+ * [org.jetbrains.kotlin.fir.java.FirJavaFacade.findClass], which owns every read of this finder.
  */
+@Suppress("UnstableApiUsage")
 class JavaClassFinderOverBinaryIndex(
     private val index: JvmDependenciesIndex,
     private val scope: GlobalSearchScope,
@@ -43,12 +42,12 @@ class JavaClassFinderOverBinaryIndex(
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = HashMap()
 
-    private val topLevelClassFiles: MutableMap<FqName, MutableMap<Name, Collection<VirtualFile>>> = HashMap()
+    private val topLevelClassesCache: MutableMap<FqName, MutableMap<Name, TopLevelClassFiles>> = HashMap()
 
     private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
-        findClassImpl(request, visibleScope = scope)
+        findClassImpl(request, applyScopeFilter = true)
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> =
         listOfNotNull(findClass(request))
@@ -91,12 +90,26 @@ class JavaClassFinderOverBinaryIndex(
         return found
     }
 
-    private fun findClassImpl(request: JavaClassFinder.Request, visibleScope: GlobalSearchScope): JavaClass? {
+    /** Cross-references from bytecode must resolve against the full classpath, not only [scope]. */
+    private fun findClassWithoutScopeFilter(request: JavaClassFinder.Request): JavaClass? =
+        findClassImpl(request, applyScopeFilter = false)
+
+    private fun findClassImpl(request: JavaClassFinder.Request, applyScopeFilter: Boolean): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
-        val candidates = findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
-        val virtualFile = candidates.firstOrNull { it in visibleScope } ?: return null
+        // Keyed by the two parts of the outermost class name as they already exist in `classId`.
+        // An `FqName` of that class would be a nicer single key, but building it costs a string
+        // concatenation, an `FqName`, an `FqNameUnsafe`, a `pathSegments()` list and a hash of a
+        // fresh string on *every* lookup, and lookups outnumber misses ~7:1 (see
+        // `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §12).
+        val packageFqName = classId.packageFqName
+        val topLevelName = classId.relativeClassName.topLevelName()
+        val topLevelClassFiles = topLevelClassesCache.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
+            findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
+        }
+        val virtualFile = (if (applyScopeFilter) topLevelClassFiles.inScope else topLevelClassFiles.anywhere) ?: return null
 
+        // binaryCache is shared across scope modes; cross-refs use the unscoped resolver.
         return readBinaryJavaClass(
             classId = classId,
             topLevelVirtualFile = virtualFile,
@@ -104,18 +117,31 @@ class JavaClassFinderOverBinaryIndex(
             outerClassFromRequest = outerClassFromRequest,
             binaryCache = binaryCache,
             signatureParser = signatureParser,
-            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), visibleScope) },
-            resolveCrossReference = { ref -> findClassImpl(JavaClassFinder.Request(ref), EverythingGlobalScope()) },
+            findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), applyScopeFilter) },
+            resolveCrossReference = { ref -> findClassWithoutScopeFilter(JavaClassFinder.Request(ref)) },
         )
     }
 
-    // Indexed by the two parts of the outermost class name as they already exist in a `ClassId`. An `FqName`
-    // of that class would be a nicer single key, but building it costs a string concatenation, an `FqName`,
-    // an `FqNameUnsafe`, a `pathSegments()` list and a hash of a fresh string on every lookup.
-    private fun findTopLevelClassFiles(packageFqName: FqName, topLevelName: Name): Collection<VirtualFile> =
-        topLevelClassFiles.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
-            index.findClassVirtualFiles(ClassId(packageFqName, topLevelName), extensions)
+    private fun findTopLevelClassFiles(outerMostClassId: ClassId): TopLevelClassFiles {
+        var anywhere: VirtualFile? = null
+        for (candidate in index.findClassVirtualFiles(outerMostClassId, extensions)) {
+            if (anywhere == null) anywhere = candidate
+            if (candidate in scope) return TopLevelClassFiles(anywhere, candidate)
         }
+        return TopLevelClassFiles(anywhere, inScope = null)
+    }
+
+    /**
+     * Both answers the index can give for one top-level class name, cached together: the classpath
+     * order winner ([anywhere], for cross-references out of bytecode) and the first candidate that
+     * is also in [scope] ([inScope], for this session's own lookups).
+     *
+     * A named holder rather than a two-element array or a value encoded into the map slot: the
+     * whole cache costs ~1 ms of allocation plus indirection per full `JavaUsingAst*` suite, and an
+     * array is *slower* on larger corpora (see `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md`
+     * §11), so the shape is chosen for readability.
+     */
+    private class TopLevelClassFiles(val anywhere: VirtualFile?, val inScope: VirtualFile?)
 
     private companion object {
         private val PACKAGE_INFO_NAME = Name.identifier("package-info")

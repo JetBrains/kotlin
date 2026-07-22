@@ -107,7 +107,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                         kotlinScopeProvider,
                         context.packagePartProviderForLibraries,
                         kotlinClassFinder,
-                        javaFacade
+                        javaFacade,
                     ),
                     runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
                         initializeBuiltinsProvider(

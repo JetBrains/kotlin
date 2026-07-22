@@ -230,7 +230,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjava-direct",
         description = "Experimental direct java support.",
     )
-    var javaDirect: Boolean = false
+    var javaDirect: Boolean = true
         set(value) {
             checkFrozen()
             field = value
