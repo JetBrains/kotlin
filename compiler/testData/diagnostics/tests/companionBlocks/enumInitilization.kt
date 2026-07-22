@@ -6,7 +6,7 @@
 enum class InitEnum(val text: String) {
     FIRST(<!UNINITIALIZED_ENUM_ENTRY!>SECOND<!>.name),
     SECOND(<!UNINITIALIZED_ENUM_COMPANION!>companionObject<!>),
-    THIRD(companionBlock),
+    THIRD(<!UNINITIALIZED_VARIABLE!>companionBlock<!>),
     FOURTH(companionBlockComputed),
     FIFTH(companionBlockFunction());
 
