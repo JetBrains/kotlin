@@ -35,16 +35,19 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isKMutableProperty
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -217,6 +220,40 @@ class AdapterGenerator(
         }
     }
 
+    internal fun generateRichPropertyReferenceForField(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        type: IrType,
+        explicitReceiverExpression: IrExpression?,
+        irPropertySymbol: IrDeclarationWithAccessorsSymbol,
+        irFieldSymbol: IrFieldSymbol,
+    ): IrRichPropertyReferenceImpl {
+        val context = AdaptedCallableReferenceContext(
+            callableReferenceAccess,
+            type as IrSimpleType,
+            explicitReceiverExpression
+        )
+
+        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
+            IrRichPropertyReferenceImpl(
+                startOffset, endOffset, type,
+                reflectionTargetSymbol = irPropertySymbol,
+                getterFunction = context.buildCallableReferenceAdapterFunction(
+                    startOffset,
+                    endOffset,
+                    irFieldSymbol,
+                ),
+                setterFunction = runIf(type.isKMutableProperty()) {
+                    context.buildCallableReferenceAdapterFunction(
+                        startOffset,
+                        endOffset,
+                        irFieldSymbol,
+                        isSetter = true,
+                    )
+                },
+            ).apply { bindValues(context) }
+        }
+    }
+
     private fun AdaptedCallableReferenceContext.buildCallableReferenceAdapterFunction(
         startOffset: Int,
         endOffset: Int,
@@ -233,6 +270,37 @@ class AdapterGenerator(
                 } else {
                     statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
                 }
+            }
+        }
+        return irAdapterFunction
+    }
+
+    private fun AdaptedCallableReferenceContext.buildCallableReferenceAdapterFunction(
+        startOffset: Int,
+        endOffset: Int,
+        fieldSymbol: IrFieldSymbol,
+        isSetter: Boolean = false,
+    ): IrSimpleFunction {
+        val irAdapterFunction = createAdapterFunctionForCallableReference(startOffset, endOffset, isSetter = isSetter)
+
+        irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
+            var index = 0
+            val fieldReceiver = runUnless(firAdaptee.isStatic) {
+                val receiver = irAdapterFunction.parameters[index++]
+                IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+            }
+            val irCall = if (isSetter) {
+                val param = irAdapterFunction.parameters[index]
+                val value = IrGetValueImpl(startOffset, endOffset, param.type, param.symbol)
+                IrSetFieldImpl(startOffset, endOffset, fieldSymbol, receiver = fieldReceiver, value = value, c.builtins.unitType)
+            } else {
+                val irFieldType = firAdaptee.returnTypeRef.coneType.toIrType()
+                IrGetFieldImpl(startOffset, endOffset, fieldSymbol, irFieldType, fieldReceiver)
+            }
+            if (isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
+                statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
+            } else {
+                statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
             }
         }
         return irAdapterFunction
