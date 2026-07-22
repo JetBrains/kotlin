@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -162,6 +166,10 @@ class FirClassAnySynthesizedMemberScope(
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
+                }.apply {
+                    if (session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals)) {
+                        equalityBoundType = klass.symbol.constructStarProjectedType()
+                    }
                 }
             )
         }
