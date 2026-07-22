@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 
 object FirCompanionBlockMemberChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
@@ -25,8 +27,11 @@ object FirCompanionBlockMemberChecker : FirCallableDeclarationChecker(MppChecker
             reporter.reportOn(declaration.source, FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION)
         }
 
-        if (declaration is FirProperty && declaration.isVar && declaration.getContainingClass()?.isInterface == true) {
-            reporter.reportOn(declaration.source, FirErrors.INTERFACE_COMPANION_BLOCK_VAR)
+        if (declaration.isConst &&
+            declaration.getContainingClass()?.isInterface == true &&
+            declaration.visibility == Visibilities.Private
+        ) {
+            reporter.reportOn(declaration.source, FirErrors.PRIVATE_CONST_IN_INTERFACE)
         }
     }
 }

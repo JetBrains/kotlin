@@ -5192,12 +5192,6 @@ private fun KaDiagnosticConverterBuilder.addConversions115() {
             token,
         )
     }
-    add(FirErrors.INTERFACE_COMPANION_BLOCK_VAR) { firDiagnostic ->
-        InterfaceCompanionBlockVarImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions116() {
@@ -6080,6 +6074,12 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
             token,
         )
     }
+    add(FirErrors.PRIVATE_CONST_IN_INTERFACE) { firDiagnostic ->
+        PrivateConstInInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.DEPRECATED_JAVA_ANNOTATION) { firDiagnostic ->
         DeprecatedJavaAnnotationImpl(
             firDiagnostic.a,
@@ -6687,12 +6687,6 @@ private fun KaDiagnosticConverterBuilder.addConversions146() {
     }
     add(FirErrors.ITERATOR_ON_NULLABLE) { firDiagnostic ->
         IteratorOnNullableImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD) { firDiagnostic ->
-        InterfaceCompanionBlockPropertyPrivateFieldImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

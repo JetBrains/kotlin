@@ -78,25 +78,25 @@ abstract class D {
 
 interface J {
    companion {
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> val private<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> val protected<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>public val public<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>internal val internal<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!INTERFACE_COMPANION_BLOCK_VAR!>var<!> internal2<!> = 1
+        private val private = 1
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> val protected = 1
+        public val public = 1
+        internal val internal = 1
+        var internal2 = 1
             internal set
 
         <!WRONG_MODIFIER_TARGET!>abstract<!> val abstract: String
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>open<!> val bar<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>final<!> val baz<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>override<!> val qux<!> = 1
+        <!WRONG_MODIFIER_TARGET!>open<!> val bar = 1
+        <!WRONG_MODIFIER_TARGET!>final<!> val baz = 1
+        <!WRONG_MODIFIER_TARGET!>override<!> val qux = 1
 
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>suspend<!> val suspend<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>external<!> val external<!> = 1
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!>lateinit <!INTERFACE_COMPANION_BLOCK_VAR!>var<!> lateinit: Any<!>
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!WRONG_MODIFIER_TARGET!>tailrec<!> val tailrec<!> = 1
+        <!WRONG_MODIFIER_TARGET!>suspend<!> val suspend = 1
+        <!WRONG_MODIFIER_TARGET!>external<!> val external = 1
+        lateinit var lateinit: Any
+        <!WRONG_MODIFIER_TARGET!>tailrec<!> val tailrec = 1
         const val const = 1
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val expect: String
-        <!INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD!><!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val actual<!> = 1
+        <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val actual = 1
         inline val inline get() = 1
 
         <!WRONG_MODIFIER_TARGET!>companion<!> val companion get() = 1

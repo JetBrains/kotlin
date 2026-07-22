@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.isInlineClassThatRequiresMangling
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_CLASS_ID
@@ -53,8 +56,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             declaration.isOverride -> OVERRIDES
             declaration.isLateInit -> LATEINIT
             declaration.isConst -> CONST
-            containingClassSymbol != null && containingClassSymbol.isInsideCompanionObjectOfInterface(session) ->
-                if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol, session)) {
+            containingClassSymbol != null && containingClassSymbol.isInterfaceOrInterfaceCompanion(session) ->
+                if (!containingClassSymbol.isInterfaceWithPublicJvmFieldProperties()) {
                     NOT_PUBLIC_VAL_WITH_JVMFIELD
                 } else {
                     return
@@ -96,7 +99,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 (setter != null && setter?.source?.kind !is KtFakeSourceElementKind)
     }
 
-    private fun FirRegularClassSymbol.isInsideCompanionObjectOfInterface(session: FirSession): Boolean {
+    private fun FirRegularClassSymbol.isInterfaceOrInterfaceCompanion(session: FirSession): Boolean {
+        if (isInterface) return true
         if (!isCompanion) {
             return false
         }
@@ -105,18 +109,27 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
         return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
 
-    private fun isInterfaceCompanionWithPublicJvmFieldProperties(containingClass: FirRegularClassSymbol, session: FirSession): Boolean {
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isInterfaceWithPublicJvmFieldProperties(): Boolean {
         var result = true
-        containingClass.processAllDeclaredCallables(session) { symbol ->
+        val processor = processAllDeclaredCallables@ { symbol: FirCallableSymbol<*> ->
             if (!result || symbol !is FirPropertySymbol) return@processAllDeclaredCallables
 
             if (symbol.visibility != Visibilities.Public ||
                 symbol.isVar ||
                 symbol.modality != Modality.FINAL ||
-                !symbol.hasJvmFieldAnnotation(session)
+                !symbol.hasJvmFieldAnnotation(context.session)
             ) {
                 result = false
             }
+        }
+
+        if (isInterface) {
+            staticScope(context)?.processAllProperties(processor)
+            resolvedCompanionObjectSymbol?.declaredMemberScope()?.processAllProperties(processor)
+        } else {
+            declaredMemberScope().processAllProperties(processor)
+            (getContainingDeclaration(context.session) as? FirRegularClassSymbol)?.staticScope(context)?.processAllProperties(processor)
         }
 
         return result

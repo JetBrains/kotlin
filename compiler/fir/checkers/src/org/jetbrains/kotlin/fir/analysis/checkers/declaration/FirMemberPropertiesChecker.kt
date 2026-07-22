@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -117,7 +118,8 @@ internal fun checkProperty(
         if (containingDeclaration.isInterface &&
             Visibilities.isPrivate(propertySymbol.visibility) &&
             !isAbstract &&
-            propertySymbol.getterSymbol?.isDefault != false
+            propertySymbol.getterSymbol?.isDefault != false &&
+            !propertySymbol.isCompanionBlockMember
         ) {
             propertySymbol.source?.let {
                 reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE)

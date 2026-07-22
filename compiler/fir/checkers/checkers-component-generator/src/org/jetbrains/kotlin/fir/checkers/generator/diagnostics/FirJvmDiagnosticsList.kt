@@ -80,8 +80,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
-
-        val INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

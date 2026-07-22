@@ -484,7 +484,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_ON_TOP_LEVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_AS_FUNCTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_COMPANION_BLOCK_VAR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CONST_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INT_LITERAL_WITH_LEADING_ZEROS
@@ -3978,8 +3978,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Companion block member cannot be an extension."
         )
         map.put(
-            INTERFACE_COMPANION_BLOCK_VAR,
-            "'var' properties in interface companion blocks are prohibited."
+            PRIVATE_CONST_IN_INTERFACE,
+            "'const' properties in interfaces must be public or internal."
         )
         map.put(
             ILLEGAL_COMPANION_BLOCK,
