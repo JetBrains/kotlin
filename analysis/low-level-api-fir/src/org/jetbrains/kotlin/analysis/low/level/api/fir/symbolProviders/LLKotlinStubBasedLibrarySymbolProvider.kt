@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isTopLevel
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -472,6 +473,12 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         return callableSymbols?.singleOrNull { it.fir.realPsi == callableDeclaration }
     }
 
+    /**
+     * All [FirDeclaration]s currently cached by the symbol provider.
+     *
+     * Note that the resulting list may include nested classes and type aliases. To retrieve cached top-level declarations, use
+     * [cachedTopLevelDeclarations].
+     */
     @FirCacheInternals
     internal val cachedDeclarations: List<FirDeclaration>
         get() = buildList {
@@ -484,6 +491,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                 properties.forEach { add(it.fir) }
             }
         }
+
+    @FirCacheInternals
+    internal val cachedTopLevelDeclarations: List<FirDeclaration>
+        get() = cachedDeclarations.filter { it.isTopLevel }
 
     companion object {
         fun loadProperty(

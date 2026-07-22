@@ -41,6 +41,6 @@ internal fun LLFirSession.collectCachedCheckableRootDeclarations(): List<FirDecl
 
             symbolProviders
                 ?.filterIsInstance<LLKotlinStubBasedLibrarySymbolProvider>()
-                ?.forEach { addAll(it.cachedDeclarations) }
+                ?.forEach { addAll(it.cachedTopLevelDeclarations) }
         }
     }
