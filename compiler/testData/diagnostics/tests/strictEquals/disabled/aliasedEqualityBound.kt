@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -StrictEquals
-// API_VERSION: 2.5
 
 // FILE: throughTypeAlias.kt
 

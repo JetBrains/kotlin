@@ -1,4 +1,3 @@
-// API_VERSION: 2.5
 // LANGUAGE: -StrictEquals
 // RUN_PIPELINE_TILL: FRONTEND
 

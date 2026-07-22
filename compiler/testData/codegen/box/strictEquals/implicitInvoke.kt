@@ -1,8 +1,4 @@
 // LANGUAGE: +StrictEquals
-// API_VERSION: 2.5
-// DONT_TARGET_EXACT_BACKEND: NATIVE
-//    ^^^ some native tests don't support API_VERSION directive
-//    ^^^ fix or wait till version bump
 
 class F(val tag: String) {
     operator fun invoke(): String = tag

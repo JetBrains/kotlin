@@ -1,5 +1,4 @@
 // LANGUAGE: +StrictEquals
-// API_VERSION: 2.5
 // WITH_STDLIB
 
 // FILE: p/JavaBad.java
