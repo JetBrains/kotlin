@@ -136,16 +136,16 @@ class CallAndReferenceGenerator(
                         declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol? ?: return null
                     }
                 }
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                    field = null,
-                    getter = referencedPropertyGetterSymbol,
-                    setter = referencedPropertySetterSymbol,
-                    origin = origin
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    referencedPropertyGetterSymbol,
+                    referencedPropertySetterSymbol,
+                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
+                    isForDelegate,
                 )
-                    .applyTypeArguments(callableReferenceAccess)
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
