@@ -1,24 +1,27 @@
-var global = "";
+// CHECK_OPTIMIZED_JS
 
-function foo(x) {
-    global += x;
-    return x;
+var global = ""
+
+fun foo(x: Int): Int {
+    global += x
+    return x
 }
 
-function box() {
-    var i = 0;
+// EXPECT_GENERATED_JS: function=box expect=doWhileWithContinue.optimized.js
+fun box(): String {
+    var i = 0
     do {
-        ++i;
+        ++i
         if (i == 5) {
             continue
         }
-        global += ";";
+        global += ";"
         if (foo(i) >= 10) {
-            break;
+            break
         }
-    } while (true);
+    } while (true)
 
-    if (global != ";1;2;3;4;6;7;8;9;10") return "fail: " + global;
+    if (global != ";1;2;3;4;6;7;8;9;10") return "fail: " + global
 
     return "OK"
 }

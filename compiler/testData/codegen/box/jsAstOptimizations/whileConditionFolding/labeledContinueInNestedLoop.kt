@@ -1,28 +1,30 @@
-var global = "";
+// CHECK_OPTIMIZED_JS
 
-function foo(x) {
-    global += x;
-    return x;
+var global = ""
+
+fun foo(x: Int): Int {
+    global += x
+    return x
 }
 
-function box() {
-    var i = 0;
-    var j;
-    loop: do {
-        ++i;
-        global += ";";
-        for (j = 0; j < 2; ++j) {
+// EXPECT_GENERATED_JS: function=box expect=labeledContinueInNestedLoop.optimized.js
+fun box(): String {
+    var i = 0
+    loop@ do {
+        ++i
+        global += ";"
+        for (j in 0..<2) {
             if (j == 1 && i == 2) {
-                continue loop;
+                continue@loop
             }
-            global += "-";
+            global += "-"
         }
         if (foo(i) >= 5) {
-            break;
+            break
         }
-    } while (true);
+    } while (true)
 
-    if (global != ";--1;-;--3;--4;--5") return "fail: " + global;
+    if (global != ";--1;-;--3;--4;--5") return "fail: " + global
 
     return "OK"
 }
