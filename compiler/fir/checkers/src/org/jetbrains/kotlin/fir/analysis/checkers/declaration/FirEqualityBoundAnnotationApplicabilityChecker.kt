@@ -30,7 +30,7 @@ object FirEqualityBoundAnnotationApplicabilityChecker : FirValueParameterChecker
                 reporter.reportOn(
                     annotation.source,
                     FirErrors.UNSUPPORTED,
-                    "'EqualityBound' annotation is only supported for parameters of 'equals' operator"
+                    "'EqualityBound' annotation is only supported for parameters of 'equals' operator."
                 )
             } else {
                 annotation.requireFeatureSupport(LanguageFeature.StrictEquals)
