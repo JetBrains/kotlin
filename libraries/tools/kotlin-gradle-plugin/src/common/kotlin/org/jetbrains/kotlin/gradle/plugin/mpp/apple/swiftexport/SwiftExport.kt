@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import kotlin.text.set
 
 internal object SwiftExportConstants {
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
@@ -172,6 +171,9 @@ private fun Project.registerSwiftExportRun(
         task.mainModuleInput.artifact.fileProvider(
             mainCompilation.compileTaskProvider.flatMap { it.outputFile }
         )
+        mainCompilation.cinterops.all {
+            task.cinteropArtifacts.from(tasks.named(it.interopProcessingTaskName))
+        }
 
         // Output
         task.parameters.outputPath.set(files)

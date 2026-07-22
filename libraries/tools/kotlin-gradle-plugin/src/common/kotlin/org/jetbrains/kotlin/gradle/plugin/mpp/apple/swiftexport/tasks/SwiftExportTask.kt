@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -45,6 +46,10 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @get:Nested
     abstract val mainModuleInput: ModuleInput
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val cinteropArtifacts: ConfigurableFileCollection
 
     @get:Nested
     abstract val kotlinNativeProvider: Property<KotlinNativeProvider>
@@ -75,24 +80,31 @@ internal abstract class SwiftExportTask @Inject constructor(
             workerSpec.forkOptions.systemProperties.put("ide.can.use.coroutines.fork", "false")
         }
 
-        val swiftModules = parameters.swiftModules.map {
-            it.toMutableList().apply {
-                add(
-                    createFullyExportedSwiftExportedModule(
-                        mainModuleInput.moduleName.get(),
-                        mainModuleInput.flattenPackage.orNull,
-                        mainModuleInput.artifact.getFile()
-                    )
+        val allSwiftExportModules = parameters.swiftModules.get().toMutableList()
+
+        allSwiftExportModules.add(
+            createFullyExportedSwiftExportedModule(
+                mainModuleInput.moduleName.get(),
+                mainModuleInput.flattenPackage.orNull,
+                mainModuleInput.artifact.getFile()
+            )
+        )
+
+        allSwiftExportModules.addAll(
+            cinteropArtifacts.map {
+                createTransitiveSwiftExportedModule(
+                    it.name,
+                    it
                 )
             }
-        }
+        )
 
         swiftExportQueue.submit(SwiftExportAction::class.java) { workParameters ->
             workParameters.bridgeModuleName.set(parameters.bridgeModuleName)
             workParameters.outputPath.set(parameters.outputPath)
             workParameters.stableDeclarationsOrder.set(parameters.stableDeclarationsOrder)
             workParameters.swiftModulesFile.set(parameters.swiftModulesFile)
-            workParameters.swiftModules.set(swiftModules)
+            workParameters.swiftModules.set(allSwiftExportModules)
             workParameters.swiftExportSettings.set(parameters.swiftExportSettings)
             workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.bundleDirectory }.map { Distribution(it) })
             workParameters.konanTarget.set(parameters.konanTarget)
