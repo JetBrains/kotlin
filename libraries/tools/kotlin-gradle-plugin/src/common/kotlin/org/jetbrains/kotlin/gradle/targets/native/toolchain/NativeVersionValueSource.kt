@@ -76,7 +76,7 @@ internal abstract class NativeVersionValueSource :
 
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
-            if (!bundleDir.resolve(MARKER_FILE).exists()) {
+            if (!provisionedMarkerFile(bundleDir).exists()) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
@@ -128,7 +128,7 @@ internal abstract class NativeVersionValueSource :
 
             checkKotlinNativeVersionWasDownloaded(toDirectory)
 
-            createSuccessfulInstallationFile(toDirectory)
+            markAsProvisioned(toDirectory)
 
             logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
         }
@@ -153,8 +153,11 @@ internal abstract class NativeVersionValueSource :
             }
         }
 
-        private fun createSuccessfulInstallationFile(bundleDir: File) {
-            bundleDir.resolve(MARKER_FILE).createNewFile()
+        private fun provisionedMarkerFile(bundleDir: File): File = bundleDir.resolve(MARKER_FILE)
+
+        // both provisioners have to agree on what a finished installation looks like, see KT-86251
+        internal fun markAsProvisioned(bundleDir: File) {
+            provisionedMarkerFile(bundleDir).createNewFile()
         }
     }
 }
