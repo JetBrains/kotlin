@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
  */
 internal fun KtTestModuleStructure.collectCheckableRootDeclarations(): List<FirDeclaration> =
     buildSet {
+        // TODO (marco): Also return declarations from the stdlib, which is not a test module.
+
         for (testModule in mainModules) {
             // We always want to collect declarations from the session that was used by the test's resolution, including binary sessions for
             // binary libraries. Going via the resolution facade would force a resolvable session, so we have to access the session cache
