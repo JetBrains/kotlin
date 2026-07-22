@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.addBoundValueAtOverride
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -560,7 +561,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
 
         if (fields.isNotEmpty()) {
-            addBoundValueAtOverride(functionReferenceClass, fields)
+            context.addBoundValueAtOverride(functionReferenceClass, fields, GENERATED_MEMBER_IN_CALLABLE_REFERENCE)
         }
 
         val superInterfaceClass = superInterfaceType.classOrFail.owner
@@ -762,48 +763,6 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 )
             }
         }
-    }
-
-    private fun addBoundValueAtOverride(functionReferenceClass: IrClass, fields: List<IrField>) {
-        val overridden = functionReferenceClass.superTypes.mapNotNull { superType ->
-            superType.getClass()
-                ?.declarations
-                ?.filterIsInstance<IrSimpleFunction>()
-                ?.singleOrNull { it.name.asString() == "boundValueAt" }
-                ?.symbol
-        }
-        if (overridden.isEmpty()) return
-
-        val function = functionReferenceClass.addFunction {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
-            name = Name.identifier("boundValueAt")
-            origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
-            returnType = overridden[0].owner.returnType
-        }
-        function.parameters += function.createDispatchReceiverParameterWithClassParent()
-        overridden[0].owner.parameters
-            .filter { it.kind == IrParameterKind.Regular }
-            .forEach { function.parameters += it.copyTo(function) }
-        function.overriddenSymbols += overridden
-        function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +irReturn(irBoundValueAt(function, fields))
-        }
-    }
-
-    private fun IrBuilderWithScope.irBoundValueAt(function: IrFunction, fields: List<IrField>): IrExpression {
-        val dispatchReceiver = function.dispatchReceiverParameter!!
-        fun boundValue(field: IrField) = irGetField(irGet(dispatchReceiver), field)
-
-        if (fields.size == 1) {
-            return boundValue(fields[0])
-        }
-
-        val indexParameter = function.parameters.single { it.kind == IrParameterKind.Regular }
-        val branches = (0..<fields.lastIndex).map { index ->
-            irBranch(irEquals(irGet(indexParameter), irInt(index)), boundValue(fields[index]))
-        } + irElseBranch(boundValue(fields.last()))
-        return irWhen(context.irBuiltIns.anyNType, branches)
     }
 
     private fun generateSuperClassConstructorCall(
