@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.backend.common.lower.DefaultParameterCleaner
 import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 internal class NativeDefaultParameterCleaner(context: CommonBackendContext) : DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true)
 
@@ -31,4 +33,7 @@ internal class NativeDefaultArgumentStubGenerator(context: CommonBackendContext)
         val value = irIfThenElse(parameter.type, irNotEquals(defaultFlag, irInt(0)), default, irGet(parameter))
         return createTmpVariable(value, nameHint = parameter.name.asString())
     }
+
+    override fun IrExpression.prepareToBeUsedIn(function: IrFunction): IrExpression =
+            deepCopyWithSymbols(function)
 }
