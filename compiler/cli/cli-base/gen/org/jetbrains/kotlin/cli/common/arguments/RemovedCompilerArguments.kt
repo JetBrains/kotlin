@@ -291,6 +291,22 @@ It has no effect when -language-version is 2.0 or higher.""",
         }
 
     @all:Deprecated(
+        message = "Use '-Xbinary=bundleId=<id>'.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xbundle-id",
+        valueDescription = "<id>",
+        description = "Bundle ID to be set in the Info.plist file of the produced framework.",
+        deprecatedVersion = "1.7.20",
+        removedVersion = "2.5.0",
+    )
+    var bundleId: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
         message = "",
         level = DeprecationLevel.ERROR,
     )

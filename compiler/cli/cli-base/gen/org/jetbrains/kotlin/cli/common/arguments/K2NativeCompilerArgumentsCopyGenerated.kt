@@ -15,8 +15,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.autoCacheableFrom = from.autoCacheableFrom.copyOf()
     to.backendThreads = from.backendThreads
     to.binaryOptions = from.binaryOptions.copyOf()
-    @Suppress("DEPRECATION")
-    to.bundleId = from.bundleId
     to.cacheDirectories = from.cacheDirectories.copyOf()
     to.cachedLibraries = from.cachedLibraries.copyOf()
     to.checkDependencies = from.checkDependencies

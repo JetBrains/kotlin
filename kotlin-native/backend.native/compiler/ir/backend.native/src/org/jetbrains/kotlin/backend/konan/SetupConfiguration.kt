@@ -294,7 +294,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
     })
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
-    putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
     setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
@@ -508,21 +507,6 @@ private fun parseKeyValuePairs(
         null
     }
 }?.toMap()
-
-private fun parseBundleId(
-        arguments: K2NativeCompilerArguments,
-        outputKind: CompilerOutputKind,
-        configuration: CompilerConfiguration
-): String? {
-    val argumentValue = @Suppress("DEPRECATION") arguments.bundleId
-    return if (argumentValue != null && outputKind != CompilerOutputKind.FRAMEWORK) {
-        configuration.report(KONAN_ARGUMENT_STRONG_WARNING, "Setting a bundle ID is only supported when producing a framework " +
-                "but the compiler is producing ${outputKind.name.lowercase()}")
-        null
-    } else {
-        argumentValue
-    }
-}
 
 private fun parseSerializedDependencies(
         arguments: K2NativeCompilerArguments,
