@@ -36,15 +36,13 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     val classOrObjectDeclaration: KtClassOrObject?,
     override val symbolPointer: KaSymbolPointer<SType>,
     override val useSiteModule: KaModule,
-    manager: PsiManager,
-) : SymbolLightClassBase(manager),
+) : SymbolLightClassBase(PsiManager.getInstance(useSiteModule.project)),
     KaSymbolJavaView<SType>,
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
         useSiteModule: KaModule,
         classSymbol: SType,
-        manager: PsiManager,
     ) : this(
         classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
         symbolPointer = kotlin.run {
@@ -52,7 +50,6 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             classSymbol.createPointer() as KaSymbolPointer<SType>
         },
         useSiteModule = useSiteModule,
-        manager = manager,
     )
 
     override fun contentModificationTrackers(): List<ModificationTracker> {
@@ -104,7 +101,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun getOwnInnerClasses(): List<PsiClass> = cachedValue {
         withClassSymbol {
-            createInnerClasses(it, manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
+            createInnerClasses(it, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
         }
     }
 
@@ -185,7 +182,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             is KtClassOrObject -> parent.toLightClass()
             is KtScript -> parent.toLightClass()
             null -> withClassSymbol { s ->
-                (s.containingDeclaration as? KaNamedClassSymbol)?.let { createLightClassNoCache(it, useSiteModule, manager) }
+                (s.containingDeclaration as? KaNamedClassSymbol)?.let { createLightClassNoCache(it, useSiteModule) }
             }
             else -> null
         }

@@ -19,7 +19,6 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
         containingClass.classOrObjectDeclaration,
         containingClass.symbolPointer,
         containingClass.useSiteModule,
-        containingClass.manager,
     ) {
     override fun getQualifiedName(): String? = containingClass.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
 
