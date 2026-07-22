@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -362,6 +363,14 @@ class FirTypeIntersectionScopeContext(
             markAsOverride = true
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
+            if (newSymbol.isEquals(session)) {
+                val bounds = mostSpecific.filterIsInstance<FirNamedFunctionSymbol>()
+                    .mapNotNull { it.valueParameterSymbols.singleOrNull()?.equalityBoundType }
+                if (bounds.isNotEmpty()) {
+                    newSymbol.fir.valueParameters.singleOrNull()?.equalityBoundType =
+                        session.typeContext.intersectTypes(bounds)
+                }
+            }
         }
         return newSymbol
     }

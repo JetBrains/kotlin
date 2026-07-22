@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
 
@@ -151,7 +154,16 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         return when (aFir) {
             is FirNamedFunction -> {
                 require(bFir is FirNamedFunction) { "b is " + bFir.javaClass }
-                byVisibilityAndType
+
+                when (aFir.name) {
+                    OperatorNameConventions.EQUALS -> {
+                        when (val byEqualityBound = typeCheckerState.compareByEqualityBoundType(aFir, bFir)) {
+                            null -> null
+                            else -> merge(byEqualityBound >= 0, byEqualityBound <= 0, byVisibilityAndType)
+                        }
+                    }
+                    else -> byVisibilityAndType
+                }
             }
 
             is FirVariable -> {
@@ -173,6 +185,26 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
             }
 
             else -> throw IllegalArgumentException("Unexpected callable: " + aFir.javaClass)
+        }
+    }
+
+    private fun TypeCheckerState.compareByEqualityBoundType(firA: FirNamedFunction, firB: FirNamedFunction): Int? {
+        val aBound = firA.valueParameters.singleOrNull()?.equalityBoundType
+        val bBound = firB.valueParameters.singleOrNull()?.equalityBoundType
+        return when {
+            aBound == null && bBound == null -> 0
+            aBound == null -> -1
+            bBound == null -> 1
+            else -> {
+                val aIsSubtype = AbstractTypeChecker.isSubtypeOf(this, aBound, bBound)
+                val bIsSubtype = AbstractTypeChecker.isSubtypeOf(this, bBound, aBound)
+                when {
+                    aIsSubtype && bIsSubtype -> 0
+                    aIsSubtype -> 1
+                    bIsSubtype -> -1
+                    else -> null
+                }
+            }
         }
     }
 }
