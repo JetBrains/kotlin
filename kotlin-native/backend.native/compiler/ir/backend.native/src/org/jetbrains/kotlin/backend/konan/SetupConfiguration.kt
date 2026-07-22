@@ -216,6 +216,49 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
     })
 
+    val compilationScheme = when (arguments.compilationScheme) {
+        null, "closed" -> CompilationScheme.CLOSED
+        "split" -> CompilationScheme.SPLIT_HOST
+        else -> {
+            report(KONAN_ARGUMENT_ERROR, "Expected 'closed' or 'split' as compilation scheme. The default will be used.")
+            CompilationScheme.CLOSED
+        }
+    }
+    if (compilationScheme != CompilationScheme.CLOSED) {
+        // Split-Compilation requires debug enabled (to disable some aggressive optimizations, and for symbol resolution).
+        // In addition to that, symbol names should be stable across the host's bootstrap object and cached objects.
+        // To do so, we need incremental cache enabled in split-compilation.
+        report(KONAN_ARGUMENT_WARNING, "Split compilation is an experimental feature, available only on Darwin platforms, the final artifact may not work as expected.")
+        if (!getBoolean(NativeConfigurationKeys.DEBUG)) {
+            report(KONAN_ARGUMENT_ERROR, "Split compilation requires debugging information enabled. Please compile by passing '-g' as argument.")
+        }
+
+        if (outputKind != CompilerOutputKind.PROGRAM && outputKind != CompilerOutputKind.FRAMEWORK) {
+            report(
+                    KONAN_ARGUMENT_ERROR,
+                    "Split compilation only supports '-produce program' and '-produce framework'. " +
+                            "Got: '${outputKind.name.lowercase()}'."
+            )
+        }
+
+        get(BinaryOptions.perFileCacheForStdlib).let { perFileCacheForStdlib ->
+            if (perFileCacheForStdlib == null || perFileCacheForStdlib) {
+                report(KONAN_ARGUMENT_ERROR, "Split compilation requires the Standard Library compiled as monolithic cache." +
+                        "Please pass '-Xbinary=perFileCacheForStdlib=false' as argument.")
+            }
+        }
+
+        if (incrementalCacheDir.isNullOrEmpty()) {
+            report(
+                    KONAN_ARGUMENT_ERROR,
+                    "Split compilation requires incremental compilation. " +
+                            "Please pass '${K2NativeCompilerArguments::incrementalCompilation.cliArgument}' " +
+                            "and '${K2NativeCompilerArguments::incrementalCacheDir.cliArgument}=<directory>'."
+            )
+        }
+    }
+    put(COMPILATION_SCHEME, compilationScheme)
+
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
         "user" -> LlvmVariant.User
@@ -260,6 +303,7 @@ private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.no
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) = with(NativeConfigurationKeys) {
     konanTarget = config.target.toString()
     put(DEBUG, config.debug)
+    put(COMPILATION_SCHEME, config.compilationScheme)
     setupPartialLinkageConfig(config.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
@@ -276,6 +320,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(BinaryOptions.macabi, config.macabi)
     putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
+    putIfNotNull(COMPILATION_SCHEME, config.configuration.compilationScheme)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

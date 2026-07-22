@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/splitCompilationScheme.kt
+-o
+$TEMP_DIR$/splitCompilationSchemeUnsupportedProduce
+-g
+-produce
+dynamic
+-Xcompilation-scheme=split
+-Xenable-incremental-compilation
+-Xic-cache-dir=$TEMP_DIR$/ic-cache

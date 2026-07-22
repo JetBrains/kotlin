@@ -70,7 +70,7 @@ class CacheBuilder(
 
     fun needToBuild() = config.ignoreCacheReason == null
             && (config.isFinalBinary || config.produce.isFullCache)
-            && (autoCacheableFrom.isNotEmpty() || icEnabled)
+            && (autoCacheableFrom.isNotEmpty() || icEnabled || config.compilationScheme == CompilationScheme.SPLIT_HOST)
 
     // Note: The order of libraries is not important here.
     private val allLibraries by lazy { config.resolvedLibraries.getFullList() }

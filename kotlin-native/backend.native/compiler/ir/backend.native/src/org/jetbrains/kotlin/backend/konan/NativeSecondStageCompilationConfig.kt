@@ -623,6 +623,10 @@ class NativeSecondStageCompilationConfig(
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.resolve(userCacheFlavorString)
     internal val dumpBuiltCachesTo = configuration.dumpBuiltCachesTo
 
+    internal val compilationScheme: CompilationScheme = configuration.compilationScheme ?: CompilationScheme.DEFAULT
+    internal val isUsingSplitCompilationScheme: Boolean
+        get() = compilationScheme == CompilationScheme.SPLIT_HOST
+
     internal val ignoreCacheReason = when {
         optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"

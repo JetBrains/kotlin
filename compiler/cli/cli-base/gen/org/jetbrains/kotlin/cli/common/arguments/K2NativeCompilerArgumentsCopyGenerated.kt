@@ -20,6 +20,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.checkDependencies = from.checkDependencies
     to.checkExternalCalls = from.checkExternalCalls
     to.clangOptions = from.clangOptions.copyOf()
+    to.compilationScheme = from.compilationScheme
     to.compileFromBitcode = from.compileFromBitcode
     to.debug = from.debug
     to.debugInfoFormatVersion = from.debugInfoFormatVersion

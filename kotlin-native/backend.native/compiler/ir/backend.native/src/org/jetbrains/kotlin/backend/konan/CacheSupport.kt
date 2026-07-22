@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.compilationScheme
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.preLinkCaches
@@ -82,12 +83,12 @@ class CacheSupport(
             }
 
     private val implicitCacheDirectories = buildList {
-        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
-            add(Path(it).takeIf { it.isDirectory() }
-                    ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
+        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach { directoryPathString ->
+            add(Path(directoryPathString).takeIf { it.isDirectory() }
+                    ?: configuration.reportCompilationErrorAndThrow("cache directory $directoryPathString is not found or is not a directory"))
         }
-        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
-        autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
+        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null || configuration.compilationScheme == CompilationScheme.SPLIT_HOST }?.let { add(it) }
+        autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || configuration.compilationScheme == CompilationScheme.SPLIT_HOST }?.let { add(it) }
         incrementalCacheDirectory?.let { add(it) }
     }
 
