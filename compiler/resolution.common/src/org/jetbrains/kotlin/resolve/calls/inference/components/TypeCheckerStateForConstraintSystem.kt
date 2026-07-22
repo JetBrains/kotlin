@@ -432,6 +432,8 @@ abstract class TypeCheckerStateForConstraintSystem(
             if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable) {
                 // This is the legacy behavior typically disabled in K2 because the LF is turned off and has no sinceVersion.
                 superType.withNullability(true)
+            } else if (superType.isRigidType()) {
+                createTrivialFlexibleTypeOrSelf(superType)
             } else {
                 superType
             }
