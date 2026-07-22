@@ -29,11 +29,14 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -1080,6 +1083,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow { _, flow ->
             processConditionalContract(flow, qualifiedAccessExpression, callArgsExit = null)
             processBackingFieldAccess(flow, qualifiedAccessExpression)
+            processEqualsParameterAccess(flow, qualifiedAccessExpression)
         }
     }
 
@@ -1391,6 +1395,16 @@ abstract class FirDataFlowAnalyzer(
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         val returnType = components.returnTypeCalculator.tryCalculateReturnType(fieldSymbol).coneType
         flow.addTypeStatement(variable typeEq returnType)
+    }
+
+    private fun processEqualsParameterAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
+        if (LanguageFeature.StrictEquals.isDisabled()) return
+        val callee = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return
+        val symbol = callee.resolvedSymbol as? FirValueParameterSymbol ?: return
+        symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        val boundType = symbol.equalityBoundType ?: return
+        val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
+        flow.addTypeStatement(variable typeEq boundType)
     }
 
     private fun getSubstitutor(

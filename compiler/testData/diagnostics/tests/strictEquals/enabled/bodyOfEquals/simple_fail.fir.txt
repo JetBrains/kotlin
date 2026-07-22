@@ -1,0 +1,63 @@
+FILE: simple_fail.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final val prop: R|kotlin/String| = String(!)
+            public get(): R|kotlin/String|
+
+        public open override operator fun equals([EqualityBoundType=A] @R|kotlin/EqualityBound|(bound = <getClass>(Q|A|) [evaluated = <getClass>(Q|A|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(R|<local>/other|.<Unresolved name: prop>#.<Unresolved name: length>#, this@R|/B|.R|/B.prop|.R|kotlin/String.length|)
+        }
+
+    }
+    public open class Generic<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val t: R|T|
+            public get(): R|T| {
+                ^ Null(null)!!
+            }
+
+    }
+    public final class Impl : R|Generic<kotlin/String>| {
+        public constructor(): R|Impl| {
+            super<R|Generic<kotlin/String>|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Generic<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Generic|) [evaluated = <getClass>(Q|Generic|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(R|<local>/other|.R|SubstitutionOverride</Generic.t: R|CapturedType(*)|>|.<Unresolved name: length>#, Int(0))
+        }
+
+    }
+    public final fun <T> local(): R|kotlin/Unit| {
+        local final fun R|T|.doSomething(): R|kotlin/Boolean| {
+            ^doSomething Boolean(true)
+        }
+
+        local final class ImplicitGeneric<Outer(T)> : R|kotlin/Any| {
+            public constructor(): R|<local>/ImplicitGeneric<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val t: R|T|
+                public get(): R|T| {
+                    ^ Null(null)!!
+                }
+
+            public open override operator fun equals([EqualityBoundType=Generic<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Generic|) [evaluated = <getClass>(Q|Generic|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals R|<local>/other|.R|SubstitutionOverride</Generic.t: R|CapturedType(*)|>|.R|<local>/doSomething<Candidate is inapplicable because of receiver type mismatch: <local>/doSomething>#|()
+            }
+
+        }
+
+    }
