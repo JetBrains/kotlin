@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -102,8 +103,8 @@ class ConstraintIncorporator(
                     ) {
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = it.type,
-                            upperType = constraint.type,
-                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            upperType = constraint.typeForFlexibleAtIncorporation,
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible && !constraint.isFromFlexibleUpperDuringIncorporation,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromNullabilityConstraint = it.isNullabilityConstraint,
                             isFromDeclaredUpperBound = false,
@@ -127,11 +128,11 @@ class ConstraintIncorporator(
                     ) {
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = constraint.type,
-                            upperType = it.type,
-                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            upperType = it.typeForFlexibleAtIncorporation,
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible && !it.isFromFlexibleUpperDuringIncorporation,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
-                            isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                             isFromNullabilityConstraint = false,
+                            isFromDeclaredUpperBound = isFromDeclaredUpperBound,
                             isNoInfer = constraint.isNoInfer || it.isNoInfer,
                         )
                     }
@@ -139,6 +140,9 @@ class ConstraintIncorporator(
             }
         }
     }
+    context(c: Context)
+    private val Constraint.typeForFlexibleAtIncorporation: KotlinTypeMarker
+        get() = runIf(isFromFlexibleUpperDuringIncorporation) { type.lowerBoundIfFlexible() } ?: type
 
     // NB: The result is reflexive
     private fun Constraint.computeNewDerivedFrom(other: Constraint): Set<TypeVariableMarker> =
