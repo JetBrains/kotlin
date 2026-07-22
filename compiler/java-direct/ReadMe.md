@@ -140,7 +140,7 @@ Corner case: the same-file supertype walk works on **raw AST text**
 `JavaInheritedMemberResolver`, to avoid re-entering type construction; package-qualified
 supertypes are declined here and handed to the `ClassId` path.
 
-### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.2)
+### Scenario D — Qualified / nested name to `ClassId` (JLS 6.5.5)
 
 Entry: `JavaTypeResolver.resolve` (dotted name) → `resolveQualifiedNameToClassIdFromParts`.
 A single left-to-right pass mirroring javac's PackageOrTypeName classification (JLS 6.5.4):
@@ -151,6 +151,15 @@ A single left-to-right pass mirroring javac's PackageOrTypeName classification (
 2. **Member-type descent** (JLS 6.5.5.2): each remaining segment must be a member type of the
    previous one — declared, or inherited from its supertypes (`findInheritedNestedClass`,
    supertype walk + finder).
+
+Like javac, the leftmost-type interpretation is committed: a failed descent returns the
+(nonexistent) nested id of the committed prefix, which stays unresolved downstream — red code.
+On a package/type name clash (JLS 6.1) the shadowing type therefore wins, matching javac and
+diverging from the PSI Java model, which loosely resolves the package interpretation; such
+tests live in the java-direct-owned `testData/diagnostics` root
+(`qualifiedNamePackageClassClash.kt`, `PackageVsClass2.kt`; KT-87813).
+
+Corner cases: `Map.Entry`-style inherited nested classes.
 
 ### Scenario E — Inherited member type via supertypes
 
