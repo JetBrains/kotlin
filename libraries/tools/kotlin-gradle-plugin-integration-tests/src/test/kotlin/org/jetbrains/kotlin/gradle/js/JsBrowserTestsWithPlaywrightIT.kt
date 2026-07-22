@@ -32,12 +32,13 @@ import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
-import kotlin.test.Ignore
+import kotlin.test.assertContains
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
     supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
-    enabledOnCI = [OS.LINUX, OS.MAC])
+    enabledOnCI = [OS.LINUX, OS.MAC]
+)
 @JsBrowserGradlePluginTests
 class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
@@ -246,7 +247,6 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         }
     }
 
-    @Ignore("KT-86797 Failed JS tests don't report errors in the output")
     @GradleTest
     fun `verify failing test fails the build and is reported for webkit`(gradleVersion: GradleVersion) {
         project(
@@ -332,6 +332,87 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                     )
                 }
                 assertTestResults(expectedTestReport, "jsBrowserTest")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `verify each browser runner executes the failing tests`(gradleVersion: GradleVersion) {
+        fun testSuitFailed(browserName: String): String =
+            """<testsuite name="jsBrowserTest.$browserName.DummyTest" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+                                <properties />
+                                <testcase name="dummy[js, browser, $browserName]" classname="jsBrowserTest.$browserName.DummyTest" time="...">
+                                  <failure message="..." type="AssertionError">...</failure>
+                                </testcase>
+                                <system-out />
+                                <system-err />
+                              </testsuite>"""
+
+        val assertionErrorMessage = "a failure happen"
+
+        fun validateMessageField(message: String): Unit {
+            assertContains(message, "AssertionError: ${assertionErrorMessage}")
+        }
+
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject(
+                testSource = """
+                    class DummyTest {
+                      @kotlin.test.Test
+                      fun dummy() {
+                        kotlin.test.assertTrue(false, "$assertionErrorMessage")
+                      }
+                    }
+                """.trimIndent(),
+            ) {
+                chromium("first")
+                firefox("second")
+                webkit("third")
+            }
+
+            buildAndFail(":jsBrowserTest") {
+                val expectedTestReport = projectPath.resolve("expected-test-report.xml").apply {
+                    writeText(
+                        """
+                            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                            <results>
+                              <testsuite name="jsBrowserTest.first.DummyTest" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+                                <properties />
+                                <testcase name="dummy[js, browser, first]" classname="jsBrowserTest.first.DummyTest" time="...">
+                                  <failure message="..." type="AssertionError">...</failure>
+                                </testcase>
+                                <system-out />
+                                <system-err />
+                              </testsuite>
+                              <testsuite name="jsBrowserTest.second.DummyTest" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+                                <properties />
+                                <testcase name="dummy[js, browser, second]" classname="jsBrowserTest.second.DummyTest" time="...">
+                                  <failure message="..." type="AssertionError">...</failure>
+                                </testcase>
+                                <system-out />
+                                <system-err />
+                              </testsuite>
+                              <testsuite name="jsBrowserTest.third.DummyTest" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+                                <properties />
+                                <testcase name="dummy[js, browser, third]" classname="jsBrowserTest.third.DummyTest" time="...">
+                                  <failure message="..." type="AssertionError">...</failure>
+                                </testcase>
+                                <system-out />
+                                <system-err />
+                              </testsuite>
+                            </results>
+                        """.trimIndent().modifyForGradle(gradleVersion)
+                    )
+                }
+                assertTestResults(
+                    expectedTestReport,
+                    "jsBrowserTest",
+                    attributeValidators = mapOf("message" to ::validateMessageField)
+                )
             }
         }
     }
@@ -457,7 +538,8 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
     abstract val newBundleLocation: DirectoryProperty
 
     @get:Internal
-    val kotlinJsTestsLocation get() = MyLocalFileLocation(
+    val kotlinJsTestsLocation
+        get() = MyLocalFileLocation(
             bundleLocation = newBundleLocation,
             testHtmlFileName = project.provider { "test.html" },
         )

@@ -2071,10 +2071,10 @@ kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kotlin-web-helpers@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-3.3.0.tgz#4c0bf6bcfa64752f6f1531e4c84583943bc7e9d6"
-  integrity sha512-sXnwHZ2YGMtIia+NQlf/c0UDtwVNHhXsIH+uHkTv87AvvZQJjJ+XbdkvUUuomPWgBC5TgcQLDEGLcjL48QkFkQ==
+kotlin-web-helpers@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-3.4.0.tgz#b72ed05f92dafe852735f63a53ba5c932ada68ca"
+  integrity sha512-i9Mojc5NTyzPT/YjvRlVSvQlqPMeGb0WgkX4otlQAJutlhnpIR2vBTIIvOqK20rWZEwNsyZxxZOQUFZR1NVUoQ==
   dependencies:
     format-util "^1.0.5"
 

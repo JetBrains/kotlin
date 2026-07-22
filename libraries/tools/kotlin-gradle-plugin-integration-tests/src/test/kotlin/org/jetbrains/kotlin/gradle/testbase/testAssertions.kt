@@ -12,7 +12,6 @@ import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
@@ -39,24 +38,32 @@ fun GradleProject.assertTestResults(
     vararg testReportNames: String,
     subprojectName: String? = null,
     stripBrowserVersionInfoFromTestCaseNames: Boolean = false,
-    cleanupStdOut: (String) -> String = { it }
+    attributeValidators: Map<String, (String) -> Unit> = emptyMap(),
+    cleanupStdOut: (String) -> String = { it },
 ) {
     val buildDirLocation = if (subprojectName != null) { projectPath.resolve(subprojectName) } else projectPath
     val testReportDirs = testReportNames.map { buildDirLocation.resolve("build/test-results/$it") }
 
     assertDirectoriesExist(*testReportDirs.toTypedArray())
 
-    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, stripBrowserVersionInfoFromTestCaseNames, cleanupStdOut)
+    val actualTestResults = readValidateAndCleanupTestResults(
+        testReportDirs,
+        projectPath,
+        stripBrowserVersionInfoFromTestCaseNames,
+        attributeValidators,
+        cleanupStdOut
+    )
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
 }
 
-internal fun readAndCleanupTestResults(
+internal fun readValidateAndCleanupTestResults(
     testReportDirs: List<Path>,
     projectPath: Path,
     stripBrowserVersionInfoFromTestCaseNames: Boolean,
-    cleanupStdOut: (String) -> String = { it }
+    attributeValidators: Map<String, (String) -> Unit> = emptyMap(),
+    cleanupStdOut: (String) -> String = { it },
 ): String {
     val files = testReportDirs
         .flatMap {
@@ -91,6 +98,9 @@ internal fun readAndCleanupTestResults(
 
         val browserTestRegex = "\\[(.*(, )?)browser,.*]".toRegex();
         e.attributes.forEach {
+            attributeValidators[it.name]?.let { validator ->
+                validator(it.value)
+            }
             if (it.name in skipAttrs) {
                 it.value = "..."
             } else if (stripBrowserVersionInfoFromTestCaseNames &&

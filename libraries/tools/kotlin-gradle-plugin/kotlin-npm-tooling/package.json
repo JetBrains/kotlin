@@ -14,7 +14,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.1",
-    "kotlin-web-helpers": "^3.3.0",
+    "kotlin-web-helpers": "^3.4.0",
     "mini-css-extract-plugin": "^2.10.2",
     "mocha": "^11.7.6",
     "sass": "^1.101.0",
