@@ -49,26 +49,9 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
     )
 
     private fun CFGNode<*>.skipNode(): Boolean {
-        val skipType = this is ExitNodeMarker ||
-                this is EnterNodeMarker ||
-                this is StubNode ||
-                this is SplitPostponedLambdasNode ||
-                this is PostponedLambdaExitNode ||
-                this is MergePostponedLambdaExitsNode ||
-                this is FunctionCallExitNode ||
-                this is BooleanOperatorExitLeftOperandNode ||
-                this is BooleanOperatorEnterRightOperandNode ||
-                this is WhenSyntheticElseBranchNode ||
-                this is WhenBranchResultEnterNode ||
-                this is WhenBranchResultExitNode ||
-                this is ExitSafeCallNode ||
-                this is ElvisLhsExitNode ||
-                this is ElvisLhsIsNotNullNode
-        val allowType = this is LoopEnterNode ||
-                this is LoopBlockEnterNode ||
-                this is TryExpressionEnterNode
-        return !allowType &&
-                (skipType ||
+        // Nodes which must be reachable, regardless of source key or element type.
+        return this !is MustBeReachableNodeMarker &&
+                (this is AlwaysReachableNodeMarker ||
                         sourceKindsToSkip.contains(this.fir.source?.kind) ||
                         this.fir.source?.elementType == TokenType.ERROR_ELEMENT)
     }
