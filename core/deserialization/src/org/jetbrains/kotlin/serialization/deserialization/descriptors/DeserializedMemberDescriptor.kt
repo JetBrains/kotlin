@@ -35,7 +35,9 @@ interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescripto
 }
 
 @K1Deprecation
-interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
+interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor {
+    val companionExtensionClass: ClassDescriptor?
+}
 
 @K1Deprecation
 class DeserializedSimpleFunctionDescriptor(
@@ -48,6 +50,7 @@ class DeserializedSimpleFunctionDescriptor(
     override val nameResolver: NameResolver,
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
+    override var companionExtensionClass: ClassDescriptor?,
     override val containerSource: DeserializedContainerSource?,
     source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
@@ -66,7 +69,7 @@ class DeserializedSimpleFunctionDescriptor(
     ): FunctionDescriptorImpl {
         return DeserializedSimpleFunctionDescriptor(
             newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
-            proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
+            proto, nameResolver, typeTable, versionRequirementTable, companionExtensionClass, containerSource, source
         ).also {
             it.setHasStableParameterNames(hasStableParameterNames())
         }
@@ -92,6 +95,7 @@ class DeserializedPropertyDescriptor(
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
         override val versionRequirementTable: VersionRequirementTable,
+        override var companionExtensionClass: ClassDescriptor?,
         override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
@@ -108,7 +112,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
-            isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
+            isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, companionExtensionClass, containerSource
         )
     }
 
@@ -154,6 +158,8 @@ class DeserializedClassConstructorDescriptor(
     override fun isTailrec(): Boolean = false
 
     override fun isSuspend(): Boolean = false
+
+    override val companionExtensionClass: ClassDescriptor? get() = null
 }
 
 @K1Deprecation

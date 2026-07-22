@@ -48,6 +48,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             c.nameResolver,
             c.typeTable,
             c.versionRequirementTable,
+            null,
             c.containerSource
         )
 
@@ -71,6 +72,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 proto.contextReceiverTypes(c.typeTable), proto.contextParameterList, proto, AnnotatedCallableKind.PROPERTY_GETTER,
             ),
         )
+
+        property.companionExtensionClass = proto.companionExtensionReceiverType(c.typeTable)
+            ?.let(local.typeDeserializer::type)
+            ?.constructor
+            ?.declarationDescriptor as? ClassDescriptor
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
         // by taking hasAnnotations/visibility/modality from property flags, and using false for the rest
@@ -210,7 +216,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 c.versionRequirementTable
         val function = DeserializedSimpleFunctionDescriptor(
             c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
-            ProtoEnumFlags.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, versionRequirementTable,
+            ProtoEnumFlags.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, versionRequirementTable, null,
             c.containerSource
         )
 
@@ -240,6 +246,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
         function.setHasStableParameterNames(!Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags))
+
+        function.companionExtensionClass = proto.companionExtensionReceiverType(c.typeTable)
+            ?.let(local.typeDeserializer::type)
+            ?.constructor
+            ?.declarationDescriptor as? ClassDescriptor
 
         val mapValueForContract =
             c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, local.typeDeserializer)
