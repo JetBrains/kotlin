@@ -223,17 +223,15 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
     override fun getLightFacade(
         fileSymbol: KaFileSymbol,
-        session: KaSession,
     ): PsiClass? {
-        context(session) {
-            val contextModule = useSiteModule
-                .takeIf(KaModule::isValidContextModule)
-                ?.takeIf(::facadeIsApplicable)
-                ?: return null
-            return getLightFacade(fileSymbol, contextModule)
-        }
+        val contextModule = useSiteModule
+            .takeIf(KaModule::isValidContextModule)
+            ?.takeIf(::facadeIsApplicable)
+            ?: return null
+        return getLightFacade(fileSymbol, contextModule)
     }
 
 
@@ -251,7 +249,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     private fun createInstanceOfDecompiledLightFacade(
         facadeFqName: FqName,
         module: KaModule,
-        files: List<KtFile>,
+        files: List<KtFile>
     ): KtLightClassForFacade? {
         val lightClass = DecompiledLightClassesFactory.createLightFacadeForDecompiledKotlinFile(project, facadeFqName, files)
         if (lightClass != null) {
@@ -328,15 +326,13 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
     override fun getLightFacade(
         scriptSymbol: KaScriptSymbol,
-        session: KaSession,
     ): PsiClass? {
-        context(session) {
-            val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
-            return cacheLightClass(scriptSymbol, contextModule) {
-                createLightScript(scriptSymbol, useSiteModule)
-            }
+        val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
+        return cacheLightClass(scriptSymbol, contextModule) {
+            createLightScript(scriptSymbol, useSiteModule)
         }
     }
 
@@ -402,14 +398,12 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
     override fun getLightClass(
         classSymbol: KaClassSymbol,
-        session: KaSession,
     ): PsiClass? {
-        context(session) {
-            val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
-            return getLightClass(classSymbol, contextModule)
-        }
+        val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
+        return getLightClass(classSymbol, contextModule)
     }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)
@@ -460,92 +454,72 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     // ============ LIGHT ELEMENTS SEARCH ============
     //region Light Elements Search
 
+    context(session: KaSession)
     override fun getLightClassParameters(
         parameterSymbol: KaParameterSymbol,
-        session: KaSession,
     ): List<PsiParameter> {
-        context(session) {
-            val enclosingDeclaration = parameterSymbol.containingDeclaration as? KaFunctionSymbol ?: return emptyList()
+        val enclosingDeclaration = parameterSymbol.containingDeclaration as? KaFunctionSymbol ?: return emptyList()
 
-            val methods = enclosingDeclaration.asPsiMethods()
+        val methods = enclosingDeclaration.asPsiMethods()
 
-            val parameterSymbolPointer = parameterSymbol.createPointer()
-            val parameterSymbolPsi = parameterSymbol.sourcePsiSafe<KtElement>()
-            return methods.mapNotNull { method ->
-                method.parameterList.parameters.firstOrNull { parameter ->
-                    parameter.isCreatedFrom(parameterSymbolPsi, parameterSymbolPointer)
-                }
+        val parameterSymbolPointer = parameterSymbol.createPointer()
+        val parameterSymbolPsi = parameterSymbol.sourcePsiSafe<KtElement>()
+        return methods.mapNotNull { method ->
+            method.parameterList.parameters.firstOrNull { parameter ->
+                parameter.isCreatedFrom(parameterSymbolPsi, parameterSymbolPointer)
             }
         }
     }
 
+    context(session: KaSession)
     override fun getLightClassTypeParameter(
         typeParameterSymbol: KaTypeParameterSymbol,
-        session: KaSession,
     ): List<PsiTypeParameter> {
-        context(session) {
-            val enclosingDeclaration = typeParameterSymbol.containingDeclaration ?: return emptyList()
-            val paramIndex = enclosingDeclaration.typeParameters.indexOf(typeParameterSymbol)
+        val enclosingDeclaration = typeParameterSymbol.containingDeclaration ?: return emptyList()
+        val paramIndex = enclosingDeclaration.typeParameters.indexOf(typeParameterSymbol)
 
-            val lightOwners = when (enclosingDeclaration) {
-                is KaClassSymbol -> listOf(enclosingDeclaration.asPsiClass())
-                is KaFunctionSymbol -> enclosingDeclaration.asPsiMethods()
-                else -> emptyList()
-            }
+        val lightOwners = when (enclosingDeclaration) {
+            is KaClassSymbol -> listOf(enclosingDeclaration.asPsiClass())
+            is KaFunctionSymbol -> enclosingDeclaration.asPsiMethods()
+            else -> emptyList()
+        }
 
-            return lightOwners.mapNotNull { lightOwner ->
-                (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.getOrNull(paramIndex)
-            }
+        return lightOwners.mapNotNull { lightOwner ->
+            (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.getOrNull(paramIndex)
         }
     }
 
+    context(session: KaSession)
     override fun getLightClassBackingField(
         declarationSymbol: KaSymbol,
-        session: KaSession,
     ): PsiField? {
         if (declarationSymbol !is KaClassSymbol && declarationSymbol !is KaEnumEntrySymbol && declarationSymbol !is KaBackingFieldSymbol) return null
 
-        context(session) {
-            var psiClass: PsiClass = getWrappingClass(declarationSymbol) ?: return null
+        val psiClass: PsiClass = getWrappingClass(declarationSymbol)?.let { wrapper ->
+            (wrapper.parent as? PsiClass).takeIf { wrapper.isCreatedFromCompanion() } ?: wrapper
+        } ?: return null
 
-            if (psiClass is KtLightClass && psiClass is KaSymbolJavaView<*>) {
-                psiClass.symbolPointer?.withSymbol(useSiteModule) { originSymbol ->
-                    if (originSymbol is KaClassSymbol && originSymbol.classKind == KaClassKind.COMPANION_OBJECT) {
-                        val containingClass = originSymbol.containingSymbol
-                        if (containingClass is KaClassSymbol) {
-                            val containingLightClass = containingClass.asPsiClass()
-                            if (containingLightClass != null) {
-                                psiClass = containingLightClass
-                            }
-                        }
-                    }
-                }
-            }
+        val declarationSymbolPointer = declarationSymbol.createPointer()
+        val declarationSymbolPsi = declarationSymbol.sourcePsiSafe<KtElement>()
 
-            val declarationSymbolPointer = declarationSymbol.createPointer()
-            val declarationSymbolPsi = declarationSymbol.sourcePsiSafe<KtElement>()
-
-            return psiClass.fields.find { psiField: PsiField ->
-                psiField.isCreatedFrom(declarationSymbolPsi, declarationSymbolPointer)
-            }
+        return psiClass.fields.find { psiField: PsiField ->
+            psiField.isCreatedFrom(declarationSymbolPsi, declarationSymbolPointer)
         }
     }
 
+    context(session: KaSession)
     override fun getLightClassMethods(
         functionSymbol: KaFunctionSymbol,
-        session: KaSession,
     ): List<PsiMethod> {
-        context(session) {
-            val functionSymbolPointer = functionSymbol.createPointer()
-            val functionSymbolPsi = functionSymbol.sourcePsiSafe<KtElement>()
+        val functionSymbolPointer = functionSymbol.createPointer()
+        val functionSymbolPsi = functionSymbol.sourcePsiSafe<KtElement>()
 
-            return getWrappingClasses(functionSymbol)
-                .flatMap { it.methods.asSequence() }
-                .filterIsInstance<KtLightMethod>()
-                .filter { lightMethod ->
-                    lightMethod.isCreatedFrom(functionSymbolPsi, functionSymbolPointer)
-                }
-        }
+        return getWrappingClasses(functionSymbol)
+            .flatMap { it.methods.asSequence() }
+            .filterIsInstance<KtLightMethod>()
+            .filter { lightMethod ->
+                lightMethod.isCreatedFrom(functionSymbolPsi, functionSymbolPointer)
+            }
     }
 
     context(_: KaSession)
@@ -566,21 +540,36 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     private fun getWrappingClasses(declaration: KaSymbol): List<PsiClass> {
         val wrapperClass = getWrappingClass(declaration) ?: return emptyList()
 
-        return (wrapperClass as? KaSymbolJavaView<*>)?.symbolPointer?.withSymbol(useSiteModule) { originSymbol ->
-            if (originSymbol is KaClassSymbol && originSymbol.classKind == KaClassKind.COMPANION_OBJECT && wrapperClass.parent is PsiClass) {
-                listOf(wrapperClass, wrapperClass.parent as PsiClass)
-            } else {
-                null
-            }
-        } ?: listOf(wrapperClass)
+        val isCompanion = wrapperClass.isCreatedFromCompanion()
+
+        val wrapperParent = wrapperClass.parent
+        return if (isCompanion && wrapperParent is PsiClass) {
+            listOf(wrapperClass, wrapperParent)
+        } else {
+            listOf(wrapperClass)
+        }
     }
 
     private fun PsiElement.isCreatedFrom(otherPsi: KtElement?, otherSymbolPointer: KaSymbolPointer<*>): Boolean {
-        if (this !is KaSymbolJavaView<*>) {
+        if (this !is KaElementJavaView) {
             return false
         }
 
-        return otherPsi != null && kotlinOrigin == otherPsi || symbolPointer?.pointsToTheSameSymbolAs(otherSymbolPointer) == true
+        return otherPsi != null && kotlinOrigin == otherPsi ||
+                (this as? KaSymbolJavaView<*>)?.symbolPointer?.pointsToTheSameSymbolAs(otherSymbolPointer) == true
+    }
+
+    private fun PsiClass.isCreatedFromCompanion(): Boolean {
+        if (this !is KaElementJavaView) {
+            return false
+        }
+
+        return when (val kotlinOrigin = kotlinOrigin) {
+            null -> (this as? KaSymbolJavaView<*>)?.symbolPointer?.withSymbol(useSiteModule) { originSymbol ->
+                originSymbol is KaClassSymbol && originSymbol.classKind == KaClassKind.COMPANION_OBJECT
+            }
+            else -> (kotlinOrigin as? KtObjectDeclaration)?.isCompanion()
+        } == true
     }
 
     //endregion
@@ -598,7 +587,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
 
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
-        searchScope: GlobalSearchScope,
+        searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope, contextualModule = null).run {
         getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName).flatMap {
             getAllClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
@@ -748,7 +737,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      */
     private fun KtElement.findContextModule(
         scope: GlobalSearchScope? = null,
-        moduleFilter: (KaModule) -> Boolean = { true },
+        moduleFilter: (KaModule) -> Boolean = { true }
     ): KaModule? {
         val declarationModule = getContainingModule().takeIf(moduleFilter) ?: return null
         return calculatedContextModuleCache
@@ -893,7 +882,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     private fun <R : KtLightClass> cacheLightClass(
         element: KaSymbol,
         module: KaModule,
-        provider: () -> R?,
+        provider: () -> R?
     ): R? {
         val computedValue = if (isMultiplatformSupportAvailable) {
             KMP_CACHE.get().computeIfAbsent(element) { provider() }

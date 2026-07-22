@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalClass
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -312,41 +313,45 @@ internal class KaFirJavaInteroperabilityComponent(
     }
 
     override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClass(classSymbol, analysisSession)
+        getLightClassProvider()?.getLightClass(session = analysisSession, classSymbol = classSymbol)
     }
 
     override fun asFacadePsiClass(fileSymbol: KaFileSymbol): PsiClass? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightFacade(fileSymbol, analysisSession)
+        getLightClassProvider()?.getLightFacade(session = analysisSession, fileSymbol = fileSymbol)
     }
 
     override fun asFacadePsiClass(scriptSymbol: KaScriptSymbol): PsiClass? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightFacade(scriptSymbol, analysisSession)
+        getLightClassProvider()?.getLightFacade(session = analysisSession, scriptSymbol = scriptSymbol)
     }
 
     override fun asPsiMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod> = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClassMethods(functionSymbol, analysisSession).orEmpty()
+        getLightClassProvider()?.getLightClassMethods(session = analysisSession, functionSymbol = functionSymbol).orEmpty()
     }
 
     override fun asPsiTypeParameters(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter> = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClassTypeParameter(typeParameterSymbol, analysisSession).orEmpty()
+        getLightClassProvider()?.getLightClassTypeParameter(session = analysisSession, typeParameterSymbol = typeParameterSymbol).orEmpty()
     }
 
     override fun asPsiParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter> = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClassParameters(parameterSymbol, analysisSession).orEmpty()
+        getLightClassProvider()?.getLightClassParameters(session = analysisSession, parameterSymbol = parameterSymbol).orEmpty()
     }
 
     override fun asPsiField(backingFieldSymbol: KaBackingFieldSymbol): PsiField? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClassBackingField(backingFieldSymbol, analysisSession)
+        getLightClassProvider()?.getLightClassBackingField(session = analysisSession, declarationSymbol = backingFieldSymbol)
     }
 
     override fun asPsiField(classSymbol: KaClassSymbol): PsiField? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)?.getLightClassBackingField(classSymbol, analysisSession)
+        getLightClassProvider()?.getLightClassBackingField(session = analysisSession, declarationSymbol = classSymbol)
     }
 
     override fun asPsiField(enumEntrySymbol: KaEnumEntrySymbol): PsiEnumConstant? = withValidityAssertion {
-        KaLightClassProvider.getInstance(project)
-            ?.getLightClassBackingField(enumEntrySymbol, analysisSession) as? PsiEnumConstant
+        getLightClassProvider()?.getLightClassBackingField(
+            session = analysisSession,
+            declarationSymbol = enumEntrySymbol
+        ) as? PsiEnumConstant
     }
+
+    private fun getLightClassProvider(): KaLightClassProvider? = KotlinAsJavaSupport.getInstance(project) as? KaLightClassProvider
 
     override fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol? = psiClass.withPsiValidityAssertion {
         if (psiClass is PsiTypeParameter) return null

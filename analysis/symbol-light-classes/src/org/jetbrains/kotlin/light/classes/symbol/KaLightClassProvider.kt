@@ -5,30 +5,36 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
-import com.intellij.openapi.components.serviceOrNull
-import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 
 /**
- * High-level service for acquiring light elements for given [KaSymbol]s.
- * The service should not be used outside of Analysis API implementation.
+ * High-level interface for acquiring light elements for given [KaSymbol]s.
+ * Should not be used outside of Analysis API implementation.
  * For the proper LC construction, use the top-level endpoints from Analysis API surface.
  */
 @KaImplementationDetail
 interface KaLightClassProvider {
-    fun getLightClass(classSymbol: KaClassSymbol, session: KaSession): PsiClass?
-    fun getLightFacade(fileSymbol: KaFileSymbol, session: KaSession): PsiClass?
-    fun getLightFacade(scriptSymbol: KaScriptSymbol, session: KaSession): PsiClass?
-    fun getLightClassParameters(parameterSymbol: KaParameterSymbol, session: KaSession): List<PsiParameter>
-    fun getLightClassTypeParameter(typeParameterSymbol: KaTypeParameterSymbol, session: KaSession): List<PsiTypeParameter>
-    fun getLightClassBackingField(declarationSymbol: KaSymbol, session: KaSession): PsiField?
-    fun getLightClassMethods(functionSymbol: KaFunctionSymbol, session: KaSession): List<PsiMethod>
+    context(session: KaSession)
+    fun getLightClass(classSymbol: KaClassSymbol): PsiClass?
 
-    @KaImplementationDetail
-    companion object {
-        fun getInstance(project: Project): KaLightClassProvider? = project.serviceOrNull<KaLightClassProvider>()
-    }
+    context(session: KaSession)
+    fun getLightFacade(fileSymbol: KaFileSymbol): PsiClass?
+
+    context(session: KaSession)
+    fun getLightFacade(scriptSymbol: KaScriptSymbol): PsiClass?
+
+    context(session: KaSession)
+    fun getLightClassParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter>
+
+    context(session: KaSession)
+    fun getLightClassTypeParameter(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter>
+
+    context(session: KaSession)
+    fun getLightClassBackingField(declarationSymbol: KaSymbol): PsiField?
+
+    context(session: KaSession)
+    fun getLightClassMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod>
 }
