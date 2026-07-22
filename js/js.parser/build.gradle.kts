@@ -17,11 +17,6 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
-}
-
 val generateJsParser by tasks.registering(JavaExec::class) {
     val outputPackage = "org.jetbrains.kotlin.js.parser.antlr.generated"
     val outputDir = layout.projectDirectory.dir("src/${outputPackage.replace('.', '/')}").asFile
@@ -73,6 +68,14 @@ val generateJsParser by tasks.registering(JavaExec::class) {
                 file.writeText(normalizedContent)
             }
     }
+}
+
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDirs(generateJsParser)
+    }
+    "test" {}
 }
 
 registerInAggregateGenerateSources("generateJsParser")
