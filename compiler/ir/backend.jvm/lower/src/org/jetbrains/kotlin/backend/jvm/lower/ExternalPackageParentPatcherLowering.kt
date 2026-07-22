@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -36,6 +37,16 @@ internal class ExternalPackageParentPatcherLowering(val context: JvmBackendConte
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
             visitElement(expression)
             val callee = expression.symbol.owner as? IrMemberWithContainerSource ?: return
+            handle(callee)
+        }
+
+        override fun visitRichCallableReference(expression: IrRichCallableReference<*>) {
+            visitElement(expression)
+            val callee = expression.reflectionTargetSymbol?.owner as? IrMemberWithContainerSource ?: return
+            handle(callee)
+        }
+
+        private fun handle(callee: IrMemberWithContainerSource) {
             if (callee.parent is IrExternalPackageFragment) {
                 val parentClass = generateOrGetFacadeClass(callee) ?: return
                 parentClass.parent = callee.parent
