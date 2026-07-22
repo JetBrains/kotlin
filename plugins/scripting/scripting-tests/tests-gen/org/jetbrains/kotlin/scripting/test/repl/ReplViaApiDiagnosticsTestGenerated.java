@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.test;
+package org.jetbrains.kotlin.scripting.test.repl;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/repl")
 @TestDataPath("$PROJECT_ROOT")
-public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractReplWithTestExtensionsDiagnosticsTest {
+public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagnosticsTest {
   private void run(String fileName) {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/" + fileName);
   }
