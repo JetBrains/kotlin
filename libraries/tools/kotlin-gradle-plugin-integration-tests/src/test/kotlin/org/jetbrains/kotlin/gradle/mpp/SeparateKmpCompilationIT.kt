@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -36,7 +35,6 @@ import kotlin.test.assertTrue
 class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("fragment dependencies are configured for shared source sets in a single-target project")
     @GradleTest
-    @Disabled("Single-target source sets are ignored")
     fun fragmentDependenciesInSingleTargetProject(gradleVersion: GradleVersion) {
         doTestFragmentDependenciesArg(
             gradleVersion,
@@ -298,6 +296,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:metadataNativeMainProcessResources",
                     ":library:processJvmMainResources",
                     ":library:transformCommonMainDependenciesMetadata",
+                    ":library:transformWebMainDependenciesMetadata",
                     ":library:transformLinuxMainDependenciesMetadata",
                     ":library:transformLinuxMainCInteropDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
@@ -325,6 +324,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":processJvmMainResources",
                     ":transformCommonMainDependenciesMetadata",
                     ":transformCommonTestDependenciesMetadata",
+                    ":transformWebMainDependenciesMetadata",
                     ":transformLinuxMainDependenciesMetadata",
                     ":transformLinuxMainCInteropDependenciesMetadata",
                     ":transformLinuxTestDependenciesMetadata",
@@ -369,13 +369,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("single-target project does not produce actual metadata artifact with the separate kmp compilation scheme")
     @GradleTest
     fun singleTargetMetadataSeparate(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
-        doTestSingleTargetMetadata(gradleVersion, localRepoDir, true)
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, enableSeparateCompilation = true)
     }
 
     @DisplayName("single-target project does not produce actual metadata artifact with the current kmp compilation scheme")
     @GradleTest
     fun singleTargetMetadataCurrent(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
-        doTestSingleTargetMetadata(gradleVersion, localRepoDir, false)
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, enableSeparateCompilation = false)
     }
 
     @DisplayName("KT-79073 - test compilation compiles with use of internals from main code")
@@ -427,28 +427,21 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             if (enableSeparateCompilation) {
                 enableSeparateCompilation()
-                buildAndFail(":publish") {
-                    // Currently, it's not clear what shared source sets of single-target projects or bamboo structures should be.
-                    // This test just fixates it's currently disallowed to have code in such shared source sets
-                    // until we decide what exactly should be allowed there
-                    assertTasksFailed(":compileKotlinJvm")
-                }
-            } else {
-                build(":publish") {
-                    val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
-                    assertFileExists(metadataJar)
-                    ZipFile(metadataJar.toFile()).use { zip ->
-                        val topLevelEntries = zip.entries().asSequence()
-                            .filter { entry ->
-                                val path = entry.name
-                                // top-level directories contain a slash at the end of the name
-                                '/' !in path || path.substring(path.indexOf('/') + 1).isEmpty()
-                            }
-                            .toList()
-
-                        assert(topLevelEntries.size == 1 && topLevelEntries.none { it.name != "META-INF/" }) {
-                            "Metadata JAR $metadataJar is expected to be an empty jar with META-INF only single-target KMP project. Top-level entries of the metadata jar: $topLevelEntries"
+            }
+            build(":publish") {
+                val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
+                assertFileExists(metadataJar)
+                ZipFile(metadataJar.toFile()).use { zip ->
+                    val topLevelEntries = zip.entries().asSequence()
+                        .filter { entry ->
+                            val path = entry.name
+                            // top-level directories contain a slash at the end of the name
+                            '/' !in path || path.substring(path.indexOf('/') + 1).isEmpty()
                         }
+                        .toList()
+
+                    assert(topLevelEntries.size == 1 && topLevelEntries.none { it.name != "META-INF/" }) {
+                        "Metadata JAR $metadataJar is expected to be an empty jar with META-INF only single-target KMP project. Top-level entries of the metadata jar: $topLevelEntries"
                     }
                 }
             }

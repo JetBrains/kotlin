@@ -109,7 +109,8 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                                 compilation.project.retrieveFragmentDependencies(
                                     sourceSets,
                                     fragmentName,
-                                    mostCommonFragmentPerNativePlatforms
+                                    mostCommonFragmentPerNativePlatforms,
+                                    compilation.kotlinSourceSets,
                                 )
                             } else project.files(),
                             friends = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
@@ -127,12 +128,14 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
         sourceSets: List<KotlinSourceSet>,
         fragmentName: String,
         mostCommonFragmentPerNativePlatformsFuture: Future<Map<Set<String>, String>>,
+        directlyCompiledSourceSets: Set<KotlinSourceSet>,
     ): FileCollection = filesProvider {
         future {
             buildSet {
                 for (sourceSet in sourceSets) {
+                    // Skip leaf source-set
+                    if (sourceSet in directlyCompiledSourceSets) continue
                     val internalSourceSet = sourceSet.internal
-                    if (!internalSourceSet.isSharedSourceSet()) continue
                     if (internalSourceSet.isNativeSourceSet.await()) {
                         val mostCommonFragmentPerNativePlatforms = mostCommonFragmentPerNativePlatformsFuture.await()
                         val mostCommonNativeFragment = mostCommonFragmentPerNativePlatforms.maxBy { it.key.size }.value
