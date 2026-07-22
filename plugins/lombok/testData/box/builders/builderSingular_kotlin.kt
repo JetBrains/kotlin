@@ -43,6 +43,22 @@ class SingularCollections(
     @Singular val pairs: Map<String, Int>,
 )
 
+@Builder
+class GenericSingular<K, V>(
+    @Singular val items: List<V>,
+    @Singular val pairs: Map<K, V>,
+)
+
+@Builder
+class NullableTypeParameterSingular<T>(
+    @Singular val items: List<T?>,
+)
+
+@Builder
+class BoundedTypeParameterSingular<T : CharSequence>(
+    @Singular val items: List<T>,
+)
+
 fun box(): String {
     val userBuilder = User.builder()
         .status("wrong")
@@ -152,6 +168,48 @@ fun box(): String {
         .item("z")
         .build()
     assertEquals(listOf("z"), cleared.items)
+
+    // `@Singular` on a field whose element/key/value type is the enclosing class's own type
+    // parameter must correctly substitute that parameter into the builder's own type-parameter scope.
+    val emptyGeneric = GenericSingular.builder<String, Int>().build()
+    assertEquals(emptyList<Int>(), emptyGeneric.items)
+    assertEquals(emptyMap<String, Int>(), emptyGeneric.pairs)
+
+    val genericSingleton = GenericSingular.builder<String, Int>()
+        .item(1)
+        .pair("k", 1)
+        .build()
+    assertEquals(listOf(1), genericSingleton.items)
+    assertEquals(mapOf("k" to 1), genericSingleton.pairs)
+
+    val generic = GenericSingular.builder<String, Int>()
+        .item(1)
+        .item(2)
+        .pair("k", 1)
+        .pair("l", 2)
+        .items(listOf(3))
+        .pairs(mapOf("m" to 3))
+        .build()
+    assertEquals(listOf(1, 2, 3), generic.items)
+    assertEquals(mapOf("k" to 1, "l" to 2, "m" to 3), generic.pairs)
+
+    // A `@Singular` collection over a nullable type parameter (`T?`) must accept `null` elements,
+    // exactly like a concrete nullable element type does (see `NullableElements` above).
+    val nullableTypeParameter = NullableTypeParameterSingular.builder<Int>()
+        .item(1)
+        .item(null)
+        .items(listOf(2, null))
+        .build()
+    assertEquals(listOf(1, null, 2, null), nullableTypeParameter.items)
+
+    // A `@Singular` collection over a bounded type parameter (`T : CharSequence`) must substitute
+    // the bound correctly into the builder's own type-parameter scope.
+    val boundedTypeParameter = BoundedTypeParameterSingular.builder<String>()
+        .item("a")
+        .item("b")
+        .items(listOf("c"))
+        .build()
+    assertEquals(listOf("a", "b", "c"), boundedTypeParameter.items)
 
     return "OK"
 }

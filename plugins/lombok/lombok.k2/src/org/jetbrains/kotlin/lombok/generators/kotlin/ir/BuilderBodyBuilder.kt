@@ -98,7 +98,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
             val field = builderClass.findBuilderField(parameter.name) ?: return@forEachIndexed
             constructorCall.arguments[index] = if (parameter.name in singularFieldNames) {
-                buildSingularResult(field, parameter, thisParameter)
+                buildSingularResult(field, thisParameter)
             } else {
                 irGetField(irGet(thisParameter), field)
             }
@@ -306,12 +306,18 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.buildSingularResult(
         field: IrField,
-        parameter: IrValueParameter,
         thisParameter: IrValueParameter,
     ): IrExpression {
         val info = singularCollectionInfo(field.type) ?: return irGetField(irGet(thisParameter), field)
         val builtIns = pluginContext.irBuiltIns
-        val resultType = parameter.type.makeNotNull()
+        // Built from `info`'s (already-substituted, builder-scoped) type arguments rather than the entity
+        // constructor's own declared parameter type, which references the entity class's own type parameters
+        // — foreign to the scope this expression is constructed in for a generic entity class.
+        val resultType = when (info.kind) {
+            SingularKind.MAP -> builtIns.mapClass.typeWith(info.typeArguments)
+            SingularKind.SET -> builtIns.setClass.typeWith(info.typeArguments)
+            else -> builtIns.listClass.typeWith(info.typeArguments)
+        }
 
         val fieldTmp = irTemporary(irGetField(irGet(thisParameter), field), nameHint = "singular")
         fun nonNullField() = irImplicitCast(irGet(fieldTmp), field.type.makeNotNull())
