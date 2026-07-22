@@ -9,6 +9,7 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.assignRootDeclarationReferences
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -282,6 +283,12 @@ internal fun deserializeClassToSymbol(
             parentProperty = null,
             session
         )
+
+        if (isTopLevel) {
+            // For deserialized symbols, top-level classes are root declarations, so we have to assign back references here. For nested
+            // classes, the root declaration is its containing top-level class, which will be assigned during that class's deserialization.
+            assignRootDeclarationReferences(this, this)
+        }
     }
 }
 

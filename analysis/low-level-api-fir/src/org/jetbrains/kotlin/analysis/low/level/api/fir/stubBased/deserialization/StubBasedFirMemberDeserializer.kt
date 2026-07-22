@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.assignRootDeclarationReferences
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.llSymbolIdFactory
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
@@ -222,6 +224,11 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
         }.apply {
             sourceElement = c.containerSource
+
+            if (isTopLevel) {
+                // For deserialized symbols, top-level type aliases are root declarations, so we have to assign back references here.
+                assignRootDeclarationReferences(this, this)
+            }
         }
     }
 
@@ -512,6 +519,11 @@ internal class StubBasedFirMemberDeserializer(
             this.setter?.loadContracts(local)
 
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+
+            if (isTopLevel) {
+                // For deserialized symbols, top-level properties are root declarations, so we have to assign back references here.
+                assignRootDeclarationReferences(this, this)
+            }
         }
     }
 
@@ -645,6 +657,11 @@ internal class StubBasedFirMemberDeserializer(
             if (isStatic && classSymbol != null) {
                 containingClassForStaticMemberAttr = classSymbol.toLookupTag()
             }
+
+            if (isTopLevel) {
+                // For deserialized symbols, top-level functions are root declarations, so we have to assign back references here.
+                assignRootDeclarationReferences(this, this)
+            }
         }
 
         return simpleFunction
@@ -728,6 +745,9 @@ internal class StubBasedFirMemberDeserializer(
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)
+
+            // Constructors are always class members, so root declaration references don't need to be assigned here. The constructor will
+            // receive its root declaration reference assignment through the containing (top-level) class.
         }
     }
 
