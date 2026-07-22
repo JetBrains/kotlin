@@ -1,0 +1,97 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] explicitEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun equals([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/EqualityBound|[CompilerRequiredAnnotations](<getClass>(EB#)) other: Any?): Boolean
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun equals([ResolvedTo(COMPANION_GENERATION)] @R|kotlin/EqualityBound|[CompilerRequiredAnnotations](<getClass>(EB#)) other: Any?): Boolean
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun equals([ResolvedTo(SUPER_TYPES)] @R|kotlin/EqualityBound|[CompilerRequiredAnnotations](<getClass>(EB#)) other: Any?): Boolean
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public final? [ResolvedTo(TYPES)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(TYPES)] fun equals([ResolvedTo(TYPES)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun equals([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(CONTRACTS)] fun equals([ResolvedTo(CONTRACTS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun equals([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(CONSTANT_EVALUATION)] fun equals([ResolvedTo(CONSTANT_EVALUATION)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun equals([ResolvedTo(ANNOTATION_ARGUMENTS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](bound = <getClass>(Q|EB|) [evaluated = <getClass>(Q|EB|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](bound = <getClass>(Q|EB|) [evaluated = <getClass>(Q|EB|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] explicitEqualityBound.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](bound = <getClass>(Q|EB|) [evaluated = <getClass>(Q|EB|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }

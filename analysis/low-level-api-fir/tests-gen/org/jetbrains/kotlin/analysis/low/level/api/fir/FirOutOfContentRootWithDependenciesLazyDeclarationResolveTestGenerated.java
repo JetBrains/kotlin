@@ -1770,6 +1770,18 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("equalityBoundUsage.kt")
+    public void testEqualityBoundUsage() {
+      run("equalityBoundUsage.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitEqualityBound.kt")
+    public void testExplicitEqualityBound() {
+      run("explicitEqualityBound.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallWithGenericResult.kt")
     public void testFunctionCallWithGenericResult() {
       run("functionCallWithGenericResult.kt");
@@ -1845,6 +1857,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       run("incompleteFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedEqualityBound.kt")
+    public void testInheritedEqualityBound() {
+      run("inheritedEqualityBound.kt");
     }
 
     @Test

@@ -1,0 +1,213 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Inherited : EB {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Inherited : EB {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Inherited : EB {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun equals([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] other: Any?): Boolean { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Inherited : EB {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun equals([ResolvedTo(COMPANION_GENERATION)] other: Any?): Boolean { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class Inherited : R|EB| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun equals([ResolvedTo(SUPER_TYPES)] other: Any?): Boolean { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+    public final? [ResolvedTo(TYPES)] class Inherited : R|EB| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] fun equals([ResolvedTo(TYPES)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun equals([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun equals([ResolvedTo(CONTRACTS)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun equals([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun equals([ResolvedTo(CONSTANT_EVALUATION)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun equals([ResolvedTo(ANNOTATION_ARGUMENTS)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(STATUS)] class Inherited : R|EB| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] inheritedEqualityBound.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](bound = <getClass>(Q|EB|) [evaluated = <getClass>(Q|EB|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Inherited : R|EB| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inherited] constructor(): R|Inherited| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
