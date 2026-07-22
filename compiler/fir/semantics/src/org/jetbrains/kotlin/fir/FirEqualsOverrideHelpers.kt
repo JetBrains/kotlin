@@ -50,26 +50,23 @@ fun computeEqualsOverrideContract(
     type: ConeKotlinType,
     session: FirSession,
     scopeSession: ScopeSession,
-    trustExpectClasses: Boolean,
 ): EqualsOverrideContract {
     return computeEqualsOverrideContract(
         symbolsForType = collectSymbolsForType(type, session),
         session = session,
         scopeSession = scopeSession,
         visitedSymbols = mutableSetOf(),
-        trustExpectClasses = trustExpectClasses,
     )
 }
 
-fun computeEqualsOverrideContract(
+private fun computeEqualsOverrideContract(
     symbolsForType: List<FirClassSymbol<*>>,
     session: FirSession,
     scopeSession: ScopeSession,
     visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
-    trustExpectClasses: Boolean,
 ): EqualsOverrideContract {
     val subtypesContract = symbolsForType
-        .maxOfOrNull { it.computeEqualsOverrideContract(session, scopeSession, visitedSymbols, trustExpectClasses) }
+        .maxOfOrNull { it.computeEqualsOverrideContract(session, scopeSession, visitedSymbols) }
         ?: EqualsOverrideContract.UNKNOWN
 
     if (subtypesContract == EqualsOverrideContract.UNKNOWN) {
@@ -85,7 +82,7 @@ fun computeEqualsOverrideContract(
         visitedSymbols = visitedSymbols,
     )
     val superClassSymbols = superTypes.mapNotNull { it.fullyExpandedType(session).toRegularClassSymbol(session) }
-    val supertypesContract = superClassSymbols.minOfOrNull { it.getDeclaredEqualsOverrideContract(session, scopeSession, trustExpectClasses) }
+    val supertypesContract = superClassSymbols.minOfOrNull { it.getDeclaredEqualsOverrideContract(session, scopeSession) }
         ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
 
     return minOf(subtypesContract, supertypesContract)
@@ -95,7 +92,6 @@ private fun FirClassSymbol<*>.computeEqualsOverrideContract(
     session: FirSession,
     scopeSession: ScopeSession,
     visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
-    trustExpectClasses: Boolean,
 ): EqualsOverrideContract {
     fun FirClassSymbol<*>.computeInheritorsContract(): EqualsOverrideContract {
         if (this !is FirRegularClassSymbol) return EqualsOverrideContract.UNKNOWN
@@ -105,15 +101,15 @@ private fun FirClassSymbol<*>.computeEqualsOverrideContract(
         }
 
         // Note that `sealed class` variants may have additional supertypes
-        return inheritors.minOfOrNull { computeEqualsOverrideContract(listOf(it), session, scopeSession, visitedSymbols, trustExpectClasses) }
+        return inheritors.minOfOrNull { computeEqualsOverrideContract(listOf(it), session, scopeSession, visitedSymbols) }
             ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
     }
 
     return when {
-        isFinal -> getDeclaredEqualsOverrideContract(session, scopeSession, trustExpectClasses)
+        isFinal -> getDeclaredEqualsOverrideContract(session, scopeSession)
         isSealed -> minOf(
             EqualsOverrideContract.TRUSTED_FOR_EXHAUSTIVENESS, // We could leave `SAFE_FOR_SMART_CAST`, but we choose to be conservative.
-            getDeclaredEqualsOverrideContract(session, scopeSession, trustExpectClasses),
+            getDeclaredEqualsOverrideContract(session, scopeSession),
             computeInheritorsContract(),
         )
         else -> EqualsOverrideContract.UNKNOWN
@@ -123,9 +119,8 @@ private fun FirClassSymbol<*>.computeEqualsOverrideContract(
 private fun FirClassSymbol<*>.getDeclaredEqualsOverrideContract(
     session: FirSession,
     scopeSession: ScopeSession,
-    trustExpectClasses: Boolean,
 ): EqualsOverrideContract {
-    if (resolvedStatus.isExpect && !trustExpectClasses) return EqualsOverrideContract.UNKNOWN
+    if (resolvedStatus.isExpect) return EqualsOverrideContract.UNKNOWN
     if (isSmartcastPrimitive(classId)) return EqualsOverrideContract.SAFE_FOR_SMART_CAST
     when (classId) {
         StandardClassIds.Any -> return EqualsOverrideContract.SAFE_FOR_SMART_CAST
