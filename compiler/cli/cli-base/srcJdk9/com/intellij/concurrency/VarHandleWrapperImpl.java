@@ -15,6 +15,7 @@ import java.lang.invoke.VarHandle;
 /**
  * Implementation of {@link VarHandleWrapper} based on {@link VarHandle}, when the latter is available in the classpath
  */
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 @ApiStatus.Internal
 public class VarHandleWrapperImpl extends VarHandleWrapper implements VarHandleWrapper.VarHandleWrapperFactory {
     private final VarHandle myVarHandle;
@@ -43,6 +44,18 @@ public class VarHandleWrapperImpl extends VarHandleWrapper implements VarHandleW
     public @NotNull VarHandleWrapper createForArrayElement(@NotNull Class<?> arrayClass) {
         assert arrayClass.isArray();
         return new VarHandleWrapperImpl(MethodHandles.arrayElementVarHandle(arrayClass), true);
+    }
+
+    //@Override
+    public Object getVolatile(Object thisObject) {
+        assert !isArray;
+        return myVarHandle.getVolatile(thisObject);
+    }
+
+    //@Override
+    public void setVolatile(Object thisObject, Object value) {
+        assert !isArray;
+        myVarHandle.setVolatile(thisObject, value);
     }
 
     @Override

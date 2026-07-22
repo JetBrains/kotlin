@@ -50,6 +50,9 @@ public abstract class VarHandleWrapper {
         @NotNull VarHandleWrapper createForArrayElement(@NotNull Class<?> arrayClass);
     }
 
+    public abstract Object getVolatile(Object thisObject);
+    public abstract void setVolatile(Object thisObject, Object value);
+
     public abstract boolean compareAndSet(Object thisObject, Object expected, Object actual);
     public abstract boolean compareAndSetInt(Object thisObject, int expected, int actual);
     public abstract boolean compareAndSetLong(Object thisObject, long expected, long actual);
