@@ -7,15 +7,8 @@ plugins {
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
-
-val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
-val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFrameGradlePluginClasspath")
-val kotlinxCoroutinesCoreGradlePluginClasspath = configurations.create("kotlinxCoroutinesCoreGradlePluginClasspath")
-val kotlinAllOpenPluginJar = configurations.create("kotlinAllOpenPluginJar")
-val kotlinScriptingCommonJar = configurations.create("kotlinScriptingCommonJar")
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -55,37 +48,6 @@ dependencies {
     compileOnly(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testImplementation(project(":compiler:frontend"))
-    testImplementation(project(":compiler:plugin-api"))
-    testImplementation(project(":compiler:util"))
-    testImplementation(project(":compiler:cli"))
-    testImplementation(project(":compiler:frontend.java"))
-    testImplementation(project(":compiler:fir:plugin-utils"))
-    testImplementation(testFixtures(project(":compiler:tests-common"))) {
-        if (this is ProjectDependency) {
-            exclude(group = "com.nordstrom.tools", module = "junit-foundation")
-        }
-    }
-    testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.platform.launcher)
-    testImplementation(kotlinTest("junit5"))
-
-    testImplementation(project(":kotlin-scripting-dependencies-maven"))
-    testImplementation(project(":plugins:scripting:scripting-tests:runtime"))
-
-    testImplementation(intellijCore())
-    testImplementation(libs.kotlinx.coroutines.core)
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
-    kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
-    kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
-    kotlinAllOpenPluginJar(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
-    kotlinScriptingCommonJar(project(":kotlin-scripting-common")) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -94,7 +56,6 @@ optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -109,39 +70,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-testsJar()
-
-projectTests {
-    testTask {
-        systemProperty("kotlin.main.kts.compiled.scripts.cache.dir", "build/main.kts.compiled.cache")
-        // MavenDependenciesResolver() tries to load from mavenLocal folder, so this file moves mavenLocal inside build folder.
-        addFileProperty(project.layout.projectDirectory.file("test-maven-settings.xml"), "org.apache.maven.user-settings")
-        val scriptClasspath = testSourceSet.output.classesDirs
-        addClasspathProperty(scriptClasspath,"kotlin.test.script.classpath")
-        addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
-        addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
-        addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
-        withAllOpenCompilerPluginJar()
-        withMainKtsJar()
-        addClasspathProperty(kotlinScriptingCommonJar, "kotlin.scripting.common.jar")
-    }
-
-    testData(isolated, "testData")
-
-    withJvmStdlibAndReflect()
-    withStdlibCommon()
-    withThirdPartyAnnotations()
-    withThirdPartyJsr305()
-    withThirdPartyJava8Annotations()
-    withStdlibCommon()
-    withJsRuntime()
-    withWasmRuntime()
-    withScriptRuntime()
-    withScriptingPlugin()
-    withScriptingTestsRuntime()
-    withTestJar()
-    withMockJdkRuntime()
-    @OptIn(KotlinCompilerDistUsage::class)
-    withDist()
-}
