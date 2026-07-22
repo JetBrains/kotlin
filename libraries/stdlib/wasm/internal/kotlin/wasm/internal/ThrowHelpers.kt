@@ -6,6 +6,7 @@
 package kotlin.wasm.internal
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.internal.staticInitializationFailure
 import kotlin.reflect.KClass
 
 @UsedFromCompilerGeneratedCode
@@ -67,4 +68,15 @@ internal fun throwKotlinNothingValueException(): Nothing {
 @UsedFromCompilerGeneratedCode
 internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
+}
+
+private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
+private const val INITIALIZATION_STATE_ERROR: Int = 2
+
+@UsedFromCompilerGeneratedCode
+internal fun checkStaticInitializationState(state: Int, klass: KClass<*>?): Boolean {
+    if (state == INITIALIZATION_STATE_ERROR) {
+        staticInitializationFailure(null, klass?.qualifiedName ?: klass?.simpleName)
+    }
+    return state == INITIALIZATION_STATE_INITIALIZED
 }

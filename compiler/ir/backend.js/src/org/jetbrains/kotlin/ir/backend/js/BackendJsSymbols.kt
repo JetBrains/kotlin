@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
-@OptIn(InternalSymbolFinderAPI::class)
 abstract class BackendWebSymbols(
     irBuiltIns: IrBuiltIns,
 ) : PreSerializationWebSymbols, BackendKlibSymbols(irBuiltIns) {
@@ -50,7 +49,6 @@ abstract class BackendWebSymbols(
         .functionSymbol { it.parameters.firstOrNull()?.type?.isFunctionOrKFunction() == false }
 }
 
-@OptIn(InternalSymbolFinderAPI::class)
 class BackendJsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
@@ -521,6 +519,8 @@ class BackendJsSymbols(
     val signatureIdSymbol by CallableIds.signatureIdIntrinsic.functionSymbol()
 
     val constructCallableReferenceSymbol by CallableIds.constructCallableReference.functionSymbol()
+
+    val checkStaticInitializationState by CallableIds.checkStaticInitializationState.functionSymbol()
 }
 
 private object ClassIds {
@@ -790,4 +790,5 @@ private object CallableIds {
     val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
     val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
     val EmptyContinuation = CallableId(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal")), Name.identifier("EmptyContinuation"))
+    val checkStaticInitializationState = "checkStaticInitializationState".jsCallableId
 }

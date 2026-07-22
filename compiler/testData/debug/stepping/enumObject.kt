@@ -74,6 +74,7 @@ fun box() {
 // test.kt:10 $Z.<init> (4)
 // test.kt:12 $Z.<init> (5)
 // test.kt:10 $static_init (4)
+// test.kt:6 $static_init (4)
 // test.kt:16 $box (6)
 // test.kt:17 $box (6)
 // test.kt:4 $static_init (4)
