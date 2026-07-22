@@ -1,0 +1,133 @@
+FILE: inheritedBound_ok.kt
+    public final class C : R|I| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/C|.R|/I.i|, R|<local>/other|.R|/I.i|)
+        }
+
+    }
+    public open class Generic<X> : R|B| {
+        public constructor<X>(): R|Generic<X>| {
+            super<R|B|>()
+        }
+
+        public final val g: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+        public open override operator fun equals([EqualityBoundType=B] @R|kotlin/EqualityBound|(bound = <getClass>(Q|B|) [evaluated = <getClass>(Q|B|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/Generic|.R|/B.b|, R|<local>/other|.R|/B.b|)
+        }
+
+    }
+    public open class Generic2<X> : R|Generic<X>| {
+        public constructor<X>(): R|Generic2<X>| {
+            super<R|Generic<X>|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Generic<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Generic|) [evaluated = <getClass>(Q|Generic|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals this@R|/Generic2|.super<R|Generic<X>|>.R|SubstitutionOverride</Generic.equals: R|kotlin/Boolean|>|(R|<local>/other|)
+        }
+
+    }
+    public final fun local(): R|kotlin/Unit| {
+        lval obj: R|<anonymous>| = object : R|Generic2<kotlin/String>| {
+            private constructor(): R|<anonymous>| {
+                super<R|Generic2<kotlin/String>|>()
+            }
+
+            public open override operator fun equals([EqualityBoundType=Generic<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals ==(R|<local>/other|.R|SubstitutionOverride</Generic.g: R|kotlin/Int|>|, this@R|/<anonymous>|.R|SubstitutionOverride</<anonymous>.g: R|kotlin/Int|>|)
+            }
+
+        }
+
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val l: R|kotlin/Int|
+                public get(): R|kotlin/Int| {
+                    ^ Int(42)
+                }
+
+            public open override operator fun equals([EqualityBoundType=<local>/Local] @R|kotlin/EqualityBound|(bound = <getClass>(Q|<local>/Local|) [evaluated = <getClass>(Q|<local>/Local|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals ==(R|<local>/other|.R|<local>/l|, this@R|<local>/Local|.R|<local>/l|)
+            }
+
+        }
+
+        local open class LocalA<X> : R|Generic2<X>| {
+            public constructor<X>(): R|<local>/LocalA<X>| {
+                super<R|Generic2<X>|>()
+            }
+
+        }
+
+        local open class LocalB<X> : R|<local>/LocalA<X>| {
+            public constructor<X>(): R|<local>/LocalB<X>| {
+                super<R|<local>/LocalA<X>|>()
+            }
+
+            public open override operator fun equals([EqualityBoundType=Generic<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals Boolean(true)
+            }
+
+        }
+
+        local open class LocalC<X> : R|<local>/LocalB<X>| {
+            public constructor<X>(): R|<local>/LocalC<X>| {
+                super<R|<local>/LocalB<X>|>()
+            }
+
+        }
+
+        local final class LocalD<X> : R|<local>/LocalC<X>| {
+            public constructor<X>(): R|<local>/LocalD<X>| {
+                super<R|<local>/LocalC<X>|>()
+            }
+
+            public open override operator fun equals([EqualityBoundType=Generic<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals ==(R|<local>/other|.R|SubstitutionOverride</Generic.g: R|kotlin/Int|>|, this@R|<local>/LocalD|.R|SubstitutionOverride<<local>/LocalD.g: R|kotlin/Int|>|)
+            }
+
+        }
+
+    }
+    public abstract class B : R|I| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+        public abstract override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final class A : R|B| {
+        public constructor(): R|A| {
+            super<R|B|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/A|.R|/I.i|, R|<local>/other|.R|/I.i|)
+        }
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+        public open val i: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+        public abstract override operator fun equals([EqualityBoundType=I] @R|kotlin/EqualityBound|(bound = <getClass>(Q|I|) [evaluated = <getClass>(Q|I|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }

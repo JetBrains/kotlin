@@ -148,6 +148,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
     /**
      * The compiler resolves modality, visibility, and modifiers for [member declarations][FirMemberDeclaration].
      *
+     * Also resolves inherited [equality bounds][org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType].
+     *
      * Note: A member's modality and its modifiers may depend on super declarations when "this" member overrides some other member.
      *
      * This is a [*jumping phase*][FirResolvePhase].

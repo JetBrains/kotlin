@@ -424,7 +424,7 @@ abstract class AbstractFirStatusResolveTransformer(
             namedFunction,
             containingClass,
             isLocal = false,
-            overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
+            overriddenFunctions,
         )
 
         namedFunction.transformStatus(this, resolvedStatus)

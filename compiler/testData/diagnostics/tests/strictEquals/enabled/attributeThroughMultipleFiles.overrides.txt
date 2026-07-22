@@ -1,0 +1,6 @@
+A:
+  [Source]: public open override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 0]
+    [Source]: public open override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /B.NestedB [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /C.NestedC.NestedMostC [id: 2]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=I] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /I [id: 2]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
