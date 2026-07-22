@@ -9,7 +9,7 @@ function box() {
       break $l$loop;
     }
     i = 1;
-    $l$loop_0: while (i < 10) {
+    while (!(i >= 10)) {
       sum = sum + i | 0;
       i = i + 1 | 0;
     }

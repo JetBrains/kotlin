@@ -1,7 +1,7 @@
 function box() {
   var i = 1;
   var sum = 0;
-  $l$loop_0: while (foo(i) < 10 && foo(sum) <= 30) {
+  while (!(foo(i) >= 10) && !(foo(sum) > 30)) {
     sum = sum + i | 0;
     i = i + 1 | 0;
   }

@@ -23,7 +23,6 @@ class FunctionPostProcessor(val root: JsFunction, private val voidName: JsName? 
     val optimizations = listOf(
         { RedundantLabelRemoval(root.body).apply() },
         { EmptyStatementElimination(root.body).apply() },
-        { WhileConditionFolding(root.body).apply() },
         { DoWhileGuardElimination(root.body).apply() },
         { TemporaryVariableElimination(root).apply() },
         { RedundantCallElimination(root.body).apply() },
