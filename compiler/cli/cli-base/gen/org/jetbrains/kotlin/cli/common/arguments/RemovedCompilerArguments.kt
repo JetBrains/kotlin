@@ -24,6 +24,21 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xsuppress-api-version-greater-than-language-version-error",
+        description = "Suppress error about API version greater than language version.",
+        deprecatedVersion = "2.0.0",
+        removedVersion = "2.5.0",
+    )
+    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.",
         level = DeprecationLevel.ERROR,
     )

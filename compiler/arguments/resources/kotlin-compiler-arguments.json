@@ -6163,8 +6163,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Suppress error about API version greater than language version.\nWarning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
-                            "valueInVersions": []
+                            "current": "Suppress error about API version greater than language version.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.0.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Suppress error about API version greater than language version.\nWarning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -6187,8 +6193,8 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.0.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
-                            "removedVersion": null
+                            "deprecatedVersion": "2.0.0",
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -6201,7 +6207,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "deprecatedMessage": null
+                        "deprecatedMessage": "This is temporary solution (see KT-63712) intended to be used only for stdlib build."
                     },
                     {
                         "name": "Xsuppress-version-warnings",

@@ -109,7 +109,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
     to.stdlibCompilation = from.stdlibCompilation
-    to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
     @Suppress("DEPRECATION")
     to.suppressedDiagnostics = from.suppressedDiagnostics.copyOf()

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
+import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 
 val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
@@ -63,6 +64,26 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_20,
             removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xsuppress-api-version-greater-than-language-version-error"
+        val introducedVersion = KotlinReleaseVersion.v2_0_0
+        val removedVersion = KotlinReleaseVersion.v2_5_0
+        val commonDescriptionPart = "Suppress error about API version greater than language version."
+        val commonDeprecationPart = "This is temporary solution (see KT-63712) intended to be used only for stdlib build."
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            introducedVersion..removedVersion.previous!! to "$commonDescriptionPart\nWarning: $commonDeprecationPart"
+        )
+        valueType = BooleanType.defaultFalse
+        deprecatedMessage = commonDeprecationPart
+
+        lifecycle(
+            introducedVersion = introducedVersion,
+            deprecatedVersion = introducedVersion, // It was deprecated upon introduction as it served only as a temporary workaround.
+            removedVersion = removedVersion,
         )
     }
 }

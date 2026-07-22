@@ -69,21 +69,14 @@ class CliDiagnosticTest {
 
     private val argumentVariants = buildList<CommonCompilerArguments> {
         val v1 = CommonCompilerArgumentsStub().apply {
-            suppressApiVersionGreaterThanLanguageVersionError = false
             suppressVersionWarnings = false
             progressiveMode = true
         }
         val v2 = CommonCompilerArgumentsStub().apply {
-            suppressApiVersionGreaterThanLanguageVersionError = true
-            suppressVersionWarnings = false
-        }
-        val v3 = CommonCompilerArgumentsStub().apply {
-            suppressApiVersionGreaterThanLanguageVersionError = false
             suppressVersionWarnings = true
         }
         add(v1)
         add(v2)
-        add(v3)
     }
 
     private class CommonCompilerArgumentsStub() : CommonCompilerArguments() {

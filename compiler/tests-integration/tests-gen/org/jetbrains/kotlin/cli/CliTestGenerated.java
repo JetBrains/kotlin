@@ -295,18 +295,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
-    public void testApiVersionGreaterThanLanguageSuppress() {
-      run("apiVersionGreaterThanLanguageSuppress.args");
-    }
-
-    @Test
-    @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
-    public void testApiVersionGreaterThanLanguageSuppressUseless() {
-      run("apiVersionGreaterThanLanguageSuppressUseless.args");
-    }
-
-    @Test
     @TestMetadata("apiVersionInvalid.args")
     public void testApiVersionInvalid() {
       run("apiVersionInvalid.args");

@@ -24,6 +24,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xklib-normalize-absolute-path",
     "Xworker-exception-handling",
     "Xdestroy-runtime-mode",
+    "Xsuppress-api-version-greater-than-language-version-error",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

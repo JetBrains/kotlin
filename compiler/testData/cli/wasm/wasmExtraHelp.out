@@ -228,9 +228,6 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
                              Suppress specified warning module-wide.

@@ -750,19 +750,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         )
     }
 
-
-    compilerArgument {
-        name = "Xsuppress-api-version-greater-than-language-version-error"
-        description =
-            "Suppress error about API version greater than language version.\nWarning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_0,
-        )
-    }
-
-
     compilerArgument {
         name = "Xexpect-actual-classes"
         description =

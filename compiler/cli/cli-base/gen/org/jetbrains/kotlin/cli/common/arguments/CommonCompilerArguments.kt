@@ -1036,17 +1036,6 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xsuppress-api-version-greater-than-language-version-error",
-        description = """Suppress error about API version greater than language version.
-Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.""",
-    )
-    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )

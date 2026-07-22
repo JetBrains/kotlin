@@ -283,20 +283,14 @@ fun CommonCompilerArguments.checkApiAndLanguageVersion(
     checkProgressiveMode(language, reporter)
 }
 
-private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersion(
+private fun checkApiVersionIsNotGreaterThenLanguageVersion(
     languageVersion: LanguageVersion,
     apiVersion: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
     if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-        if (!suppressApiVersionGreaterThanLanguageVersionError) {
-            reporter.reportError(
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
-            )
-        }
-    } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        reporter.reportWarning(
-            "-Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (${apiVersion.versionString}) is not greater than the language version (${languageVersion.versionString})."
+        reporter.reportError(
+            "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
         )
     }
 }
