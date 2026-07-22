@@ -13,15 +13,24 @@ class MyClass {
 
 fun box(): String {
   val testO: String
-    val testO$delegate: String = provideDelegate(/* <this> = MyClass(value = "O"), */ host = null, p = ::testO)
+    val testO$delegate: String = provideDelegate(/* <this> = MyClass(value = "O"), */ host = null, p = KProperty0<String>(
+      /* bound = */ [],
+      /* getter = */      local fun(): String    )
+)
     local get(): String {
-      return getValue(/* <this> = testO$delegate, */ receiver = null, p = ::testO)
+      return getValue(/* <this> = testO$delegate, */ receiver = null, p = KProperty0<String>(
+        /* bound = */ [],
+        /* getter = */        local fun(): String      )
+)
     }
 
   val testK: String
     val testK$delegate: String = "K"
     local get(): String {
-      return getValue(/* <this> = testK$delegate, */ receiver = null, p = ::testK)
+      return getValue(/* <this> = testK$delegate, */ receiver = null, p = KProperty0<String>(
+        /* bound = */ [],
+        /* getter = */        local fun(): String      )
+)
     }
 
   val testOK: String = <get-testO>().plus(other = <get-testK>())
