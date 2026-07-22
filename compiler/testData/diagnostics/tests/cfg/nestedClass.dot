@@ -110,4 +110,18 @@ digraph nestedClass_kt {
     29 -> {30};
     30 -> {31};
 
+    subgraph cluster_13 {
+        color=red
+        32 [label="Enter static <static of NestedClass>" style="filled" fillcolor=red];
+        33 [label="Exit static <static of NestedClass>" style="filled" fillcolor=red];
+    }
+    32 -> {33} [color=green];
+
+    subgraph cluster_14 {
+        color=red
+        34 [label="Enter static <static of OuterClass>" style="filled" fillcolor=red];
+        35 [label="Exit static <static of OuterClass>" style="filled" fillcolor=red];
+    }
+    34 -> {35} [color=green];
+
 }

@@ -614,4 +614,11 @@ digraph localClassesWithImplicit_kt {
     195 -> {196} [style=dotted];
     196 -> {197} [style=dotted];
 
+    subgraph cluster_51 {
+        color=red
+        198 [label="Enter static <static of A>" style="filled" fillcolor=red];
+        199 [label="Exit static <static of A>" style="filled" fillcolor=red];
+    }
+    198 -> {199} [color=green];
+
 }

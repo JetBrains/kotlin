@@ -26,70 +26,75 @@ digraph elvis_kt {
 
     subgraph cluster_3 {
         color=red
-        6 [label="Enter function test_1" style="filled" fillcolor=red];
-        subgraph cluster_4 {
+        6 [label="Enter static <static of A>" style="filled" fillcolor=red];
+        7 [label="Exit static <static of A>" style="filled" fillcolor=red];
+    }
+    6 -> {7} [color=green];
+
+    subgraph cluster_4 {
+        color=red
+        8 [label="Enter function test_1" style="filled" fillcolor=red];
+        subgraph cluster_5 {
             color=blue
-            7 [label="Enter block"];
-            subgraph cluster_5 {
+            9 [label="Enter block"];
+            subgraph cluster_6 {
                 color=blue
-                8 [label="Enter when"];
-                subgraph cluster_6 {
-                    color=blue
-                    9 [label="Enter when branch condition "];
-                    10 [label="Access variable R|<local>/x|"];
-                    11 [label="Enter safe call"];
-                    12 [label="Access variable R|/A.b|"];
-                    13 [label="Exit safe call"];
-                    14 [label="Exit lhs of ?:"];
-                    15 [label="Enter rhs of ?:"];
-                    16 [label="Jump: ^test_1 Unit"];
-                    17 [label="Stub" style="filled" fillcolor=gray];
-                    18 [label="Lhs of ?: is not null"];
-                    19 [label="Exit ?:"];
-                    20 [label="Exit when branch condition"];
-                }
-                21 [label="Synthetic else branch"];
-                22 [label="Enter when branch result"];
+                10 [label="Enter when"];
                 subgraph cluster_7 {
                     color=blue
-                    23 [label="Enter block"];
-                    subgraph cluster_8 {
-                        color=blue
-                        24 [label="Function call arguments enter"];
-                        25 [label="Access variable R|<local>/x|"];
-                        26 [label="Smart cast: R|<local>/x|"];
-                        27 [label="Function call arguments exit"];
-                    }
-                    28 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
-                    29 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
-                    30 [label="Exit block"];
+                    11 [label="Enter when branch condition "];
+                    12 [label="Access variable R|<local>/x|"];
+                    13 [label="Enter safe call"];
+                    14 [label="Access variable R|/A.b|"];
+                    15 [label="Exit safe call"];
+                    16 [label="Exit lhs of ?:"];
+                    17 [label="Enter rhs of ?:"];
+                    18 [label="Jump: ^test_1 Unit"];
+                    19 [label="Stub" style="filled" fillcolor=gray];
+                    20 [label="Lhs of ?: is not null"];
+                    21 [label="Exit ?:"];
+                    22 [label="Exit when branch condition"];
                 }
-                31 [label="Exit when branch result"];
-                32 [label="Exit when"];
+                23 [label="Synthetic else branch"];
+                24 [label="Enter when branch result"];
+                subgraph cluster_8 {
+                    color=blue
+                    25 [label="Enter block"];
+                    subgraph cluster_9 {
+                        color=blue
+                        26 [label="Function call arguments enter"];
+                        27 [label="Access variable R|<local>/x|"];
+                        28 [label="Smart cast: R|<local>/x|"];
+                        29 [label="Function call arguments exit"];
+                    }
+                    30 [label="Function call enter: R|<local>/x|.R|/A.foo|()"];
+                    31 [label="Function call exit: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
+                    32 [label="Exit block"];
+                }
+                33 [label="Exit when branch result"];
+                34 [label="Exit when"];
             }
-            33 [label="Exit block"];
+            35 [label="Exit block"];
         }
-        34 [label="Exit function test_1" style="filled" fillcolor=red];
+        36 [label="Exit function test_1" style="filled" fillcolor=red];
     }
-    6 -> {7};
-    7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {11 15};
+    10 -> {11};
     11 -> {12};
-    12 -> {13};
+    12 -> {13 17};
     13 -> {14};
-    14 -> {15 18};
+    14 -> {15};
     15 -> {16};
-    16 -> {34};
-    16 -> {17} [style=dotted];
-    17 -> {19} [style=dotted];
-    18 -> {19};
-    19 -> {20};
-    20 -> {21 22};
-    21 -> {32};
-    22 -> {23};
-    23 -> {24};
+    16 -> {17 20};
+    17 -> {18};
+    18 -> {36};
+    18 -> {19} [style=dotted];
+    19 -> {21} [style=dotted];
+    20 -> {21};
+    21 -> {22};
+    22 -> {23 24};
+    23 -> {34};
     24 -> {25};
     25 -> {26};
     26 -> {27};
@@ -100,116 +105,118 @@ digraph elvis_kt {
     31 -> {32};
     32 -> {33};
     33 -> {34};
+    34 -> {35};
+    35 -> {36};
 
-    subgraph cluster_9 {
+    subgraph cluster_10 {
         color=red
-        35 [label="Enter function test2" style="filled" fillcolor=red];
-        subgraph cluster_10 {
+        37 [label="Enter function test2" style="filled" fillcolor=red];
+        subgraph cluster_11 {
             color=blue
-            36 [label="Enter block"];
-            subgraph cluster_11 {
+            38 [label="Enter block"];
+            subgraph cluster_12 {
                 color=blue
-                37 [label="Enter when"];
-                subgraph cluster_12 {
-                    color=blue
-                    38 [label="Enter when branch condition "];
-                    39 [label="Access variable R|<local>/b|"];
-                    40 [label="Type operator: (R|<local>/b| !is R|kotlin/String|)"];
-                    41 [label="Exit when branch condition"];
-                }
-                42 [label="Synthetic else branch"];
-                43 [label="Enter when branch result"];
+                39 [label="Enter when"];
                 subgraph cluster_13 {
                     color=blue
-                    44 [label="Enter block"];
-                    45 [label="Const: String()"];
-                    46 [label="Jump: ^test2 String()"];
-                    47 [label="Stub" style="filled" fillcolor=gray];
-                    48 [label="Exit block" style="filled" fillcolor=gray];
+                    40 [label="Enter when branch condition "];
+                    41 [label="Access variable R|<local>/b|"];
+                    42 [label="Type operator: (R|<local>/b| !is R|kotlin/String|)"];
+                    43 [label="Exit when branch condition"];
                 }
-                49 [label="Exit when branch result" style="filled" fillcolor=gray];
-                50 [label="Exit when"];
-            }
-            subgraph cluster_14 {
-                color=blue
-                51 [label="Enter when"];
-                subgraph cluster_15 {
+                44 [label="Synthetic else branch"];
+                45 [label="Enter when branch result"];
+                subgraph cluster_14 {
                     color=blue
-                    52 [label="Enter when branch condition "];
-                    53 [label="Access variable R|<local>/a|"];
-                    54 [label="Type operator: (R|<local>/a| !is R|kotlin/String?|)"];
-                    55 [label="Exit when branch condition"];
+                    46 [label="Enter block"];
+                    47 [label="Const: String()"];
+                    48 [label="Jump: ^test2 String()"];
+                    49 [label="Stub" style="filled" fillcolor=gray];
+                    50 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                56 [label="Synthetic else branch"];
-                57 [label="Enter when branch result"];
+                51 [label="Exit when branch result" style="filled" fillcolor=gray];
+                52 [label="Exit when"];
+            }
+            subgraph cluster_15 {
+                color=blue
+                53 [label="Enter when"];
                 subgraph cluster_16 {
                     color=blue
-                    58 [label="Enter block"];
-                    59 [label="Const: String()"];
-                    60 [label="Jump: ^test2 String()"];
-                    61 [label="Stub" style="filled" fillcolor=gray];
-                    62 [label="Exit block" style="filled" fillcolor=gray];
+                    54 [label="Enter when branch condition "];
+                    55 [label="Access variable R|<local>/a|"];
+                    56 [label="Type operator: (R|<local>/a| !is R|kotlin/String?|)"];
+                    57 [label="Exit when branch condition"];
                 }
-                63 [label="Exit when branch result" style="filled" fillcolor=gray];
-                64 [label="Exit when"];
+                58 [label="Synthetic else branch"];
+                59 [label="Enter when branch result"];
+                subgraph cluster_17 {
+                    color=blue
+                    60 [label="Enter block"];
+                    61 [label="Const: String()"];
+                    62 [label="Jump: ^test2 String()"];
+                    63 [label="Stub" style="filled" fillcolor=gray];
+                    64 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                65 [label="Exit when branch result" style="filled" fillcolor=gray];
+                66 [label="Exit when"];
             }
-            65 [label="Access variable R|<local>/a|"];
-            66 [label="Smart cast: R|<local>/a|"];
-            67 [label="Exit lhs of ?:"];
-            68 [label="Enter rhs of ?:"];
-            69 [label="Access variable R|<local>/b|"];
-            70 [label="Smart cast: R|<local>/b|"];
-            71 [label="Lhs of ?: is not null"];
-            72 [label="Exit ?:"];
-            73 [label="Jump: ^test2 R|<local>/a| ?: R|<local>/b|"];
-            74 [label="Stub" style="filled" fillcolor=gray];
-            75 [label="Exit block" style="filled" fillcolor=gray];
+            67 [label="Access variable R|<local>/a|"];
+            68 [label="Smart cast: R|<local>/a|"];
+            69 [label="Exit lhs of ?:"];
+            70 [label="Enter rhs of ?:"];
+            71 [label="Access variable R|<local>/b|"];
+            72 [label="Smart cast: R|<local>/b|"];
+            73 [label="Lhs of ?: is not null"];
+            74 [label="Exit ?:"];
+            75 [label="Jump: ^test2 R|<local>/a| ?: R|<local>/b|"];
+            76 [label="Stub" style="filled" fillcolor=gray];
+            77 [label="Exit block" style="filled" fillcolor=gray];
         }
-        76 [label="Exit function test2" style="filled" fillcolor=red];
+        78 [label="Exit function test2" style="filled" fillcolor=red];
     }
-    35 -> {36};
-    36 -> {37};
     37 -> {38};
     38 -> {39};
     39 -> {40};
     40 -> {41};
-    41 -> {42 43};
-    42 -> {50};
-    43 -> {44};
-    44 -> {45};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44 45};
+    44 -> {52};
     45 -> {46};
-    46 -> {76};
-    46 -> {47} [style=dotted];
-    47 -> {48} [style=dotted];
+    46 -> {47};
+    47 -> {48};
+    48 -> {78};
     48 -> {49} [style=dotted];
     49 -> {50} [style=dotted];
-    50 -> {51};
-    51 -> {52};
+    50 -> {51} [style=dotted];
+    51 -> {52} [style=dotted];
     52 -> {53};
     53 -> {54};
     54 -> {55};
-    55 -> {56 57};
-    56 -> {64};
-    57 -> {58};
-    58 -> {59};
+    55 -> {56};
+    56 -> {57};
+    57 -> {58 59};
+    58 -> {66};
     59 -> {60};
-    60 -> {76};
-    60 -> {61} [style=dotted];
-    61 -> {62} [style=dotted];
+    60 -> {61};
+    61 -> {62};
+    62 -> {78};
     62 -> {63} [style=dotted];
     63 -> {64} [style=dotted];
-    64 -> {65};
-    65 -> {66};
+    64 -> {65} [style=dotted];
+    65 -> {66} [style=dotted];
     66 -> {67};
-    67 -> {68 71};
+    67 -> {68};
     68 -> {69};
-    69 -> {70};
-    70 -> {72};
+    69 -> {70 73};
+    70 -> {71};
     71 -> {72};
-    72 -> {73};
-    73 -> {76};
-    73 -> {74} [style=dotted];
-    74 -> {75} [style=dotted];
+    72 -> {74};
+    73 -> {74};
+    74 -> {75};
+    75 -> {78};
     75 -> {76} [style=dotted];
+    76 -> {77} [style=dotted];
+    77 -> {78} [style=dotted];
 
 }

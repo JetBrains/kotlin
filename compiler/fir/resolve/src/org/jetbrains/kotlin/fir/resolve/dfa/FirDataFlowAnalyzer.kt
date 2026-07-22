@@ -438,14 +438,30 @@ abstract class FirDataFlowAnalyzer(
         context.variableAssignmentAnalyzer.enterClass(klass)
     }
 
-    fun exitClass(): ControlFlowGraph? {
+    fun exitClass(): CfgExitClassResult? {
         context.variableAssignmentAnalyzer.exitClass()
-        val [node, graph] = graphBuilder.exitClass()
-        if (node != null) {
-            node.mergeIncomingFlow()
-        } else {
+        val result = graphBuilder.exitClass()
+        val staticGraph = result?.staticGraph
+        val memberGraph = result?.memberGraph
+
+        staticGraph?.enterNode?.mergeIncomingFlow()
+        staticGraph?.exitNode?.mergeIncomingFlow()
+        memberGraph?.exitNode?.mergeIncomingFlow()
+
+        if (memberGraph == null || !memberGraph.exitNode.isUnion) {
             resetSmartCastPosition() // to state before class initialization
         }
+        return result
+    }
+
+    fun enterEnumEntry(klass: FirEnumEntry) {
+        val node = graphBuilder.enterEnumEntry(klass)
+        node.mergeIncomingFlow()
+    }
+
+    fun exitEnumEntry(): ControlFlowGraph {
+        val [node, graph] = graphBuilder.exitEnumEntry()
+        node.mergeIncomingFlow()
         return graph
     }
 

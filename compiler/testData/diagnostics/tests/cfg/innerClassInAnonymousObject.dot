@@ -79,4 +79,11 @@ digraph innerClassInAnonymousObject_kt {
     17 -> {18};
     18 -> {19};
 
+    subgraph cluster_8 {
+        color=red
+        20 [label="Enter static <static of Nested>" style="filled" fillcolor=red];
+        21 [label="Exit static <static of Nested>" style="filled" fillcolor=red];
+    }
+    20 -> {21} [color=green];
+
 }
