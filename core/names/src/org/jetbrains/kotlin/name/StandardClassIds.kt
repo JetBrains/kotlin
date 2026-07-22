@@ -272,6 +272,8 @@ object StandardClassIds {
             val retentionValue = value
             val targetAllowedTargets = Name.identifier("allowedTargets")
 
+            val equalityBound = Name.identifier("bound")
+
             val sinceKotlinVersion = Name.identifier("version")
 
             val deprecatedMessage = Name.identifier("message")

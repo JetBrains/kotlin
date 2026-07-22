@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.firstQualifierPart
 import org.jetbrains.kotlin.fir.resolve.*
@@ -28,7 +30,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -521,6 +526,30 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             hasNullableMark = qualifier.isNullableLhsForCallableReference,
             hasExplicitTypeArguments = qualifier.typeArguments.isNotEmpty(),
         )
+    }
+
+    override fun resolveEqualityBoundTypeOrNull(
+        getClassLhs: FirExpression,
+        configuration: TypeResolutionConfiguration,
+    ): ConeKotlinType? {
+        var currentPropertyAccess: FirPropertyAccessExpression? = getClassLhs as? FirPropertyAccessExpression ?: return null
+        val segmentNames = buildList {
+            while (currentPropertyAccess != null) {
+                add(currentPropertyAccess.calleeReference.name to currentPropertyAccess.source)
+                val receiver = currentPropertyAccess.explicitReceiver
+                if (receiver !is FirPropertyAccessExpression?) return null
+                currentPropertyAccess = receiver
+            }
+        }
+        val fakeTypeRef = buildUserTypeRef {
+            isMarkedNullable = false
+            source = getClassLhs.source!!
+            qualifier.addAll(segmentNames.map { [name, source] -> FirQualifierPartImpl(source, name, FirTypeArgumentListImpl(null)) })
+        }
+        val symbol = resolveUserTypeToSymbol(fakeTypeRef, configuration, SupertypeSupplier.Default, resolveDeprecations = true)
+            .resolvedCandidateOrNull()
+            ?.symbol as? FirClassLikeSymbol ?: return null
+        return symbol.constructType(typeArguments = Array(symbol.typeParameterSymbols.size) { ConeStarProjection })
     }
 
     override fun resolveType(

@@ -1,0 +1,32 @@
+FILE: local.kt
+    public final fun local(): R|kotlin/Any| {
+        local open class A : R|kotlin/Any| {
+            public constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        local final class B : R|<local>/A| {
+            public constructor(): R|<local>/B| {
+                super<R|<local>/A|>()
+            }
+
+            public open override operator fun equals([EqualityBoundType=<local>/A] @R|kotlin/EqualityBound|(bound = <getClass>(Q|<local>/A|) [evaluated = <getClass>(Q|<local>/A|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals Boolean(true)
+            }
+
+        }
+
+        ^local object : R|<local>/A| {
+            private constructor(): R|<anonymous>| {
+                super<R|<local>/A|>()
+            }
+
+            public open override operator fun equals([EqualityBoundType=<local>/A] @R|kotlin/EqualityBound|(bound = <getClass>(Q|<local>/A|) [evaluated = <getClass>(Q|<local>/A|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals Boolean(true)
+            }
+
+        }
+
+    }

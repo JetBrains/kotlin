@@ -1,8 +1,9 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
 
 // FILE: throughTypeAlias.kt
 
-typealias MyEqualityBound = EqualityBound
+typealias MyEqualityBound = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_ERROR!>EqualityBound<!>
 
 class Foo {
     override fun equals(@MyEqualityBound(Foo::class) other: Any?): Boolean = true

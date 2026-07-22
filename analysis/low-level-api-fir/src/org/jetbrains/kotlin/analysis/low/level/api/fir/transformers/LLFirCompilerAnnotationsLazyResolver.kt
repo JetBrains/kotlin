@@ -103,7 +103,9 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         /**
          * Annotation arguments should be calculated even if they are not from
          * [org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent.requiredAnnotationsWithArguments]
-         * as compiler plugins still may access unresolved arguments for some computations (like to get a class literal)
+         * as
+         *  - compiler plugins still may access unresolved arguments for some computations (like to get a class literal)
+         *  - argument of `EqualityBound` is accessed not immediately, but in [FirResolvePhase.TYPES] phase
          */
         override fun annotationResolved(annotation: FirAnnotationCall) {
             FirLazyBodiesCalculator.calculateAnnotation(annotation, resolveTargetSession)

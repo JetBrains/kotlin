@@ -1,0 +1,23 @@
+FILE: throughTypeAlias.kt
+    public final typealias MyEqualityBound = R|kotlin/EqualityBound|
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals(@R|{MyEqualityBound=} kotlin/EqualityBound|(bound = <getClass>(Q|Foo|) [evaluated = <getClass>(Q|Foo|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+FILE: throughImport.kt
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals(@R|kotlin/EqualityBound|(bound = <getClass>(Q|Bar|) [evaluated = <getClass>(Q|Bar|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }

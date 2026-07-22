@@ -139,6 +139,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      * - types of annotations (without resolution of annotation arguments)
      *   for [annotation containers][org.jetbrains.kotlin.fir.FirAnnotationContainer].
      *
+     * Also resolves explicitly written [equality bounds][org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType].
+     *
      * @see IMPLICIT_TYPES_BODY_RESOLVE
      */
     TYPES,

@@ -1,7 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
+// FIR_DUMP
 
 open class Simple {
-    override fun equals(@EqualityBound(Simple::class) other: Any?): Boolean = true
+    override fun equals(@EqualityBound(bound = Simple::class) other: Any?): Boolean = true
 }
 
 class SimpleChild : Simple() {

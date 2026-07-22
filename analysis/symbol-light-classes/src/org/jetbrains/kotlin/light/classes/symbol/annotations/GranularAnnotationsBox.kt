@@ -109,6 +109,7 @@ internal class GranularAnnotationsBox(
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.IntroducedAt,
+            StandardClassIds.Annotations.EqualityBound,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

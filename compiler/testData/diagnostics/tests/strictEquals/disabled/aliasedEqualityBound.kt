@@ -4,7 +4,7 @@
 
 // FILE: throughTypeAlias.kt
 
-typealias MyEqualityBound = EqualityBound
+typealias MyEqualityBound = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_ERROR!>EqualityBound<!>
 
 class Foo {
     override fun equals(<!UNSUPPORTED_FEATURE!>@MyEqualityBound(Foo::class)<!> other: Any?): Boolean = true

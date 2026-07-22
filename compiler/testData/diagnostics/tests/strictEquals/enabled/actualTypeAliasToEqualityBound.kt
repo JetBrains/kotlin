@@ -17,7 +17,7 @@ class Foo {
 // FILE: file2.kt
 package example
 
-actual typealias MyEqualityBound = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION!>EqualityBound<!>
+actual typealias MyEqualityBound = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_ERROR!>EqualityBound<!>
 
 class Bar {
     override fun equals(@MyEqualityBound(Bar::class) other: Any?): Boolean = true

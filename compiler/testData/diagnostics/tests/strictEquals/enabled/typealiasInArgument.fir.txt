@@ -1,0 +1,48 @@
+FILE: typealiasInArgument.kt
+    public final class NonGeneric : R|kotlin/Any| {
+        public constructor(): R|NonGeneric| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias Self = R|NonGeneric|
+
+        public open override operator fun equals([EqualityBoundType=NonGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|NonGeneric.Self|) [evaluated = <getClass>(Q|NonGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class StarGeneric<K> : R|kotlin/Any| {
+        public constructor<K>(): R|StarGeneric<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias Self = R|StarGeneric<*>|
+
+        public open override operator fun equals([EqualityBoundType=StarGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|StarGeneric.Self|) [evaluated = <getClass>(Q|StarGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final typealias Self<M> = R|NiceGeneric<M>|
+    public final class NiceGeneric<L> : R|kotlin/Any| {
+        public constructor<L>(): R|NiceGeneric<L>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Self<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Self|) [evaluated = <getClass>(Q|Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class BadGeneric<N> : R|kotlin/Any| {
+        public constructor<N>(): R|BadGeneric<N>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias Self = R|BadGeneric<kotlin/String>|
+
+        public open override operator fun equals([EqualityBoundType=BadGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|BadGeneric.Self|) [evaluated = <getClass>(Q|BadGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }

@@ -111,6 +111,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
             StandardClassIds.Annotations.WasExperimental,
+            StandardClassIds.Annotations.EqualityBound,
         )
 
         override val volatileAnnotations: Set<ClassId> = setOf(

@@ -362,6 +362,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$Parame
 	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinHiddenSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinWarningSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getParameterNameName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getRetentionValue ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSinceKotlinVersion ()Lorg/jetbrains/kotlin/name/Name;
