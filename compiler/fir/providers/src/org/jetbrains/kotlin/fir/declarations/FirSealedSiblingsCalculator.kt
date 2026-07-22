@@ -64,7 +64,7 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
             }
         }
 
-    fun collectAllSubclassesFor(symbol: FirClassSymbol<*>): Set<FirClassSymbol<*>> =
+    fun collectAllSubclassesOfSealed(symbol: FirClassSymbol<*>): Set<FirClassSymbol<*>> =
         allSubclassesCache.getValue(symbol, context = null).toSet()
 
     private fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
@@ -148,7 +148,7 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
             result
         }
 
-    fun collectComplementarySymbolsFor(symbol: FirRegularClassSymbol): Set<FirClassSymbol<*>> =
+    fun collectSealedSiblingsFor(symbol: FirRegularClassSymbol): Set<FirClassSymbol<*>> =
         relevantSealedUniverseCache.getValue(symbol, null).filterCachedUniverseTo(mutableSetOf()) {
             (symbol.isFinal || it.isFinal || symbol.isClass && it.isClass) && areUnrelated(symbol, it)
         }
@@ -156,5 +156,5 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
 
 val FirSession.sealedSiblingsCalculator: FirSealedSiblingsCalculator by FirSession.sessionComponentAccessor()
 
-fun FirClassSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirClassSymbol<*>> =
-    session.sealedSiblingsCalculator.collectAllSubclassesFor(this)
+fun FirClassSymbol<*>.collectAllSubclassesIfSealed(session: FirSession): Set<FirClassSymbol<*>> =
+    session.sealedSiblingsCalculator.collectAllSubclassesOfSealed(this)
