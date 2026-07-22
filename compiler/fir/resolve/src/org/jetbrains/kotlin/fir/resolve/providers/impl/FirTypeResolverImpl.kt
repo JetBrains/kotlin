@@ -549,7 +549,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val symbol = resolveUserTypeToSymbol(fakeTypeRef, configuration, SupertypeSupplier.Default, resolveDeprecations = true)
             .resolvedCandidateOrNull()
             ?.symbol as? FirClassLikeSymbol ?: return null
-        return symbol.constructType(typeArguments = Array(symbol.typeParameterSymbols.size) { ConeStarProjection })
+        val unexpandedType = symbol.constructStarProjectedType()
+        return when {
+            aliasedTypeExpansionGloballyDisabled -> unexpandedType
+            else -> unexpandedType.fullyExpandedType(session)
+        }
     }
 
     override fun resolveType(

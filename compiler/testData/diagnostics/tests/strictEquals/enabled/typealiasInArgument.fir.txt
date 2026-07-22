@@ -6,7 +6,7 @@ FILE: typealiasInArgument.kt
 
         public final typealias Self = R|NonGeneric|
 
-        public open override operator fun equals([EqualityBoundType=NonGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|NonGeneric.Self|) [evaluated = <getClass>(Q|NonGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType={NonGeneric.Self=} NonGeneric] @R|kotlin/EqualityBound|(bound = <getClass>(Q|NonGeneric.Self|) [evaluated = <getClass>(Q|NonGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
@@ -18,7 +18,7 @@ FILE: typealiasInArgument.kt
 
         public final typealias Self = R|StarGeneric<*>|
 
-        public open override operator fun equals([EqualityBoundType=StarGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|StarGeneric.Self|) [evaluated = <getClass>(Q|StarGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType={StarGeneric.Self=} StarGeneric<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|StarGeneric.Self|) [evaluated = <getClass>(Q|StarGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
@@ -29,7 +29,7 @@ FILE: typealiasInArgument.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override operator fun equals([EqualityBoundType=Self<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Self|) [evaluated = <getClass>(Q|Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType={Self<*>=} NiceGeneric<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Self|) [evaluated = <getClass>(Q|Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
@@ -41,7 +41,7 @@ FILE: typealiasInArgument.kt
 
         public final typealias Self = R|BadGeneric<kotlin/String>|
 
-        public open override operator fun equals([EqualityBoundType=BadGeneric.Self] @R|kotlin/EqualityBound|(bound = <getClass>(Q|BadGeneric.Self|) [evaluated = <getClass>(Q|BadGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType={BadGeneric.Self=} BadGeneric<kotlin/String>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|BadGeneric.Self|) [evaluated = <getClass>(Q|BadGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
