@@ -161,6 +161,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     fun directSupertypeClassIds(): List<ClassId> = directSupertypeClassIdsCache
 
+    val nonEnhancedVisibility: Visibility get() = originalStatus.visibility
+
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> get() = annotationList
 
