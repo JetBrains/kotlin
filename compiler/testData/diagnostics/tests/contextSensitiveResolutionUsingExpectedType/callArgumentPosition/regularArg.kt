@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75315
 // WITH_STDLIB
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 open class Super {
     val superProp: String = ""

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75315
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 sealed interface SealedInterface {
     open class NestedInheritor(prop: String): SealedInterface {}

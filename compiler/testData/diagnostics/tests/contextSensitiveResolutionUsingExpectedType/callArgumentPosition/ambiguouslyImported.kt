@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75315
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // FILE: other1.kt
 package a1

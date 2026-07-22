@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 // ISSUE: KT-75315
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 enum class MyEnum1 {
     X, Y

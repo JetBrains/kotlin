@@ -259,6 +259,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType/*") {
+        defaultDirectives {
+            LANGUAGE with "+ContextSensitiveResolutionUsingExpectedType"
+        }
+    }
+
     forTestsMatching(
         "compiler/testData/diagnostics/tests/extraCheckers/*" or
                 "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"

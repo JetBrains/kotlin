@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75316
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 enum class MyEnum {
     X, Y

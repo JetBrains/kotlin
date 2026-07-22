@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75316
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 import kotlin.reflect.KProperty
 

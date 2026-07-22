@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // ISSUE: KT-76400
 
 fun receiveMyClass(m: MyClass) {}

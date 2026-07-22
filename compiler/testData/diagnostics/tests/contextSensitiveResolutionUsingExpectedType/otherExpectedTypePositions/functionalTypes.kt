@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75316
 // WITH_STDLIB
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType, +ContextParameters
+// LANGUAGE: +ContextParameters
 
 enum class MyEnum {
     Option1, Option2, Option3;

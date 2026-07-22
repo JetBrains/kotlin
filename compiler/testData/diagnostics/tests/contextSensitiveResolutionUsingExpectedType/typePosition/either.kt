@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75061
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 sealed interface Either<out E, out A> {
     data class  Left<out E>(val error: E): Either<E, Nothing>

@@ -1,51 +1,51 @@
-/local.kt:26:9: error: Check for instance is always 'false'.
+/local.kt:25:9: error: Check for instance is always 'false'.
 
-/local.kt:26:12: error: Ambiguity with context-sensitive resolution:
+/local.kt:25:12: error: Ambiguity with context-sensitive resolution:
 object <local>.B
 class foo.Sealed.B
 
-/local.kt:29:9: error: Check for instance is always 'false'.
+/local.kt:28:9: error: Check for instance is always 'false'.
 
-/local.kt:29:12: error: Ambiguity with context-sensitive resolution:
+/local.kt:28:12: error: Ambiguity with context-sensitive resolution:
 class kotlin.String
 class foo.Sealed.String
 
-/local.kt:30:9: error: Ambiguity with context-sensitive resolution:
+/local.kt:29:9: error: Ambiguity with context-sensitive resolution:
 local val CompanionB: Int
 val CompanionB: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:30:9: error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:29:9: error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:58:13: error: Ambiguity with context-sensitive resolution:
+/local.kt:57:13: error: Ambiguity with context-sensitive resolution:
 class foo.Test.A
 class foo.Sealed.A
 
-/local.kt:59:13: error: Check for instance is always 'false'.
+/local.kt:58:13: error: Check for instance is always 'false'.
 
-/local.kt:59:16: error: Ambiguity with context-sensitive resolution:
+/local.kt:58:16: error: Ambiguity with context-sensitive resolution:
 class foo.Test.B
 class foo.Sealed.B
 
-/local.kt:62:13: error: Check for instance is always 'false'.
+/local.kt:61:13: error: Check for instance is always 'false'.
 
-/local.kt:62:16: error: Ambiguity with context-sensitive resolution:
+/local.kt:61:16: error: Ambiguity with context-sensitive resolution:
 class kotlin.String
 class foo.Sealed.String
 
-/local.kt:63:13: error: Ambiguity with context-sensitive resolution:
+/local.kt:62:13: error: Ambiguity with context-sensitive resolution:
 class foo.Test.CompanionA
 val CompanionA: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:64:13: error: Ambiguity with context-sensitive resolution:
+/local.kt:63:13: error: Ambiguity with context-sensitive resolution:
 val CompanionB: Int, defined in foo.Test
 val CompanionB: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:64:13: error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:63:13: error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:72:13: error: Check for instance is always 'false'.
+/local.kt:71:13: error: Check for instance is always 'false'.
 
-/local.kt:75:13: error: Check for instance is always 'false'.
+/local.kt:74:13: error: Check for instance is always 'false'.
 
-/local.kt:77:13: error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:76:13: error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:91:13: warning: 'when' is exhaustive so 'else' is redundant here.
+/local.kt:90:13: warning: 'when' is exhaustive so 'else' is redundant here.
