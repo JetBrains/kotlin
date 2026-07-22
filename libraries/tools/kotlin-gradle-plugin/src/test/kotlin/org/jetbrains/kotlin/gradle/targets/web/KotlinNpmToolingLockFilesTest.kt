@@ -123,7 +123,7 @@ class KotlinNpmToolingLockFilesTest {
     }
 
     private fun assertLockfileContainsNpmVersionsDependencies(
-        lockfileDependencies: List<String>,
+        lockfileDependencies: Set<String>,
         lockfileName: String,
     ) {
         val allNpmVersionsDependencies = NpmVersions().allDependencies.map { it.name }
@@ -174,14 +174,26 @@ class KotlinNpmToolingLockFilesTest {
 
     /**
      * Load `package-lock.json` and `yarn.lock` files and check all dependencies are the same
-     * (ignoring version).
+     * (ignoring versions).
      */
     @Test
     fun `verify yarn and npm lockfiles have same dependencies`() {
-        assertEquals(
-            yarnLockPackages.prettyPrinted,
-            packageLockJsonPackages.prettyPrinted,
-        )
+        val inYarnButNotInNpm = yarnLockPackages - packageLockJsonPackages
+        val inNpmButNotInYarn = packageLockJsonPackages - yarnLockPackages
+
+        assertTrue(inYarnButNotInNpm.isEmpty() && inNpmButNotInYarn.isEmpty()) {
+            buildString {
+                appendLine("Dependencies in yarn.lock and package-lock.json are not in sync.")
+                if (inYarnButNotInNpm.isNotEmpty()) {
+                    appendLine("yarn.lock has ${inYarnButNotInNpm.size} dependencies not in package-lock.json:")
+                    inYarnButNotInNpm.forEach { appendLine("  - $it") }
+                }
+                if (inNpmButNotInYarn.isNotEmpty()) {
+                    appendLine("package-lock.json has ${inNpmButNotInYarn.size} dependencies not in yarn.lock:")
+                    inNpmButNotInYarn.forEach { appendLine("  - $it") }
+                }
+            }
+        }
     }
 
     companion object {
@@ -221,25 +233,21 @@ class KotlinNpmToolingLockFilesTest {
         }
 
         /** All (non-nested) dependencies in [packageLockJson]. */
-        private val packageLockJsonPackages: List<String> by lazy {
+        private val packageLockJsonPackages: Set<String> by lazy {
             packageLockJson.packages.keys
                 .asSequence()
                 .filter { it.isNotBlank() } // Remove root project entry
                 .filter { it.startsWith("node_modules/") } // only leaving actual resolved full dependency path including name
                 // Leaving only package name (including package-specific one where package name added as a prefix)
                 .map { it.substringAfterLast("node_modules/") }
-                .distinct()
-                .sorted()
-                .toList()
+                .toSortedSet()
         }
 
         /** All dependencies in [yarnLockContent]. */
-        private val yarnLockPackages: List<String> by lazy {
+        private val yarnLockPackages: Set<String> by lazy {
             yarnLock.entries
                 .map { it.name }
-                .distinct()
-                .sorted()
-                .toList()
+                .toSortedSet()
         }
 
         private fun loadResource(path: String): String {
