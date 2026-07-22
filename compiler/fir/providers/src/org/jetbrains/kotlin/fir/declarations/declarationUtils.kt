@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
-import org.jetbrains.kotlin.fir.declarations.utils.isClass
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
@@ -226,17 +224,9 @@ fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>
 
         superType.fir.getSealedClassInheritors(holder.session)
             .mapNotNull { it.toSymbol() as? FirRegularClassSymbol }
-            .filter { (isFinal || it.isFinal || isClass && it.isClass) && areUnrelated(this, it) }
+            .filter { it != this@getComplementarySymbols && it !in superTypes }
     }
 }
-
-context(holder: SessionHolder)
-private fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
-    isSubclassOf(other.toLookupTag(), holder.session, isStrict = false, lookupInterfaces = true)
-
-context(holder: SessionHolder)
-private fun areUnrelated(a: FirClassSymbol<*>, b: FirClassSymbol<*>): Boolean =
-    !a.isSubclassOf(b) && !b.isSubclassOf(a)
 
 /**
  * Returns the FirClassLikeDeclaration that the
