@@ -20,7 +20,6 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         containerOwner.classOrObjectDeclaration,
         containerOwner.symbolPointer,
         containerOwner.useSiteModule,
-        containerOwner.manager,
     ) {
     override fun getQualifiedName(): String? = containerOwner.qualifiedName?.let { "$it.${JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME}" }
     override fun getName(): String = JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME

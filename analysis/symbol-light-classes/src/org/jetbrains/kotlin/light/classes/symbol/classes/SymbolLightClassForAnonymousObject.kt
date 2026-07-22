@@ -28,15 +28,13 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         classOrObjectDeclaration = anonymousObjectDeclaration,
         classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(useSiteModule),
         useSiteModule = useSiteModule,
-        manager = anonymousObjectDeclaration.manager,
     )
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
-    ) : super(classOrObjectDeclaration, classSymbolPointer, useSiteModule, manager)
+    ) : super(classOrObjectDeclaration, classSymbolPointer, useSiteModule)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()
@@ -110,5 +108,5 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, symbolPointer, useSiteModule)
 }

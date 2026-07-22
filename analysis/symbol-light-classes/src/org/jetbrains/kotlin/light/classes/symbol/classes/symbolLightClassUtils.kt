@@ -89,24 +89,20 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
 internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
     ktModule: KaModule,
-    manager: PsiManager,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
         useSiteModule = ktModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
         useSiteModule = ktModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
         useSiteModule = ktModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 }
 
@@ -621,7 +617,6 @@ internal fun createInheritanceList(
 context(session: KaSession)
 internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
-    manager: PsiManager,
     containingClass: SymbolLightClassBase,
     classOrObject: KtClassOrObject?,
 ): List<SymbolLightClassBase> {
@@ -632,7 +627,7 @@ internal fun createInnerClasses(
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
-            createLightClassNoCache(it, ktModule = containingClass.useSiteModule, manager)
+            createLightClassNoCache(it, ktModule = containingClass.useSiteModule)
         }
     }
 
