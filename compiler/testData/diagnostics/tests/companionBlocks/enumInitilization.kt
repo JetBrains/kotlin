@@ -14,7 +14,7 @@ enum class InitEnum(val text: String) {
         val companionObject: String = FIRST.name
     }
     companion {
-        val companionBlock: String = <!UNINITIALIZED_ENUM_ENTRY!>SECOND<!>.name
+        val companionBlock: String = SECOND.name
         val companionBlockComputed: String get() = SECOND.name
         fun companionBlockFunction() = SECOND.name
     }

@@ -368,4 +368,11 @@ digraph destructuringDeclarationsScript_kts {
     118 -> {119} [style=dotted];
     119 -> {120} [style=dotted];
 
+    subgraph cluster_39 {
+        color=red
+        121 [label="Enter static <static of A> [3]" style="filled" fillcolor=red];
+        122 [label="Exit static <static of A> [3]" style="filled" fillcolor=red];
+    }
+    121 -> {122} [color=green];
+
 }

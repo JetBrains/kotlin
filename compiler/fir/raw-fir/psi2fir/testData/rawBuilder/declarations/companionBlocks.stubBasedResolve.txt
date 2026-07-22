@@ -60,7 +60,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionBlocks.kt
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<E>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class E : R|kotlin/Enum<E>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|E| {
             super<R|kotlin/Enum<E>|>()
         }

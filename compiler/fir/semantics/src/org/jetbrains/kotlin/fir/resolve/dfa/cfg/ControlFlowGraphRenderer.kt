@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
 
 private class ControlFlowGraphRenderer(
@@ -52,7 +51,7 @@ private class ControlFlowGraphRenderer(
     }
 
     fun renderPartialGraph(controlFlowGraph: ControlFlowGraph) {
-        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
+        val nodes = controlFlowGraph.topological()
             .associateWithTo(linkedMapOf()) { nodeCounter++ }
         printer.renderNodes(nodes.filterKeys { it.level >= controlFlowGraph.enterNode.level })
         printer.renderEdges(nodes)
@@ -233,6 +232,57 @@ private class ControlFlowGraphRenderer(
         .replace(">", "&gt;")
         .replace("<", "&lt;")
         .replace(System.lineSeparator(), "<BR/>")
+
+    private enum class VisitState {
+        VISITING,
+        VISITED,
+    }
+
+    /**
+     * Return a list of all [nodes][CFGNode] contained within [this] graph and its subgraphs in topological order.
+     * Implemented using a non-recursive DFS, to avoid stack overflow issues from long paths through the graph.
+     */
+    private fun ControlFlowGraph.topological(): List<CFGNode<*>> {
+        val states = mutableMapOf<CFGNode<*>, VisitState>()
+        val stack = ArrayDeque<CFGNode<*>>().apply {
+            add(enterNode)
+        }
+
+        return buildList {
+            while (stack.isNotEmpty()) {
+                val node = stack.last()
+                when (states[node]) {
+                    // First time encountering node on the stack.
+                    null -> {
+                        states[node] = VisitState.VISITING
+                        for (next in node.followingNodes.asReversed()) {
+                            when (states[next]) {
+                                null -> stack.addLast(next) // First time, add to the stack.
+                                VisitState.VISITING -> Unit // Cycle... ...skip!
+                                VisitState.VISITED -> Unit // Already visited, skip!
+                            }
+                        }
+                    }
+
+                    // Returning to node on the stack, add node to the list.
+                    VisitState.VISITING -> {
+                        states[node] = VisitState.VISITED
+                        stack.removeLast()
+                        add(node)
+                    }
+
+                    // Already visited, skip!
+                    VisitState.VISITED -> {
+                        stack.removeLast()
+                    }
+                }
+            }
+
+            // Nodes were added in reverse-topological order,
+            // so reverse to get the correct order.
+            reverse()
+        }
+    }
 }
 
 data class ControlFlowGraphRenderOptions(

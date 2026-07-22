@@ -10,7 +10,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingModifierInsideEnumEntry.kt
     }
     public final const [ResolvedTo(CONTRACTS)] val CONSTANT: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
-    public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] constructor(): R|foo/MyEnumClass| {
             super<R|kotlin/Enum<foo/MyEnumClass>|>()
         }

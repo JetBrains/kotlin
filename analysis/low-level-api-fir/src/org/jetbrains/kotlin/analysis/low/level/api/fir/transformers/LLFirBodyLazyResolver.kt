@@ -558,8 +558,9 @@ private class FirPartialBodyExpressionResolveTransformer(
  *   to be resolved before the file to build correct [CFG][ControlFlowGraph].
  * - [FirScript] – All members which [isUsedInControlFlowGraphBuilderForScript] have
  *   to be resolved before the script to build correct [CFG][ControlFlowGraph].
- * - [FirRegularClass] – All members which [isUsedInControlFlowGraphBuilderForClass] have
- *   to be resolved before the class to build correct [CFG][ControlFlowGraph].
+ * - [FirRegularClass] – All declarations which [isUsedInControlFlowGraphBuilderForClass]
+ *   or [isUsedInControlFlowGraphBuilderForStatic] have to be resolved before the
+ *   class to build correct [CFG][ControlFlowGraph].
  *
  * @see BodyStateKeepers
  * @see FirBodyResolveTransformer
@@ -611,7 +612,9 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirRegularClass -> {
                 if (checkAnalysisReadiness(target, containingDeclarations, resolverPhase)) return true
 
-                // resolve class CFG graph here, to do this we need to have property & init blocks resoled
+                // Resolve class CFG graphs here.
+                // To create the member graph, we need to have property & init blocks resoled.
+                // To create the static graph, we need to have enum entries & companions resolved.
                 resolveMembersForControlFlowGraph(
                     declarationWithMembers = target,
                     withDeclaration = this::withRegularClass,
@@ -686,12 +689,15 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 
         val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
         dataFlowAnalyzer.enterClass(target, buildGraph = true)
-        val controlFlowGraph = dataFlowAnalyzer.exitClass()
+        val (memberGraph, staticGraph) = dataFlowAnalyzer.exitClass()
             ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firClass", target)
             }
 
-        target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(memberGraph))
+        if (staticGraph != null) {
+            target.replaceStaticControlFlowGraphReference(FirControlFlowGraphReferenceImpl(staticGraph))
+        }
     }
 
     private inline fun <T : FirElementWithResolveState> resolveMembersForControlFlowGraph(
@@ -828,6 +834,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
+            is FirEnumEntry -> resolve(target, BodyStateKeepers.ENUM_ENTRY)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
@@ -926,6 +933,11 @@ internal object BodyStateKeepers {
     val FIELD: StateKeeper<FirField, FirDesignation> = stateKeeper { builder, _, designation ->
         builder.add(VARIABLE, designation)
         builder.add(FirField::controlFlowGraphReference, FirField::replaceControlFlowGraphReference)
+    }
+
+    val ENUM_ENTRY: StateKeeper<FirEnumEntry, FirDesignation> = stateKeeper { builder, _, designation ->
+        builder.add(VARIABLE, designation)
+        builder.add(FirEnumEntry::controlFlowGraphReference, FirEnumEntry::replaceControlFlowGraphReference)
     }
 
     val PROPERTY: StateKeeper<FirProperty, FirDesignation> = stateKeeper { builder, property, designation ->
@@ -1120,4 +1132,5 @@ private val FirDeclaration.isUsedInScriptControlFlowGraphBuilder: Boolean
     get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForScript
 
 private val FirDeclaration.isUsedInClassControlFlowGraphBuilder: Boolean
-    get() = this is FirControlFlowGraphOwner && isUsedInControlFlowGraphBuilderForClass
+    get() = this is FirControlFlowGraphOwner &&
+            (isUsedInControlFlowGraphBuilderForClass || isUsedInControlFlowGraphBuilderForStatic)

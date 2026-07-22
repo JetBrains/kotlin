@@ -156,4 +156,11 @@ digraph inLocalClass_kt {
     46 -> {47};
     47 -> {48};
 
+    subgraph cluster_17 {
+        color=red
+        49 [label="Enter static <static of LocalClass>" style="filled" fillcolor=red];
+        50 [label="Exit static <static of LocalClass>" style="filled" fillcolor=red];
+    }
+    49 -> {50} [color=green];
+
 }

@@ -710,16 +710,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts>] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
-                    LAZY_super<R|kotlin/Any|>
+            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                    super<R|kotlin/Any|>()
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val outer: R|kotlin/String| = String()
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
 
-                public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val inner: R|kotlin/Int| = Int(0)
-                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+                public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val inner: R|kotlin/Int| = Int(0)
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
             }
 

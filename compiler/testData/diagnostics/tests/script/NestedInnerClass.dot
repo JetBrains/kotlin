@@ -120,226 +120,247 @@ digraph NestedInnerClass_kts {
 
     subgraph cluster_12 {
         color=red
-        36 [label="Enter class Inner [3]" style="filled" fillcolor=red];
-        subgraph cluster_13 {
-            color=blue
-            37 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            38 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            39 [label="Exit function <init> [4]" style="filled" fillcolor=red];
-        }
+        36 [label="Enter static <static of Nested> [3]" style="filled" fillcolor=red];
+        37 [label="Exit static <static of Nested> [3]" style="filled" fillcolor=red];
+    }
+    36 -> {37} [color=green];
+
+    subgraph cluster_13 {
+        color=red
+        38 [label="Enter class Inner [3]" style="filled" fillcolor=red];
         subgraph cluster_14 {
             color=blue
-            40 [label="Enter property [4]" style="filled" fillcolor=red];
-            41 [label="Access variable R|/property| [4]"];
-            42 [label="Exit property [4]" style="filled" fillcolor=red];
+            39 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            40 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            41 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_15 {
             color=blue
-            43 [label="Enter property [4]" style="filled" fillcolor=red];
-            44 [label="Access variable this@NestedInnerClass# [4]"];
-            45 [label="Access variable <Unresolved name: property># [4]"];
-            46 [label="Exit property [4]" style="filled" fillcolor=red];
+            42 [label="Enter property [4]" style="filled" fillcolor=red];
+            43 [label="Access variable R|/property| [4]"];
+            44 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        47 [label="Exit class Inner [3]" style="filled" fillcolor=red];
-    }
-    36 -> {37} [color=green];
-    36 -> {47} [style=dotted];
-    36 -> {37 40 43} [style=dashed];
-    37 -> {38};
-    38 -> {39};
-    39 -> {40} [color=green];
-    40 -> {41};
-    41 -> {42};
-    42 -> {43} [color=green];
-    43 -> {44};
-    44 -> {45};
-    45 -> {46};
-    46 -> {47} [color=green];
-
-    subgraph cluster_16 {
-        color=red
-        48 [label="Enter function innerFun [4]" style="filled" fillcolor=red];
-        subgraph cluster_17 {
+        subgraph cluster_16 {
             color=blue
-            49 [label="Enter block [4]"];
-            subgraph cluster_18 {
-                color=blue
-                50 [label="Function call arguments enter [4]"];
-                51 [label="Function call arguments exit [4]"];
-            }
-            52 [label="Function call enter: R|/function|() [4]"];
-            53 [label="Function call exit: R|/function|() [4]" style="filled" fillcolor=yellow];
-            54 [label="Jump: ^innerFun R|/function|() [4]"];
-            55 [label="Stub [4]" style="filled" fillcolor=gray];
-            56 [label="Exit block [4]" style="filled" fillcolor=gray];
+            45 [label="Enter property [4]" style="filled" fillcolor=red];
+            46 [label="Access variable this@NestedInnerClass# [4]"];
+            47 [label="Access variable <Unresolved name: property># [4]"];
+            48 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        57 [label="Exit function innerFun [4]" style="filled" fillcolor=red];
+        49 [label="Exit class Inner [3]" style="filled" fillcolor=red];
     }
-    48 -> {49};
-    49 -> {50};
+    38 -> {39} [color=green];
+    38 -> {49} [style=dotted];
+    38 -> {39 42 45} [style=dashed];
+    39 -> {40};
+    40 -> {41};
+    41 -> {42} [color=green];
+    42 -> {43};
+    43 -> {44};
+    44 -> {45} [color=green];
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49} [color=green];
+
+    subgraph cluster_17 {
+        color=red
+        50 [label="Enter function innerFun [4]" style="filled" fillcolor=red];
+        subgraph cluster_18 {
+            color=blue
+            51 [label="Enter block [4]"];
+            subgraph cluster_19 {
+                color=blue
+                52 [label="Function call arguments enter [4]"];
+                53 [label="Function call arguments exit [4]"];
+            }
+            54 [label="Function call enter: R|/function|() [4]"];
+            55 [label="Function call exit: R|/function|() [4]" style="filled" fillcolor=yellow];
+            56 [label="Jump: ^innerFun R|/function|() [4]"];
+            57 [label="Stub [4]" style="filled" fillcolor=gray];
+            58 [label="Exit block [4]" style="filled" fillcolor=gray];
+        }
+        59 [label="Exit function innerFun [4]" style="filled" fillcolor=red];
+    }
     50 -> {51};
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {57};
-    54 -> {55} [style=dotted];
-    55 -> {56} [style=dotted];
+    54 -> {55};
+    55 -> {56};
+    56 -> {59};
     56 -> {57} [style=dotted];
+    57 -> {58} [style=dotted];
+    58 -> {59} [style=dotted];
 
-    subgraph cluster_19 {
+    subgraph cluster_20 {
         color=red
-        58 [label="Enter function innerThisFun [4]" style="filled" fillcolor=red];
-        subgraph cluster_20 {
+        60 [label="Enter function innerThisFun [4]" style="filled" fillcolor=red];
+        subgraph cluster_21 {
             color=blue
-            59 [label="Enter block [4]"];
-            subgraph cluster_21 {
+            61 [label="Enter block [4]"];
+            subgraph cluster_22 {
                 color=blue
-                60 [label="Function call arguments enter [4]"];
-                61 [label="Access variable this@NestedInnerClass# [4]"];
-                62 [label="Function call arguments exit [4]"];
+                62 [label="Function call arguments enter [4]"];
+                63 [label="Access variable this@NestedInnerClass# [4]"];
+                64 [label="Function call arguments exit [4]"];
             }
-            63 [label="Function call enter: this@NestedInnerClass#.<Unresolved name: function>#() [4]"];
-            64 [label="Function call exit: this@NestedInnerClass#.<Unresolved name: function>#() [4]" style="filled" fillcolor=yellow];
-            65 [label="Jump: ^innerThisFun this@NestedInnerClass#.<Unresolved name: function>#() [4]"];
-            66 [label="Stub [4]" style="filled" fillcolor=gray];
-            67 [label="Exit block [4]" style="filled" fillcolor=gray];
+            65 [label="Function call enter: this@NestedInnerClass#.<Unresolved name: function>#() [4]"];
+            66 [label="Function call exit: this@NestedInnerClass#.<Unresolved name: function>#() [4]" style="filled" fillcolor=yellow];
+            67 [label="Jump: ^innerThisFun this@NestedInnerClass#.<Unresolved name: function>#() [4]"];
+            68 [label="Stub [4]" style="filled" fillcolor=gray];
+            69 [label="Exit block [4]" style="filled" fillcolor=gray];
         }
-        68 [label="Exit function innerThisFun [4]" style="filled" fillcolor=red];
+        70 [label="Exit function innerThisFun [4]" style="filled" fillcolor=red];
     }
-    58 -> {59};
-    59 -> {60};
     60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
     64 -> {65};
-    65 -> {68};
-    65 -> {66} [style=dotted];
-    66 -> {67} [style=dotted];
+    65 -> {66};
+    66 -> {67};
+    67 -> {70};
     67 -> {68} [style=dotted];
+    68 -> {69} [style=dotted];
+    69 -> {70} [style=dotted];
 
-    subgraph cluster_22 {
+    subgraph cluster_23 {
         color=red
-        69 [label="Enter class InnerInner [4]" style="filled" fillcolor=red];
-        subgraph cluster_23 {
+        71 [label="Enter class InnerInner [4]" style="filled" fillcolor=red];
+        subgraph cluster_24 {
             color=blue
-            70 [label="Enter function <init> [5]" style="filled" fillcolor=red];
-            71 [label="Delegated constructor call: super<R|kotlin/Any|>() [5]" style="filled" fillcolor=yellow];
-            72 [label="Exit function <init> [5]" style="filled" fillcolor=red];
+            72 [label="Enter function <init> [5]" style="filled" fillcolor=red];
+            73 [label="Delegated constructor call: super<R|kotlin/Any|>() [5]" style="filled" fillcolor=yellow];
+            74 [label="Exit function <init> [5]" style="filled" fillcolor=red];
         }
-        73 [label="Exit class InnerInner [4]" style="filled" fillcolor=red];
+        75 [label="Exit class InnerInner [4]" style="filled" fillcolor=red];
     }
-    69 -> {70} [color=green];
-    69 -> {73} [style=dotted];
-    69 -> {70} [style=dashed];
-    70 -> {71};
-    71 -> {72};
-    72 -> {73} [color=green];
+    71 -> {72} [color=green];
+    71 -> {75} [style=dotted];
+    71 -> {72} [style=dashed];
+    72 -> {73};
+    73 -> {74};
+    74 -> {75} [color=green];
 
-    subgraph cluster_24 {
+    subgraph cluster_25 {
         color=red
-        74 [label="Enter function f [5]" style="filled" fillcolor=red];
-        subgraph cluster_25 {
+        76 [label="Enter function f [5]" style="filled" fillcolor=red];
+        subgraph cluster_26 {
             color=blue
-            75 [label="Enter block [5]"];
-            subgraph cluster_26 {
+            77 [label="Enter block [5]"];
+            subgraph cluster_27 {
                 color=blue
-                76 [label="Function call arguments enter [5]"];
-                77 [label="Function call arguments exit [5]"];
+                78 [label="Function call arguments enter [5]"];
+                79 [label="Function call arguments exit [5]"];
             }
-            78 [label="Function call enter: this@R|/Inner|.R|/Inner.innerFun|() [5]"];
-            79 [label="Function call exit: this@R|/Inner|.R|/Inner.innerFun|() [5]" style="filled" fillcolor=yellow];
-            80 [label="Jump: ^f this@R|/Inner|.R|/Inner.innerFun|() [5]"];
-            81 [label="Stub [5]" style="filled" fillcolor=gray];
-            82 [label="Exit block [5]" style="filled" fillcolor=gray];
+            80 [label="Function call enter: this@R|/Inner|.R|/Inner.innerFun|() [5]"];
+            81 [label="Function call exit: this@R|/Inner|.R|/Inner.innerFun|() [5]" style="filled" fillcolor=yellow];
+            82 [label="Jump: ^f this@R|/Inner|.R|/Inner.innerFun|() [5]"];
+            83 [label="Stub [5]" style="filled" fillcolor=gray];
+            84 [label="Exit block [5]" style="filled" fillcolor=gray];
         }
-        83 [label="Exit function f [5]" style="filled" fillcolor=red];
+        85 [label="Exit function f [5]" style="filled" fillcolor=red];
     }
-    74 -> {75};
-    75 -> {76};
     76 -> {77};
     77 -> {78};
     78 -> {79};
     79 -> {80};
-    80 -> {83};
-    80 -> {81} [style=dotted];
-    81 -> {82} [style=dotted];
+    80 -> {81};
+    81 -> {82};
+    82 -> {85};
     82 -> {83} [style=dotted];
+    83 -> {84} [style=dotted];
+    84 -> {85} [style=dotted];
 
-    subgraph cluster_27 {
+    subgraph cluster_28 {
         color=red
-        84 [label="Enter function g [5]" style="filled" fillcolor=red];
-        subgraph cluster_28 {
+        86 [label="Enter function g [5]" style="filled" fillcolor=red];
+        subgraph cluster_29 {
             color=blue
-            85 [label="Enter block [5]"];
-            86 [label="Access variable R|/Inner.innerProp| [5]"];
-            87 [label="Jump: ^g this@R|/Inner|.R|/Inner.innerProp| [5]"];
-            88 [label="Stub [5]" style="filled" fillcolor=gray];
-            89 [label="Exit block [5]" style="filled" fillcolor=gray];
+            87 [label="Enter block [5]"];
+            88 [label="Access variable R|/Inner.innerProp| [5]"];
+            89 [label="Jump: ^g this@R|/Inner|.R|/Inner.innerProp| [5]"];
+            90 [label="Stub [5]" style="filled" fillcolor=gray];
+            91 [label="Exit block [5]" style="filled" fillcolor=gray];
         }
-        90 [label="Exit function g [5]" style="filled" fillcolor=red];
+        92 [label="Exit function g [5]" style="filled" fillcolor=red];
     }
-    84 -> {85};
-    85 -> {86};
     86 -> {87};
-    87 -> {90};
-    87 -> {88} [style=dotted];
-    88 -> {89} [style=dotted];
+    87 -> {88};
+    88 -> {89};
+    89 -> {92};
     89 -> {90} [style=dotted];
+    90 -> {91} [style=dotted];
+    91 -> {92} [style=dotted];
 
-    subgraph cluster_29 {
+    subgraph cluster_30 {
         color=red
-        91 [label="Enter function h [5]" style="filled" fillcolor=red];
-        subgraph cluster_30 {
+        93 [label="Enter function h [5]" style="filled" fillcolor=red];
+        subgraph cluster_31 {
             color=blue
-            92 [label="Enter block [5]"];
-            subgraph cluster_31 {
+            94 [label="Enter block [5]"];
+            subgraph cluster_32 {
                 color=blue
-                93 [label="Function call arguments enter [5]"];
-                94 [label="Access variable this@R|/Inner| [5]"];
-                95 [label="Function call arguments exit [5]"];
+                95 [label="Function call arguments enter [5]"];
+                96 [label="Access variable this@R|/Inner| [5]"];
+                97 [label="Function call arguments exit [5]"];
             }
-            96 [label="Function call enter: this@R|/Inner|.R|/Inner.innerFun|() [5]"];
-            97 [label="Function call exit: this@R|/Inner|.R|/Inner.innerFun|() [5]" style="filled" fillcolor=yellow];
-            98 [label="Jump: ^h this@R|/Inner|.R|/Inner.innerFun|() [5]"];
-            99 [label="Stub [5]" style="filled" fillcolor=gray];
-            100 [label="Exit block [5]" style="filled" fillcolor=gray];
+            98 [label="Function call enter: this@R|/Inner|.R|/Inner.innerFun|() [5]"];
+            99 [label="Function call exit: this@R|/Inner|.R|/Inner.innerFun|() [5]" style="filled" fillcolor=yellow];
+            100 [label="Jump: ^h this@R|/Inner|.R|/Inner.innerFun|() [5]"];
+            101 [label="Stub [5]" style="filled" fillcolor=gray];
+            102 [label="Exit block [5]" style="filled" fillcolor=gray];
         }
-        101 [label="Exit function h [5]" style="filled" fillcolor=red];
+        103 [label="Exit function h [5]" style="filled" fillcolor=red];
     }
-    91 -> {92};
-    92 -> {93};
     93 -> {94};
     94 -> {95};
     95 -> {96};
     96 -> {97};
     97 -> {98};
-    98 -> {101};
-    98 -> {99} [style=dotted];
-    99 -> {100} [style=dotted];
+    98 -> {99};
+    99 -> {100};
+    100 -> {103};
     100 -> {101} [style=dotted];
+    101 -> {102} [style=dotted];
+    102 -> {103} [style=dotted];
 
-    subgraph cluster_32 {
+    subgraph cluster_33 {
         color=red
-        102 [label="Enter function i [5]" style="filled" fillcolor=red];
-        subgraph cluster_33 {
+        104 [label="Enter function i [5]" style="filled" fillcolor=red];
+        subgraph cluster_34 {
             color=blue
-            103 [label="Enter block [5]"];
-            104 [label="Access variable this@R|/Inner| [5]"];
-            105 [label="Access variable R|/Inner.innerProp| [5]"];
-            106 [label="Jump: ^i this@R|/Inner|.R|/Inner.innerProp| [5]"];
-            107 [label="Stub [5]" style="filled" fillcolor=gray];
-            108 [label="Exit block [5]" style="filled" fillcolor=gray];
+            105 [label="Enter block [5]"];
+            106 [label="Access variable this@R|/Inner| [5]"];
+            107 [label="Access variable R|/Inner.innerProp| [5]"];
+            108 [label="Jump: ^i this@R|/Inner|.R|/Inner.innerProp| [5]"];
+            109 [label="Stub [5]" style="filled" fillcolor=gray];
+            110 [label="Exit block [5]" style="filled" fillcolor=gray];
         }
-        109 [label="Exit function i [5]" style="filled" fillcolor=red];
+        111 [label="Exit function i [5]" style="filled" fillcolor=red];
     }
-    102 -> {103};
-    103 -> {104};
     104 -> {105};
     105 -> {106};
-    106 -> {109};
-    106 -> {107} [style=dotted];
-    107 -> {108} [style=dotted];
+    106 -> {107};
+    107 -> {108};
+    108 -> {111};
     108 -> {109} [style=dotted];
+    109 -> {110} [style=dotted];
+    110 -> {111} [style=dotted];
+
+    subgraph cluster_35 {
+        color=red
+        112 [label="Enter static <static of InnerInner> [4]" style="filled" fillcolor=red];
+        113 [label="Exit static <static of InnerInner> [4]" style="filled" fillcolor=red];
+    }
+    112 -> {113} [color=green];
+
+    subgraph cluster_36 {
+        color=red
+        114 [label="Enter static <static of Inner> [3]" style="filled" fillcolor=red];
+        115 [label="Exit static <static of Inner> [3]" style="filled" fillcolor=red];
+    }
+    114 -> {115} [color=green];
 
 }

@@ -19,70 +19,84 @@ digraph smartCastingExplicitReceiver_kt {
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter class C" style="filled" fillcolor=red];
-        subgraph cluster_3 {
-            color=blue
-            5 [label="Enter function <init>" style="filled" fillcolor=red];
-            6 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            7 [label="Exit function <init>" style="filled" fillcolor=red];
-        }
-        8 [label="Exit class C" style="filled" fillcolor=red];
+        4 [label="Enter static <static of I>" style="filled" fillcolor=red];
+        5 [label="Exit static <static of I>" style="filled" fillcolor=red];
     }
     4 -> {5} [color=green];
-    4 -> {8} [style=dotted];
-    4 -> {5} [style=dashed];
-    5 -> {6};
-    6 -> {7};
-    7 -> {8} [color=green];
 
-    subgraph cluster_4 {
+    subgraph cluster_3 {
         color=red
-        9 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_5 {
+        6 [label="Enter class C" style="filled" fillcolor=red];
+        subgraph cluster_4 {
             color=blue
-            10 [label="Enter block"];
-            11 [label="Const: String(ret)"];
-            12 [label="Jump: ^foo String(ret)"];
-            13 [label="Stub" style="filled" fillcolor=gray];
-            14 [label="Exit block" style="filled" fillcolor=gray];
+            7 [label="Enter function <init>" style="filled" fillcolor=red];
+            8 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            9 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        15 [label="Exit function foo" style="filled" fillcolor=red];
+        10 [label="Exit class C" style="filled" fillcolor=red];
     }
-    9 -> {10};
-    10 -> {11};
+    6 -> {7} [color=green];
+    6 -> {10} [style=dotted];
+    6 -> {7} [style=dashed];
+    7 -> {8};
+    8 -> {9};
+    9 -> {10} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        11 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            12 [label="Enter block"];
+            13 [label="Const: String(ret)"];
+            14 [label="Jump: ^foo String(ret)"];
+            15 [label="Stub" style="filled" fillcolor=gray];
+            16 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        17 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     11 -> {12};
-    12 -> {15};
-    12 -> {13} [style=dotted];
-    13 -> {14} [style=dotted];
+    12 -> {13};
+    13 -> {14};
+    14 -> {17};
     14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+    16 -> {17} [style=dotted];
 
-    subgraph cluster_6 {
+    subgraph cluster_7 {
         color=red
-        16 [label="Enter function bar" style="filled" fillcolor=red];
-        subgraph cluster_7 {
-            color=blue
-            17 [label="Enter block"];
-            subgraph cluster_8 {
-                color=blue
-                18 [label="Function call arguments enter"];
-                19 [label="Access variable this@R|/bar|"];
-                20 [label="Type operator: (this@R|/bar| as R|C|)"];
-                21 [label="Function call arguments exit"];
-            }
-            22 [label="Function call enter: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()"];
-            23 [label="Function call exit: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()" style="filled" fillcolor=yellow];
-            24 [label="Exit block"];
-        }
-        25 [label="Exit function bar" style="filled" fillcolor=red];
+        18 [label="Enter static <static of C>" style="filled" fillcolor=red];
+        19 [label="Exit static <static of C>" style="filled" fillcolor=red];
     }
-    16 -> {17};
-    17 -> {18};
-    18 -> {19};
-    19 -> {20};
+    18 -> {19} [color=green];
+
+    subgraph cluster_8 {
+        color=red
+        20 [label="Enter function bar" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            21 [label="Enter block"];
+            subgraph cluster_10 {
+                color=blue
+                22 [label="Function call arguments enter"];
+                23 [label="Access variable this@R|/bar|"];
+                24 [label="Type operator: (this@R|/bar| as R|C|)"];
+                25 [label="Function call arguments exit"];
+            }
+            26 [label="Function call enter: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()"];
+            27 [label="Function call exit: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()" style="filled" fillcolor=yellow];
+            28 [label="Exit block"];
+        }
+        29 [label="Exit function bar" style="filled" fillcolor=red];
+    }
     20 -> {21};
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
 
 }
