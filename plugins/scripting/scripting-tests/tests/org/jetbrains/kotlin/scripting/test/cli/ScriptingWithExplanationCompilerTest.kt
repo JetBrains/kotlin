@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.scripting.compiler.plugin.captureOutErrRet
-import org.jetbrains.kotlin.scripting.compiler.plugin.withTempFile
+import org.jetbrains.kotlin.scripting.test.captureOutErrRet
+import org.jetbrains.kotlin.scripting.test.withTempFile
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

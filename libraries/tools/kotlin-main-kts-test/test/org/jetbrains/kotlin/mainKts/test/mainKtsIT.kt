@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
+import org.jetbrains.kotlin.scripting.test.runAndCheckResults
+import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.test.runWithKotlinLauncherScript
+import org.jetbrains.kotlin.scripting.test.runWithKotlinc
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil

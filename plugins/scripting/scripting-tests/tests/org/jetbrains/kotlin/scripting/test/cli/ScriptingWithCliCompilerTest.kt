@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.runtimeJarForTests
-import org.jetbrains.kotlin.scripting.compiler.plugin.captureOutErrRet
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
-import org.jetbrains.kotlin.scripting.compiler.plugin.withTempDir
+import org.jetbrains.kotlin.scripting.test.captureOutErrRet
+import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.test.runWithKotlinc
+import org.jetbrains.kotlin.scripting.test.withTempDir
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode

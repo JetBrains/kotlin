@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.test.host
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
-import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
+import org.jetbrains.kotlin.scripting.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Test

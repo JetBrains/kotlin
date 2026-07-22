@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.scripting.test.host
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
+import org.jetbrains.kotlin.scripting.test.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import kotlin.reflect.KClass
