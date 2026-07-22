@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -36,6 +37,6 @@ sealed interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainer
     abstract var classKind: ClassKind
     abstract val superTypeRefs: MutableList<FirTypeRef>
     abstract val declarations: MutableList<FirDeclaration>
-
+    abstract var staticControlFlowGraphReference: FirControlFlowGraphReference?
     override fun build(): FirClass
 }

@@ -522,6 +522,7 @@ object FirTree : AbstractFirTreeBuilder() {
             withReplace = true
         }
         +annotations
+        +field("staticControlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
     }
 
     val regularClass: Element by element(Declaration) {

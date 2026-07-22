@@ -50,6 +50,7 @@ abstract class FirAnonymousObject : FirClass() {
     @DirectDeclarationsAccess
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
+    abstract override val staticControlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirAnonymousObjectSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -70,6 +71,8 @@ abstract class FirAnonymousObject : FirClass() {
     abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceStaticControlFlowGraphReference(newStaticControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 
