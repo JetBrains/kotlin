@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.test.grouping
  * that [passedTests], [failedTests], and [ignoredTests] were reported for, keyed by an opaque test id of type [ID].
  *
  * This is the shared shape of the long-standing Kotlin/Native `TestReport`
- * (`org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport`, keyed by `TestName`), extracted here so that
- * the grouped K/Wasm runner can reuse it. Wasm keys by the stable `ProxyLauncher_<hash>` id (`ID = String`); a
+ * ([org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport], keyed by `TestName`), extracted here so that
+ * the grouped JS/Wasm runners can reuse it. Wasm keys by the stable `ProxyLauncher_<hash>` id (`ID = String`); a
  * future convergence can have K/N use `ID = TestName` (see [TestRunChecks]).
  *
  * The holder is deliberately free of any transport/protocol detail (no raw outcomes, messages, or stack traces):

@@ -6,43 +6,27 @@
 package org.jetbrains.kotlin.test.grouping
 
 /**
- * Wire protocol for reporting per-test results of a grouped K/Wasm batch from the VM back to the JVM test runner.
+ * Wire protocol for per-test results of a grouped test batch, executor/VM → JVM: it both generates [generateResultCollectingRunnerSource]
+ * the emitting-side driver and parses [parse] the block it prints. It's a different approach from what K/Native testinfra has:
+ * - the `##teamcity[...]` scraping, which needed suite-stack reconstruction,
+ * - TeamCity escaping,
+ * - `kotlin.test` `TeamcityAdapter`'s 7000-char stack-trace truncation.
  *
- * This replaces the previous approach of scraping human-oriented `##teamcity[...]` service messages from stdout
- * (which required suite-stack reconstruction, TeamCity escaping, and was subject to a 7000-char stack-trace
- * truncation in `kotlin.test`'s `TeamcityAdapter`).
+ * The driver wraps each `ProxyLauncher_<hash>().runTest()` in a `try`/`catch` and prints one [LINE_PREFIX] line per test between [BEGIN]/[END];
+ * [parse] reads that block and attributes each outcome by the stable `ProxyLauncher_<hash>` id (see `computeProxyLauncherClassName`)
+ * — no suite-stack reconstruction, no reporter coupling.
+ * Everything here is target-independent; only the exported entry point differs per target and is factored
+ * into [GroupedTestsExportedEntryPointGenerator]. One mechanism drives every executor/VM.
  *
- * How it works:
- *  - [generateResultCollectingRunnerSource] emits a tiny Kotlin driver into the synthesized batch launcher.
- *    The driver wraps every per-test `ProxyLauncher_<hash>().runTest()` in a `try`/`catch` — this `catch` is the
- *    "callback" that observes each test's outcome, analogous to a JUnit `RunListener` / a `kotlin.test`
- *    `FrameworkAdapter.test()` wrapper — and prints exactly one [LINE_PREFIX] line per test, between the
- *    [BEGIN]/[END] sentinels.
- *  - The JVM side ([parse]) reads that single structured block out of the captured VM stdout and attributes each
- *    outcome to its test purely by the stable `ProxyLauncher_<hash>` id (see `computeProxyLauncherClassName`) —
- *    no suite-stack reconstruction, no reporter-format coupling.
- *
- * The same driver is used for both K/Wasm targets (`@JsExport fun runGroupedTests()` for wasm-js,
- * `@WasmExport fun startTest()` for wasm-wasi) and for every VM (V8/SpiderMonkey/JavaScriptCore, Node.js,
- * WasmEdge, Wasmtime), unifying what used to be two divergent execution/attribution paths.
- *
- * ### Line format
- *
- * The `KGTI` marker stands for **K**otlin **G**rouping **T**est **I**nfra; it is deliberately
- * target-independent (the same protocol is used for wasm-js and wasm-wasi).
+ * ### Line format (`KGTI` = **K**otlin **G**rouping **T**est **I**nfra)
  * ```
  * ##KGTI_BEGIN##
  * ##KGTI##|<id>|<status>|<escaped-message>|<escaped-details>
- * ...
  * ##KGTI_END##
  * ```
- * `status` is [STARTED], [PASSED] or [FAILED]. The driver prints a [STARTED] line (with empty message/details)
- * immediately *before* running each test, then a [PASSED]/[FAILED] line *after* it. This bracketing localizes a
- * crash: a test that has a [STARTED] line but no terminal [PASSED]/[FAILED] one is the test that was in progress
- * when the VM died (a hard trap, OOM, or `proc_exit`), as opposed to a test that has neither — which never ran.
- *
- * `message`/`details` are escaped by the generated driver so that a field never contains a raw [SEP], letting
- * [parse] split safely: `\` → `\\`, `|` → `\p`, newline → `\n`, CR → `\r`.
+ * `status` is [STARTED] (printed *before* each test) then [PASSED]/[FAILED] (*after*): a [STARTED] with no terminal
+ * line marks the test that crashed the VM mid-run; neither line means it never ran. `message`/`details` are escaped
+ * so no field holds a raw [SEP], letting [parse] split safely: `\`→`\\`, `|`→`\p`, newline→`\n`, CR→`\r`.
  */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
@@ -52,6 +36,9 @@ object GroupedTestsResultProtocol {
     const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
+
+    /** Name of the generated function that runs and reports every test; the exported entry point calls it. */
+    private const val RUN_ALL_FUNCTION_NAME: String = "__kgtiRunAll"
 
     /** A single per-test result parsed out of the structured block. */
     data class Outcome(val id: String, val passed: Boolean, val message: String?, val details: String?)
@@ -223,15 +210,18 @@ object GroupedTestsResultProtocol {
      * Emits:
      *  - `__kgtiEscape` — mirrors [unescape] on the emitting side (uses only `String` operations, so it works
      *    with every stdlib version, including the previously-released ones used by KLIB-compatibility tests);
-     *  - `__kgtiReport` — prints a [STARTED] line, runs one test body in a `try`/`catch` and prints its [LINE_PREFIX] line;
+     *  - `__kgtiReport` — prints a [STARTED] line, runs one test body in a `try`/`catch`, then prints its terminal
+     *    [PASSED]/[FAILED] line; a start with no terminal line marks the test that crashed the VM;
      *  - `__kgtiRunAll` — prints [BEGIN], reports each [proxyClassNames] test, prints [END];
-     *  - the target-specific exported entry point (`runGroupedTests` on wasm-js, `startTest` on wasm-wasi) that
-     *    simply calls `__kgtiRunAll`.
+     *  - the target-specific exported entry point (supplied by [exportedEntryPointGenerator]) that simply calls `__kgtiRunAll`.
      *
      * The generated code deliberately builds strings via `+` concatenation (never `"$..."` interpolation) so no
      * `$` handling leaks into the emitted source.
      */
-    fun generateResultCollectingRunnerSource(proxyClassNames: List<String>, isWasiTarget: Boolean): String = buildString {
+    fun generateResultCollectingRunnerSource(
+        proxyClassNames: List<String>,
+        exportedEntryPointGenerator: GroupedTestsExportedEntryPointGenerator,
+    ): String = buildString {
         appendLine(
             """
             private fun __kgtiEscape(s: String?): String {
@@ -255,7 +245,7 @@ object GroupedTestsResultProtocol {
             """.trimIndent()
         )
         appendLine()
-        appendLine("private fun __kgtiRunAll() {")
+        appendLine("private fun $RUN_ALL_FUNCTION_NAME() {")
         appendLine("""    println("$BEGIN")""")
         for (name in proxyClassNames) {
             appendLine("""    __kgtiReport("$name") { $name().runTest() }""")
@@ -263,24 +253,6 @@ object GroupedTestsResultProtocol {
         appendLine("""    println("$END")""")
         appendLine("}")
         appendLine()
-        if (isWasiTarget) {
-            appendLine(
-                """
-                @kotlin.wasm.WasmExport
-                fun startTest() {
-                    __kgtiRunAll()
-                }
-                """.trimIndent()
-            )
-        } else {
-            appendLine(
-                """
-                @JsExport
-                fun runGroupedTests() {
-                    __kgtiRunAll()
-                }
-                """.trimIndent()
-            )
-        }
+        appendLine(exportedEntryPointGenerator.generateExportedEntryPointSource(RUN_ALL_FUNCTION_NAME))
     }
 }

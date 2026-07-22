@@ -5,30 +5,19 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
-import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.isSingleTestBatch
-import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestArtifactKind
-import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.artifactsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.test.services.testInfo
-import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
+import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
 import java.io.File
 
 data class PerTestOutput(val testServices: TestServices, val testModule: TestModule, val klib: BinaryArtifacts.KLib)
@@ -109,8 +98,12 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         filteredOutputs: List<PerTestOutput>,
         someModule: TestModule,
         tempDir: File,
-        isWasiTarget: Boolean,
     ): TestFile {
+        val exportedEntryPointGenerator = when (val targetPlatform = someModule.targetPlatform(testServices)) {
+            WasmPlatforms.wasmWasi -> WasmWasiGroupedTestsExportedEntryPointGenerator
+            WasmPlatforms.wasmJs -> WasmJsGroupedTestsExportedEntryPointGenerator
+            else -> testInfraError("GroupedTestsExportedEntryPointGenerator is not supported for Wasm target platform $targetPlatform")
+        }
         val proxyClassNames = mutableListOf<String>()
         val proxyLauncherContent = buildString {
             for ([services, _] in filteredOutputs.groupBy { it.testServices }) {
@@ -143,7 +136,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
             }
 
             appendLine()
-            append(GroupedTestsResultProtocol.generateResultCollectingRunnerSource(proxyClassNames, isWasiTarget))
+            append(GroupedTestsResultProtocol.generateResultCollectingRunnerSource(proxyClassNames, exportedEntryPointGenerator))
         }
         val tempFile = tempDir.resolve("ProxyBatchLauncher.kt")
         tempFile.writeText(proxyLauncherContent)

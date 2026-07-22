@@ -36,7 +36,7 @@ object TestRunChecks {
     }
 
     /**
-     * Ids that were expected to run but for which the report carries no outcome at all. On the Wasm side a missing
+     * Ids that were expected to run but for which the report carries no outcome at all. On the executor/VM side a missing
      * id means the test's `ProxyLauncher_<hash>` line never appeared (e.g. the launcher class was stripped, or a VM
      * crashed before reaching it) — which must fail that specific test rather than let it pass silently.
      */

@@ -139,7 +139,6 @@ class CustomWasmSecondStageFacade internal constructor(
             facade: CustomWasmSecondStageFacade,
         ): BinaryArtifacts.Wasm {
             val someModule = inputArtifact.nonGroupingStageOutputs.first().testServices.moduleStructure.modules.last()
-            val isWasiTarget = someModule.targetPlatform(testServices).isWasmWasi()
 
             val filteredOutputs = secondStageContext.filteredOutputs
             val firstStageSettings = firstStageContext.settings
@@ -148,7 +147,7 @@ class CustomWasmSecondStageFacade internal constructor(
             val cleanedFirstStageRegularDependencies = firstStageContext.cleanedRegularDependencies
             val cleanedSecondStageRegularDependencies = secondStageContext.cleanedRegularDependencies
 
-            val batchLauncherFile = generateGroupedBatchLauncherSource(filteredOutputs, someModule, tempDir, isWasiTarget)
+            val batchLauncherFile = generateGroupedBatchLauncherSource(filteredOutputs, someModule, tempDir)
 
             // Step 1: Compile ONLY the launcher into a small KLIB (a few lines of source, no test sources merged).
             val launcherKlibFile = tempDir.resolve("launcher.klib")
