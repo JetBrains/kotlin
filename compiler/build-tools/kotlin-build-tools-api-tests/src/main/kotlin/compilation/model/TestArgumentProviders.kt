@@ -89,20 +89,25 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
 }
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
+        namedStrategyProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
 
     companion object {
-        fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
-            return BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments().flatMap { namedArgument ->
+        fun namedStrategyProviders(): List<Named<() -> Pair<KotlinToolchains, ExecutionPolicy>>> {
+            return BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders().flatMap { namedArgument ->
                 listOfNotNull(
                     named(
-                        "${namedArgument.name}[in-process]", namedArgument.payload to namedArgument.payload.createInProcessExecutionPolicy()
-                    ),
+                        "${namedArgument.name}[in-process]"
+                    ) {
+                        namedArgument.payload().let { it to it.createInProcessExecutionPolicy() }
+                    },
                     // We do not test the daemon when running in Smoke test mode
                     if (testFederationMode != TestFederationMode.Smoke) {
-                        named("${namedArgument.name}[daemon]", namedArgument.payload to namedArgument.payload.daemonExecutionPolicy())
+                        named(
+                            "${namedArgument.name}[daemon]"
+                        ) {
+                            namedArgument.payload().let { it to it.daemonExecutionPolicy() }
+                        }
                     } else null
                 )
             }
@@ -111,39 +116,47 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
 }
 
 class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
+        namedProjectProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
 
     companion object {
-        fun namedStrategyArguments(): List<Named<ProjectCreator>> {
-            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
+        fun namedProjectProviders(): List<Named<() -> ProjectCreator>> {
+            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyProviders()
                 .flatMap { executionStrategyConfiguration ->
+                    val temporaryKotlinToolchains = executionStrategyConfiguration.payload().first
                     listOfNotNull(
                         named(
                             "${executionStrategyConfiguration.name}[JVM]"
-                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                            baseTest.jvmProject(executionStrategyConfiguration.payload, testAction)
+                        ) {
+                            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                baseTest.jvmProject(executionStrategyConfiguration.payload(), testAction)
+                            }
                         },
-                        if (executionStrategyConfiguration.payload.first.supportsJs()) {
+                        if (temporaryKotlinToolchains.supportsJs()) {
                             named(
                                 "${executionStrategyConfiguration.name}[JS]"
-                            ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                baseTest.jsProject(executionStrategyConfiguration.payload, testAction)
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                    baseTest.jsProject(executionStrategyConfiguration.payload(), testAction)
+                                }
                             }
                         } else null,
-                        if (executionStrategyConfiguration.payload.first.supportsWasm()) {
+                        if (temporaryKotlinToolchains.supportsWasm()) {
                             named(
                                 "${executionStrategyConfiguration.name}[Wasm]"
-                            ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                    baseTest.wasmProject(executionStrategyConfiguration.payload(), testAction)
+                                }
                             }
                         } else null,
-                        if (executionStrategyConfiguration.payload.first.supportsMetadata()) {
+                        if (temporaryKotlinToolchains.supportsMetadata()) {
                             named(
                                 "${executionStrategyConfiguration.name}[Metadata]"
-                            ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                baseTest.metadataProject(executionStrategyConfiguration.payload, testAction)
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                    baseTest.metadataProject(executionStrategyConfiguration.payload(), testAction)
+                                }
                             }
                         } else null,
                     )
@@ -153,31 +166,38 @@ class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsP
 }
 
 class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> =
+        namedScenarioProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
 
     companion object {
-        fun namedStrategyArguments(): List<Named<ScenarioCreator>> {
-            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
+        fun namedScenarioProviders(): List<Named<() -> ScenarioCreator>> {
+            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyProviders()
                 .flatMap { executionStrategyConfiguration ->
+                    val temporaryKotlinToolchains = executionStrategyConfiguration.payload().first
+
                     listOfNotNull(
                         named(
                             "${executionStrategyConfiguration.name}[JVM]"
-                        ) { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                            baseTest.jvmScenario(executionStrategyConfiguration.payload, testAction)
-                        }, if (executionStrategyConfiguration.payload.first.supportsJs()) {
+                        ) {
+                            { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                                baseTest.jvmScenario(executionStrategyConfiguration.payload(), testAction)
+                            }
+                        }, if (temporaryKotlinToolchains.supportsJs()) {
                             named(
                                 "${executionStrategyConfiguration.name}[JS]"
-                            ) { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                                baseTest.jsScenario(executionStrategyConfiguration.payload, testAction)
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                                    baseTest.jsScenario(executionStrategyConfiguration.payload(), testAction)
+                                }
                             }
                         } else null,
-                        if (executionStrategyConfiguration.payload.first.supportsWasm()) {
+                        if (temporaryKotlinToolchains.supportsWasm()) {
                             named(
                                 "${executionStrategyConfiguration.name}[Wasm]"
-                            ) { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                                baseTest.wasmScenario(executionStrategyConfiguration.payload, testAction)
+                            ) {
+                                { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                                    baseTest.wasmScenario(executionStrategyConfiguration.payload(), testAction)
+                                }
                             }
                         } else null
                     )
@@ -186,36 +206,38 @@ class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : Arguments
     }
 }
 
-
 class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
+        namedToolchainProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
 
     companion object {
-        fun namedStrategyArguments(): List<Named<KotlinToolchains>> {
+        fun namedToolchainProviders(): List<Named<() -> KotlinToolchains>> {
             return buildList {
-                val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
+                val kotlinToolchainsProvider = { KotlinToolchains.loadImplementation(btaClassloader) }
+                val temporaryKotlinToolchains = kotlinToolchainsProvider()
+                val version = temporaryKotlinToolchains.getCompilerVersion()
 
                 @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
-                    if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 4, 0, null)) {
-                        val asKotlinToolchainsMethod =
-                            btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
-                                .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
-                        asKotlinToolchainsMethod.invoke(
-                            null, CompilationService.loadImplementation(
-                                btaClassloader
-                            )
-                        ) as KotlinToolchains
+                    if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
+                        {
+                            val asKotlinToolchainsMethod =
+                                btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
+                                    .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
+                            asKotlinToolchainsMethod.invoke(
+                                null, CompilationService.loadImplementation(
+                                    btaClassloader
+                                )
+                            ) as KotlinToolchains
+                        }
                     } else null
                 if (kotlinToolchainV1Adapter != null) {
                     add(
-                        named("[v1][${kotlinToolchainV1Adapter.getCompilerVersion()}]", kotlinToolchainV1Adapter)
+                        named("[v1][$version]", kotlinToolchainV1Adapter)
                     )
                 }
-                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter::class != kotlinToolchains::class) {
+                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter()::class != temporaryKotlinToolchains::class) {
                     add(
-                        named("[v2][${kotlinToolchains.getCompilerVersion()}]", kotlinToolchains)
+                        named("[v2][$version]", kotlinToolchainsProvider)
                     )
                 }
             }

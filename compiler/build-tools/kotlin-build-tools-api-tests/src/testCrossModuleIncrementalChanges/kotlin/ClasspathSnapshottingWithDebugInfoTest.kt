@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyArguments
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyProviders
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
@@ -34,25 +34,25 @@ private annotation class StrategyAgnosticSnapshotterTest
 
 private class StrategyAgnosticSnapshotterTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().flatMap { namedStrategyArg ->
+        return namedStrategyProviders().flatMap { namedStrategyArg ->
             sequenceOf(
                 Arguments.of(
-                    namedStrategyArg,
+                    named(namedStrategyArg.name, namedStrategyArg.payload()),
                     ClassSnapshotGranularity.CLASS_LEVEL,
                     named("ignore inlined classes", false)
                 ),
                 Arguments.of(
-                    namedStrategyArg,
+                    named(namedStrategyArg.name, namedStrategyArg.payload()),
                     ClassSnapshotGranularity.CLASS_LEVEL,
                     named("use inlined classes", true)
                 ),
                 Arguments.of(
-                    namedStrategyArg,
+                    named(namedStrategyArg.name, namedStrategyArg.payload()),
                     ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
                     named("ignore inlined classes", false)
                 ),
                 Arguments.of(
-                    namedStrategyArg,
+                    named(namedStrategyArg.name, namedStrategyArg.payload()),
                     ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
                     named("use inlined classes", true)
                 ),

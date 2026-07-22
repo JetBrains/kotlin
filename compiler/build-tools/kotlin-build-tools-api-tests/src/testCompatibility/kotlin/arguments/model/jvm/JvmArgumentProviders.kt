@@ -96,7 +96,7 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<J
 }
 
 private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = jvmCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
@@ -105,7 +105,7 @@ private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescri
 
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                JvmArgumentConfiguration(namedKotlinToolchains.payload, namedArgumentDescriptor.payload)
+                JvmArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
             )
         }
     }

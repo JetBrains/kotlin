@@ -66,7 +66,7 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<W
 private fun namedArgumentConfiguration(
     argumentPredicate: (WasmArgumentTestDescriptor<*>) -> Boolean = { true },
 ): List<Named<WasmArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = wasmCompilerArguments.filter { argumentPredicate(it) }.map {
         named("[${it.operationKind.displayName}][${it.argumentName}]", it)
     }
@@ -75,7 +75,7 @@ private fun namedArgumentConfiguration(
         compilerArguments.map { namedArgumentDescriptor ->
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                WasmArgumentConfiguration(namedKotlinToolchains.payload, namedArgumentDescriptor.payload)
+                WasmArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
             )
         }
     }
