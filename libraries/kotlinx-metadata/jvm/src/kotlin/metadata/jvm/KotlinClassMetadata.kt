@@ -422,7 +422,7 @@ public sealed class KotlinClassMetadata {
             throw IllegalArgumentException("This $name cannot be written because it represents metadata read in lenient mode")
         }
 
-        private fun checkMetadataVersionForWrite(version: JvmMetadataVersion) {
+        internal fun checkMetadataVersionForWrite(version: JvmMetadataVersion) {
             require(version.major >= 1 && (version.major > 1 || version.minor >= 4)) {
                 "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
                         "Please change the version from $version to at least [1, 4]."
