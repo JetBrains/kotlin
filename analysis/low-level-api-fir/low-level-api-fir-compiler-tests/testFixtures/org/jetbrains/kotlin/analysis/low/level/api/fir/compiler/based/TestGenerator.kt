@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
             this.run {
                 fun TestGroup.TestClass.scriptDiagnosticsInit() {
                     model(
-                        "diagnostics/testScripts",
+                        "diagnostics/scriptsWithCustomDefinitions",
                         pattern = TestGeneratorUtil.KTS,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     )
@@ -91,7 +91,7 @@ fun main(args: Array<String>) {
             this.run {
                 fun TestGroup.TestClass.scriptCustomDefBackBoxInit() {
                     model(
-                        "codegen/testScripts",
+                        "codegen/scriptsWithCustomDefinitions",
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                         pattern = KT_OR_KTS,
                     )

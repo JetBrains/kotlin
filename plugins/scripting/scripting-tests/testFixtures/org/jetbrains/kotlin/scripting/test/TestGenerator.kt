@@ -30,11 +30,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
-                model("testData/diagnostics/testScripts", extension = "kts")
+                model("testData/diagnostics/scriptsWithCustomDefinitions", extension = "kts")
             }
 
             testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
-                model("testData/codegen/testScripts", extension = "kts")
+                model("testData/codegen/scriptsWithCustomDefinitions", extension = "kts")
             }
 
             testClass<AbstractReplWithTestExtensionsDiagnosticsTest> {
