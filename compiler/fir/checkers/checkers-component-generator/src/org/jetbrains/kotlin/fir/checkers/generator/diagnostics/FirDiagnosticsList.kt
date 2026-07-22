@@ -181,6 +181,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val PLACEHOLDER_PROJECTION_IN_QUALIFIER by error<PsiElement>()
+        val PLACEHOLDER_PROJECTION_IN_TYPEREF by error<PsiElement>()
 
         val DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE by error<PsiElement>()
 

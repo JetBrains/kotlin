@@ -3,7 +3,12 @@
 // FILE: unresolved.kt
 package a
 
-val list: List<<!UNRESOLVED_REFERENCE!>_<!>>? = null
+val list: List<<!PLACEHOLDER_PROJECTION_IN_TYPEREF!>_<!>>? = null
+
+val list2: List<<!UNRESOLVED_REFERENCE!>`_`<!>>? = null
+val list3: List<a.<!UNRESOLVED_REFERENCE!>_<!>>? = null
+
+fun foo(l: List<<!PLACEHOLDER_PROJECTION_IN_TYPEREF!>_<!>>) {}
 
 // FILE: resolved.kt
 package b

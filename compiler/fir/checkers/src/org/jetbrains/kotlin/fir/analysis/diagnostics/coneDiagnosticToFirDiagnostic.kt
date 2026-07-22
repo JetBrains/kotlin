@@ -573,7 +573,11 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
             // Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>, Resolved.<!UNRESOLVED_REFERENCE!>Unresolved<!>.Foo
             source?.kind == KtRealSourceElementKind -> {
                 val lastQualifier = this.qualifiers.last()
-                FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null, null, session)
+                if (lastQualifier.source?.text == "_" && qualifiers.size == 1) {
+                    FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF.createOn(lastQualifier.source, session)
+                } else {
+                    FirErrors.UNRESOLVED_REFERENCE.createOn(lastQualifier.source, lastQualifier.name.asString(), null, null, session)
+                }
             }
             else -> {
                 FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier, null, null, session)

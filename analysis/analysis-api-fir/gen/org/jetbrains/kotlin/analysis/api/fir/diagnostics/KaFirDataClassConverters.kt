@@ -2798,6 +2798,12 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
             token,
         )
     }
+    add(FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF) { firDiagnostic ->
+        PlaceholderProjectionInTyperefImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT) { firDiagnostic ->
         AnnotationUsedAsAnnotationArgumentImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -383,6 +383,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PlaceholderProjectionInQualifier::class
     }
 
+    interface PlaceholderProjectionInTyperef : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PlaceholderProjectionInTyperef::class
+    }
+
     interface DuplicateParameterNameInFunctionType : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DuplicateParameterNameInFunctionType::class
     }

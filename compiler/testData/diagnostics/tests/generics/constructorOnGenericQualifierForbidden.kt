@@ -11,11 +11,11 @@ typealias TA = Generic<Double>
 
 fun test(
     n: Generic<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><String><!>.Nested,
-    n2: Generic<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>_<!>><!>.Nested,
+    n2: Generic<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><<!PLACEHOLDER_PROJECTION_IN_TYPEREF, PLACEHOLDER_PROJECTION_IN_TYPEREF!>_<!>><!>.Nested,
     n3: Generic.Nested,
     n4: TA.<!UNRESOLVED_REFERENCE!>Nested<!>,
     i: Generic<Int>.Inner,
-    i2: Generic<<!UNRESOLVED_REFERENCE!>_<!>>.Inner,
+    i2: Generic<<!PLACEHOLDER_PROJECTION_IN_TYPEREF!>_<!>>.Inner,
     i3: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>.Inner,
     i4: TA.<!UNRESOLVED_REFERENCE!>Nested<!>,
 ) {
