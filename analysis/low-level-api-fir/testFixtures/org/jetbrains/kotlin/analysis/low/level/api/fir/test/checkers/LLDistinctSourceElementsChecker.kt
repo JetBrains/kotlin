@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers
 
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
@@ -12,8 +13,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 /**
  * This checker ensures that the source elements of FIR declarations are distinct after analysis. See [checkDistinctSourceElements] for more
  * information.
- *
- * FIR files are checked in the state they were resolved to, or built fresh and checked as raw FIR if they haven't been resolved yet.
  *
  * See [FirDistinctSourceElementsHandler][org.jetbrains.kotlin.test.frontend.fir.handlers.FirDistinctSourceElementsHandler] for the
  * corresponding compiler checker.
@@ -23,8 +22,7 @@ class LLDistinctSourceElementsChecker(testServices: TestServices) : AfterAnalysi
         // We ignore failed assertions. With symbol IDs, duplicate source elements can easily lead to resolution problems, so they have a
         // higher priority than the resolution test failure itself.
 
-        checkAllFirFiles(testServices) { firFiles ->
-            checkDistinctSourceElements(firFiles) { _, _ -> "Duplicate source elements" }
-        }
+        val roots = testServices.ktTestModuleStructure.collectCheckableRootDeclarations()
+        checkDistinctSourceElements(roots) { _, _ -> "Duplicate source elements" }
     }
 }

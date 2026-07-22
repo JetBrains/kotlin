@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.checkRootDeclarationReferences
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.checkSymbolIdConstraints
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLDistinctSourceElementsChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLRootDeclarationReferenceChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLDistinctSourceElementsChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers.LLSymbolIdConstraintsChecker
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.checkRootDeclarationReferences
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.frontend.fir.checkDistinctSourceElements
 
@@ -27,8 +27,8 @@ fun TestConfigurationBuilder.configureFirConsistencyChecks() {
 }
 
 /**
- * Performs all FIR consistency checks on the given [firFiles] inline (as opposed to [configureFirConsistencyChecks], which registers them
- * as after-analysis checkers running once at the end of the test).
+ * Performs all FIR consistency checks on the given [roots] inline (as opposed to [configureFirConsistencyChecks], which registers them as
+ * after-analysis checkers running once at the end of the test).
  *
  * This is useful when the checks need to run repeatedly during a single test, for example phase by phase in
  * [AbstractFirLazyDeclarationResolveOverAllPhasesTest][org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest].
@@ -40,12 +40,12 @@ fun TestConfigurationBuilder.configureFirConsistencyChecks() {
  *  each failing check.
  */
 fun checkFirConsistency(
-    firFiles: List<FirFile>,
+    roots: List<FirDeclaration>,
     lazyLocationDescription: () -> String = { "after analysis" },
 ) {
-    checkDistinctSourceElements(firFiles) { _, _ -> "Duplicate source elements ${lazyLocationDescription()}" }
-    checkSymbolIdConstraints(firFiles) { "Symbol ID constraint violation ${lazyLocationDescription()}" }
-    firFiles.forEach { firFile ->
-        checkRootDeclarationReferences(firFile) { "FIR file back reference violation ${lazyLocationDescription()}" }
+    checkDistinctSourceElements(roots) { _, _ -> "Duplicate source elements ${lazyLocationDescription()}" }
+    checkSymbolIdConstraints(roots) { "Symbol ID constraint violation ${lazyLocationDescription()}" }
+    roots.forEach { root ->
+        checkRootDeclarationReferences(root) { "Back reference violation ${lazyLocationDescription()}" }
     }
 }

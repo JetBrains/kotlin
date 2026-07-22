@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.checkers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.checkRootDeclarationReferences
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -20,8 +21,8 @@ class LLRootDeclarationReferenceChecker(testServices: TestServices) : AfterAnaly
         // We ignore failed assertions. A missing or wrong back reference can lead to duplicate FIR once files are weakly referenced, so it
         // has a higher priority than the resolution test failure itself.
 
-        checkAllFirFiles(testServices) { firFiles ->
-            firFiles.forEach { checkRootDeclarationReferences(it) }
-        }
+        testServices.ktTestModuleStructure
+            .collectCheckableRootDeclarations()
+            .forEach { checkRootDeclarationReferences(it) }
     }
 }
