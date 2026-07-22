@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 fun inTrailing(
     x: String,
     @IntroducedAt("1") y: Int = 1,
