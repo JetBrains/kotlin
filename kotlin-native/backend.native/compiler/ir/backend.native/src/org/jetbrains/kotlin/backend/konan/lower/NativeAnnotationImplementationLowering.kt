@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 
-internal class NativeAnnotationImplementationLowering(context: NativeBackendContext) : AnnotationImplementationLowering(
+internal class NativeAnnotationImplementationLowering(context: NativeGenerationState) : AnnotationImplementationLowering(
     { NativeAnnotationImplementationTransformer(context, it) }
 )
 
-private class NativeAnnotationImplementationTransformer(context: NativeBackendContext, irFile: IrFile) :
+private class NativeAnnotationImplementationTransformer(context: NativeGenerationState, irFile: IrFile) :
         AnnotationImplementationTransformer(context, context.symbolTable, irFile) {
 
     private val arrayContentEqualsMap = context.symbols.arraysContentEquals

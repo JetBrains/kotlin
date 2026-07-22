@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -68,7 +73,7 @@ internal class NativeGenerationState(
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config), LoweringContext, BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicNativeBackendPhaseContext(config), CommonBackendContext, BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -122,6 +127,10 @@ internal class NativeGenerationState(
             context.inVerbosePhase = value
         }
 
+    override fun log(message: String) {
+        super<BasicNativeBackendPhaseContext>.log(message)
+    }
+
     override fun dispose() {
         if (isDisposed) return
 
@@ -149,19 +158,24 @@ internal class NativeGenerationState(
     override val configuration: CompilerConfiguration
         get() = context.configuration
 
-    override val symbols: PreSerializationSymbols
+    override val symbols: BackendNativeSymbols
         get() = context.symbols
-
+    override val typeSystem: IrTypeSystemContext
+        get() = context.typeSystem
     override val irBuiltIns: IrBuiltIns
         get() = context.irBuiltIns
-
     override val irFactory: IrFactory
         get() = context.irFactory
-
     override val sharedVariablesManager: SharedVariablesManager
         get() = context.sharedVariablesManager
-
-    override fun log(message: String) {
-        super<BasicNativeBackendPhaseContext>.log(message)
-    }
+    override val inlineClassesUtils: InlineClassesUtils
+        get() = context.inlineClassesUtils
+    override val innerClassesSupport: InnerClassesSupport
+        get() = context.innerClassesSupport
+    override val optimizeLoopsOverUnsignedArrays: Boolean
+        get() = context.optimizeLoopsOverUnsignedArrays
+    override val partialLinkageSupport: PartialLinkageSupportForLowerings
+        get() = context.partialLinkageSupport
+    val symbolTable: ReferenceSymbolTable
+        get() = context.symbolTable
 }

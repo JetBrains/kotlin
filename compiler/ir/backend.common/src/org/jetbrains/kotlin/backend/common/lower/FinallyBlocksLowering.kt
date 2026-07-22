@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 val FINALLY_EXPRESSION by IrStatementOriginImpl
 val SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION by IrStatementOriginImpl
 
-class FinallyBlocksLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+open class FinallyBlocksLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val throwableType: IrType = context.irBuiltIns.throwableType
 
     private interface HighLevelJump {

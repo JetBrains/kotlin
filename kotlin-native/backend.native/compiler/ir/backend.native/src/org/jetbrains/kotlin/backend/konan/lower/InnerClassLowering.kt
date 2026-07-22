@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.ConstructorDelegationKind
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.delegationKind
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -61,7 +62,7 @@ internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : Inn
     override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor = shouldNotBeCalled()
 }
 
-internal class OuterThisLowering(val context: NativeBackendContext) : ClassLoweringPass {
+internal class OuterThisLowering(val context: NativeGenerationState) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isInner) return
         irClass.transformChildrenVoid(Transformer(irClass, irClass))
@@ -150,7 +151,8 @@ internal class OuterThisLowering(val context: NativeBackendContext) : ClassLower
     }
 }
 
-internal class InnerClassLowering(val context: NativeBackendContext) : ClassLoweringPass {
+@PhasePrerequisites(NativeDefaultParameterInjector::class)
+internal class InnerClassLowering(val context: NativeGenerationState) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         OuterThisLowering(context).lower(irClass)
         InnerClassTransformer(irClass).lowerInnerClass()
