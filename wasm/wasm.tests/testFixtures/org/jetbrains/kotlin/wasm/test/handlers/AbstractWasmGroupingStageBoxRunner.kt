@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.TestReport
 import org.jetbrains.kotlin.test.grouping.TestRunChecks
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 
@@ -115,12 +114,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
 
         val parsedBatchResult = GroupedTestsResultProtocol.parseMerged(texts)
-        val results = parsedBatchResult.outcomes
-        val testReport = parsedBatchResult.toTestReport()
-        val sawStructuredBlock = parsedBatchResult.sawStructuredBlock
 
-        if (sawStructuredBlock) {
-            attributeStructuredResults(results, testReport, exceptions, texts)
+        if (parsedBatchResult.sawStructuredBlock) {
+            attributeStructuredResults(parsedBatchResult, exceptions, texts)
             return
         }
 
@@ -140,16 +136,19 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      * Attributes structured per-test results back to the individual grouping inputs via their
      * [NonGroupingStageOutput.catchingExecutor], so JUnit reports each failure against the specific test rather
      * than against the whole batch. A test whose stable `ProxyLauncher_<hash>` id is absent from [results] is
-     * failed with a sanity error: it was expected to run in the batch but produced no result line (e.g. its
-     * launcher class was stripped, or a VM crashed before reaching it) — which also prevents a silently-skipped
-     * test from masquerading as passing.
+     * failed with a sanity error: it was expected to run in the batch but produced no result line. The message
+     * distinguishes a test that crashed the VM mid-run (a `STARTED` line with no terminal result — see
+     * [GroupedTestsResultProtocol.ParsedBatchResult.crashedInProgress]) from one that never ran at all (neither a
+     * start nor a result, e.g. a stripped launcher) — which also prevents a silently-skipped test from
+     * masquerading as passing.
      */
     private fun attributeStructuredResults(
-        results: Map<String, GroupedTestsResultProtocol.Outcome>,
-        testReport: TestReport<String>,
+        parsedBatchResult: GroupedTestsResultProtocol.ParsedBatchResult,
         exceptions: List<Throwable>,
         texts: List<String>,
     ) {
+        val results = parsedBatchResult.outcomes
+        val testReport = parsedBatchResult.toTestReport()
         var anyFailureAttributed = false
         val expectedIds = testServices.groupingStageInputs.map { input ->
             computeProxyLauncherClassName(input.testServices.testInfo)
@@ -187,14 +186,22 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             val outcome = results[id]
             when {
                 id in missingIds -> {
+                    val missingDiagnosis = if (parsedBatchResult.crashedInProgress(id)) {
+                        "The VM printed a '${GroupedTestsResultProtocol.STARTED}' line for '$id' but no terminal " +
+                                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
+                                "this test most likely crashed the VM (a hard trap, OOM, or process exit) while executing."
+                    } else {
+                        "The test was expected to run as part of the batch, but produced no " +
+                                "'${GroupedTestsResultProtocol.LINE_PREFIX}' line (not even a " +
+                                "'${GroupedTestsResultProtocol.STARTED}' one). This typically indicates the test was silently " +
+                                "skipped (e.g. a stripped ProxyLauncher class), or a VM crashed before this test's launcher was reached."
+                    }
                     input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
                         throw AssertionError(
                             """
                             ${nonEmptyFailureReason?.let { "$it\n" } ?: ""}
                             Sanity check failed: no per-test result was reported for '$id' in the grouped batch.
-                            The test was expected to run as part of the batch, but produced no '${GroupedTestsResultProtocol.LINE_PREFIX}' line.
-                            This typically indicates the test was silently skipped (e.g. a stripped ProxyLauncher class),
-                            or a VM crashed before this test's launcher was reached.
+                            $missingDiagnosis
                             Collected outputs:
                             """.trimIndent() + "\n" + texts.joinToString("\n")
                         )

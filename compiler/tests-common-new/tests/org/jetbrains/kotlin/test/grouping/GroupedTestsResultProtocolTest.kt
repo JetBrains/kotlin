@@ -264,4 +264,65 @@ class GroupedTestsResultProtocolTest {
         // Known escapes around it are still decoded (`\p` -> `|`, `\n` -> newline); only the unknown `\q` survives raw.
         assertEquals("|\\q\n", outcome.details)
     }
+
+    @Test
+    fun `given started then terminal result when parseMerged then id is recorded and not crashed`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertTrue(result.startedIds.contains("id"))
+        assertTrue(result.outcomes.getValue("id").passed)
+        // Has a terminal result, so it did not crash in progress.
+        assertFalse(result.crashedInProgress("id"))
+    }
+
+    @Test
+    fun `given started line with no terminal result when parseMerged then id is crashed in progress and missing`() {
+        // Simulates a VM dying mid-test: it prints STARTED for the crasher, then no terminal result and no END.
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|ok|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|ok|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|crasher|${GroupedTestsResultProtocol.STARTED}||")
+            // No terminal line for `crasher` and no END sentinel: the VM crashed here.
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertTrue(result.sawStructuredBlock)
+        // `crasher` started but never finished -> localized as the crasher.
+        assertTrue(result.crashedInProgress("crasher"))
+        // `ok` completed, so it is not the crasher.
+        assertFalse(result.crashedInProgress("ok"))
+        // A crashed-in-progress test has no outcome, so it shows up as missing and is failed by the runner.
+        val report = result.toTestReport()
+        assertEquals(listOf("crasher"), TestRunChecks.findMissingResults(listOf("ok", "crasher"), report))
+    }
+
+    @Test
+    fun `given started ids across multiple outputs when parseMerged then they are unioned`() {
+        val vmA = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|a|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|a|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+        val vmB = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|b|${GroupedTestsResultProtocol.STARTED}||")
+            // `b` started on vmB but never reported a result on any VM.
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(vmA, vmB))
+
+        assertTrue(result.startedIds.containsAll(listOf("a", "b")))
+        assertFalse(result.crashedInProgress("a"))
+        assertTrue(result.crashedInProgress("b"))
+    }
 }

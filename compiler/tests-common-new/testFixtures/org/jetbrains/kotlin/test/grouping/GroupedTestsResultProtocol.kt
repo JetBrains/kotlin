@@ -36,14 +36,20 @@ package org.jetbrains.kotlin.test.grouping
  * ...
  * ##KGTI_END##
  * ```
- * `status` is [PASSED] or [FAILED]. `message`/`details` are escaped by the generated driver so that a field never
- * contains a raw [SEP], letting [parse] split safely: `\` → `\\`, `|` → `\p`, newline → `\n`, CR → `\r`.
+ * `status` is [STARTED], [PASSED] or [FAILED]. The driver prints a [STARTED] line (with empty message/details)
+ * immediately *before* running each test, then a [PASSED]/[FAILED] line *after* it. This bracketing localizes a
+ * crash: a test that has a [STARTED] line but no terminal [PASSED]/[FAILED] one is the test that was in progress
+ * when the VM died (a hard trap, OOM, or `proc_exit`), as opposed to a test that has neither — which never ran.
+ *
+ * `message`/`details` are escaped by the generated driver so that a field never contains a raw [SEP], letting
+ * [parse] split safely: `\` → `\\`, `|` → `\p`, newline → `\n`, CR → `\r`.
  */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
     const val END: String = "##KGTI_END##"
     const val LINE_PREFIX: String = "##KGTI##"
     const val SEP: String = "|"
+    const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
 
@@ -55,11 +61,23 @@ object GroupedTestsResultProtocol {
      *
      * [sawStructuredBlock] is `true` when at least one output contained a [BEGIN] sentinel line, even if no
      * valid per-test lines were parsed.
+     *
+     * [startedIds] holds every id that printed a [STARTED] line on any VM. An id in [startedIds] but absent from
+     * [outcomes] is a test that began running but never reported a terminal result — i.e. it crashed the VM while
+     * executing. Use [crashedInProgress] to tell such a test apart from one that never ran at all.
      */
     data class ParsedBatchResult(
         val outcomes: Map<String, Outcome>,
         val sawStructuredBlock: Boolean,
+        val startedIds: Set<String>,
     ) {
+        /**
+         * `true` if [id] started on some VM but produced no terminal [PASSED]/[FAILED] result — the signature of a
+         * test that took the VM down mid-execution. Distinguishes a crasher from a test that was never reached
+         * (stripped launcher, or a VM that died before this test), which has neither a start nor a result.
+         */
+        fun crashedInProgress(id: String): Boolean = id in startedIds && id !in outcomes
+
         /**
          * The per-test pass/fail status as a shared [TestReport], keyed by the stable `ProxyLauncher_<hash>` id.
          * The raw [outcomes] (messages, stack traces) stay on this result — [TestReport] carries only status sets,
@@ -97,11 +115,15 @@ object GroupedTestsResultProtocol {
      */
     fun parse(output: String): Map<String, Outcome> {
         val result = LinkedHashMap<String, Outcome>()
-        parseInto(output, result)
+        parseInto(output, result, LinkedHashSet())
         return result
     }
 
-    private fun parseInto(output: String, destination: LinkedHashMap<String, Outcome>): Boolean {
+    private fun parseInto(
+        output: String,
+        destination: LinkedHashMap<String, Outcome>,
+        startedDestination: LinkedHashSet<String>,
+    ): Boolean {
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
@@ -123,41 +145,48 @@ object GroupedTestsResultProtocol {
             val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
             if (parts.size < 4) continue
             val id = parts[0]
-            val status = parts[1]
-            val passed = when (status) {
-                PASSED -> true
-                FAILED -> false
-                else -> continue
-            }
-            val outcome = Outcome(
-                id = id,
-                passed = passed,
-                message = unescape(parts[2]).ifEmpty { null },
-                details = unescape(parts[3]).ifEmpty { null },
-            )
-            val existing = destination[id]
-            // Keep a failure over a pass, so a per-test failure on any VM is reported.
-            if (existing == null || (existing.passed && !passed)) {
-                destination[id] = outcome
+            when (parts[1]) {
+                // A pre-test marker: record that the test began, so a start-without-result can be localized as
+                // the crasher. It never contributes to [destination] and never overrides a terminal result.
+                STARTED -> startedDestination += id
+                PASSED, FAILED -> {
+                    val passed = parts[1] == PASSED
+                    val outcome = Outcome(
+                        id = id,
+                        passed = passed,
+                        message = unescape(parts[2]).ifEmpty { null },
+                        details = unescape(parts[3]).ifEmpty { null },
+                    )
+                    val existing = destination[id]
+                    // Keep a failure over a pass, so a per-test failure on any VM is reported.
+                    if (existing == null || (existing.passed && !passed)) {
+                        destination[id] = outcome
+                    }
+                }
+                // Any other status is a malformed line: ignore it.
             }
         }
         return sawStructuredBlock
     }
 
     /**
-     * Parses and merges multiple VM outputs using the same failure-wins semantics as [parse].
+     * Parses and merges multiple VM outputs using the same failure-wins semantics as [parse]. Started-test ids
+     * are unioned across outputs, so a start observed on any VM localizes a crash even if that VM's block was
+     * partial.
      */
     fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, Outcome>()
+        val startedIds = LinkedHashSet<String>()
 
         for (output in outputs) {
-            sawStructuredBlock = parseInto(output, merged) || sawStructuredBlock
+            sawStructuredBlock = parseInto(output, merged, startedIds) || sawStructuredBlock
         }
 
         return ParsedBatchResult(
             outcomes = merged,
             sawStructuredBlock = sawStructuredBlock,
+            startedIds = startedIds,
         )
     }
 
@@ -194,7 +223,7 @@ object GroupedTestsResultProtocol {
      * Emits:
      *  - `__kgtiEscape` — mirrors [unescape] on the emitting side (uses only `String` operations, so it works
      *    with every stdlib version, including the previously-released ones used by KLIB-compatibility tests);
-     *  - `__kgtiReport` — runs one test body in a `try`/`catch` and prints its [LINE_PREFIX] line;
+     *  - `__kgtiReport` — prints a [STARTED] line, runs one test body in a `try`/`catch` and prints its [LINE_PREFIX] line;
      *  - `__kgtiRunAll` — prints [BEGIN], reports each [proxyClassNames] test, prints [END];
      *  - the target-specific exported entry point (`runGroupedTests` on wasm-js, `startTest` on wasm-wasi) that
      *    simply calls `__kgtiRunAll`.
@@ -215,6 +244,7 @@ object GroupedTestsResultProtocol {
         appendLine(
             """
             private fun __kgtiReport(id: String, body: () -> Unit) {
+                println("$LINE_PREFIX$SEP" + id + "$SEP$STARTED$SEP$SEP")
                 try {
                     body()
                     println("$LINE_PREFIX$SEP" + id + "$SEP$PASSED$SEP$SEP")
