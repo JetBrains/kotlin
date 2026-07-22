@@ -1,0 +1,107 @@
+FILE fqName:<root> fileName:/delegated.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.I
+    FUN name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        annotations:
+          EqualityBound(bound = I::class)
+      overridden:
+        public abstract fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.C declared in <root>.C.equals' type=<root>.C origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
+            then: BLOCK type=kotlin.Unit origin=null
+              RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+                CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.I
+              GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
+            then: BLOCK type=kotlin.Unit origin=null
+              RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+                CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
+          CONST Boolean type=kotlin.Boolean value=true
+  CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
+    FIELD DELEGATE name:$$delegate_0 type:<root>.C visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.D [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.I]' type=kotlin.Unit
+    FUN DELEGATED_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        annotations:
+          EqualityBound(bound = I::class)
+      overridden:
+        public abstract fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.D'
+          CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C' type=kotlin.Boolean origin=null
+            ARG <this>: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.C visibility:private [final] declared in <root>.D' type=<root>.C origin=null
+              receiver: GET_VAR '<this>: <root>.D declared in <root>.D.equals' type=<root>.D origin=null
+            ARG other: GET_VAR 'other: kotlin.Any? declared in <root>.D.equals' type=kotlin.Any? origin=null
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.I
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:equals visibility:public modality:ABSTRACT returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        annotations:
+          EqualityBound(bound = I::class)
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
+              ARG arg1: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value="Fail#1"
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.D' type=<root>.D origin=null
+              ARG arg1: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value="Fail#2"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
