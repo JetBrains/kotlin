@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -90,6 +90,7 @@ internal fun Project.registerSwiftExportTask(
         swiftApiLibraryName = swiftApiLibraryName,
         swiftExportTask = swiftExportTask
     )
+
     val packageBuild = registerSPMPackageBuild(
         taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
@@ -108,7 +109,7 @@ internal fun Project.registerSwiftExportTask(
         packageBuildTask = packageBuild
     )
 
-    return registerCopyTask(
+    val copyTask = registerCopyTask(
         taskGroup = taskGroup,
         configuration = buildConfiguration,
         libraryName = mergeLibrariesTask.map { it.library.getFile().name },
@@ -116,6 +117,33 @@ internal fun Project.registerSwiftExportTask(
         packageBuildTask = packageBuild,
         mergeLibrariesTask = mergeLibrariesTask
     )
+
+    target.whenSwiftPMImportAvailable { products ->
+        swiftExportTask.configure { task ->
+            task.cinteropModuleName.set(products.cinteropModuleName)
+            task.cinteropModuleArtifact.fileProvider(products.cinteropKlib)
+        }
+        packageGenerationTask.configure { task ->
+            task.swiftPMImportProductName.set(products.umbrellaProductName)
+            task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
+            task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
+            task.swiftPMImportCoordinationService.set(products.coordinationService)
+            task.dependsOn(products.fetchTask)
+        }
+        packageBuild.configure { task ->
+            task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
+            task.swiftPMImportCheckout.set(products.swiftPMLocalCheckout)
+            task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
+            task.swiftPMImportCoordinationService.set(products.coordinationService)
+            task.dependsOn(products.fetchTask)
+        }
+        copyTask.configure { task ->
+            task.filterInterfacesToOwnModules.set(true)
+            task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
+        }
+    }
+
+    return copyTask
 }
 
 private fun Project.registerSwiftExportRun(
@@ -331,7 +359,7 @@ private fun Project.registerCopyTask(
     packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
     packageBuildTask: TaskProvider<BuildSPMSwiftExportPackage>,
     mergeLibrariesTask: TaskProvider<MergeStaticLibrariesTask>,
-): TaskProvider<out Task> {
+): TaskProvider<CopySwiftExportIntermediatesForConsumer> {
 
     val copyTaskName = lowerCamelCaseName(
         "copy",

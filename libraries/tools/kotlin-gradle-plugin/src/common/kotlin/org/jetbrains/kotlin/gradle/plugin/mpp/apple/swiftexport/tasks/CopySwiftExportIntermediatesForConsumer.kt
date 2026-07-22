@@ -11,6 +11,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import java.io.File
 import javax.inject.Inject
 
@@ -45,6 +46,14 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val interfaces: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @get:Input
+    val filterInterfacesToOwnModules: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val swiftModulesFile: RegularFileProperty
+
     fun addInterface(swiftInterface: Provider<File>) {
         interfaces.from(swiftInterface)
     }
@@ -67,13 +76,22 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     }
 
     private fun copyInterfaces() {
+        val ownModulePatterns = ownSwiftModuleNames()?.map { "$it.swiftmodule/**" }
         interfaces.files.forEach { swiftInterface ->
             fileSystem.copy { spec ->
                 spec.from(swiftInterface)
                 spec.into(builtProductsDirectory)
                 spec.includeEmptyDirs = false
+                ownModulePatterns?.forEach { spec.include(it) }
             }
         }
+    }
+
+    private fun ownSwiftModuleNames(): List<String>? {
+        if (!filterInterfacesToOwnModules.get()) return null
+        val modulesFile = swiftModulesFile.orNull?.asFile
+            ?: error("swiftModulesFile must be set when filterInterfacesToOwnModules is enabled")
+        return SerializationTools.readFromJson(modulesFile.readText()).modules.map { it.name }
     }
 
     private fun copyOtherIncludes() {
