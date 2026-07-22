@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: ANY
-
 // ISSUE: KT-87889
 
 // FILE: Singularization.java
@@ -151,19 +149,19 @@ fun box(): String {
         sex(7)
         testis(8)
         movie(9)
-        <!UNRESOLVED_REFERENCE!>octopus<!>(10)
+        octopus(10)
         bus(11)
         mouse(12)
         louse(13)
         man(14)
         woman(15)
-        <!UNRESOLVED_REFERENCE!>minutia<!>(16)
+        minutia(16)
         shoe(17)
         synopsis(18)
         prognosis(19)
         thesis(20)
         diagnosis(21)
-        <!UNRESOLVED_REFERENCE!>base<!>(22)
+        base(22)
         analysis(23)
         crisis(24)
         child(25)

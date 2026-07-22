@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
@@ -682,7 +681,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             else -> return
         }
 
-        val nameInSingularForm = (singular.singularName ?: item.name.identifier.singularForm)?.let(Name::identifier) ?: return
+        val nameInSingularForm = (singular.singularName ?: Singulars.autoSingularize(item.name.identifier))?.let(Name::identifier) ?: return
 
         val valueParameters: List<ConeLombokValueParameter>
         val collectionType: SingularAddAllParameterType
@@ -1033,9 +1032,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             Name.identifier("${prefix}${identifier.capitalize()}")
         }
     }
-
-    private val String.singularForm: String?
-        get() = StringUtil.unpluralize(this)
 
     private fun FirTypeRef.parameterType(index: Int, substitutor: ConeSubstitutor): FirTypeRef? {
         return when (this) {
