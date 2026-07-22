@@ -81,7 +81,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 }
                 LLVMIsAGlobalAlias(value) != null -> cleanCalledFunction(LLVMAliasGetAliasee(value)!!)
                 else -> {
-                    TODO("not implemented call argument ${llvm2string(value)} called in ${llvm2string(this)}")
+                    TODO("not implemented call argument ${value.toValueString()} called in ${this.toValueString()}")
                 }
             }
         }
@@ -112,9 +112,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 (invoke instructions are intertwined with basic blocks, so getting the next instruction requires more code).
                 The function doesn't throw, so nobody should generate "invokes" to it anyway.
                 */
-                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${llvm2string(call)}" }
+                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${call.toValueString()}" }
                 val nextInstruction = LLVMGetNextInstruction(call)
-                check(nextInstruction != null) { "Expected a next instruction after ${llvm2string(call)}" }
+                check(nextInstruction != null) { "Expected a next instruction after ${call.toValueString()}" }
                 nextInstruction
             } else {
                 /*
@@ -164,7 +164,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     calledPtrLlvm = when (val typeKind = LLVMGetTypeKind(calleeInfo.calledPtr.type)) {
                         LLVMTypeKind.LLVMPointerTypeKind -> calleeInfo.calledPtr
                         LLVMTypeKind.LLVMIntegerTypeKind -> LLVMBuildIntToPtr(builder, calleeInfo.calledPtr, llvm.pointerType, "")!!
-                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${llvm2string(calleeInfo.calledPtr)}")
+                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${calleeInfo.calledPtr.toValueString()}")
                     }
                 }
             }

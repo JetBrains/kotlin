@@ -46,7 +46,7 @@ internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstVal
     init {
         elements.forEach {
             assert(it.llvmType == elementType) {
-                "Expected element type: ${llvmtype2string(elementType)}, actual: ${llvmtype2string(it.llvmType)}"
+                "Expected element type: ${elementType.toTypeString()}, actual: ${it.llvmType.toTypeString()}"
             }
         }
     }
@@ -64,8 +64,8 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
         } else {
             element.llvm.also {
                 assert(it.type == expectedType) {
-                    "Unexpected type at $index: expected ${LLVMPrintTypeToString(expectedType)!!.toKString()}, " +
-                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()} in ${LLVMPrintTypeToString(type)!!.toKString()}"
+                    "Unexpected type at $index: expected ${expectedType.toTypeString()}, " +
+                            "got ${it.type.toTypeString()} in ${type.toTypeString()}"
                 }
             }
         }
@@ -74,7 +74,7 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
     init {
         assert(elements.size == LLVMCountStructElementTypes(type)) {
             "Should have ${LLVMCountStructElementTypes(type)} elements, have ${elements.size} " +
-                    "for type ${LLVMPrintTypeToString(type)!!.toKString()}"
+                    "for type ${type.toTypeString()}"
         }
     }
 }
@@ -248,14 +248,14 @@ internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, pa
         functionType(returnType, isVarArg, *paramTypes.toTypedArray())
 
 
-fun llvm2string(value: LLVMValueRef?): String {
-  if (value == null) return "<null>"
-  return LLVMPrintValueToString(value)!!.toKString()
+fun LLVMValueRef?.toValueString(): String {
+    if (this == null) return "<null>"
+    return LLVMPrintValueToString(this)!!.toKString()
 }
 
-fun llvmtype2string(type: LLVMTypeRef?): String {
-    if (type == null) return "<null type>"
-    return LLVMPrintTypeToString(type)!!.toKString()
+fun LLVMTypeRef?.toTypeString(): String {
+    if (this == null) return "<null type>"
+    return LLVMPrintTypeToString(this)!!.toKString()
 }
 
 fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {

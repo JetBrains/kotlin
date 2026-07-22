@@ -504,7 +504,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitAreEqualByValue(args: List<LLVMValueRef>): LLVMValueRef {
         val [first, second] = args
-        assert (first.type == second.type) { "Types are different: '${llvmtype2string(first.type)}' and '${llvmtype2string(second.type)}'" }
+        assert (first.type == second.type) { "Types are different: '${first.type.toTypeString()}' and '${second.type.toTypeString()}'" }
 
         return when (val typeKind = LLVMGetTypeKind(first.type)) {
             LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind,
@@ -521,10 +521,10 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitIeee754Equals(args: List<LLVMValueRef>): LLVMValueRef {
         val [first, second] = args
         assert (first.type == second.type)
-                { "Types are different: '${llvmtype2string(first.type)}' and '${llvmtype2string(second.type)}'" }
+                { "Types are different: '${first.type.toTypeString()}' and '${second.type.toTypeString()}'" }
         val type = LLVMGetTypeKind(first.type)
         assert (type == LLVMTypeKind.LLVMFloatTypeKind || type == LLVMTypeKind.LLVMDoubleTypeKind)
-                { "Should be of floating point kind, not: '${llvmtype2string(first.type)}'"}
+                { "Should be of floating point kind, not: '${first.type.toTypeString()}'"}
         return fcmpEq(first, second)
     }
 

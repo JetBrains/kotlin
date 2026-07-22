@@ -368,8 +368,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
             require(getGlobalFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
-                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()}, " +
-                        "found: ${LLVMPrintTypeToString(getGlobalFunctionType(found))!!.toKString()}"
+                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${llvmFunctionProto.signature.llvmFunctionType.toTypeString()}, " +
+                        "found: ${getGlobalFunctionType(found).toTypeString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
             return LlvmCallable(found, llvmFunctionProto.signature)

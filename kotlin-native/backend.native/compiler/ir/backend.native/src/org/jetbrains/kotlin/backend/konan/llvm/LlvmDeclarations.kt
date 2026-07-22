@@ -124,12 +124,12 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
     context.logMultiple {
         +"$name has following fields:"
         for (i in fieldTypes.indices) {
-            +"  $i: ${llvmtype2string(fieldTypes[i])} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
+            +"  $i: ${fieldTypes[i].toTypeString()} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
         }
         +"  Overall llvm alignment is ${LLVMABIAlignmentOfType(runtime.targetData, classType)}"
         +"  Overall required alignment is ${alignment}"
         +"  Overall size is ${LLVMABISizeOfType(runtime.targetData, classType)}"
-        +"  Resulting type is ${llvmtype2string(classType)}"
+        +"  Resulting type is ${classType.toTypeString()}"
     }
 
     return ClassBodyAndAlignmentInfo(classType, alignment, indices)

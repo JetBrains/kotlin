@@ -268,7 +268,7 @@ internal object VirtualTablesLookup {
         else
             loadTypeInfo(receiver)
 
-        assert(typeInfoPtr.type == llvm.pointerType) { llvmtype2string(typeInfoPtr.type) }
+        assert(typeInfoPtr.type == llvm.pointerType) { typeInfoPtr.type.toTypeString() }
 
         val owner = irFunction.parentAsClass
         val canCallViaVtable = !owner.isInterface

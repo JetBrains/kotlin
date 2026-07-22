@@ -1464,7 +1464,7 @@ internal class CodeGeneratorVisitor(
             onCheck: (argument: LLVMValueRef, checkResult: LLVMValueRef) -> LLVMValueRef,
     ) : LLVMValueRef {
         val srcArg = evaluateExpression(value.argument, resultSlot)
-        require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${llvmtype2string(srcArg.type)} for ${value.argument.dump()}" }
+        require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
         val srcType = value.argument.type
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
 
@@ -1705,7 +1705,7 @@ internal class CodeGeneratorVisitor(
         if (thisPtr != null) {
             require(!field.isStatic) { "Unexpected receiver for a static field: ${value.render()}" }
             require(thisPtr.type == llvm.pointerType) {
-                LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
+                thisPtr.type.toTypeString()
             }
             address = fieldPtrOfClass(thisPtr, field)
             alignment = generationState.llvmDeclarations.forField(field).alignment

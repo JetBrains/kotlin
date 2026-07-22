@@ -170,7 +170,7 @@ private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, state: NativeG
 
 private fun getStringValue(initializer: LLVMValueRef): String? = when (LLVMGetValueKind(initializer)) {
     LLVMValueKind.LLVMConstantDataArrayValueKind -> memScoped {
-        require(LLVMIsConstantString(initializer) != 0) { "not a constant string: ${llvm2string(initializer)}" }
+        require(LLVMIsConstantString(initializer) != 0) { "not a constant string: ${initializer.toValueString()}" }
 
         val lengthVar = alloc<size_tVar>()
         val bytePtr = LLVMGetAsString(initializer, lengthVar.ptr)!!
@@ -178,7 +178,7 @@ private fun getStringValue(initializer: LLVMValueRef): String? = when (LLVMGetVa
 
         val lastByte = bytePtr[length - 1]
         require(lastByte == 0.toByte()) {
-            "${llvm2string(initializer)}:\n  expected zero terminator, found $lastByte"
+            "${initializer.toValueString()}:\n  expected zero terminator, found $lastByte"
         }
 
         bytePtr.toKString()
@@ -186,7 +186,7 @@ private fun getStringValue(initializer: LLVMValueRef): String? = when (LLVMGetVa
 
     LLVMValueKind.LLVMConstantAggregateZeroValueKind -> ""
 
-    else -> error("Unexpected literal initializer: ${llvm2string(initializer)}")
+    else -> error("Unexpected literal initializer: ${initializer.toValueString()}")
 }
 
 private fun <T, K> List<T>.associateNonRepeatingBy(keySelector: (T) -> K): Map<K, T> =
@@ -212,7 +212,7 @@ private fun patchLiteral(
         generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
             val firstCharPtr = LLVMGetUser(use)!!.also {
                 require(it.isFirstCharPtr(llvm, global)) {
-                    "Unexpected literal usage: ${llvm2string(it)}"
+                    "Unexpected literal usage: ${it.toValueString()}"
                 }
             }
             LLVMReplaceAllUsesWith(firstCharPtr, newFirstCharPtr)
