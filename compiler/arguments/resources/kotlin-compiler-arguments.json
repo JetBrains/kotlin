@@ -9571,8 +9571,19 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Suppress warnings about deprecated JVM target versions.\nThis option has no effect and will be deleted in a future version.",
-                                    "valueInVersions": []
+                                    "current": "Suppress warnings about deprecated JVM target versions.",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "1.7.20",
+                                            "maxReleaseVersion": "2.4.20",
+                                            "value": "Suppress warnings about deprecated JVM target versions.\nThis option has no effect and will be deleted in a future version."
+                                        },
+                                        {
+                                            "minReleaseVersion": "1.5.0",
+                                            "maxReleaseVersion": "1.7.0",
+                                            "value": "Suppress warnings about deprecated JVM target versions."
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
@@ -9595,8 +9606,8 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.5.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "deprecatedVersion": "1.7.20",
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

@@ -642,12 +642,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Suppress warnings about deprecated JVM target versions.
-     * This option has no effect and will be deleted in a future version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 1.7.20.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING", KotlinReleaseVersion(1, 5, 0))
 

@@ -177,6 +177,21 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xsuppress-deprecated-jvm-target-warning",
+        description = "Suppress warnings about deprecated JVM target versions.",
+        deprecatedVersion = "1.7.20",
+        removedVersion = "2.5.0",
+    )
+    var suppressDeprecatedJvmTargetWarning: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xuse-javac",
         description = "Use javac for Java source and class file analysis.",
         removedVersion = "2.4.0",

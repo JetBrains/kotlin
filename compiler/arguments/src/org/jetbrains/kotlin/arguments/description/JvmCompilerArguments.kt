@@ -822,17 +822,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
     }
 
     compilerArgument {
-        name = "Xsuppress-deprecated-jvm-target-warning"
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xtype-enhancement-improvements-strict-mode"
         compilerName = "typeEnhancementImprovementsInStrictMode"
         description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,

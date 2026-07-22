@@ -572,17 +572,6 @@ The default value is 'enable'.""",
         }
 
     @Argument(
-        value = "-Xsuppress-deprecated-jvm-target-warning",
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""",
-    )
-    var suppressDeprecatedJvmTargetWarning: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with '-no-stdlib').",
     )
