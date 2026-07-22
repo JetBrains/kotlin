@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.resultOrNull
-import org.jetbrains.kotlin.fir.utils.exceptions.withSourceEntry
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -41,10 +41,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -212,7 +214,60 @@ internal class ClassMemberGenerator(
                     IrReturnImpl(startOffset, endOffset, builtins.nothingType, symbol, expression)
                 )
             }
-            else -> visitor.convertToIrBlockBody(firBody)
+            else -> visitor.convertToIrBlockBody(firBody, buildEqualityBoundPrologue(firFunction))
+        }
+    }
+
+    private fun IrFunction.buildEqualityBoundPrologue(firFunction: FirFunction?): List<IrStatement>? {
+        if (firFunction == null || configuration.skipBodies) return null
+        val equalityBoundConeType = firFunction.valueParameters.singleOrNull()?.equalityBoundType
+            ?: return null
+        val irBoundType = equalityBoundConeType.toIrType()
+
+        val otherParam = parameters.singleOrNull { it.kind == IrParameterKind.Regular }
+            ?: return null
+        val thisReceiver = dispatchReceiverParameter
+            ?: return null
+        return buildList {
+            // if (this === other) return true — only for non-value classes
+            if ((parent as? IrClass)?.isValue == false) {
+                val eqeqeqCall = IrCallImplWithShape(
+                    startOffset, endOffset, builtins.booleanType, builtins.eqeqeqSymbol,
+                    typeArgumentsCount = 0, valueArgumentsCount = 2, contextParameterCount = 0,
+                    hasDispatchReceiver = false, hasExtensionReceiver = false,
+                    origin = IrStatementOrigin.EQEQEQ,
+                ).apply {
+                    arguments[0] = IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol)
+                    arguments[1] = IrGetValueImpl(startOffset, endOffset, otherParam.type, otherParam.symbol)
+                }
+                val returnTrue = IrReturnImpl(
+                    startOffset, endOffset, builtins.nothingType, symbol,
+                    IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
+                )
+                this += IrWhenImpl(startOffset, endOffset, builtins.unitType, IrStatementOrigin.IF).apply {
+                    branches += IrBranchImpl(
+                        eqeqeqCall,
+                        IrBlockImpl(startOffset, endOffset, builtins.unitType).apply { statements += returnTrue }
+                    )
+                }
+            }
+
+            // if (other !is <equalityBoundType>) return false
+            val notIsCheck = IrTypeOperatorCallImpl(
+                startOffset, endOffset, builtins.booleanType,
+                IrTypeOperator.NOT_INSTANCEOF, irBoundType,
+                IrGetValueImpl(startOffset, endOffset, otherParam.type, otherParam.symbol),
+            )
+            val returnFalse = IrReturnImpl(
+                startOffset, endOffset, builtins.nothingType, symbol,
+                IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, false),
+            )
+            this += IrWhenImpl(startOffset, endOffset, builtins.unitType, IrStatementOrigin.IF).apply {
+                branches += IrBranchImpl(
+                    notIsCheck,
+                    IrBlockImpl(startOffset, endOffset, builtins.unitType).apply { statements += returnFalse }
+                )
+            }
         }
     }
 
