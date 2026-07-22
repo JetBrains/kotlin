@@ -2,3 +2,22 @@ root = true
 
 [*]
 insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+[*.{kt,kts,java,gradle,xml}]
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[**/testData/**]
+trim_trailing_whitespace = false
+insert_final_newline = unset
+indent_style = unset
+indent_size = unset
