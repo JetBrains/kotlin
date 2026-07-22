@@ -23,23 +23,19 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager,
     ) : super(
         useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         symbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-        manager = manager
     )
 
     protected val isLocal: Boolean get() = withClassSymbol { it.isLocal }
