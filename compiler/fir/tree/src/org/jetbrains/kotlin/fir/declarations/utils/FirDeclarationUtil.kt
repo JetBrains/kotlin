@@ -59,6 +59,20 @@ val FirDeclaration.isLocal: Boolean
     }
 
 /**
+ * Whether the [FirDeclaration] is a top-level declaration.
+ *
+ * A FIR declaration is top-level iff it is a FIR file (or similar file-wide structure) or if its parent is a FIR file (or similar).
+ */
+val FirDeclaration.isTopLevel: Boolean
+    get() = when (this) {
+        is FirFile, is FirScript, is FirCodeFragment, is FirReplSnippet -> true
+        is FirRegularClass -> !symbol.classId.isNestedClass
+        is FirTypeAlias -> !symbol.classId.isNestedClass
+        is FirCallableDeclaration -> symbol.callableId?.isTopLevel == true
+        else -> false
+    }
+
+/**
  * `true` when [FirCallableDeclaration.receiverParameter] is not `null`.
  *
  * Use [isInstanceExtension] to check for extensions excluding companion extensions

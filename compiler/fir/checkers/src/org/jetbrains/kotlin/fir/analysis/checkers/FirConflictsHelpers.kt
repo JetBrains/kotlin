@@ -56,8 +56,6 @@ private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
     return cleanedStatus.modifiersRepresentation == defaultStatusForMain.modifiersRepresentation
 }
 
-private val CallableId.isTopLevel get() = className == null
-
 private fun FirBasedSymbol<*>.isCollectable(): Boolean {
     if (this is FirCallableSymbol<*>) {
         if (this is FirErrorCallableSymbol<*>) return false

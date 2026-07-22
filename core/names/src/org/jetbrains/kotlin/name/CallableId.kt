@@ -66,6 +66,9 @@ class CallableId private constructor(
     val isLocal: Boolean
         get() = packageName == PACKAGE_FQ_NAME_FOR_LOCAL || classId?.isLocal == true
 
+    val isTopLevel: Boolean
+        get() = classId == null
+
     constructor(
         packageName: FqName, className: FqName?, callableName: Name,
     ) : this(packageName, className, callableName, calculateClassId(packageName, className), pathToLocal = null)
