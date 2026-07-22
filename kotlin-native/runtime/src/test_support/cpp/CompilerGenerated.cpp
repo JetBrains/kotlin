@@ -196,7 +196,7 @@ void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason, const TypeInfo* typeInfo) {
+void RUNTIME_NORETURN StaticInitializationFailure(KRef reason, const TypeInfo* typeInfo) {
     throw std::runtime_error("Not implemented for tests");
 }
 
