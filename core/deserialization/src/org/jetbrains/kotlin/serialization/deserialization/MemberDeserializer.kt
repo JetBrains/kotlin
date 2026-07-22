@@ -72,6 +72,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
             ),
         )
 
+        property.companionExtensionClass = proto.companionExtensionReceiverType(c.typeTable)
+            ?.let(local.typeDeserializer::type)
+            ?.constructor
+            ?.declarationDescriptor as? ClassDescriptor
+
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
         // by taking hasAnnotations/visibility/modality from property flags, and using false for the rest
         val defaultAccessorFlags = Flags.getAccessorFlags(
@@ -240,6 +245,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
         function.setHasStableParameterNames(!Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags))
+
+        function.companionExtensionClass = proto.companionExtensionReceiverType(c.typeTable)
+            ?.let(local.typeDeserializer::type)
+            ?.constructor
+            ?.declarationDescriptor as? ClassDescriptor
 
         val mapValueForContract =
             c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, local.typeDeserializer)
