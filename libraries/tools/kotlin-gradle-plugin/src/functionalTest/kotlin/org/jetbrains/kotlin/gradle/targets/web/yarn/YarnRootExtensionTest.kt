@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.web.yarn
 
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.internal.KgpBuildConstants
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,7 +17,10 @@ class YarnRootExtensionTest {
     @Test
     fun checkDefaultYarnVersion() {
         val project = ProjectBuilder.builder().build()
-        val yarnRootExtension = YarnPlugin.Companion.apply(project)
+        // Apply the KotlinMultiplatformPluginWrapper first so the necessary wiring takes places,
+        // consistent with how WasmYarnPlugin is applied in real projects.
+        project.plugins.apply(KotlinMultiplatformPluginWrapper::class.java)
+        val yarnRootExtension = YarnPlugin.apply(project)
         assertEquals(
             KgpBuildConstants.DEFAULT_YARN_VERSION,
             yarnRootExtension.versionProperty.orNull,

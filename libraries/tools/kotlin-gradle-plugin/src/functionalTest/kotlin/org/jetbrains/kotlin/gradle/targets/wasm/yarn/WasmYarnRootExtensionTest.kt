@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.internal.KgpBuildConstants
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -15,6 +16,9 @@ class WasmYarnRootExtensionTest {
     @Test
     fun checkDefaultYarnVersion() {
         val project = ProjectBuilder.builder().build()
+        // Apply the KotlinMultiplatformPluginWrapper first so the necessary wiring takes places,
+        // consistent with how WasmYarnPlugin is applied in real projects.
+        project.plugins.apply(KotlinMultiplatformPluginWrapper::class.java)
         val yarnRootExtension = WasmYarnPlugin.apply(project)
         assertEquals(
             KgpBuildConstants.DEFAULT_YARN_VERSION,
