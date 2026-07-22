@@ -109,7 +109,11 @@ fun CFGNode<*>.render(): String =
 
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
+                is StaticEnterNode -> "Enter static ${owner.name}"
+                is StaticExitNode -> "Exit static ${owner.name}"
                 is LocalClassExitNode -> "Local class declaration"
+                is EnumEntryEnterNode -> "Enter enum entry ${owner.name}"
+                is EnumEntryExitNode -> "Exit enum entry ${owner.name}"
                 is AnonymousObjectEnterNode -> "Enter anonymous object"
                 is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
 
