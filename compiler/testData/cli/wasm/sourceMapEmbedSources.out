@@ -1,1 +1,2 @@
-OK
+error: embedding sources into the source map is not supported for Kotlin/Wasm. Remove the -source-map-embed-sources argument or set it to 'never'.
+COMPILATION_ERROR
