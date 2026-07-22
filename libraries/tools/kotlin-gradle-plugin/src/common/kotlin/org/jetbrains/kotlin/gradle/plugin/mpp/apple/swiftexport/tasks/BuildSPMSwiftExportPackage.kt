@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
@@ -102,7 +103,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
     private fun buildSyntheticPackage() {
         val intermediatesDestination = mapOf(
-            // Thin/universal object files
+            // Thin/universal object files - Swift Export
             "TARGET_BUILD_DIR" to objectFilesPath.getFile().absolutePath,
             // .swiftmodule interface
             "BUILT_PRODUCTS_DIR" to interfacesPath.getFile().absolutePath,

@@ -24,11 +24,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.hasDirectOrTransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterCoordinationService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMImportFetchTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import kotlin.text.set
 
 internal object SwiftExportConstants {
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
@@ -229,6 +233,8 @@ private fun Project.registerPackageGeneration(
         "generateSPMPackage"
     )
 
+    val swiftPMImportFetchTask = locateOrRegisterSwiftPMImportFetchTask()
+
     return locateOrRegisterTask<GenerateSPMPackageFromSwiftExport>(spmPackageGenTaskName) { task ->
         task.description = "Generates $taskNamePrefix SPM Package"
         task.group = taskGroup
@@ -241,6 +247,9 @@ private fun Project.registerPackageGeneration(
         task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
+        task.hasDirectOrTransitiveSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies())
+        task.swiftPMImportPackageFingerprint.set(swiftPMImportFetchTask.flatMap { it.syntheticPackageFingerprint.asFile})
+        task.coordinationService.set(locateOrRegisterCoordinationService())
 
         // Output
         task.packagePath.set(layout.buildDirectory.dir("SPMPackage/${target.name}/$configuration"))

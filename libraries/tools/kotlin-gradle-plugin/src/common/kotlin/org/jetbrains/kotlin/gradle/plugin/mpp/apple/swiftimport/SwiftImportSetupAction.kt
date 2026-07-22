@@ -160,9 +160,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     )
 
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
-    val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
-        FetchSyntheticImportProjectPackages.TASK_NAME,
-    ) {
+    val fetchSyntheticImportProjectPackages = project.locateOrRegisterSwiftPMImportFetchTask()
+    fetchSyntheticImportProjectPackages.configure {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.ideaSyncEnabled.set(ideaSyncEnabled)
@@ -188,13 +187,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
     )
 
-    val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
-        this,
-        provideXcodeDumpsDir(),
-        provideCheckoutDir(),
-        provideSyntheticPackageDir(),
-    )
-
+    val fingerprintCoordinationService = locateOrRegisterCoordinationService()
     project.launch {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
 
@@ -516,6 +509,16 @@ internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = pro
     }
 }
 
+internal fun Project.locateOrRegisterCoordinationService() = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
+    this,
+    provideXcodeDumpsDir(),
+    provideCheckoutDir(),
+    provideSyntheticPackageDir(),
+)
+
+internal fun Project.locateOrRegisterSwiftPMImportFetchTask() = locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
+    FetchSyntheticImportProjectPackages.TASK_NAME,
+)
 
 private fun Project.getIdentifierLockFilesMetadataProvider(): Provider<List<SwiftPMImportMetadataForLockFiles>> {
     if (!HostManager.hostIsMac) return provider { emptyList() }

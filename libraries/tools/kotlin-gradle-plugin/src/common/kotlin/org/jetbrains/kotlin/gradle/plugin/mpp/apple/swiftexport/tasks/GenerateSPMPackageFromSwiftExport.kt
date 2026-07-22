@@ -15,15 +15,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_DYLIB
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
 import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
 import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
+import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
+import java.nio.file.Path
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
@@ -34,6 +40,15 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     init {
         onlyIf { HostManager.hostIsMac }
     }
+
+    @get:Input
+    val hasDirectOrTransitiveSwiftPMDependencies: Property<Boolean> = objectFactory.property()
+
+    @get:Input
+    val swiftPMImportPackageFingerprint: Property<File> = objectFactory.property()
+
+    @get:Internal
+    abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
     @get:Input
     abstract val swiftApiModuleName: Property<String>
@@ -64,14 +79,19 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private val swiftLibrary get() = swiftLibraryName.get()
     private val swiftApiModule get() = swiftApiModuleName.get()
-    private val kotlinRuntimeModule get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalizeAsciiOnly() }
+    private val kotlinRuntimeModule
+        get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalizeAsciiOnly() }
 
     @TaskAction
     fun generate() {
         val swiftModules = deserializeSwiftModules()
 
+        val swiftPMImportPackagePath = if (hasDirectOrTransitiveSwiftPMDependencies.get()) {
+            coordinationService.get().sharedPackageGenerationRoot(swiftPMImportPackageFingerprint.get().readText().split("\n")[1])
+        } else null
+
         createSPMSources(swiftModules)
-        createPackageManifest(swiftModules)
+        createPackageManifest(swiftModules, swiftPMImportPackagePath)
         createKotlinRuntimeTarget()
     }
 
@@ -141,9 +161,21 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         appendToOtherIncludes(kotlinRuntimeModule, kotlinRuntimeIncludePath)
     }
 
-    private fun createPackageManifest(modules: List<GradleSwiftExportModule>) {
+    private fun createPackageManifest(modules: List<GradleSwiftExportModule>, swiftPMImportPackagePath: File?) {
         val manifest = packagePath.getFile().resolve("Package.swift")
-        val content = SPMManifestGenerator.generateManifest(swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules)
+        val content = SPMManifestGenerator.generateManifest(
+            swiftApiModule,
+            swiftLibrary,
+            kotlinRuntimeModule,
+            modules.map {
+                when (it) {
+                    // .product(name: "", package: "...")
+                    is GradleSwiftExportModule.BridgesToKotlin -> it.copy(dependencies = it.dependencies.map { "\"${it}\"" } + if (swiftPMImportPackagePath != null) listOf(".product(name: \"${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}\", package: \"${swiftPMImportPackagePath!!.name}\")") else emptyList())
+                    is GradleSwiftExportModule.SwiftOnly -> it
+                }
+            },
+            swiftPMImportPackagePath?.let { listOf(".package(path: \"${swiftPMImportPackagePath.path}\")") } ?: emptyList()
+        )
         manifest.writeText(content)
     }
 
@@ -163,6 +195,7 @@ internal object SPMManifestGenerator {
         swiftLibrary: String,
         kotlinRuntime: String,
         modules: List<GradleSwiftExportModule>,
+        dependencies: List<String>,
     ): String = buildStringBlock {
         line("// swift-tools-version: 5.9")
         line()
@@ -181,6 +214,11 @@ internal object SPMManifestGenerator {
                     }
                 }
                 entry {
+                    block("dependencies: [", "]") {
+                        emitListItems(dependencies)
+                    }
+                }
+                entry {
                     block("targets: [", "]") {
                         commaSeparatedEntries {
                             emitTargetDefinitions(modules, kotlinRuntime)
@@ -194,8 +232,8 @@ internal object SPMManifestGenerator {
 
     private fun GradleSwiftExportModule.spmDependencies(kotlinRuntime: String): List<String> {
         return when (this) {
-            is GradleSwiftExportModule.BridgesToKotlin -> dependencies + listOf(bridgeName, kotlinRuntime)
-            is GradleSwiftExportModule.SwiftOnly -> dependencies + listOf(kotlinRuntime)
+            is GradleSwiftExportModule.BridgesToKotlin -> dependencies + listOf(bridgeName, kotlinRuntime).map { "\"$it\"" }
+            is GradleSwiftExportModule.SwiftOnly -> dependencies + listOf(kotlinRuntime).map { "\"$it\"" }
         }
     }
 
@@ -211,7 +249,7 @@ internal object SPMManifestGenerator {
             commaSeparatedEntries {
                 entry { line("name: \"$name\"") }
                 if (dependencies != null) {
-                    entry { line("dependencies: [${dependencies.joinToString(", ") { "\"$it\"" }}]") }
+                    entry { line("dependencies: [${dependencies.joinToString(", ") { it }}]") }
                 }
             }
         }
