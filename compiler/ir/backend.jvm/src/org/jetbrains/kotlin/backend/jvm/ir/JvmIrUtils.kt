@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -360,11 +359,6 @@ fun IrField.constantValue(): IrConst? {
     val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     return if (implicitConst || correspondingPropertySymbol?.owner?.isConst == true) value else null
 }
-
-fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReference =
-    IrClassReferenceImpl(
-        startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
-    )
 
 fun JvmIrBuilder.kClassToJavaClass(kClassReference: IrExpression): IrCall =
     irGet(irSymbols.javaLangClass.starProjectedType, null, irSymbols.kClassJavaPropertyGetter.symbol).apply {

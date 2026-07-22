@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.starProjectedType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 
@@ -523,3 +524,8 @@ fun IrBuilder.irRichFunctionReference(
 ).apply {
     boundValues += captures
 }
+
+fun IrBuilderWithScope.kClassReference(classType: IrType): IrClassReference =
+    IrClassReferenceImpl(
+        startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
+    )
