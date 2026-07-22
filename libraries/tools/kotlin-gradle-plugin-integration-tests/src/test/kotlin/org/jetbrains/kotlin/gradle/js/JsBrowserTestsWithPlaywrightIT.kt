@@ -33,6 +33,7 @@ import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
@@ -464,6 +465,63 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
             build(":jsNodeTest") {
                 assertOutputContains("Is node: true")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `verify playwright install browsers executed only once for multiple js targets`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js("first") {
+                        browser {
+                            test.apply {
+                                chromium()
+                            }
+                        }
+                    }
+                    js("second") {
+                        browser {
+                            test.apply {
+                                chromium()
+                            }
+                        }
+                    }
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+
+                project.projectDir.resolve("src/commonTest/kotlin/DummyTest.kt").apply {
+                    parentFile.mkdirs()
+                    writeText(
+                        """
+                            class DummyTest {
+                              @kotlin.test.Test
+                              fun dummy() {
+                                println("dummy test")
+                              }
+                            }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            build(":firstBrowserTest", ":secondBrowserTest") {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium")
+                assertTasksExecuted(":firstBrowserTest", ":secondBrowserTest")
+                assertEquals(
+                    1,
+                    output.lines().count { "> Task :kotlinInstallPlaywrightChromium" in it },
+                    "Expected playwright chromium install to be executed exactly once across all JS targets"
+                )
+                assertOutputContains("dummy test")
             }
         }
     }
