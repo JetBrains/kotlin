@@ -64,8 +64,9 @@ class JavaClassifierTypeOverAst(
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
-    private val rawTypeNameParts: List<String>
-        get() = extractTypeNameParts(node)
+    private val rawTypeNameParts: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        extractTypeNameParts(node)
+    }
 
     private val rawTypeName: String
         get() {
@@ -201,8 +202,9 @@ class JavaClassifierTypeOverAst(
         return false
     }
 
-    override val typeArguments: List<JavaType>
-        get() = computeTypeArguments()
+    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computeTypeArguments()
+    }
 
     private fun computeTypeArguments(): List<JavaType> {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.

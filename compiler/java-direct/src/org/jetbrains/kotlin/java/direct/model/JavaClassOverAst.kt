@@ -78,9 +78,9 @@ class JavaClassOverAst(
         computeTypeParameters(node, tree, resolutionContext)
     }
 
-    override val supertypes: Collection<JavaClassifierType>
-        get() {
-            val result = mutableListOf<JavaClassifierType>()
+    // Memoized: FIR reads supertypes from multiple lazy slots; rebuild would re-resolve each time.
+    override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val result = mutableListOf<JavaClassifierType>()
 
             if (isEnum) {
                 result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
@@ -98,18 +98,19 @@ class JavaClassOverAst(
                 result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
             }
 
-            tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
-                tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
-                    result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
-                }
+        tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
+            tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
+                result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
             }
-            return result
         }
+        result
+    }
 
-    override val innerClassNames: Collection<Name>
-        get() = tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
+    override val innerClassNames: Collection<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
             Name.identifier(classNodeSimpleName(it) ?: "<error>")
         }
+    }
 
     // Positive-only cache: same name → same JavaClass instance. Required so that the
     // JavaTypeParameter instances of inner classes also satisfy FIR's identity contract
@@ -176,8 +177,9 @@ class JavaClassOverAst(
             return result
         }
 
-    override val isInterface: Boolean
-        get() = tree.findChildByType(node, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
+    override val isInterface: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
+    }
 
     /**
      * A Java `@interface` (annotation declaration) is parsed by the KMP parser as a CLASS node
@@ -189,17 +191,21 @@ class JavaClassOverAst(
      * - A class-/interface-level `@Annotation` lives nested under the `MODIFIER_LIST` child
      *   (`MODIFIER_LIST → ANNOTATION → AT`), so its `AT` is never a direct CLASS child.
      */
-    override val isAnnotationType: Boolean
-        get() = tree.findChildByType(node, JavaSyntaxTokenType.AT) != null
+    override val isAnnotationType: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxTokenType.AT) != null
+    }
 
-    override val isEnum: Boolean
-        get() = tree.findChildByType(node, JavaSyntaxTokenType.ENUM_KEYWORD) != null
+    override val isEnum: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxTokenType.ENUM_KEYWORD) != null
+    }
 
-    override val isRecord: Boolean
-        get() = tree.findChildByType(node, JavaSyntaxTokenType.RECORD_KEYWORD) != null
+    override val isRecord: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.findChildByType(node, JavaSyntaxTokenType.RECORD_KEYWORD) != null
+    }
 
-    override val isSealed: Boolean
-        get() = hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD)
+    override val isSealed: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD)
+    }
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
@@ -285,48 +291,47 @@ class JavaClassOverAst(
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    override val methods: Collection<JavaMethod>
-        get() {
-            val methodNodes =
-                tree.getChildrenByType(node, JavaSyntaxElementType.METHOD) + tree.getChildrenByType(
-                    node,
-                    JavaSyntaxElementType.ANNOTATION_METHOD
-                )
-            return methodNodes
-                .filter { tree.findChildByType(it, JavaSyntaxElementType.TYPE) != null }
-                .map { JavaMethodOverAst(it, tree, this) }
-        }
+    override val methods: Collection<JavaMethod> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val methodNodes =
+            tree.getChildrenByType(node, JavaSyntaxElementType.METHOD) + tree.getChildrenByType(
+                node,
+                JavaSyntaxElementType.ANNOTATION_METHOD
+            )
+        methodNodes
+            .filter { tree.findChildByType(it, JavaSyntaxElementType.TYPE) != null }
+            .map { JavaMethodOverAst(it, tree, this) }
+    }
 
-    override val fields: Collection<JavaField>
-        get() {
-            val fieldNodes = tree.getChildrenByType(node, JavaSyntaxElementType.FIELD) +
-                    tree.getChildrenByType(node, JavaSyntaxElementType.ENUM_CONSTANT)
-            return fieldNodes.map { JavaFieldOverAst(it, tree, this) }
-        }
+    override val fields: Collection<JavaField> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val fieldNodes = tree.getChildrenByType(node, JavaSyntaxElementType.FIELD) +
+                tree.getChildrenByType(node, JavaSyntaxElementType.ENUM_CONSTANT)
+        fieldNodes.map { JavaFieldOverAst(it, tree, this) }
+    }
 
-    override val constructors: Collection<JavaConstructor>
-        // A constructor is a METHOD node with no return TYPE (mirrors PSI's
-        // `getReturnTypeElement() == null`); the name is irrelevant. A malformed nameless
-        // declaration like `void () {}` — whose `void` is an error element, not a return type —
-        // is therefore a (package-private) constructor, matching PSI and suppressing the
-        // synthesized default constructor.
-        get() = tree.getChildrenByType(node, JavaSyntaxElementType.METHOD)
+    // A constructor is a METHOD node with no return TYPE (mirrors PSI's
+    // `getReturnTypeElement() == null`); the name is irrelevant. A malformed nameless
+    // declaration like `void () {}` — whose `void` is an error element, not a return type —
+    // is therefore a (package-private) constructor, matching PSI and suppressing the
+    // synthesized default constructor.
+    override val constructors: Collection<JavaConstructor> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.getChildrenByType(node, JavaSyntaxElementType.METHOD)
             .filter { tree.findChildByType(it, JavaSyntaxElementType.TYPE) == null }
             .map { JavaConstructorOverAst(it, tree, this) }
+    }
 
-    override val recordComponents: Collection<JavaRecordComponent>
-        get() {
-            val header = tree.findChildByType(node, JavaSyntaxElementType.RECORD_HEADER)
-            return if (header != null) {
-                tree.getChildrenByType(header, JavaSyntaxElementType.RECORD_COMPONENT)
-                    .map { JavaRecordComponentOverAst(it, tree, this) }
-            } else emptyList()
-        }
+    override val recordComponents: Collection<JavaRecordComponent> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val header = tree.findChildByType(node, JavaSyntaxElementType.RECORD_HEADER)
+        if (header != null) {
+            tree.getChildrenByType(header, JavaSyntaxElementType.RECORD_COMPONENT)
+                .map { JavaRecordComponentOverAst(it, tree, this) }
+        } else emptyList()
+    }
 
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
+    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
+    }
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = isDeprecatedInJavaDoc(tree, node)
