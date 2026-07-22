@@ -87,7 +87,7 @@ internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : F
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(CatchMerger(ctx))
 
-        irFile.transformChildrenVoid(FinallyBlocksLowering(ctx, ctx.irBuiltIns.throwableType))
+        irFile.transformChildrenVoid(FinallyBlocksLowering(ctx))
 
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {

@@ -159,7 +159,7 @@ open class JsSuspendFunctionsLowering<C : JsCommonBackendContext>(
         argumentToPropertiesMap: Map<IrValueParameter, IrField>
     ) {
         val returnableBlockTransformer = ReturnableBlockTransformer(context)
-        val finallyBlockTransformer = FinallyBlocksLowering(context, context.catchAllThrowableType)
+        val finallyBlockTransformer = FinallyBlocksLowering(context)
         val simplifiedFunction =
             transformingFunction.transform(finallyBlockTransformer, null).transform(returnableBlockTransformer, null) as IrFunction
 

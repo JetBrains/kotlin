@@ -251,7 +251,7 @@ private val dataClassesPhase = createFileLoweringPhase(
 )
 
 private val finallyBlocksPhase = createFileLoweringPhase(
-        { context, irFile -> FinallyBlocksLowering(context, context.irBuiltIns.throwableType).lower(irFile) },
+        { context, irFile -> FinallyBlocksLowering(context).lower(irFile) },
         name = "FinallyBlocks",
         prerequisite = setOf(initializersPhase, localFunctionsPhase, tailrecPhase)
 )
