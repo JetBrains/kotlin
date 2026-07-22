@@ -251,6 +251,13 @@ public interface KaTypeInformationProvider : KaSessionComponent {
     /**
      * Checks whether the given [KaType] is a class type with the given [ClassId].
      */
+    @Deprecated(
+        message = "Use the 'classId' instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.classId == classId",
+            imports = ["org.jetbrains.kotlin.analysis.api.types.classId"],
+        ),
+    )
     public fun KaType.isClassType(classId: ClassId): Boolean
 
     /**
@@ -911,8 +918,16 @@ public val KaType.isNestedArray: Boolean
 /**
  * Checks whether the given [KaType] is a class type with the given [ClassId].
  */
+@Deprecated(
+    message = "Use the 'classId' instead.",
+    replaceWith = ReplaceWith(
+        expression = "this.classId == classId",
+        imports = ["org.jetbrains.kotlin.analysis.api.types.classId"],
+    ),
+)
 context(session: KaSession)
 public fun KaType.isClassType(classId: ClassId): Boolean {
+    @Suppress("DEPRECATION")
     return with(session) {
         isClassType(
             classId = classId,

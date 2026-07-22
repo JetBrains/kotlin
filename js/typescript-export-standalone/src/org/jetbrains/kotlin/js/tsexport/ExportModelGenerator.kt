@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.js.tsexport
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.isClassType
 import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -148,7 +147,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 val expandedSymbol = it.expandedSymbol ?: return@filter false
                 expandedSymbol.classKind != KaClassKind.INTERFACE
                         && !it.isAnyType
-                        && !it.isClassType(StandardClassIds.Enum)
+                        && it.classId != StandardClassIds.Enum
             }
             .map { exportType(it, typeParameterScope, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
