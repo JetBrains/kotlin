@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -179,16 +179,15 @@ sealed class FunctionOrigin {
     class OwnedBy(val declaration: IrDeclaration, val weak: Boolean = false) : FunctionOrigin()
 }
 
-
 /**
  * Prototype of a LLVM function that is not tied to a specific LLVM module.
  */
 internal class LlvmFunctionProto(
-      val name: String,
-      val signature: LlvmFunctionSignature,
-      val origin: FunctionOrigin?,
-      val linkage: LLVMLinkage,
-      val independent: Boolean = false,
+        val name: String,
+        val signature: LlvmFunctionSignature,
+        val origin: FunctionOrigin?,
+        val linkage: LLVMLinkage,
+        val independent: Boolean = false,
 ) {
     constructor(irFunction: IrSimpleFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
             name = symbolName,
@@ -198,20 +197,21 @@ internal class LlvmFunctionProto(
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
 
-    fun createLlvmFunction(context: NativeBackendContext, llvmModule: LLVMModuleRef): LlvmCallable {
+    /**
+     * Given the current [context], it creates a new function definition within the [llvmModule] module.
+     */
+    fun createLlvmFunction(context: NativeBackendContext, llvmModule: LLVMModuleRef): LlvmFunction.Definition {
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)
         signature.addFunctionAttributes(function)
         LLVMSetLinkage(function, linkage)
-        return LlvmCallable(function, signature)
+        return LlvmFunction.Definition(function, signature)
     }
 }
 
 internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?, linkage: LLVMLinkage, independent: Boolean = false) =
         LlvmFunctionProto(name, this, origin, linkage, independent)
-
-
 
 private fun mustNotInline(context: NativeBackendContext, irFunction: IrSimpleFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {

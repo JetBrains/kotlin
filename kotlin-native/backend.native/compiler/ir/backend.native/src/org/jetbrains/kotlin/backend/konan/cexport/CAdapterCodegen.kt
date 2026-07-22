@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
  * Second phase of C Export: build bitcode bridges from C wrappers to Kotlin functions.
  */
 internal class CAdapterCodegen(
-    private val codegen: CodeGenerator,
-    override val generationState: NativeGenerationState,
+        private val codegen: CodeGenerator,
+        override val generationState: NativeGenerationState,
 ) : ContextUtils {
 
     fun buildAllAdaptersRecursively(elements: CAdapterExportedElements) {
@@ -55,7 +55,7 @@ internal class CAdapterCodegen(
                     } else {
                         // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
                         // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
-                        codegen.llvmFunction(irFunction)
+                        codegen.getLlvmFunctionFrom(irFunction)
                     }
 
                     val args = signature.parameterTypes.indices.map { param(it) }
@@ -86,12 +86,12 @@ internal class CAdapterCodegen(
                     )
                     generateFunction(codegen, functionProto) {
                         val value = call(
-                            codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
-                            emptyList(),
-                            Lifetime.GLOBAL,
-                            ExceptionHandler.Caller,
-                            false,
-                            returnSlot
+                                codegen.getLlvmFunctionFrom(context.getObjectClassInstanceFunction(irClass)),
+                                emptyList(),
+                                Lifetime.GLOBAL,
+                                ExceptionHandler.Caller,
+                                false,
+                                returnSlot
                         )
                         ret(value)
                     }

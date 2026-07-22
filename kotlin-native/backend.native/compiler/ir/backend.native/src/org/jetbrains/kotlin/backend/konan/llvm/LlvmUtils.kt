@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -257,6 +257,18 @@ fun LLVMTypeRef?.toTypeString(): String {
     if (this == null) return "<null type>"
     return LLVMPrintTypeToString(this)!!.toKString()
 }
+
+val LLVMValueRef.valueName: String?
+    get() = LLVMGetValueName(this)?.toKString()
+
+val LLVMValueRef.isConst: Boolean
+    get() = (LLVMIsConstant(this) == 1)
+
+val LLVMValueRef.isLLVMBuiltin: Boolean
+    get() {
+        val name = valueName ?: return false
+        return name.startsWith("llvm.")
+    }
 
 fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
     val count = LLVMCountStructElementTypes(type)

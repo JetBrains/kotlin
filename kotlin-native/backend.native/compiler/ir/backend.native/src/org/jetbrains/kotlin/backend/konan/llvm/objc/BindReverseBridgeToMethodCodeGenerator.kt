@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,9 +36,9 @@ internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrCla
 }
 
 private fun CodeGenerator.resolveReverseBridgeAdapter(
-    irClass: IrClass,
-    layoutBuilder: ClassLayoutBuilder,
-    bridge: BindReverseBridgeToMethod,
+        irClass: IrClass,
+        layoutBuilder: ClassLayoutBuilder,
+        bridge: BindReverseBridgeToMethod,
 ): KotlinToObjCMethodAdapter? {
     val targetFunction = irClass.simpleFunctions()
             .firstOrNull { it.name.asString() == bridge.targetMethod }
@@ -59,9 +59,9 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     }
 
     return KotlinToObjCMethodAdapter(
-        selector = bridge.targetMethod,
-        itablePlace = itablePlace,
-        vtableIndex = vtableIndex,
-        kotlinImpl = llvmFunction(bridge.bridgeFunction).toConstPointer(),
+            selector = bridge.targetMethod,
+            itablePlace = itablePlace,
+            vtableIndex = vtableIndex,
+            kotlinImpl = getLlvmFunctionFrom(bridge.bridgeFunction).toConstPointer(),
     )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.library.uniqueName
-
-private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
-    val name = this.name ?: return false
-    return name.startsWith("llvm.")
-}
-
 
 private class CallsChecker(generationState: NativeGenerationState, goodFunctions: List<String>) {
     private val llvm = generationState.llvm
@@ -66,9 +60,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         fun cleanCalledFunction(value: LLVMValueRef): ExternalCallInfo? {
             return when {
                 LLVMIsAFunction(value) != null -> {
-                    val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin() }
+                    val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin }
                             ?: LLVMConstIntToPtr(llvm.int64(CALLED_LLVM_BUILTIN), llvm.pointerType)!!
-                    ExternalCallInfo(value.name!!, valueOrSpecial).takeIf { value.isExternalFunction() }
+                    ExternalCallInfo(value.valueName!!, valueOrSpecial).takeIf { value.isExternalFunction() }
                 }
                 LLVMIsACastInst(value) != null -> cleanCalledFunction(LLVMGetOperand(value, 0)!!)
                 isIndirectCallArgument(value) -> ExternalCallInfo(null, value) // this is a callback call
@@ -176,9 +170,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
     }
 
     fun processFunction(function: LLVMValueRef) {
-        if (function.name == checkerFunction.name) return
+        if (function.valueName == checkerFunction.name) return
         getBasicBlocks(function).forEach {
-            processBasicBlock(function.name!!, it)
+            processBasicBlock(function.valueName!!, it)
         }
     }
 
