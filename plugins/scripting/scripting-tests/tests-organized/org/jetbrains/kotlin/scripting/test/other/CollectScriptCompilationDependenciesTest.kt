@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.other
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -31,7 +32,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertTrue
 
-private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/collectDependencies"
+private const val testDataPath = "plugins/scripting/scripting-tests/testData/other/collectDependencies"
 
 class CollectScriptCompilationDependenciesTest {
     private val testRootDisposable: Disposable =

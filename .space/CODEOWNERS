@@ -197,7 +197,6 @@
 /compiler/testData/codegen/properties/ "Kotlin JVM"
 /compiler/testData/codegen/reflection/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
 /compiler/testData/codegen/script/ "Kotlin Frontend"
-/compiler/testData/codegen/scriptCustom/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/codegen/sourceInfo/
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"
