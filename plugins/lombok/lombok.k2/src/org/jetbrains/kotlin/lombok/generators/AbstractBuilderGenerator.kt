@@ -383,6 +383,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             builder,
                             singular,
                             item,
+                            substitutor,
                             builderSymbol = builderSymbol,
                             existingFunctionNames = existingFunctionNames
                         )
@@ -669,6 +670,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builder: AbstractBuilder,
         singular: Singular,
         item: FirVariable,
+        substitutor: ConeSubstitutor,
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
@@ -688,7 +690,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
-                val parameterTypeRef = typeRef.parameterType(0) ?: return
+                val parameterTypeRef = typeRef.parameterType(0, substitutor) ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(nameInSingularForm, parameterTypeRef)
                 )
@@ -701,8 +703,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
-                val keyTypeRef = typeRef.parameterType(0) ?: return
-                val valueTypeRef = typeRef.parameterType(1) ?: return
+                val keyTypeRef = typeRef.parameterType(0, substitutor) ?: return
+                val valueTypeRef = typeRef.parameterType(1, substitutor) ?: return
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("key"), keyTypeRef),
                     ConeLombokValueParameter(Name.identifier("value"), valueTypeRef),
@@ -713,9 +715,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
-                val rowKeyTypeRef = typeRef.parameterType(0) ?: return
-                val columnKeyTypeRef = typeRef.parameterType(1) ?: return
-                val valueType = typeRef.parameterType(2) ?: return
+                val rowKeyTypeRef = typeRef.parameterType(0, substitutor) ?: return
+                val columnKeyTypeRef = typeRef.parameterType(1, substitutor) ?: return
+                val valueType = typeRef.parameterType(2, substitutor) ?: return
 
                 valueParameters = listOf(
                     ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyTypeRef),
@@ -1035,9 +1037,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private val String.singularForm: String?
         get() = StringUtil.unpluralize(this)
 
-    private fun FirTypeRef.parameterType(index: Int): FirTypeRef? {
+    private fun FirTypeRef.parameterType(index: Int, substitutor: ConeSubstitutor): FirTypeRef? {
         return when (this) {
             is FirJavaTypeRef -> {
+                // Java type variables are resolved by name via the owning declaration's `javaTypeParameterStack`,
+                // which is already populated with the builder's copied type parameters (see
+                // `populateTypeParametersMapping`), so no substitution is needed here.
                 val javaClassifierType = type as? JavaClassifierType
                 if (javaClassifierType != null) {
                     val type = javaClassifierType.typeArguments.getOrNull(index) ?: runIf(javaClassifierType.isRaw) {
@@ -1048,7 +1053,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     null
                 }
             }
-            is FirResolvedTypeRef -> coneType.typeArguments.getOrNull(index)?.type?.toFirResolvedTypeRef()
+            // For Kotlin, the type argument directly references the entity class's type-parameter symbols,
+            // which differ from the builder's own copied symbols (see `extractTypeParametersMapping`),
+            // so we must substitute them explicitly, exactly like `addSetterMethod` does for regular fields.
+            is FirResolvedTypeRef -> coneType.typeArguments.getOrNull(index)?.type?.let(substitutor::substituteOrSelf)
+                ?.toFirResolvedTypeRef()
             else -> null
         }
     }
