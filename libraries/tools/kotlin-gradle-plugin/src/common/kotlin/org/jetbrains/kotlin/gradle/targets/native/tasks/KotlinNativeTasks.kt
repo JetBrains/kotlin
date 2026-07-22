@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.filterAndReportUnsupportedKotlinArchiveLibraries
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
@@ -53,7 +55,6 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
-import org.jetbrains.kotlin.gradle.tasks.filterKlibsPassedToCompiler
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -115,7 +116,10 @@ private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDir
 /**
  * [File.exists] is called on files, it could leads to issues with configuration cache
  */
-internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
+internal fun Collection<File>.filterKlibsPassedToCompiler(diagnostics: UsesKotlinToolingDiagnostics): List<File> {
+    return filterAndReportUnsupportedKotlinArchiveLibraries(diagnostics)
+        .filter(File::canKlibBePassedToCompiler)
+}
 
 // endregion
 @Suppress("DEPRECATION_ERROR")
@@ -126,7 +130,7 @@ abstract class AbstractKotlinNativeCompile<
         >
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val providerFactory: ProviderFactory
+    private val providerFactory: ProviderFactory,
 ) : AbstractKotlinCompileTool<M>(objectFactory), ProducesKlib {
     @get:Internal
     internal abstract val compilation: KotlinCompilationInfo
@@ -208,7 +212,7 @@ abstract class AbstractKotlinNativeCompile<
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @get:Deprecated(
-        message ="Replaced with 'compilerOptions.progressiveMode'",
+        message = "Replaced with 'compilerOptions.progressiveMode'",
         level = DeprecationLevel.ERROR,
     )
     @get:Internal
@@ -283,7 +287,8 @@ internal constructor(
     UsesBuildFusService,
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
-    UsesKonanPropertiesBuildService {
+    UsesKonanPropertiesBuildService,
+    UsesKotlinToolingDiagnostics {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -505,12 +510,14 @@ internal constructor(
         dependencyClasspath { args ->
             args.libraries = runSafe {
                 //filterKlibsPassedToCompiler call exists on files
-                val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler().toMutableList()
+                val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files
+                    .filterKlibsPassedToCompiler(this@KotlinNativeCompile).toMutableList()
+
                 filteredLibraries.toPathsArray()
             } ?: emptyArray()
             args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }
-                    ?.filterKlibsPassedToCompiler()
+                    ?.filterKlibsPassedToCompiler(this@KotlinNativeCompile)
                     ?.map { it.absolutePath }
                     ?.joinToString(File.pathSeparator)
             }
@@ -778,6 +785,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService,
+    UsesKotlinToolingDiagnostics,
     ProducesKlib {
 
     internal class Params(
@@ -1013,7 +1021,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 addArg("-linker-option", it)
             }
 
-            libraries.files.filterKlibsPassedToCompiler().forEach { library ->
+            libraries.files.filterKlibsPassedToCompiler(this@CInteropProcess).forEach { library ->
                 addArg("-library", library.absolutePath)
             }
 

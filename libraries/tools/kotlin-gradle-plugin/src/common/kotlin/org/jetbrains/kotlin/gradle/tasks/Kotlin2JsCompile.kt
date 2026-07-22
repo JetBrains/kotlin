@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportUnsupportedKotlinArchiveLibraries
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
@@ -199,6 +200,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
             args.libraries = runSafe {
                 libraries
+                    .apply { reportUnsupportedKotlinArchiveLibraries(this@Kotlin2JsCompile) }
                     .filter { libraryFilter(it) }
                     .filterMainCompilationKlibArtifact()
                     .map { it.absolutePath }
@@ -320,6 +322,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         logger.debug("Calling compiler")
 
         val dependencies = libraries
+            .apply { reportUnsupportedKotlinArchiveLibraries(this@Kotlin2JsCompile) }
             .filter { libraryFilter(it) }
             .filterMainCompilationKlibArtifact()
             .map { it.normalize().absolutePath }
