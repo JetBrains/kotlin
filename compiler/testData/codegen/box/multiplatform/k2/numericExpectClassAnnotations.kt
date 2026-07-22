@@ -7,7 +7,7 @@
 
 // MODULE: stdlibextra
 // FILE: Annotations.kt
-package kotlin
+package support
 
 import kotlin.reflect.KClass
 
@@ -20,7 +20,7 @@ annotation class NumericClass(
 // MODULE: main-common(stdlibextra)()()
 // FILE: Common.kt
 
-@kotlin.NumericClass(Long::class)
+@support.NumericClass(Long::class)
 expect class NSInteger {
     fun toByte(): Byte
     fun toShort(): Short
@@ -37,7 +37,7 @@ expect fun acceptLong(num: Long)
 
 var sum: Long = 0L
 
-@kotlin.NumericClass(UInt::class)
+@support.NumericClass(UInt::class)
 expect value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short

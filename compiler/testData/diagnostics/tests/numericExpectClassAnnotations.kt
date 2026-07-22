@@ -5,7 +5,7 @@
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor +MultiPlatformProjects
 
 // FILE: Stdlib.kt
-package kotlin
+package support
 
 import kotlin.reflect.KClass
 
@@ -17,7 +17,7 @@ annotation class NumericClass(
 
 // FILE: Main.kt
 
-@kotlin.NumericClass(Long::class)
+@support.NumericClass(Long::class)
 expect class NSInteger {
     fun toByte(): Byte
     fun toShort(): Short
@@ -37,7 +37,7 @@ fun acceptULong(num: ULong) {}
 fun acceptLong(num: Long) {}
 fun acceptInt(num: Int) {}
 
-@kotlin.NumericClass(UInt::class)
+@support.NumericClass(UInt::class)
 expect value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short
