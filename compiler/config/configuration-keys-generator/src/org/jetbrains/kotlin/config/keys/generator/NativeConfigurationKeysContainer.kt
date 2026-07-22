@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 @Suppress("unused")
 object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.konan.config", "NativeConfigurationKeys") {
-    val BUNDLE_ID by key<String>("Bundle ID to be set in Info.plist of a produced framework.")
     val CHECK_DEPENDENCIES by key<Boolean>("Check dependencies and download the missing ones.")
     val DEBUG by key<Boolean>()
     val FAKE_OVERRIDE_VALIDATOR by key<Boolean>()

@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 object NativeConfigurationKeys {
-    // Bundle ID to be set in Info.plist of a produced framework.
-    @JvmField
-    val BUNDLE_ID = CompilerConfigurationKey.create<String>("BUNDLE_ID")
-
     // Check dependencies and download the missing ones.
     @JvmField
     val CHECK_DEPENDENCIES = CompilerConfigurationKey.create<Boolean>("CHECK_DEPENDENCIES")
@@ -283,10 +279,6 @@ object NativeConfigurationKeys {
     val LLVM_LTO_PASSES = CompilerConfigurationKey.create<String>("LLVM_LTO_PASSES")
 
 }
-
-var CompilerConfiguration.bundleId: String?
-    get() = get(NativeConfigurationKeys.BUNDLE_ID)
-    set(value) { put(NativeConfigurationKeys.BUNDLE_ID, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.checkDependencies: Boolean
     get() = getBoolean(NativeConfigurationKeys.CHECK_DEPENDENCIES)
