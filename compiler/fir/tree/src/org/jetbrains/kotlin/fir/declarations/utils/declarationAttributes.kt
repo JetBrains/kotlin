@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
 private object IsFromVarargKey : FirDeclarationDataKey()
@@ -42,6 +43,7 @@ private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 private object IsDelegatedProperty : FirDeclarationDataKey()
 private object LambdaArgumentHoldsInTruths : FirDeclarationDataKey()
 private object FileNameForPluginGeneratedCallable : FirDeclarationDataKey()
+private object EqualityBoundType : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -243,3 +245,6 @@ val FirProperty.correspondingValueParameterFromPrimaryConstructor: FirValueParam
         val reference = initializer.calleeReference as? FirPropertyFromParameterResolvedNamedReference ?: return null
         return reference.resolvedSymbol as? FirValueParameterSymbol
     }
+
+var FirValueParameter.equalityBoundType: ConeKotlinType? by FirDeclarationDataRegistry.data(EqualityBoundType)
+val FirValueParameterSymbol.equalityBoundType: ConeKotlinType? get() = fir.equalityBoundType
