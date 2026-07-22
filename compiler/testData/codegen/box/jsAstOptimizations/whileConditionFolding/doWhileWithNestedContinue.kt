@@ -1,48 +1,45 @@
-var global = "";
+// CHECK_OPTIMIZED_JS
 
-function foo(x) {
-    global += x;
-    return x;
+var global = ""
+
+fun foo(x: Int): Int {
+    global += x
+    return x
 }
 
-function box() {
-    var i = 0;
-    var j;
+// EXPECT_GENERATED_JS: function=box expect=doWhileWithNestedContinue.optimized.js
+fun box(): String {
+    var i = 0
+    var j: Int
     do {
-        ++i;
-        global += ";";
-        for (j = 0; j < 2; ++j) {
-            if (j == 1) {
-                continue;
-            }
-            global += "-";
-        }
-        for (k in { a: 2, b: 3 }) {
+        ++i
+        global += ";"
+        for (k in arrayOf("a", "b")) {
             if (k != "a") {
-                continue;
+                continue
             }
-            global += "@";
+            global += "@"
         }
-        j = 0;
+        j = 0
         while (j++ < 2) {
             if (j == 1) {
-                continue;
+                continue
             }
-            global += "$";
+            global += "$"
         }
-        j = 0;
+        j = 0
         do {
             if (j == 1) {
-                continue;
+                continue
             }
-            global += "#";
-        } while (j++ < 2);
+            global += "#"
+        } while (j++ < 2)
         if (foo(i) >= 3) {
-            break;
+            break
         }
-    } while (true);
+    } while (true)
 
-    if (global != ";-@$##1;-@$##2;-@$##3") return "fail: " + global;
+    if (global != ";@$##1;@$##2;@$##3") return "fail: " + global
 
     return "OK"
 }
