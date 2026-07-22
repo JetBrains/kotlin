@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -65,6 +66,7 @@ internal class FirEnumEntryImpl(
         get() = null
     override val backingField: FirBackingField?
         get() = null
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -78,6 +80,7 @@ internal class FirEnumEntryImpl(
         returnTypeRef.accept(visitor, data)
         initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
@@ -138,6 +141,7 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         transformAnnotations(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this
     }
 
@@ -169,5 +173,9 @@ internal class FirEnumEntryImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 }
