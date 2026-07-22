@@ -8,6 +8,12 @@ package org.jetbrains.kotlin.scripting.test
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefBlackBoxCodegenTest
+import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefDiagnosticsTestBase
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiDiagnosticsTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiEvaluationTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsCodegenTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsDiagnosticsTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
