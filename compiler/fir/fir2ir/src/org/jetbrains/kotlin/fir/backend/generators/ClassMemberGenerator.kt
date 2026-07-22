@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
@@ -46,7 +48,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -219,8 +220,8 @@ internal class ClassMemberGenerator(
     }
 
     private fun IrFunction.buildEqualityBoundPrologue(firFunction: FirFunction?): List<IrStatement>? {
-        if (firFunction == null || configuration.skipBodies) return null
-        val equalityBoundConeType = firFunction.valueParameters.singleOrNull()?.equalityBoundType
+        if (firFunction == null || configuration.skipBodies || LanguageFeature.StrictEquals.isDisabled()) return null
+        val equalityBoundConeType = (firFunction as? FirNamedFunction)?.equalityBoundTypeOfParameter
             ?: return null
         val irBoundType = equalityBoundConeType.toIrType()
 

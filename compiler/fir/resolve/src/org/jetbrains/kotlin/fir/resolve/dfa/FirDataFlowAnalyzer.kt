@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.expressions.*
@@ -29,14 +30,13 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -857,7 +857,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun processDirectEqualsCall(flow: MutableFlow, expression: FirFunctionCall, callee: FirNamedFunction) {
-        callee.valueParameters.singleOrNull()?.equalityBoundType?.let { boundType ->
+        callee.equalityBoundTypeOfParameter?.let { boundType ->
             val argument = expression.arguments.singleOrNull() ?: return
             val argumentVariable = flow.getVariableIfUsedOrReal(argument)
             if (argumentVariable !is RealVariable) return
@@ -1306,7 +1306,7 @@ abstract class FirDataFlowAnalyzer(
 
         if (qualifiedAccess is FirFunctionCall &&
             callee is FirNamedFunction &&
-            callee.symbol.isEquals(session) &&
+            callee.isEquals(session) &&
             LanguageFeature.StrictEquals.isEnabled()
         ) {
             processDirectEqualsCall(flow, qualifiedAccess, callee)
@@ -1428,7 +1428,6 @@ abstract class FirDataFlowAnalyzer(
         if (LanguageFeature.StrictEquals.isDisabled()) return
         val callee = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return
         val symbol = callee.resolvedSymbol as? FirValueParameterSymbol ?: return
-        symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val boundType = symbol.equalityBoundType ?: return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         flow.addTypeStatement(variable typeEq boundType)

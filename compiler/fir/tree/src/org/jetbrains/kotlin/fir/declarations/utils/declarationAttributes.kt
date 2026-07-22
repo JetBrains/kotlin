@@ -247,4 +247,18 @@ val FirProperty.correspondingValueParameterFromPrimaryConstructor: FirValueParam
     }
 
 var FirValueParameter.equalityBoundType: ConeKotlinType? by FirDeclarationDataRegistry.data(EqualityBoundType)
-val FirValueParameterSymbol.equalityBoundType: ConeKotlinType? get() = fir.equalityBoundType
+val FirValueParameterSymbol.equalityBoundType: ConeKotlinType?
+    get() {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.equalityBoundType
+    }
+
+var FirNamedFunction.equalityBoundTypeOfParameter: ConeKotlinType?
+    get() = valueParameters.singleOrNull()?.equalityBoundType
+    set(value) {
+        valueParameters.singleOrNull()?.equalityBoundType = value
+    }
+
+val FirNamedFunctionSymbol.equalityBoundTypeOfParameter: ConeKotlinType?
+    get() = valueParameterSymbols.singleOrNull()?.equalityBoundType
+

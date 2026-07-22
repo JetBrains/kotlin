@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.util.*
@@ -152,27 +150,16 @@ class FirStatusResolver(
         }
 
         val overriddenFunctions = overriddenFunctions ?: getOverriddenFunctions(function, containingClass)
-        function.inheritEqualityBoundType(overriddenFunctions, session)
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals)
+            && function.isEquals(session)
+            && function.equalityBoundTypeOfParameter == null
+        ) {
+            function.setEqualityBoundTypeFromOverridden(overriddenFunctions, session)
+        }
 
         val statuses = overriddenFunctions.map { it.status as FirResolvedDeclarationStatus }
 
         return resolveStatus(function, status, containingClass, null, isLocal, statuses)
-    }
-
-    private fun FirNamedFunction.inheritEqualityBoundType(
-        overriddenFunctions: List<FirNamedFunction>,
-        session: FirSession,
-    ) {
-        if (LanguageFeature.StrictEquals.isDisabled() || name != OperatorNameConventions.EQUALS) return
-        val parameter = valueParameters.singleOrNull() ?: return
-        if (parameter.equalityBoundType != null) return
-
-        val inheritedBoundType = overriddenFunctions.mapNotNull { it.valueParameters.singleOrNull()?.equalityBoundType }.ifNotEmpty {
-            session.typeContext.intersectTypes(this)
-        }
-        if (inheritedBoundType != null) {
-            parameter.equalityBoundType = inheritedBoundType
-        }
     }
 
     fun resolveStatus(

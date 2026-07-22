@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
@@ -156,7 +158,7 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
                 require(bFir is FirNamedFunction) { "b is " + bFir.javaClass }
 
                 when (aFir.name) {
-                    OperatorNameConventions.EQUALS -> {
+                    OperatorNameConventions.EQUALS if session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals) -> {
                         when (val byEqualityBound = typeCheckerState.compareByEqualityBoundType(aFir, bFir)) {
                             null -> null
                             else -> merge(byEqualityBound >= 0, byEqualityBound <= 0, byVisibilityAndType)
@@ -189,8 +191,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
     }
 
     private fun TypeCheckerState.compareByEqualityBoundType(firA: FirNamedFunction, firB: FirNamedFunction): Int? {
-        val aBound = firA.valueParameters.singleOrNull()?.equalityBoundType
-        val bBound = firB.valueParameters.singleOrNull()?.equalityBoundType
+        val aBound = firA.equalityBoundTypeOfParameter
+        val bBound = firB.equalityBoundTypeOfParameter
         return when {
             aBound == null && bBound == null -> 0
             aBound == null -> -1

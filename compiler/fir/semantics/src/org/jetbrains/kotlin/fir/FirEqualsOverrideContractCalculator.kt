@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.fir.EqualsOverrideContract.*
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -186,7 +186,7 @@ class FirEqualsOverrideContractCalculator(
         ) { function ->
             // should only be a single such function
             if (function.isEquals(session)) {
-                function.valueParameterSymbols.singleOrNull()?.equalityBoundType?.let {
+                function.equalityBoundTypeOfParameter?.let {
                     result = it
                 }
             }

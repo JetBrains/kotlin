@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -363,13 +363,8 @@ class FirTypeIntersectionScopeContext(
             markAsOverride = true
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
-            if (newSymbol.isEquals(session)) {
-                val bounds = mostSpecific.filterIsInstance<FirNamedFunctionSymbol>()
-                    .mapNotNull { it.valueParameterSymbols.singleOrNull()?.equalityBoundType }
-                if (bounds.isNotEmpty()) {
-                    newSymbol.fir.valueParameters.singleOrNull()?.equalityBoundType =
-                        session.typeContext.intersectTypes(bounds)
-                }
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals)) {
+                setEqualityBoundTypeFromOverridden(mostSpecific, session)
             }
         }
         return newSymbol
