@@ -74,3 +74,5 @@ val generateJsParser by tasks.registering(JavaExec::class) {
             }
     }
 }
+
+registerInAggregateGenerateSources("generateJsParser")

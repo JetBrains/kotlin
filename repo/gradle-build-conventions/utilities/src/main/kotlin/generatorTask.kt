@@ -10,6 +10,15 @@ import org.gradle.kotlin.dsl.get
 import kotlin.properties.PropertyDelegateProvider
 import GeneratorInputKind.RuntimeClasspath
 import GeneratorInputKind.SourceSetJar
+import org.gradle.api.Task
+
+const val AGGREGATE_GENERATE_SOURCES_TASK_NAME = "aggregateGenerateSources"
+
+fun Project.registerInAggregateGenerateSources(taskName: String) {
+    getOrCreateTask<Task>(AGGREGATE_GENERATE_SOURCES_TASK_NAME) {
+        dependsOn(taskName)
+    }
+}
 
 enum class GeneratorInputKind {
     RuntimeClasspath,
@@ -20,9 +29,10 @@ fun Project.generator(
     fqName: String,
     sourceSet: SourceSet,
     inputKind: GeneratorInputKind = SourceSetJar,
+    registerInAggregateGenerateSources: Boolean = true,
     configure: JavaExec.() -> Unit = {}
 ): PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> = PropertyDelegateProvider { _, property ->
-    generator(property.name, fqName, sourceSet, inputKind, configure)
+    generator(property.name, fqName, sourceSet, inputKind, registerInAggregateGenerateSources, configure)
 }
 
 fun Project.generator(
@@ -30,6 +40,7 @@ fun Project.generator(
     fqName: String,
     sourceSet: SourceSet,
     inputKind: GeneratorInputKind,
+    registerInAggregateGenerateSources: Boolean = true,
     configure: JavaExec.() -> Unit = {}
 ): TaskProvider<JavaExec> = smartJavaExec(
     name = taskName,
@@ -41,10 +52,12 @@ fun Project.generator(
     workingDir = rootDir
     systemProperty("line.separator", "\n")
     systemProperty("idea.ignore.disabled.plugins", "true")
-    if (kotlinBuildProperties.isTeamcityBuild.get()) {
-        systemProperty("teamcity", "true")
-    }
+    systemProperty("teamcity", kotlinBuildProperties.isTeamcityBuild.get())
     configure()
+}.also {
+    if (registerInAggregateGenerateSources) {
+        registerInAggregateGenerateSources(taskName)
+    }
 }
 
 /**
@@ -56,7 +69,7 @@ fun Project.generator(
  *   It's recommended to use [SourceSetJar], as it provides more narrow scope.
  * @param mainClass is the FQN of the main class to be executed.
  */
-fun Project.smartJavaExec(
+private fun Project.smartJavaExec(
     name: String,
     sourceSet: SourceSet,
     mainClass: String,

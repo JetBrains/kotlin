@@ -20,4 +20,4 @@ sourceSets {
 
 optInToK1Deprecation()
 
-generatedConfigurationKeys("WasmConfigurationKeys")
+generatedConfigurationKeys("WasmConfigurationKeys", dependOnTaskOutput = true)

@@ -24,3 +24,5 @@ protobuf {
         }
     }
 }
+
+registerInAggregateGenerateSources("generateProto")

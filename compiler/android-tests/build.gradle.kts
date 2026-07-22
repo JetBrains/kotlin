@@ -119,5 +119,6 @@ val generateAndroidTests by generator(
     "org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator",
     testSourceSet,
     inputKind = GeneratorInputKind.RuntimeClasspath,
+    registerInAggregateGenerateSources = false,
 ) {
 }

@@ -217,6 +217,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         taskName: String = "generateTests",
         doNotSetFixturesSourceSetDependency: Boolean = false,
         generateTestsInBuildDirectory: Boolean = false,
+        excludeFromAggregateGeneratorTask: Boolean = false,
         skipCollectDataTask: Boolean = false,
         configureTestDataCollection: CollectTestDataTask.() -> Unit = {},
         configure: JavaExec.() -> Unit = {},
@@ -234,6 +235,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             taskName = taskName,
             fqName = fqName,
             sourceSet = fixturesSourceSet ?: project.testSourceSet,
+            registerInAggregateGenerateSources = !generateTestsInBuildDirectory && !excludeFromAggregateGeneratorTask,
             inputKind = when (doNotSetFixturesSourceSetDependency) {
                 true -> GeneratorInputKind.RuntimeClasspath
                 false -> GeneratorInputKind.SourceSetJar
