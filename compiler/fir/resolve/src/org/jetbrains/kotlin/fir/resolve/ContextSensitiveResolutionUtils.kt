@@ -116,6 +116,7 @@ private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =
         is ConeAmbiguityError -> candidates.all {
             it.applicability == CandidateApplicability.HIDDEN || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR
         }
+        is ConeInapplicableWrongReceiver -> true
         else -> false
     }
 
