@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -19,8 +18,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal abstract class SwcPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
-        MultiplePluginDeclarationDetector.detect(project)
-
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.extensions.createSwcEnvSpec()
