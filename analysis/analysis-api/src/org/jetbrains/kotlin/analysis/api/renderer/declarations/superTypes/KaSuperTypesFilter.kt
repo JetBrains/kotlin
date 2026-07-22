@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 @KaSpi
@@ -26,11 +27,11 @@ public fun interface KaSuperTypesFilter {
                     return false
                 }
 
-                if (symbol.classKind == KaClassKind.ANNOTATION_CLASS && superType.isClassType(StandardClassIds.Annotation)) {
+                if (symbol.classKind == KaClassKind.ANNOTATION_CLASS && superType.classId == StandardClassIds.Annotation) {
                     return false
                 }
 
-                if (symbol.classKind == KaClassKind.ENUM_CLASS && superType.isClassType(StandardClassIds.Enum)) {
+                if (symbol.classKind == KaClassKind.ENUM_CLASS && superType.classId == StandardClassIds.Enum) {
                     return false
                 }
 

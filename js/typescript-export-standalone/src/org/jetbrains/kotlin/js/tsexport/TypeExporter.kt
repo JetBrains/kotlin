@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.isClassType
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -108,13 +107,13 @@ internal class TypeExporter(
         if (type.isNothingType)
             return Primitive.Nothing
         type.arrayElementType?.let {
-            return if (type.isClassType(StandardClassIds.Array)) {
+            return if (type.classId == StandardClassIds.Array) {
                 Array(exportType(it))
             } else {
                 exportSpecializedArrayWithElementType(it)
             }
         }
-        if (type.isClassType(StandardClassIds.Throwable))
+        if (type.classId == StandardClassIds.Throwable)
             return Primitive.Throwable
         if (type is KaFunctionType && !type.isKFunctionType && !type.isKSuspendFunctionType) {
             return if (type.isSuspend && !config.exportableSuspendLambdas) {

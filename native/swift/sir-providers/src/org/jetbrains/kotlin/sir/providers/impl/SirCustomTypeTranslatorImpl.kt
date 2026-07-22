@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.isClassType
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.BYTE
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.INT
@@ -47,7 +46,7 @@ public class SirCustomTypeTranslatorImpl(
                     swiftType = SirNominalType(SirSwiftModule.string)
                     AsObjCBridged(swiftType, CType.NSString).wrapper()
                 }
-                isClassType(StandardClassIds.List) -> {
+                classId == StandardClassIds.List -> {
                     val swiftArgumentType = typeArguments.single().sirType(ctx)
                     if (!swiftArgumentType.isBridgeableCollectionElement()) return null
                     swiftType = SirArrayType(
@@ -56,7 +55,7 @@ public class SirCustomTypeTranslatorImpl(
                     AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
                 }
 
-                isClassType(StandardClassIds.Set) -> {
+                classId == StandardClassIds.Set -> {
                     val swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
                     if (swiftArgumentType.containsExistential()) return null
                     if (!swiftArgumentType.isBridgeableCollectionElement()) return null
@@ -67,7 +66,7 @@ public class SirCustomTypeTranslatorImpl(
                     AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
                 }
 
-                isClassType(StandardClassIds.Map) -> {
+                classId == StandardClassIds.Map -> {
                     val swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
                     if (swiftKeyType.containsExistential()) return null
                     val swiftValueType = typeArguments.last().sirType(ctx)
@@ -80,11 +79,11 @@ public class SirCustomTypeTranslatorImpl(
                     ).wrapper()
                 }
 
-                isClassType(ClassId.topLevel(openEndRangeFqName)) || isClassType(ClassId.topLevel(closedRangeFqName)) -> {
+                classId == ClassId.topLevel(openEndRangeFqName) || classId == ClassId.topLevel(closedRangeFqName) -> {
                     val argumentType = typeArguments.single()
                     if (argumentType is KaTypeArgumentWithVariance && !argumentType.type.isNumber) return null
                     val swiftArgumentType = argumentType.sirType(ctx)
-                    val inclusive = !isClassType(ClassId.topLevel(openEndRangeFqName))
+                    val inclusive = classId != ClassId.topLevel(openEndRangeFqName)
                     swiftType = SirNominalType(
                         typeDeclaration = if (inclusive) SirSwiftModule.closedRange else SirSwiftModule.range,
                         typeArguments = listOf(swiftArgumentType)
@@ -97,7 +96,7 @@ public class SirCustomTypeTranslatorImpl(
                     ).wrapper()
                 }
 
-                isClassType(StandardClassIds.IntRange) -> {
+                classId == StandardClassIds.IntRange -> {
                     val swiftArgumentType = SirNominalType(SirSwiftModule.int32)
                     swiftType = SirNominalType(
                         SirSwiftModule.closedRange,
@@ -111,7 +110,7 @@ public class SirCustomTypeTranslatorImpl(
                     ).wrapper()
                 }
 
-                isClassType(StandardClassIds.LongRange) -> {
+                classId == StandardClassIds.LongRange -> {
                     val swiftArgumentType = SirNominalType(SirSwiftModule.int64)
                     swiftType = SirNominalType(
                         SirSwiftModule.closedRange,

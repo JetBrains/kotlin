@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.*
@@ -109,9 +110,9 @@ private fun KaSession.bridgeType(
         type.isUShortType -> ObjCValueType.UNSIGNED_SHORT
         type.isUIntType -> ObjCValueType.UNSIGNED_INT
         type.isULongType -> ObjCValueType.UNSIGNED_LONG_LONG
-        type.isClassType(KonanPrimitiveType.VECTOR128.classId) && !type.isMarkedNullable ->
+        type.classId == KonanPrimitiveType.VECTOR128.classId && !type.isMarkedNullable ->
             ObjCValueType.VECTOR_FLOAT_128
-        type.isClassType(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
+        type.classId == KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId -> ObjCValueType.POINTER
         else -> null
     }
 
