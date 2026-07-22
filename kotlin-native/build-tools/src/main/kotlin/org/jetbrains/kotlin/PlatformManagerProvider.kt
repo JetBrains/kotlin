@@ -51,7 +51,19 @@ open class PlatformManagerProvider @Inject constructor(
         }.getOrDefault(false)
         if (isNativeProtoDistribution) {
             // For proto distribution, we must patch the llvm distribution.
-            project.llvmDistributionSource.asProperties
+            val llvmOverride = project.llvmDistributionSource.asProperties
+            // With whole-Xcode provisioning on, put build-tools' own PlatformManager into ProvisionedXcode mode so the
+            // runtime clang/linker resolve the toolchain and sysroot from the provisioned Xcode via
+            // AppleConfigurablesImpl.absoluteTargetSysRoot.
+            //
+            // Only the distribution being built understands the flag: it is the one whose konan.properties carries
+            // xcodeVersion/xcodeBuild. A released distribution — notably the native bootstrap that libclangInterop's
+            // genInteropStubs runs against — has no such keys and would fail resolving them.
+            if (project.isWholeXcodeProvisioningEnabled()) {
+                llvmOverride + ("useProvisionedXcode" to "true")
+            } else {
+                llvmOverride
+            }
         } else {
             // For any other distribution, we shouldn't change anything.
             emptyMap()
