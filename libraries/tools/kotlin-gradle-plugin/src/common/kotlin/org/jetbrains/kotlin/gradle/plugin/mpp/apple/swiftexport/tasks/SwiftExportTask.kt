@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -45,6 +46,15 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @get:Nested
     abstract val mainModuleInput: ModuleInput
+
+    @get:Input
+    @get:Optional
+    abstract val cinteropModuleName: Property<String>
+
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val cinteropModuleArtifact: RegularFileProperty
 
     @get:Nested
     abstract val kotlinNativeProvider: Property<KotlinNativeProvider>
@@ -84,6 +94,14 @@ internal abstract class SwiftExportTask @Inject constructor(
                         mainModuleInput.artifact.getFile()
                     )
                 )
+                if (cinteropModuleName.isPresent) {
+                    add(
+                        createTransitiveSwiftExportedModule(
+                            cinteropModuleName.get(),
+                            cinteropModuleArtifact.getFile()
+                        )
+                    )
+                }
             }
         }
 

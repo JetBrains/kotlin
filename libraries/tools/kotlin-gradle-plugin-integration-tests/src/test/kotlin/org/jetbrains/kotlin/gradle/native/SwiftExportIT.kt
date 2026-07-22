@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.apple.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.apple.createLocalSwiftPackage
+import org.jetbrains.kotlin.gradle.apple.describeSwiftPackage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -30,6 +32,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
@@ -937,6 +940,166 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = envVars,
             ) {
                 assertNoDiagnostic(KotlinToolingDiagnostics.SwiftPMLinkagePackageNotIntegratedInXcodeProject)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: a SwiftPM-import cinterop klib is reexported through Swift Export")
+    @GradleTest
+    fun testSwiftPMImportCinteropIsReexportedThroughSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package via xcodebuild.
+        project("emptyxcode", gradleVersion) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    // Expose the imported package's Objective-C type in the exported API. This forces Swift Export
+                    // to reexport the `LocalSwiftPackage` module and emit `import LocalSwiftPackage`, which only
+                    // resolves if the generated SPM package depends on the SwiftPM-import synthetic package.
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package producer
+                            import swiftPMImport.shared.LocalHelper
+                            fun roundTrip(helper: LocalHelper): LocalHelper = helper
+                        """.trimIndent()
+                    )
+
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            // The synthetic linkage package must be integrated into the Xcode project (and PROJECT_FILE_PATH set)
+            // for embedSwiftExportForXcode's integration check to pass, mirroring the sibling swiftPMImport tests.
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+
+            // The template's script phase drives the framework embed task; this project uses Swift Export.
+            val pbxproj = iosAppXcodeProj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            val derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData")
+            buildXcodeProject(
+                xcodeproj = iosAppXcodeProj,
+                action = XcodeBuildAction.Build,
+                destination = "generic/platform=iOS Simulator",
+                buildSettingOverrides = mapOf(
+                    "ARCHS" to "arm64",
+                ),
+                derivedDataPath = derivedDataPath,
+            )
+
+            // The generated package declares the resolved synthetic package as a real SPM dependency. Its identity is
+            // the directory name, which under fingerprint coordination is a hash, so assert on the dependency kind and
+            // on the umbrella product the Swift Export target consumes instead.
+            val generatedPackage = describeSwiftPackage(projectPath.resolve("build/SPMPackage/iosSimulatorArm64/debug"))
+            assertEquals(
+                listOf("fileSystem"),
+                generatedPackage.dependencies.map { it.type },
+                "the generated package should depend on the synthetic package by path"
+            )
+            assertContains(
+                generatedPackage.targets.flatMap { it.productDependencies },
+                SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                "a target should consume the synthetic package's umbrella product"
+            )
+
+            // The imported package's object files must not be packed into the Swift Export library: the consuming
+            // app builds the imported packages itself, so packing them here would duplicate their symbols.
+            val packageLibrary = projectPath.resolve("build/SPMBuild/iosSimulatorArm64/debug/dd-a-files/libSharedLibrary.a")
+            assertFileExists(packageLibrary)
+            val archivedObjects = runProcess(listOf("ar", "-t", packageLibrary.absolutePathString()), projectPath.toFile()).output
+            assertTrue(
+                archivedObjects.lines().none { it.contains(targetName) },
+                "Expected no $targetName object files in the Swift Export library, got:\n$archivedObjects"
+            )
+
+            // The copy step delivered the exported module's interfaces into the app's BUILT_PRODUCTS_DIR.
+            // (The imported package's products also live there — built by the app itself through the
+            // integrated linkage package, not stomped by the copy step, which filters to own modules.)
+            val builtProductsDir = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator")
+            assertDirectoryExists(builtProductsDir.resolve("Shared.swiftmodule"))
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: Swift Export without swiftPMDependencies emits no cinterop package dependency")
+    @GradleTest
+    fun testSwiftExportWithoutSwiftPMImportHasNoCinteropDependency(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            package producer
+                            fun greeting(): String = "Hello"
+                        """.trimIndent()
+                    )
+
+                    with(swiftExport) {
+                        configure {
+                            freeCompilerArgs.add("-Xpartial-linkage-loglevel=error")
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                // No Swift package imported => the manifest must stay free of any package dependency, confirming the
+                // cinterop reexport wiring only engages for SwiftPM-import klibs.
+                val generatedPackage = describeSwiftPackage(projectPath.resolve("build/SPMPackage/iosArm64/debug"))
+                assertEquals(
+                    emptyList(),
+                    generatedPackage.dependencies,
+                    "Expected no SPM package dependency without swiftPMDependencies"
+                )
             }
         }
     }

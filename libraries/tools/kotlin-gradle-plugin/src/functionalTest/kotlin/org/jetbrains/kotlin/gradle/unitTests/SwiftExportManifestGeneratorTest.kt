@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CinteropPackageImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SPMManifestGenerator
 import kotlin.test.Test
 import java.io.File
@@ -88,6 +89,25 @@ class SwiftExportManifestGeneratorTest {
         val expectedManifest = singleModuleManifestGold()
 
         assertEquals(expectedManifest, manifest)
+    }
+
+    @Test
+    fun `test swift export SPM manifest with reexported cinterop package dependency`() {
+        val swiftApiModule = "Shared"
+
+        val manifest = SPMManifestGenerator.generateManifest(
+            swiftApiModule,
+            "SharedLibrary",
+            "KotlinRuntime",
+            sharedModulesFixture(swiftApiModule),
+            CinteropPackageImport(
+                path = "/repo/build/kotlin/swiftImport",
+                productName = "KotlinMultiplatformLinkedPackage",
+                packageIdentity = "swiftImport",
+            )
+        )
+
+        assertEquals(cinteropDependencyManifestGold(), manifest)
     }
 
     private fun sharedModulesFixture(swiftApiModule: String): List<GradleSwiftExportModule> = listOf(
@@ -247,6 +267,40 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "SingleModule",
                     dependencies: ["KotlinRuntime"]
+                ),
+                .target(
+                    name: "KotlinRuntime"
+                )
+            ]
+        )
+    """.trimIndent() + "\n"
+
+    private fun cinteropDependencyManifestGold() = """
+        // swift-tools-version: 5.9
+
+        import PackageDescription
+        let package = Package(
+            name: "Shared",
+            products: [
+                .library(
+                    name: "SharedLibrary",
+                    targets: ["Shared", "Dependency"]
+                )
+            ],
+            dependencies: [
+                .package(path: "/repo/build/kotlin/swiftImport")
+            ],
+            targets: [
+                .target(
+                    name: "Shared",
+                    dependencies: ["Dependency", "SharedBridge", "KotlinRuntime", .product(name: "KotlinMultiplatformLinkedPackage", package: "swiftImport")]
+                ),
+                .target(
+                    name: "SharedBridge"
+                ),
+                .target(
+                    name: "Dependency",
+                    dependencies: ["KotlinRuntime", .product(name: "KotlinMultiplatformLinkedPackage", package: "swiftImport")]
                 ),
                 .target(
                     name: "KotlinRuntime"

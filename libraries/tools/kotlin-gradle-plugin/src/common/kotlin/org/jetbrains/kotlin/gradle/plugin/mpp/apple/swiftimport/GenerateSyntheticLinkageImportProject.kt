@@ -491,6 +491,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
 
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
+
+        const val SWIFT_PM_IMPORT_CINTEROP_NAME = "swiftPMImport"
         const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
