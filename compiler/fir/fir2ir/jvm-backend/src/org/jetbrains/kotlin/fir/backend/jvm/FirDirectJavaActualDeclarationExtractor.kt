@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrClassifierStorage
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.getJavaClassLikeSymbolByClassId
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -22,25 +23,25 @@ import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.name.CallableId
 
 class FirDirectJavaActualDeclarationExtractor private constructor(
-    private val javaSymbolProvider: JavaSymbolProvider,
+    private val session: FirSession,
     private val classifierStorage: Fir2IrClassifierStorage,
 ) : IrExtraActualDeclarationExtractor() {
 
     companion object {
         fun initializeIfNeeded(platformComponents: Fir2IrComponents): FirDirectJavaActualDeclarationExtractor? {
-            val javaSymbolProvider = platformComponents.session.javaSymbolProvider
-            if (javaSymbolProvider != null &&
-                platformComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
-                platformComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.DirectJavaActualization)
+            val session = platformComponents.session
+            if (session.javaSymbolProvider != null &&
+                session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
+                session.languageVersionSettings.supportsFeature(LanguageFeature.DirectJavaActualization)
             ) {
-                return FirDirectJavaActualDeclarationExtractor(javaSymbolProvider, platformComponents.classifierStorage)
+                return FirDirectJavaActualDeclarationExtractor(session, platformComponents.classifierStorage)
             }
             return null
         }
     }
 
     override fun extract(expectIrClass: IrClass): IrClassSymbol? {
-        val javaActualDeclaration = javaSymbolProvider.getClassLikeSymbolByClassId(expectIrClass.classIdOrFail)
+        val javaActualDeclaration = session.getJavaClassLikeSymbolByClassId(expectIrClass.classIdOrFail)
             ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
         if (javaActualDeclaration != null) {
             return classifierStorage.getIrClassSymbol(javaActualDeclaration)
