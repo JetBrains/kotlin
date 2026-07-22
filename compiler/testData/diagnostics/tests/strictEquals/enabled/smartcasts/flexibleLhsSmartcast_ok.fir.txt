@@ -1,0 +1,68 @@
+FILE: main.kt
+    package q
+
+    public open class Regular : R|kotlin/Any| {
+        public constructor(): R|q/Regular| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=q/Regular] @R|kotlin/EqualityBound|(bound = <getClass>(Q|q/Regular|) [evaluated = <getClass>(Q|q/Regular|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final fun R|q/Regular?|.methodOnNullable(): R|kotlin/Unit| {
+        ^methodOnNullable Q|kotlin/Unit|
+    }
+    public final fun R|q/Regular|.methodOnNotNull(): R|kotlin/Unit| {
+        ^methodOnNotNull Q|kotlin/Unit|
+    }
+    public final fun <T> id(t: R|T|): R|T| {
+        ^id R|<local>/t|
+    }
+    public final fun useSite_1(b: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a: R|q/Regular!| = Q|q/Utils|.R|q/Utils.makeFlexible*s|<R|q/Regular!|>(R|q/Regular.Regular|())
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|q/methodOnNullable|()
+                R|<local>/b|?.{ $subj$.R|q/methodOnNotNull|() }
+                lvar c: R|q/Regular?| = R|q/id|<R|q/Regular?|>(R|<local>/b|)
+                R|<local>/c| = Null(null)
+            }
+        }
+
+    }
+    public final fun <T : R|q/Regular|> useSite_2(a: R|T|, b: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a1: R|T!| = Q|q/Utils|.R|q/Utils.makeFlexible*s|<R|T!|>(R|<local>/a|)
+        when () {
+            ==(R|<local>/a1|, R|<local>/b|) ->  {
+                R|<local>/b|.R|q/methodOnNullable|()
+                R|<local>/b|?.{ $subj$.R|q/methodOnNotNull|() }
+                lvar c: R|q/Regular?| = R|q/id|<R|q/Regular?|>(R|<local>/b|)
+                R|<local>/c| = Null(null)
+            }
+        }
+
+    }
+    public final fun <T : R|q/Regular?|> useSite_3(a: R|T|, b: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a1: R|T!| = Q|q/Utils|.R|q/Utils.makeFlexible*s|<R|T!|>(R|<local>/a|)
+        when () {
+            ==(R|<local>/a1|, R|<local>/b|) ->  {
+                R|<local>/b|.R|q/methodOnNullable|()
+                R|<local>/b|?.{ $subj$.R|q/methodOnNotNull|() }
+                lvar c: R|q/Regular?| = R|q/id|<R|q/Regular?|>(R|<local>/b|)
+                R|<local>/c| = Null(null)
+            }
+        }
+
+    }
+    public final fun useSite_4(b: R|kotlin/Any|): R|kotlin/Unit| {
+        lval a: R|q/Regular!| = Q|q/Utils|.R|q/Utils.makeFlexible*s|<R|q/Regular!|>(R|q/Regular.Regular|())
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|q/methodOnNullable|()
+                R|<local>/b|.R|q/methodOnNotNull|()
+            }
+        }
+
+    }
