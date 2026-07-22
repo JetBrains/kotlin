@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
@@ -14,11 +15,14 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
@@ -59,6 +63,18 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                 val newCalleeReference = newExpression.calleeReference
                 val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
                 if (shouldTake) {
+                    if (newExpression.extensionReceiver === additionalQualifier) {
+                        // By KEEP, we have to filter here properties with extension receiver
+                        // Only properties extending the static and companion object scopes of the contextual types are included
+                        val newResolvedSymbol = newCalleeReference.symbol as? FirPropertySymbol
+                        val receiverOfNewResolvedSymbol =
+                            (newResolvedSymbol?.receiverParameterSymbol?.resolvedType?.toSymbol() as? FirRegularClassSymbol)?.let {
+                                if (it.isCompanion) it.getContainingClassSymbol() as? FirRegularClassSymbol else it
+                            }
+                        if (receiverOfNewResolvedSymbol !== representativeClass) {
+                            return null
+                        }
+                    }
                     newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
                 }
                 shouldTake
