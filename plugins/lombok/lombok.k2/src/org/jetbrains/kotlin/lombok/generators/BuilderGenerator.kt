@@ -35,7 +35,12 @@ import org.jetbrains.kotlin.name.Name
 class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(session) {
     companion object {
         private val PREDICATE = DeclarationPredicate.create {
-            annotated(listOf(LombokNames.BUILDER))
+            annotated(
+                listOf(
+                    LombokNames.BUILDER,
+                    LombokNames.SINGULAR,
+                )
+            )
         }
     }
 
@@ -99,7 +104,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = {
-                    BuilderGeneratorKey(BuilderDeclarationType.Build)
+                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build)
                 }
             )
         }

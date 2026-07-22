@@ -5,20 +5,31 @@
 
 package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.lombok.generators.BuilderDeclarationType
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Fills the bodies with the builder members previously generated (as bare signatures) by
@@ -37,12 +48,31 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         declaration: IrSimpleFunction,
     ) {
         val regularParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
-        when (key.type) {
-            BuilderDeclarationType.Setter -> buildSetter(declaration, regularParameters.single())
-            BuilderDeclarationType.Build -> buildBuildMethod(declaration)
-            BuilderDeclarationType.Builder -> buildBuilderFactory(declaration)
-            BuilderDeclarationType.ToBuilder -> buildToBuilder(declaration)
-            else -> {}
+        val builderFunctionType = key.type as? BuilderDeclarationType.Function ?: return
+        when (builderFunctionType) {
+            BuilderDeclarationType.Function.Setter -> buildSetter(declaration, regularParameters.single())
+            BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration)
+            BuilderDeclarationType.Function.Builder -> buildBuilderFactory(declaration)
+            BuilderDeclarationType.Function.ToBuilder -> buildToBuilder(declaration)
+            is BuilderDeclarationType.SingularFunction -> {
+                val fieldName = builderFunctionType.fieldName
+                when (builderFunctionType) {
+                    is BuilderDeclarationType.SingularFunction.AddSingle -> buildSingularAddSingle(
+                        fieldName,
+                        declaration,
+                        regularParameters
+                    )
+                    is BuilderDeclarationType.SingularFunction.AddAll -> buildSingularAddAll(
+                        fieldName,
+                        declaration,
+                        regularParameters.single()
+                    )
+                    is BuilderDeclarationType.SingularFunction.Clear -> buildSingularClear(
+                        fieldName,
+                        declaration
+                    )
+                }
+            }
         }
     }
 
@@ -61,12 +91,17 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val thisParameter = declaration.dispatchReceiverParameter!!
         val entityClass = declaration.returnType.classOrNull!!.owner
         val constructor = entityClass.builderConstructor()
+        val singularFieldNames = builderClass.singularFieldNames()
 
         val constructorCall = irConstruct(declaration, constructor)
         constructor.parameters.forEachIndexed { index, parameter ->
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
             val field = builderClass.findBuilderField(parameter.name) ?: return@forEachIndexed
-            constructorCall.arguments[index] = irGetField(irGet(thisParameter), field)
+            constructorCall.arguments[index] = if (parameter.name in singularFieldNames) {
+                buildSingularResult(field, parameter, thisParameter)
+            } else {
+                irGetField(irGet(thisParameter), field)
+            }
         }
 
         +irReturn(constructorCall)
@@ -83,17 +118,20 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val entityClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
         val builderClass = declaration.returnType.classOrNull!!.owner
+        val singularFieldNames = builderClass.singularFieldNames()
 
         val builder = irTemporary(irConstruct(declaration, builderClass.builderConstructor()), nameHint = "builder")
         val fields = builderClass.declarations.mapNotNull { (it as? IrProperty)?.backingField }
         for (field in fields) {
             val property = entityClass.findDeclaration<IrProperty> { it.name == field.name } ?: continue
             val getter = property.getter ?: continue
-            +irSetField(
-                irGet(builder),
-                field,
-                irCall(getter.symbol).apply { arguments[0] = irGet(thisParameter) },
-            )
+            val entityValue = irCall(getter.symbol).apply { arguments[0] = irGet(thisParameter) }
+            val newValue = if (field.name in singularFieldNames) {
+                copySingularValue(field, entityValue)
+            } else {
+                entityValue
+            }
+            +irSetField(irGet(builder), field, newValue)
         }
 
         +irReturn(irGet(builder))
@@ -105,6 +143,287 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             val field = (declaration as? IrProperty)?.backingField
             field?.takeIf { it.name == name }
         }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrClass.singularFieldNames(): Set<Name> =
+        declarations.asSequence()
+            .filterIsInstance<IrSimpleFunction>()
+            .mapNotNull { (it.origin as? GeneratedByPlugin)?.pluginKey as? BuilderGeneratorKey }
+            .map { it.type }
+            .filterIsInstance<BuilderDeclarationType.SingularFunction>()
+            .map { it.fieldName }
+            .toSet()
+
+    // -------------------------------- @Singular support --------------------------------
+    //
+    // A `@Singular` builder field holds a nullable, lazily-initialized *mutable* backing collection
+    // (`null` == "not yet created"); `item()`/`items()` mutate it in place and `clear...()` reuses it.
+    // `build()` always produces a non-null, genuinely immutable result (matching Lombok's own
+    // size-based 0/1/else switch); `toBuilder()` never aliases the entity's own collection.
+
+    private enum class SingularKind { COLLECTION, SET, ITERABLE, MAP }
+
+    private class SingularCollectionInfo(val kind: SingularKind, val typeArguments: List<IrType>)
+
+    /** `item(e)` (or `item(k, v)` for maps) — mutates the (lazily-created) backing collection in place. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildSingularAddSingle(
+        fieldName: Name,
+        declaration: IrSimpleFunction,
+        parameters: List<IrValueParameter>,
+    ) {
+        val builderClass = declaration.parent as IrClass
+        val thisParameter = declaration.dispatchReceiverParameter!!
+        val field = builderClass.findBuilderField(fieldName) ?: return
+        val info = singularCollectionInfo(field.type) ?: return
+        val builtIns = pluginContext.irBuiltIns
+        val backing = irImplicitCast(irGetField(irGet(thisParameter), field), field.type.makeNotNull())
+
+        +ensureInitialized(thisParameter, field, info)
+        +if (info.kind == SingularKind.MAP) {
+            irCall(
+                builtIns.mutableMapClass.owner.getSimpleFunction("put")!!,
+                info.typeArguments[1].makeNullable(),
+                typeArgumentsCount = 0
+            ).apply {
+                arguments[0] = backing
+                arguments[1] = irGet(parameters[0])
+                arguments[2] = irGet(parameters[1])
+            }
+        } else {
+            irCallOp(
+                builtIns.mutableCollectionClass.owner.getSimpleFunction("add")!!,
+                builtIns.booleanType,
+                backing,
+                irGet(parameters.single())
+            )
+        }
+        +irReturn(irGet(thisParameter))
+    }
+
+    /** `items(collection)` — mutates the (lazily-created) backing collection in place; a `null` argument is ignored. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildSingularAddAll(
+        fieldName: Name,
+        declaration: IrSimpleFunction,
+        parameter: IrValueParameter,
+    ) {
+        val builderClass = declaration.parent as IrClass
+        val thisParameter = declaration.dispatchReceiverParameter!!
+        val field = builderClass.findBuilderField(fieldName) ?: return
+        val info = singularCollectionInfo(field.type) ?: return
+        val builtIns = pluginContext.irBuiltIns
+
+        // When the parameter is nullable (a nullable field type or `@Singular(ignoreNullCollections = true)`),
+        // a `null` collection must be silently ignored — matching Lombok's `ignoreNullCollections` semantics.
+        val nullable = parameter.type.isNullable()
+        val argument = if (nullable) irImplicitCast(irGet(parameter), parameter.type.makeNotNull()) else irGet(parameter)
+        val backing = irImplicitCast(irGetField(irGet(thisParameter), field), field.type.makeNotNull())
+        val addAllCall = if (info.kind == SingularKind.MAP) {
+            irCallOp(builtIns.mutableMapClass.owner.getSimpleFunction("putAll")!!, builtIns.unitType, backing, argument)
+        } else {
+            irCallOp(builtIns.mutableCollectionClass.owner.getSimpleFunction("addAll")!!, builtIns.booleanType, backing, argument)
+        }
+        val mutate = irComposite(resultType = builtIns.unitType) {
+            +ensureInitialized(thisParameter, field, info)
+            +addAllCall
+        }
+
+        if (nullable) {
+            +irIfThen(builtIns.unitType, irNotEquals(irGet(parameter), irNull()), mutate)
+        } else {
+            +mutate
+        }
+        +irReturn(irGet(thisParameter))
+    }
+
+    /** `clearItems()` — reuses the existing backing collection in place; a never-created field stays `null`. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildSingularClear(fieldName: Name, declaration: IrSimpleFunction) {
+        val builderClass = declaration.parent as IrClass
+        val thisParameter = declaration.dispatchReceiverParameter!!
+        val field = builderClass.findBuilderField(fieldName) ?: return
+        val info = singularCollectionInfo(field.type) ?: return
+        val builtIns = pluginContext.irBuiltIns
+        val clearSymbol = if (info.kind == SingularKind.MAP) builtIns.mutableMapClass.owner.getSimpleFunction("clear")!!
+        else builtIns.mutableCollectionClass.owner.getSimpleFunction("clear")!!
+
+        val tmp = irTemporary(irGetField(irGet(thisParameter), field))
+        +irIfThen(
+            builtIns.unitType,
+            irNotEquals(irGet(tmp), irNull()),
+            irCallOp(clearSymbol, builtIns.unitType, irImplicitCast(irGet(tmp), field.type.makeNotNull())),
+        )
+        +irReturn(irGet(thisParameter))
+    }
+
+    /** Lazily creates the backing collection the first time a field is mutated; a no-op once it exists. */
+    private fun IrBlockBodyBuilder.ensureInitialized(
+        thisParameter: IrValueParameter,
+        field: IrField,
+        info: SingularCollectionInfo,
+    ): IrStatement =
+        irIfThen(
+            pluginContext.irBuiltIns.unitType,
+            irEqualsNull(irGetField(irGet(thisParameter), field)),
+            irSetField(irGet(thisParameter), field, newMutableBacking(info)),
+        )
+
+    private fun IrBlockBodyBuilder.singularCollectionInfo(type: IrType): SingularCollectionInfo? {
+        val simpleType = type as? IrSimpleType ?: return null
+        val classifier = simpleType.classifier as? IrClassSymbol ?: return null
+        val typeArguments = simpleType.arguments.map { it.typeOrNull ?: return null }
+        val builtIns = pluginContext.irBuiltIns
+        val kind = when (classifier) {
+            builtIns.mapClass, builtIns.mutableMapClass -> SingularKind.MAP
+            builtIns.setClass, builtIns.mutableSetClass -> SingularKind.SET
+            builtIns.iterableClass, builtIns.mutableIterableClass -> SingularKind.ITERABLE
+            builtIns.listClass, builtIns.mutableListClass, builtIns.collectionClass, builtIns.mutableCollectionClass ->
+                SingularKind.COLLECTION
+            else -> return null
+        }
+        return SingularCollectionInfo(kind, typeArguments)
+    }
+
+    private fun IrBlockBodyBuilder.emptyCollection(info: SingularCollectionInfo): IrExpression {
+        val name = when (info.kind) {
+            SingularKind.MAP -> "emptyMap"
+            SingularKind.SET -> "emptySet"
+            else -> "emptyList"
+        }
+        val symbol = pluginContext
+            .finderForBuiltins()
+            .findFunctions(CallableId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(name)))
+            .first()
+        return irCallWithSubstitutedType(symbol, info.typeArguments)
+    }
+
+    /**
+     * `build()`'s per-field result: a size-based 3-way switch matching Lombok's own bytecode —
+     * `0 -> canonical empty`, `1 -> canonical singleton` (List/Set only), `else -> defensive copy
+     * wrapped unmodifiable`. Always non-null even though the field itself may never be initialized.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildSingularResult(
+        field: IrField,
+        parameter: IrValueParameter,
+        thisParameter: IrValueParameter,
+    ): IrExpression {
+        val info = singularCollectionInfo(field.type) ?: return irGetField(irGet(thisParameter), field)
+        val builtIns = pluginContext.irBuiltIns
+        val resultType = parameter.type.makeNotNull()
+
+        val fieldTmp = irTemporary(irGetField(irGet(thisParameter), field), nameHint = "singular")
+        fun nonNullField() = irImplicitCast(irGet(fieldTmp), field.type.makeNotNull())
+
+        val sizeGetter = if (info.kind == SingularKind.MAP) builtIns.mapClass.owner.getPropertyGetter("size")!!
+        else builtIns.collectionClass.owner.getPropertyGetter("size")!!
+        val sizeTmp = irTemporary(
+            irIfNull(builtIns.intType, irGet(fieldTmp), irInt(0), irCallOp(sizeGetter, builtIns.intType, nonNullField())),
+            nameHint = "size",
+        )
+
+        val branches = mutableListOf<IrBranch>(irBranch(irEquals(irGet(sizeTmp), irInt(0)), emptyCollection(info)))
+        if (info.kind != SingularKind.MAP) {
+            branches += irBranch(irEquals(irGet(sizeTmp), irInt(1)), singleElementCollection(info, nonNullField()))
+        }
+        branches += irElseBranch(unmodifiableDefensiveCopy(info, field.file, nonNullField()))
+
+        return irWhen(resultType, branches)
+    }
+
+    /** `listOf(element)` / `setOf(element)`, `element` being the collection's sole entry. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.singleElementCollection(info: SingularCollectionInfo, source: IrExpression): IrExpression {
+        val builtIns = pluginContext.irBuiltIns
+        val elementType = info.typeArguments.single()
+        val iterator = irCallOp(
+            builtIns.iterableClass.owner.getSimpleFunction("iterator")!!,
+            builtIns.iteratorClass.typeWith(elementType),
+            source,
+        )
+        val element = irCallOp(builtIns.iteratorClass.owner.getSimpleFunction("next")!!, elementType, iterator)
+        val name = if (info.kind == SingularKind.SET) "setOf" else "listOf"
+        val symbol = pluginContext
+            .finderForBuiltins()
+            .findFunctions(CallableId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(name)))
+            .first { function ->
+                val regular = function.owner.parameters.filter { it.kind == IrParameterKind.Regular }
+                regular.size == 1 && regular.single().varargElementType == null
+            }
+        return irCallWithSubstitutedType(symbol, info.typeArguments).apply { arguments[0] = element }
+    }
+
+    /** A fresh mutable copy of [source], wrapped unmodifiable (falls back to the plain copy if the JDK wrapper can't be resolved). */
+    private fun IrBlockBodyBuilder.unmodifiableDefensiveCopy(
+        info: SingularCollectionInfo,
+        file: IrFile,
+        source: IrExpression,
+    ): IrExpression =
+        unmodifiableWrap(info, file, freshMutableCopy(info, source))
+
+    /** A fresh `ArrayList`/`LinkedHashSet`/`LinkedHashMap` filled via `addAll`/`putAll` from [source]. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.freshMutableCopy(info: SingularCollectionInfo, source: IrExpression): IrExpression {
+        val builtIns = pluginContext.irBuiltIns
+        val backing = newMutableBacking(info)
+        return irBlock(resultType = backing.type) {
+            val copy = irTemporary(backing)
+            val addAllCall = if (info.kind == SingularKind.MAP) {
+                irCallOp(builtIns.mutableMapClass.owner.getSimpleFunction("putAll")!!, builtIns.unitType, irGet(copy), source)
+            } else {
+                irCallOp(builtIns.mutableCollectionClass.owner.getSimpleFunction("addAll")!!, builtIns.booleanType, irGet(copy), source)
+            }
+            +addAllCall
+            +irGet(copy)
+        }
+    }
+
+    /** `java.util.Collections.unmodifiableList/Set/Map(mutableCopy)`; returns [mutableCopy] unchanged if unresolved. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.unmodifiableWrap(info: SingularCollectionInfo, file: IrFile, mutableCopy: IrExpression): IrExpression {
+        val name = when (info.kind) {
+            SingularKind.MAP -> "unmodifiableMap"
+            SingularKind.SET -> "unmodifiableSet"
+            SingularKind.COLLECTION, SingularKind.ITERABLE -> "unmodifiableList"
+        }
+        val collectionsClass = ClassId(FqName("java.util"), Name.identifier("Collections"))
+        val symbol = pluginContext.finderForSource(file).findClass(collectionsClass)?.owner?.getSimpleFunction(name)
+            ?: return mutableCopy
+        return irCallWithSubstitutedType(symbol, info.typeArguments).apply { arguments[0] = mutableCopy }
+    }
+
+    /** A fresh, empty `ArrayList<T>`/`LinkedHashSet<T>`/`LinkedHashMap<K, V>` matching [info]'s shape. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.newMutableBacking(info: SingularCollectionInfo): IrExpression {
+        val name = when (info.kind) {
+            SingularKind.MAP -> "LinkedHashMap"
+            SingularKind.SET -> "LinkedHashSet"
+            SingularKind.COLLECTION, SingularKind.ITERABLE -> "ArrayList"
+        }
+        val classSymbol = pluginContext
+            .finderForBuiltins()
+            .findClass(ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(name)))!!
+        val constructor = classSymbol.owner.constructors.first { it.parameters.none { p -> p.kind == IrParameterKind.Regular } }
+        return irCallConstructor(constructor.symbol, info.typeArguments).apply { type = classSymbol.typeWith(info.typeArguments) }
+    }
+
+    /**
+     * `toBuilder()`'s per-singular-field value: a fresh mutable copy of the entity's own (immutable)
+     * collection, never an alias of it — or `null` if the entity's value is itself `null`.
+     */
+    private fun IrBlockBodyBuilder.copySingularValue(field: IrField, entityValue: IrExpression): IrExpression {
+        val info = singularCollectionInfo(field.type) ?: return entityValue
+        if (!entityValue.type.isNullable()) {
+            return freshMutableCopy(info, entityValue)
+        }
+        val tmp = irTemporary(entityValue)
+        val nonNullSource = irImplicitCast(irGet(tmp), entityValue.type.makeNotNull())
+        return irIfNull(field.type, irGet(tmp), irNull(), freshMutableCopy(info, nonNullSource))
+    }
+
+    private val IrBlockBodyBuilder.pluginContext: IrPluginContext
+        get() = context as IrPluginContext
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.builderConstructor(): IrConstructor =
