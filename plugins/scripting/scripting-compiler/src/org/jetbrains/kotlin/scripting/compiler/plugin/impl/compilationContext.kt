@@ -79,7 +79,7 @@ fun createIsolatedCompilationContext(
     )
 }
 
-internal fun createCompilationContextFromEnvironment(
+fun createCompilationContextFromEnvironment(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment,
     messageCollector: ScriptDiagnosticsMessageCollector
