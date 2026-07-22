@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -204,6 +204,7 @@ internal annotation class WasmOp(val name: String) {
         const val BR_TABLE = "BR_TABLE"
         const val RETURN = "RETURN"
         const val CALL = "CALL"
+        const val CALL_PURE = "CALL_PURE"
         const val CALL_INDIRECT = "CALL_INDIRECT"
         const val TRY = "TRY"
         const val CATCH = "CATCH"
@@ -255,8 +256,19 @@ internal annotation class WasmOp(val name: String) {
         const val BR_ON_CAST_FAIL = "BR_ON_CAST_FAIL"
         const val EXTERN_INTERNALIZE = "EXTERN_INTERNALIZE"
         const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
+        const val CONT_NEW = "CONT_NEW"
+        const val CONT_BIND = "CONT_BIND"
+        const val SUSPEND = "SUSPEND"
+        const val RESUME = "RESUME"
+        const val RESUME_THROW = "RESUME_THROW"
+        const val RESUME_THROW_REF = "RESUME_THROW_REF"
+        const val SWITCH = "SWITCH"
+        const val TRY_TABLE = "TRY_TABLE"
+        const val THROW_REF = "THROW_REF"
         const val PSEUDO_COMMENT_PREVIOUS_INSTR = "PSEUDO_COMMENT_PREVIOUS_INSTR"
         const val PSEUDO_COMMENT_GROUP_START = "PSEUDO_COMMENT_GROUP_START"
         const val PSEUDO_COMMENT_GROUP_END = "PSEUDO_COMMENT_GROUP_END"
+        const val PSEUDO_ANNOTATION_BRANCH_HINT = "PSEUDO_ANNOTATION_BRANCH_HINT"
+        const val PSEUDO_ANNOTATION_TRACE_INST = "PSEUDO_ANNOTATION_TRACE_INST"
     }
 }

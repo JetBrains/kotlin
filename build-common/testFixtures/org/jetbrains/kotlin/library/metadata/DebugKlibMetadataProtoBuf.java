@@ -59,6 +59,7 @@ public final class DebugKlibMetadataProtoBuf {
      *
      * <pre>
      *Possible values are listed in KlibMetadataHeaderFlags class.
+     *Flags are also stored in the manifest.
      * </pre>
      */
     boolean hasFlags();
@@ -67,6 +68,7 @@ public final class DebugKlibMetadataProtoBuf {
      *
      * <pre>
      *Possible values are listed in KlibMetadataHeaderFlags class.
+     *Flags are also stored in the manifest.
      * </pre>
      */
     int getFlags();
@@ -285,6 +287,7 @@ public final class DebugKlibMetadataProtoBuf {
      *
      * <pre>
      *Possible values are listed in KlibMetadataHeaderFlags class.
+     *Flags are also stored in the manifest.
      * </pre>
      */
     public boolean hasFlags() {
@@ -295,6 +298,7 @@ public final class DebugKlibMetadataProtoBuf {
      *
      * <pre>
      *Possible values are listed in KlibMetadataHeaderFlags class.
+     *Flags are also stored in the manifest.
      * </pre>
      */
     public int getFlags() {
@@ -757,6 +761,7 @@ public final class DebugKlibMetadataProtoBuf {
        *
        * <pre>
        *Possible values are listed in KlibMetadataHeaderFlags class.
+       *Flags are also stored in the manifest.
        * </pre>
        */
       public boolean hasFlags() {
@@ -767,6 +772,7 @@ public final class DebugKlibMetadataProtoBuf {
        *
        * <pre>
        *Possible values are listed in KlibMetadataHeaderFlags class.
+       *Flags are also stored in the manifest.
        * </pre>
        */
       public int getFlags() {
@@ -777,6 +783,7 @@ public final class DebugKlibMetadataProtoBuf {
        *
        * <pre>
        *Possible values are listed in KlibMetadataHeaderFlags class.
+       *Flags are also stored in the manifest.
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -790,6 +797,7 @@ public final class DebugKlibMetadataProtoBuf {
        *
        * <pre>
        *Possible values are listed in KlibMetadataHeaderFlags class.
+       *Flags are also stored in the manifest.
        * </pre>
        */
       public Builder clearFlags() {
