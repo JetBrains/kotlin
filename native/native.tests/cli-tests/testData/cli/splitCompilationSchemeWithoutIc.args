@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/splitCompilationScheme.kt
+-o
+$TEMP_DIR$/splitCompilationSchemeWithoutIc
+-g
+-Xcompilation-scheme=split

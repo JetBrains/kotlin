@@ -1,0 +1,2 @@
+error: split compilation requires incremental compilation. Please pass '-Xenable-incremental-compilation' and '-Xic-cache-dir=<directory>'.
+COMPILATION_ERROR

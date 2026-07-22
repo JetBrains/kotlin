@@ -1,0 +1,2 @@
+error: split compilation only supports '-produce program' and '-produce framework'. Got: 'dynamic'.
+COMPILATION_ERROR

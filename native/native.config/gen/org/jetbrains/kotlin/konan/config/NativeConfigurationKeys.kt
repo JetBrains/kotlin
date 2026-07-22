@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.konan.config
  */
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.CompilationScheme
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -70,6 +71,10 @@ object NativeConfigurationKeys {
     // Path to a file where the list of all cache archives produced by this build should be written.
     @JvmField
     val DUMP_BUILT_CACHES_TO = CompilerConfigurationKey.create<String>("DUMP_BUILT_CACHES_TO")
+
+    // Compilation scheme used by the compiler, 'split-host' is used to have hot-reload enabled binaries.
+    @JvmField
+    val COMPILATION_SCHEME = CompilerConfigurationKey.create<CompilationScheme>("COMPILATION_SCHEME")
 
     // Mapping from library paths to cache paths.
     @JvmField
@@ -335,6 +340,10 @@ var CompilerConfiguration.incrementalCacheDir: String?
 var CompilerConfiguration.dumpBuiltCachesTo: String?
     get() = get(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO)
     set(value) { put(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.compilationScheme: CompilationScheme?
+    get() = get(NativeConfigurationKeys.COMPILATION_SCHEME)
+    set(value) { put(NativeConfigurationKeys.COMPILATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.cachedLibraries: Map<String, String>
     get() = getMap(NativeConfigurationKeys.CACHED_LIBRARIES)
