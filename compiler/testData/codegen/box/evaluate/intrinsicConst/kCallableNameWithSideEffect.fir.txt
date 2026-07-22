@@ -3,18 +3,18 @@ FILE: kCallableNameWithSideEffect.kt
         ^id this@R|/id|
     }
     public final fun someSideEffect(value: R|kotlin/Any?|): R|() -> kotlin/Unit| {
-        ^someSideEffect [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^someSideEffect fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 
     }
     public final class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+        public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
         public final val a: R|kotlin/String| = String()
-            public [ContainingClassKey=A] get(): R|kotlin/String|
+            public get(): R|kotlin/String|
 
         public final fun b(): R|kotlin/String| {
             ^b String()

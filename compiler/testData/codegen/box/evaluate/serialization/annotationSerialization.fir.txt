@@ -1,29 +1,29 @@
 Module: lib
 FILE: lib.kt
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPEALIAS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class BinaryAnnotation : R|kotlin/Annotation| {
-        public [ContainingClassKey=BinaryAnnotation] constructor([CorrespondingProperty=/BinaryAnnotation.str] str: R|kotlin/String|): R|BinaryAnnotation| {
+        public constructor(str: R|kotlin/String|): R|BinaryAnnotation| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ContainingClassKey=BinaryAnnotation] get(): R|kotlin/String|
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
 
     }
     @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final class A : R|kotlin/Any| {
-        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.i] i: R|kotlin/Int|): R|A| {
+        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public constructor(i: R|kotlin/Int|): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ContainingClassKey=A] get(): R|kotlin/Int|
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
 
-        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public [ContainingClassKey=A] constructor(): R|A| {
+        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public constructor(): R|A| {
             this<R|A|>(Int(0))
         }
 
     }
     @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final annotation class Anno : R|kotlin/Annotation| {
-        public [ContainingClassKey=Anno] constructor(): R|Anno| {
+        public constructor(): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -33,25 +33,25 @@ FILE: lib.kt
     @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final val prop: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
     public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
-        private [ContainingClassKey=SomeEnum] constructor(): R|SomeEnum| {
+        private constructor(): R|SomeEnum| {
             super<R|kotlin/Enum<SomeEnum>|>()
         }
 
-        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final static [ContainingClassKey=SomeEnum] enum entry A: R|SomeEnum| = object : R|SomeEnum| {
-            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final static enum entry A: R|SomeEnum| = object : R|SomeEnum| {
+            private constructor(): R|<anonymous>| {
                 super<R|SomeEnum|>()
             }
 
         }
 
-        public final static [ContainingClassKey=SomeEnum] enum entry B: R|SomeEnum|
-        public final static [ContainingClassKey=SomeEnum] fun values(): R|kotlin/Array<SomeEnum>| {
+        public final static enum entry B: R|SomeEnum|
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
         }
 
-        public final static [ContainingClassKey=SomeEnum] fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
-        public final static [ContainingClassKey=SomeEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
             public static get(): R|kotlin/enums/EnumEntries<SomeEnum>|
 
     }
@@ -59,7 +59,7 @@ FILE: lib.kt
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
     public final object Delegate : R|kotlin/Any| {
-        private [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+        private constructor(): R|Delegate| {
             super<R|kotlin/Any|>()
         }
 
@@ -84,22 +84,22 @@ FILE: lib.kt
             ^ Int(0)
         }
     public final class WithConstructorArgumentAnnotation : R|kotlin/Any| {
-        public [ContainingClassKey=WithConstructorArgumentAnnotation] constructor([CorrespondingProperty=/WithConstructorArgumentAnnotation.a] @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) a: R|kotlin/Int|): R|WithConstructorArgumentAnnotation| {
+        public constructor(@R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) a: R|kotlin/Int|): R|WithConstructorArgumentAnnotation| {
             super<R|kotlin/Any|>()
         }
 
-        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-            public [ContainingClassKey=WithConstructorArgumentAnnotation] get(): R|kotlin/Int|
+        @R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
 
     }
-    public final [IsReferredViaField=true] var setParamProp: R|kotlin/Int| = Int(0)
+    public final var setParamProp: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int| {
             ^ F|/setParamProp|.R|kotlin/Int.plus|(Int(1))
         }
         public set(@SETTER_PARAMETER:R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) x: R|kotlin/Int|): R|kotlin/Unit| {
             F|/setParamProp| = R|<local>/x|.R|kotlin/Int.times|(Int(2))
         }
-    public final [IsReferredViaField=true] var mutablePropWithAnnotationOnSetterParam: R|kotlin/Int| = Int(0)
+    public final var mutablePropWithAnnotationOnSetterParam: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
         public set(@R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) x: R|kotlin/Int|): R|kotlin/Unit| {
             F|/mutablePropWithAnnotationOnSetterParam| = R|<local>/x|.R|kotlin/Int.times|(Int(2))

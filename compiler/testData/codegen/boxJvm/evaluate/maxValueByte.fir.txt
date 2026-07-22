@@ -1,24 +1,24 @@
 FILE: maxValueByte.kt
     @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
-        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.p1] p1: R|kotlin/Int|, [CorrespondingProperty=/Ann.p2] p2: R|kotlin/Byte|, [CorrespondingProperty=/Ann.p4] p4: R|kotlin/Int|, [CorrespondingProperty=/Ann.p5] p5: R|kotlin/Int|): R|Ann| {
+        public constructor(p1: R|kotlin/Int|, p2: R|kotlin/Byte|, p4: R|kotlin/Int|, p5: R|kotlin/Int|): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val p1: R|kotlin/Int| = R|<local>/p1|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+        public final val p1: R|kotlin/Int| = R|<local>/p1|
+            public get(): R|kotlin/Int|
 
-        public final [IsFromPrimaryConstructor=true] val p2: R|kotlin/Byte| = R|<local>/p2|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Byte|
+        public final val p2: R|kotlin/Byte| = R|<local>/p2|
+            public get(): R|kotlin/Byte|
 
-        public final [IsFromPrimaryConstructor=true] val p4: R|kotlin/Int| = R|<local>/p4|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+        public final val p4: R|kotlin/Int| = R|<local>/p4|
+            public get(): R|kotlin/Int|
 
-        public final [IsFromPrimaryConstructor=true] val p5: R|kotlin/Int| = R|<local>/p5|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+        public final val p5: R|kotlin/Int| = R|<local>/p5|
+            public get(): R|kotlin/Int|
 
     }
     @R|Ann|(p1 = Q|java/lang/Byte|.R|java/lang/Byte.MAX_VALUE*s|.R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(128)], p2 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Byte(2)], p4 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p5 = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(2)]) public final class MyClass : R|kotlin/Any| {
-        public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+        public constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 

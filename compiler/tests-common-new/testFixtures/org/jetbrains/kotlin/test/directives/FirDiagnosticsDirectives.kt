@@ -136,9 +136,9 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         """
     )
 
-    val RENDER_FIR_DECLARATION_ATTRIBUTES by directive(
+    val RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES by stringDirective(
         description = """
-            Prints declaration attributes to dumps in load compiled kotlin tests
+            Renders specified attributes to `.fir.txt` dumps
         """
     )
 

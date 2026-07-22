@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
@@ -60,12 +60,18 @@ class FirDumpHandler(
             val allFiles = collectFilesForRendering(module, info, part)
             part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
+            val declarationRenderer = if (RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES in module.directives) {
+                FirDeclarationRendererWithSpecificAttributes(module.directives[RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES].toSet())
+            } else {
+                FirDeclarationRenderer()
+            }
+
             val renderer = FirRenderer(
                 builder = builderForModule,
                 packageDirectiveRenderer = FirPackageDirectiveRenderer(),
                 classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session),
                 referencedSymbolRenderer = FirSymbolRendererWithStaticFlag(),
-                declarationRenderer = if (RENDER_FIR_DECLARATION_ATTRIBUTES in module.directives) FirDeclarationRendererWithFilteredAttributes() else FirDeclarationRenderer(),
+                declarationRenderer = declarationRenderer,
             )
             allFiles.forEach {
                 renderer.renderElementAsString(it)

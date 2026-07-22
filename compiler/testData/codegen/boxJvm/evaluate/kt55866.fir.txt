@@ -5,7 +5,7 @@ FILE: kt55866.kt
     private final const [EvaluatedValue=String(Tagged)] val TAG: R|kotlin/String| = String(Tagged)
         private get(): R|kotlin/String|
     public final class ConstParamFiller : R|kotlin/Any| {
-        public [ContainingClassKey=ConstParamFiller] constructor(): R|root/ConstParamFiller| {
+        public constructor(): R|root/ConstParamFiller| {
             super<R|kotlin/Any|>()
         }
 

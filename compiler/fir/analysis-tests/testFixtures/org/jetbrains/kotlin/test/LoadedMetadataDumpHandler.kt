@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRenderer
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithSpecificAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -48,6 +49,8 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
@@ -209,9 +212,11 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         ).single().session
 
         val packageFqName = FqName("test")
-        val printAttributes = FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES in module.directives
+        val printedAttributes = runIf(RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES in module.directives) {
+            module.directives[RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES].ifNotEmpty { toSet() }
+        }
         dumper.builderForModule(module)
-            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName), printAttributes))
+            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName), printedAttributes))
     }
 
     protected abstract val targetPlatform: TargetPlatform
@@ -333,14 +338,14 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
     }
 
-    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>, printAttributes: Boolean): String {
+    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>, printedAttributes: Set<String>?): String {
         val provider = session.symbolProvider
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(
             builder,
-            declarationRenderer = if (printAttributes) {
-                FirDeclarationRendererWithFilteredAttributes()
+            declarationRenderer = if (printedAttributes != null) {
+                FirDeclarationRendererWithSpecificAttributes(printedAttributes)
             } else {
                 FirDeclarationRenderer()
             }

@@ -1,16 +1,16 @@
 Module: lib
 FILE: lib.kt
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class TypeAnnotation : R|kotlin/Annotation| {
-        public [ContainingClassKey=TypeAnnotation] constructor([CorrespondingProperty=/TypeAnnotation.str] str: R|kotlin/String|): R|TypeAnnotation| {
+        public constructor(str: R|kotlin/String|): R|TypeAnnotation| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ContainingClassKey=TypeAnnotation] get(): R|kotlin/String|
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
 
     }
     public open class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor(): R|A| {
+        public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -18,7 +18,7 @@ FILE: lib.kt
     public abstract interface B : R|kotlin/Any| {
     }
     public final class C : R|@R|TypeAnnotation|(str = <strcat>(String(AClass), String(Anno)) [evaluated = String(AClassAnno)])  A|, R|@R|TypeAnnotation|(str = <strcat>(String(BInterface), String(Anno)) [evaluated = String(BInterfaceAnno)])  B| {
-        public [ContainingClassKey=C] constructor(): R|C| {
+        public constructor(): R|C| {
             super<R|@R|TypeAnnotation|(str = <strcat>(String(AClass), String(Anno)) [evaluated = String(AClassAnno)])  A|>()
         }
 
@@ -51,7 +51,7 @@ FILE: lib.kt
     }
     public final fun withAnonymousObject(): R|kotlin/Unit| {
         object : R|kotlin/Any| {
-            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -63,12 +63,12 @@ FILE: lib.kt
 
     }
     public final class Outer : R|kotlin/Any| {
-        public [ContainingClassKey=Outer] constructor(): R|Outer| {
+        public constructor(): R|Outer| {
             super<R|kotlin/Any|>()
         }
 
         public final inner class Inner : R|kotlin/Any| {
-            public [ContainingClassKey=Inner] Outer.constructor(): R|Outer.Inner| {
+            public Outer.constructor(): R|Outer.Inner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -83,7 +83,7 @@ FILE: lib.kt
         R|<local>/action|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Any|>|(Int(0), String())
     }
     public final fun lambda(): R|kotlin/Unit| {
-        R|/functionWithLambda|(<L> = [MatchingParameterFunctionTypeKey=(kotlin/Int, kotlin/String) -> kotlin/Any] functionWithLambda@fun <anonymous>(integer: R|@R|TypeAnnotation|(str = <strcat>(String(InsideLambdaInt), String(Anno)) [evaluated = String(InsideLambdaIntAnno)])  kotlin/Int|, string: R|kotlin/String|): R|kotlin/Any| <inline=NoInline>  {
+        R|/functionWithLambda|(<L> = functionWithLambda@fun <anonymous>(integer: R|@R|TypeAnnotation|(str = <strcat>(String(InsideLambdaInt), String(Anno)) [evaluated = String(InsideLambdaIntAnno)])  kotlin/Int|, string: R|kotlin/String|): R|kotlin/Any| <inline=NoInline>  {
             lval a: R|@R|TypeAnnotation|(str = <strcat>(String(InsideLambda), String(Anno)) [evaluated = String(InsideLambdaAnno)])  kotlin/Int| = Int(0)
             ^ R|<local>/a|
         }

@@ -2,16 +2,16 @@ FILE: char.kt
     package test
 
     @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
-        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=test/Ann.c1] c1: R|kotlin/Int|): R|test/Ann| {
+        public constructor(c1: R|kotlin/Int|): R|test/Ann| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val c1: R|kotlin/Int| = R|<local>/c1|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+        public final val c1: R|kotlin/Int| = R|<local>/c1|
+            public get(): R|kotlin/Int|
 
     }
     @R|test/Ann|(c1 = Char(a).R|kotlin/Char.minus|(Char(a)) [evaluated = Int(0)]) public final class MyClass : R|kotlin/Any| {
-        public [ContainingClassKey=MyClass] constructor(): R|test/MyClass| {
+        public constructor(): R|test/MyClass| {
             super<R|kotlin/Any|>()
         }
 

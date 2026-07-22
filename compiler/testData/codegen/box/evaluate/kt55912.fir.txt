@@ -1,15 +1,15 @@
 FILE: kt55912.kt
     public final annotation class Entity : R|kotlin/Annotation| {
-        public [ContainingClassKey=Entity] constructor([CorrespondingProperty=/Entity.foreignKeys] foreignKeys: R|kotlin/Array<kotlin/String>|): R|Entity| {
+        public constructor(foreignKeys: R|kotlin/Array<kotlin/String>|): R|Entity| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val foreignKeys: R|kotlin/Array<kotlin/String>| = R|<local>/foreignKeys|
-            public [ContainingClassKey=Entity] get(): R|kotlin/Array<kotlin/String>|
+        public final val foreignKeys: R|kotlin/Array<kotlin/String>| = R|<local>/foreignKeys|
+            public get(): R|kotlin/Array<kotlin/String>|
 
     }
     @R|Entity|(foreignKeys = <collectionLiteralCall>(String(id)) [evaluated = <collectionLiteralCall>(String(id))]) public final class Record : R|kotlin/Any| {
-        public [ContainingClassKey=Record] constructor(): R|Record| {
+        public constructor(): R|Record| {
             super<R|kotlin/Any|>()
         }
 
