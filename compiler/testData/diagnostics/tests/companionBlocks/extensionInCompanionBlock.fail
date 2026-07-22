@@ -1,6 +1,0 @@
-Caused by: java.lang.IllegalArgumentException: source must not be null
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:145)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:63)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:57)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCompanionExtensionChecker.check(FirCompanionExtensionChecker.kt:39)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCompanionExtensionChecker.check(FirCompanionExtensionChecker.kt:33)
