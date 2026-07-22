@@ -83,6 +83,9 @@ internal class JsKlibCompilationOperationImpl private constructor(
         return JsHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
     }
 
+    override val outputPath: Path?
+        get() = destination
+
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {

@@ -83,6 +83,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         return WasmHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
     }
 
+    override val outputPath: Path?
+        get() = destination
+
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): WasmKlibCompilationOperationImpl {

@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
+import org.jetbrains.kotlin.buildtools.internal.capture.BtaEventCapture
+import org.jetbrains.kotlin.buildtools.internal.capture.CapturingKotlinLogger
+import org.jetbrains.kotlin.buildtools.internal.capture.EventContext
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
@@ -72,29 +75,48 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
+    /**
+     * The compiler output directory of this operation, used as a per-module key for opt-in event capture
+     * (see [BtaEventCapture]). Overridden by each platform operation to return its destination directory.
+     */
+    internal open val outputPath: Path?
+        get() = null
+
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
-        val kotlinLogger = logger ?: DefaultKotlinLogger
-        compilerArguments.reportRestrictedViolations(kotlinLogger)
-        if (compilerArguments.hasValidationErrors()) {
-            compilerArguments.reportValidationErrors(kotlinLogger)
-            return CompilationResult.COMPILATION_ERROR
+        val resolvedLogger = logger ?: DefaultKotlinLogger
+        val captureContext = if (BtaEventCapture.isEnabled) {
+            EventContext(buildId = projectId.toString(), modulePath = outputPath?.toString(), moduleName = null)
+        } else null
+        val kotlinLogger = if (captureContext != null) CapturingKotlinLogger(resolvedLogger, captureContext) else resolvedLogger
+        captureContext?.let {
+            resolvedLogger.lifecycle("[BTA-CAPTURE] start module=${it.modulePath} build=${it.buildId}")
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+        compilerArguments.reportRestrictedViolations(kotlinLogger)
+        val result = if (compilerArguments.hasValidationErrors()) {
+            compilerArguments.reportValidationErrors(kotlinLogger)
+            CompilationResult.COMPILATION_ERROR
+        } else {
+            val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
 
-        return when (executionPolicy) {
-            InProcessExecutionPolicyImpl -> {
-                compileInProcess(loggerAdapter)
-            }
-            is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(projectId, executionPolicy, loggerAdapter)
-            }
-            else -> {
-                CompilationResult.COMPILATION_ERROR.also {
-                    loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
+            when (executionPolicy) {
+                InProcessExecutionPolicyImpl -> {
+                    compileInProcess(loggerAdapter)
+                }
+                is DaemonExecutionPolicyImpl -> {
+                    compileWithDaemon(projectId, executionPolicy, loggerAdapter)
+                }
+                else -> {
+                    CompilationResult.COMPILATION_ERROR.also {
+                        loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
+                    }
                 }
             }
         }
+        captureContext?.let {
+            resolvedLogger.lifecycle("[BTA-CAPTURE] end module=${it.modulePath} build=${it.buildId} result=$result")
+        }
+        return result
     }
 
     abstract val targetPlatform: CompileService.TargetPlatform

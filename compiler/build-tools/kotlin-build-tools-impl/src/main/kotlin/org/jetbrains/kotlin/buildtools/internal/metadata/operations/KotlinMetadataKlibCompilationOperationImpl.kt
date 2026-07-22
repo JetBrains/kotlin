@@ -49,6 +49,9 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
+    override val outputPath: Path?
+        get() = destination
+
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl {

@@ -83,6 +83,9 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override val targetPlatform: CompileService.TargetPlatform = CompileService.TargetPlatform.JVM
 
+    override val outputPath: Path?
+        get() = destinationDirectory
+
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JvmCompilationOperationImpl {
