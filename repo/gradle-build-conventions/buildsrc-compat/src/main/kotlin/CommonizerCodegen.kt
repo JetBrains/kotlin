@@ -34,6 +34,27 @@ abstract class GenerateSupportSources : DefaultTask() {
         val output = outputDir.get().asFile
         output.deleteRecursively()
 
+        val immediateActualizations = mutableMapOf<String, MutableSet<String>>()
+
+        traverseRawSources(rawSourceDir.get().asFile) { file, _ ->
+            val contents = file.readText()
+
+            for (nextMatch in actualTypealiasPattern.findAll(contents)) {
+                val (_, name, expansion) = nextMatch.groupValues
+                immediateActualizations.getOrPut(name) { mutableSetOf() }.add(expansion)
+            }
+        }
+
+        fun String.leafExpansions(cache: MutableMap<String, Set<String>>): Set<String> =
+            cache.getOrPut(this) {
+                immediateActualizations[this]?.flatMapTo(mutableSetOf()) { it.leafExpansions(cache) }
+                    ?: setOf(this)
+            }
+
+        val leafActualizations = mutableMapOf<String, Set<String>>().apply {
+            immediateActualizations.keys.forEach { it.leafExpansions(this) }
+        }
+
         val similarToSearchIndex = substituteAllInclusions(buildClassToContentsMap(sourceTemplateDir.get().asFile))
         val classesThatNeedRange = mutableSetOf<String>()
         val classesThatNeedIterator = mutableSetOf<String>()
@@ -77,6 +98,13 @@ abstract class GenerateSupportSources : DefaultTask() {
                         if (name in classesThatNeedVar) it.plus("\n\n$varOfVariant\n\n$valueAccessor") else it
                     }
                     .replace("AnyNumber", name)
+                    .let { content ->
+                        val relevantActualizations = leafActualizations[name]
+                            ?.joinToString(", ") { "$it::class" }
+                            ?: error("No actualizations for $name")
+
+                        "@NumericClass($relevantActualizations)\n$content"
+                    }
                     .let { content ->
                         when {
                             prototypeReference != null -> "/**\n * Modeled after [$prototypeReference].\n */\n$content"

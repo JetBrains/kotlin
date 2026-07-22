@@ -29,6 +29,8 @@ object StandardClassIds {
     val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
     val BASE_TEXT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("text"))
 
+    val BASE_SUPPORT_PACKAGE = FqName("support")
+
     val builtInsPackagesWithDefaultNamedImport = setOf(
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
@@ -197,7 +199,6 @@ object StandardClassIds {
         val RequireKotlin = "RequireKotlin".internalId()
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
-        val NumericClass = "NumericClass".baseId()
 
         val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
 
@@ -261,6 +262,8 @@ object StandardClassIds {
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
 
         val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
+
+        val NumericClass = "NumericClass".supportId()
 
         val JvmBuiltin = "JvmBuiltin".internalId()
         val SuppressBytecodeGeneration = "SuppressBytecodeGeneration".internalId()
@@ -342,6 +345,8 @@ private fun String.enumsId() = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name
 private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
 private fun String.atomicsId() = ClassId(StandardClassIds.BASE_CONCURRENT_ATOMICS_PACKAGE, Name.identifier(this))
 private fun String.sequencesId() = ClassId(StandardClassIds.BASE_SEQUENCES_PACKAGE, Name.identifier(this))
+
+private fun String.supportId() = ClassId(StandardClassIds.BASE_SUPPORT_PACKAGE, Name.identifier(this))
 
 private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier(this))
 
