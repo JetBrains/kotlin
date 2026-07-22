@@ -65,8 +65,13 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                 if (shouldTake) {
                     if (newExpression.extensionReceiver === additionalQualifier) {
                         // By KEEP, we have to filter here properties with extension receiver
-                        // Only properties extending the static and companion object scopes of the contextual types are included
                         val newResolvedSymbol = newCalleeReference.symbol as? FirPropertySymbol
+                        // We shouldn't have declaration-site dispatch receiver matched with use-site resolved qualifier
+                        // (imported from object seems the only case here)
+                        if (newResolvedSymbol?.dispatchReceiverType != null && newExpression.dispatchReceiver is FirResolvedQualifier) {
+                            return null
+                        }
+                        // Only properties extending the static and companion object scopes of the contextual types are included
                         val receiverOfNewResolvedSymbol =
                             (newResolvedSymbol?.receiverParameterSymbol?.resolvedType?.toSymbol() as? FirRegularClassSymbol)?.let {
                                 if (it.isCompanion) it.getContainingClassSymbol() as? FirRegularClassSymbol else it
