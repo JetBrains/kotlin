@@ -208,7 +208,7 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         for (illegalSize in listOf(Int.MIN_VALUE, -1, 0)) {
             for (illegalStep in listOf(Int.MIN_VALUE, -1, 0)) {
                 assertFailsWith<IllegalArgumentException> { data.windowed(illegalSize, illegalStep) }.let { e ->
-                    assertEquals("Both size and step must be greater than zero (size = $illegalSize, step = $illegalStep).", e.message)
+                    assertEquals("Both size and step must be greater than zero (size = $illegalSize, step = $illegalStep)", e.message)
                 }
             }
         }
