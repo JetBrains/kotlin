@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseFunctionType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.analysis.api.types.builtinFunctionTypeFamilies as builtinFunctionTypeFamiliesEndpoint
@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.analysis.api.types.isUnitType as isUnitTypeEndpoint
  * which in turn reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider] proxy.
  *
  * Three members keep their original behavior here instead of routing through a new endpoint:
- *  - [isClassType] ([ClassId]) — intentionally left un-migrated (KT-68881);
  *  - `functionTypeKind` — the deprecated, hidden, reflection-accessed member, kept faithful to its original computation;
  *  - [canBeNull] — keeps its deprecated interface default (`= isNullable`).
  *
@@ -175,9 +174,12 @@ internal class KaTypeInformationProviderBridge(
     override val KaType.isNestedArray: Boolean
         get() = context(analysisSession) { isNestedArrayEndpoint }
 
-    override fun KaType.isClassType(classId: ClassId): Boolean = withValidityAssertion {
-        if (this !is KaClassType) return false
-        return this.classId == classId
+    @Deprecated(
+        "Use the 'classId' instead.",
+        replaceWith = ReplaceWith("this.classId == classId", "org.jetbrains.kotlin.analysis.api.types.classId")
+    )
+    override fun KaType.isClassType(classId: ClassId): Boolean = context(analysisSession) {
+        this.classId == classId
     }
 
     override val KaType.isPrimitive: Boolean
