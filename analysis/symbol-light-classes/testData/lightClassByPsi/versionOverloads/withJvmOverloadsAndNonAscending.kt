@@ -1,6 +1,5 @@
 // LIBRARY_PLATFORMS: JVM
 
-@file:OptIn(ExperimentalVersionOverloading::class)
 @file:Suppress("CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION")
 
 @JvmOverloads

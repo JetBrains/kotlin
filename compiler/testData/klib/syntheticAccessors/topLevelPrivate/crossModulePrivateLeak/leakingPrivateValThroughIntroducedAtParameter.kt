@@ -1,7 +1,5 @@
 // MODULE: lib
 // FILE: A.kt
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 private val ok = "OK"
 
 internal inline fun internalInlineFun(

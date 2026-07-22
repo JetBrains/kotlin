@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalVersionOverloading::class)
 @file:Suppress("NON_ASCENDING_VERSION_ANNOTATION")
 
 class SimpleClass {

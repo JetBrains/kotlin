@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.ExperimentalVersionOverloading::class)
-
 fun fooMiddleInsertFun(
     x: Int,
     @IntroducedAt("1") y: Int = 1,

@@ -6,8 +6,6 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 expect fun missingAnnotation(
     x: String = "O",
     @IntroducedAt("2") y: String = "foo",
@@ -20,8 +18,6 @@ expect fun annotationWithWrongNumber(
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 actual fun missingAnnotation(
     x: String,
