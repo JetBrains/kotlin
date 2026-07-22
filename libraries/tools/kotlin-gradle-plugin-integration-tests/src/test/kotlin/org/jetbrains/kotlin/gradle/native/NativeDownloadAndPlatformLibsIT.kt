@@ -124,6 +124,33 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Toolchain leaves a distribution installed by the legacy downloader alone (KT-86251)")
+    @GradleTest
+    fun testToolchainDoesNotReinstallOverLegacyInstallation(gradleVersion: GradleVersion) {
+        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+            val konanDataDir = workingDir.resolve(".konan")
+
+            // this path has to write 'provisioned.ok' as well, that is the marker the toolchain looks for
+            build("tasks", buildOptions = defaultBuildOptions.copy(konanDataDir = konanDataDir)) {
+                assertOutputContains("Unpack Kotlin/Native compiler to ")
+            }
+
+            // the toolchain has to leave that installation alone. Unpacking on top of it happens in place, so
+            // anything reading the distribution at the same time sees half-written files.
+            build(
+                "downloadKotlinNativeDistribution",
+                buildOptions = defaultBuildOptions.copy(
+                    konanDataDir = konanDataDir,
+                    freeArgs = listOf("-Pkotlin.native.toolchain.enabled=true"),
+                ),
+            ) {
+                assertTasksExecuted(":downloadKotlinNativeDistribution")
+                assertOutputDoesNotContain("Native bundle files will be overwritten")
+                assertOutputDoesNotContain("Moving Kotlin/Native bundle from")
+            }
+        }
+    }
+
     @DisplayName("K/N distribution with platform libraries generation")
     @GradleTest
     fun testLibrariesGeneration(gradleVersion: GradleVersion) {

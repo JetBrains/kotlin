@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -202,13 +203,17 @@ class NativeCompilerDownloader(
                     it.into(tmpDir)
                 }
                 val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                if (!compilerTmp.renameTo(compilerDirectory)) {
+                // never copy over an existing installation, that rewrites files other builds are reading (KT-86251)
+                if (!compilerTmp.renameTo(compilerDirectory) && !compilerDirectory.exists()) {
                     project.copy {
                         it.from(compilerTmp)
                         it.into(compilerDirectory)
                     }
                 }
                 logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+                // without the marker a toolchain build sharing this konan data dir unpacks the archive over the
+                // distribution again (KT-86251). Keep it the last thing written.
+                compilerDirectory.resolve(NativeVersionValueSource.MARKER_FILE).createNewFile()
             } finally {
                 tmpDir.deleteRecursively()
             }

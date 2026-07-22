@@ -65,15 +65,23 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeVersion: String,
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
+        val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
+        if (needToReinstall) {
+            logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
+        }
+
+        // every installer writes the marker last, so having it means the bundle is complete and there is nothing
+        // to do. Returning before the lock also keeps us out of a directory that other builds, including ones
+        // installing through NativeCompilerDownloader, may be reading right now (KT-86251).
+        if (!reinstallFlag && !needToReinstall && bundleDir.resolve(MARKER_FILE).exists()) {
+            logger.info("Kotlin/Native bundle is already installed at ${bundleDir.absolutePath}")
+            return
+        }
+
         val lock =
             KotlinInterprocessDirectoryLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
-            val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
-            if (needToReinstall) {
-                logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
-            }
-
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
             if (!bundleDir.resolve(MARKER_FILE).exists()) {
