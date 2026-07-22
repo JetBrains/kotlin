@@ -90,6 +90,15 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         return knownClassNamesInPackage.getValue(packageFqName)
     }
 
+    fun isInSourceIndex(classId: ClassId): Boolean = classFinder.isInSourceIndex(classId)
+
+    fun hasPackageInSources(fqName: FqName): Boolean = classFinder.hasPackageInSources(fqName)
+
+    fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? {
+        if (!classFinder.canComputeKnownClassNamesInPackage()) return null
+        return classFinder.sourceClassNamesInPackage(packageFqName)
+    }
+
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 
     /**

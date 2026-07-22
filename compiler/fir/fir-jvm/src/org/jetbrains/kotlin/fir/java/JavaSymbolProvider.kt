@@ -46,8 +46,9 @@ open class JavaSymbolProvider(
             symbol
         }
 
+    // Source-only: binary Java classes come from JvmClassFileBasedSymbolProvider.
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
+        if (javaFacade.isInSourceIndex(classId)) getClassLikeSymbolByClassId(classId, null) else null
 
     fun getClassLikeSymbolByClassId(classId: ClassId, javaClass: JavaClass?): FirRegularClassSymbol? =
         classCache.getValue(
@@ -67,14 +68,23 @@ open class JavaSymbolProvider(
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 
-    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackageInSources(fqName)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
-            javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
+            javaFacade.sourceClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
     }
 }
 
 val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+
+/**
+ * Looks up a Java class-like symbol by [classId], bypassing the composite symbol provider.
+ *
+ * Needed when a Kotlin declaration may share the same classId: `session.symbolProvider` returns the
+ * first match and would hide the Java side (e.g. redeclaration checks, direct Java actualization).
+ */
+fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
+    javaSymbolProvider?.getClassLikeSymbolByClassId(classId)

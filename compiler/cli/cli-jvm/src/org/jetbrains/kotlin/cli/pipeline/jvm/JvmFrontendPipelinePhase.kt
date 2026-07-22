@@ -45,11 +45,13 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.createJavaDirectBinaryClassFinderInputsBuilder
 import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -355,10 +357,19 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
+        val javaDirectBinaryClassFinderInputs: (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? =
+            if (configuration.useJavaDirect) createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)
+            else { _, _ -> null }
         val javaDirectFacade =
             if (configuration.useJavaDirect) {
-                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+                createJavaDirectSourceJavaFacadeBuilder(
+                    configuration,
+                    projectEnvironment,
+                    librariesScope,
+                    javaDirectBinaryClassFinderInputs,
+                )
             } else AbstractProjectEnvironment::getFirJavaFacade
+
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -420,6 +431,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration.languageVersionSettings,
                     context,
                     createJavaFacade = javaDirectFacade,
+                    createBinaryClassFinderInputs = javaDirectBinaryClassFinderInputs,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->

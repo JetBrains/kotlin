@@ -42,4 +42,15 @@ interface JavaClassFinder {
      * will always return `null`.
      */
     fun canComputeKnownClassNamesInPackage(): Boolean
+
+    // Source-only probes for JavaSymbolProvider; defaults match the combined APIs for single-side finders.
+
+    /** Whether [classId] may exist on the Java source side. Default true when there is no separate source index. */
+    fun isInSourceIndex(classId: ClassId): Boolean = true
+
+    /** Whether [fqName] is a package on the Java source side. */
+    fun hasPackageInSources(fqName: FqName): Boolean = findPackage(fqName, mayHaveAnnotations = false) != null
+
+    /** Top-level source Java class names in [packageFqName], or null if not computable. */
+    fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? = knownClassNamesInPackage(packageFqName)
 }
