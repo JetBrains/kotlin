@@ -129,8 +129,8 @@ public class SirTypeProviderImpl(
                 is KaFunctionType -> {
                     @OptIn(KaExperimentalApi::class)
                     SirFunctionalType(
-                        contextTypes = kaType.contextReceivers.map {
-                            it.type.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())).withEscapingIfNeeded()
+                        contextTypes = kaType.contextParameterTypes.map {
+                            it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())).withEscapingIfNeeded()
                         },
                         parameterTypes = listOfNotNull(
                             kaType.receiverType?.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip()))

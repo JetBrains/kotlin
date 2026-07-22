@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -347,8 +348,34 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val isReflectType: Boolean
 
     /**
+     * The types of the function type's context parameters.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * context(Foo, Bar) () -> Int
+     * ```
+     *
+     * The function type above has two context parameter types: `Foo` and `Bar`.
+     */
+    public abstract val contextParameterTypes: List<KaType>
+
+    /**
+     * Whether the function type has context parameters.
+     */
+    public abstract val hasContextParameters: Boolean
+
+    /**
+     * The context receivers of the function type.
+     */
+    @Deprecated("Context receivers in function types are deprecated. Use `contextParameterTypes` instead.")
+    @KaExperimentalApi
+    public abstract override val contextReceivers: List<KaContextReceiver>
+
+    /**
      * Whether the function type has context receiver parameters.
      */
+    @Deprecated("Use `hasContextParameters` instead.", ReplaceWith("hasContextParameters"))
     @KaExperimentalApi
     public abstract val hasContextReceivers: Boolean
 

@@ -70,8 +70,10 @@ public interface KaFunctionalTypeRenderer {
                         }
                     },
                     {
-                        if (type.hasContextReceivers) {
-                            typeRenderer.contextReceiversRenderer.renderContextReceivers(analysisSession, type, typeRenderer, printer)
+                        if (type.hasContextParameters) {
+                            printCollection(type.contextParameterTypes, prefix = "context(", postfix = ")") {
+                                typeRenderer.renderType(analysisSession, it, printer)
+                            }
                         }
                     },
                     {
