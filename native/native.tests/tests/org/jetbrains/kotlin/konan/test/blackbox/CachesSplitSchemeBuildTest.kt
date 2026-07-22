@@ -42,6 +42,7 @@ class CachesSplitSchemeBuildTest : AbstractNativeSimpleTest() {
     fun testSplitSchemeBuildsCaches() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val builtCachesDump = buildDir.resolve("built_caches_split.txt")
+        val icCacheDir = buildDir.resolve("ic_cache").also { it.mkdirs() }
 
         val main = compileToExecutableInOneStage(
             rootDir.resolve("main"),
@@ -50,6 +51,8 @@ class CachesSplitSchemeBuildTest : AbstractNativeSimpleTest() {
                 [
                     "-Xcompilation-scheme=split",
                     "-g",
+                    "-Xenable-incremental-compilation",
+                    "-Xic-cache-dir=${icCacheDir.absolutePath}",
                     "-Xdump-built-caches-to=${builtCachesDump.absolutePath}",
                 ]
             ),
