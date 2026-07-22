@@ -119,7 +119,7 @@ abstract class BaseNpmExtension internal constructor(
             val finalCommand = if (isWindows && customCommand == command) "$command.$windowsExtension" else customCommand
             return if (nodeJsEnvironmentValue.download)
                 nodeJsEnvironmentValue.nodeBinDir
-                    .resolve(finalCommand).absolutePath
+                    .resolve("npm-cli.js").absolutePath
             else
                 finalCommand
         }

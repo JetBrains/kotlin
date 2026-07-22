@@ -43,6 +43,12 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
             val nodeDirName = "node-v$versionValue-$name-$architecture"
             val nodeDir = installationDirectory.getFile().resolve(nodeDirName)
             val isWindows = platformValue.isWindows()
+            val nodeLibBinDir = if (isWindows) {
+                nodeDir.resolve("node_modules/npm/bin")
+            } else {
+                nodeDir.resolve("lib/node_modules/npm/bin")
+            }
+
             val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
             val downloadValue = download.get()
@@ -60,7 +66,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
             NodeJsEnv(
                 download = downloadValue,
                 dir = nodeDir,
-                nodeBinDir = nodeBinDir,
+                nodeBinDir = nodeLibBinDir,
                 executable = getExecutable("node", command.get(), "exe"),
                 platformName = name,
                 architectureName = architecture,

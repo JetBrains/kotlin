@@ -147,26 +147,19 @@ private fun TestProject.registerCustomNpmToolingInstallTask(
 
             val exec = project.serviceOf<ExecOperations>()
 
-            val toolExecutable = if (useYarn) {
-                nodejsExecutable
-            } else {
-                project.provider {
-                    project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
-                }
-            }
-
             val installArgs = if (useYarn) {
                 project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { listOf(it) }
             } else {
+                val npmCli = project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
                 project.provider {
-                    listOf("install", "--ignore-scripts")
+                    listOf(npmCli, "install", "--ignore-scripts")
                 }
             }
 
             task.doLast { _ ->
                 val execOutput = ByteArrayOutputStream()
                 val result = exec.exec { exec ->
-                    exec.executable(toolExecutable.get())
+                    exec.executable(nodejsExecutable.get())
                     exec.args(installArgs.get())
                     exec.workingDir(toolingCustomDir)
                     exec.standardOutput = execOutput

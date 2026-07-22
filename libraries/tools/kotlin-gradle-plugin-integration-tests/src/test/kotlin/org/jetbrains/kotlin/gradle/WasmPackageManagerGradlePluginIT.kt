@@ -295,4 +295,16 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Npm Install in the project with braces in path")
+    @GradleTest
+    @TestMetadata("wasm-project-with-(braces)")
+    fun testWasmNpmInstallInProjectWithBraces(gradleVersion: GradleVersion) {
+        project("wasm-project-with-(braces)", gradleVersion) {
+            build("build") {
+                assertTasksExecuted(":kotlinWasmToolingSetup")
+                assertTasksExecuted(":kotlinWasmNpmInstall")
+            }
+        }
+    }
 }
