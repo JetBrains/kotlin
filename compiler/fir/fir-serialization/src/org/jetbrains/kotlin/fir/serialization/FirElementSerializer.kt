@@ -955,6 +955,14 @@ class FirElementSerializer private constructor(
             }
         }
 
+        parameter.equalityBoundType?.let { boundType ->
+            if (useTypeTable()) {
+                builder.equalityBoundTypeId = typeId(boundType)
+            } else {
+                builder.setEqualityBoundType(typeProto(boundType))
+            }
+        }
+
         extension.serializeValueParameter(parameter, builder)
 
         return builder

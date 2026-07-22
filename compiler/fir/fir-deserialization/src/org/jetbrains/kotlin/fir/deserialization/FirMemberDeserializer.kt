@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
@@ -908,6 +909,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     index,
                 )
                 valueParameterKind = kind
+            }.also { parameter ->
+                proto.equalityBoundType(c.typeTable)?.let { type ->
+                    parameter.equalityBoundType = c.typeDeserializer.type(type)
+                }
             }
         }
     }

@@ -24317,6 +24317,24 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Annotation.Argument.Value annotation_parameter_default_value = 8;</code>
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value getAnnotationParameterDefaultValue();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+     */
+    boolean hasEqualityBoundType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Type getEqualityBoundType();
+
+    /**
+     * <code>optional int32 equality_bound_type_id = 10;</code>
+     */
+    boolean hasEqualityBoundTypeId();
+    /**
+     * <code>optional int32 equality_bound_type_id = 10;</code>
+     */
+    int getEqualityBoundTypeId();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.ValueParameter}
@@ -24434,6 +24452,24 @@ public final class ProtoBuf {
                 annotationParameterDefaultValue_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000040;
+              break;
+            }
+            case 74: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
+                subBuilder = equalityBoundType_.toBuilder();
+              }
+              equalityBoundType_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(equalityBoundType_);
+                equalityBoundType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000080;
+              break;
+            }
+            case 80: {
+              bitField0_ |= 0x00000100;
+              equalityBoundTypeId_ = input.readInt32();
               break;
             }
           }
@@ -24627,6 +24663,36 @@ public final class ProtoBuf {
       return annotationParameterDefaultValue_;
     }
 
+    public static final int EQUALITY_BOUND_TYPE_FIELD_NUMBER = 9;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Type equalityBoundType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+     */
+    public boolean hasEqualityBoundType() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Type getEqualityBoundType() {
+      return equalityBoundType_;
+    }
+
+    public static final int EQUALITY_BOUND_TYPE_ID_FIELD_NUMBER = 10;
+    private int equalityBoundTypeId_;
+    /**
+     * <code>optional int32 equality_bound_type_id = 10;</code>
+     */
+    public boolean hasEqualityBoundTypeId() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional int32 equality_bound_type_id = 10;</code>
+     */
+    public int getEqualityBoundTypeId() {
+      return equalityBoundTypeId_;
+    }
+
     private void initFields() {
       flags_ = 0;
       name_ = 0;
@@ -24636,6 +24702,8 @@ public final class ProtoBuf {
       varargElementTypeId_ = 0;
       annotation_ = java.util.Collections.emptyList();
       annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
+      equalityBoundType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      equalityBoundTypeId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -24667,6 +24735,12 @@ public final class ProtoBuf {
       }
       if (hasAnnotationParameterDefaultValue()) {
         if (!getAnnotationParameterDefaultValue().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasEqualityBoundType()) {
+        if (!getEqualityBoundType().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -24709,6 +24783,12 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(8, annotationParameterDefaultValue_);
       }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeMessage(9, equalityBoundType_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        output.writeInt32(10, equalityBoundTypeId_);
+      }
       extensionWriter.writeUntil(200, output);
       output.writeRawBytes(unknownFields);
     }
@@ -24750,6 +24830,14 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(8, annotationParameterDefaultValue_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(9, equalityBoundType_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(10, equalityBoundTypeId_);
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -24861,6 +24949,10 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000040);
         annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000080);
+        equalityBoundType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        equalityBoundTypeId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -24917,6 +25009,14 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000040;
         }
         result.annotationParameterDefaultValue_ = annotationParameterDefaultValue_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000080;
+        }
+        result.equalityBoundType_ = equalityBoundType_;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000100;
+        }
+        result.equalityBoundTypeId_ = equalityBoundTypeId_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -24954,6 +25054,12 @@ public final class ProtoBuf {
         if (other.hasAnnotationParameterDefaultValue()) {
           mergeAnnotationParameterDefaultValue(other.getAnnotationParameterDefaultValue());
         }
+        if (other.hasEqualityBoundType()) {
+          mergeEqualityBoundType(other.getEqualityBoundType());
+        }
+        if (other.hasEqualityBoundTypeId()) {
+          setEqualityBoundTypeId(other.getEqualityBoundTypeId());
+        }
         this.mergeExtensionFields(other);
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -24985,6 +25091,12 @@ public final class ProtoBuf {
         }
         if (hasAnnotationParameterDefaultValue()) {
           if (!getAnnotationParameterDefaultValue().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasEqualityBoundType()) {
+          if (!getEqualityBoundType().isInitialized()) {
             
             return false;
           }
@@ -25473,6 +25585,98 @@ public final class ProtoBuf {
         annotationParameterDefaultValue_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000080);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Type equalityBoundType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public boolean hasEqualityBoundType() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Type getEqualityBoundType() {
+        return equalityBoundType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public Builder setEqualityBoundType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        equalityBoundType_ = value;
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public Builder setEqualityBoundType(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
+        equalityBoundType_ = builderForValue.build();
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public Builder mergeEqualityBoundType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00000100) == 0x00000100) &&
+            equalityBoundType_ != org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance()) {
+          equalityBoundType_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Type.newBuilder(equalityBoundType_).mergeFrom(value).buildPartial();
+        } else {
+          equalityBoundType_ = value;
+        }
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Type equality_bound_type = 9;</code>
+       */
+      public Builder clearEqualityBoundType() {
+        equalityBoundType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000100);
+        return this;
+      }
+
+      private int equalityBoundTypeId_ ;
+      /**
+       * <code>optional int32 equality_bound_type_id = 10;</code>
+       */
+      public boolean hasEqualityBoundTypeId() {
+        return ((bitField0_ & 0x00000200) == 0x00000200);
+      }
+      /**
+       * <code>optional int32 equality_bound_type_id = 10;</code>
+       */
+      public int getEqualityBoundTypeId() {
+        return equalityBoundTypeId_;
+      }
+      /**
+       * <code>optional int32 equality_bound_type_id = 10;</code>
+       */
+      public Builder setEqualityBoundTypeId(int value) {
+        bitField0_ |= 0x00000200;
+        equalityBoundTypeId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 equality_bound_type_id = 10;</code>
+       */
+      public Builder clearEqualityBoundTypeId() {
+        bitField0_ = (bitField0_ & ~0x00000200);
+        equalityBoundTypeId_ = 0;
+        
         return this;
       }
 

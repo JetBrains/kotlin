@@ -470,6 +470,9 @@ message ValueParameter {
 
   optional Annotation.Argument.Value annotation_parameter_default_value = 8;
 
+  optional Type equality_bound_type = 9;
+  optional int32 equality_bound_type_id = 10 [(type_id_in_table) = true];
+
   extensions 100 to 199;
 }
 

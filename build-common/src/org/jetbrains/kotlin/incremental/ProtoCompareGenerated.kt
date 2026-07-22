@@ -1020,6 +1020,16 @@ open class ProtoCompareGenerated(
             if (!checkEquals(old.annotationParameterDefaultValue, new.annotationParameterDefaultValue)) return false
         }
 
+        if (old.hasEqualityBoundType() != new.hasEqualityBoundType()) return false
+        if (old.hasEqualityBoundType()) {
+            if (!checkEquals(old.equalityBoundType, new.equalityBoundType)) return false
+        }
+
+        if (old.hasEqualityBoundTypeId() != new.hasEqualityBoundTypeId()) return false
+        if (old.hasEqualityBoundTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.equalityBoundTypeId), newTypeTable.getType(new.equalityBoundTypeId))) return false
+        }
+
         if (old.getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.parameterAnnotation)) {
             return false
         }
@@ -2649,6 +2659,14 @@ fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes:
 
     if (hasAnnotationParameterDefaultValue()) {
         hashCode = 31 * hashCode + annotationParameterDefaultValue.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasEqualityBoundType()) {
+        hashCode = 31 * hashCode + equalityBoundType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasEqualityBoundTypeId()) {
+        hashCode = 31 * hashCode + typeById(equalityBoundTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) - 1) {

@@ -107,6 +107,12 @@ fun ProtoBuf.ValueParameter.varargElementType(typeTable: TypeTable): ProtoBuf.Ty
     else -> null
 }
 
+fun ProtoBuf.ValueParameter.equalityBoundType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasEqualityBoundType() -> equalityBoundType
+    hasEqualityBoundTypeId() -> typeTable[equalityBoundTypeId]
+    else -> null
+}
+
 fun ProtoBuf.Type.outerType(typeTable: TypeTable): ProtoBuf.Type? = when {
     hasOuterType() -> outerType
     hasOuterTypeId() -> typeTable[outerTypeId]
