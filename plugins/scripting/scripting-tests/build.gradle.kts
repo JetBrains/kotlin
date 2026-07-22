@@ -46,13 +46,12 @@ dependencies {
 }
 
 sourceSets {
-    "main" {}
+    "main" { none() }
     "test" {
         projectDefault()
         generatedTestDir()
-        java.srcDir("tests-organized")
     }
-    "testFixtures" {projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 
