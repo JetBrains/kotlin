@@ -10,6 +10,9 @@ plugins {
 
 val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
 val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
+val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
+val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFrameGradlePluginClasspath")
+val kotlinxCoroutinesCoreGradlePluginClasspath = configurations.create("kotlinxCoroutinesCoreGradlePluginClasspath")
 
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
@@ -33,9 +36,13 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
     powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
+    kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
+    kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
+    kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
 }
 
 sourceSets {
@@ -66,6 +73,9 @@ projectTests {
         workingDir = rootDir
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
+        addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
+        addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
+        addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
     }
 
     testGenerator("org.jetbrains.kotlin.scripting.test.TestGeneratorKt")

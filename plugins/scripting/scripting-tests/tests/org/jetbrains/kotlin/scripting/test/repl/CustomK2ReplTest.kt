@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.repl
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
+import org.jetbrains.kotlin.scripting.compiler.test.ReplReceiver1
 import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
@@ -167,7 +169,7 @@ class CustomK2ReplTest {
                 result.onSuccess { s ->
                     s.get().result.let { r ->
                         @Suppress("UNCHECKED_CAST") val propx =
-                            r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as kotlin.reflect.KMutableProperty1<Any, Int>
+                            r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as KMutableProperty1<Any, Int>
                         val x = propx.get(r.scriptInstance!!)
                         assertEquals(3, x)
                         propx.set(r.scriptInstance!!, 5)
