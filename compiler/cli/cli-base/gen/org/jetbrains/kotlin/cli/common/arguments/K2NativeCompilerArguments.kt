@@ -143,6 +143,20 @@ The default value is 1.""",
         }
 
     @Argument(
+        value = "-Xcompilation-scheme",
+        valueDescription = "<closed|split>",
+        description = """Compilation scheme used by the compiler to produce final binaries. 
+1. 'closed': default compilation scheme. It produces one single artifact containing all the Kotlin code.
+2. 'split': hot-reload enable artifacts. It produces one single executable (the host) and a bootstrap object (loaded by host) containing Kotlin code.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var compilationScheme: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xcompile-from-bitcode",
         valueDescription = "<path>",
         description = "Continue compilation from the given bitcode file.",

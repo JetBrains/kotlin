@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.CompilationScheme
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
@@ -27,6 +28,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val AUTO_CACHE_DIR by key<String>("Path to the directory where to put caches for auto-cacheable dependencies.")
     val INCREMENTAL_CACHE_DIR by key<String>("Path to the directory where to put incremental build caches.")
     val DUMP_BUILT_CACHES_TO by key<String>("Path to a file where the list of all cache archives produced by this build should be written.")
+    val COMPILATION_SCHEME by key<CompilationScheme>("Compilation scheme used by the compiler, 'split-host' is used to have hot-reload enabled binaries.")
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
     val MAKE_PER_FILE_CACHE by key<Boolean>()
