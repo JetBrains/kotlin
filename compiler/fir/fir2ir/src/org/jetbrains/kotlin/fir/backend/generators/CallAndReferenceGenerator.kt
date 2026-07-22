@@ -117,8 +117,6 @@ class CallAndReferenceGenerator(
                     irPropertySymbol,
                     referencedPropertyGetterSymbol,
                     referencedPropertySetterSymbol,
-                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
-                    isForDelegate,
                 )
             }
 
@@ -143,8 +141,6 @@ class CallAndReferenceGenerator(
                     irPropertySymbol,
                     referencedPropertyGetterSymbol,
                     referencedPropertySetterSymbol,
-                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
-                    isForDelegate,
                 )
             }
 
@@ -158,8 +154,6 @@ class CallAndReferenceGenerator(
                     irPropertySymbol,
                     declarationStorage.findGetterOfProperty(irPropertySymbol),
                     declarationStorage.findSetterOfProperty(irPropertySymbol),
-                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
-                    isForDelegate,
                 )
             }
 
@@ -187,8 +181,7 @@ class CallAndReferenceGenerator(
                     callableReferenceAccess,
                     type,
                     explicitReceiverExpression,
-                    irFunctionSymbol,
-                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
+                    irFunctionSymbol
                 )
             }
 
