@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEqualsOverrideContractCalculator
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
@@ -150,6 +151,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val syntheticCallGenerator: FirSyntheticCallGenerator by lazy(LazyThreadSafetyMode.NONE) { FirSyntheticCallGenerator(this) }
         override val callableReferenceLhsResolver: FirCallableReferenceLhsResolver by lazy(LazyThreadSafetyMode.NONE) {
             FirCallableReferenceLhsResolver(this, context)
+        }
+
+        override val equalsOverrideContractCalculator: FirEqualsOverrideContractCalculator by lazy(LazyThreadSafetyMode.NONE) {
+            FirEqualsOverrideContractCalculator(session, scopeSession)
         }
 
         override val outerClassManager: FirOuterClassManager by lazy(LazyThreadSafetyMode.NONE) {

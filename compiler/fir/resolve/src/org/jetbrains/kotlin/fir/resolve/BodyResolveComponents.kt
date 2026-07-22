@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirEqualsOverrideContractCalculator
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
@@ -44,6 +45,7 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val callResolver: FirCallResolver
     abstract val callCompleter: FirCallCompleter
     abstract val callableReferenceLhsResolver: FirCallableReferenceLhsResolver
+    abstract val equalsOverrideContractCalculator: FirEqualsOverrideContractCalculator
     abstract val syntheticCallGenerator: FirSyntheticCallGenerator
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer
     abstract val outerClassManager: FirOuterClassManager

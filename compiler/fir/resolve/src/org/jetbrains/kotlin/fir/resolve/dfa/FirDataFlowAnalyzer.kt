@@ -856,7 +856,7 @@ abstract class FirDataFlowAnalyzer(
         val equalsContract by lazy(LazyThreadSafetyMode.NONE) {
             when {
                 operation != FirOperation.EQ && operation != FirOperation.NOT_EQ -> EqualsOverrideContract.SAFE_FOR_SMART_CAST
-                else -> computeEqualsOverrideContract(leftOperand.resolvedType, components.session, components.scopeSession)
+                else -> components.equalsOverrideContractCalculator.computeFor(leftOperand.resolvedType)
             }
         }
     }
