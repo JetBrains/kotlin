@@ -17,3 +17,19 @@ internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
 @UsedFromCompilerGeneratedCode
 internal fun throwUnsupportedOperationException(message: String): Nothing =
     throw UnsupportedOperationException(message)
+
+@UsedFromCompilerGeneratedCode
+internal fun staticInitializationFailure(reason: Throwable?, className: String?): Nothing {
+    when (reason) {
+        is Error -> throw reason
+        null -> {
+            // TODO(KT-57134): align exact exception hierarchy with jvm
+            // in JVM it's NoClassDefFound if reason is null, i.e. this is already failed class
+            val message = className?.let { "Could not initialize class $it" } ?: "There was an error during file or class initialization"
+            throw ExceptionInInitializerError(message)
+        }
+        else -> {
+            throw ExceptionInInitializerError(reason)
+        }
+    }
+}

@@ -84,3 +84,8 @@ public actual open class ArithmeticException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
 }
+
+internal actual open class ExceptionInInitializerError : Error {
+    constructor(message: String) : super(message)
+    actual constructor(cause: Throwable) : super(null, cause)
+}
