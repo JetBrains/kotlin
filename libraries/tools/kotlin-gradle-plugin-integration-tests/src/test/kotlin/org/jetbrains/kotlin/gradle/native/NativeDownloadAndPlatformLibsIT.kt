@@ -18,13 +18,16 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.readText
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 // We temporarily disable it for windows until a proper fix is found for this issue:
@@ -120,6 +123,40 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             build("assemble") {
                 assertOutputContains("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platformName".toRegex())
                 assertOutputDoesNotContain(generateRegex)
+            }
+        }
+    }
+
+    @DisplayName("K/N distribution is marked read-only when the diagnostics property is enabled (KT-86251)")
+    @GradleTest
+    fun testReadOnlyDistributionDiagnostics(gradleVersion: GradleVersion) {
+        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+            val konanDataDir = workingDir.resolve(".konan")
+            build(
+                "tasks",
+                "-Pkotlin.native.diagnostics.readOnlyDistribution=true",
+                buildOptions = defaultBuildOptions.copy(konanDataDir = konanDataDir),
+            ) {
+                assertOutputContains("marked Kotlin/Native distribution read-only")
+
+                val distributionDir = konanDataDir.resolve("kotlin-native-prebuilt-$platformName-$currentCompilerVersion")
+                assertDirectoryExists(distributionDir)
+
+                // Shipped distribution files must be read-only, so any process overwriting them fails loudly (KT-86251).
+                val shippedFile = distributionDir.resolve("konan").resolve("konan.properties")
+                assertTrue(shippedFile.exists(), "Expected a shipped distribution file to exist: $shippedFile")
+                assertFalse(
+                    PosixFilePermission.OWNER_WRITE in Files.getPosixFilePermissions(shippedFile),
+                    "Shipped Kotlin/Native distribution file must be read-only: $shippedFile",
+                )
+
+                // The runtime cache directory must stay writable so the compiler can still build its caches.
+                val cacheDir = distributionDir.resolve("klib").resolve("cache")
+                assertDirectoryExists(cacheDir)
+                assertTrue(
+                    PosixFilePermission.OWNER_WRITE in Files.getPosixFilePermissions(cacheDir),
+                    "Kotlin/Native distribution klib/cache directory must remain writable: $cacheDir",
+                )
             }
         }
     }

@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.attribute.PosixFilePermission
 
 class NativeCompilerDownloader(
     val project: Project,
@@ -103,6 +106,65 @@ class NativeCompilerDownloader(
             }
 
         private val useZip = HostManager.hostIsMingw
+
+        // KT-86251 diagnostics: opt-in flag (`-Pkotlin.native.diagnostics.readOnlyDistribution=true`) to make the
+        // freshly extracted distribution read-only, so any process overwriting shipped files fails with a stack trace.
+        internal const val READ_ONLY_DISTRIBUTION_DIAGNOSTICS_PROPERTY = "kotlin.native.diagnostics.readOnlyDistribution"
+
+        private val WRITE_PERMISSIONS = setOf(
+            PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.GROUP_WRITE,
+            PosixFilePermission.OTHERS_WRITE,
+        )
+
+        /**
+         * Diagnostic aid for KT-86251. Makes the freshly extracted Kotlin/Native distribution immutable by
+         * stripping the write bit from every file and directory (read/execute bits are preserved, so binaries
+         * stay runnable and directories stay listable). Any later attempt to overwrite or delete a *shipped*
+         * distribution file then fails loudly with a permission error whose stack trace names the writer.
+         *
+         * The `klib/cache` directory node is kept writable so the compiler can still create and rebuild its
+         * runtime caches (`klib/cache/<flavor>/...`) while the shipped tree stays read-only.
+         *
+         * POSIX-only; a no-op on filesystems without POSIX permissions (e.g. Windows).
+         */
+        internal fun markDistributionReadOnly(distribution: File, logger: Logger) {
+            if (!distribution.toPath().fileSystem.supportedFileAttributeViews().contains("posix")) {
+                logger.info("KT-86251 diagnostics: read-only distribution requested, but the filesystem is not POSIX; skipping")
+                return
+            }
+            // Create the runtime cache dir up front (while still writable) so it can be kept writable below.
+            val cacheDir = distribution.resolve("klib").resolve("cache").also { it.mkdirs() }
+            distribution.walkTopDown().forEach { setWritable(it.toPath(), writable = false, logger = logger) }
+            // Re-grant write on the cache directory node only (not its shipped children), so the compiler can
+            // still create new cache flavors while the shipped tree stays immutable.
+            setWritable(cacheDir.toPath(), writable = true, logger = logger)
+            logger.lifecycle("KT-86251 diagnostics: marked Kotlin/Native distribution read-only at $distribution (klib/cache kept writable)")
+        }
+
+        /**
+         * Restores the write bit recursively. Needed before deleting a distribution previously marked
+         * read-only by [markDistributionReadOnly] (e.g. on reinstall), otherwise the delete would fail.
+         */
+        internal fun restoreDistributionWritable(distribution: File) {
+            if (!distribution.exists()) return
+            if (!distribution.toPath().fileSystem.supportedFileAttributeViews().contains("posix")) return
+            distribution.walkTopDown().forEach { setWritable(it.toPath(), writable = true, logger = null) }
+        }
+
+        private fun setWritable(path: Path, writable: Boolean, logger: Logger?) {
+            try {
+                val permissions = Files.getPosixFilePermissions(path).toMutableSet()
+                if (writable) {
+                    permissions.add(PosixFilePermission.OWNER_WRITE)
+                } else {
+                    permissions.removeAll(WRITE_PERMISSIONS)
+                }
+                Files.setPosixFilePermissions(path, permissions)
+            } catch (e: IOException) {
+                logger?.info("KT-86251 diagnostics: could not update permissions of $path: ${e.message}")
+            }
+        }
 
     }
 
@@ -202,17 +264,32 @@ class NativeCompilerDownloader(
                     it.into(tmpDir)
                 }
                 val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                if (!compilerTmp.renameTo(compilerDirectory)) {
+                // Don't copy over an already-present installation: it races with concurrent readers and, once the
+                // distribution is marked read-only for diagnostics (KT-86251), would fail with EACCES from here.
+                if (!compilerTmp.renameTo(compilerDirectory) && !compilerDirectory.exists()) {
                     project.copy {
                         it.from(compilerTmp)
                         it.into(compilerDirectory)
                     }
                 }
                 logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+                markDistributionReadOnlyForDiagnostics(compilerDirectory)
             } finally {
                 tmpDir.deleteRecursively()
             }
         }
+    }
+
+    private val readOnlyDistributionDiagnosticsEnabled: Boolean
+        get() = project.providers
+            .gradleProperty(READ_ONLY_DISTRIBUTION_DIAGNOSTICS_PROPERTY)
+            .map { it.toBoolean() }
+            .getOrElse(false)
+
+    // KT-86251 diagnostics: opt-in aid to detect who overwrites the shipped Kotlin/Native distribution.
+    private fun markDistributionReadOnlyForDiagnostics(distribution: File) {
+        if (!readOnlyDistributionDiagnosticsEnabled) return
+        markDistributionReadOnly(distribution, logger)
     }
 
     fun downloadIfNeeded() {
@@ -266,6 +343,8 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
 
         if (kotlinPropertiesProvider.nativeReinstall) {
             logger.info("Reinstall Kotlin/Native distribution")
+            // KT-86251 diagnostics: the distribution may have been marked read-only; restore write so it can be deleted.
+            NativeCompilerDownloader.restoreDistributionWritable(downloader.compilerDirectory)
             downloader.compilerDirectory.deleteRecursively()
         }
 
