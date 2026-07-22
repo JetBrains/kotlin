@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode

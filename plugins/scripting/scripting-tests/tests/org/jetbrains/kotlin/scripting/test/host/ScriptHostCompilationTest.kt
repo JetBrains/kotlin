@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.test.TestDisposable
+import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
-import org.jetbrains.kotlin.scripting.compiler.test.captureOut
-import org.jetbrains.kotlin.scripting.compiler.test.compileAndExecuteScript
+import org.jetbrains.kotlin.scripting.test.captureOut
+import org.jetbrains.kotlin.scripting.test.compileAndExecuteScript
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind

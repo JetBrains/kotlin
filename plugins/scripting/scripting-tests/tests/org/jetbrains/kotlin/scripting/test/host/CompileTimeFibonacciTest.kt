@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
+import org.jetbrains.kotlin.scripting.test.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.compiler.test.CompileTimeFibonacci
-import org.jetbrains.kotlin.scripting.compiler.test.captureOut
+import org.jetbrains.kotlin.scripting.test.captureOut
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider

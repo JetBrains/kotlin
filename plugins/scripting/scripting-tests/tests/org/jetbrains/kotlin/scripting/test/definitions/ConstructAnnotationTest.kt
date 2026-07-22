@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
+import org.jetbrains.kotlin.scripting.test.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.getScriptKtFile
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
 import org.jetbrains.kotlin.test.ConfigurationKind
