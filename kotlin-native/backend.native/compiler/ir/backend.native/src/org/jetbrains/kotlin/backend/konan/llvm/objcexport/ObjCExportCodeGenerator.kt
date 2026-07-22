@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -120,6 +120,7 @@ internal class ObjCExportFunctionGenerationContextBuilder(
     init {
         forceCleanupLandingpad = true
     }
+
     override fun build(): ObjCExportFunctionGenerationContext {
         return ObjCExportFunctionGenerationContext(this)
     }
@@ -171,7 +172,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
             functionAttributes = listOf(LlvmFunctionAttribute.NoInline)
     )
 
-    val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto( this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage)) {
+    val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto(this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage)) {
         setupBridgeDebugInfo()
         // Don't generate redundant cleanup landingpad (the generation would fail due to forbidRuntime below):
         forceCleanupLandingpad = false
@@ -179,7 +180,10 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
         val actualArgs = signature.parameterTypes.indices.map { param(it) }
-        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(param(signature.parameterTypes.size), signature) else function
+        val actualCallable = if (functionIsPassedAsLastParameter)
+            LlvmFunctionPointer(param(signature.parameterTypes.size), signature)
+        else
+            function
 
         // Use LLVMBuildCall instead of call, because the latter enforces using exception handler, which is exactly what we have to avoid.
         val result = actualCallable.buildCall(builder, actualArgs).let { callResult ->
@@ -341,9 +345,9 @@ internal class ObjCExportCodeGenerator(
     }
 
     private fun ObjCExportFunctionGenerationContext.objCBlockPointerToKotlin(
-        value: LLVMValueRef,
-        typeBridge: BlockPointerBridge,
-        resultLifetime: Lifetime
+            value: LLVMValueRef,
+            typeBridge: BlockPointerBridge,
+            resultLifetime: Lifetime
     ) = callFromBridge(
             blockToKotlinFunctionConverter(typeBridge),
             listOf(value),
@@ -430,7 +434,7 @@ internal class ObjCExportCodeGenerator(
     internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
 
-        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+        NSNumberKind.entries.mapNotNull { it.mappedKotlinClassId }.forEach {
             dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
         }
         dataGenerator.exportClass(namer.mutableSetName.binaryName)
@@ -814,7 +818,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 debugInfo = false,
                 suffix = baseMethod.computeSymbolName(),
         ) {
-            callFromBridge(codegen.llvmFunction(symbols.throwIllegalStateException.owner), emptyList())
+            callFromBridge(codegen.getLlvmFunctionFrom(symbols.throwIllegalStateException.owner), emptyList())
         }
     } else generateObjCImp(
             methodBridge,
@@ -830,7 +834,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         val llvmCallable = if (isVirtual) {
             codegen.getVirtualFunctionTrampoline(target as IrSimpleFunction)
         } else {
-            codegen.llvmFunction(target as? IrSimpleFunction ?: context.getLoweredConstructorFunction(target as IrConstructor))
+            codegen.getLlvmFunctionFrom(target as? IrSimpleFunction ?: context.getLoweredConstructorFunction(target as IrConstructor))
         }
         call(llvmCallable, args, resultLifetime, exceptionHandler)
     }
@@ -963,7 +967,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             MethodBridge.ReturnValue.Instance.FactoryResult -> return autoreleaseAndRet(kotlinReferenceToRetainedObjC(targetResult!!)) // provided by [callKotlin]
             MethodBridge.ReturnValue.Suspend -> {
                 val coroutineSuspended = callFromBridge(
-                        codegen.llvmFunction(context.symbols.objCExportGetCoroutineSuspended.owner),
+                        codegen.getLlvmFunctionFrom(context.symbols.objCExportGetCoroutineSuspended.owner),
                         emptyList(),
                         Lifetime.STACK
                 )
@@ -1647,10 +1651,10 @@ private fun ObjCExportCodeGenerator.nonOverridableAdapter(
         selector: String,
         hasSelectorAmbiguity: Boolean
 ): KotlinToObjCMethodAdapter = codegen.KotlinToObjCMethodAdapter(
-    selector,
-    vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
-    kotlinImpl = llvm.nullPointer,
-    itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
+        selector,
+        vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
+        kotlinImpl = llvm.nullPointer,
+        itablePlace = ClassLayoutBuilder.InterfaceTablePlace.INVALID
 )
 
 private val ObjCTypeForKotlinType.kotlinMethods: List<ObjCMethodForKotlinMethod>

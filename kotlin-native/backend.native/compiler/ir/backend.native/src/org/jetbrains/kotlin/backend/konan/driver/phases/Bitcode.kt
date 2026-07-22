@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleA
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
-import org.jetbrains.kotlin.backend.konan.llvm.name
+import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
@@ -120,7 +120,7 @@ internal val StackProtectorPhaseInCompiler = createSimpleNamedCompilerPhase<Opti
             }
             attribute?.let { sspAttribute ->
                 getFunctions(module)
-                        .filter { LLVMIsDeclaration(it) == 0 && it.name != "__clang_call_terminate" }
+                        .filter { LLVMIsDeclaration(it) == 0 && it.valueName != "__clang_call_terminate" }
                         .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
             }
         }

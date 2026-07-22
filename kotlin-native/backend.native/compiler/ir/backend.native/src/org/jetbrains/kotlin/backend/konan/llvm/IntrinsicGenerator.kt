@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
@@ -643,7 +648,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfZero(divider: LLVMValueRef) {
         ifThen(icmpEq(divider, Zero(divider.type).llvm)) {
-            val throwArithExc = codegen.llvmFunction(context.symbols.throwArithmeticException.owner)
+            val throwArithExc = codegen.getLlvmFunctionFrom(context.symbols.throwArithmeticException.owner)
             call(throwArithExc, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }
@@ -651,7 +656,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitThrowIfOOB(index: LLVMValueRef, size: LLVMValueRef) {
         ifThen(icmpUGe(index, size)) {
-            val throwIndexOutOfBoundsException = codegen.llvmFunction(context.symbols.throwIndexOutOfBoundsException.owner)
+            val throwIndexOutOfBoundsException = codegen.getLlvmFunctionFrom(context.symbols.throwIndexOutOfBoundsException.owner)
             call(throwIndexOutOfBoundsException, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }

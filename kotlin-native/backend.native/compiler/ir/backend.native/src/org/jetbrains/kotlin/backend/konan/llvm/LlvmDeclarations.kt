@@ -40,12 +40,8 @@ enum class UniqueKind(val llvmName: String) {
 }
 
 internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrSimpleFunction): LlvmCallable =
-            forFunctionOrNull(function) ?: with(function) {
-                error("$name in $file/${parent.fqNameForIrSerialization}")
-            }
 
-    fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
+    fun forFunctionOrNull(function: IrSimpleFunction) =
             (function.metadata as? KonanMetadata.Function)?.llvm
 
     fun forClass(irClass: IrClass) =
@@ -475,7 +471,7 @@ internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: 
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 
-    class Function(irFunction: IrSimpleFunction, val llvm: LlvmCallable) : Declaration<IrSimpleFunction>(irFunction)
+    class Function(irFunction: IrSimpleFunction, val llvm: LlvmFunction) : Declaration<IrSimpleFunction>(irFunction)
 
     class InstanceField(irField: IrField, val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,33 +8,17 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.toCValues
 import llvm.*
 
-/**
- *  Wrapper around LLVM value of functional type.
- *
- *  @todo This class mixes "something that can be called" and function abstractions.
- *        Some of it's methods make sense only for functions. Probably, LlvmFunction sub-class should be extracted.
- */
-class LlvmCallable(val functionType: LLVMTypeRef, val returnsObjectType: Boolean, private val llvmValue: LLVMValueRef, private val attributeProvider: LlvmFunctionAttributeProvider) {
-    internal constructor(
-            llvmValue: LLVMValueRef,
-            signature: LlvmFunctionSignature,
-    ) : this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+sealed class LlvmCallable(
+        val functionType: LLVMTypeRef,
+        val returnsObjectType: Boolean,
+        protected val llvmValue: LLVMValueRef,
+        protected val attributeProvider: LlvmFunctionAttributeProvider,
+) {
 
-    val returnType: LLVMTypeRef by lazy {
-        LLVMGetReturnType(functionType)!!
-    }
-
-    val name by lazy {
-        llvmValue.name
-    }
-
-    val numParams by lazy {
-        LLVMCountParamTypes(functionType)
-    }
-
-    val isConstant by lazy {
-        LLVMIsConstant(llvmValue) == 1
-    }
+    val name: String? by lazy { llvmValue.valueName }
+    val returnType: LLVMTypeRef by lazy { LLVMGetReturnType(functionType)!! }
+    val numParams: Int by lazy { LLVMCountParamTypes(functionType) }
+    val isConstant by lazy { llvmValue.isConst }
 
     fun buildCall(builder: LLVMBuilderRef, args: List<LLVMValueRef>, name: String = "") =
             LLVMBuildCall2(builder, functionType, llvmValue, args.toCValues(), args.size, name)!!.also {
@@ -46,51 +30,99 @@ class LlvmCallable(val functionType: LLVMTypeRef, val returnsObjectType: Boolean
                 attributeProvider.addCallSiteAttributes(it)
             }
 
-    fun buildLandingpad(builder: LLVMBuilderRef, landingpadType: LLVMTypeRef, numClauses: Int, name: String = "") =
-            LLVMBuildLandingPad(builder, landingpadType, llvmValue, numClauses, name)!!
+    internal fun toConstPointer() = constPointer(llvmValue)
 
-    fun addBasicBlock(context: LLVMContextRef, name: String = "") =
-            LLVMAppendBasicBlockInContext(context, llvmValue, name)!!
+    internal fun asCallback() = llvmValue
+}
 
-    fun blockAddress(label: LLVMBasicBlockRef) = LLVMBlockAddress(llvmValue, label)!!
+class LlvmFunctionPointer(
+        functionType: LLVMTypeRef,
+        returnsObjectType: Boolean,
+        llvmValue: LLVMValueRef,
+        attributeProvider: LlvmFunctionAttributeProvider,
+) : LlvmCallable(functionType, returnsObjectType, llvmValue, attributeProvider) {
+    internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
+            this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+}
 
-    fun addDebugInfoSubprogram(subprogram: DISubprogramRef) {
-        DIFunctionAddSubprogram(llvmValue, subprogram)
+sealed class LlvmFunction(
+        functionType: LLVMTypeRef,
+        returnsObjectType: Boolean,
+        llvmValue: LLVMValueRef,
+        attributeProvider: LlvmFunctionAttributeProvider,
+) : LlvmCallable(functionType, returnsObjectType, llvmValue, attributeProvider) {
+
+    val isNoUnwind by lazy {
+        requireNotNull(LLVMIsAFunction(llvmValue)) {
+            "The LLVM value '${llvmValue.valueName}' is not a function. Supposed to be a function named '$name'."
+        }
+        isFunctionNoUnwind(llvmValue)
     }
 
-    fun createBridgeFunctionDebugInfo(
-            builder: DIBuilderRef,
-            scope: DIScopeOpaqueRef,
-            file: DIFileRef,
-            lineNo: Int,
-            type: DISubroutineTypeRef,
-            isLocal: Int,
-            isDefinition: Int,
-            scopeLine: Int,
-            isTransparentStepping: Boolean,
-    ) = DICreateBridgeFunction(
-            builder = builder,
-            scope = scope,
-            function = llvmValue,
-            file = file,
-            lineNo = lineNo,
-            type = type,
-            isLocal = isLocal,
-            isDefinition = isDefinition,
-            scopeLine = scopeLine,
-            isTransparentStepping = if (isTransparentStepping) 1 else 0,
-    )!!
-
-    fun param(i: Int) : LLVMValueRef {
-        require(i in 0 until numParams)
+    fun param(i: Int): LLVMValueRef {
+        require(i in 0 until numParams) {
+            "Requested index $i but function '$name' got only $numParams params."
+        }
         return LLVMGetParam(llvmValue, i)!!
     }
 
-    val isNoUnwind by lazy {
-        LLVMIsAFunction(llvmValue) != null && isFunctionNoUnwind(llvmValue)
+    fun buildLandingpad(builder: LLVMBuilderRef, landingpadType: LLVMTypeRef, numClauses: Int, name: String = "") =
+            LLVMBuildLandingPad(builder, landingpadType, llvmValue, numClauses, name)!!
+
+    /**
+     * Function prototypes (or [declaration in LLVM terms](https://llvm.org/docs/LangRef.html#functions)) do not belong to a specific module.
+     */
+    class Prototype(
+            functionType: LLVMTypeRef,
+            returnsObjectType: Boolean,
+            llvmValue: LLVMValueRef,
+            attributeProvider: LlvmFunctionAttributeProvider,
+    ) : LlvmFunction(functionType, returnsObjectType, llvmValue, attributeProvider) {
+        internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
+                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
     }
 
-    // these functions are potentially unsafe, as they need to use same attribute provider when converted to callable
-    internal fun toConstPointer() = constPointer(llvmValue)
-    internal fun asCallback() = llvmValue
+    class Definition(
+            functionType: LLVMTypeRef,
+            returnsObjectType: Boolean,
+            llvmValue: LLVMValueRef,
+            attributeProvider: LlvmFunctionAttributeProvider,
+    ) : LlvmFunction(functionType, returnsObjectType, llvmValue, attributeProvider) {
+
+        internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
+                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+
+        fun addBasicBlock(context: LLVMContextRef, name: String = "") =
+                LLVMAppendBasicBlockInContext(context, llvmValue, name)!!
+
+        fun blockAddress(label: LLVMBasicBlockRef) =
+                LLVMBlockAddress(llvmValue, label)!!
+
+        fun addDebugInfoSubprogram(subprogram: DISubprogramRef) {
+            DIFunctionAddSubprogram(llvmValue, subprogram)
+        }
+
+        fun createBridgeFunctionDebugInfo(
+                builder: DIBuilderRef,
+                scope: DIScopeOpaqueRef,
+                file: DIFileRef,
+                lineNo: Int,
+                type: DISubroutineTypeRef,
+                isLocal: Int,
+                isDefinition: Int,
+                scopeLine: Int,
+                isTransparentStepping: Boolean,
+        ) = DICreateBridgeFunction(
+                builder = builder,
+                scope = scope,
+                function = llvmValue,
+                file = file,
+                lineNo = lineNo,
+                type = type,
+                isLocal = isLocal,
+                isDefinition = isDefinition,
+                scopeLine = scopeLine,
+                isTransparentStepping = if (isTransparentStepping) 1 else 0,
+        )!!
+    }
 }

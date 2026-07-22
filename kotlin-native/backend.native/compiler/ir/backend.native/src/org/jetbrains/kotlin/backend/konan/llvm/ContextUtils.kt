@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -182,11 +182,10 @@ internal interface ContextUtils : RuntimeAware {
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.
      */
-    val IrSimpleFunction.llvmFunction: LlvmCallable
-        get() = llvmFunctionOrNull
-                ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
+    val IrSimpleFunction.llvmFunction: LlvmFunction
+        get() = llvmFunctionOrNull ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
 
-    val IrSimpleFunction.llvmFunctionOrNull: LlvmCallable?
+    val IrSimpleFunction.llvmFunctionOrNull: LlvmFunction?
         get() {
             assert(this.isReal) {
                 this.computeFullName()
@@ -343,7 +342,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
         attributesCopier.addFunctionAttributes(function)
 
-        return LlvmCallable(functionType, returnsObjectType, function, attributesCopier)
+        return LlvmFunction.Prototype(functionType, returnsObjectType, function, attributesCopier)
     }
 
     private fun importMemset(): LlvmCallable {
@@ -354,16 +353,16 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                 functionType)
     }
 
-    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
+    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmFunction.Prototype {
         val result = LLVMAddFunction(module, name, type)!!
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)
         }
-        return LlvmCallable(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
+        return LlvmFunction.Prototype(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
 
-    internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
+    internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmFunction {
         if (llvmFunctionProto.origin != null) {
             this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
         }
@@ -374,7 +373,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                         "found: ${getGlobalFunctionType(found).toTypeString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
-            return LlvmCallable(found, llvmFunctionProto.signature)
+            return LlvmFunction.Prototype(found, llvmFunctionProto.signature)
         } else {
             return llvmFunctionProto.createLlvmFunction(context, module)
         }

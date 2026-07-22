@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -131,7 +131,7 @@ private fun FunctionGenerationContext.loadBlockInvoke(
     val invokePtr = structGep(codegen.runtime.blockLiteralType, blockPtr, 3)
     val signature = bridge.blockType.toBlockInvokeLlvmType(llvm)
     val functionPointer = load(llvm.pointerType, invokePtr)
-    return LlvmCallable(functionPointer, signature)
+    return LlvmFunctionPointer(functionPointer, signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(

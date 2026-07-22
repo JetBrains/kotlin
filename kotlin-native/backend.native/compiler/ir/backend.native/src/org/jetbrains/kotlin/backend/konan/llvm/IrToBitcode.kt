@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -603,12 +603,12 @@ internal class CodeGeneratorVisitor(
     private inner class FunctionScope private constructor(
             val functionGenerationContext: FunctionGenerationContext,
             val declaration: IrSimpleFunction?,
-            val llvmFunction: LlvmCallable) : InnerScopeImpl() {
+            val llvmFunction: LlvmFunction) : InnerScopeImpl() {
 
         constructor(declaration: IrSimpleFunction, functionGenerationContext: FunctionGenerationContext) :
-                this(functionGenerationContext, declaration, codegen.llvmFunction(declaration))
+                this(functionGenerationContext, declaration, codegen.getLlvmFunctionFrom(declaration))
 
-        constructor(llvmFunction: LlvmCallable, functionGenerationContext: FunctionGenerationContext) :
+        constructor(llvmFunction: LlvmFunction, functionGenerationContext: FunctionGenerationContext) :
                 this(functionGenerationContext, null, llvmFunction)
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
@@ -713,11 +713,11 @@ internal class CodeGeneratorVisitor(
             }
             StaticInitializersOrigins.EAGER_STATIC_GLOBAL_INITIALIZER -> {
                 require(scopeState.globalEagerInitFunction == null) { "There can only be at most one global eager file initializer" }
-                scopeState.globalEagerInitFunction = codegen.llvmFunction(declaration)
+                scopeState.globalEagerInitFunction = codegen.getLlvmFunctionFrom(declaration)
             }
             StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER -> {
                 require(scopeState.threadLocalEagerInitFunction == null) { "There can only be at most one thread local eager file initializer" }
-                scopeState.threadLocalEagerInitFunction = codegen.llvmFunction(declaration)
+                scopeState.threadLocalEagerInitFunction = codegen.getLlvmFunctionFrom(declaration)
             }
             else -> return
         }
@@ -760,7 +760,7 @@ internal class CodeGeneratorVisitor(
 
 
         if (declaration.retainAnnotation(context.config.target)) {
-            llvm.usedFunctions.add(codegen.llvmFunction(declaration))
+            llvm.usedFunctions.add(codegen.getLlvmFunctionFrom(declaration))
         }
 
         if (context.shouldVerifyBitCode())
@@ -2193,7 +2193,7 @@ internal class CodeGeneratorVisitor(
             ) else null
 
     @Suppress("UNCHECKED_CAST")
-    private fun IrSimpleFunction.scope(startLine:Int): DIScopeOpaqueRef? {
+    private fun IrSimpleFunction.scope(startLine: Int): DIScopeOpaqueRef? {
         if (!context.shouldContainLocationDebugInfo())
             return null
 
@@ -2201,8 +2201,8 @@ internal class CodeGeneratorVisitor(
             isReifiedInline -> null
             // TODO: May be tie up inline lambdas to their outer function?
             codegen.isExternal(this) && !KonanBinaryInterface.isExported(this) -> null
-            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionOrNull(it) }
-            else -> codegen.llvmFunctionOrNull(this)
+            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.getLlvmFunctionOrNullFrom(it) }
+            else -> codegen.getLlvmFunctionOrNullFrom(this)
         }
         return with(debugInfo) {
             val f = this@scope
@@ -2214,7 +2214,7 @@ internal class CodeGeneratorVisitor(
                             && f.hasAnnotation(KonanFqNames.transparentForDebugger)
 
                     diFunctionScope(fileEntry(), functionLlvmValue.name!!, startLine, nodebug, isTransparentStepping).also {
-                        if (!this@scope.isInline)
+                        if (!this@scope.isInline && functionLlvmValue is LlvmFunction.Definition)
                             functionLlvmValue.addDebugInfoSubprogram(it)
                     }
                 } as DIScopeOpaqueRef
@@ -2523,7 +2523,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     fun callDirect(function: IrSimpleFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val functionDeclarations = codegen.llvmFunction(function.target)
+        val functionDeclarations = codegen.getLlvmFunctionFrom(function.target)
         return call(function, functionDeclarations, args, resultLifetime, resultSlot)
     }
 
@@ -2778,7 +2778,7 @@ internal class CodeGeneratorVisitor(
                         files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
                     }
                 }.map {
-                    codegen.addFunction(it)
+                    codegen.addFunctionDefinition(it)
                 }
             }
         }
