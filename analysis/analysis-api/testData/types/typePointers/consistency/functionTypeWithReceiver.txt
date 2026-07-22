@@ -4,8 +4,8 @@ KaFunctionType:
   abbreviation: null
   annotations: []
   classId: kotlin/Function2
-  contextReceivers: []
-  hasContextReceivers: false
+  contextParameterTypes: []
+  hasContextParameters: false
   hasReceiver: true
   isReflectType: false
   isSuspend: false
