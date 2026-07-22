@@ -1,6 +1,9 @@
+// ISSUE: KT-87009
 // LANGUAGE: +CompanionBlocks
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 // FULL_JDK
+
+package foo
 
 class C {
     companion {
@@ -45,7 +48,8 @@ fun box(): String {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
                 "NATIVE" -> "There was an error during file or class initialization"
-                else -> "Could not initialize class C"
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class C"
+                else -> "Could not initialize class foo.C"
             }
             if (e.message != expectedMessage) return "FAIL 2.2: message must be '$expectedMessage', was '${e.message}'"
         }
@@ -68,7 +72,8 @@ fun box(): String {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
                 "NATIVE" -> "There was an error during file or class initialization"
-                else -> "Could not initialize class Child"
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class Child"
+                else -> "Could not initialize class foo.Child"
             }
             if (e.message != expectedMessage) return "FAIL 4.2: message must be '$expectedMessage', was '${e.message}'"
         }
@@ -81,7 +86,8 @@ fun box(): String {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
                 "NATIVE" -> "There was an error during file or class initialization"
-                else -> "Could not initialize class Parent"
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class Parent"
+                else -> "Could not initialize class foo.Parent"
             }
             if (e.message != expectedMessage) return "FAIL 5.2: message must be '$expectedMessage', was '${e.message}'"
         }
@@ -102,7 +108,8 @@ fun box(): String {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
                 "NATIVE" -> "There was an error during file or class initialization"
-                else -> "Could not initialize class ThrowsMyError"
+                "JS_IR", "JS_IR_ES6" -> "Could not initialize class ThrowsMyError"
+                else -> "Could not initialize class foo.ThrowsMyError"
             }
             if (e.message != expectedMessage) return "FAIL 7.2: message must be '$expectedMessage', was '${e.message}'"
         }

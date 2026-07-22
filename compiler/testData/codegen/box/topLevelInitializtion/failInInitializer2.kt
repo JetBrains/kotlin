@@ -2,6 +2,8 @@
 // FULL_JDK
 
 // FILE: lib.kt
+package lib
+
 val x: String = computeX()
 
 fun computeX(): String = throw IllegalStateException("1")
@@ -11,6 +13,8 @@ val y: String = computeY()
 fun computeY(): String = "2"
 
 // FILE: main.kt
+import lib.*
+
 fun box() : String {
     try {
         x
@@ -26,7 +30,7 @@ fun box() : String {
     } catch(t: Error /* NoClassDefFoundError */) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "JVM_IR" -> "Could not initialize class LibKt"
+                "JVM_IR" -> "Could not initialize class lib.LibKt"
                 "NATIVE" -> "There was an error during file or class initialization"
                 else -> "Could not initialize file"
             }
