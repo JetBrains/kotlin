@@ -498,6 +498,7 @@ class FirSignatureEnhancement(
             if (isJavaRecordComponent) {
                 this.isJavaRecordComponent = true
             }
+            (this as? FirNamedFunction)?.setEqualityBoundTypeFromOverridden(overriddenMembers, session)
             updateIsOperatorFlagIfNeeded(this)
         }
 
