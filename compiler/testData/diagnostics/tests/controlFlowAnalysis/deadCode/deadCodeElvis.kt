@@ -23,14 +23,14 @@ fun test2(): Int {
 fun test3(a: Int?): Any? {
     a?.let {
         return a
-    } <!UNREACHABLE_CODE!>?:<!> return null
+    } ?: return null
     <!UNREACHABLE_CODE!>unreachable()<!>
 }
 
 fun test4(a: Int?) {
     a?.let {
         return
-    } <!UNREACHABLE_CODE!>?:<!> error("null a")
+    } ?: error("null a")
     <!UNREACHABLE_CODE!>unreachable()<!>
 }
 
