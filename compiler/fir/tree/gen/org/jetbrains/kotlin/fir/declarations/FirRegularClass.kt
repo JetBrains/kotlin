@@ -55,6 +55,7 @@ abstract class FirRegularClass : FirClass() {
     @DirectDeclarationsAccess
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
+    abstract override val staticControlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract val hasLazyNestedClassifiers: Boolean
@@ -78,6 +79,8 @@ abstract class FirRegularClass : FirClass() {
     abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceStaticControlFlowGraphReference(newStaticControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?)
 
