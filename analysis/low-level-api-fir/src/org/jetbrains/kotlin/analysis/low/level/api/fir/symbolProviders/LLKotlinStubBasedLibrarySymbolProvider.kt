@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.LLSymbolIdFactory
@@ -473,8 +472,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         return callableSymbols?.singleOrNull { it.fir.realPsi == callableDeclaration }
     }
 
-    @OptIn(FirCacheInternals::class)
-    @LLStatisticsOnlyApi
+    @FirCacheInternals
     internal val cachedDeclarations: List<FirDeclaration>
         get() = buildList {
             typeAliasCache.cachedValues.forEach { addIfNotNull(it?.fir) }

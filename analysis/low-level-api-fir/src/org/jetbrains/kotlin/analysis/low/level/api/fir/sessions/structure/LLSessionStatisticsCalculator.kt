@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinObjectSizeCal
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibrarySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinStubBasedLibrarySymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirLazyJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.declarations.*
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import kotlin.time.DurationUnit
 
-@OptIn(LLStatisticsOnlyApi::class)
+@OptIn(FirCacheInternals::class)
 internal object LLSessionStatisticsCalculator {
     /**
      * Calculates the weight and other statistics for the given [session].

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
@@ -31,7 +31,7 @@ internal abstract class ModuleFileCache {
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
-    @LLStatisticsOnlyApi
+    @FirCacheInternals
     abstract fun getAllCachedFirFiles(): Collection<FirFile>
 }
 
@@ -70,6 +70,6 @@ internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleRes
         return getCachedFirFile(ktFile)// ?: moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
-    @LLStatisticsOnlyApi
+    @FirCacheInternals
     override fun getAllCachedFirFiles(): Collection<FirFile> = firFileCache.asMap().values
 }

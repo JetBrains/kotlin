@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -53,7 +53,7 @@ internal class LLFirJavaSymbolProvider(
             ClassCacheContext(parentClass, JavaClassImpl(psiClass))
         }
 
-    @LLStatisticsOnlyApi
+    @FirCacheInternals
     internal val cachedDeclarations: Collection<FirDeclaration>
         get() = psiAwareCache.cachedValues.mapNotNull { it?.fir }
 }
