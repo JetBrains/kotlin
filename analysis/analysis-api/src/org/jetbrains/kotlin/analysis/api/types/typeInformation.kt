@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.name.ClassId
 
 /**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
@@ -410,4 +411,14 @@ public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.typeInformationProvider.builtinFunctionTypeFamilies()
+    }
+
+/**
+ * The [ClassId] provided the type exposes any (it is the case for [KaClassType]).
+ */
+context(session: KaSession)
+public val KaType.classId: ClassId?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.typeInformationProvider.classId(this)
     }

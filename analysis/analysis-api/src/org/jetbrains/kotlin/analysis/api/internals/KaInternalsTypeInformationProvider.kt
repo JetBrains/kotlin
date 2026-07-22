@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.name.ClassId
 
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -89,4 +90,6 @@ public interface KaInternalsTypeInformationProvider {
 
     @KaExperimentalApi
     public fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies
+
+    public fun classId(type: KaType): ClassId?
 }
