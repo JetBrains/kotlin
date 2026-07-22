@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiModifier
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
@@ -22,8 +19,6 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     containingDeclaration: T,
     modifiersBox: ModifiersBox = EmptyModifiersBox,
     annotationsBox: AnnotationsBox = EmptyAnnotationsBox,
-    override val symbolPointer: KaSymbolPointer<KaSymbol>?,
-    override val useSiteModule: KaModule,
 ) : SymbolLightModifierList<T>(containingDeclaration, modifiersBox, annotationsBox) {
     override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false

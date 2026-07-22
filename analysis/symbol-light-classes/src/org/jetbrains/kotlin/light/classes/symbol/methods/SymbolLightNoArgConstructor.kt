@@ -65,9 +65,7 @@ internal class SymbolLightNoArgConstructor(
                     annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                     additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
                 )
-            },
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
+            }
         )
     }
 

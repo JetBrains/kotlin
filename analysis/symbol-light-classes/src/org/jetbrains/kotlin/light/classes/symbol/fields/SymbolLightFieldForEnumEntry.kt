@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -58,8 +59,6 @@ internal class SymbolLightFieldForEnumEntry(
                     annotatedSymbolPointer = symbolPointer
                 )
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

@@ -55,8 +55,6 @@ internal abstract class SymbolLightParameterCommon(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

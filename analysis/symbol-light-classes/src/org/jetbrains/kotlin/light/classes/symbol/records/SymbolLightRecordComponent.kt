@@ -82,8 +82,6 @@ internal class SymbolLightRecordComponent private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = backingFieldSymbolPointer),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

@@ -226,8 +226,6 @@ internal class SymbolLightFieldForProperty private constructor(
                     }
                 }
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

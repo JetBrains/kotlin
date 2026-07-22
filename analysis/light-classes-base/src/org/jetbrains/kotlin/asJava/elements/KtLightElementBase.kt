@@ -9,15 +9,17 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.light.LightElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
 import javax.swing.Icon
 
-abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE),
+    KaElementJavaView {
     override fun toString() = "${this::class.simpleName.orEmpty()} of $parent"
     override fun getParent(): PsiElement = parent
-
-    abstract val kotlinOrigin: KtElement?
 
     @Deprecated("Hack for ULC", level = DeprecationLevel.ERROR)
     fun setParent(newParent: PsiElement) {

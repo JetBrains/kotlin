@@ -69,8 +69,6 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
             additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
         ),
-        symbolPointer = symbolPointer,
-        useSiteModule = useSiteModule
     )
 
     final override fun getModifierList(): PsiModifierList? = cachedValue {

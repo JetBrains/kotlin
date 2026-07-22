@@ -89,8 +89,6 @@ internal class SymbolLightClassForFacade(
                     )
                 )
             },
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

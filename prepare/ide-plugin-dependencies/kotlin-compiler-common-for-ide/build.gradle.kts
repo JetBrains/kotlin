@@ -7,6 +7,7 @@ plugins {
 
 val commonCompilerModules: Array<String> = CompilerModules.commonCompilerModules
 val descriptorsCompilerModules: Array<String> = CompilerModules.descriptorsCompilerModules
+val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
 
 /**
  * The list of modules that aren't a part of [commonCompilerModules] and doesn't have a dedicated artifact,
@@ -21,16 +22,24 @@ val otherAnalysisApiModules = listOf(
     ":analysis:stubs",
 )
 
-val projects = commonCompilerModules.asList() + descriptorsCompilerModules + otherAnalysisApiModules + listOf(
-    ":compiler:arguments.common",
-    ":compiler:cli-base",
-    ":kotlin-build-common",
-    ":kotlin-compiler-runner-unshaded",
-    ":kotlin-preloader",
-    ":daemon-common",
-    ":kotlin-daemon-client",
-    ":compiler:build-tools:kotlin-build-tools-api",
-)
+val projects = buildList {
+    addAll(commonCompilerModules.asList())
+    addAll(descriptorsCompilerModules)
+    addAll(analysisApiSurfaceModules)
+    addAll(otherAnalysisApiModules)
+    addAll(
+        listOf(
+            ":compiler:arguments.common",
+            ":compiler:cli-base",
+            ":kotlin-build-common",
+            ":kotlin-compiler-runner-unshaded",
+            ":kotlin-preloader",
+            ":daemon-common",
+            ":kotlin-daemon-client",
+            ":compiler:build-tools:kotlin-build-tools-api",
+        )
+    )
+}
 
 publishJarsForIde(
     projects = projects,

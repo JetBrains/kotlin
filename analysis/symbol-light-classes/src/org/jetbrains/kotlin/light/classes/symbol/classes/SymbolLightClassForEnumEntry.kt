@@ -66,8 +66,6 @@ internal class SymbolLightClassForEnumEntry(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

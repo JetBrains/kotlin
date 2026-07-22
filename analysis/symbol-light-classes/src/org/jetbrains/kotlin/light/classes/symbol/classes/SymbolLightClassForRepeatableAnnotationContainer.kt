@@ -50,8 +50,6 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
             ),
             annotationFilter = CollectionAnnotationFilter(allowedAnnotations),
         ),
-        symbolPointer = symbolPointer,
-        useSiteModule = useSiteModule
     )
 
     override fun computeOwnMethods(): List<PsiMethod> = listOf(

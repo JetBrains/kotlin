@@ -6,26 +6,23 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue
 import org.jetbrains.kotlin.analysis.api.resolution.singleConstructorCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithReference
 import org.jetbrains.kotlin.light.classes.symbol.toAnnotationMemberValue
 import org.jetbrains.kotlin.psi.*
 
-@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
-    KtLightElementBase(parent), PsiAnnotation, KtLightElement<KtCallElement, PsiAnnotation>, KaSymbolJavaView<KaSymbol> {
+    KtLightElementBase(parent), PsiAnnotation, KtLightElement<KtCallElement, PsiAnnotation> {
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 

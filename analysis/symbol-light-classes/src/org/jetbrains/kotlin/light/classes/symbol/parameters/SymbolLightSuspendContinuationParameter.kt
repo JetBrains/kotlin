@@ -67,8 +67,6 @@ internal class SymbolLightSuspendContinuationParameter(
                         NullabilityAnnotation.NON_NULLABLE
                 },
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

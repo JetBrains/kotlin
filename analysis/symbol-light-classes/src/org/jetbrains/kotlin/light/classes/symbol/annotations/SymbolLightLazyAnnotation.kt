@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.normalizedArguments
 import org.jetbrains.kotlin.name.ClassId
@@ -48,12 +45,6 @@ internal class SymbolLightLazyAnnotation(
                     annotationApplication
                 }
             }
-
-    override val symbolPointer: KaSymbolPointer<KaSymbol>?
-        get() = null
-
-    override val useSiteModule: KaModule
-        get() = annotationApplication.annotation.useSiteModule
 
     override val kotlinOrigin: KtCallElement?
         get() = annotationApplication.annotation.sourcePsi

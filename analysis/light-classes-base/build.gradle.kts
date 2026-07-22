@@ -12,7 +12,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
     api(project(":compiler:resolution.common.jvm"))
     api(project(":core:compiler.common.jvm"))
-    implementation(project(":analysis:analysis-api"))
+    api(project(":analysis:analysis-api"))
     compileOnly(intellijCore())
 }
 

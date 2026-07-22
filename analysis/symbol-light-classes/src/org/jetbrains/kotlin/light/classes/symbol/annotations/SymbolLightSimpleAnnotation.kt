@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
@@ -38,7 +35,4 @@ internal class SymbolLightSimpleAnnotation(
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList
-
-    override val symbolPointer: KaSymbolPointer<KaSymbol>? = null
-    override val useSiteModule: KaModule? = null
 }

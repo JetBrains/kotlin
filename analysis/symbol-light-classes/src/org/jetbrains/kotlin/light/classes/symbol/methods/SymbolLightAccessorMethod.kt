@@ -215,8 +215,6 @@ internal class SymbolLightAccessorMethod private constructor(
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

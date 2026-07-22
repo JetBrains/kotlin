@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.PsiModifierListOwner
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
@@ -18,6 +15,4 @@ internal class SymbolLightClassModifierList<T : KtLightElement<KtModifierListOwn
     containingDeclaration: T,
     modifiersBox: ModifiersBox = EmptyModifiersBox,
     annotationsBox: AnnotationsBox = EmptyAnnotationsBox,
-    override val symbolPointer: KaSymbolPointer<KaSymbol>?,
-    override val useSiteModule: KaModule,
 ) : SymbolLightModifierList<T>(containingDeclaration, modifiersBox, annotationsBox)

@@ -76,8 +76,6 @@ internal class SymbolLightFieldForObject private constructor(
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
                 listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
             },
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

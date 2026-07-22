@@ -105,8 +105,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
                 annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

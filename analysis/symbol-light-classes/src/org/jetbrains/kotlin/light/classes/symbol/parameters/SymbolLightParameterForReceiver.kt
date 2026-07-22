@@ -90,8 +90,6 @@ internal class SymbolLightParameterForReceiver private constructor(
                     }
                 },
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

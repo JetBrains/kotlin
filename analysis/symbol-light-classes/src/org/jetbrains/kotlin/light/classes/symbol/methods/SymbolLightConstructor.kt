@@ -77,8 +77,6 @@ internal class SymbolLightConstructor private constructor(
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
             ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

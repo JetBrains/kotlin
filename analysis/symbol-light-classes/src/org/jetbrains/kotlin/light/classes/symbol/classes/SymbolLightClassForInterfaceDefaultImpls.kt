@@ -43,8 +43,6 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,
         modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
-        symbolPointer = symbolPointer,
-        useSiteModule = useSiteModule
     )
 
     override fun classKind(): KaClassKind = KaClassKind.CLASS

@@ -44,9 +44,7 @@ internal class SymbolLightScriptMainParameter(
 
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
-            containingDeclaration = this,
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
+            containingDeclaration = this
         )
     }
 

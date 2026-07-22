@@ -52,7 +52,6 @@ internal class SymbolLightClassForScript private constructor(
             }
         )
         add(defaultConstructor)
-
         val mainMethod = SymbolLightMethodForScriptMain(
             script,
             this@SymbolLightClassForScript,
@@ -96,8 +95,6 @@ internal class SymbolLightClassForScript private constructor(
         SymbolLightClassModifierList(
             containingDeclaration = this@SymbolLightClassForScript,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

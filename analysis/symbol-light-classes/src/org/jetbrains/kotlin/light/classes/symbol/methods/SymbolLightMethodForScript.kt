@@ -77,8 +77,6 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptDefaultConstructor,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 
@@ -105,8 +103,6 @@ internal class SymbolLightMethodForScriptMain(
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptMain,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
         )
     }
 

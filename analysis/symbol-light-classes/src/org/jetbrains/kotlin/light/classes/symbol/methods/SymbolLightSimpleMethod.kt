@@ -181,9 +181,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
                 ),
-            ),
-            symbolPointer = symbolPointer,
-            useSiteModule = useSiteModule
+            )
         )
     }
 
