@@ -16,6 +16,12 @@ import org.jetbrains.kotlin.utils.ThreadSafe
 
 /**
  * Caches the [KtFile] to [FirFile] mapping of a [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule].
+ *
+ * [FirFile]s cached in [ModuleFileCache] are expected to have *source-based* [symbol IDs][org.jetbrains.kotlin.fir.symbols.id.FirSymbolId]
+ * and [root declaration][org.jetbrains.kotlin.analysis.low.level.api.fir.declarations.roots.rootDeclaration] references. This is checked by
+ * various checkers after Analysis API tests (see `configureFirConsistencyChecks`).
+ *
+ * These invariants allow the cache to weakly reference FIR files, making it possible to discard unused ones.
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {

@@ -57,6 +57,10 @@ import kotlin.reflect.KClass
  * [LLKotlinSourceSymbolProvider] is a [LLKotlinSymbolProvider] which provides symbols for source-based modules, such as [KaSourceModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
  * and [KaScriptModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule].
  *
+ * For source symbols, the underlying [FirFile]s and thereby [ModuleFileCache][org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache]
+ * are the source of truth. This allows the symbol provider to reference its symbols weakly, which allows them to be collected when the
+ * underlying FIR file is also unused.
+ *
  * ### Resolve extension symbols
  *
  * The symbol provider includes symbols from [LLFirResolveExtensionTool]s. While it would be nicer to have a separate resolve extension
