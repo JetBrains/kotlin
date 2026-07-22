@@ -1,0 +1,163 @@
+# Java-Direct: Iteration Results Log
+
+**Current status**: `:compiler:java-direct:test` full suite green, 2839/2839 (100%). No known won't-fix.
+
+**Last archived**: `implDocs/archive/ITERATION_RESULTS_2026_07_13.md` (entries through 2026-07-13).
+
+---
+
+## How to write entries
+
+This log is read into the agent's context every session, so **entries must stay short**.
+
+- **Newest entry on top.** One entry per landed change or per investigated regression.
+- **Cap each entry at ~15 lines / ~150 words.** If the rationale, a trace, or a
+  measurement table is longer, put it in a dedicated `implDocs/<TOPIC>.md` and link to it
+  from the entry — do not inline it here.
+- **Use the fixed fields below.** No free-form multi-paragraph narration; if a field needs
+  more than ~2 lines, link out instead.
+- **No pasted logs, stacktraces, or diffs.** Quote the single line that matters; link the rest.
+- **Archive when this file passes ~600 lines** (see `AGENT_INSTRUCTIONS.md` →
+  "Docs Maintenance"): `git mv` it to
+  `implDocs/archive/ITERATION_RESULTS_<last-entry-date>.md`, add an archive banner, and
+  reset this file to the template below.
+
+### Entry template
+
+```
+### YYYY-MM-DD — <one-line title>
+- **Change**: what changed and why (1–3 lines).
+- **Files**: key files touched (+N/−M LoC if useful).
+- **Tests**: suites run + counts (e.g. box 1178/1178, phased 1513/1513).
+- **Result**: green / regression fixed / won't-fix — link to a detail doc if there is one.
+```
+
+---
+
+<!-- Add new entries below, newest first. -->
+
+### 2026-07-20 — Perf review: memoize recomputed reads in the Java-source model
+- **Change**: the model layer recomputed pure, AST-derived values on every access. Converted the
+  hot ones to `by lazy(PUBLICATION)` (same precedent as `supertypes`/`typeParameters`): class
+  keyword flags (`isInterface`/`isEnum`/`isRecord`/`isAnnotationType`/`isSealed`),
+  `methods`/`fields`/`constructors`/`recordComponents`/`innerClassNames`/`annotations`; per-member
+  `resolutionContext`/`valueParameters`/`returnType` and field
+  `leadingFieldNode`/`modifierList`/`type`/`initializerNode`/`annotations`; type
+  `rawTypeNameParts`/`typeArguments`. Memoizing the class collections is the key enabler — member
+  wrappers are now stable, so the per-member lazies actually cache. Behaviour-preserving (pure
+  functions of the immutable AST + already-lazy `classifier`).
+- **Files**: `model/JavaClassOverAst.kt`, `model/JavaMemberOverAst.kt`, `model/JavaTypeOverAst.kt`.
+- **Tests**: box+phased 2767/2767 (0 FAILED); `JavaParsing*` 105/105.
+- **Result**: green. Full write-up + reviewed-healthy caches + riskier follow-ups (plain-`HashMap`
+  concurrency in `JvmBinaryClassFinderInputsOverIndex`, annotation `classId` memoization, more
+  per-type/param lazies) in `implDocs/PERFORMANCE_REVIEW_2026_07_20.md`.
+
+### 2026-07-20 — Read package-level default-nullability annotations off binary `package-info.class`
+- **Change**: the library-session facade's finder (was a no-op `findPackage`) now materialises a
+  binary `<pkg>/package-info.class` and exposes its class-level annotations as the package's
+  `JavaPackage.annotations`. Previously those were dropped, so JSR-305/JSpecify package defaults
+  (`@ParametersAreNonnullByDefault`, `@TypeQualifierDefault`, `@NullMarked`, …) on a **binary**
+  Java package were invisible: a type-variable parameter substituted with an explicitly nullable
+  Kotlin type argument stayed nullable instead of becoming definitely-non-null, producing a
+  spurious `UNSAFE_CALL` in user code (dokka's `Property<File?>.map { it.relativeToOrSelf(..) }`).
+  The finder reuses the same memoised binary index the deserializer reads through; class/package
+  existence still routes through the deserializer, so only annotations are added.
+- **Files**: `JvmBinaryClassFinderInputsOverIndex.kt` (+`findPackageInfoClass`),
+  `JavaDirectFacadeBuilder.kt` (`NoOpJavaClassFinder` → `LibraryJavaClassFinder` +
+  `BinaryPackageInfoJavaPackage`), `cli-jvm/…/JvmFrontendPipelinePhase.kt` (thread the shared
+  binary-inputs builder into the facade builder); new test
+  `codegen/boxJvm/javaInterop/foreignAnnotationsTests/tests/dnnParameterFromBinaryPackageAnnotation.kt`.
+- **Tests**: full box+phased suite green (0 FAILED). New reproducer fails without the fix with the
+  exact reported symptom (`UNSAFE_CALL … nullable receiver of type 'String?'`) and passes with it.
+- **Result**: regression fixed (java-direct now matches PSI on binary package defaults).
+
+### 2026-07-16 — Remove the loose `probeFqnSplits` fallback: commit to the leftmost type like javac
+- **Change**: `resolveQualifiedNameToClassIdFromParts` no longer retries a failed name as a plain
+  `package.Class` split. Like javac (JLS 6.5.4/6.5.5), once a leftmost type is found the
+  interpretation is committed: a failed member-type descent returns the *nonexistent* nested id of
+  the committed prefix (full resolution), which stays unresolved downstream — red code, exactly as
+  javac reports on a package/type name clash (JLS 6.1). The reentrance-safe flavor returns `null`
+  instead, so supertype-walk seeding is never poisoned by a dangling id. `probeFqnSplits` deleted.
+- **Tests**: the strict behavior conflicts with the PSI Java model (which loosely resolves the
+  package interpretation), so the two tests pinning the loose behavior moved out of the shared
+  roots: `qualifiedNamePackageClassClash.kt` deleted from the shared roots and recreated with
+  javac-strict expectations in the new java-direct-owned `testData/diagnostics` root (wired into
+  `TestGenerator`); the pre-existing `javac/qualifiedExpression/PackageVsClass2.kt` — verified
+  against real javac to be red code ("cannot find symbol: class b, location: class a") — is
+  skipped via the new `SkipTestsPinningPsiJavaModelDeviationsMetaConfigurator` and mirrored
+  strictly in the same root. Strict diagnostics: `MISSING_DEPENDENCY_CLASS` on the call whose Java
+  signature uses the clash name + `UNRESOLVED_REFERENCE` on members of the unresolved type.
+- **Files**: `resolution/JavaTypeResolver.kt` (−32/+18), `testFixtures/…/components.kt`,
+  `testFixtures/…/AbstractJavaUsingAstTest.kt`, `testFixtures/…/TestGenerator.kt`,
+  `build.gradle.kts` (own testdata root registered); Scenario D refreshed in `ReadMe.md` and
+  `implDocs/RESOLUTION_SCHEMA.md`.
+- **Result**: the module is now javac-conformant on qualified-name resolution — the last
+  deliberate JLS deviation (KT-87813's unsound loose fallback) is gone. Full module suite green
+  (box + phased, 0 FAILED; the skipped PSI-pinning test is mirrored strictly).
+
+### 2026-07-16 — Rewrite `resolveQualifiedNameToClassIdFromParts` as a left-to-right JLS 6.5.4 pass
+- **Change**: replaced the recursive try-every-split loop (outer-prefix enumeration + per-prefix
+  recursion, O(n²) probes) with a single non-recursive left-to-right pass that mirrors javac's
+  PackageOrTypeName classification: first segment as a simple type name in scope (JLS 6.5.4.1),
+  else grow the package prefix until a segment names a top-level type (JLS 6.5.4.2), then a
+  member-type descent probing declared-then-inherited at every segment (JLS 6.5.5.2). The loose
+  `probeFqnSplits` fallback survives, but is now reached only when the JLS pass fails — the sole
+  divergence from javac remains the package/type name clash pinned by
+  `qualifiedNamePackageClassClash.kt` (KT-87813).
+- **Files**: `resolution/JavaTypeResolver.kt` (−36/+28); Scenario D refreshed in `ReadMe.md` and
+  `implDocs/RESOLUTION_SCHEMA.md`.
+- **Tests**: box+phased suite green (0 FAILED); `JavaParsing*` unit tests green.
+- **Result**: simplification landed (behavior-preserving on the whole suite).
+
+### 2026-07-15 — Drop redundant `JavaToKotlinClassMap` disjunct in `resolveFromJavaLang`
+- **Change**: `resolveFromJavaLang` accepted a name when either `JavaToKotlinClassMap.mapJavaToKotlin`
+  hit **or** `classExists` was true; the map disjunct is dead. It only ever probes `ClassId(java.lang, X)`,
+  and `classExists` resolves those via the symbol provider whose JVM builtins arm answers only `kotlin.*`
+  ids (`StandardClassIds.builtInsPackages`), so a `java.lang.*` lookup never returns a `BuiltIns`-origin
+  symbol filtered by `tryResolve` — it hits the JDK library class instead. Every mapped `java.lang` fqName
+  (Object/String/Number/CharSequence/Comparable/Throwable/Cloneable/Iterable/Enum/wrappers/Deprecated)
+  exists in both full JDK and mockJDK, so `classExists` already covers exactly what the map would.
+  Collapsed to `classExists(classId, fullResolution)`, matching `resolveFromSamePackage`; better PSI
+  parity (no divergence in the no-JDK case). Removed the now-unused `JavaToKotlinClassMap` import.
+- **Files**: `resolution/JavaTypeResolver.kt` (−5/+1).
+- **Tests**: box+phased suite green (0 FAILED/0 errors).
+- **Result**: simplification landed (reviewer question — `classExists` alone suffices).
+
+### 2026-07-15 — Nameless Java method recovered as a constructor (`testNamelessInJava`)
+- **Change**: `JavaClassOverAst.constructors` required a constructor `METHOD` node to have both no
+  return `TYPE` **and** an `IDENTIFIER`, so a malformed nameless declaration like `void () {}`
+  (its `void` is an error element, not a return type) was dropped; with no explicit constructor a
+  public default constructor was synthesized, so `class K : Nameless()` saw a visible constructor and
+  produced no diagnostic. PSI (same syntax parser) treats any no-return-type method as a
+  (package-private) constructor, suppressing the default one → `INVISIBLE_REFERENCE`. Dropped the
+  `IDENTIFIER` requirement so constructor detection mirrors PSI's `getReturnTypeElement() == null`.
+- **Files**: `model/JavaClassOverAst.kt` (constructors filter). Test data unchanged (shared golden).
+- **Tests**: full box+phased suite 2839/2839 (0 FAILED); `JavaParsingTest`/`JavaLightTreeTest` green.
+- **Result**: regression fixed (new test from master merge; SDK 261 golden).
+
+### 2026-07-14 — Skip inaccessible inherited nested classes (IJ-FP regression: `testIntellij_exceptionAnalyzer`)
+- **Change**: `walkSupertypeClassIds` accepted the first inherited nested class of a matching simple
+  name regardless of accessibility, so a package-private nested type in a supertype from another
+  package (e.g. `SimpleColoredComponent.TextRenderer`) wrongly shadowed a same-named top-level class,
+  producing a spurious `RETURN_TYPE_MISMATCH`. Now filtered by JLS 6.6/8.2 accessibility: `private`
+  never inherited, package-private only within the declaring package; inaccessible matches expand
+  deeper instead of resolving. Visibility read cycle-safely via new `FirJavaClass.nonEnhancedVisibility`
+  (from `originalStatus`, no lazy `status`) surfaced through `FirBackedJavaClassAdapter.visibility`.
+- **Files**: `resolution/JavaInheritedClassResolver.kt`, `resolution/FirBackedJavaClassAdapter.kt`,
+  `fir-jvm/.../FirJavaClass.kt` (+`nonEnhancedVisibility`); test
+  `codegen/box/javaDirect/packagePrivateInheritedNestedClassNotVisibleAcrossPackages.kt`.
+- **Tests**: box 1179/1179, phased 1513/1513 (0 FAILED); `IntelliJFullPipelineTestsGenerated.testIntellij_exceptionAnalyzer`
+  green under java-direct; PSI + CompileKotlinAgainstKotlin gates green (shared `FirJavaClass` edit).
+- **Result**: regression fixed.
+
+### 2026-07-13 — Memoize `JavaClassOverAst.supertypes` (IJ-FP regression)
+- **Change**: `supertypes` was a recomputing `get()` that returned fresh `JavaClassifierTypeOverAst`
+  instances on every read; FIR forces it from two lazy slots per class (`FirJavaClass.superTypeRefs`
+  enhancement and `directSupertypeClassIdsCache`), so each supertype's `classifier` (a per-instance
+  lazy hitting the symbol provider) resolved from cold twice. Made it `by lazy(PUBLICATION)` so both
+  reads share instances and each supertype resolves once. List build allocates wrappers only → still
+  resolution-safe.
+- **Files**: `model/JavaClassOverAst.kt` (supertypes get()→by lazy).
+- **Tests**: box 1178/1178, phased 1513/1513 (0 FAILED).
+- **Result**: regression fixed. IntelliJ `testIntellij_platform_ide_impl` warm frontend (isolated bench,
+  4 iters, same build): java-direct 21.5s wall / 20.8s CPU vs legacy 25.3s / 23.6s — was ~+8% before.

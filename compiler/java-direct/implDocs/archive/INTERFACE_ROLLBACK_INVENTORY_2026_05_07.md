@@ -1,0 +1,339 @@
+# Java-Model Interface Rollback Inventory — 2026-05-07
+
+> **Status / scope.** Authoritative goal-statement for the public Java-model interface
+> rollback. Supersedes the narrower scope of
+> [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+> for purposes of *what comes off the public interface*. The proposal still owns the
+> design rationale for the callback-deletion half (its §6 dispatcher and §6.1
+> `JavaSupertypeLoopChecker` stand). Steps 4.5a / 4.5b sequencing in the proposal is
+> withdrawn; the corrective iterations below replace it.
+>
+> Read this file before editing any
+> `core/compiler.common.jvm/src/.../load/java/structure/*` interface, any
+> `JavaTypeOverAst` / `JavaAnnotationOverAst` resolution path, or
+> `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`.
+
+---
+
+## 1. Goal
+
+The public `core/compiler.common.jvm/src/.../load/java/structure/*` Java-model interfaces
+(`JavaType`, `JavaClassifierType`, `JavaAnnotation`, `JavaField`, `JavaAnnotationArgument`,
+and friends) are consumed by **three** in-tree implementations: PSI-backed, binary, and
+`java-direct`. The architectural intent of `java-direct` is that all three present the
+**same public surface** to FIR — FIR conversion code reads `classifier?.classId`,
+`annotation.classId`, `field.initializerValue`, etc. without branching on the
+implementation.
+
+During `java-direct`'s development a number of new members were added to those public
+interfaces to thread FIR-side knowledge back into the model through callbacks (the
+model couldn't see `FirSession`, so resolution it could not perform on its own had to
+be supplied from outside). With `FirSession` now injected (per the foundation iteration
+recorded in `ITERATION_RESULTS.md` 2026-05-06), those bridges are **debt** — the model
+can now resolve internally, and the additions should come back off.
+
+**The rollback goal, stated as an invariant:** the diff of every
+`core/compiler.common.jvm/.../load/java/structure/*.kt` file from `master` to the
+post-rollback HEAD is a **net deletion** of `java-direct`-introduced members; no new
+public members appear there. Members that genuinely cannot be removed (perf-sensitive
+protocols) move to a `java-direct`-private subinterface inside
+`compiler/java-direct/src/.../model/`, not back onto the public surface.
+
+This is the binding contract for `AGENT_INSTRUCTIONS.md` rule 7.
+
+---
+
+## 2. Inventory of `java-direct`-introduced public-interface members
+
+Every member added during `java-direct` development. File:line refers to current HEAD
+(post-Step-4.5a). The *Why added* column records the original problem the member
+solved; the *Rollback path* column records how it comes off given `FirSession`
+injection.
+
+### 2.1 In `javaTypes.kt`
+
+| Member | File:line | Why added | Rollback path | Status |
+|---|---|---|---|---|
+| `JavaType.needsTypeUseAnnotationFiltering` | _(deleted 2026-05-07)_ | Let the FIR caller skip the filter-callback closure on impls (PSI/binary) that pre-filter at structure-build time. java-direct can't pre-filter without resolving annotation FQNs first. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaTypeWithExternalAnnotationFiltering` (`compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt`). FIR-side `filterTypeUseAnnotationsIfNeeded` helper performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
+| `JavaType.filterTypeUseAnnotations(isTypeUseAnnotation)` | _(deleted 2026-05-07)_ | Same — pulled a callback into the model for filtering. | Relocated to `JavaTypeWithExternalAnnotationFiltering` alongside `needsTypeUseAnnotationFiltering`. | **Done (2026-05-07, Step C)** |
+| `JavaClassifierType.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classifierQualifiedName` is reliable. java-direct returns `false` when the simple name didn't resolve to a known class. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
+| `JavaClassifierType.resolvedClassId` | `javaTypes.kt:84` | **Side-channel added in Step 4.5a (2026-05-06).** Exposes the model's resolved `ClassId` for cross-file references because `classifier` was left `null`. The intended design (§3 of the proposal) was that `classifier?.classId` would be reliable post-injection; the implementer kept `classifier == null` for cross-file refs and added this property instead. | Build `FirBackedJavaClassAdapter`; populate `classifier` for every cross-file reference; FIR's `resolveTypeName` reverts to its pre-`java-direct` body. | **Open (Step 4.5b)** |
+| `JavaClassifierType.isTriviallyFlexibleHint` | `javaTypes.kt:98` | PSI checks "is trivially flexible" via the resolved classifier; java-direct's `classifier` is null for cross-file refs, so this hint reproduces the answer. | Same as `resolvedClassId` — once `classifier` is reliably populated, FIR can call `isTriviallyFlexible(classifier)` directly. | **Open (Step 4.5b)** |
+| `JavaClassifierType.containingClassIds` | _(deleted 2026-05-07)_ | Innermost-to-outermost `ClassId`s of the containing-class chain, used by FIR's `findOuterTypeArgsFromHierarchy` for inherited-inner type-arg substitution. PSI uses `PsiSubstitutor` for the same job; binary types come with explicit outer args in their signature. | The lexical containing-class symbol is now carried on `MutableJavaTypeParameterStack.containingClassSymbol`, set in `FirJavaFacade.convertJavaClassToFir`; `findOuterTypeArgsFromHierarchy` derives the outer chain by walking `containingClassSymbol.classId.outerClassId`. The original "walk via `classifier.outerClass`" sketch in §3 was incorrect — `classifier.outerClass` is the **resolved** classId's outer chain, not the **lexical** chain at the reference site (the two differ exactly in the inherited-inner case the recovery exists for). | **Done (2026-05-07)** |
+
+### 2.2 In `javaElements.kt`
+
+| Member | File:line | Why added | Rollback path | Status |
+|---|---|---|---|---|
+| `JavaAnnotation.isResolved` | _(deleted 2026-05-07)_ | Gates whether `classId` is reliable. java-direct returns `false` when the annotation reference is unqualified and not imported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
+| `JavaField.supportsExternalInitializerResolution` | _(deleted 2026-05-07)_ | Let the FIR caller skip the resolve-callback closure when the impl (PSI/binary) already pre-evaluates literals. java-direct can't pre-evaluate cross-language references (Java field reads Kotlin constant) without resolution. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaFieldWithExternalInitializerResolution`. FirJavaFacade's `lazyInitializer` performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
+| `JavaField.resolveInitializerValue(resolveReference)` | _(deleted 2026-05-07)_ | Same — pulled a resolution callback into the model for cross-language constant evaluation. | Relocated alongside `supportsExternalInitializerResolution`. | **Done (2026-05-07, Step C)** |
+
+### 2.3 In `annotationArguments.kt`
+
+| Member | File:line | Why added | Rollback path | Status |
+|---|---|---|---|---|
+| `JavaEnumValueAnnotationArgument.isResolved` | _(deleted 2026-05-07)_ | Gates whether `enumClassId` is reliable. java-direct returns `false` when the enum reference is unqualified+unimported. | Confirmed dead on FIR side (no production callers). Pure cleanup; no replacement needed. | **Done (2026-05-07)** |
+| `JavaEnumValueAnnotationArgument.couldBeConstReference` | _(deleted 2026-05-07)_ | PSI/binary disambiguate const-fields from enum entries at structure-build time and emit the correct `JavaLiteralAnnotationArgument` / `JavaEnumValueAnnotationArgument`; java-direct can't disambiguate at parse time and emits the enum variant for both cases, so it overrode this to `true` to opt FIR into a const-field fallback path. | Step C (move-to-private). Relocated to fir-jvm-private subinterface `JavaEnumValueAnnotationArgumentWithConstFallback`. `javaAnnotationsMapping.kt`'s enum-value-argument branch performs the `as?` downcast. | **Done (2026-05-07, Step C)** |
+
+### 2.4 Adjacent code that becomes simplifiable (not interface members, but on the same path)
+
+These are not public-interface additions, but they exist solely because of the
+`classifier == null` cross-file case. They become simplifiable in lockstep with §3
+Step 4.5b:
+
+| Site | File:line | Why it exists | Post-rollback |
+|---|---|---|---|
+| `isMethodWithOneObjectParameter` `classifier == null` branch | `core/compiler.common.jvm/src/.../load/java/structure/javaLoading.kt:33–37` | Treats an unresolved `Object` reference as `java.lang.Object` because `classifier` is `null` for cross-file refs. | Once `classifier` is reliably populated by the 4.5b adapter, the fallback branch is unreachable and can be deleted. |
+
+### 2.5 Already deleted (Step 4.5a, 2026-05-06)
+
+For completeness — these are the three callback methods the proposal already deleted:
+
+| Member | What it did | Replacement |
+|---|---|---|
+| `JavaClassifierType.resolve(tryResolve, getSupertypeClassIds): ClassId?` | FIR→model callback for cross-origin classifier resolution. | Internal resolution via `JavaResolutionContext.resolve` + `LazySessionAccess`. The interim side-channel `resolvedClassId` is what 4.5b removes. |
+| `JavaAnnotation.resolveAnnotation(tryResolve): ClassId?` | Same, for annotations. | `JavaAnnotation.classId` populated internally. |
+| `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve): ClassId?` | Same, for enum-value args. | `JavaEnumValueAnnotationArgument.enumClassId` populated internally. |
+
+---
+
+## 3. Corrective iteration plan
+
+The merged-plan / proposal sequence (Step 4.5a then Step 4.5b) is withdrawn. The
+corrective sequence is below; treat each step as a separate iteration with its own
+validation gate per `AGENT_INSTRUCTIONS.md`.
+
+### Step 4.5b — Build `FirBackedJavaClassAdapter`; remove the side-channel + the four laziness-gate properties
+
+**Status update (2026-05-07).** **Partially landed.** Three `isResolved` deletions
+already shipped (per `ITERATION_RESULTS.md`'s 2026-05-07 entry). The full deliverable
+(adapter + `resolvedClassId` deletion + `isTriviallyFlexibleHint` deletion +
+`JavaTypeConversion.resolveTypeName` restore) was prototyped twice and reverted both
+times. The prototype regressed three cross-file-inner-class tests (`testJ_k_complex`,
+`testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef`) that
+require proper outer-class-chain handling — now identified as **Step 4.5c**'s
+prerequisite, not Step 4.5b's. **Re-sequenced:** Step 4.5c moves before the
+adapter-side completion of 4.5b; the rest of 4.5b lands once 4.5c provides the
+structural-`JavaClass`-shaped adapter (or equivalent outer-chain mechanism).
+
+**Second-attempt findings (2026-05-07).** A FIR-side outer-args propagation patch
+("Option B" — generalising `JavaTypeConversion.kt`'s `null ->` branch
+`findOuterTypeArgsFromHierarchy` recovery to the `is JavaClass ->` branch via a
+`typeArguments.size < typeParameterSymbols.size` check, gated on
+`containingClassIds.isNotEmpty()` for zero binary/PSI cost) was implemented and ran
+into the same 3 regressions. Root cause: `findOuterTypeArgsFromHierarchy:461` skips
+index 0 of `containingClassIds` to avoid recursion in supertype-resolution context;
+for cross-file refs in **method-body / field-type** context the containing chain has
+size 1 → loop doesn't fire → returns `null` → outer arg lost. The Option B patch
+covers the **supertype-clause** context (size ≥ 2) but not the method-body context.
+Pre-Step-4.5b passes both because AST-side `findInnerClassFromSupertypes`
+(`compiler/java-direct/.../JavaInheritedMemberResolver.kt:77`) returns a real
+`JavaClassOverAst` with a fully-shaped outerClass chain whose `JavaTypeParameter`
+instances are registered in `MutableJavaTypeParameterStack` at FIR conversion time;
+the implicit-outer walk in `JavaClassifierTypeOverAst.computeTypeArguments` emits
+real refs that FIR's `is JavaTypeParameter ->` lookup at `JavaTypeConversion.kt:310`
+resolves correctly. The synthetic adapter cannot replicate this without registering
+its placeholder type-params in the stack. **Option A is required** for Step 4.5c —
+specifically, a `JavaTypeParameter`-implementing class that **directly carries its
+`FirTypeParameterSymbol`**, with FIR's `is JavaTypeParameter ->` branch checking for
+this subtype before falling back to stack lookup. ~80-120 LOC vs the 30-50 of Option B.
+
+The orphaned `FirBackedJavaClassAdapter.kt` from this iteration's prototype is
+preserved in HEAD as a starting point for Step 4.5c (the structural adapter half is
+already written; the missing pieces are the symbol-carrying type-param subtype and
+the FIR-side lookup-bypass branch).
+
+**Goal.** `JavaClassifierTypeOverAst.computeClassifier()` returns a real `JavaClass`
+adapter for cross-file references, derived from `firSession.symbolProvider`.
+`JavaTypeConversion.resolveTypeName` reverts to its pre-`java-direct` body
+(`(javaType.classifier as? JavaClass)?.classId ?: findClassIdByFqNameString(name, session) ?: ClassId.topLevel(FqName(name))`).
+Five interface members come off.
+
+**Deletes (public interface — net deletions, no additions):**
+
+- ~~`JavaClassifierType.resolvedClassId`~~ **— done 2026-05-07 (Option A landing, conditional on KJK trip-wire decision)**
+- ~~`JavaClassifierType.isResolved`~~ **— done 2026-05-07**
+- ~~`JavaClassifierType.isTriviallyFlexibleHint`~~ **— done 2026-05-07 (Option A landing, conditional on KJK trip-wire decision)**
+- ~~`JavaAnnotation.isResolved`~~ **— done 2026-05-07**
+- ~~`JavaEnumValueAnnotationArgument.isResolved`~~ **— done 2026-05-07**
+
+**Touches.**
+
+| File | Change |
+|---|---|
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Delete `resolvedClassId`, `isResolved`, `isTriviallyFlexibleHint`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt` | Delete `JavaAnnotation.isResolved`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/annotationArguments.kt` | Delete `JavaEnumValueAnnotationArgument.isResolved`. |
+| **New** `compiler/java-direct/src/.../resolution/FirBackedJavaClassAdapter.kt` | `JavaClass`-shaped adapter over `FirRegularClassSymbol`. For `FirJavaClass` arms: backed by `directSupertypeClassIds()` cache + the underlying `javaClass.supertypes` for full structural data (or the §12 Q1 fallback D). For Kotlin / built-in / deserialized: builds a structural view on demand using `firSession.symbolProvider` for outer-chain recovery. Construction is mediated by `LazySessionAccess` so cache-population code cannot construct adapters. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `computeClassifier()` cross-file branch returns `FirBackedJavaClassAdapter` (not `null`). Delete `resolvedClassId` override. Delete `isTriviallyFlexibleHint` override (and `computeIsTriviallyFlexibleHint`). Delete `isResolved` override (if present). The "Cross-file references stay `classifier == null`" comment block (currently lines 128–134) is removed. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | Delete `isResolved` override; `classId` already returns the resolved value (post-Step-4.5a foundation). Same for the annotation-argument variant. |
+| `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | Restore `resolveTypeName` to its pre-`java-direct` body — delete the `?: javaType.resolvedClassId` middle term. Delete the `isTriviallyFlexibleHint` read at lines 189–193 in favour of the existing `isTriviallyFlexible(classifier)` path. Audit the `isResolved` read at line 322 and the surrounding `isResolved`-gated branches; collapse to the single resolution path now that `classifier` answers in all cases. |
+| `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` | Audit `isResolved` reads on `JavaAnnotation` (if any remain post-4.5a foundation). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | Iteration entry. |
+
+**Validation.**
+
+- `JavaUsingAst*` matrix unchanged: 2693 / 2693 (the post-Step-4.5a baseline).
+- Trip-wire pair green: `Tests.Generics.InnerClasses.testJ_k_complex` and
+  `Tests.J_k.CollectionOverrides.testMapMethodsImplementedInJava`.
+- `KJKComplexHierarchyNestedLoop.kt` cross-origin re-entry trip-wire green (per
+  the Step 4.5a entry; the `JavaSupertypeLoopChecker` from the foundation
+  iteration carries this).
+- PSI regression gate: `PhasedJvmDiagnosticLightTreeTestGenerated.*` shows no new
+  failures.
+- `git diff core/compiler.common.jvm/src/.../load/java/structure/` is **net deletion
+  of 5 members; zero additions**.
+
+### Step 4.5c — Eliminate `containingClassIds` — **Done (2026-05-07)**
+
+**Goal achieved.** `findOuterTypeArgsFromHierarchy` derives the lexical
+containing-class chain from the FIR side directly. `JavaClassifierType.containingClassIds`
+deleted from the public Java-model interface; `JavaTypeOverAst`'s override and
+`JavaResolutionContext.getContainingClassIds()` consumers updated.
+
+**Note on the original sketch.** The §2.1 row's pre-landing rollback path said
+"walk via `classifier.outerClass`". That was wrong. `classifier.outerClass` is
+the **resolved classId's** outer chain (e.g., for `NestedInSuperClass` resolved
+to `SuperClass.NestedInSuperClass`, `classifier.outerClass = SuperClass`).
+`findOuterTypeArgsFromHierarchy` needs the **lexical containing-class chain at
+the reference site** — for `class J1.NestedSubClass extends NestedInSuperClass`
+the lexical chain is `[J1.NestedSubClass, J1]` and we walk J1's supertypes to
+find `SuperClass<String>`. The two chains coincide only for non-inherited inner
+references — exactly the case the recovery doesn't fire for.
+
+**Implementation (landed 2026-05-07).** Lexical containing-class symbol carried
+on `MutableJavaTypeParameterStack.containingClassSymbol` (new field), set in
+`FirJavaFacade.convertJavaClassToFir` after stack creation. `copy()` propagates
+it (same logical class); `addStack(parent)` does not (each FirJavaClass owns its
+own identity). `findOuterTypeArgsFromHierarchy` takes a `JavaTypeParameterStack`
+parameter and walks `containingClassSymbol.classId.outerClassId` chain;
+non-`MutableJavaTypeParameterStack` callers (no containing class set) get an
+early `null` return.
+
+**Deletes:** `JavaClassifierType.containingClassIds` (public interface).
+
+**Touches landed.**
+
+| File | Change |
+|---|---|
+| `compiler/fir/fir-jvm/src/.../MutableJavaTypeParameterStack.kt` | Add `var containingClassSymbol: FirRegularClassSymbol?`. `copy()` copies it; `addStack` does not. |
+| `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` | `convertJavaClassToFir` sets `javaTypeParameterStack.containingClassSymbol = classSymbol` after stack creation, before `addStack(parent)`. |
+| `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | `findOuterTypeArgsFromHierarchy` signature changes from `(ClassId, List<ClassId>, FirSession)` to `(ClassId, JavaTypeParameterStack, FirSession)`. Three call sites (the `null ->` branch's `isRawType` recovery, the `is JavaClass ->` branch's outer-args recovery, and the `null ->` branch's regular outer-args recovery) drop the `containingClassIds.isNotEmpty()` perf gate (the function's early `null` return on `containingClassSymbol == null` covers non-`FirJavaClass`-conversion callers; the `pathSegments().size > 1` and `typeArguments` size checks remain). |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Delete `containingClassIds`. Drop unused `ClassId` import. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | Delete `containingClassIds` override. Drop unused `ClassId` import. |
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | `getContainingClassIds()` retained as model-internal helper for `resolveFromLocalScope`'s containing-chain walk (Stage-4 of `RESOLVER_UNIFICATION_AND_LAZINESS`). Not on the public interface; not affected by this rollback. |
+
+**Validation (landed).** Both gates green.
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`: BUILD SUCCESSFUL (matches the post-4.5b 2693/2693 baseline; trip-wires `testJ_k_complex`, `testKJKComplexHierarchyWithNested`, `testGenericBoundInnerConstructorRef` stay green).
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
+- `git diff core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt`: net deletion of one member (`containingClassIds`) plus one unused import. No additions.
+
+### Step C — Move-to-private — **Done (2026-05-07)**
+
+**Goal achieved.** The remaining five `java-direct`-introduced members
+(`needsTypeUseAnnotationFiltering` + `filterTypeUseAnnotations`,
+`supportsExternalInitializerResolution` + `resolveInitializerValue`, and
+`JavaEnumValueAnnotationArgument.couldBeConstReference`) are off the public
+`core/compiler.common.jvm` Java-model interfaces. The §1 invariant is now
+satisfied — zero `java-direct`-introduced public-interface members remain.
+
+**Decision taken.** The "move-to-private" path was chosen over the
+"perf-audit-then-eager-pre-process" path. Rationale:
+
+- The protocols are genuinely useful — they let java-direct defer work (annotation
+  pre-filtering, cross-language constant evaluation, enum-vs-const disambiguation)
+  to resolution time. PSI/binary impls do that work at structure-build time.
+- Relocating the protocols off the public surface is a zero-perf-risk transformation
+  that preserves the §1 invariant. Eager pre-processing would change perf behavior;
+  the move-to-private path doesn't.
+- The perf audit suggested in earlier drafts of this section is a future optimisation
+  if java-direct's model-internal eager paths are wanted; not a prerequisite for the
+  rollback goal.
+
+**Implementation (landed 2026-05-07).** New file
+`compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt` defines three
+fir-jvm-private subinterfaces:
+
+| Subinterface | Carries |
+|---|---|
+| `JavaTypeWithExternalAnnotationFiltering` | `needsTypeUseAnnotationFiltering`, `filterTypeUseAnnotations` |
+| `JavaFieldWithExternalInitializerResolution` | `supportsExternalInitializerResolution`, `resolveInitializerValue` |
+| `JavaEnumValueAnnotationArgumentWithConstFallback` | `couldBeConstReference` |
+
+Located in fir-jvm (not java-direct) because fir-jvm is the consumer; java-direct
+already depends on fir-jvm transitively, but fir-jvm does not depend on java-direct,
+so locating the protocol there avoids any dependency cycle.
+
+**Touches (landed).**
+
+| File | Change |
+|---|---|
+| **New** `compiler/fir/fir-jvm/src/.../fir/java/JavaModelExtensions.kt` | Three subinterfaces. |
+| `compiler/fir/fir-jvm/src/.../fir/java/JavaTypeConversion.kt` | Two call sites collapsed into a single `filterTypeUseAnnotationsIfNeeded(session)` helper that performs the `as?` downcast onto `JavaTypeWithExternalAnnotationFiltering`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/FirJavaFacade.kt` | `lazyInitializer` performs the `as?` downcast onto `JavaFieldWithExternalInitializerResolution`. |
+| `compiler/fir/fir-jvm/src/.../fir/java/javaAnnotationsMapping.kt` | Enum-value-argument branch performs the `as?` downcast onto `JavaEnumValueAnnotationArgumentWithConstFallback`. |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | `JavaTypeOverAst` now also implements `JavaTypeWithExternalAnnotationFiltering`. |
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | `JavaFieldOverAst` now also implements `JavaFieldWithExternalInitializerResolution`. |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | `JavaEnumValueAnnotationArgumentOverAst` now also implements `JavaEnumValueAnnotationArgumentWithConstFallback`. |
+| `compiler/java-direct/test/.../JavaParsingAnnotationsTest.kt` | Two `filterTypeUseAnnotations` test call sites cast through `JavaTypeWithExternalAnnotationFiltering`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaTypes.kt` | Deleted both members. `JavaType` collapses to `interface JavaType : ListBasedJavaAnnotationOwner`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt` | Deleted both members from `JavaField`. |
+| `core/compiler.common.jvm/src/.../load/java/structure/annotationArguments.kt` | Deleted `couldBeConstReference` from `JavaEnumValueAnnotationArgument`. |
+
+**Validation (landed).** Both gates green.
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`: BUILD SUCCESSFUL.
+- `PhasedJvmDiagnosticLightTreeTestGenerated.*`: BUILD SUCCESSFUL.
+- `git diff core/compiler.common.jvm/src/.../load/java/structure/`: net deletion of five members. No additions.
+
+**§1 invariant status.** ✅ Satisfied. Zero `java-direct`-introduced public-interface
+members remain at HEAD.
+
+---
+
+## 4. Operational rules
+
+These supplement `AGENT_INSTRUCTIONS.md` for any iteration touching the surfaces named
+above:
+
+1. **Read this doc first.** The status table in §2 names the rollback path for every
+   member. If you're tempted to add a new member as a "bridge" / "hint" /
+   "side-channel", consult §2 first; the path that doesn't require an addition will
+   be in there.
+2. **Net deletions only on `core/compiler.common.jvm/.../structure/*.kt`.** The diff
+   of every iteration described in §3 is a net deletion at that path. Reviewer should
+   reject any patch that adds a member there.
+3. **Side-channels are forbidden.** The 4.5a `resolvedClassId` was the canonical
+   example of what not to do. If the work seems to require one, the iteration scope
+   is wrong — split or escalate, do not bridge.
+4. **Don't widen `firSession.symbolProvider` exposure.** Use the existing
+   `LazySessionAccess` wrapper. New resolution-time helpers go on the wrapper or on
+   `JavaResolutionContext`; cache-population code stays out.
+
+---
+
+## 5. Cross-references
+
+- [`AGENT_INSTRUCTIONS.md` rule 7](../AGENT_INSTRUCTIONS.md#-non-negotiable-rules-stop-immediately-if-violated)
+  — the operational invariant.
+- [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+  — superseded for *what comes off the public interface*; still authoritative for §6
+  (per-origin dispatcher) and §6.1 (`JavaSupertypeLoopChecker`).
+- [`MERGED_REFACTORING_PLAN_2026_05_04.md`](MERGED_REFACTORING_PLAN_2026_05_04.md) —
+  the pre-existing execution-order doc; its Steps 4.5a / 4.5b inserts (applied
+  2026-05-06) are subsumed by the corrective sequence in §3 above. A follow-up
+  amendment to that doc should reference this inventory as the authoritative
+  Step 4.5b / 4.5c / Step C source.
+- [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) — landing log; the
+  Step 4.5a 2026-05-06 entry records the side-channel landing that motivated this doc.
+- [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+  — Step 6 (PSI Phase 2) is unaffected by this rollback; the inventory only touches
+  surfaces between FIR and the model, not the PSI removal track.
+
+---
+
+*Authoritative as of 2026-05-07. Update §2 status as iterations land. Future
+rollback iterations append entries to `ITERATION_RESULTS.md` and update this doc's
+status column accordingly.*
