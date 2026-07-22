@@ -1,0 +1,232 @@
+digraph enumInitilization_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file enumInitilization.kt" style="filled" fillcolor=red];
+        1 [label="Exit file enumInitilization.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class InitEnum" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Enum<InitEnum>|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        subgraph cluster_3 {
+            color=blue
+            6 [label="Enter property" style="filled" fillcolor=red];
+            7 [label="Access variable R|<local>/text|"];
+            8 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_4 {
+            color=blue
+            9 [label="Enter property" style="filled" fillcolor=red];
+            10 [label="Access variable R|/InitEnum.SECOND|"];
+            11 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            12 [label="Exit property" style="filled" fillcolor=red];
+        }
+        13 [label="Exit class InitEnum" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {13} [style=dotted];
+    2 -> {3 6 9} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6} [color=green];
+    6 -> {7};
+    7 -> {8};
+    8 -> {9} [color=green];
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        14 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        15 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+    }
+    14 -> {15} [style=dotted];
+
+    subgraph cluster_6 {
+        color=red
+        16 [label="Enter function <init>" style="filled" fillcolor=red];
+        17 [label="Access variable R|/InitEnum.SECOND|"];
+        18 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+        19 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+        20 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+
+    subgraph cluster_7 {
+        color=red
+        22 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        23 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+    }
+    22 -> {23} [style=dotted];
+
+    subgraph cluster_8 {
+        color=red
+        24 [label="Enter function <init>" style="filled" fillcolor=red];
+        25 [label="Access variable R|/InitEnum.Companion.companionObject|"];
+        26 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+        27 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+
+    subgraph cluster_9 {
+        color=red
+        29 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        30 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+    }
+    29 -> {30} [style=dotted];
+
+    subgraph cluster_10 {
+        color=red
+        31 [label="Enter function <init>" style="filled" fillcolor=red];
+        32 [label="Access variable R|/InitEnum.companionBlock|"];
+        33 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+        34 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+
+    subgraph cluster_11 {
+        color=red
+        36 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        37 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+    }
+    36 -> {37} [style=dotted];
+
+    subgraph cluster_12 {
+        color=red
+        38 [label="Enter function <init>" style="filled" fillcolor=red];
+        39 [label="Access variable R|/InitEnum.companionBlockComputed|"];
+        40 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+        41 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+
+    subgraph cluster_13 {
+        color=red
+        43 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        44 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+    }
+    43 -> {44} [style=dotted];
+
+    subgraph cluster_14 {
+        color=red
+        45 [label="Enter function <init>" style="filled" fillcolor=red];
+        subgraph cluster_15 {
+            color=blue
+            46 [label="Function call arguments enter"];
+            47 [label="Function call arguments exit"];
+        }
+        48 [label="Function call enter: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()"];
+        49 [label="Function call exit: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()" style="filled" fillcolor=yellow];
+        50 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+        51 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+
+    subgraph cluster_16 {
+        color=red
+        53 [label="Enter class Companion" style="filled" fillcolor=red];
+        subgraph cluster_17 {
+            color=blue
+            54 [label="Enter function <init>" style="filled" fillcolor=red];
+            55 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            56 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        subgraph cluster_18 {
+            color=blue
+            57 [label="Enter property" style="filled" fillcolor=red];
+            58 [label="Access variable R|/InitEnum.FIRST|"];
+            59 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            60 [label="Exit property" style="filled" fillcolor=red];
+        }
+        61 [label="Exit class Companion" style="filled" fillcolor=red];
+    }
+    53 -> {54} [color=green];
+    53 -> {61} [style=dotted];
+    53 -> {54 57} [style=dashed];
+    54 -> {55};
+    55 -> {56};
+    56 -> {57} [color=green];
+    57 -> {58};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61} [color=green];
+
+    subgraph cluster_19 {
+        color=red
+        62 [label="Enter function <getter>" style="filled" fillcolor=red];
+        subgraph cluster_20 {
+            color=blue
+            63 [label="Enter block"];
+            64 [label="Access variable R|/InitEnum.SECOND|"];
+            65 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            66 [label="Jump: ^ Q|InitEnum|.R|/InitEnum.SECOND|.R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            67 [label="Stub" style="filled" fillcolor=gray];
+            68 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        69 [label="Exit function <getter>" style="filled" fillcolor=red];
+    }
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {69};
+    66 -> {67} [style=dotted];
+    67 -> {68} [style=dotted];
+    68 -> {69} [style=dotted];
+
+    subgraph cluster_21 {
+        color=red
+        70 [label="Enter function companionBlockFunction" style="filled" fillcolor=red];
+        subgraph cluster_22 {
+            color=blue
+            71 [label="Enter block"];
+            72 [label="Access variable R|/InitEnum.SECOND|"];
+            73 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            74 [label="Jump: ^companionBlockFunction Q|InitEnum|.R|/InitEnum.SECOND|.R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+            75 [label="Stub" style="filled" fillcolor=gray];
+            76 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        77 [label="Exit function companionBlockFunction" style="filled" fillcolor=red];
+    }
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    74 -> {77};
+    74 -> {75} [style=dotted];
+    75 -> {76} [style=dotted];
+    76 -> {77} [style=dotted];
+
+}
