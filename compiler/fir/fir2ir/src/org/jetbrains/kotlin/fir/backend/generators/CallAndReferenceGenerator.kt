@@ -151,12 +151,15 @@ class CallAndReferenceGenerator(
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
                 val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrLocalDelegatedPropertySymbol ?: return null
 
-                return IrLocalDelegatedPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    delegate = declarationStorage.findDelegateVariableOfProperty(irPropertySymbol),
-                    getter = declarationStorage.findGetterOfProperty(irPropertySymbol),
-                    setter = declarationStorage.findSetterOfProperty(irPropertySymbol),
-                    origin = origin
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    declarationStorage.findGetterOfProperty(irPropertySymbol),
+                    declarationStorage.findSetterOfProperty(irPropertySymbol),
+                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
+                    isForDelegate,
                 )
             }
 
