@@ -7,4 +7,4 @@ setlocal
 set _KOTLIN_COMPILER=org.jetbrains.kotlin.kapt.cli.KaptCli
 set _KOTLIN_TOOL=kotlin-annotation-processing-cli.jar
 
-call %~dps0kotlinc.bat %*
+call "%~dp0kotlinc.bat" %*

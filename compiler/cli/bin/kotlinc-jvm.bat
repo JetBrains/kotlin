@@ -3,4 +3,4 @@
 rem Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
 rem Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 
-call %~dps0kotlinc.bat %*
+call "%~dp0kotlinc.bat" %*

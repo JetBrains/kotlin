@@ -81,9 +81,8 @@ rem ##########################################################################
 rem # subroutines
 
 :set_home
-  set _BIN_DIR=
-  for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
-  set _KOTLIN_HOME=%_BIN_DIR%..
+  for %%i in ("%~f0") do set "_BIN_DIR=%%~dpi"
+  set "_KOTLIN_HOME=%_BIN_DIR%.."
 goto :eof
 
 rem Parses "java -version" output and stores the major version to _java_major_version.
