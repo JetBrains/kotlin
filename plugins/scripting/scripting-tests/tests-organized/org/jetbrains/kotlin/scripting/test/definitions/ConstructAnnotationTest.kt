@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.test
+package org.jetbrains.kotlin.scripting.test.definitions
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
@@ -34,7 +34,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/constructAnnotations"
+private const val testDataPath = "plugins/scripting/scripting-tests/testData/definitions/constructAnnotations"
 
 @Target(AnnotationTarget.FILE)
 @Repeatable

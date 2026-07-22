@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.scripting.test.definitions
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -22,6 +11,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.codegen.CodegenTestFiles
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -40,6 +32,8 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
+
+private const val testDataPath = "plugins/scripting/scripting-tests/testData/definitions/scriptCustom"
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
@@ -90,7 +84,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     @Test
     fun testLanguage(): Unit = muteTest {
-        setUpEnvironment("scriptCustom/fib.lang.kts")
+        setUpEnvironment("fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -102,7 +96,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     @Test
     fun testLanguageWithPackage(): Unit = muteTest {
-        setUpEnvironment("scriptCustom/fibwp.lang.kts")
+        setUpEnvironment("fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -114,7 +108,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     @Test
     fun testDependentScripts(): Unit = muteTest {
-        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
+        setUpEnvironment(listOf("fibwp.lang.kts", "fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
@@ -131,7 +125,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     @Test
     fun testScriptWhereMethodHasClosure(): Unit = muteTest {
-        setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
+        setUpEnvironment("methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -143,7 +137,7 @@ class ScriptGenTest : CodegenTestCase() {
 
     @Test
     fun testNameSanitation() {
-        setUpEnvironment("scriptCustom/1#@2.kts")
+        setUpEnvironment("1#@2.kts")
 
         val aClass = generateClass("_1__2")
         assertEquals("OK", aClass.getDeclaredMethod("getResult")(aClass.newInstance()))
@@ -162,14 +156,23 @@ class ScriptGenTest : CodegenTestCase() {
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, FIB_SCRIPT_DEFINITION)
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
 
-            addKotlinSourceRoots(sourcePaths.map { KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/$it").path })
+            addKotlinSourceRoots(sourcePaths.map { ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + it).path })
         }
         loadScriptingPlugin(configuration, testRootDisposable)
 
         @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        loadFiles(*sourcePaths.toTypedArray())
+        loadScriptFiles(sourcePaths)
+    }
+
+    private fun loadScriptFiles(names: List<String>) {
+        val baseDir = ForTestCompileRuntime.transformTestDataPath(testDataPath).path
+        val files = names.map { name ->
+            val content = KtTestUtil.doLoadFile(baseDir, name)
+            KtTestUtil.createFile(name, content, myEnvironment!!.project)
+        }
+        myFiles = CodegenTestFiles.create(files)
     }
 
     private inline fun muteTest(block: () -> Unit) {

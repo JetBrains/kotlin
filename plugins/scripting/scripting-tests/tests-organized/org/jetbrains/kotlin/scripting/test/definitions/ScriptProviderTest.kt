@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package org.jetbrains.kotlin.scripting.compiler.plugin
+package org.jetbrains.kotlin.scripting.test.definitions
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
