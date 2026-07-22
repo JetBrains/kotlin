@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.asPsiSearchScope
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -14,54 +17,125 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
-import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.createJavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
- * Direct-injection seam used to plug `java-direct` into the FIR JVM sessions through the
- * `createJavaFacade` lambda parameter on `FirJvmSessionFactory.createSourceSession` and
- * `FirJvmSessionFactory.createLibrarySession`. `JvmFrontendPipelinePhase.prepareJvmSessions`
- * populates the builder when the `JvmAnalysisFlags.useJavaDirect` flag is set.
+ * Injects java-direct into FIR JVM sessions via `createJavaFacade` when `useJavaDirect` is set.
+ *
+ * Dispatches by scope identity (`scope === librariesScope`): library sessions use
+ * [LibraryJavaClassFinder] (package-info annotations only; binaries go through the deserializer);
+ * source sessions use [JavaClassFinderOverAstImpl].
  */
 fun createJavaDirectSourceJavaFacadeBuilder(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
-): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-    { _, session, moduleData, scope ->
-        val finder = buildJavaDirectClassFinder(
-            configuration = configuration,
-            session = session,
-            binaryFinderProvider = {
-                projectEnvironment.project.createJavaClassFinder(scope.asPsiSearchScope(), session.javaAnnotationProvider)
-            },
-        )
-        FirJavaFacadeForSource(session, moduleData, finder)
-    }
+    librariesScope: AbstractProjectFileSearchScope,
+    binaryClassFinderInputsBuilder: (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?,
+): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
+    val localFs = projectEnvironment.knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
 
-private fun buildJavaDirectClassFinder(
-    configuration: CompilerConfiguration,
-    session: FirSession,
-    binaryFinderProvider: () -> JavaClassFinder,
-): JavaClassFinder {
     val sourceRootEntries: List<JavaSourceRootEntry> =
         configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
             .filterIsInstance<JavaSourceRoot>()
-            .map { javaRoot ->
+            .mapNotNull { javaRoot ->
+                val vFile = localFs.findFileByPath(javaRoot.file.path) ?: return@mapNotNull null
                 val prefix =
                     if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
                     else FqName(javaRoot.packagePrefix!!)
-                JavaSourceRootEntry(javaRoot.file, prefix)
+                JavaSourceRootEntry(vFile, prefix)
             }
             .toList()
 
-    val binaryFinder: JavaClassFinder = binaryFinderProvider()
+    return { _, session, moduleData, scope ->
+        val finder: JavaClassFinder = when {
+            scope === librariesScope -> LibraryJavaClassFinder(
+                binaryClassFinderInputsBuilder(projectEnvironment, scope) as? JvmBinaryClassFinderInputsOverIndex
+            )
+            else -> JavaClassFinderOverAstImpl(session, sourceRootEntries)
+        }
+        FirJavaFacadeForSource(session, moduleData, finder)
+    }
+}
 
-    if (sourceRootEntries.isEmpty()) return binaryFinder
+/**
+ * Memoized [JvmBinaryClassFinderInputsOverIndex] for the library-session deserializer,
+ * or `null` when no CLI `JvmDependenciesIndex` is available.
+ */
+@Suppress("UnstableApiUsage")
+fun createJavaDirectBinaryClassFinderInputsBuilder(
+    projectEnvironment: VfsBasedProjectEnvironment,
+): (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? {
+    val cache: MutableMap<BinaryInputsCacheKey, JvmBinaryClassFinderInputs?> = HashMap()
+    return { _, scope ->
+        val psiSearchScope: GlobalSearchScope = scope.asPsiSearchScope()
+        val vfff = VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
+        val key = BinaryInputsCacheKey(System.identityHashCode(psiSearchScope), vfff?.enableSearchInCtSym)
+        cache.getOrPut(key) {
+            if (vfff != null) {
+                JvmBinaryClassFinderInputsOverIndex(vfff.index, psiSearchScope, vfff.enableSearchInCtSym)
+            } else {
+                null
+            }
+        }
+    }
+}
 
-    val sourceFinder = JavaClassFinderOverAstImpl(session, sourceRootEntries)
-    return CombinedJavaClassFinder(sourceFinder, binaryFinder)
+private data class BinaryInputsCacheKey(val scopeIdentity: Int, val enableCtSym: Boolean?)
+
+/**
+ * Library-session [JavaClassFinder]: all probes no-op except [findPackage], which exposes
+ * binary `package-info.class` annotations for package default-nullability qualifiers.
+ */
+private class LibraryJavaClassFinder(
+    private val binaryInputs: JvmBinaryClassFinderInputsOverIndex?,
+) : JavaClassFinder {
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? = null
+
+    override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> = emptyList()
+
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
+        if (!mayHaveAnnotations) return null
+        val packageInfoClass = binaryInputs?.findPackageInfoClass(fqName) ?: return null
+        return BinaryPackageInfoJavaPackage(fqName, packageInfoClass)
+    }
+
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+
+    override fun canComputeKnownClassNamesInPackage(): Boolean = false
+
+    override fun isInSourceIndex(classId: ClassId): Boolean = false
+
+    override fun hasPackageInSources(fqName: FqName): Boolean = false
+
+    override fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+}
+
+/** [JavaPackage] carrying only binary `package-info.class` annotations. */
+private class BinaryPackageInfoJavaPackage(
+    override val fqName: FqName,
+    private val packageInfoClass: JavaClass,
+) : JavaPackage {
+    override val annotations: Collection<JavaAnnotation>
+        get() = packageInfoClass.annotations
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    override val subPackages: Collection<JavaPackage>
+        get() = emptyList()
+
+    override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> = emptyList()
 }
