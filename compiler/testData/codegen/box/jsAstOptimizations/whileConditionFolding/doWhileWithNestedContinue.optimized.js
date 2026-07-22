@@ -1,7 +1,7 @@
 function box() {
   var i = 0;
   var j;
-  $l$loop_2: do {
+  do {
     i = i + 1 | 0;
     global = global + ';';
     // Inline function 'kotlin.arrayOf' call
@@ -44,7 +44,7 @@ function box() {
     }
      while (_unary__edvuaz_0 < 2);
   }
-   while (foo(i) < 3);
+   while (!(foo(i) >= 3));
   if (!(global === ';@$##1;@$##2;@$##3'))
     return 'fail: ' + global;
   return 'OK';
