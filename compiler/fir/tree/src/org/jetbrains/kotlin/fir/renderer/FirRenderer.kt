@@ -73,6 +73,7 @@ class FirRenderer(
             propertyAccessorRenderer = null,
             callArgumentsRenderer = FirCallNoArgumentsRenderer(),
             lineBreakAfterContextParameters = false,
+            declarationRenderer = FirDeclarationRendererWithSpecificAttributes(setOf("EqualityBoundType"))
         )
 
         fun withResolvePhase(): FirRenderer = FirRenderer(
