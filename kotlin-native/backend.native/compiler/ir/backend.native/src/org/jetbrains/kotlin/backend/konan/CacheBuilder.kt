@@ -70,7 +70,7 @@ class CacheBuilder(
 
     fun needToBuild() = config.ignoreCacheReason == null
             && (config.isFinalBinary || config.produce.isFullCache)
-            && (autoCacheableFrom.isNotEmpty() || icEnabled || config.compilationScheme == CompilationScheme.SPLIT_HOST)
+            && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
     private val allLibraries by lazy { config.resolvedLibraries.getFullList() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
@@ -584,7 +584,7 @@ class CacheBuilder(
             val fileContent = if (lastRebuiltArchives.isEmpty())
                 ""
             else
-                lastRebuiltArchives.joinToString("\n") { it.absolutePathString() } + "\n"
+                lastRebuiltArchives.joinToString("\n") { it.normalize().absolutePathString() } + "\n"
             rebuiltArchivesFile.writeText(fileContent)
         }
     }
