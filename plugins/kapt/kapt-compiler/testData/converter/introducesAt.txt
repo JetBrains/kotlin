@@ -8,7 +8,6 @@
  * }
  */
 @kotlin.Metadata()
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalVersionOverloading.class})
 public final class IntroducesAtKt {
 
     @org.jetbrains.annotations.NotNull()

@@ -1,4 +1,3 @@
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalVersionOverloading.class})
 public final class JvmNameKt /* JvmNameKt*/ {
   @kotlin.jvm.JvmName(name = "javaName")
   @org.jetbrains.annotations.NotNull()
