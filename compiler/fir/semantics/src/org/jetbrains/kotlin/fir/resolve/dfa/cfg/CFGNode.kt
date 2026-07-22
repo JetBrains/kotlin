@@ -424,16 +424,58 @@ class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: 
     GraphExitNodeMarker {
 
     override val isUnion: Boolean
-        get() = fir is FirAnonymousObject && fir.classKind != ClassKind.ENUM_ENTRY
+        get() = fir is FirAnonymousObject
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitClassExitNode(this, data)
     }
 }
 
+class StaticEnterNode(
+    owner: ControlFlowGraph,
+    override val fir: FirClass,
+    level: Int,
+) : CFGNodeWithExplicitSubgraphs<FirClass>(owner, level), GraphEnterNodeMarker {
+
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitStaticEnterNode(this, data)
+    }
+}
+
+class StaticExitNode(
+    owner: ControlFlowGraph,
+    override val fir: FirClass,
+    level: Int,
+) : CFGNodeWithExplicitSubgraphs<FirClass>(owner, level), GraphExitNodeMarker {
+
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitStaticExitNode(this, data)
+    }
+}
+
 class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int) : CFGNodeWithCfgOwner<FirRegularClass>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLocalClassExitNode(this, data)
+    }
+}
+
+class EnumEntryEnterNode(
+    owner: ControlFlowGraph,
+    override val fir: FirEnumEntry,
+    level: Int,
+) : CFGNode<FirEnumEntry>(owner, level), GraphEnterNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitEnumEntryEnterNode(this, data)
+    }
+}
+
+class EnumEntryExitNode(
+    owner: ControlFlowGraph,
+    override val fir: FirEnumEntry,
+    level: Int,
+) : CFGNode<FirEnumEntry>(owner, level), GraphExitNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitEnumEntryExitNode(this, data)
     }
 }
 
