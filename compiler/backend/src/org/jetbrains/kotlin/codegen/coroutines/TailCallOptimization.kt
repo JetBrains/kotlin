@@ -93,8 +93,11 @@ private fun AbstractInsnNode.skipBeforeSuspendMarker(): AbstractInsnNode? {
     return next.next
 }
 
-internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<SuspensionPoint>) {
-    for (suspensionPoint in suspensionPoints) {
+internal fun MethodNode.addCoroutineSuspendedChecks(
+    suspensionPoints: List<SuspensionPoint>,
+    suspensionPointNextLineNumbers: List<LineNumberNode?>
+) {
+    for ([suspensionPoint, nextLineNumber] in suspensionPoints.zip(suspensionPointNextLineNumbers)) {
         if (suspensionPoint.suspensionCallEnd.nextMeaningful?.opcode == Opcodes.ARETURN) {
             // `if (x == COROUTINE_SUSPENDED) return x else return x` == `return x`
             continue
@@ -104,6 +107,13 @@ internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<Suspe
             dup()
             loadCoroutineSuspendedMarker()
             ifacmpne(label)
+            if (nextLineNumber != null) {
+                // in case of suspension of a called function, the tailcall function will not ever get execution back, even after resume
+                // So, for stepping and breakpoints, it would be better to "step" to the next line just after the suspension than never
+                val returnLabel = Label()
+                mark(returnLabel)
+                visitLineNumber(nextLineNumber.line, returnLabel)
+            }
             areturn(AsmTypes.OBJECT_TYPE)
             mark(label)
         })

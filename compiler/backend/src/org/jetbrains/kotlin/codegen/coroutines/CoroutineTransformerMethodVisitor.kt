@@ -119,7 +119,8 @@ class CoroutineTransformerMethodVisitor(
 
         if (isForNamedFunction) {
             if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints)) {
-                methodNode.addCoroutineSuspendedChecks(suspensionPoints)
+                val suspensionPointNextLineNumbers = suspensionPoints.map { findSuspensionPointNextLineNumber(it) }
+                methodNode.addCoroutineSuspendedChecks(suspensionPoints, suspensionPointNextLineNumbers)
                 methodNode.insertAsyncStackTraceEntriesForTailCallFunction(suspensionPoints)
                 dropSuspensionMarkers(methodNode)
                 dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
