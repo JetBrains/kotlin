@@ -25,10 +25,10 @@ kotlin {
         }
     }
 
-    val commonMain by sourceSets.getting
-    val withInteropMain by sourceSets.creating
-    val linuxX64Main by sourceSets.getting
-    val linuxArm64Main by sourceSets.getting
+    val commonMain = sourceSets.getByName("commonMain")
+    val withInteropMain = sourceSets.create("withInteropMain")
+    val linuxX64Main = sourceSets.getByName("linuxX64Main")
+    val linuxArm64Main = sourceSets.getByName("linuxArm64Main")
 
     withInteropMain.dependsOn(commonMain)
     linuxX64Main.dependsOn(withInteropMain)

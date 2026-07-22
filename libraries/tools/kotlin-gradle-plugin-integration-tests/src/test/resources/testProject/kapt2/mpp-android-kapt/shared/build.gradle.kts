@@ -16,7 +16,7 @@ kotlin {
     androidTarget()
     
     sourceSets {
-        val androidMain by getting {
+        val androidMain = getByName("androidMain") {
             dependencies {
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
                 implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
@@ -26,7 +26,7 @@ kotlin {
                         "com.google.dagger:hilt-compiler:2.59.1"
                     )
                 )
-                val kotlin_version: String by project.extra
+                val kotlin_version = providers.gradleProperty("kotlin_version").get()
                 configurations.getByName("kapt").dependencies.add(
                     project.dependencies.create(
                         "org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin_version"

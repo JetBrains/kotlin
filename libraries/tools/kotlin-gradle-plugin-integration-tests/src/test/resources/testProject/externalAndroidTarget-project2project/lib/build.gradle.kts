@@ -26,7 +26,7 @@ publishing {
     }
 
     publications {
-        val android by getting {
+        val android = getByName("android").apply {
             this as MavenPublication
             artifactId = "tcs-android"
             version = "2.0"

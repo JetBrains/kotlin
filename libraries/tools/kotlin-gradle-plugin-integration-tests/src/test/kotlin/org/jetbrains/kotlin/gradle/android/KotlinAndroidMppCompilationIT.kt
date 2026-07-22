@@ -125,12 +125,12 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
                             implementation(kotlin("stdlib-common"))
                         }
                     }
-                    val androidLibDebug by creating {
+                    val androidLibDebug = create("androidLibDebug") {
                         dependencies {
                             implementation(kotlin("reflect"))
                         }
                     }
-                    val androidLibRelease by creating {
+                    val androidLibRelease = create("androidLibRelease") {
                         dependencies {
                             implementation(kotlin("test-junit"))
                         }

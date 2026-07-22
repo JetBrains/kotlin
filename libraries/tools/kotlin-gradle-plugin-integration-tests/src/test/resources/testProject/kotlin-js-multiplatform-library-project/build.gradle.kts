@@ -14,7 +14,7 @@ kotlin {
     }
 
     sourceSets {
-        val jsTest by getting {
+        val jsTest = getByName("jsTest") {
             dependencies {
                 implementation(kotlin("test"))
             }

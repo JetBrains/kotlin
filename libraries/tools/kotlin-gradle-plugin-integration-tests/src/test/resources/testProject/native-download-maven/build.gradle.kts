@@ -10,7 +10,7 @@ repositories {
 }
 
 kotlin {
-    val nativeMain by sourceSets.creating {
+    val nativeMain = sourceSets.create("nativeMain") {
         dependsOn(sourceSets["commonMain"])
     }
 

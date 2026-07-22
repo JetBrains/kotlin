@@ -21,7 +21,7 @@ kotlin {
         attributes.attribute(disambiguation1Attribute, "someValue")
         binaries {
             framework("main") {
-                export(project(":exported"))
+                export(dependencies.project(":exported"))
             }
             framework("custom") {
                 linkerOpts = mutableListOf("-L.")
@@ -35,7 +35,7 @@ kotlin {
     iosX64("iosSim") {
         binaries {
             framework("main") {
-                export(project(":exported"))
+                export(dependencies.project(":exported"))
             }
         }
     }

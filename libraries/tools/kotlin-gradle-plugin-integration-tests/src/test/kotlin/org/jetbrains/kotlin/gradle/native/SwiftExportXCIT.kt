@@ -47,7 +47,7 @@ class SwiftExportXCIT : KGPBaseTest() {
                                 moduleName.set("Shared")
                                 flattenPackage.set("com.github.jetbrains.example")
 
-                                export(project(":subproject")) {
+                                export(dependencies.project(":subproject")) {
                                     moduleName.set("Subproject")
                                     flattenPackage.set("com.github.jetbrains.library")
                                 }

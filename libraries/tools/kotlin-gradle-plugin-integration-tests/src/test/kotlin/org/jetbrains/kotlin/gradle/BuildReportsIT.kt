@@ -990,7 +990,7 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("for build scan with develocity plugin")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_4
+        minVersion = TestVersions.Gradle.G_8_14
     )
     @GradleTest
     fun testBuildScanReportWithDevelocityPlugin(gradleVersion: GradleVersion) {
@@ -1018,21 +1018,22 @@ class BuildReportsIT : KGPBaseTest() {
                         
                 develocity {
                     buildScan {
-                        termsOfUseAgree = "yes"
-                        termsOfUseUrl = "https://gradle.com/terms-of-service"
+                        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+                        termsOfUseAgree.set("yes")
 
                         tag "test"
                     }
                 }
                 """.trimIndent()
             }
+            // -Dscan.dump disables build scan publishing and instead dumps it onto disk
             build(
-                "compileKotlin", "--scan"
+                "compileKotlin", "--scan", "-Dscan.dump"
             ) {
                 assertOutputDoesNotContain("The build scan was not published due to a configuration problem.")
                 assertOutputDoesNotContain("The following functionality has been deprecated and will be removed in the next major release of the Develocity Gradle plugin.")
                 assertOutputContains("Build metrics are stored into build scan for")
-                assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Publishing build scan...")
+                assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Build scan written to:")
             }
         }
     }

@@ -15,16 +15,16 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
-        val linuxX64Main by getting
-        val linuxArm64Main by getting
-        val mingwX64Main by getting
+        val commonMain = getByName("commonMain")
+        val linuxX64Main = getByName("linuxX64Main")
+        val linuxArm64Main = getByName("linuxArm64Main")
+        val mingwX64Main = getByName("mingwX64Main")
 
-        val linuxMain by creating {
+        val linuxMain = create("linuxMain").apply {
             linuxX64Main.dependsOn(this)
             linuxArm64Main.dependsOn(this)
         }
-        val nativeMain by creating {
+        val nativeMain = create("nativeMain").apply {
             this.dependsOn(commonMain)
             linuxMain.dependsOn(this)
             mingwX64Main.dependsOn(this)
@@ -32,16 +32,16 @@ kotlin {
                 implementation(project(":lib"))
             }
         }
-        val commonTest by getting
-        val linuxX64Test by getting
-        val linuxArm64Test by getting
-        val mingwX64Test by getting
+        val commonTest = getByName("commonTest")
+        val linuxX64Test = getByName("linuxX64Test")
+        val linuxArm64Test = getByName("linuxArm64Test")
+        val mingwX64Test = getByName("mingwX64Test")
 
-        val linuxTest by creating {
+        val linuxTest = create("linuxTest").apply {
             linuxX64Test.dependsOn(this)
             linuxArm64Test.dependsOn(this)
         }
-        val nativeTest by creating {
+        val nativeTest = create("nativeTest").apply {
             this.dependsOn(commonTest)
             linuxTest.dependsOn(this)
             mingwX64Test.dependsOn(this)

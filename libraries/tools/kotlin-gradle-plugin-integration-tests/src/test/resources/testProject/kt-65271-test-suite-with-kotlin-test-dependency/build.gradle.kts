@@ -6,7 +6,7 @@ plugins {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
+        named("test", JvmTestSuite::class) {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-test-junit5")
             }

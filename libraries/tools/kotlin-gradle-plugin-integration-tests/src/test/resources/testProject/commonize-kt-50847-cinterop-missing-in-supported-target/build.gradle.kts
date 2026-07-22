@@ -30,7 +30,7 @@ kotlin {
     }
 
     /* 'Disable' a cinterop on a certain target */
-    val disabledCInteropTarget = when (val propertyValue = properties["disableTargetNumber"]) {
+    val disabledCInteropTarget = when (val propertyValue = providers.gradleProperty("disableTargetNumber").orNull) {
         null -> error("Test project expects property 'disableTargetNumber' with value '1' or '2'")
         "1" -> linuxTarget1
         "2" -> linuxTarget2

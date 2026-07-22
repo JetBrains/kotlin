@@ -44,21 +44,21 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        val jvm6Main by getting {
+        val jvm6Main = getByName("jvm6Main") {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4")
             }
         }
-        val jvm6Test by getting {
+        val jvm6Test = getByName("jvm6Test") {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
 
-        val nativeMain by creating { dependsOn(commonMain.get()) }
-        val linux64Main by getting { dependsOn(nativeMain) }
-        val macos64Main by getting { dependsOn(nativeMain) }
-        val macosArm64Main by getting { dependsOn(nativeMain) }
+        val nativeMain = create("nativeMain") { dependsOn(commonMain.get()) }
+        val linux64Main = getByName("linux64Main") { dependsOn(nativeMain) }
+        val macos64Main = getByName("macos64Main") { dependsOn(nativeMain) }
+        val macosArm64Main = getByName("macosArm64Main") { dependsOn(nativeMain) }
     }
 }
 

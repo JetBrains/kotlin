@@ -11,9 +11,9 @@ kotlin {
     jvm()
 
     sourceSets {
-        val intermediate by creating
+        val intermediate = create("intermediate")
 
-        val jvmMain by getting {
+        val jvmMain = getByName("jvmMain") {
             dependsOn(intermediate)
         }
 

@@ -56,10 +56,10 @@ kotlin {
             }
 
             sharedLib(listOf(RELEASE)) {
-                export(project(":exported"))
+                export(dependencies.project(":exported"))
             }
             staticLib(listOf(RELEASE)) {
-                export(project(":exported"))
+                export(dependencies.project(":exported"))
             }
         }
         // Check that we can access binaries/tasks:
