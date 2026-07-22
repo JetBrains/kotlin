@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
@@ -107,6 +110,11 @@ abstract class AbstractJsCodegenBoxTestBase(
 
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
+        }
+
+        // TODO KT-87965: Move it to setupCommonHandlersForJsTest() to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
+        builder.configureKlibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpAfterInliningVerifyingHandler)
         }
     }
 }
