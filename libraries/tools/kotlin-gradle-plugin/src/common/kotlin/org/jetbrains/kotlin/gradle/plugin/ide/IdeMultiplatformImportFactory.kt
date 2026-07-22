@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdeKotlinArchiveFilter
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
@@ -151,6 +152,12 @@ internal fun IdeMultiplatformImport(
             transformer = IdePlatformStdlibCommonDependencyFilter,
             constraint = SourceSetConstraint.isSinglePlatformType and !SourceSetConstraint.isSharedNative
                     or SourceSetConstraint.isJvmAndAndroid,
+            phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
+        )
+
+        registerDependencyTransformer(
+            transformer = IdeKotlinArchiveFilter,
+            constraint = SourceSetConstraint.unconstrained,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
         )
 

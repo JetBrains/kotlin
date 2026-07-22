@@ -5926,7 +5926,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
+public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
 	public final fun getAllHeadersDirs ()Ljava/util/Set;
 	public final fun getBaseKlibName ()Ljava/lang/String;
 	public final fun getCompilerOpts ()Ljava/util/List;
@@ -5956,6 +5956,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
 	public final fun processInterop ()V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 }
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
@@ -6180,7 +6181,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinCompilerPluginData$In
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile, org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompileTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/K2MultiplatformCompilationTask {
+public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile, org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompileTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/plugin/statistics/UsesBuildFusService, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService, org/jetbrains/kotlin/gradle/tasks/K2MultiplatformCompilationTask {
 	public final fun compile ()V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
@@ -6209,6 +6210,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getShortModuleName ()Ljava/lang/String;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
 	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }

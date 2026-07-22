@@ -306,7 +306,7 @@ internal object KotlinToolingDiagnostics {
             debuggable: Boolean,
             optimized: Boolean,
             contextDescription: String,
-            contextSolution: String
+            contextSolution: String,
         ): ToolingDiagnostic = build {
             title("Incompatible Binary Configuration")
                 .description {
@@ -450,6 +450,27 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object UnsupportedKotlinArchiveUsage : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            libraries: Collection<File>,
+            resolvedByMavenCoordinates: String? = null,
+        ) = build {
+            title("Unsupported Kotlin Archive (.kar) used")
+                .description(buildString {
+                    appendLine("${libraries.size} use(s) the '.kar' format, which is not supported by this version of Kotlin.")
+                    if (resolvedByMavenCoordinates != null) {
+                        appendLine("Resolved by: '$resolvedByMavenCoordinates'")
+                    }
+
+                    libraries.forEach { library ->
+                        appendLine("  - ${library.path}")
+                    }
+                })
+                .solution("Upgrade Kotlin or downgrade the associated dependency")
+                .documentationLink(URI("https://kotl.in/kar"))
+        }
+    }
+
     object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
@@ -469,7 +490,7 @@ internal object KotlinToolingDiagnostics {
             binaryName: String,
             targetName: String,
             reason: String,
-            issueUrl: URI?
+            issueUrl: URI?,
         ) = build {
             title("Kotlin/Native cache is disabled for $buildType binary '${binaryName}'")
                 .description {
@@ -492,7 +513,7 @@ internal object KotlinToolingDiagnostics {
             buildType: String,
             binaryName: String,
             targetName: String,
-            hostName: String
+            hostName: String,
         ) = build {
             title("Kotlin/Native cache disable configuration is redundant for $buildType binary '$binaryName'")
                 .description {
@@ -1928,7 +1949,7 @@ internal object KotlinToolingDiagnostics {
             title("Local SwiftPM Package Directory Not Found")
                 .description {
                     "Local SwiftPM package directory does not exist: $resolvedPath\n" +
-                    "Path was resolved from: layout.projectDirectory.dir(\"$originalPath\")"
+                            "Path was resolved from: layout.projectDirectory.dir(\"$originalPath\")"
                 }
                 .solutions {
                     listOf(
@@ -2158,7 +2179,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object DeprecatedKotlinAndroidPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(
-            projectPath: String
+            projectPath: String,
         ) = build {
             title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
@@ -2282,7 +2303,7 @@ internal object KotlinToolingDiagnostics {
         DiagnosticGroup.Kgp.Deprecation
     ) {
         operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
-            title {"sourceSets collection in Kotlin Android is deprecated" }
+            title { "sourceSets collection in Kotlin Android is deprecated" }
                 .description {
                     """
                         Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
