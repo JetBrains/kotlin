@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.canHaveUndefinedNullability
+import org.jetbrains.kotlin.types.model.makeDefinitelyNotNullOrNotNull
+import org.jetbrains.kotlin.types.model.replaceType
+import org.jetbrains.kotlin.types.model.withNullability
 
 
 context(onDiagnostic: (ConeDiagnostic) -> Unit)
@@ -33,8 +37,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     }
 
     session.typeApproximator.approximateToSuperType(
-        originalType,
-        TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        originalType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
     )?.let {
         return computeRepresentativeTypeForBareType(type, it)
     }
@@ -53,13 +56,11 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
             castClass.defaultType(), originalClassLookupTag,
         ).firstOrNull() as? ConeClassLikeType ?: return null
 
-        if (originalType.isMarkedNullable)
-            correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
-        else
-            correspondingSupertype
+        if (originalType.isMarkedNullable) correspondingSupertype.withNullability(nullable = true) as ConeClassLikeType
+        else correspondingSupertype
     }
 
-    val substitution = trySimpleInference(castClass, originalType, superTypeWithParameters) ?: run {
+    val substitution = trySimpleInference(castClass, originalType, superTypeWithParameters, onDiagnostic) ?: run {
         onDiagnostic(
             ConeSimpleBareInferenceFailed(
                 "originalType: $originalType; castClass: ${castClass.defaultType()}, superTypeWithParameters: $superTypeWithParameters"
@@ -84,15 +85,43 @@ private fun BodyResolveComponents.tryLegacyInference(
     return substitution
 }
 
-private fun trySimpleInference(
+data class SimpleInferenceStats(
+    val containingArguments: Int,
+    val directInheritance: Int,
+    val isSameConstraints: Boolean?,
+    val isSameVariance: Boolean?,
+    val isOriginalUnconstrained: Boolean?,
+    val isOriginalSatisfiesSubtypeConstraints: Boolean?,
+)
+
+private fun BodyResolveComponents.trySimpleInference(
     castClass: FirRegularClass,
     originalType: ConeKotlinType,
     superTypeWithParameters: ConeClassLikeType,
+    onDiagnostic: (ConeDiagnostic) -> Unit,
 ): Map<FirTypeParameterSymbol, ConeTypeProjection>? {
     val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
     val originalArguments = originalType.typeArguments
     val supertypeArguments = superTypeWithParameters.typeArguments
+
+    typeParameters.forEach { typeParameter ->
+        val containingArguments = supertypeArguments.zip(supertypeArguments.indices).filter { [argumentType, idx] ->
+            argumentType.type?.contains { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == typeParameter } ?: false
+        }
+
+        val directInheritanceArguments = containingArguments.filter { [argumentType, idx] ->
+            argumentType is ConeTypeParameterType && argumentType.lookupTag.typeParameterSymbol == typeParameter
+        }
+
+        if (directInheritanceArguments.size != 1) {
+            val stats = SimpleInferenceStats(containingArguments.size, directInheritanceArguments.size, null, null, null, null)
+            onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
+        }
+
+        val [type, idx] = directInheritanceArguments.single()
+    }
+
     for (i in originalArguments.indices) {
         val originalArgument = originalArguments[i]
         val supertypeArgument = supertypeArguments[i]
@@ -102,6 +131,7 @@ private fun trySimpleInference(
         if (typeParameterSymbol !in typeParameters || typeParameterSymbol in substitution) return null
         substitution[typeParameterSymbol] = originalArgument
     }
+    if (substitution.size != typeParameters.size) return null
     return substitution
 }
 
