@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -42,19 +41,17 @@ internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, Ir
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
         module: IrModuleFragment,
-        performanceManager: PerformanceManager? = context.performanceManager,
-) = runLowerings(lowerings, listOf(module), performanceManager)
+) = runLowerings(lowerings, listOf(module))
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
         modules: List<IrModuleFragment>,
-        performanceManager: PerformanceManager? = context.performanceManager,
 ) {
     for (module in modules) {
         for (file in module.files) {
             context.fileLowerState = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
-                performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
+                context.performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
                     try {
                         runPhase(lowering, loweredFile)
                     } catch (e: CompilationException) {
@@ -74,9 +71,8 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(
 internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
         lowering: ModuleLowering,
         modules: List<IrModuleFragment>,
-        performanceManager: PerformanceManager?,
 ) {
-    performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
+    context.performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
         for (module in modules) {
             runPhase(lowering, module)
         }
