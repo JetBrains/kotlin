@@ -5,6 +5,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.ExperimentalContextParameters;
 import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
@@ -33,6 +34,10 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
 
     @SinceKotlin(version = "1.1")
     protected final Object receiver;
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    protected Object[] boundContextArguments;
 
     @SinceKotlin(version = "1.4")
     private final Class owner;
@@ -81,6 +86,12 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     @SinceKotlin(version = "1.1")
     public Object getBoundReceiver() {
         return receiver;
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public Object[] getBoundContextArguments() {
+        return boundContextArguments;
     }
 
     @SinceKotlin(version = "1.1")
