@@ -52,7 +52,9 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
         arguments: K2JVMCompilerArguments,
         services: Services,
     ): PerformanceManager {
-        return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
+        return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager.also {
+            it.detailedPerf = arguments.detailedPerf
+        }
     }
 
     companion object {
