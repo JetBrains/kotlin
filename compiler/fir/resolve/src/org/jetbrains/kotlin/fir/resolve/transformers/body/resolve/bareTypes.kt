@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -117,9 +118,28 @@ private fun BodyResolveComponents.trySimpleInference(
         if (directInheritanceArguments.size != 1) {
             val stats = SimpleInferenceStats(containingArguments.size, directInheritanceArguments.size, null, null, null, null)
             onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
+            return@forEach
         }
 
-        val [type, idx] = directInheritanceArguments.single()
+        val [originalInstantiation, idx] = directInheritanceArguments.single()
+        val originalTypeParameter = originalType.fullyExpandedType().classLikeLookupTagIfAny!!.toClassSymbol()!!.typeParameterSymbols[idx]
+        val isSameConstraints = originalTypeParameter.resolvedBounds.all { typeParameter.resolvedBounds.contains(it) }
+        val isSameVariance = originalTypeParameter.variance == typeParameter.variance
+        val isOriginalUnconstrained =
+            originalInstantiation.isStarProjection || (originalInstantiation is ConeTypeParameterType && originalInstantiation.collectUpperBounds(
+                this.session.typeContext
+            ).all { originalTypeParameter.resolvedBounds.map { it.coneType }.contains(it) })
+
+        val stats = SimpleInferenceStats(
+            containingArguments.size,
+            directInheritanceArguments.size,
+            isSameConstraints,
+            isSameVariance,
+            isOriginalUnconstrained,
+            null
+        )
+
+        onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
     }
 
     for (i in originalArguments.indices) {
