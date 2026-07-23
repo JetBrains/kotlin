@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
@@ -77,6 +79,8 @@ projectTests {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
+
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))
