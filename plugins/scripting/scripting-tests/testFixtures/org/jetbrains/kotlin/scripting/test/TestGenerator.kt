@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.scripting.test
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefBlackBoxCodegenTest
 import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiDiagnosticsTest
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsDi
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirLightTreeCustomScriptCodegenTest
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirPsiCustomScriptCodegenTest
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.parallel.Execution
@@ -35,6 +38,17 @@ fun main(args: Array<String>) {
 
             testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
                 model("testData/diagnostics/scriptsWithCustomDefinitions", extension = "kts")
+            }
+
+            testClass<AbstractPhasedJvmDiagnosticPsiTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.PhasedScriptingPsiTestGenerated"
+            ) {
+                model(
+                    "testData/diagnostics/general",
+                    skipTestAllFilesCheck = true,
+                    pattern = TestGeneratorUtil.KT_OR_KTS.canFreezeIDE,
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                )
             }
 
             testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
