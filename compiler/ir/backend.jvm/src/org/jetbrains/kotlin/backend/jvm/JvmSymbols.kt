@@ -691,6 +691,15 @@ class JvmSymbols(
     }
     val illegalArgumentExceptionCtorString = illegalArgumentException.constructors.single()
 
+    val arithmeticException = createClass(FqName("java.lang.ArithmeticException")) { irClass ->
+        irClass.addConstructor {
+            name = Name.special("<init>")
+        }.apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+    }
+    val arithmeticExceptionCtorString = arithmeticException.constructors.single()
+
     val jvmMethodType: IrSimpleFunctionSymbol =
         irFactory.buildFun {
             name = Name.special("<jvm-method-type>")
