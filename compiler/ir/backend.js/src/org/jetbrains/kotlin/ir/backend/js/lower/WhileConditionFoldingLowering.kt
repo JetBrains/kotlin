@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isTrueConst
@@ -46,23 +47,21 @@ class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : B
     }
 
     private fun DeclarationIrBuilder.process(loop: IrLoop) {
-        do {
+        while (true) {
             val body = loop.body ?: break
-            var optimized = false
             val isDoWhile = loop is IrDoWhileLoop
             val first = findFirstNonBlockStatement(body, reverse = isDoWhile) ?: break
-            val condition = extractCondition(first, loop)
-            if (condition != null) {
+            val [condition, shouldRemove] = extractCondition(first, loop) ?: break
+            if (shouldRemove) {
                 loop.body = removeFirstNonBlockStatement(body, reverse = isDoWhile) ?: irComposite {}
-                val existingCondition = loop.condition
-                loop.condition = when {
-                    existingCondition.isTrueConst() -> condition
-                    isDoWhile -> context.andand(condition, existingCondition)
-                    else -> context.andand(existingCondition, condition)
-                }
-                optimized = true
             }
-        } while (optimized)
+            val existingCondition = loop.condition
+            loop.condition = when {
+                existingCondition.isTrueConst() -> condition
+                isDoWhile -> context.andand(condition, existingCondition)
+                else -> context.andand(existingCondition, condition)
+            }
+        }
     }
 
     /**
@@ -77,70 +76,77 @@ class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : B
      *
      * This function should return `A`, (negated condition of if statement).
      */
-    private fun DeclarationIrBuilder.extractCondition(statement: IrStatement, loop: IrLoop): IrExpression? = when (statement) {
-        is IrBreak if statement.loop == loop -> {
-            // Code like this
-            //
-            //     while (A) {
-            //         break;
-            //         B();
-            //     }
-            //
-            // can be rewritten as
-            //
-            //     while (A && false) {
-            //         B();
-            //     }
-            //
-            // therefore for single `break` we should return `false`.
-            context.constFalse(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        }
-        is IrWhen if statement.branches.size == 1 -> {
-            // Code like this
-            //
-            //     while (A) {
-            //         if (!B)
-            //             X;
-            //         D();
-            //     }
-            //
-            // where X is a statement, and we can extract condition `C` from it, can be rewritten as
-            //
-            //     while (A && (B || C)) {
-            //         D()
-            //     }
-            // therefore we return B || C
-            //
-            // an example is
-            //
-            //     while (A) {
-            //         if (!B)
-            //             if (!C)
-            //                 break;
-            //         D()
-            //     }
-            //
-            // applying this rule repeatedly we get while (A && (B || C)), which is correct
-            val branch = statement.branches[0]
-            extractCondition(branch.result, loop)?.let { nextCondition ->
-                if (nextCondition.isFalseConst()) {
-                    // Just a little optimization. When inner statement is a single `break`, `nextCondition` would be false.
-                    // However, `A || false` can be rewritten as simply `A`
-                    not(branch.condition)
-                } else {
-                    context.oror(not(branch.condition), nextCondition)
+    private fun DeclarationIrBuilder.extractCondition(statement: IrStatement, loop: IrLoop): Pair<IrExpression, Boolean>? =
+        when (statement) {
+            is IrBreak if statement.loop == loop -> {
+                // Code like this
+                //
+                //     while (A) {
+                //         break;
+                //         B();
+                //     }
+                //
+                // can be rewritten as
+                //
+                //     while (A && false) {
+                //         B();
+                //     }
+                //
+                // therefore for single `break` we should return `false`.
+                context.constFalse(UNDEFINED_OFFSET, UNDEFINED_OFFSET) to true
+            }
+            is IrWhen if statement.branches.isNotEmpty() -> {
+                // Code like this
+                //
+                //     while (A) {
+                //         if (!B)
+                //             X;
+                //         D();
+                //     }
+                //
+                // where X is a statement, and we can extract condition `C` from it, can be rewritten as
+                //
+                //     while (A && (B || C)) {
+                //         D()
+                //     }
+                // therefore we return B || C
+                //
+                // an example is
+                //
+                //     while (A) {
+                //         if (!B)
+                //             if (!C)
+                //                 break;
+                //         D()
+                //     }
+                //
+                // applying this rule repeatedly we get while (A && (B || C)), which is correct
+                val branch = statement.branches[0]
+                extractCondition(branch.result, loop)?.let { [nextCondition, shouldRemove] ->
+                    var shouldRemove = shouldRemove
+                    if (statement.branches.size >= 2) {
+                        statement.branches.removeAt(0)
+                        shouldRemove = false
+                    }
+                    if (nextCondition.isFalseConst()) {
+                        // Just a little optimization. When inner statement is a single `break`, `nextCondition` would be false.
+                        // However, `A || false` can be rewritten as simply `A`
+                        not(branch.condition)
+                    } else {
+                        context.oror(not(branch.condition), nextCondition)
+                    } to shouldRemove
                 }
             }
+            is IrContainerExpression if statement.statements.size == 1 -> extractCondition(statement.statements[0], loop)
+            else -> null
         }
-        is IrContainerExpression if statement.statements.size == 1 -> extractCondition(statement.statements[0], loop)
-        else -> null
-    }
 
     private fun findFirstNonBlockStatement(expression: IrExpression, reverse: Boolean): IrExpression? = when (expression) {
         is IrContainerExpression -> {
             val statements = if (reverse) expression.statements.asReversed() else expression.statements
             for (statement in statements) {
                 when (statement) {
+                    is IrVariable if statement.initializer == null -> continue
                     is IrExpression -> {
                         findFirstNonBlockStatement(statement, reverse)?.let { return it }
                     }
@@ -159,6 +165,7 @@ class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : B
             val indices = if (reverse) statements.indices.reversed() else statements.indices
             for (i in indices) {
                 when (val statement = statements[i]) {
+                    is IrVariable if statement.initializer == null -> continue
                     is IrExpression -> {
                         if (removeFirstNonBlockStatement(statement, reverse) == null) {
                             statements.removeAt(i)
