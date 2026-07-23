@@ -82,6 +82,13 @@
             </array>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/plugins/kotlinx-serialization/testData/boxIr">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/build/{out,out-min,out-per-module,out-per-module-min}/codegen/{serializationBoxFirWithInlinedFunInKlib,serializationBoxFir}/$TEST_DATA_FILE$_v5.js" />
+            </array>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="testDataDirectories">
