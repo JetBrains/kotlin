@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableVal
 import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCacheInternals
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits.KeyReferenceStrength
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits.ValueReferenceStrength
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.FirLazyValueWithContext
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
 internal class FirThreadSafeCachesFactory(private val project: Project) : FirCachesFactory() {
@@ -42,12 +44,10 @@ internal class FirThreadSafeCachesFactory(private val project: Project) : FirCac
         FirThreadSafeCacheWithPostCompute(createValue, postCompute)
 
     override fun <K : Any, V, CONTEXT> createCacheWithSuggestedLimits(
-        expirationAfterAccess: Duration?,
-        maximumSize: Long?,
-        keyStrength: KeyReferenceStrength,
-        valueStrength: ValueReferenceStrength,
+        limits: FirCacheLimits,
         createValue: (K, CONTEXT) -> V
     ): FirCache<K, V, CONTEXT> {
+        val (expirationAfterAccess, maximumSize, keyStrength, valueStrength) = limits
         if (
             expirationAfterAccess == null &&
             maximumSize == null &&

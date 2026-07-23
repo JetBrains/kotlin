@@ -64,61 +64,49 @@ abstract class FirCachesFactory : FirSessionComponent {
         postCompute: (K, V, DATA) -> Unit
     ): FirCache<K, V, CONTEXT>
 
-    enum class KeyReferenceStrength {
-        /**
-         * An ordinary strong reference.
-         */
-        STRONG,
-
-        /**
-         * @see java.lang.ref.WeakReference
-         */
-        WEAK,
-    }
-
-    enum class ValueReferenceStrength {
-        /**
-         * An ordinary strong reference.
-         */
-        STRONG,
-
-        /**
-         * @see java.lang.ref.SoftReference
-         */
-        SOFT,
-
-        /**
-         * @see java.lang.ref.WeakReference
-         */
-        WEAK,
-    }
-
     /**
      * Creates a cache which returns a value by key on demand if it is computed.
      * Otherwise, computes the value in [createValue] and caches it for future invocations.
      *
      * [FirCache.getValue] should not be called inside [createValue].
      *
-     * The cache may be limited in various dimensions, such as time, size, and the choice of references. Limits should be understood as
-     * *suggestions*. Whether the suggested limit is applied is up to the cache factory implementation. Hence, it is legal for a cache
-     * factory to construct an entirely unlimited cache.
+     * The cache may be limited in various dimensions, such as time, size, and the choice of references, as specified by [limits]. Limits
+     * should be understood as *suggestions*. Whether a suggested limit is applied is up to the cache factory implementation. Hence, it is
+     * legal for a cache factory to construct an entirely unlimited cache.
      *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
      *
-     * @param expirationAfterAccess The cache evicts entries after they haven't been accessed for a set amount of time. The cache is not
-     *  required to register scheduled maintenance, so expiration of cache entries may require active cache access.
-     * @param maximumSize If the cache exceeds the maximum size, it evicts entries based on a least-usage strategy.
-     * @param keyStrength The strength of the key reference.
-     * @param valueStrength The strength of the value reference.
+     * @param limits The suggested limits to apply to the cache. See [FirCacheLimits] for a description of the individual limit options.
      */
     abstract fun <K : Any, V, CONTEXT> createCacheWithSuggestedLimits(
-        expirationAfterAccess: Duration? = null,
-        maximumSize: Long? = null,
-        keyStrength: KeyReferenceStrength = KeyReferenceStrength.STRONG,
-        valueStrength: ValueReferenceStrength = ValueReferenceStrength.STRONG,
+        limits: FirCacheLimits,
         createValue: (K, CONTEXT) -> V,
     ): FirCache<K, V, CONTEXT>
+
+    /**
+     * Creates a cache which returns a value by key on demand if it is computed.
+     * Otherwise, computes the value in [createValue] and caches it for future invocations.
+     *
+     * This is a convenience overload of [createCacheWithSuggestedLimits] which accepts the individual limit options directly instead of a
+     * [FirCacheLimits] object. See [FirCacheLimits] for a description of each limit option.
+     *
+     * Where:
+     * [CONTEXT] -- type of value which be used to create value by [createValue]
+     *
+     * @see FirCacheLimits
+     */
+    fun <K : Any, V, CONTEXT> createCacheWithSuggestedLimits(
+        expirationAfterAccess: Duration? = null,
+        maximumSize: Long? = null,
+        keyStrength: FirCacheLimits.KeyReferenceStrength = FirCacheLimits.KeyReferenceStrength.STRONG,
+        valueStrength: FirCacheLimits.ValueReferenceStrength = FirCacheLimits.ValueReferenceStrength.STRONG,
+        createValue: (K, CONTEXT) -> V,
+    ): FirCache<K, V, CONTEXT> =
+        createCacheWithSuggestedLimits(
+            FirCacheLimits(expirationAfterAccess, maximumSize, keyStrength, valueStrength),
+            createValue,
+        )
 
     abstract fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V>
 
@@ -151,13 +139,62 @@ inline fun <K : Any, V> FirCachesFactory.createCache(
 )
 
 /**
+ * A collection of limit options for a cache created via [FirCachesFactory.createCacheWithSuggestedLimits]. Each option limits the cache in
+ * a particular dimension, such as time, size, or the choice of references. Every option is optional and defaults to an unlimited or strong
+ * setting, so an empty [FirCacheLimits] suggests no limits at all.
+ *
+ * @param expirationAfterAccess The cache evicts entries after they haven't been accessed for a set amount of time. The cache is not
+ *  required to register scheduled maintenance, so expiration of cache entries may require active cache access.
+ * @param maximumSize If the cache exceeds the maximum size, it evicts entries based on a least-usage strategy.
+ * @param keyStrength The strength of the key reference.
+ * @param valueStrength The strength of the value reference.
+ *
+ * @see FirCachesFactory.createCacheWithSuggestedLimits
+ */
+data class FirCacheLimits(
+    val expirationAfterAccess: Duration? = null,
+    val maximumSize: Long? = null,
+    val keyStrength: KeyReferenceStrength = KeyReferenceStrength.STRONG,
+    val valueStrength: ValueReferenceStrength = ValueReferenceStrength.STRONG,
+) {
+    enum class KeyReferenceStrength {
+        /**
+         * An ordinary strong reference.
+         */
+        STRONG,
+
+        /**
+         * @see java.lang.ref.WeakReference
+         */
+        WEAK,
+    }
+
+    enum class ValueReferenceStrength {
+        /**
+         * An ordinary strong reference.
+         */
+        STRONG,
+
+        /**
+         * @see java.lang.ref.SoftReference
+         */
+        SOFT,
+
+        /**
+         * @see java.lang.ref.WeakReference
+         */
+        WEAK,
+    }
+}
+
+/**
  * @see FirCachesFactory.createCacheWithSuggestedLimits
  */
 inline fun <K : Any, V> FirCachesFactory.createCacheWithSuggestedLimits(
     expirationAfterAccess: Duration? = null,
     maximumSize: Long? = null,
-    keyHardness: FirCachesFactory.KeyReferenceStrength = FirCachesFactory.KeyReferenceStrength.STRONG,
-    valueHardness: FirCachesFactory.ValueReferenceStrength = FirCachesFactory.ValueReferenceStrength.STRONG,
+    keyStrength: FirCacheLimits.KeyReferenceStrength = FirCacheLimits.KeyReferenceStrength.STRONG,
+    valueStrength: FirCacheLimits.ValueReferenceStrength = FirCacheLimits.ValueReferenceStrength.STRONG,
     crossinline createValue: (K) -> V,
 ): FirCache<K, V, Nothing?> =
-    createCacheWithSuggestedLimits(expirationAfterAccess, maximumSize, keyHardness, valueHardness) { key, _ -> createValue(key) }
+    createCacheWithSuggestedLimits(expirationAfterAccess, maximumSize, keyStrength, valueStrength) { key, _ -> createValue(key) }

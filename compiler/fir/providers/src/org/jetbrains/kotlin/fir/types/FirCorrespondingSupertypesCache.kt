@@ -32,7 +32,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 //            initialCapacity = 1000,
 //            loadFactor = 0.5f
             expirationAfterAccess = 10.seconds,
-//            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+//            valueStrength = FirCacheLimits.ValueReferenceStrength.SOFT,
         ) { lookupTag, typeCheckerState ->
             computeSupertypesMap(lookupTag, typeCheckerState)
         }

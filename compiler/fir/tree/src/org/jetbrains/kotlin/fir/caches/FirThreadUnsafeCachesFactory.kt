@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.caches
 
-import kotlin.time.Duration
-
 object FirThreadUnsafeCachesFactory : FirCachesFactory() {
     override fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT> =
         FirThreadUnsafeCache(createValue = createValue)
@@ -28,10 +26,7 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
         FirThreadUnsafeCacheWithPostCompute(createValue, postCompute)
 
     override fun <K : Any, V, CONTEXT> createCacheWithSuggestedLimits(
-        expirationAfterAccess: Duration?,
-        maximumSize: Long?,
-        keyStrength: KeyReferenceStrength,
-        valueStrength: ValueReferenceStrength,
+        limits: FirCacheLimits,
         createValue: (K, CONTEXT) -> V
     ): FirCache<K, V, CONTEXT> = createCache(createValue)
 

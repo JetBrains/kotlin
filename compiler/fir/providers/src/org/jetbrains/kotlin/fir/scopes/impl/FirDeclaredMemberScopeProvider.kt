@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -43,7 +43,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     private val declaredMemberCache: FirCache<FirSymbolId<FirClassSymbol<FirClass>>, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
         useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
             expirationAfterAccess = 5.seconds,
-            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+            valueStrength = FirCacheLimits.ValueReferenceStrength.SOFT,
         ) { symbolId, context ->
             // The `symbol` should be trivially alive since the symbol's class is on the stack at this point (we get the symbol ID from the
             // `FirClass`).
@@ -53,7 +53,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     private val nestedClassifierCache: FirCache<FirSymbolId<FirClassSymbol<FirClass>>, FirNestedClassifierScope?, Nothing?> =
         useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
             expirationAfterAccess = 5.seconds,
-            valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
+            valueStrength = FirCacheLimits.ValueReferenceStrength.SOFT,
         ) { symbolId, _ ->
             createNestedClassifierScope(symbolId.symbol.fir)
         }
