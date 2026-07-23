@@ -114,6 +114,7 @@ CoreLibs:
  - libraries/kotlin.test
  - libraries/reflect
  - libraries/stdlib
+ - libraries/tools/kotlin-annotations-jvm
 
 AnalysisApi:
  - analysis
@@ -241,7 +242,6 @@ Unknown:
  - libraries/tools/js-plain-objects
  - libraries/tools/klib-abi-reader
  - libraries/tools/kotlin-allopen
- - libraries/tools/kotlin-annotations-jvm
  - libraries/tools/kotlin-assignment
  - libraries/tools/kotlin-bom
  - libraries/tools/kotlin-build-tools-enum-compat

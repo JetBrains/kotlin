@@ -42,6 +42,7 @@ Native:
 CoreLibs:
   include:
     - "libraries/stdlib/**"
+    - "libraries/tools/kotlin-annotations-jvm/**"
     - "libraries/reflect/**"
     - "libraries/kotlin.test/**"
 
