@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.EnumTestProtos
+import androidx.compose.compiler.plugins.LargeEnum
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -1065,6 +1066,23 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
         """,
         additionalPaths = listOf(
             Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
+            Classpath.jarFor<com.google.protobuf.Internal.EnumLite>() // protobuf-lite
+        )
+    )
+
+    @Test
+    fun compileLargeProtobufEnums() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+            import androidx.compose.compiler.plugins.LargeEnum
+
+            @Composable
+            fun Test(parameter: LargeEnum) {
+                val lambda = { println(parameter) }
+            }
+        """,
+        additionalPaths = listOf(
+            Classpath.jarFor<LargeEnum>(), // protobuf-test-classes
             Classpath.jarFor<com.google.protobuf.Internal.EnumLite>() // protobuf-lite
         )
     )
