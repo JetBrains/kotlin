@@ -46,11 +46,6 @@ val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? Deserialize
 
 val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {
-        if (this is IrFile) {
-            val fileMetadata = metadata as? DescriptorMetadataSource.File
-            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
-            moduleDescriptor?.konanLibrary?.let { return it }
-        }
         return this.moduleDescriptor.konanLibrary
     }
 // Any changes made to konanLibrary here should be ported to the containsDeclaration
