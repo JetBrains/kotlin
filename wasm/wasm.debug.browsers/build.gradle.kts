@@ -12,8 +12,6 @@ plugins {
     alias(libs.plugins.gradle.node)
 }
 
-val nodejsVersion = nodejsVersionForBuildingWasmDebugBrowsers
-
 node {
     version.set(nodejsVersion)
     download.set(true)

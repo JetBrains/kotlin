@@ -192,7 +192,6 @@ val Project.kotlinNativeVersion: String
 
 val Project.nodejsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs").get()
 val Project.nodejsLtsVersion: String get() = kotlinBuildProperties.versionsProperty("nodejs.lts").get()
-val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = kotlinBuildProperties.versionsProperty("nodejs.for.building.wasm.debug.browsers").get()
 
 fun Project.firstFromJavaHomeThatExists(
     vararg paths: String,
