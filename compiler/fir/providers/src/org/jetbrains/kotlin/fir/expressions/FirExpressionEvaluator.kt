@@ -251,7 +251,8 @@ object FirExpressionEvaluator {
         }
 
         override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): FirEvaluatorResult {
-            return literalExpression.wrap()
+            // Copy the literal to cast the value to the correct type
+            return literalExpression.copy(literalExpression).wrap()
         }
 
         override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): FirEvaluatorResult {
@@ -574,12 +575,9 @@ object FirExpressionEvaluator {
             val opr1 = evaluatedArgs[0]
             val opr2 = evaluatedArgs[1]
 
-            val opr1Value = opr1.kind.convertToGivenKind(opr1.value)
-            val opr2Value = opr2.kind.convertToGivenKind(opr2.value)
-
             val result = when (equalityOperatorCall.operation) {
-                FirOperation.EQ -> opr1Value == opr2Value
-                FirOperation.NOT_EQ -> opr1Value != opr2Value
+                FirOperation.EQ -> opr1.value == opr2.value
+                FirOperation.NOT_EQ -> opr1.value != opr2.value
                 else -> NotConst
             }
 
@@ -610,9 +608,7 @@ object FirExpressionEvaluator {
                 if (!it.isNullLiteral && !it.hasAllowedCompileTimeType(session)) return NotConst
                 evaluateOr<FirLiteralExpression>(it) { return it }
             }
-            val result = strings.joinToString(separator = "") {
-                it.kind.convertToGivenKind(it.value).toString()
-            }
+            val result = strings.joinToString(separator = "") { it.value.toString() }
             return result.toConstExpression(ConstantValueKind.String, stringConcatenationCall).wrap()
         }
 
@@ -931,6 +927,9 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
             if (value is ULong) value
             else (value as? Number)?.toLong()?.toULong()
         }
+        ConstantValueKind.IntegerLiteral -> {
+            (value as? Number)?.toLong()
+        }
         ConstantValueKind.UnsignedIntegerLiteral -> {
             when (value) {
                 is UInt -> value.toULong()
@@ -948,26 +947,17 @@ private fun Any?.toConstExpression(
     kind: ConstantValueKind,
     originalExpression: FirExpression,
 ): FirLiteralExpression {
-    // Later stages of the compiler expect signed values
-    val value = when (this) {
-        is UByte -> this.toByte()
-        is UShort -> this.toShort()
-        is UInt -> this.toInt()
-        is ULong -> this.toLong()
-        else -> this
-    }
-
     return buildLiteralExpression(
         originalExpression.source,
         kind,
-        value,
+        kind.convertToGivenKind(this),
         originalExpression.annotations.takeIf { it.isNotEmpty() }?.toMutableList(),
         setType = false,
     ).apply { replaceConeTypeOrNull(originalExpression.resolvedType) }
 }
 
 private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
-    return this.value.toConstExpression(this.kind, originalExpression)
+    return this.value.toConstExpression(originalExpression.resolvedType.toConstantValueKind() ?: this.kind, originalExpression)
 }
 
 private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvaluatorResult {

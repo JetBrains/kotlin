@@ -48,7 +48,7 @@ FILE: incDec.kt
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(0)] val incMaxUByte: R|kotlin/UByte| = Q|kotlin/UByte|.R|kotlin/UByte.Companion.MAX_VALUE|.R|kotlin/UByte.inc|()
         public get(): R|kotlin/UByte|
-    public final const [EvaluatedValue=UByte(-1)] val decMinUByte: R|kotlin/UByte| = Q|kotlin/UByte|.R|kotlin/UByte.Companion.MIN_VALUE|.R|kotlin/UByte.dec|()
+    public final const [EvaluatedValue=UByte(255)] val decMinUByte: R|kotlin/UByte| = Q|kotlin/UByte|.R|kotlin/UByte.Companion.MIN_VALUE|.R|kotlin/UByte.dec|()
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(1)] val incDecChainedUByte: R|kotlin/UByte| = UInt(1).R|kotlin/UInt.toUByte|().R|kotlin/UByte.inc|().R|kotlin/UByte.dec|().R|kotlin/UByte.inc|().R|kotlin/UByte.dec|()
         public get(): R|kotlin/UByte|
@@ -58,7 +58,7 @@ FILE: incDec.kt
         public get(): R|kotlin/UShort|
     public final const [EvaluatedValue=UShort(0)] val incMaxUShort: R|kotlin/UShort| = Q|kotlin/UShort|.R|kotlin/UShort.Companion.MAX_VALUE|.R|kotlin/UShort.inc|()
         public get(): R|kotlin/UShort|
-    public final const [EvaluatedValue=UShort(-1)] val decMinUShort: R|kotlin/UShort| = Q|kotlin/UShort|.R|kotlin/UShort.Companion.MIN_VALUE|.R|kotlin/UShort.dec|()
+    public final const [EvaluatedValue=UShort(65535)] val decMinUShort: R|kotlin/UShort| = Q|kotlin/UShort|.R|kotlin/UShort.Companion.MIN_VALUE|.R|kotlin/UShort.dec|()
         public get(): R|kotlin/UShort|
     public final const [EvaluatedValue=UShort(1)] val incDecChainedUShort: R|kotlin/UShort| = UInt(1).R|kotlin/UInt.toUShort|().R|kotlin/UShort.inc|().R|kotlin/UShort.dec|().R|kotlin/UShort.inc|().R|kotlin/UShort.dec|()
         public get(): R|kotlin/UShort|
@@ -68,7 +68,7 @@ FILE: incDec.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val incMaxUInt: R|kotlin/UInt| = Q|kotlin/UInt|.R|kotlin/UInt.Companion.MAX_VALUE|.R|kotlin/UInt.inc|()
         public get(): R|kotlin/UInt|
-    public final const [EvaluatedValue=UInt(-1)] val decMinUInt: R|kotlin/UInt| = Q|kotlin/UInt|.R|kotlin/UInt.Companion.MIN_VALUE|.R|kotlin/UInt.dec|()
+    public final const [EvaluatedValue=UInt(4294967295)] val decMinUInt: R|kotlin/UInt| = Q|kotlin/UInt|.R|kotlin/UInt.Companion.MIN_VALUE|.R|kotlin/UInt.dec|()
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val incDecChainedUInt: R|kotlin/UInt| = UInt(1).R|kotlin/UInt.inc|().R|kotlin/UInt.dec|().R|kotlin/UInt.inc|().R|kotlin/UInt.dec|()
         public get(): R|kotlin/UInt|
@@ -78,7 +78,7 @@ FILE: incDec.kt
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(0)] val incMaxULong: R|kotlin/ULong| = Q|kotlin/ULong|.R|kotlin/ULong.Companion.MAX_VALUE|.R|kotlin/ULong.inc|()
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(-1)] val decMinULong: R|kotlin/ULong| = Q|kotlin/ULong|.R|kotlin/ULong.Companion.MIN_VALUE|.R|kotlin/ULong.dec|()
+    public final const [EvaluatedValue=ULong(18446744073709551615)] val decMinULong: R|kotlin/ULong| = Q|kotlin/ULong|.R|kotlin/ULong.Companion.MIN_VALUE|.R|kotlin/ULong.dec|()
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(1)] val incDecChainedULong: R|kotlin/ULong| = ULong(1).R|kotlin/ULong.inc|().R|kotlin/ULong.dec|().R|kotlin/ULong.inc|().R|kotlin/ULong.dec|()
         public get(): R|kotlin/ULong|

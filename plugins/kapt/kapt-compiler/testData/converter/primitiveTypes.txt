@@ -136,6 +136,70 @@
  *   public final const val stringRN: kotlin/String (* = ... *)
  *     public final get
  *
+ *   // field: uByte10:B
+ *   public final const val uByte10: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: uByteMaxPlusOne:B
+ *   public final const val uByteMaxPlusOne: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: uByteMaxValue:B
+ *   public final const val uByteMaxValue: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: uByteMinValue:B
+ *   public final const val uByteMinValue: kotlin/UByte (* = ... *)
+ *     public final get
+ *
+ *   // field: uInt10:I
+ *   public final const val uInt10: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uIntMaxPlusOne:I
+ *   public final const val uIntMaxPlusOne: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uIntMaxValue:I
+ *   public final const val uIntMaxValue: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uIntMinValue:I
+ *   public final const val uIntMinValue: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uLong10:J
+ *   public final const val uLong10: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: uLongMaxPlusOne:J
+ *   public final const val uLongMaxPlusOne: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: uLongMaxValue:J
+ *   public final const val uLongMaxValue: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: uLongMinValue:J
+ *   public final const val uLongMinValue: kotlin/ULong (* = ... *)
+ *     public final get
+ *
+ *   // field: uShort10:S
+ *   public final const val uShort10: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // field: uShortMaxPlusOne:S
+ *   public final const val uShortMaxPlusOne: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // field: uShortMaxValue:S
+ *   public final const val uShortMaxValue: kotlin/UShort (* = ... *)
+ *     public final get
+ *
+ *   // field: uShortMinValue:S
+ *   public final const val uShortMinValue: kotlin/UShort (* = ... *)
+ *     public final get
+ *
  *   // module name: main
  * }
  */
@@ -175,6 +239,22 @@ public final class PrimitiveTypes {
     public static final java.lang.String stringQuotes = "quotes \" \'\'quotes";
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
+    public static final byte uByte10 = (byte)10;
+    public static final byte uByteMaxValue = (byte)-1;
+    public static final byte uByteMinValue = (byte)0;
+    public static final byte uByteMaxPlusOne = (byte)-128;
+    public static final short uShort10 = (short)10;
+    public static final short uShortMaxValue = (short)-1;
+    public static final short uShortMinValue = (short)0;
+    public static final short uShortMaxPlusOne = (short)-32768;
+    public static final int uInt10 = 10;
+    public static final int uIntMaxValue = -1;
+    public static final int uIntMinValue = 0;
+    public static final int uIntMaxPlusOne = -2147483648;
+    public static final long uLong10 = 10L;
+    public static final long uLongMaxValue = -1L;
+    public static final long uLongMinValue = 0L;
+    public static final long uLongMaxPlusOne = -9223372036854775808L;
     @org.jetbrains.annotations.NotNull()
     public static final PrimitiveTypes INSTANCE = null;
 

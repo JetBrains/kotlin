@@ -38,4 +38,24 @@ object PrimitiveTypes {
     const val stringHelloWorld: String = "Hello, world!"
     const val stringQuotes: String = "quotes \" ''quotes"
     const val stringRN: String = "\r\n"
+
+    const val uByte10: UByte = 10u
+    const val uByteMaxValue: UByte = UByte.MAX_VALUE
+    const val uByteMinValue: UByte = UByte.MIN_VALUE
+    const val uByteMaxPlusOne: UByte = 128u
+
+    const val uShort10: UShort = 10u
+    const val uShortMaxValue: UShort = UShort.MAX_VALUE
+    const val uShortMinValue: UShort = UShort.MIN_VALUE
+    const val uShortMaxPlusOne: UShort = 32768u
+
+    const val uInt10: UInt = 10u
+    const val uIntMaxValue: UInt = UInt.MAX_VALUE
+    const val uIntMinValue: UInt = UInt.MIN_VALUE
+    const val uIntMaxPlusOne: UInt = 2147483648u
+
+    const val uLong10: ULong = 10uL
+    const val uLongMaxValue: ULong = ULong.MAX_VALUE
+    const val uLongMinValue: ULong = ULong.MIN_VALUE
+    const val uLongMaxPlusOne: ULong = 9223372036854775808uL
 }
