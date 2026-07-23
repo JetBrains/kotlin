@@ -2113,6 +2113,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("reportPerfJson_detailedPerf.args")
+    public void testReportPerfJson_detailedPerf() {
+      run("reportPerfJson_detailedPerf.args");
+    }
+
+    @Test
     @TestMetadata("reportPerfPsi.args")
     public void testReportPerfPsi() {
       run("reportPerfPsi.args");
@@ -2592,6 +2598,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfJson.args")
     public void testReportPerfJson() {
       run("reportPerfJson.args");
+    }
+
+    @Test
+    @TestMetadata("reportPerfJson_detailedPerf.args")
+    public void testReportPerfJson_detailedPerf() {
+      run("reportPerfJson_detailedPerf.args");
     }
 
     @Test
