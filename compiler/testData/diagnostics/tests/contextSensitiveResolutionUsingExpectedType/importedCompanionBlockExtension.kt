@@ -13,7 +13,7 @@ class MyColor(val name: String) {
 }
 
 // Since the declaration-site is red, it's not important if we are able to resolve into it
-val myColorCompanion: MyColor = EXT_COLOR_FROM_COMPANION
+val myColorCompanion: MyColor = <!UNRESOLVED_REFERENCE!>EXT_COLOR_FROM_COMPANION<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, getter, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
 stringLiteral */
