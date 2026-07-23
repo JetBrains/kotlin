@@ -34,8 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
  */
 @PhasePrerequisites(NativeDefaultParameterInjector::class, NativeSingleAbstractMethodLowering::class, NativeEnumWhenLowering::class)
-internal class BuiltinOperatorLowering(val context: NativeGenerationState) : FileLoweringPass, IrBuildingTransformer(context) {
-
+internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : FileLoweringPass, IrBuildingTransformer(context) {
     private val irBuiltins = context.irBuiltIns
     private val symbols = context.symbols
 
@@ -55,8 +54,8 @@ internal class BuiltinOperatorLowering(val context: NativeGenerationState) : Fil
 
             irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset,
-                    context.symbols.throwNoWhenBranchMatchedException.owner.returnType,
-                    context.symbols.throwNoWhenBranchMatchedException)
+                    symbols.throwNoWhenBranchMatchedException.owner.returnType,
+                    symbols.throwNoWhenBranchMatchedException)
 
             irBuiltins.linkageErrorSymbol -> with(symbols.throwIrLinkageError) { irCall(expression, this, newReturnType = owner.returnType) }
 

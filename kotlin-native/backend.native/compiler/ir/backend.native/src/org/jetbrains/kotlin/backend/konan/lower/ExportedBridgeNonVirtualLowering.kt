@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.annotations.exportedBridgeNonVirtualTargetMethod
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * `@ExportedBridge(..., nonVirtualTargetMethod = "<method>")` so that every call to said method gets dispatched non-virtually,
  */
 @PhasePrerequisites(PostInlineLowering::class)
-internal class ExportedBridgeNonVirtualLowering(val context: NativeGenerationState) : FileLoweringPass {
+internal class ExportedBridgeNonVirtualLowering(val context: NativeLoweringContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         for (function in irFile.declarations.filterIsInstance<IrSimpleFunction>()) {
             val targetMethod = function.exportedBridgeNonVirtualTargetMethod ?: continue

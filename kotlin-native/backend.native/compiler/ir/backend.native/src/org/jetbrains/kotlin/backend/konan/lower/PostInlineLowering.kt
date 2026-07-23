@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
-internal class PostInlineLowering(val context: NativeGenerationState) : BodyLoweringPass {
-
+internal class PostInlineLowering(val context: NativeLoweringContext) : BodyLoweringPass {
     private val symbols get() = context.symbols
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

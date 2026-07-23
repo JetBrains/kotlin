@@ -41,18 +41,18 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
  * Boxes and unboxes values of value types when necessary.
  */
 @PhasePrerequisites(BridgesBuilding::class, NativeSuspendFunctionsLowering::class, GenericCallsReturnTypeEraser::class)
-internal class Autoboxing(val context: NativeGenerationState) : FileLoweringPass {
+internal class Autoboxing(val context: NativeLoweringContext) : FileLoweringPass {
 
-    private val transformer = AutoboxingTransformer(context.context)
+    private val transformer = AutoboxingTransformer(context)
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(transformer)
-        irFile.transform(InlineClassTransformer(context.context), data = null)
+        irFile.transform(InlineClassTransformer(context), data = null)
     }
 
 }
 
-private class AutoboxingTransformer(val context: NativeBackendContext) : AbstractValueUsageTransformer(
+private class AutoboxingTransformer(val context: NativeLoweringContext) : AbstractValueUsageTransformer(
         context.symbols,
         context.irBuiltIns
 ) {
@@ -288,10 +288,8 @@ private class AutoboxingTransformer(val context: NativeBackendContext) : Abstrac
 
 }
 
-private class InlineClassTransformer(private val context: NativeBackendContext) : IrBuildingTransformer(context) {
-
+private class InlineClassTransformer(private val context: NativeLoweringContext) : IrBuildingTransformer(context) {
     private val symbols = context.symbols
-    private val irBuiltIns = context.irBuiltIns
 
     private val builtSpecialFunctions = mutableListOf<IrFunction>()
 
@@ -629,7 +627,7 @@ private class InlineClassTransformer(private val context: NativeBackendContext) 
 
 private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-private fun NativeBackendContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
+private fun NativeLoweringContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {
