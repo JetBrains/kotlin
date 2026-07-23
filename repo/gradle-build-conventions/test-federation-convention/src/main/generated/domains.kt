@@ -51,7 +51,7 @@ internal object NativeDomainInfo : DomainInfo {
 
 internal object CoreLibsDomainInfo : DomainInfo {
     override val domain = Domain.CoreLibs
-    override val include: List<String> = listOf("libraries/stdlib/**", "libraries/tools/kotlin-annotations-jvm/**", "libraries/reflect/**", "libraries/kotlin.test/**")
+    override val include: List<String> = listOf("libraries/stdlib/**", "libraries/tools/kotlin-annotations-jvm/**", "core/metadata*/**", "core/reflect*/**", "core/descriptors.runtime/**", "libraries/kotlinx-metadata/**", "libraries/reflect/**", "libraries/kotlin.test/**", "libraries/tools/jdk-api-validator")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }

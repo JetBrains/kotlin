@@ -63,7 +63,24 @@ Compiler:
  - compiler/util-klib
  - compiler/util-klib-abi
  - compiler/util-klib-metadata
- - core
+ - core/compiler.common
+ - core/compiler.common.js
+ - core/compiler.common.jvm
+ - core/compiler.common.native
+ - core/compiler.common.wasm
+ - core/compiler.common.web
+ - core/descriptors
+ - core/descriptors.jvm
+ - core/deserialization
+ - core/deserialization.common
+ - core/deserialization.common.jvm
+ - core/language.model
+ - core/language.targets
+ - core/language.targets.jvm
+ - core/language.version-settings
+ - core/names
+ - core/script.runtime
+ - core/util.runtime
  - jps
 
 Wasm:
@@ -110,8 +127,16 @@ Native:
 Js, Wasm:
  - js/js.translator/testData
 
+Compiler, CoreLibs:
+ - core/descriptors.runtime
+ - core/metadata
+ - core/metadata.jvm
+ - core/reflection.common.jvm
+ - core/reflection.jvm
+
 CoreLibs:
  - libraries/kotlin.test
+ - libraries/kotlinx-metadata
  - libraries/reflect
  - libraries/stdlib
  - libraries/tools/kotlin-annotations-jvm
@@ -225,7 +250,6 @@ Unknown:
  - libraries/ReadMe.md
  - libraries/examples
  - libraries/kotlin-dom-api-compat
- - libraries/kotlinx-metadata
  - libraries/lib
  - libraries/maven-settings.xml
  - libraries/mvnw

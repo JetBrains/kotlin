@@ -43,8 +43,14 @@ CoreLibs:
   include:
     - "libraries/stdlib/**"
     - "libraries/tools/kotlin-annotations-jvm/**"
+    - "core/metadata*/**"
+    - "core/reflect*/**"
+    # Old reflect
+    - "core/descriptors.runtime/**"
+    - "libraries/kotlinx-metadata/**"
     - "libraries/reflect/**"
     - "libraries/kotlin.test/**"
+    - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
   include:
