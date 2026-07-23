@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR
-// ^KT-86452
 context(_: String) val foo get() = 1
 context(_: String, b: Boolean) var foo2
     get() = 1
