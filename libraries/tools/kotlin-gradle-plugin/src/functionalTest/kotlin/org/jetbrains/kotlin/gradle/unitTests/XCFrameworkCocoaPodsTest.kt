@@ -32,11 +32,9 @@ class XCFrameworkCocoaPodsTest {
             applyCocoapodsPlugin()
             kotlin {
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                listOf(
-                    iosSimulatorArm64(),
-                    iosX64(),
-                    iosArm64(),
-                )
+                iosSimulatorArm64()
+                iosX64()
+                iosArm64()
 
                 cocoapods {
                     framework {

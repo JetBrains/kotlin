@@ -52,7 +52,7 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(
     for (module in modules) {
         for (file in module.files) {
             context.fileLowerState = FileLowerState()
-            lowerings.fold(file) { loweredFile, lowering ->
+            val _ = lowerings.fold(file) { loweredFile, lowering ->
                 performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
                     runPhase(lowering, loweredFile)
                 }

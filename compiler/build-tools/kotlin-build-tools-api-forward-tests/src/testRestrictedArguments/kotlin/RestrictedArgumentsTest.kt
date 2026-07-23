@@ -292,7 +292,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
                     additionalCompilationAssertions()
                 }
             }
-            val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
+            val exception = assertThrows<CompilerArgumentsParseException> { val _ = compilationBody() }
             assertTrue(
                 restrictedArgs.flatMap { it.first }.any { alias ->
                     exception.message?.contains("'$alias' is not supported in the Build Tools API.") == true

@@ -83,7 +83,7 @@ class KotlinJvmRunTest {
 
         configurationResult.await()
 
-        mainCompilation.output.allOutputs.files.ifEmpty { fail("Expected some file in 'allOutputs'") }
+        if (mainCompilation.output.allOutputs.files.isEmpty()) fail("Expected some file in 'allOutputs'")
         if (!mainRunTask.classpath.files.containsAll(mainCompilation.output.allOutputs.files)) {
             fail("Missing output from main compilation in '$mainRunTask'")
         }

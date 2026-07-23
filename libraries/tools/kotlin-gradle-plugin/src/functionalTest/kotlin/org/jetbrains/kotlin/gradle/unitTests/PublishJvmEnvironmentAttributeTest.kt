@@ -85,7 +85,7 @@ class PublishJvmEnvironmentAttributeTest {
     private fun KotlinTarget.forEachUsage(action: (usage: KotlinUsageContext) -> Unit) {
         val component = internal.kotlinComponents.singleOrNull() ?: fail("Expected a single component. Found: ${components}")
         component as KotlinVariantWithMetadataVariant
-        component.usages.ifEmpty { fail("Expected at least one 'usage'") }
+        if (component.usages.isEmpty()) fail("Expected at least one 'usage'")
         component.usages.forEach(action)
     }
 }

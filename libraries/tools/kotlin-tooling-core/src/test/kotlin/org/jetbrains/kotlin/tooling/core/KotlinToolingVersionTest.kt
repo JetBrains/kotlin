@@ -317,7 +317,7 @@ class KotlinToolingVersionTest {
 
     @Test
     fun testBehaviourInEdgeCases() {
-        KotlinToolingVersion("1.6.20.1").apply {
+        KotlinToolingVersion("1.6.20.1").run {
             assertEquals(STABLE, maturity)
             assertEquals(1, major)
             assertEquals(6, minor)
@@ -327,7 +327,7 @@ class KotlinToolingVersionTest {
             assertNull(buildNumber)
         }
 
-        KotlinToolingVersion("1.6-x").apply {
+        KotlinToolingVersion("1.6-x").run {
             assertEquals(DEV, maturity)
             assertEquals(1, major)
             assertEquals(6, minor)
@@ -337,7 +337,7 @@ class KotlinToolingVersionTest {
             assertNull(buildNumber)
         }
 
-        KotlinToolingVersion("1.8.0-dev----999").apply {
+        KotlinToolingVersion("1.8.0-dev----999").run {
             assertEquals(DEV, maturity)
             assertEquals(1, major)
             assertEquals(8, minor)
@@ -347,7 +347,7 @@ class KotlinToolingVersionTest {
             assertEquals(999, buildNumber)
         }
 
-        KotlinToolingVersion("1.6.20-dev-google-pr-510").apply {
+        KotlinToolingVersion("1.6.20-dev-google-pr-510").run {
             assertEquals(DEV, maturity)
             assertEquals(1, major)
             assertEquals(6, minor)
@@ -357,7 +357,7 @@ class KotlinToolingVersionTest {
             assertEquals(510, buildNumber)
         }
 
-        KotlinToolingVersion("1.6.x-dev").apply {
+        KotlinToolingVersion("1.6.x-dev").run {
             assertEquals(DEV, maturity)
             assertEquals(1, major)
             assertEquals(6, minor)

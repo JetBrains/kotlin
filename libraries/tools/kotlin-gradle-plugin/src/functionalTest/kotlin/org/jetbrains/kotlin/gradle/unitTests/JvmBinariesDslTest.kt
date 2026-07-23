@@ -28,6 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class JvmBinariesDslTest {
 
@@ -598,7 +599,7 @@ class JvmBinariesDslTest {
         val installTask = consumerProject.assertContainsTaskInstance<Sync>("installJvmTestDist")
 
         scriptsTask.assertDependsOn(libJarTask)
-        scriptsTask.classpath!!.files.map { it.name }.contains(libJarTask.archiveFileName.get())
+        assertTrue(libJarTask.archiveFileName.get() in scriptsTask.classpath!!.files.map { it.name })
 
         installTask.assertDependsOn(libJarTask)
     }
