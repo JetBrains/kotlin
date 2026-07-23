@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -109,5 +110,14 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     headless.convention(runner.headless)
     launchArgs.convention(runner.launchArgs)
     launchEnvironmentVariables.convention(runner.launchEnvironmentVariables)
-    customBrowserExecutable.convention(runner.customBrowserExecutable)
+    customBrowserExecutable.convention(
+        runner.customBrowserExecutable.map { executable ->
+            if (!executable.asFile.exists()) {
+                throw InvalidUserDataException(
+                    "Custom browser executable for runner '${runner.name}' does not exist: ${executable.asFile}"
+                )
+            }
+            executable
+        }
+    )
 }

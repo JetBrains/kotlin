@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
@@ -24,11 +25,13 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERS
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import java.io.File
+import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -38,6 +41,9 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
 class KotlinPlaywrightTestFrameworkWiringTest {
+
+    @field:TempDir
+    lateinit var tempDirectory: Path
 
     @Test
     fun `declaring a runner replaces the test framework with playwright`() {
@@ -179,7 +185,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val mockLocation3 = mockLocation()
         val mockLocation4 = mockLocation()
 
-        val customChromeExecutable = File("custom-chrome-executable.txt").absoluteFile
+        val customChromeExecutable = tempDirectory.resolve("custom-chrome-executable").toFile().apply {
+            createNewFile()
+        }
 
         val setup = buildBrowserTestProject {
             testsLocation.set(mockLocation1)
@@ -230,6 +238,28 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         val webkit2Runner = inputs.webkitRunners.get().find { it.name.get() == "webki2" }!!
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
+    }
+
+    @Test
+    fun `non-existent custom browser executable is rejected`() {
+        val customChromeExecutable = tempDirectory.resolve("missing-chrome-executable").toFile()
+        val setup = buildBrowserTestProject {
+            chromium {
+                it.customBrowserExecutable.set(customChromeExecutable)
+            }
+        }
+
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val chromeRunner = framework.frameworkTaskInputs.chromiumRunners.get().single()
+        val queryException = assertFails {
+            chromeRunner.customBrowserExecutable.get()
+        }
+        val validationException = assertIs<InvalidUserDataException>(queryException.cause)
+
+        assertEquals(
+            "Custom browser executable for runner 'chromium' does not exist: $customChromeExecutable",
+            validationException.message,
+        )
     }
 }
 
