@@ -80,7 +80,9 @@ abstract class AbstractKlibLoaderTest {
             // Copy of a real KLIB without the "default" component. As a directory.
             val noDefaultComponentDir = tmpDir.resolve("corrupted-library3")
             Path(stdlib).copyToRecursively(noDefaultComponentDir, followLinks = false, overwrite = true)
-            with(noDefaultComponentDir.resolve("default")) { moveTo(resolveSibling("non-default")) }
+            with(noDefaultComponentDir.resolve("default")) {
+                val _ = moveTo(resolveSibling("non-default"))
+            }
             add(noDefaultComponentDir)
 
             // Copy of a real KLIB without the "default" component. As a file.
@@ -313,14 +315,14 @@ abstract class AbstractKlibLoaderTest {
         val qux = libsDir.resolve("qux").pathString
         val qux_klib = libsDir.resolve("qux.klib").pathString
 
-        with(Path(generateNewKlib(asFile = false, fileExtension = ""))) {
+        val _ = with(Path(generateNewKlib(asFile = false, fileExtension = ""))) {
             copyToRecursively(Path(foo), followLinks = false, overwrite = false)
             copyToRecursively(Path(foo_klib), followLinks = false, overwrite = false)
             copyToRecursively(Path(bar), followLinks = false, overwrite = false)
             copyToRecursively(Path(baz_klib), followLinks = false, overwrite = false)
         }
 
-        with(Path(generateNewKlib(asFile = true, fileExtension = "klib"))) {
+        val _ = with(Path(generateNewKlib(asFile = true, fileExtension = "klib"))) {
             copyToRecursively(Path(bar_klib), followLinks = false, overwrite = false)
             copyToRecursively(Path(baz), followLinks = false, overwrite = false)
             copyToRecursively(Path(qux), followLinks = false, overwrite = false)

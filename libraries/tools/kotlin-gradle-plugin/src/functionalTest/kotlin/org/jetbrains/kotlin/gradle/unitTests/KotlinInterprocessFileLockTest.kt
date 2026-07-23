@@ -103,7 +103,7 @@ class KotlinInterprocessFileLockTest {
                 arrayOf(classLoader.loadClass(Function1::class.java.name)),
                 InvocationHandler { _, _, _ -> action() })
             val withLockMethod = instance::class.declaredFunctions.first { it.name == "withLock" }
-            withLockMethod.call(instance, actionProxy)
+            val _ = withLockMethod.call(instance, actionProxy)
         }
     }
 }

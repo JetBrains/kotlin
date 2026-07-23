@@ -2245,7 +2245,8 @@ class UklibResolutionTestsWithMockComponents {
             val resolutionException = runCatching {
                 it()
             }.exceptionOrNull() ?: error("Expect a failure")
-            findMatchingExceptions(resolutionException, VariantSelectionByAttributesException::class.java).single()
+            val exceptions = findMatchingExceptions(resolutionException, VariantSelectionByAttributesException::class.java)
+            assert(exceptions.size == 1) { "Expected exactly one exception, but got ${exceptions.size}: $exceptions" }
         }
     }
 

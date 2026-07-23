@@ -744,22 +744,22 @@ fun indexTranslationUnitsForTypesDefinitions(
                 when (kind) {
                     CXIdxEntity_Union, CXIdxEntity_Struct -> {
                         if (!isStructDeclForward(cursor)) {
-                            structDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            structDefinitionBySpelling.computeIfAbsent(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCClass -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
-                            classDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            classDefinitionBySpelling.computeIfAbsent(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCProtocol -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
-                            protocolDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            protocolDefinitionBySpelling.computeIfAbsent(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_Enum -> {
                         if (!isEnumDeclForward(cursor)) {
-                            enumDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            enumDefinitionBySpelling.computeIfAbsent(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     else -> {}

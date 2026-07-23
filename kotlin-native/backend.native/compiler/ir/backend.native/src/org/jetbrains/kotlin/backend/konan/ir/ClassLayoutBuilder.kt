@@ -231,7 +231,7 @@ internal class GlobalHierarchyAnalysis(val context: NativeBackendContext, val ir
                     }
 
                     fun registerInterface(iface: IrClass) {
-                        interfaceIndices.getOrPut(iface) {
+                        interfaceIndices.computeIfAbsent(iface) {
                             forbidden.add(mutableListOf())
                             interfaces.add(iface)
                             interfaces.size - 1

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.name
 import kotlin.io.path.pathString

@@ -323,32 +323,32 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         val iosTargets = listOf(iosX64, iosArm64)
 
         /* Define interops */
-        nativeTargets.map { target ->
-            target.compilations.getByName("main").cinterops.create("nativeHelper").identifier
+        nativeTargets.forEach { target ->
+            target.compilations.getByName("main").cinterops.create("nativeHelper")
         }
 
-        nativeTargets.map { target ->
-            target.compilations.getByName("test").cinterops.create("nativeTestHelper").identifier
+        nativeTargets.forEach { target ->
+            target.compilations.getByName("test").cinterops.create("nativeTestHelper")
         }
 
-        windowsTargets.map { target ->
-            target.compilations.getByName("main").cinterops.create("windowsHelper").identifier
+        windowsTargets.forEach { target ->
+            target.compilations.getByName("main").cinterops.create("windowsHelper")
         }
 
-        unixLikeTargets.map { target ->
-            target.compilations.getByName("main").cinterops.create("unixHelper").identifier
+        unixLikeTargets.forEach { target ->
+            target.compilations.getByName("main").cinterops.create("unixHelper")
         }
 
-        appleTargets.map { target ->
-            target.compilations.getByName("main").cinterops.create("appleHelper").identifier
+        appleTargets.forEach { target ->
+            target.compilations.getByName("main").cinterops.create("appleHelper")
         }
 
-        appleTargets.map { target ->
-            target.compilations.getByName("test").cinterops.create("appleTestHelper").identifier
+        appleTargets.forEach { target ->
+            target.compilations.getByName("test").cinterops.create("appleTestHelper")
         }
 
-        iosTargets.map { target ->
-            target.compilations.getByName("main").cinterops.create("iosHelper").identifier
+        iosTargets.forEach { target ->
+            target.compilations.getByName("main").cinterops.create("iosHelper")
         }
 
         iosX64.compilations.getByName("main").cinterops.create("iosX64Helper").identifier

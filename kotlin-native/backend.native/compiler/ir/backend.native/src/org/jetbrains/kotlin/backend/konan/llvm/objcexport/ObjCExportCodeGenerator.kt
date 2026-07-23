@@ -1927,7 +1927,7 @@ private fun MethodBridge.parametersAssociated(
                 it to null
 
             MethodBridgeReceiver.Factory -> {
-                kotlinParameters.next()
+                val _ = kotlinParameters.next()
                 it to null
             }
         }

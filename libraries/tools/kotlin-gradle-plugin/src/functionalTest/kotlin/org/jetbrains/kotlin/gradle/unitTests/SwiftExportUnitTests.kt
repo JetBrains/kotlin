@@ -183,7 +183,7 @@ class SwiftExportUnitTests {
     fun `test swift export missing arch`() {
         val project = swiftExportProject(archs = "arm64", multiplatform = {
             @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-            listOf(iosSimulatorArm64(), iosX64(), iosArm64())
+            iosSimulatorArm64(); iosX64(); iosArm64()
         })
 
         project.evaluate()
@@ -212,7 +212,7 @@ class SwiftExportUnitTests {
     fun `test swift export embed and sign inputs`() {
         val project = swiftExportProject(archs = "arm64 x86_64", multiplatform = {
             @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-            listOf(iosSimulatorArm64(), iosX64())
+            iosSimulatorArm64(); iosX64()
         })
 
         project.evaluate()

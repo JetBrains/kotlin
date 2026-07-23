@@ -219,16 +219,16 @@ class KotlinTargetVariantResourcesResolutionTests {
         val producer = rootProject.createSubproject(
             "producer",
         ) {
-            kotlin { producerTarget() }
+            kotlin { val _ = producerTarget() }
         }
         val consumer = rootProject.createSubproject(
             "consumer",
         ) {
             kotlin {
-                consumerTarget()
+                val _ = consumerTarget()
                 sourceSets.commonMain {
                     dependencies {
-                        dependencyScope()(project(":${producer.name}"))
+                        val _ = dependencyScope()(project(":${producer.name}"))
                     }
                 }
             }
@@ -255,7 +255,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                 enableMppResourcesPublication(true)
             }
         ) {
-            kotlin { targetProvider() }
+            kotlin { val _ = targetProvider() }
         }
 
         val middle = rootProject.createSubproject(
@@ -265,10 +265,10 @@ class KotlinTargetVariantResourcesResolutionTests {
             }
         ) {
             kotlin {
-                targetProvider()
+                val _ = targetProvider()
                 sourceSets.commonMain {
                     dependencies {
-                        dependencyScope()(dependencies.project(":${producer.name}"))
+                        val _ = dependencyScope()(dependencies.project(":${producer.name}"))
                     }
                 }
             }
@@ -281,10 +281,10 @@ class KotlinTargetVariantResourcesResolutionTests {
             }
         ) {
             kotlin {
-                targetProvider()
+                val _ = targetProvider()
                 sourceSets.commonMain {
                     dependencies {
-                        dependencyScope()(dependencies.project(":${middle.name}"))
+                        val _ = dependencyScope()(dependencies.project(":${middle.name}"))
                     }
                 }
             }
