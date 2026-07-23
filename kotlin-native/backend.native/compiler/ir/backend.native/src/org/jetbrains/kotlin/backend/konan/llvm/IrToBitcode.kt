@@ -2472,7 +2472,7 @@ internal class CodeGeneratorVisitor(
                 ib.eqeqeqSymbol -> icmpEq(args[0], args[1])
                 ib.booleanNotSymbol -> icmpNe(args[0], kTrue)
                 else -> {
-                    val isFloatingPoint = args[0].type.isFloatingPoint()
+                    val isFloatingPoint = args[0].type.isFloatingPoint
                     // LLVM does not distinguish between signed/unsigned integers, so we must check
                     // the parameter type.
                     val shouldUseUnsignedComparison = function.parameters[0].type.isChar()
