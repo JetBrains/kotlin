@@ -306,7 +306,7 @@ abstract class FirDataFlowAnalyzer(
         val typeStatement = augmentTypeStatement(variable, extractTypeStatementFrom(flow, variable))?.takeIf { it.isNotEmpty }
             ?: run {
                 // Can have an unstable alias to a stable variable, so don't resolve aliases here.
-                variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
+                variable = flow.getKnownVariableWithoutUnwrappingAlias(expression) ?: return null
                 augmentTypeStatement(variable, extractTypeStatementFrom(flow, variable))?.takeIf { it.isNotEmpty }
             }
         return buildSmartCastStatement(flow, variable, typeStatement)
@@ -580,7 +580,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun addTypeOperatorStatements(flow: MutableFlow, typeOperatorCall: FirTypeOperatorCall) {
         val type = typeOperatorCall.conversionTypeRef.coneType
-        val operandVariable = flow.getVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
+        val operandVariable = flow.rememberVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val siblings = typeOperatorCall.conversionTypeRef.coneType
             .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
         when (val operation = typeOperatorCall.operation) {
@@ -713,7 +713,7 @@ abstract class FirDataFlowAnalyzer(
             return processEqNull(flow, expression, operand, isEq)
         }
 
-        val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
+        val operandVariable = flow.rememberVariableIfUsedOrReal(operand) ?: return
         val expressionVariable = SyntheticVariable(expression)
 
         if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBoolean) {
@@ -744,7 +744,7 @@ abstract class FirDataFlowAnalyzer(
         isEq: Boolean,
         lhsExitFlow: PersistentFlow? = null,
     ) {
-        val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
+        val operandVariable = flow.rememberVariableIfUsedOrReal(operand) ?: return
         if (operandVariable is RealVariable && lhsExitFlow != null &&
             !logicSystem.isSameValueIn(lhsExitFlow, flow, operandVariable)
         ) return
@@ -763,9 +763,9 @@ abstract class FirDataFlowAnalyzer(
         operation: FirOperation,
     ) {
         // Only consider the LHS variable if it has not been reassigned in the RHS.
-        val leftOperandVariable = flow.getVariableIfUsedOrReal(leftOperand)
+        val leftOperandVariable = flow.rememberVariableIfUsedOrReal(leftOperand)
             .takeIf { isSameValueIn(lhsExitFlow, leftOperand, flow) }
-        val rightOperandVariable = flow.getVariableIfUsedOrReal(rightOperand)
+        val rightOperandVariable = flow.rememberVariableIfUsedOrReal(rightOperand)
         if (leftOperandVariable == null && rightOperandVariable == null) return
         val expressionVariable = SyntheticVariable(expression)
 
@@ -889,7 +889,7 @@ abstract class FirDataFlowAnalyzer(
     private fun processDirectEqualsCall(flow: MutableFlow, expression: FirFunctionCall, callee: FirNamedFunction) {
         callee.equalityBoundTypeOfParameter?.let { boundType ->
             val argument = expression.arguments.singleOrNull() ?: return
-            val argumentVariable = flow.getVariableIfUsedOrReal(argument)
+            val argumentVariable = flow.rememberVariableIfUsedOrReal(argument)
             if (argumentVariable !is RealVariable) return
             val expressionVariable = SyntheticVariable(expression)
             flow.addImplication((expressionVariable eq true) implies (argumentVariable typeEq boundType))
@@ -938,7 +938,7 @@ abstract class FirDataFlowAnalyzer(
         exitNode.mergeIncomingFlow { _, flow ->
             @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, similar to KT-61837
             if (checkNotNullCall.argument.coneTypeOrNull is ConeDynamicType) return@mergeIncomingFlow
-            val argumentVariable = flow.getVariableIfUsedOrReal(checkNotNullCall.argument) ?: return@mergeIncomingFlow
+            val argumentVariable = flow.rememberVariableIfUsedOrReal(checkNotNullCall.argument) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(argumentVariable notEq null)
         }
     }
@@ -957,7 +957,7 @@ abstract class FirDataFlowAnalyzer(
         val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
         if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
-        val previousConditionVariable = flow.getVariableIfUsed(previousCondition) ?: return@mergeIncomingFlow
+        val previousConditionVariable = flow.getKnownVariableIfUsed(previousCondition) ?: return@mergeIncomingFlow
         flow.commitOperationStatement(previousConditionVariable eq false)
     }
 
@@ -967,7 +967,7 @@ abstract class FirDataFlowAnalyzer(
         resultEnterNode.mergeIncomingFlow { _, flow ->
             // If the condition is invalid, don't generate smart casts to Any or Boolean.
             if (whenBranch.condition.resolvedType.isBoolean) {
-                val conditionVariable = flow.getVariableIfUsed(whenBranch.condition) ?: return@mergeIncomingFlow
+                val conditionVariable = flow.getKnownVariableIfUsed(whenBranch.condition) ?: return@mergeIncomingFlow
                 flow.commitOperationStatement(conditionVariable eq true)
             }
         }
@@ -1003,7 +1003,7 @@ abstract class FirDataFlowAnalyzer(
         loopConditionExitNode.mergeIncomingFlow()
         loopBlockEnterNode.mergeIncomingFlow { _, flow ->
             if (loop.condition.resolvedType.isBoolean) {
-                val conditionVariable = flow.getVariableIfUsed(loop.condition) ?: return@mergeIncomingFlow
+                val conditionVariable = flow.getKnownVariableIfUsed(loop.condition) ?: return@mergeIncomingFlow
                 flow.commitOperationStatement(conditionVariable eq true)
             }
         }
@@ -1054,7 +1054,7 @@ abstract class FirDataFlowAnalyzer(
     private fun processLoopExit(flow: MutableFlow, node: LoopExitNode, conditionExitNode: LoopConditionExitNode) {
         if (conditionExitNode.isDead || node.previousNodes.count { !it.isDead } > 1) return
         if (conditionExitNode.fir.resolvedType.isBoolean) {
-            val variable = flow.getVariableIfUsed(conditionExitNode.fir) ?: return
+            val variable = flow.getKnownVariableIfUsed(conditionExitNode.fir) ?: return
             flow.commitOperationStatement(variable eq false)
         }
     }
@@ -1142,7 +1142,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
         graphBuilder.enterSafeCall(safeCall).mergeIncomingFlow { _, flow ->
-            val receiverVariable = flow.getVariableIfUsedOrReal(safeCall.receiver) ?: return@mergeIncomingFlow
+            val receiverVariable = flow.rememberVariableIfUsedOrReal(safeCall.receiver) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(receiverVariable notEq null)
         }
     }
@@ -1156,7 +1156,7 @@ abstract class FirDataFlowAnalyzer(
             if (node.previousNodes.size < 2) return@mergeIncomingFlow
             // Otherwise if the result is non-null, then `b` executed, which implies `a` is not null
             // and every statement from `b` holds.
-            val expressionVariable = flow.getOrCreateVariable(safeCall) ?: return@mergeIncomingFlow
+            val expressionVariable = flow.rememberVariable(safeCall) ?: return@mergeIncomingFlow
             val previousFlow = node.lastPreviousNode.getFlow(path)
 
             flow.addAllConditionally(expressionVariable notEq null, previousFlow)
@@ -1380,13 +1380,13 @@ abstract class FirDataFlowAnalyzer(
 
         val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
             arguments[i]?.let { argument ->
-                flow.getVariableIfUsedOrReal(argument)
+                flow.rememberVariableIfUsedOrReal(argument)
                     // Only apply contract information to argument if it has not been reassigned in a lambda.
                     .takeIf { callArgsExit == null || isSameValueIn(callArgsExit, argument, flow) }
             }
         }
         val allArgumentVariables = Array(arguments.size) { i ->
-            arguments[i]?.let { argument -> flow.getOrCreateVariable(argument) }
+            arguments[i]?.let { argument -> flow.rememberVariable(argument) }
         }
 
         val substitutor = getSubstitutor(callee, qualifiedAccess, originalFunction)
@@ -1399,7 +1399,7 @@ abstract class FirDataFlowAnalyzer(
             if (operation == null) {
                 flow.addAllStatements(statements)
             } else if (qualifiedAccess is FirExpression) {
-                val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
+                val functionCallVariable = flow.rememberVariable(qualifiedAccess)
                 if (functionCallVariable != null) {
                     flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
                 }
@@ -1449,7 +1449,7 @@ abstract class FirDataFlowAnalyzer(
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
         val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.publicApiInlineFunction, session) ?: return
         if (isPrivateToThisInvisibleAccess(qualifiedAccess, session, fieldSymbol)) return
-        val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
+        val variable = flow.rememberVariable(qualifiedAccess) ?: return
         val returnType = components.returnTypeCalculator.tryCalculateReturnType(fieldSymbol).coneType
         flow.addTypeStatement(variable typeEq returnType)
     }
@@ -1459,7 +1459,7 @@ abstract class FirDataFlowAnalyzer(
         val callee = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return
         val symbol = callee.resolvedSymbol as? FirValueParameterSymbol ?: return
         val boundType = symbol.equalityBoundType ?: return
-        val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
+        val variable = flow.rememberVariable(qualifiedAccess) ?: return
         flow.addTypeStatement(variable typeEq boundType)
     }
 
@@ -1516,8 +1516,8 @@ abstract class FirDataFlowAnalyzer(
             if (property.isEffectivelyLocal || property.isVal) {
                 exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
-                val variable = flow.getRealVariableWithoutUnwrappingAlias(assignment.lValue)
-                if (variable != null) {
+                val variable = flow.getKnownVariableWithoutUnwrappingAlias(assignment.lValue)
+                if (variable is RealVariable) {
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
                 }
             }
@@ -1533,7 +1533,7 @@ abstract class FirDataFlowAnalyzer(
         hasExplicitType: Boolean,
     ) {
         val propertyVariable = if (assignmentLhs != null) {
-            flow.getVariableWithoutUnwrappingAlias(assignmentLhs, createReal = true) as? RealVariable ?: return
+            flow.rememberVariableWithoutUnwrappingAlias(assignmentLhs) as? RealVariable ?: return
         } else {
             getLocal(property.symbol, create = true) ?: return
         }
@@ -1545,7 +1545,7 @@ abstract class FirDataFlowAnalyzer(
 
         val stability = propertyVariable.getStability(flow, components.session)
         if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {
-            val initializerVariable = flow.getVariableIfUsedOrReal(initializer)
+            val initializerVariable = flow.rememberVariableIfUsedOrReal(initializer)
             if (!hasExplicitType && initializerVariable is RealVariable &&
                 // It's impossible to reference implicit when subjects.
                 // With explicit local variables, we want to give the user an option to
@@ -1603,7 +1603,7 @@ abstract class FirDataFlowAnalyzer(
         val [leftExitNode, rightEnterNode] = graphBuilder.exitLeftBooleanOperatorExpressionArgument(booleanOperatorExpression)
         leftExitNode.mergeIncomingFlow()
         rightEnterNode.mergeIncomingFlow { _, flow ->
-            val leftOperandVariable = flow.getVariableIfUsed(booleanOperatorExpression.leftOperand) ?: return@mergeIncomingFlow
+            val leftOperandVariable = flow.getKnownVariableIfUsed(booleanOperatorExpression.leftOperand) ?: return@mergeIncomingFlow
             val saturatingValue = booleanOperatorExpression.kind != LogicOperationKind.AND
             flow.commitOperationStatement(leftOperandVariable eq !saturatingValue)
         }
@@ -1625,8 +1625,8 @@ abstract class FirDataFlowAnalyzer(
         // Not checking this variable for reassignments is safe because the only statement we will approve on it is
         // `leftVariable eq saturatingValue`, which implies that the right side, along with any assignments in it,
         // did not execute at all due to short-circuiting.
-        val leftVariable = flowFromLeft.takeIf { fir.leftOperand.resolvedType.isBoolean }?.getVariableIfUsed(fir.leftOperand)
-        val rightVariable = flowFromRight.takeIf { fir.rightOperand.resolvedType.isBoolean }?.getVariableIfUsed(fir.rightOperand)
+        val leftVariable = flowFromLeft.takeIf { fir.leftOperand.resolvedType.isBoolean }?.getKnownVariableIfUsed(fir.leftOperand)
+        val rightVariable = flowFromRight.takeIf { fir.rightOperand.resolvedType.isBoolean }?.getKnownVariableIfUsed(fir.rightOperand)
 
         when {
             // If RHS cannot terminate, then LHS *has* to be saturating, otherwise the entire expression won't terminate.
@@ -1689,7 +1689,7 @@ abstract class FirDataFlowAnalyzer(
     private fun exitBooleanNot(flow: MutableFlow, expression: FirFunctionCall) {
         // Processing case with a candidate might be necessary for PCLA, because even top-level calls might be not fully completed
         val argument = expression.candidate()?.dispatchReceiverExpression() ?: expression.dispatchReceiver!!
-        val argumentVariable = flow.getVariableIfUsed(argument) ?: return
+        val argumentVariable = flow.getKnownVariableIfUsed(argument) ?: return
         val expressionVariable = SyntheticVariable(expression)
         // Alternatively: (expression == true => argument == false) && (expression == false => argument == true)
         // Which implementation is faster and/or consumes less memory is an open question.
@@ -1768,11 +1768,11 @@ abstract class FirDataFlowAnalyzer(
         val [lhsExitNode, lhsIsNotNullNode, rhsEnterNode] = graphBuilder.exitElvisLhs(elvisExpression)
         lhsExitNode.mergeIncomingFlow()
         lhsIsNotNullNode.mergeIncomingFlow { _, flow ->
-            val lhs = flow.getVariableIfUsedOrReal(elvisExpression.lhs) ?: return@mergeIncomingFlow
+            val lhs = flow.rememberVariableIfUsedOrReal(elvisExpression.lhs) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(lhs notEq null)
         }
         rhsEnterNode.mergeIncomingFlow { _, flow ->
-            val lhs = flow.getVariableIfUsedOrReal(elvisExpression.lhs) ?: return@mergeIncomingFlow
+            val lhs = flow.rememberVariableIfUsedOrReal(elvisExpression.lhs) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(lhs eq null)
         }
     }
@@ -1790,7 +1790,7 @@ abstract class FirDataFlowAnalyzer(
             // If (x ?: null) != null then x != null
             @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, see KT-61837
             if (elvisExpression.rhs.coneTypeOrNull?.isNullableNothing == true) {
-                val lhsVariable = flow.getVariableIfUsedOrReal(elvisExpression.lhs)
+                val lhsVariable = flow.rememberVariableIfUsedOrReal(elvisExpression.lhs)
                 if (lhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (lhsVariable notEq null))
                 }
@@ -1799,7 +1799,7 @@ abstract class FirDataFlowAnalyzer(
             // If (null ?: x) != null then x != null
             @OptIn(UnresolvedExpressionTypeAccess::class) // Lambdas can have unresolved type here, see KT-61837
             if (elvisExpression.lhs.coneTypeOrNull?.isNullableNothing == true) {
-                val rhsVariable = flow.getVariableIfUsedOrReal(elvisExpression.rhs)
+                val rhsVariable = flow.rememberVariableIfUsedOrReal(elvisExpression.rhs)
                 if (rhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (rhsVariable notEq null))
                 }
@@ -1991,8 +1991,8 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun isSameValueIn(other: PersistentFlow, fir: FirExpression, original: MutableFlow): Boolean {
-        val variable = other.getRealVariableWithoutUnwrappingAlias(fir)
-        return variable == null || logicSystem.isSameValueIn(other, original, variable)
+        val variable = other.getKnownVariableWithoutUnwrappingAlias(fir)
+        return variable !is RealVariable || logicSystem.isSameValueIn(other, original, variable)
     }
 
     private fun MutableFlow.addImplication(statement: Implication) {
@@ -2034,36 +2034,32 @@ abstract class FirDataFlowAnalyzer(
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
     }
 
-    private fun Flow.getVariable(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
-        variableStorage.get(fir, createReal, unwrapAlias = { unwrapVariableIfStable(it) })
+    fun Flow.getKnownVariableWithoutUnwrappingAlias(fir: FirExpression): DataFlowVariable? =
+        variableStorage.get(fir, createReal = false, unwrapAlias = { it }, unwrapAliasInReceivers = { unwrapVariableIfStable(it) })
 
-    fun Flow.getVariableWithoutUnwrappingAlias(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
-        variableStorage.get(fir, createReal, unwrapAlias = { it }, unwrapAliasInReceivers = { unwrapVariableIfStable(it) })
+    private fun Flow.rememberVariableWithoutUnwrappingAlias(fir: FirExpression): DataFlowVariable? =
+        variableStorage.get(fir, createReal = true, unwrapAlias = { it }, unwrapAliasInReceivers = { unwrapVariableIfStable(it) })
 
     // Use this when making non-type statements, such as `variable eq true`.
     // Returns null if the statement would be useless (the variable has not been used in any implications).
-    private fun Flow.getVariableIfUsed(fir: FirExpression): DataFlowVariable? =
-        getVariable(fir, createReal = false)?.takeIf { !getImplications(it).isNullOrEmpty() }
+    private fun Flow.getKnownVariableIfUsed(fir: FirExpression): DataFlowVariable? =
+        variableStorage.get(fir, createReal = false, unwrapAlias = { unwrapVariableIfStable(it) })
+            ?.takeIf { !getImplications(it).isNullOrEmpty() }
 
     // Use this when making type statements, such as `variable typeEq ...` or `variable notEq null`.
     // Returns null if the statement would be useless (the variable is synthetic and has not been used in any implications).
-    private fun Flow.getVariableIfUsedOrReal(fir: FirExpression): DataFlowVariable? =
-        getVariable(fir, createReal = true)?.takeIf { it.isReal() || !getImplications(it).isNullOrEmpty() }
+    private fun Flow.rememberVariableIfUsedOrReal(fir: FirExpression): DataFlowVariable? =
+        rememberVariable(fir)?.takeIf { it.isReal() || !getImplications(it).isNullOrEmpty() }
 
     // Use this for variables on the left side of an implication if `fir` could be a variable access. Most statements
     // that create implications are not variable accesses, in which case `SyntheticVariable` can be created directly.
     // Returns null only if the variable is an unstable alias, and so cannot be used at all.
-    private fun Flow.getOrCreateVariable(fir: FirExpression): DataFlowVariable? =
-        getVariable(fir, createReal = true)
+    private fun Flow.rememberVariable(fir: FirExpression): DataFlowVariable? =
+        variableStorage.get(fir, createReal = true, unwrapAlias = { unwrapVariableIfStable(it) })
 
     fun getOrCreateVariable(fir: FirExpression): DataFlowVariable? {
-        return currentSmartCastPosition?.getOrCreateVariable(fir)
+        return currentSmartCastPosition?.rememberVariable(fir)
     }
-
-    // Use this for calling `getTypeStatement` or accessing reassignment information.
-    // Returns null if it's already known that no statements about the variable were made ever.
-    private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirExpression): RealVariable? =
-        getVariableWithoutUnwrappingAlias(fir, createReal = false) as? RealVariable
 
     private fun Flow.unwrapVariableIfStable(variable: RealVariable): RealVariable? {
         val unwrappedVariable = unwrapVariable(variable)
