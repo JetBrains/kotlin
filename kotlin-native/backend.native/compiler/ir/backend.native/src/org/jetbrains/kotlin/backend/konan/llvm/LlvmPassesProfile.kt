@@ -78,6 +78,7 @@ internal fun PerformanceManager.addLlvmPassesProfile(profile: LlvmPassesProfile)
             platform = PlatformType.Native,
             filesCount = 0,
             linesCount = 0,
+            measuredCpuAndUserTime = false,
             initStats = null,
             analysisStats = null,
             translationToIrStats = null,

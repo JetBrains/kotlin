@@ -24,6 +24,7 @@ object UnitStatsJsonDumper {
 
                     appendKeyValue(::filesCount, filesCount, indent = 1)
                     appendKeyValue(::linesCount, linesCount, indent = 1)
+                    appendKeyValue(::measuredCpuAndUserTime, measuredCpuAndUserTime, indent = 1)
 
                     initStats?.let { appendTime(::initStats, it, indent = 1, trailingComma = true) }
                     analysisStats?.let { appendTime(::analysisStats, it, indent = 1, trailingComma = true) }
@@ -75,6 +76,7 @@ object UnitStatsJsonDumper {
 
     private const val TRAILING_COMMA_SUFFIX = ",\n"
 
+    context(stats: UnitStats)
     private fun StringBuilder.appendSideStats(key: KProperty<*>, sideStats: SideStats, indent: Int = 1, trailingComma: Boolean = true) {
         appendObject(key, sideStats, indent, trailingComma) {
             sideStats.apply {
@@ -84,11 +86,14 @@ object UnitStatsJsonDumper {
         }
     }
 
+    context(stats: UnitStats)
     private fun StringBuilder.appendTime(key: KProperty<*>, time: Time, indent: Int, trailingComma: Boolean) {
         appendObject(key, time, indent, trailingComma) {
-            appendKeyValue(it::nanos, it.nanos, indent + 1)
-            appendKeyValue(it::userNanos, it.userNanos, indent + 1)
-            appendKeyValue(it::cpuNanos, it.cpuNanos, indent + 1, trailingComma = false)
+            appendKeyValue(it::nanos, it.nanos, indent + 1, trailingComma = stats.measuredCpuAndUserTime)
+            if (stats.measuredCpuAndUserTime) {
+                appendKeyValue(it::userNanos, it.userNanos, indent + 1)
+                appendKeyValue(it::cpuNanos, it.cpuNanos, indent + 1, trailingComma = false)
+            }
         }
     }
 

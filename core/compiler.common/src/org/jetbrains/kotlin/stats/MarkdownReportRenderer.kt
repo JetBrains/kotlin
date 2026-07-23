@@ -66,9 +66,13 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
 
                 renderLine(
                     name,
-                    formatTime(timeRatio.nanos, time.nanos),
-                    formatTime(timeRatio.userNanos, time.userNanos),
-                    formatTime(timeRatio.cpuNanos, time.cpuNanos)
+                    *buildList {
+                        add(formatTime(timeRatio.nanos, time.nanos))
+                        if (aggregatedStats.measuredCpuAndUserTime) {
+                            add(formatTime(timeRatio.userNanos, time.userNanos))
+                            add(formatTime(timeRatio.cpuNanos, time.cpuNanos))
+                        }
+                    }.toTypedArray(),
                 )
             }
 
