@@ -60,7 +60,8 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
 
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
 
-    // Some receivers don't need to be stored in fields and can be reevaluated every time an accessor is called:
+    // A stable bound receiver doesn't need to be stored in a field and can be reevaluated every time an accessor is called.
+    // Every expression shape accepted here must be copyable by `IrExpression.remapReceiver`:
     private fun IrExpression?.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
         null -> true
         is IrGetValue -> {
@@ -79,6 +80,12 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             val callee = symbol.owner
             callee.isFinalDefaultValGetter && callee.fileParentOrNull.let { it != null && it in visibleScopes }
                     && arguments.all { it.canInline(visibleScopes) }
+        }
+        is IrTypeOperatorCall -> {
+            // Implicit casts (e.g. coming from smart casts) cannot fail and have no side effects. Unsafe casts of stable
+            // arguments are deterministic, and the initializer block generated below evaluates them once at the position of
+            // the original delegate construction, so reevaluations in accessors cannot fail if initialization succeeded:
+            (operator == IrTypeOperator.IMPLICIT_CAST || operator == IrTypeOperator.CAST) && argument.canInline(visibleScopes)
         }
         else -> {
             // Constants and singleton object accesses are always stable:

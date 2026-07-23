@@ -672,6 +672,8 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
                     } else argument
             }
         }
+    is IrTypeOperatorCall ->
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.remapReceiver(oldReceiver, newReceiver))
     else -> shallowCopy()
 }
 
