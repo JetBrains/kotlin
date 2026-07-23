@@ -251,7 +251,7 @@ abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest
         if (index in testModule.directives[Directives.INTERRUPT_AT]) {
             ErrorResistanceServiceRegistrar.handleInterruption {
                 try {
-                    block()
+                    val _ = block()
                     throw IllegalStateException("Analysis should be interrupted")
                 } catch (_: AnalysisInterruptedException) {
                 }
