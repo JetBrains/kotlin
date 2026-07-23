@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
  * [startVersion] or [endVersion] equaling null means Infinite on appropriate edge.
  * In this case appropriate [startInclusive] or [endInclusive] does not matter.
  */
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
@@ -65,6 +67,8 @@ data class NpmRange(
     }
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 infix fun NpmRange.union(other: NpmRange): Set<NpmRange> {
     if (!hasIntersection(other)) return setOf(this, other)
 
@@ -80,6 +84,8 @@ infix fun NpmRange.union(other: NpmRange): Set<NpmRange> {
     ).toSetOrEmpty()
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun NpmRange.invert(): Set<NpmRange> {
     if (startVersion == null && endVersion == null) return emptySet()
 
@@ -105,12 +111,16 @@ fun NpmRange.invert(): Set<NpmRange> {
     return result
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 infix fun Set<NpmRange>.intersect(others: Set<NpmRange>): Set<NpmRange> = flatMapTo(mutableSetOf()) { current ->
     others.mapNotNull { other ->
         current intersect other
     }
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     if (!hasIntersection(other)) return null
 
@@ -126,6 +136,8 @@ infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     )
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
     val maxStart = maxStart(this, other)
     val minEnd = minEnd(this, other)
@@ -138,6 +150,8 @@ infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
             }
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null -> b.startVersion
@@ -145,18 +159,24 @@ fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
         else -> maxOf(a.startVersion, b.startVersion)
     }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun minStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null || b.startVersion == null -> null
         else -> minOf(a.startVersion, b.startVersion)
     }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun maxEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null || b.endVersion == null -> null
         else -> maxOf(a.endVersion, b.endVersion)
     }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun minEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null -> b.endVersion

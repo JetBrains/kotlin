@@ -286,6 +286,10 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(libs.slf4j.api)
     testRuntimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
+
+    testRuntimeOnly("com.github.gundy:semver4j:0.16.4:nodeps") {
+        exclude(group = "*")
+    }
 }
 
 optInToK1Deprecation()

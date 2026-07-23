@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import com.github.gundy.semver4j.model.Version
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -15,7 +16,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.targets.js.npm.createVersionFromGradleRichVersion
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
@@ -25,10 +26,6 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), UsesBuildFusService {
@@ -449,9 +446,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             return explicitlySpecifiedDeploymentVersion
         }
         val maximumDeploymentTarget = transitivelyImportedDeploymentVersions.fold(
-            SemVer.from(deploymentVersionDefault, loose = true),
+            Version.fromString(deploymentVersionDefault),
         ) { max, current ->
-            val other = SemVer.from(current, loose = true)
+            val other = Version.fromString(current)
             if (max >= other) {
                 max
             } else {
@@ -467,6 +464,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             DYNAMIC,
             INFERRED,
         }
+
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
         const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"

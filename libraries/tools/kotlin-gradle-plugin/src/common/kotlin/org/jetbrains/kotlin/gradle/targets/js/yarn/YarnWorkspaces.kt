@@ -42,8 +42,9 @@ class YarnWorkspaces internal constructor(
             rootProjectName,
             rootProjectVersion,
             subProjects,
-            packageManagerEnvironment.yarnResolutions
-                .associate { it.path to it.toVersionString() },
+            packageManagerEnvironment.yarnResolutions2
+                ?.associate { it.name to it.range.get() }.orEmpty()
+//                .associate { it.path to it.toVersionString() },
         )
     }
 

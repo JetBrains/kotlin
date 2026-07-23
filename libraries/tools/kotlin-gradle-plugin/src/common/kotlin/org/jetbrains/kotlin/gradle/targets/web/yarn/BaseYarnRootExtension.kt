@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.web.yarn
 
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -201,20 +202,25 @@ abstract class BaseYarnRootExtension internal constructor(
      * This property has been migrated to use the Provider API.
      * Instead, use [resolutionsProperty].
      */
+    @Suppress("DEPRECATION")
     @Deprecated("Updated to use the Provider API. Use `resolutionsProperty` instead. Scheduled for removal in 2.7.0.")
     // NOTE: Must use Property instead of LegacyProperty. The new `resolutionsProperty` must use `property` as a lazy convention.
     // If we used LegacyProperty then, if a user calls `resolutions.add(...)` then it will return a _copy_ of the list.
     // `add(...)` will mutate the _copy_ and the `resolutionsProperty` will not be updated.
     // Instead, use the deprecated Property and use the value of `resolutions` as its convention.
-    var resolutions: MutableList<YarnResolution> by @Suppress("DEPRECATION") Property(mutableListOf())
+    var resolutions: MutableList< YarnResolution> by @Suppress("DEPRECATION") Property(mutableListOf())
 
     /**
      * The list of Yarn resolutions.
      *
      * See https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/
      */
+    @Deprecated("use versionResolutions")
+    @Suppress("DEPRECATION")
     val resolutionsProperty: ListProperty<YarnResolution> = objects.listProperty(YarnResolution::class.java)
         .convention(providers.provider { @Suppress("DEPRECATION") resolutions })
+
+    abstract val versionResolutions: NamedDomainObjectContainer<YarnResolutionSpec>
 
     /**
      * Add a resolution to the list of Yarn resolutions.
@@ -223,6 +229,8 @@ abstract class BaseYarnRootExtension internal constructor(
      *
      * @see resolutionsProperty
      */
+    @Deprecated("use versionResolutions")
+    @Suppress("DEPRECATION")
     fun resolution(path: String, configure: Action<YarnResolution>) {
         resolutionsProperty.add(
             YarnResolution(path)
@@ -237,6 +245,8 @@ abstract class BaseYarnRootExtension internal constructor(
      *
      * @see resolutionsProperty
      */
+    @Deprecated("use versionResolutions")
+    @Suppress("DEPRECATION")
     fun resolution(path: String, version: String) {
         resolution(path) {
             it.include(version)

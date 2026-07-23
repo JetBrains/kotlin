@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.yarn
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolutionSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -59,7 +60,10 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
      *
      * Details: https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/
      */
-    abstract val resolutions: ListProperty<YarnResolution>
+    @Suppress("DEPRECATION")
+    @Deprecated("use resolutions2")
+    abstract val resolutions: ListProperty<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution>
+    abstract val resolutions2: NamedDomainObjectContainer<YarnResolutionSpec>
 
     final override val env: Provider<YarnEnv> = produceEnv()
 
@@ -97,7 +101,7 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
                 yarnLockMismatchReport = yarnLockMismatchReport.get(),
                 reportNewYarnLock = reportNewYarnLock.get(),
                 yarnLockAutoReplace = yarnLockAutoReplace.get(),
-                yarnResolutions = resolutions.get(),
+                yarnResolutions = resolutions2 ,
             )
         }
     }

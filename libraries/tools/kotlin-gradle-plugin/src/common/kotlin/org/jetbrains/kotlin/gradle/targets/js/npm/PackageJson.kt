@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import java.io.File
 import java.io.Serializable
 import kotlin.io.path.createDirectories
@@ -142,9 +141,10 @@ internal fun packageJson(
 
     val dependencies = mutableMapOf<String, String>()
 
-    npmDependencies.forEach {
-        val module = it.name
-        dependencies[module] = chooseVersion(module, dependencies[module], it.version)
+    npmDependencies.forEach { (_, name, version) ->
+        val oldVersion = dependencies[name]
+        val newVersion = version
+        dependencies[name] = listOfNotNull(oldVersion, newVersion).joinToString(" ")
     }
 
     npmDependencies.forEach {
@@ -164,21 +164,21 @@ internal fun packageJson(
     return packageJson
 }
 
-private fun chooseVersion(
-    module: String,
-    oldVersion: String?,
-    newVersion: String,
-): String {
-    if (oldVersion == null) {
-        return newVersion
-    }
-
-    return (includedRange(oldVersion) intersect includedRange(newVersion))?.toString()
-        ?: throw GradleException(
-            """
-                There is already declared version of '$module' with version '$oldVersion' which does not intersects with another declared version '${newVersion}'
-            """.trimIndent()
-        )
-}
+//private fun chooseVersion(
+//    module: String,
+//    oldVersion: String?,
+//    newVersion: String,
+//): String {
+//    if (oldVersion == null) {
+//        return newVersion
+//    }
+//
+//    return (includedRange(oldVersion) intersect includedRange(newVersion))?.toString()
+//        ?: throw GradleException(
+//            """
+//                There is already declared version of '$module' with version '$oldVersion' which does not intersects with another declared version '${newVersion}'
+//            """.trimIndent()
+//        )
+//}
 
 internal const val fakePackageJsonValue = "FAKE"

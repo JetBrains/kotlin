@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
@@ -13,6 +14,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -33,6 +35,7 @@ abstract class BaseNpmExtension internal constructor(
     val project: Project,
     val nodeJsRoot: BaseNodeJsRootExtension,
     private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
     private val execOps: ExecOperations,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
@@ -94,9 +97,17 @@ abstract class BaseNpmExtension internal constructor(
     val packageLockAutoReplace: org.gradle.api.provider.Property<Boolean> = project.objects.property(Boolean::class.java)
         .convention(false)
 
-    val overrides: ListProperty<NpmOverride> = project.objects.listProperty(NpmOverride::class.java)
+    abstract val versionOverrides: NamedDomainObjectContainer<NpmOverrideSpec>
 
+    @Deprecated("Use versionOverrides")
+    @Suppress("DEPRECATION")
+    val overrides: ListProperty<NpmOverride> =
+        project.objects.listProperty(NpmOverride::class.java)
+
+    @Deprecated("Use versionOverrides")
+    @Suppress("DEPRECATION")
     fun override(path: String, configure: Action<NpmOverride>) {
+        @Suppress("DEPRECATION")
         overrides.add(
             NpmOverride(path)
                 .apply { configure.execute(this) }
@@ -104,9 +115,11 @@ abstract class BaseNpmExtension internal constructor(
     }
 
     fun override(path: String, version: String) {
-        override(path, Action {
-            it.include(version)
-        })
+        versionOverrides.register(path) { it.range.set(version)}
+//        @Suppress("DEPRECATION")
+//        override(path) {
+//            it.include(version)
+//        }
     }
 
     internal val nodeJsEnvironment: org.gradle.api.provider.Property<NodeJsEnv> = project.objects.property(NodeJsEnv::class.java)
@@ -130,7 +143,15 @@ abstract class BaseNpmExtension internal constructor(
             packageLockMismatchReport = packageLockMismatchReport.get(),
             reportNewPackageLock = reportNewPackageLock.get(),
             packageLockAutoReplace = packageLockAutoReplace.get(),
-            overrides = overrides.get()
+            newOverrides =
+            objects.domainObjectContainer(NpmOverrideSpec::class.java)
+                .apply {
+                    this.addAllLater(
+                        providers.provider { versionOverrides }
+                    )
+                }
+//                versionOverrides
+            ,
         )
     }
 

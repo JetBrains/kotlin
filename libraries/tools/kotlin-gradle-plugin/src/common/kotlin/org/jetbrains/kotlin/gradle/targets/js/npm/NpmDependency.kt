@@ -15,6 +15,20 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_J
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
 
+//internal data class InternalNpmDependency(
+//    val name: String,
+//    val version: String,
+//    val scope: Scope,
+//) {
+//    internal enum class Scope {
+//        NORMAL,
+//        DEV,
+//        OPTIONAL,
+//        PEER
+//    }
+//}
+
+//@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 data class NpmDependency(
     val objectFactory: ObjectFactory,
     val scope: Scope = Scope.NORMAL,

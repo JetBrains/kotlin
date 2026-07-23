@@ -31,6 +31,7 @@ open class YarnPlugin : CommonYarnPlugin {
             nodeJsRootExtension = { it.kotlinNodeJsRootExtension },
             nodeJsEnvSpec = { it.kotlinNodeJsEnvSpec },
             lockFileDirectory = { it.resolve(LockCopyTask.KOTLIN_JS_STORE) },
+            target.providers
         ).apply(target)
     }
 

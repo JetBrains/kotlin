@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.targets.js.npm.buildNpmVersion
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.Serializable
+import javax.inject.Inject
 
+@Deprecated("internal util")
 class YarnResolution(
-    val path: String
+    val path: String,
 ) : Serializable {
     var includedVersions = mutableListOf<String>()
     var excludedVersions = mutableListOf<String>()
@@ -23,6 +29,37 @@ class YarnResolution(
     }
 }
 
+@Suppress("DEPRECATION")
+@Deprecated("internal util")
 fun YarnResolution.toVersionString(): String {
     return buildNpmVersion(includedVersions, excludedVersions)
+}
+
+//abstract class YarnResolutionContainer
+//internal constructor() {
+//    internal abstract val resolutions: NamedDomainObjectContainer<YarnResolutionSpec>
+//
+//    fun register(name: String, configure: YarnResolutionSpec.() -> Unit) {
+//        resolutions.register(name, configure)
+//    }
+//
+//    fun configure(packageName: String)  {
+//        resolutions.named(packageName) {
+//            configure(this)
+//        }
+//    }
+//}
+//
+//internal fun org.gradle.api.model.ObjectFactory.YarnResolutionContainer(): YarnResolutionContainer
+// = newInstance<YarnResolutionContainer>()
+
+
+abstract class YarnResolutionSpec
+@Inject
+internal constructor(
+    private val packageName: String,
+) : Named {
+    abstract val range: Property<String>
+
+    override fun getName(): String = packageName
 }

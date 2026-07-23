@@ -42,8 +42,11 @@ class Npm internal constructor(
             rootProjectName,
             rootProjectVersion,
             subProjects,
-            packageManagerEnvironment.overrides
-                .associate { it.path to it.toVersionString() },
+            packageManagerEnvironment
+                .newOverrides
+                ?.associate { it.name to it.range.get() }
+                .orEmpty()
+//                .associate { it.path to it.toVersionString() },
         )
     }
 

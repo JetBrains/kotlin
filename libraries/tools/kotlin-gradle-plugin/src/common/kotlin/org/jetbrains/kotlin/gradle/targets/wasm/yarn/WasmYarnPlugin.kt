@@ -35,6 +35,7 @@ abstract class WasmYarnPlugin internal constructor() : CommonYarnPlugin {
             nodeJsRootExtension = { it.kotlinNodeJsRootExtension },
             nodeJsEnvSpec = { it.kotlinNodeJsEnvSpec },
             lockFileDirectory = { it.resolve(LockCopyTask.KOTLIN_JS_STORE).resolve(WasmPlatformDisambiguator.platformDisambiguator) },
+            target.providers,
         ).apply(target)
 
         target.kotlinNodeJsRootExtension.toolingInstallTaskProvider.configure {

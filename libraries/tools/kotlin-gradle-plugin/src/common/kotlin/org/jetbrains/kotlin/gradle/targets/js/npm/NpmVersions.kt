@@ -11,6 +11,8 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionLexer
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import org.gradle.api.InvalidUserDataException
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun versionToNpmRanges(version: String): Set<NpmRange> {
     val lexer = NodeSemverExpressionLexer(ANTLRInputStream(version))
     val tokens = CommonTokenStream(lexer)
@@ -19,6 +21,8 @@ fun versionToNpmRanges(version: String): Set<NpmRange> {
         .visit(parser.rangeSet())!!
 }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun includedRange(
     includedVersion: String,
     includedWithCaret: Boolean = false,
@@ -28,6 +32,8 @@ fun includedRange(
         includedWithCaret
     )
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun includedRange(
     includedVersions: List<String>,
     includedWithCaret: Boolean = false,
@@ -47,6 +53,8 @@ fun includedRange(
         throw InvalidUserDataException("No ranges for included versions $includedVersions")
     }
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun buildNpmVersion(
     includedVersions: List<String>,
     excludedVersions: List<String>,
@@ -74,6 +82,7 @@ fun buildNpmVersion(
             .joinToString(" || ")
 }
 
+@Suppress("DEPRECATION")
 private fun NpmRange.caretizeSingleVersion(): NpmRange {
     if (startVersion?.toVersion() == endVersion?.toVersion() && (startInclusive || endInclusive)) {
         return NpmRange(

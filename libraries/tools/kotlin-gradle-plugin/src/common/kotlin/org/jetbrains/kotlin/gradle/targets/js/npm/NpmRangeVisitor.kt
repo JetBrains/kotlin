@@ -11,6 +11,8 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
+@Deprecated("Unused internal utility. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<Set<NpmRange>>() {
     override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): Set<NpmRange> =
         setOf(NpmRange())

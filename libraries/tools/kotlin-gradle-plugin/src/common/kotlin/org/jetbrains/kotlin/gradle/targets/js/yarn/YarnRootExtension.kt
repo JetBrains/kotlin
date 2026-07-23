@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
@@ -32,6 +33,8 @@ internal constructor(
     providers = providers,
     execOps = execOps,
 ) {
+    override val versionResolutions: NamedDomainObjectContainer<YarnResolutionSpec> =
+        objects.domainObjectContainer(YarnResolutionSpec::class.java)
 
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
         val YARN: String

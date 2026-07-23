@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
@@ -50,6 +51,7 @@ internal class YarnPluginApplier(
     private val nodeJsRootExtension: (project: Project) -> BaseNodeJsRootExtension,
     private val nodeJsEnvSpec: (project: Project) -> BaseNodeJsEnvSpec,
     private val lockFileDirectory: (projectDirectory: File) -> File,
+    private val providers: ProviderFactory,
 ) {
 
     fun apply(project: Project) {
@@ -210,6 +212,8 @@ internal class YarnPluginApplier(
         yarnLockMismatchReport.convention(yarnRootExtension.yarnLockMismatchReportProperty)
         reportNewYarnLock.convention(yarnRootExtension.reportNewYarnLockProperty)
         yarnLockAutoReplace.convention(yarnRootExtension.yarnLockAutoReplaceProperty)
-        resolutions.convention(yarnRootExtension.resolutionsProperty)
+//        resolutions.convention(yarnRootExtension.resolutionsProperty)
+//        resolutions.convention(yarnRootExtension.resolutions2)
+        resolutions2.addAllLater( providers.provider {   yarnRootExtension.versionResolutions })
     }
 }

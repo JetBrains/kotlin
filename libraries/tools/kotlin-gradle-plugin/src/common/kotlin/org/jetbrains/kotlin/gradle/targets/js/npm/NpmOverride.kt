@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import java.io.Serializable
+import javax.inject.Inject
 
+@Deprecated("Replaced.")
 class NpmOverride(
-    val path: String
+    val path: String,
 ) : Serializable {
     var includedVersions = mutableListOf<String>()
     var excludedVersions = mutableListOf<String>()
@@ -22,6 +28,25 @@ class NpmOverride(
     }
 }
 
+@Deprecated("Replaced.")
+@Suppress("DEPRECATION")
 fun NpmOverride.toVersionString(): String {
     return buildNpmVersion(includedVersions, excludedVersions)
+}
+
+//abstract class NpmOverrideContainer
+//@Inject internal constructor(
+//    private val objects: ObjectFactory,
+//) {
+//
+//}
+
+abstract class NpmOverrideSpec
+@Inject
+internal constructor(
+    private val packageName: String,
+) : Named {
+    abstract val range: Property<String>
+
+    override fun getName(): String = packageName
 }

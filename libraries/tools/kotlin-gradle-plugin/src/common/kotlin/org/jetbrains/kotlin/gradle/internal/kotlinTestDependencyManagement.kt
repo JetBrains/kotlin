@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.github.gundy.semver4j.model.Version
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.DependencySet
-import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
@@ -23,7 +18,8 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
 import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.internal.KotlinTestJvmFramework.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -31,7 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.targets.js.npm.createVersionFromGradleRichVersion
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -40,9 +36,9 @@ import org.jetbrains.kotlin.gradle.utils.*
 private val Dependency.isKotlinTestRootDependency: Boolean
     get() = group == KOTLIN_MODULE_GROUP && name == KOTLIN_TEST_ROOT_MODULE_NAME
 
-private val kotlin150Version = SemVer(1.toBigInteger(), 5.toBigInteger(), 0.toBigInteger())
+private val kotlin150Version = Version.fromString("1.5.0")
 
-private fun isAtLeast1_5(version: String) = SemVer.fromGradleRichVersion(version) >= kotlin150Version
+private fun isAtLeast1_5(version: String) = createVersionFromGradleRichVersion(version) >= kotlin150Version
 
 private val jvmPlatforms = setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 

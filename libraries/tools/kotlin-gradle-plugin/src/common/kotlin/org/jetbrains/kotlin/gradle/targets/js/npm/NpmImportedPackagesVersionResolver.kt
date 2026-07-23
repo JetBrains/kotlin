@@ -27,7 +27,7 @@ class NpmImportedPackagesVersionResolver(
     private fun resolve(modules: MutableSet<GradleNodeModule>) {
         modules.groupBy { it.name }.forEach { (name, versions) ->
             val selected: GradleNodeModule = if (versions.size > 1) {
-                val sorted = versions.sortedBy { it.semver }
+                val sorted = versions.sortedBy { it.parsedVersion }
                 val selected = sorted.last()
                 resolvedVersion[name] = ResolvedNpmDependency(
                     version = selected.version,

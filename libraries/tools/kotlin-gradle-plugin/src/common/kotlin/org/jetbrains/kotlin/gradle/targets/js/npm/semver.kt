@@ -2,12 +2,21 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.github.gundy.semver4j.model.Version
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.CLOSE_INC
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.FINITE_RANGE
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.LOWER_INFINITE_RANGE
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.MAJOR_PREFIX_VERSION
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.MINOR_PREFIX_VERSION
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.SINGLE_VALUE_RANGE
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer.Companion.UPPER_INFINITE_RANGE
 import java.math.BigInteger
 
+@Deprecated("Unused utility class. Scheduled for removal in Kotlin 2.7.")
 data class SemVer(
     val major: BigInteger,
     val minor: BigInteger,
@@ -90,58 +99,18 @@ data class SemVer(
          * version number for major, minor or patch.
          */
         fun fromGradleRichVersion(version: String): SemVer {
-            return when {
-                version == "+" || version.startsWith("latest.") ->
-                    SemVer(Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
-                version.matches(MAJOR_PREFIX_VERSION) ->
-                    from("${version.replaceFirst("+", Int.MAX_VALUE.toString())}.${Int.MAX_VALUE}", loose = true)
-                version.matches(MINOR_PREFIX_VERSION) ->
-                    from(version.replaceFirst("+", Int.MAX_VALUE.toString()), loose = true)
-                version.matches(FINITE_RANGE) -> {
-                    if (version.endsWith(CLOSE_INC)) {
-                        from(FINITE_RANGE.find(version)!!.groups[2]!!.value, loose = true)
-                    } else {
-                        from(FINITE_RANGE.find(version)!!.groups[2]!!.value, loose = true).decrement()
-                    }
-                }
-                version.matches(LOWER_INFINITE_RANGE) -> {
-                    if (version.endsWith(CLOSE_INC)) {
-                        from(LOWER_INFINITE_RANGE.find(version)!!.groups[1]!!.value, loose = true)
-                    } else {
-                        from(LOWER_INFINITE_RANGE.find(version)!!.groups[1]!!.value, loose = true).decrement()
-                    }
-                }
-                version.matches(UPPER_INFINITE_RANGE) -> {
-                    SemVer(Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
-                }
-                version.matches(SINGLE_VALUE_RANGE) -> {
-                    from(SINGLE_VALUE_RANGE.find(version)!!.groups[1]!!.value, loose = true)
-                }
-                else -> from(version, loose = true)
-            }
+            return createVersionFromGradleRichVersion(version).toSemVer()
         }
 
-        private fun SemVer.decrement(): SemVer {
-            return if (patch == 0.toBigInteger()) {
-                if (minor == 0.toBigInteger()) {
-                    SemVer(major.dec(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
-                } else {
-                    SemVer(major, minor.dec(), Int.MAX_VALUE.toBigInteger())
-                }
-            } else {
-                SemVer(major, minor, patch.dec())
-            }
-        }
-
-        private val MAJOR_PREFIX_VERSION = "^[0-9]+\\.\\+$".toRegex()
-        private val MINOR_PREFIX_VERSION = "^[0-9]+\\.[0-9]+\\.\\+$".toRegex()
+        internal val MAJOR_PREFIX_VERSION = "^[0-9]+\\.\\+$".toRegex()
+        internal val MINOR_PREFIX_VERSION = "^[0-9]+\\.[0-9]+\\.\\+$".toRegex()
 
         // Following constants and logic around was peeked from
-        // https://github.com/gradle/gradle/blob/master/subprojects/dependency-management/src/main/java/org/gradle/api/internal/artifacts/ivyservice/ivyresolve/strategy/VersionRangeSelector.java
-        private const val OPEN_INC = "["
-        private const val OPEN_EXC = "]"
+        // https://github.com/gradle/gradle/blob/v9.6.1/platforms/software/dependency-management/src/main/java/org/gradle/api/internal/artifacts/ivyservice/ivyresolve/strategy/VersionRangeSelector.java
+        internal const val OPEN_INC = "["
+        internal const val OPEN_EXC = "]"
         private const val OPEN_EXC_MAVEN = "("
-        private const val CLOSE_INC = "]"
+        internal const val CLOSE_INC = "]"
         private const val CLOSE_EXC = "["
         private const val CLOSE_EXC_MAVEN = ")"
         private const val LOWER_INFINITE = "("
@@ -167,10 +136,69 @@ data class SemVer(
         private const val UPPER_INFINITE_PATTERN = (OPEN_PATTERN + "\\s*("
                 + ANY_NON_SPECIAL_PATTERN + "+)" + SEP_PATTERN + UI_PATTERN)
         private const val SINGLE_VALUE_PATTERN = "$OPEN_INC_PATTERN\\s*($ANY_NON_SPECIAL_PATTERN+)$CLOSE_INC_PATTERN"
-        private val FINITE_RANGE = FINITE_PATTERN.toRegex()
-        private val LOWER_INFINITE_RANGE = LOWER_INFINITE_PATTERN.toRegex()
-        private val UPPER_INFINITE_RANGE = UPPER_INFINITE_PATTERN.toRegex()
-        private val SINGLE_VALUE_RANGE = SINGLE_VALUE_PATTERN.toRegex()
+        internal val FINITE_RANGE = FINITE_PATTERN.toRegex()
+        internal val LOWER_INFINITE_RANGE = LOWER_INFINITE_PATTERN.toRegex()
+        internal val UPPER_INFINITE_RANGE = UPPER_INFINITE_PATTERN.toRegex()
+        internal val SINGLE_VALUE_RANGE = SINGLE_VALUE_PATTERN.toRegex()
+    }
+}
+
+//internal fun createVersionFromGradleRichVersion(version: String, loose: Boolean): Version {
+//    return createVersionFromGradleRichVersion(version)
+//}
+
+internal fun createVersionFromGradleRichVersion(version: String, loose: Boolean = false): Version {
+    @Suppress("NAME_SHADOWING")
+    val version = if (loose) fixSemver(version) else version
+    return when {
+        version == "+" || version.startsWith("latest.") ->
+            Version.builder().major(Int.MAX_VALUE).minor(Int.MAX_VALUE).patch(Int.MAX_VALUE).build()
+        version.matches(MAJOR_PREFIX_VERSION) ->
+            Version.fromString(fixSemver("${version.replaceFirst("+", Int.MAX_VALUE.toString())}.${Int.MAX_VALUE}"))
+        version.matches(MINOR_PREFIX_VERSION) ->
+            Version.fromString(fixSemver(version.replaceFirst("+", Int.MAX_VALUE.toString())))
+        version.matches(FINITE_RANGE) -> {
+            val parsed =
+                Version.fromString(
+                    fixSemver(FINITE_RANGE.find(version)!!.groups[2]!!.value)
+                )
+            if (version.endsWith(CLOSE_INC)) {
+                parsed
+            } else {
+                parsed.decrement()
+            }
+        }
+        version.matches(LOWER_INFINITE_RANGE) -> {
+            val parsed =
+                Version.fromString(
+                    fixSemver(LOWER_INFINITE_RANGE.find(version)!!.groups[1]!!.value)
+                )
+            if (version.endsWith(CLOSE_INC)) {
+                parsed
+            } else {
+                parsed.decrement()
+            }
+        }
+        version.matches(UPPER_INFINITE_RANGE) -> {
+            Version.builder().major(Int.MAX_VALUE).minor(Int.MAX_VALUE).patch(Int.MAX_VALUE).build()
+        }
+        version.matches(SINGLE_VALUE_RANGE) -> {
+            Version.fromString(fixSemver(SINGLE_VALUE_RANGE.find(version)!!.groups[1]!!.value))
+        }
+        else ->
+            Version.fromString(fixSemver(version))
+    }
+}
+
+private fun Version.decrement(): Version {
+    return if (patch == 0) {
+        if (minor == 0) {
+            Version.builder().major(major.dec()).minor(Int.MAX_VALUE).patch(Int.MAX_VALUE).build()
+        } else {
+            Version.builder().major(major).minor(Int.MAX_VALUE).patch(Int.MAX_VALUE).build()
+        }
+    } else {
+        Version.builder().major(major).minor(minor).patch(patch.dec()).build()
     }
 }
 
@@ -261,6 +289,8 @@ private fun String.foldDelimiters(): String {
     return result.toString()
 }
 
+@Deprecated("Unused utility class. Scheduled for removal in Kotlin 2.7.")
+@Suppress("DEPRECATION")
 fun Version.toSemVer(): SemVer =
     SemVer(
         major.toBigInteger(),
@@ -270,7 +300,8 @@ fun Version.toSemVer(): SemVer =
         build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
     )
 
-fun SemVer.toVersion(): Version =
+@Deprecated("Unused utility class. Scheduled for removal in Kotlin 2.7.")
+fun @Suppress("DEPRECATION") SemVer.toVersion(): Version =
     Version.builder()
         .major(major.toInt())
         .minor(minor.toInt())
@@ -280,9 +311,11 @@ fun SemVer.toVersion(): Version =
         .build()
 
 @Deprecated("Use `minOf()` stdlib function instead. Scheduled for removal in Kotlin 2.6.", ReplaceWith("minOf(a, b)"))
+@Suppress("DEPRECATION")
 fun min(a: SemVer, b: SemVer): SemVer =
     minOf(a, b)
 
 @Deprecated("Use `maxOf()` stdlib function instead. Scheduled for removal in Kotlin 2.6.", ReplaceWith("maxOf(a, b)"))
+@Suppress("DEPRECATION")
 fun max(a: SemVer, b: SemVer): SemVer =
     maxOf(a, b)

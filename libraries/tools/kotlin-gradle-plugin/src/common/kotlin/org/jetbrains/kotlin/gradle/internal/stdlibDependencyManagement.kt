@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.github.gundy.semver4j.model.Version
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinStdlibConfigurationMetrics
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.targets.js.npm.createVersionFromGradleRichVersion
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
 internal const val KOTLIN_STDLIB_COMMON_MODULE_NAME = "kotlin-stdlib-common"
@@ -62,7 +63,7 @@ internal fun ConfigurationContainer.configureStdlibVersionAlignment() = configur
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
                     (dependency.name == KOTLIN_STDLIB_MODULE_NAME || dependency.name == KOTLIN_STDLIB_JDK7_MODULE_NAME) &&
                     dependency.version != null &&
-                    SemVer.fromGradleRichVersion(dependency.version!!).let { it >= kotlin180Version && it < kotlin1920Version }
+                    createVersionFromGradleRichVersion(dependency.version!!).let { it >= kotlin180Version && it < kotlin1920Version }
                 ) {
                     if (configuration.isCanBeResolved) configuration.alignStdlibJvmVariantVersions(dependency)
 
@@ -123,7 +124,7 @@ private fun KotlinTarget.addStdlibDependency(
                     return@withDependencies
 
                 val requestedStdlibVersion = coreLibrariesVersion.get()
-                val stdlibVersion = SemVer.fromGradleRichVersion(requestedStdlibVersion)
+                val stdlibVersion = createVersionFromGradleRichVersion(requestedStdlibVersion)
 
                 // Since 1.9.20 in MPP projects, we should add stdlib only for common dependencies
                 // except standalone compilations which as not using 'common'
@@ -190,8 +191,8 @@ internal fun KotlinPlatformType.stdlibPlatformType(
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
 
-private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
-private val kotlin1920Version = SemVer(1.toBigInteger(), 9.toBigInteger(), 20.toBigInteger())
+private val kotlin180Version = Version.fromString("1.8.0")
+private val kotlin1920Version = Version.fromString("1.9.20")
 
 private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
     val androidVariant = androidSourceSetInfoOrNull?.androidVariantType ?: return false

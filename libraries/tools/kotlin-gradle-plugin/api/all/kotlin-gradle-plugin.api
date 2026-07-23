@@ -3503,6 +3503,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtensio
 	public final fun getReportNewPackageLock ()Lorg/gradle/api/provider/Property;
 	public final fun getRestorePackageLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getStorePackageLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getVersionOverrides ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public final fun override (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun override (Ljava/lang/String;Lorg/gradle/api/Action;)V
 }
@@ -3740,7 +3741,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv {
 	public final fun component7 ()Ljava/util/List;
 	public final fun copy (Ljava/lang/String;ZZLorg/jetbrains/kotlin/gradle/targets/js/npm/LockFileMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv;Ljava/lang/String;ZZLorg/jetbrains/kotlin/gradle/targets/js/npm/LockFileMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getExecutable ()Ljava/lang/String;
 	public final fun getIgnoreScripts ()Z
 	public final fun getOverrides ()Ljava/util/List;
@@ -3748,8 +3748,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmEnv {
 	public final fun getPackageLockMismatchReport ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/LockFileMismatchReport;
 	public final fun getReportNewPackageLock ()Z
 	public final fun getStandalone ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment : org/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment {
@@ -3760,13 +3758,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment : o
 	public final fun component4 ()Ljava/util/List;
 	public final fun copy (Ljava/lang/String;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;Ljava/lang/String;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getExecutable ()Ljava/lang/String;
 	public final fun getIgnoreScripts ()Z
-	public final fun getOverrides ()Ljava/util/List;
 	public final fun getStandalone ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/NpmExtension : org/jetbrains/kotlin/gradle/targets/js/npm/BaseNpmExtension {
@@ -3798,6 +3792,11 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmOverride : java
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmOverrideKt {
 	public static final fun toVersionString (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmOverride;)Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/NpmOverrideSpec : org/gradle/api/Named {
+	public fun getName ()Ljava/lang/String;
+	public abstract fun getRange ()Lorg/gradle/api/provider/Property;
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/npm/NpmProject : java/io/Serializable {
@@ -4931,21 +4930,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
-	public final fun component1 ()Z
-	public final fun component10 ()Z
-	public final fun component11 ()Ljava/util/List;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Z
-	public final fun component4 ()Ljava/io/File;
-	public final fun component5 ()Ljava/lang/String;
-	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Z
-	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
-	public final fun component9 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
@@ -4957,9 +4941,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jet
 	public final fun getStandalone ()Z
 	public final fun getYarnLockAutoReplace ()Z
 	public final fun getYarnLockMismatchReport ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
-	public final fun getYarnResolutions ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+	public final fun getYarnResolutions ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment : org/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment {
@@ -4970,13 +4952,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment :
 	public final fun component4 ()Ljava/util/List;
 	public final fun copy (Ljava/lang/String;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/lang/String;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getExecutable ()Ljava/lang/String;
 	public final fun getIgnoreScripts ()Z
 	public final fun getStandalone ()Z
-	public final fun getYarnResolutions ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockCopyTask : org/jetbrains/kotlin/gradle/targets/js/npm/LockCopyTask {
@@ -5026,6 +5004,11 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnResolution : 
 	public final fun setIncludedVersions (Ljava/util/List;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnResolutionSpec : org/gradle/api/Named {
+	public fun getName ()Ljava/lang/String;
+	public abstract fun getRange ()Lorg/gradle/api/provider/Property;
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnResolutionsKt {
 	public static final fun toVersionString (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnResolution;)Ljava/lang/String;
 }
@@ -5043,6 +5026,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootEnvSpec$C
 
 public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension : org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension$Companion;
+	public fun getVersionResolutions ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
@@ -5803,6 +5787,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
 	public abstract fun getReportNewYarnLock ()Lorg/gradle/api/provider/Property;
 	public abstract fun getResolutions ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getResolutions2 ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Property;
 	public abstract fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Property;
 	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
@@ -5833,6 +5818,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public final fun getResolutionsProperty ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getRestoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getStoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getVersionResolutions ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public final fun getYarnLockAutoReplace ()Z
 	public final fun getYarnLockAutoReplaceProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getYarnLockMismatchReport ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
@@ -6524,4 +6510,3 @@ public final class org/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOpti
 	public final fun processLaunchOptions (Lorg/gradle/api/model/ObjectFactory;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;
 	public static synthetic fun processLaunchOptions$default (Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions$Companion;Lorg/gradle/api/model/ObjectFactory;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;
 }
-

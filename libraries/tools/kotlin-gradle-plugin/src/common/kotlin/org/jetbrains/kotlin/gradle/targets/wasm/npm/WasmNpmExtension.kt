@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.npm
 
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.BaseNpmExtension
@@ -29,11 +30,13 @@ abstract class WasmNpmExtension internal constructor(
     nodeJsRoot: WasmNodeJsRootExtension,
     objects: ObjectFactory,
     execOps: ExecOperations,
+    providers: ProviderFactory,
 ) : BaseNpmExtension(
     project = project,
     nodeJsRoot = nodeJsRoot,
     objects = objects,
     execOps = execOps,
+    providers = providers,
 ) {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String

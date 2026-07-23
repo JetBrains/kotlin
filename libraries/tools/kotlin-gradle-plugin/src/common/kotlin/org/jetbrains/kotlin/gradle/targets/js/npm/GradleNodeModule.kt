@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.github.gundy.semver4j.model.Version
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import java.io.File
@@ -14,8 +15,13 @@ import java.io.Serializable
  * Fake NodeJS module directory created from Gradle external module
  */
 data class GradleNodeModule(val name: String, val version: String, val path: File) : Serializable {
+    @Deprecated("Scheduled for removal in Kotlin 2.7.")
+    @Suppress("DEPRECATION")
     val semver: SemVer
-        get() = SemVer.from(version)
+        get() = parsedVersion.toSemVer()
+
+    internal val parsedVersion: Version
+        get() = Version.fromString(version)
 
     @get:Synchronized
     val dependencies: Set<NpmDependencyDeclaration> by lazy {

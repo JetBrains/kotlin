@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.github.gundy.semver4j.model.Version
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.targets.js.npm.createVersionFromGradleRichVersion
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
 private const val KOTLIN_DOM_API_MODULE_NAME = "kotlin-dom-api-compat"
@@ -25,9 +26,9 @@ private const val KOTLIN_DOM_API_MODULE_NAME = "kotlin-dom-api-compat"
 private val Dependency.isKotlinDomApiDependency: Boolean
     get() = group == KOTLIN_MODULE_GROUP && (name == KOTLIN_DOM_API_MODULE_NAME)
 
-private val kotlin190Version = SemVer(1.toBigInteger(), 9.toBigInteger(), 0.toBigInteger())
+private val kotlin190Version = Version.fromString("1.9.0")
 
-private fun isAtLeast1_9_0(version: String) = SemVer.fromGradleRichVersion(version) >= kotlin190Version
+private fun isAtLeast1_9_0(version: String) = createVersionFromGradleRichVersion(version) >= kotlin190Version
 
 internal fun Project.configureKotlinDomApiDefaultDependency(
     kotlinExtension: KotlinProjectExtension,
