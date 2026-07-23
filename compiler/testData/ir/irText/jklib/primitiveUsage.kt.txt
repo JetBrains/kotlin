@@ -1,0 +1,9 @@
+fun testPrimitiveCalls() {
+  val a: Int = 1.plus(other = 2)
+  val b: Boolean = true.not()
+}
+
+fun testPrimitiveReferences() {
+  val plusRef: Function2<Int, Int, Int> = Int::plus
+  val notRef: Function1<Boolean, Boolean> = Boolean::not
+}
