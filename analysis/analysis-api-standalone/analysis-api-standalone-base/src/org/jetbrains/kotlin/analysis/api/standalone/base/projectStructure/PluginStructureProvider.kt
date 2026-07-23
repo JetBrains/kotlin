@@ -63,12 +63,12 @@ object PluginStructureProvider {
 
     private fun getOrCalculatePluginDescriptor(
         designation: PluginDesignation,
-    ): RawPluginDescriptor? = pluginDescriptorsCache.computeIfAbsent(designation) {
+    ): RawPluginDescriptor? = pluginDescriptorsCache.getOrPut(designation) {
         PluginXmlPathResolver.DEFAULT_PATH_RESOLVER.resolvePath(
             readContext = ReadContext,
             dataLoader = ResourceDataLoader(designation.classLoader),
             relativePath = designation.relativePath,
-        )?.build()
+        )?.build() ?: return null
     }
 
     fun registerApplicationServices(application: MockApplication, pluginRelativePath: String) {
