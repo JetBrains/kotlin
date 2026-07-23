@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.delegationKind
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -63,7 +63,7 @@ internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : Inn
 }
 
 @PhasePrerequisites(NativeDefaultParameterInjector::class)
-internal class InnerClassLowering(val context: NativeGenerationState) : ClassLoweringPass {
+internal class InnerClassLowering(val context: NativeLoweringContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isInner) return
 

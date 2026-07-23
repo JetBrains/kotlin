@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowerin
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irFlag
@@ -22,12 +23,12 @@ import org.jetbrains.kotlin.name.Name
 @PhasePrerequisites(SharedVariablesLowering::class, LocalDelegatedPropertiesLowering::class, InteropBridgesNameInventor::class)
 internal class NativeLocalDeclarationsLowering(context: LoweringContext) : LocalDeclarationsLowering(context)
 
-internal class NativeKlibInventNamesForLocalFunctions(@Suppress("unused") context: NativeGenerationState) : KlibInventNamesForLocalFunctions()
+internal class NativeKlibInventNamesForLocalFunctions(@Suppress("unused") context: NativeLoweringContext) : KlibInventNamesForLocalFunctions()
 
 internal var IrClass.hasSyntheticNameToBeHiddenInReflection by irFlag(copyByDefault = true)
 
 // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
-internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses() {
+internal class NativeInventNamesForLocalClasses(@Suppress("unused") context: NativeLoweringContext) : InventNamesForLocalClasses() {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.asString()
     override fun sanitizeNameIfNeeded(name: String) = name
 

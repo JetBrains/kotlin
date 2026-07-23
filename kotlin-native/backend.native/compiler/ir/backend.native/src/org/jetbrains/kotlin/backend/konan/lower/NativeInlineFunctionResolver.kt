@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
@@ -27,8 +27,8 @@ private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 internal class NativeInlineFunctionResolver(
         val generationState: NativeGenerationState,
         inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<NativeBackendContext>(
-        context = generationState.context,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<NativeLoweringContext>(
+        context = generationState,
         inlineMode = inlineMode,
 ) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
@@ -44,7 +44,7 @@ internal class NativeInlineFunctionResolver(
             return function
         }
 
-        context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
+        generationState.context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
         function.wasLowered = true
 

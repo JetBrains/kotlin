@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesPrimitiveBoxSpecializationLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 
 @PhasePrerequisites(SharedVariablesLowering::class)
-internal class NativeSharedVariablesPrimitiveBoxSpecializationLowering(context: NativeGenerationState)
+internal class NativeSharedVariablesPrimitiveBoxSpecializationLowering(context: NativeLoweringContext)
     : SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols)

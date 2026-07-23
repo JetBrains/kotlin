@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
-import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunction
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -66,7 +63,7 @@ internal class NativeGenerationState(
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config), CommonBackendContext by context, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicNativeBackendPhaseContext(config), NativeLoweringContext by context, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -124,10 +121,11 @@ internal class NativeGenerationState(
         super<BasicNativeBackendPhaseContext>.log(message)
     }
 
-    // Keep the phase-context reporter: the CommonBackendContext delegation would otherwise
-    // silently replace the one initialized in BasicNativeBackendPhaseContext with `context`'s.
     override val diagnosticReporter: IrDiagnosticReporter
-        get() = super<BasicNativeBackendPhaseContext>.diagnosticReporter
+        get() = super.diagnosticReporter
+
+    override val config: NativeSecondStageCompilationConfig
+        get() = super.config
 
     override fun dispose() {
         if (isDisposed) return
@@ -149,12 +147,4 @@ internal class NativeGenerationState(
 
     override val llvmModule: LLVMModuleRef
         get() = llvm.module
-
-    // CommonBackendContext is implemented by delegation to `context` (see the class header),
-    // but `symbols` needs an explicit override to narrow the type to BackendNativeSymbols.
-    override val symbols: BackendNativeSymbols
-        get() = context.symbols
-
-    val symbolTable: ReferenceSymbolTable
-        get() = context.symbolTable
 }
