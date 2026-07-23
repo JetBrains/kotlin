@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.BaseJvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -54,10 +56,26 @@ import org.jetbrains.kotlin.utils.DFS.ifAny as ifAnyDFS
 class JKlibIrMangler : BaseJvmIrMangler() {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String {
-        if (!getPackageFragment().packageFqName.asString().isKotlinPackage() && isJavaBackedCallable()) {
-            (descriptor as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
-                return it
+        if (this is IrClass) {
+            val fqName = fqNameWhenAvailable
+            if (fqName != null && JKlibSignatureMapper.isMappedJavaPlatformClass(fqName)) {
+                val kotlinClassId = JKlibSignatureMapper.mapJavaToKotlinClassId(fqName)
+                if (kotlinClassId != null) {
+                    return kotlinClassId.asString()
+                }
             }
+        }
+        if (!getPackageFragment().packageFqName.asString().isKotlinPackage() && isJavaBackedCallable()) {
+        if (this is IrProperty && getter == null && setter == null && backingField == null) {
+            val overridden = overriddenSymbols.firstOrNull()?.owner
+            if (overridden != null) {
+                return overridden.signatureString(compatibleMode)
+            }
+            val parentClass = parentClassOrNull
+            if (parentClass != null) {
+                return "${parentClass.signatureString(compatibleMode)}#${name.asString()}"
+            }
+            return name.asString()
         }
         return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
     }
@@ -83,8 +101,17 @@ class JKlibIrMangler : BaseJvmIrMangler() {
 class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : JvmDescriptorMangler(mainDetector) {
 
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String {
+        if (this is ClassDescriptor) {
+            val fqName = fqNameOrNull()
+            if (fqName != null && JKlibSignatureMapper.isMappedJavaPlatformClass(fqName)) {
+                val kotlinClassId = JKlibSignatureMapper.mapJavaToKotlinClassId(fqName)
+                if (kotlinClassId != null) {
+                    return kotlinClassId.asString()
+                }
+            }
+        }
         if (this.containingPackage()?.asString()
-                ?.isKotlinPackage() == false && this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor
+                ?.isKotlinPackage() == false && (this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor)
         ) {
             (this as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
                 return it

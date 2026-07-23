@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JKlibIrLinker(
@@ -47,6 +49,22 @@ class JKlibIrLinker(
         get() = false
 
     private val javaName = Name.identifier("java")
+
+    private fun resolveMappedBuiltInSymbol(
+        idSig: IdSignature,
+        mappedSig: IdSignature,
+        symbolKind: BinarySymbolData.SymbolKind,
+    ): IrSymbol? {
+        if (symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && mappedSig != idSig && mappedSig is IdSignature.CommonSignature) {
+            val classId = if (mappedSig.packageFqName.isEmpty()) {
+                ClassId.topLevel(FqName(mappedSig.declarationFqName))
+            } else {
+                ClassId(FqName(mappedSig.packageFqName), FqName(mappedSig.declarationFqName), false)
+            }
+            return JKlibSignatureMapper.getBuiltInClassSymbol(classId, stubGenerator.irBuiltIns)
+        }
+        return null
+    }
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {
@@ -138,7 +156,18 @@ class JKlibIrLinker(
             idSig: IdSignature,
             symbolKind: BinarySymbolData.SymbolKind,
         ): IrSymbol? {
-            val descriptor = resolveDescriptor(idSig) ?: return null
+            val mappedSig = JKlibSignatureMapper.mapJavaSignatureToKotlinSignature(idSig)
+            resolveMappedBuiltInSymbol(idSig, mappedSig, symbolKind)?.let { return it }
+
+            val descriptor = resolveDescriptor(idSig) ?: resolveDescriptor(mappedSig) ?: return null
+
+            if (symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && descriptor is ClassDescriptor) {
+                val fqName = descriptor.fqNameOrNull()
+                if (fqName != null) {
+                    val symbol = JKlibSignatureMapper.getBuiltInClassSymbolForMappedJavaClass(fqName, stubGenerator.irBuiltIns)
+                    if (symbol != null) return symbol
+                }
+            }
 
             val declaration = stubGenerator.run {
                 when (symbolKind) {
@@ -159,6 +188,13 @@ class JKlibIrLinker(
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         override fun declareIrSymbol(symbol: IrSymbol) {
+            val descriptor = symbol.descriptor
+            if (descriptor is ClassDescriptor) {
+                val fqName = descriptor.fqNameOrNull()
+                if (fqName != null && JKlibSignatureMapper.isMappedJavaPlatformClass(fqName)) {
+                    return
+                }
+            }
             if (symbol is IrFieldSymbol) {
                 declareJavaFieldStub(symbol)
             } else {
@@ -217,15 +253,38 @@ class JKlibIrLinker(
             idSig: IdSignature,
             symbolKind: BinarySymbolData.SymbolKind,
         ): IrSymbol? {
-            super.tryDeserializeIrSymbol(idSig, symbolKind)?.let {
-                return it
+            deserializedSymbols[idSig]?.let { return it }
+            val mappedSig = JKlibSignatureMapper.mapJavaSignatureToKotlinSignature(idSig)
+            if (mappedSig != idSig) {
+                deserializedSymbols[mappedSig]?.let { return it }
             }
-            deserializedSymbols[idSig]?.let {
-                return it
+
+            resolveMappedBuiltInSymbol(idSig, mappedSig, symbolKind)?.let { return it }
+
+            super.tryDeserializeIrSymbol(mappedSig, symbolKind)?.let { return it }
+            if (mappedSig != idSig) {
+                super.tryDeserializeIrSymbol(idSig, symbolKind)?.let { return it }
             }
-            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
+
+            val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(mappedSig)
+                ?: descriptorByIdSignatureFinder.findDescriptorBySignature(idSig)
+                ?: return null
+
+            if (symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && descriptor is ClassDescriptor) {
+                val fqName = descriptor.fqNameOrNull()
+                if (fqName != null) {
+                    val symbol = JKlibSignatureMapper.getBuiltInClassSymbolForMappedJavaClass(fqName, stubGenerator.irBuiltIns)
+                    if (symbol != null) {
+                        deserializedSymbols[idSig] = symbol
+                        deserializedSymbols[mappedSig] = symbol
+                        return symbol
+                    }
+                }
+            }
+
             val symbol = (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
             deserializedSymbols[idSig] = symbol
+            deserializedSymbols[mappedSig] = symbol
             return symbol
         }
     }
@@ -239,6 +298,13 @@ class JKlibIrLinker(
     ) : CurrentModuleDeserializer(moduleFragment) {
         override fun declareIrSymbol(symbol: IrSymbol) {
             val descriptor = symbol.descriptor
+
+            if (descriptor is ClassDescriptor) {
+                val fqName = descriptor.fqNameOrNull()
+                if (fqName != null && JKlibSignatureMapper.isMappedJavaPlatformClass(fqName)) {
+                    return
+                }
+            }
 
             if (descriptor.isJavaDescriptor()) {
                 // Wrap java declaration with lazy ir
