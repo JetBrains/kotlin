@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  * Generates [IrReturn]s for `Unit`-returning functions.
  */
 @PhasePrerequisites(Autoboxing::class, NativeSuspendFunctionsLowering::class, EnumClassLowering::class)
-internal class ReturnsInsertionLowering(val context: NativeGenerationState) : FileLoweringPass {
+internal class ReturnsInsertionLowering(val context: NativeLoweringContext) : FileLoweringPass {
     private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {

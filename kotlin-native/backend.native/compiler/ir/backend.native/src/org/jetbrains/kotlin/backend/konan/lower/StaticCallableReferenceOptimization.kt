@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.lower.NativeFunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * That's what this optimization pass does.
  */
 @PhasePrerequisites(NativeFunctionReferenceLowering::class, PropertyReferenceLowering::class)
-internal class StaticCallableReferenceOptimization(val context: NativeGenerationState) : FileLoweringPass {
+internal class StaticCallableReferenceOptimization(val context: NativeLoweringContext) : FileLoweringPass {
     private val allPropertyReferenceSymbols = buildList {
         val immutableSymbols = context.symbols.immutablePropertiesConstructors
         addAll(immutableSymbols.byRecieversCount)

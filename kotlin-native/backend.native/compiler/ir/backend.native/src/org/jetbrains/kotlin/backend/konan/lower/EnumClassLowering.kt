@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
@@ -80,8 +80,8 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
 }
 
 @PhasePrerequisites(EnumClassLowering::class)
-internal class EnumUsageLowering(val context: NativeGenerationState) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
-    private val enumsSupport = context.context.enumsSupport
+internal class EnumUsageLowering(val context: NativeLoweringContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+    private val enumsSupport = context.enumsSupport
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile, data = null)
@@ -157,8 +157,8 @@ internal class EnumUsageLowering(val context: NativeGenerationState) : IrTransfo
 }
 
 @PhasePrerequisites(EnumWhenLowering::class)
-internal class EnumClassLowering(val context: NativeGenerationState) : FileLoweringPass {
-    private val enumsSupport = context.context.enumsSupport
+internal class EnumClassLowering(val context: NativeLoweringContext) : FileLoweringPass {
+    private val enumsSupport = context.enumsSupport
     private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries

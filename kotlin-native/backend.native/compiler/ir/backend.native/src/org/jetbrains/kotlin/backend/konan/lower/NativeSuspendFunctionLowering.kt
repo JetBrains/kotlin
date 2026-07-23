@@ -5,12 +5,12 @@ import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.isRestrictedSuspensionFunction
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 @PhasePrerequisites(LocalDeclarationPopupLowering::class, FinallyBlocksLowering::class, KotlinNothingValueExceptionLowering::class)
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
-) : AbstractSuspendFunctionsLowering<NativeBackendContext>(generationState.context), FileLoweringPass {
+) : AbstractSuspendFunctionsLowering<NativeLoweringContext>(generationState), FileLoweringPass {
     private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState

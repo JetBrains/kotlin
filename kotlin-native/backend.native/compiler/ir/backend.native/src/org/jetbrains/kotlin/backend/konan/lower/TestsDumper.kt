@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.ir.IrStatement
@@ -22,7 +22,7 @@ import kotlin.io.path.appendLines
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
-internal class TestsDumper(private val context: NativeGenerationState) : FileLoweringPass {
+internal class TestsDumper(private val context: NativeLoweringContext) : FileLoweringPass {
     private val symbols = context.symbols
 
     private val baseClassSuite = symbols.baseClassSuite
