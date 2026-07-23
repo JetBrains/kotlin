@@ -391,7 +391,7 @@ class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: Pe
         if (!config.runLLVMPassesInCompiler)
             return
         getFunctions(module)
-                .filter { LLVMIsDeclaration(it) == 0 }
+                .filter { it.isDefinition }
                 .forEach { addLlvmFunctionEnumAttribute(it, LlvmFunctionAttribute.SanitizeThread) }
     }
 }

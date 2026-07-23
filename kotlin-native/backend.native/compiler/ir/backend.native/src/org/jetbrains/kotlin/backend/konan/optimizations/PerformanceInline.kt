@@ -16,6 +16,6 @@ private const val PERFORMANCE_INLINE_ANNOTATION = "performance_inline"
 internal fun handlePerformanceInlineAnnotation(config: NativeSecondStageCompilationConfig, llvm: BasicLlvmHelpers) {
     if (config.inlineForPerformance && !config.isUsingSplitCompilationScheme) {
         val toInline = llvm.runtimeAnnotationMap[PERFORMANCE_INLINE_ANNOTATION] ?: return
-        toInline.filter { it.isDefinition() }.forEach { setFunctionAlwaysInline(it) }
+        toInline.filter { it.isDefinition }.forEach { setFunctionAlwaysInline(it) }
     }
 }

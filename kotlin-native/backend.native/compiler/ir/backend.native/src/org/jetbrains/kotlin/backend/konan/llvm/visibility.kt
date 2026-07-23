@@ -8,29 +8,37 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.utils.DFS
 
+private fun Sequence<LLVMValueRef>.setVisibilityTo(viz: LLVMVisibility, preserved: Set<LLVMValueRef>, f: (LLVMValueRef) -> Boolean) {
+    this.filter(f).minus(preserved).forEach { LLVMSetVisibility(it, viz) }
+}
+
 /**
  * Applies hidden visibility to symbols similarly to LLVM's internalize pass:
  * it makes hidden the symbols that are made internal by internalize.
  */
-fun makeVisibilityHiddenLikeLlvmInternalizePass(module: LLVMModuleRef) {
+fun LLVMModuleRef.makeSymbolsVisibilityHiddenLikeLlvmInternalizePass() {
     // Note: the implementation below generally follows InternalizePass::internalizeModule,
     // but omits some details for simplicity.
 
     // TODO: LLVM handles some additional cases.
-    val alwaysPreserved = getLlvmUsed(module)
+    val alwaysPreserved = getLlvmUsed(this)
+    val gatheredValues = getFunctions(this) + getGlobals(this) + getGlobalAliases(this)
 
-    (getFunctions(module) + getGlobals(module) + getGlobalAliases(module))
-            .filter {
-                when (LLVMGetLinkage(it)) {
-                    LLVMLinkage.LLVMInternalLinkage, LLVMLinkage.LLVMPrivateLinkage -> false
-                    else -> true
-                }
-            }
-            .filter { LLVMIsDeclaration(it) == 0 }
-            .minus(alwaysPreserved)
-            .forEach {
-                LLVMSetVisibility(it, LLVMVisibility.LLVMHiddenVisibility)
-            }
+    gatheredValues.setVisibilityTo(LLVMVisibility.LLVMHiddenVisibility, alwaysPreserved) {
+        val hasTargetLinkage = when (LLVMGetLinkage(it)) {
+            LLVMLinkage.LLVMInternalLinkage, LLVMLinkage.LLVMPrivateLinkage -> false
+            else -> true
+        }
+        hasTargetLinkage && it.isDefinition
+    }
+}
+
+fun LLVMModuleRef.makeSymbolsVisibilityDefault() {
+    val alwaysPreserved = getLlvmUsed(this)
+    val gatheredValues = getFunctions(this) + getGlobals(this) + getGlobalAliases(this)
+    gatheredValues.setVisibilityTo(LLVMVisibility.LLVMDefaultVisibility, alwaysPreserved) {
+        it.isDefinition
+    }
 }
 
 private fun getLlvmUsed(module: LLVMModuleRef): Set<LLVMValueRef> {
