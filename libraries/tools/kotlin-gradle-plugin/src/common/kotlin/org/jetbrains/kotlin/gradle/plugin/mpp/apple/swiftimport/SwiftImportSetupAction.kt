@@ -160,9 +160,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     )
 
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
-    val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
-        FetchSyntheticImportProjectPackages.TASK_NAME,
-    ) {
+    val fetchSyntheticImportProjectPackages = project.locateOrRegisterSwiftPMImportFetchTask()
+    fetchSyntheticImportProjectPackages.configure {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.ideaSyncEnabled.set(ideaSyncEnabled)
@@ -188,12 +187,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
     )
 
-    val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
-        this,
-        provideXcodeDumpsDir(),
-        provideCheckoutDir(),
-        provideSyntheticPackageDir(),
-    )
+    val fingerprintCoordinationService = locateOrRegisterCoordinationService()
 
     project.launch {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
@@ -321,7 +315,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             target.konanTarget,
         )
 
-        val cinteropName = "swiftPMImport"
+        val cinteropName = GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME
         val targetPlatform = target.konanTarget.applePlatform
         // use sdk for a more conventional name
         val targetSdk = target.konanTarget.appleTarget.sdk
@@ -977,6 +971,17 @@ internal fun Project.registerPackageGeneration(
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
 }
+
+internal fun Project.locateOrRegisterCoordinationService(): Provider<SwiftImportFingerprintedCoordinationService> =
+    SwiftImportFingerprintedCoordinationService.registerIfAbsent(
+        this,
+        provideXcodeDumpsDir(),
+        provideCheckoutDir(),
+        provideSyntheticPackageDir(),
+    )
+
+internal fun Project.locateOrRegisterSwiftPMImportFetchTask(): TaskProvider<FetchSyntheticImportProjectPackages> =
+    locateOrRegisterTask(FetchSyntheticImportProjectPackages.TASK_NAME)
 
 internal const val SHARED_XCODE_DUMP_DIR = "build/kotlin/swiftPMXcodeDumps"
 private fun Project.provideXcodeDumpsDir(): Provider<Directory> =
