@@ -148,8 +148,10 @@ FILE: [ResolvedTo(IMPORTS)] evalWithDelegatedProperty.repl.kts
                 )
             }
 
-            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
-                public [ResolvedTo(STATUS)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/EvalWithDelegatedProperty_repl|.D|/EvalWithDelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/EvalWithDelegatedProperty_repl|, ::R|/EvalWithDelegatedProperty_repl.bar|)
+                }
 
         }
 
@@ -168,8 +170,10 @@ FILE: [ResolvedTo(IMPORTS)] evalWithDelegatedProperty.repl.kts
                 )
             }
 
-            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
-                public [ResolvedTo(STATUS)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/EvalWithDelegatedProperty_repl|.D|/EvalWithDelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/EvalWithDelegatedProperty_repl|, ::R|/EvalWithDelegatedProperty_repl.bar|)
+                }
 
         }
 
@@ -188,8 +192,10 @@ FILE: [ResolvedTo(IMPORTS)] evalWithDelegatedProperty.repl.kts
                 )
             }
 
-            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
-                public [ResolvedTo(STATUS)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/EvalWithDelegatedProperty_repl|.D|/EvalWithDelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/EvalWithDelegatedProperty_repl|, ::R|/EvalWithDelegatedProperty_repl.bar|)
+                }
 
         }
 
@@ -208,8 +214,10 @@ FILE: [ResolvedTo(IMPORTS)] evalWithDelegatedProperty.repl.kts
                 )
             }
 
-            public final [ResolvedTo(STATUS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
-                public [ResolvedTo(STATUS)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): <implicit> { LAZY_BLOCK }
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val bar: R|kotlin/String|by REPL_EXPRESSION_REF
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EvalWithDelegatedProperty_repl] get(): R|kotlin/String| {
+                    ^ this@R|/EvalWithDelegatedProperty_repl|.D|/EvalWithDelegatedProperty_repl.bar|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/EvalWithDelegatedProperty_repl|, ::R|/EvalWithDelegatedProperty_repl.bar|)
+                }
 
         }
 

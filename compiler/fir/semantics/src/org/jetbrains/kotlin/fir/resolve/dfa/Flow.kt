@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentHashMapOf
-import kotlin.collections.plus
+import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.expressions.*
 
 sealed class Flow(
     protected val previousFlow: PersistentFlow?,
@@ -31,6 +29,8 @@ sealed class Flow(
      */
     internal abstract val directAliasMap: Map<RealVariable, RealVariable>
     internal abstract val backwardsAliasMap: Map<RealVariable, PersistentSet<RealVariable>>
+    internal abstract val realVariables: Map<RealVariable, RealVariable>
+    internal abstract val memberVariables: Map<RealVariable, PersistentSet<RealVariable>>
 
     val knownVariables: Set<DataFlowVariable>
         get() = approvedTypeStatements.keys + directAliasMap.keys
@@ -51,6 +51,61 @@ sealed class Flow(
         return implications[variable]
     }
 
+    /**
+     * Create a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
+     * return a [RealVariable], otherwise a [SyntheticVariable].
+     *
+     * As an optimization, any resulting [RealVariable] will be deduplicated against variables known by this [Flow].
+     *
+     * @param unwrapAlias When multiple [RealVariable]s are known to have the same value in every execution, this lambda
+     * can map them to some "representative" variable so that type information about all these variables is shared. It can also
+     * return `null` to abort the entire [getVariable] operation, making it also return `null`.
+     *
+     * @param unwrapAliasInReceivers Same as [unwrapAlias], but used when looking up [RealVariable]s for receivers of [fir]
+     * if it is a qualified access expression.
+     */
+    context(_: SessionHolder)
+    fun getVariable(
+        fir: FirExpression,
+        unwrapAlias: (RealVariable) -> RealVariable? = { it },
+        unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
+    ): DataFlowVariable? {
+        return DataFlowVariable.of(
+            fir,
+            unwrap = { unwrapAlias(getVariableIfKnown(it) ?: it) },
+            unwrapInReceivers = { unwrapAliasInReceivers(getVariableIfKnown(it) ?: it) },
+        )
+    }
+
+    /**
+     * Retrieve a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
+     * return a [RealVariable], otherwise a [SyntheticVariable].
+     *
+     * If result is a [RealVariable], only variables which are already known by this [Flow] will be returned.
+     *
+     * @param unwrapAlias When multiple [RealVariable]s are known to have the same value in every execution, this lambda
+     * can map them to some "representative" variable so that type information about all these variables is shared. It can also
+     * return `null` to abort the entire [getVariableIfKnown] operation, making it also return `null`.
+     *
+     * @param unwrapAliasInReceivers Same as [unwrapAlias], but used when looking up [RealVariable]s for receivers of [fir]
+     * if it is a qualified access expression.
+     */
+    context(_: SessionHolder)
+    fun getVariableIfKnown(
+        fir: FirExpression,
+        unwrapAlias: (RealVariable) -> RealVariable? = { it },
+        unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
+    ): DataFlowVariable? {
+        return DataFlowVariable.of(
+            fir,
+            unwrap = { getVariableIfKnown(it)?.let { unwrapAlias(it) } },
+            unwrapInReceivers = { getVariableIfKnown(it)?.let { unwrapAliasInReceivers(it) } },
+        )
+    }
+
+    fun getVariableIfKnown(variable: RealVariable): RealVariable? {
+        return realVariables[variable]
+    }
 }
 
 class PersistentFlow internal constructor(
@@ -60,6 +115,8 @@ class PersistentFlow internal constructor(
     override val assignmentIndex: PersistentMap<RealVariable, Int>,
     override val directAliasMap: PersistentMap<RealVariable, RealVariable>,
     override val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    override val realVariables: PersistentMap<RealVariable, RealVariable>,
+    override val memberVariables: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow(previousFlow) {
 
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
@@ -90,6 +147,8 @@ class PersistentFlow internal constructor(
         assignmentIndex.builder(),
         directAliasMap.builder(),
         backwardsAliasMap.builder(),
+        realVariables.builder(),
+        memberVariables.builder(),
     )
 }
 
@@ -100,6 +159,8 @@ class MutableFlow internal constructor(
     override val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
     override val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
     override val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    override val realVariables: PersistentMap.Builder<RealVariable, RealVariable>,
+    override val memberVariables: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow(previousFlow) {
     constructor() : this(
         null,
@@ -108,7 +169,68 @@ class MutableFlow internal constructor(
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
+        emptyPersistentHashMapBuilder(),
+        emptyPersistentHashMapBuilder(),
     )
+
+    /**
+     * Create and remember a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
+     * return a [RealVariable], otherwise a [SyntheticVariable].
+     *
+     * Unknown [RealVariable]s will be added to the set of known variables in this [Flow].
+     *
+     * @param unwrapAlias When multiple [RealVariable]s are known to have the same value in every execution, this lambda
+     * can map them to some "representative" variable so that type information about all these variables is shared. It can also
+     * return `null` to abort the entire [remember] operation, making it also return `null`.
+     *
+     * @param unwrapAliasInReceivers Same as [unwrapAlias], but used when looking up [RealVariable]s for receivers of [fir]
+     * if it is a qualified access expression.
+     */
+    context(_: SessionHolder)
+    fun remember(
+        fir: FirExpression,
+        unwrapAlias: (RealVariable) -> RealVariable? = { it },
+        unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
+    ): DataFlowVariable? {
+        return DataFlowVariable.of(
+            fir,
+            unwrap = { unwrapAlias(rememberWithReceivers(it)) },
+            unwrapInReceivers = { unwrapAliasInReceivers(rememberWithReceivers(it)) },
+        )
+    }
+
+    /** Store a reference to a variable so that [getVariableIfKnown] can return it. */
+    fun remember(variable: RealVariable): RealVariable {
+        return rememberWithReceivers(variable.mapReceivers(::remember))
+    }
+
+    private fun rememberWithReceivers(variable: RealVariable): RealVariable {
+        return realVariables.getOrPut(variable) {
+            variable.dispatchReceiver?.let { memberVariables.add(it, variable) }
+            variable.extensionReceiver?.let { memberVariables.add(it, variable) }
+            variable
+        }
+    }
+
+    private inline fun RealVariable.mapReceivers(block: (RealVariable) -> RealVariable): RealVariable {
+        return RealVariable(symbol, isImplicit, dispatchReceiver?.let(block), extensionReceiver?.let(block), originalType)
+    }
+
+    /**
+     * Call a lambda with every known [RealVariable] that represents a member property of another [RealVariable].
+     *
+     * @param to If not `null`, additionally replace these variables' receivers with the new value, and pass the modified member
+     * to the lambda as the second argument.
+     *
+     * For example, if [from] represents `x`, [to] represents `y`, and there is a known [RealVariable] representing `x.p`, then
+     * [processMember] will be called that variable as the first argument and a new variable representing `y.p` as the second.
+     */
+    fun replaceReceiverReferencesInMembers(from: RealVariable, to: RealVariable?, processMember: (RealVariable, RealVariable?) -> Unit) {
+        for (member in memberVariables[from].orEmpty()) {
+            val remapped = to?.let { rememberWithReceivers(member.mapReceivers { if (it == from) to else it }) }
+            processMember(member, remapped)
+        }
+    }
 
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
@@ -117,8 +239,20 @@ class MutableFlow internal constructor(
         assignmentIndex.build(),
         directAliasMap.build(),
         backwardsAliasMap.build(),
+        realVariables.build(),
+        memberVariables.build(),
     )
 }
 
 private fun <K, V> emptyPersistentHashMapBuilder(): PersistentMap.Builder<K, V> =
     persistentHashMapOf<K, V>().builder()
+
+internal fun <K, V> MutableMap<K, PersistentSet<V>>.add(key: K, value: V) {
+    val existing = getOrElse(key) { persistentHashSetOf() }
+    put(key, existing.adding(value))
+}
+
+internal fun <K, V> MutableMap<K, PersistentSet<V>>.addAll(key: K, value: Collection<V>) {
+    val existing = getOrElse(key) { persistentHashSetOf() }
+    put(key, existing.addingAll(value))
+}
