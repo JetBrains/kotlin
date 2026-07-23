@@ -224,8 +224,8 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
                                     prepareReq.addClassExclusionFilter("androidx.compose.runtime.*")
                                     prepareReq.addClassExclusionFilter("jdk.internal.*")
                                 }
-                                manager.stepRequests().map { it.enable() }
-                                manager.classPrepareRequests().map { it.enable() }
+                                manager.stepRequests().forEach { it.enable() }
+                                manager.classPrepareRequests().forEach { it.enable() }
                                 inContentMethod = true
                                 loggedItems.add(event)
                             }
@@ -233,9 +233,9 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
                         is StepEvent -> {
                             // Handle the case where an Exception causing program to exit without MethodExitEvent.
                             if (inContentMethod && event.location().method().name() == "run") {
-                                manager.stepRequests().map { it.disable() }
-                                manager.classPrepareRequests().map { it.disable() }
-                                manager.breakpointRequests().map { it.disable() }
+                                manager.stepRequests().forEach { it.disable() }
+                                manager.classPrepareRequests().forEach { it.disable() }
+                                manager.breakpointRequests().forEach { it.disable() }
                                 break@vmLoop
                             }
                             if (inContentMethod) {
@@ -244,9 +244,9 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
                         }
                         is MethodExitEvent -> {
                             if (event.location().method().name() == CONTENT_METHOD) {
-                                manager.stepRequests().map { it.disable() }
-                                manager.classPrepareRequests().map { it.disable() }
-                                manager.breakpointRequests().map { it.disable() }
+                                manager.stepRequests().forEach { it.disable() }
+                                manager.classPrepareRequests().forEach { it.disable() }
+                                manager.breakpointRequests().forEach { it.disable() }
                                 break@vmLoop
                             }
                         }
