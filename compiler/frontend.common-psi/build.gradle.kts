@@ -3,6 +3,7 @@ plugins {
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("generated-sources")
 }
 
 dependencies {
@@ -17,3 +18,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+generatedSourcesTask(
+    taskName = "generateFeatureToFlagMap",
+    generatorProject = ":compiler:frontend.common-psi:feature-to-flag-map-generator",
+    generatorMainClass = "org.jetbrains.kotlin.diagnostics.rendering.generator.FeatureToFlagMapGeneratorKt",
+)
