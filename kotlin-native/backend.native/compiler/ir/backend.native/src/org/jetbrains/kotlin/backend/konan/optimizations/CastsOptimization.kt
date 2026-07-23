@@ -1420,7 +1420,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                     }
                 }
 
-                VisitorResult(receiverResult?.predicate ?: Predicate.Empty, phantomVariable)
+                VisitorResult(receiverResult?.predicate ?: data, phantomVariable)
             } else {
                 if (expression.type == nothingType)
                     VisitorResult.Nothing
