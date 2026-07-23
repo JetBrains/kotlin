@@ -14,7 +14,7 @@ import kotlin.reflect.KProperty2
 internal open class KotlinKProperty2<D, E, out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KProperty2<D, E, V> {
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList()), KProperty2<D, E, V> {
     override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(receiver1: D, receiver2: E): V = getter.call(receiver1, receiver2)

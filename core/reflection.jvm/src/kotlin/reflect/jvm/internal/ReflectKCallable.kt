@@ -28,6 +28,8 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
 
     val rawBoundReceiver: Any?
 
+    val rawBoundContextArguments: List<Any?>
+
     /**
      * In contrast to [parameters], includes instance/extension/context parameters, even if the callable is bound.
      */
@@ -78,6 +80,9 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
 }
 
 internal val ReflectKCallable<*>.isBound: Boolean
+    get() = rawBoundReceiver !== CallableReference.NO_RECEIVER || rawBoundContextArguments.isNotEmpty()
+
+internal val ReflectKCallable<*>.isReceiverBound: Boolean
     get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
 /**
@@ -86,14 +91,31 @@ internal val ReflectKCallable<*>.isBound: Boolean
 internal val ReflectKCallable<*>.boundReceiver: Any?
     get() = rawBoundReceiver.coerceToExpectedReceiverType(this)
 
+/**
+ * Same as [ReflectKCallable.rawBoundContextArguments], except for inline class-typed bound context values, in which case they are unboxed.
+ */
+internal val ReflectKCallable<*>.boundContextArguments: List<Any?>
+    get() {
+        val contextArguments = rawBoundContextArguments
+        if (contextArguments.isEmpty()) return contextArguments
+        val contextParameters = allParameters.filter { it.kind == KParameter.Kind.CONTEXT }
+        return contextArguments.mapIndexed { index, argument ->
+            argument.coerceToInlineClassRepresentation(contextParameters.getOrNull(index)?.type, this)
+        }
+    }
+
 private fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>): Any? {
     if (this === CallableReference.NO_RECEIVER) return this
     if (callable is ReflectKProperty<*> && callable.isUnderlyingPropertyOfValueClass()) return this
+    val expectedReceiverType = callable.allParameters.singleOrNull {
+        it.kind == KParameter.Kind.INSTANCE || it.kind == KParameter.Kind.EXTENSION_RECEIVER
+    }?.type
+    return coerceToInlineClassRepresentation(expectedReceiverType, callable)
+}
 
-    val expectedReceiverType = callable.allParameters.singleOrNull { it.kind != KParameter.Kind.VALUE }?.type
-    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
-
-    return unboxMethod.invoke(this)
+private fun Any?.coerceToInlineClassRepresentation(expectedType: KType?, callable: ReflectKCallable<*>): Any? {
+    val unboxMethod = expectedType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
+    return if (this == null) null else unboxMethod.invoke(this)
 }
 
 internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
@@ -101,7 +123,7 @@ internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
     val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
 
     val parametersWithAllocatedBitInMask = parameters.count { it.kind == KParameter.Kind.VALUE || it.kind == KParameter.Kind.CONTEXT }
-    val maskSize = (parametersWithAllocatedBitInMask + Integer.SIZE - 1) / Integer.SIZE
+    val maskSize = (rawBoundContextArguments.size + parametersWithAllocatedBitInMask + Integer.SIZE - 1) / Integer.SIZE
 
     // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
     val arguments = arrayOfNulls<Any?>(parameterSize + maskSize + 1)
@@ -143,7 +165,7 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
         }
     }
 
-    var valueParameterIndex = 0
+    var valueParameterIndex = rawBoundContextArguments.size
     var anyOptional = false
 
     for (parameter in parameters) {

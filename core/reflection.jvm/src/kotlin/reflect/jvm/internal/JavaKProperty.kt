@@ -31,7 +31,7 @@ internal abstract class JavaKProperty<out V>(
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(includeReceivers = false)
+        if (isReceiverBound) computeParameters(includeReceivers = false)
         else allParameters
     }
 
@@ -66,6 +66,8 @@ internal abstract class JavaKProperty<out V>(
         override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
+
+        override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
 
         override val typeParameters: List<KTypeParameter> get() = emptyList()
 
@@ -158,10 +160,10 @@ private fun JavaKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
     return when {
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
                 else CallerImpl.FieldGetter.Instance(field)
             else
-                if (isBound) CallerImpl.FieldSetter.BoundInstance(field, notNull = false, boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldSetter.BoundInstance(field, notNull = false, boundReceiver)
                 else CallerImpl.FieldSetter.Instance(field, notNull = false)
         else ->
             if (isGetter) CallerImpl.FieldGetter.Static(field)

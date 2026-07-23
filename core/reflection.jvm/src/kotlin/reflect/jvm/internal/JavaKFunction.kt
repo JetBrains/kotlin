@@ -27,7 +27,7 @@ internal abstract class JavaKFunction(
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         val allParameters = allParameters
-        if (!isBound) return@lazy allParameters
+        if (!isReceiverBound) return@lazy allParameters
         // For bound references, recreate all parameters except the bound one, with the correct indices.
         check(allParameters.isNotEmpty()) { "Bound function reference has no parameters: $container.$name" }
         List(allParameters.size - 1) { i ->

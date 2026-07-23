@@ -37,7 +37,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         get() = caller.parameterTypes
 
     override val isBoundInstanceCallWithValueClasses: Boolean =
-        caller is CallerImpl.Method.Instance && callable.isBound
+        caller is CallerImpl.Method.Instance && callable.isReceiverBound
 
     private class BoxUnboxData(
         val argumentRange: IntRange,
@@ -62,26 +62,26 @@ internal class ValueClassAwareCaller<out M : Member?>(
             return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
         }
 
+        val boundContextArgumentCount = callable.rawBoundContextArguments.size
+
         val shift = when {
-            caller is CallerImpl.Method.Static && caller.isBound && !caller.isCallByToValueClassMangledMethod -> {
-                // Bound reference to a static method is only possible for a top level extension function/property,
-                // and in that case the number of expected arguments is one less than usual, hence -1
-                -1
+            caller is CallerImpl.Method.Static && caller.boundArgumentCount > 0 && !caller.isCallByToValueClassMangledMethod -> {
+                -caller.boundArgumentCount
             }
 
             callable.isConstructor ->
-                if (callable.isBound) -1 else 0
+                (if (callable.isReceiverBound) -1 else 0) - boundContextArgumentCount
 
             callable.parameters.any { it.kind == KParameter.Kind.INSTANCE } -> {
                 // If we have an unbound reference to the value class member,
                 // its receiver (which is passed as argument 0) should also be unboxed.
-                if ((callable.container as? KClassImpl<*>)?.isJvmInlineValue == true)
+                (if ((callable.container as? KClassImpl<*>)?.isJvmInlineValue == true)
                     0
                 else
-                    1
+                    1) - boundContextArgumentCount
             }
 
-            else -> 0
+            else -> -boundContextArgumentCount
         }
 
         val kotlinParameterTypes = makeKotlinParameterTypes(callable, caller.member)

@@ -23,8 +23,8 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
 internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, DescriptorKProperty<V> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, rawBoundContextArguments
     )
 
     constructor(
@@ -65,8 +65,8 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
 }
 
 internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, KMutableProperty1<T, V> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, rawBoundContextArguments
     )
 
     constructor(

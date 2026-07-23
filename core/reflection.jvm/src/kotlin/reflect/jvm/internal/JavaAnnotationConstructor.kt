@@ -31,6 +31,7 @@ internal class JavaAnnotationConstructor(
 
     override val container: KDeclarationContainerImpl get() = klass
     override val rawBoundReceiver: Any? get() = null
+    override val rawBoundContextArguments: List<Any?> get() = emptyList()
     override val signature: String by lazy(PUBLICATION) {
         parameters.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.type.jvmErasure.java.desc }
     }

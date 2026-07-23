@@ -17,6 +17,8 @@ internal abstract class JavaKCallable<out R>(
     override val rawBoundReceiver: Any?,
     overriddenStorage: KCallableOverriddenStorage,
 ) : ReflectKCallableImpl<R>(overriddenStorage) {
+    final override val rawBoundContextArguments: List<Any?> get() = emptyList()
+
     override val visibility: KVisibility?
         get() = member.modifiers.computeVisibilityForJavaModifiers()
 

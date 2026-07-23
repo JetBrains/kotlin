@@ -42,12 +42,13 @@ internal class DescriptorKFunction private constructor(
     override val signature: String,
     descriptorInitialValue: FunctionDescriptor?,
     override val rawBoundReceiver: Any?,
+    override val rawBoundContextArguments: List<Any?>,
     overriddenStorage: KCallableOverriddenStorage,
 ) : DescriptorKCallable<Any?>(overriddenStorage), ReflectKFunction,
     FunctionBase<Any?>, FunctionWithAllInvokes {
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
-            : this(container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>)
+            : this(container, name, signature, null, boundReceiver, rawBoundContextArguments, KCallableOverriddenStorage.EMPTY)
 
     constructor(
         container: KDeclarationContainerImpl,
@@ -60,6 +61,7 @@ internal class DescriptorKFunction private constructor(
         RuntimeTypeMapper.mapSignature(descriptor).asString(),
         descriptor,
         boundReceiver,
+        rawBoundContextArguments = emptyList(),
         overriddenStorage
     )
 
@@ -176,7 +178,7 @@ internal class DescriptorKFunction private constructor(
         DescriptorKFunction(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
+        if (this.rawBoundReceiver === boundReceiver && rawBoundContextArguments.isEmpty()) this
         else DescriptorKFunction(container, descriptor, boundReceiver, overriddenStorage)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
@@ -188,26 +190,27 @@ internal class DescriptorKFunction private constructor(
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
         CallerImpl.Method.Static(
             member, isCallByToValueClassMangledMethod,
-            // Check `isBound` first so that `useBoxedBoundReceiver` is only invoked for actually bound references.
-            boundReceiver = if (isBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+            // Check `isReceiverBound` first so that `useBoxedBoundReceiver` is only invoked for actually bound references.
+            boundReceiver = if (isReceiverBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+            boundContextArguments,
         )
 
     private fun createJvmStaticInObjectCaller(member: Method) =
-        CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
+        CallerImpl.Method.JvmStaticInObject(member, boundReceiver, boundContextArguments)
 
     private fun createInstanceMethodCaller(member: Method) =
-        CallerImpl.Method.Instance(member, boundReceiver)
+        CallerImpl.Method.Instance(member, boundReceiver, boundContextArguments)
 
     private fun createConstructorCaller(
         member: Constructor<*>, descriptor: FunctionDescriptor, isDefault: Boolean
     ): CallerImpl<Constructor<*>> {
         return if (!isDefault && shouldHideConstructorDueToValueClassTypeValueParameters(descriptor)) {
-            if (isBound)
+            if (isReceiverBound)
                 CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
             else
                 CallerImpl.AccessorForHiddenConstructor(member)
         } else {
-            if (isBound)
+            if (isReceiverBound)
                 CallerImpl.BoundConstructor(member, boundReceiver)
             else
                 CallerImpl.Constructor(member)
@@ -241,7 +244,8 @@ internal class DescriptorKFunction private constructor(
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        return container == that.container && name == that.name && signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver && rawBoundContextArguments == that.rawBoundContextArguments
     }
 
     override fun hashCode(): Int =

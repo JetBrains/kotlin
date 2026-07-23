@@ -36,10 +36,11 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val signature: String,
     descriptorInitialValue: PropertyDescriptor?,
     override val rawBoundReceiver: Any?,
+    override val rawBoundContextArguments: List<Any?>,
     overriddenStorage: KCallableOverriddenStorage,
 ) : DescriptorKCallable<V>(overriddenStorage), ReflectKProperty<V> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
-        container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>) : this(
+        container, name, signature, null, boundReceiver, rawBoundContextArguments, KCallableOverriddenStorage.EMPTY
     )
 
     constructor(
@@ -53,6 +54,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
         descriptor,
         boundReceiver,
+        rawBoundContextArguments = emptyList(),
         overriddenStorage,
     )
 
@@ -119,7 +121,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectProperty() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        return container == that.container && name == that.name && signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver && rawBoundContextArguments == that.rawBoundContextArguments
     }
 
     override fun hashCode(): Int =
@@ -141,6 +144,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
+
+        override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
 
         override val isInline: Boolean get() = descriptor.isInline
         override val isExternal: Boolean get() = descriptor.isExternal
@@ -228,17 +233,17 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
     fun computeFieldCaller(field: Field): CallerImpl<Field> = when {
         property.descriptor.isJvmFieldPropertyInCompanionObject() || !Modifier.isStatic(field.modifiers) ->
             if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
                 else CallerImpl.FieldGetter.Instance(field)
             else
-                if (isBound) CallerImpl.FieldSetter.BoundInstance(field, isNotNullProperty(), boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldSetter.BoundInstance(field, isNotNullProperty(), boundReceiver)
                 else CallerImpl.FieldSetter.Instance(field, isNotNullProperty())
         isJvmStaticProperty() ->
             if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundJvmStaticInObject(field)
+                if (isReceiverBound) CallerImpl.FieldGetter.BoundJvmStaticInObject(field)
                 else CallerImpl.FieldGetter.JvmStaticInObject(field)
             else
-                if (isBound) CallerImpl.FieldSetter.BoundJvmStaticInObject(field, isNotNullProperty())
+                if (isReceiverBound) CallerImpl.FieldSetter.BoundJvmStaticInObject(field, isNotNullProperty())
                 else CallerImpl.FieldSetter.JvmStaticInObject(field, isNotNullProperty())
         else ->
             if (isGetter) CallerImpl.FieldGetter.Static(field)
@@ -270,7 +275,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                         val unboxMethod =
                             property.descriptor.containingDeclaration.toInlineClass()?.getInlineClassUnboxMethod(property)
                                 ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
-                        if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
+                        if (isReceiverBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
                         else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)
                     } else {
                         val javaField = property.javaField
@@ -279,11 +284,13 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                     }
                 }
                 !Modifier.isStatic(accessor.modifiers) ->
-                    CallerImpl.Method.Instance(accessor, boundReceiver)
+                    CallerImpl.Method.Instance(accessor, boundReceiver, boundContextArguments)
                 isJvmStaticProperty() ->
-                    CallerImpl.Method.JvmStaticInObject(accessor, boundReceiver)
+                    CallerImpl.Method.JvmStaticInObject(accessor, boundReceiver, boundContextArguments)
                 else ->
-                    CallerImpl.Method.Static(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
+                    CallerImpl.Method.Static(
+                        accessor, isCallByToValueClassMangledMethod = false, boundReceiver, boundContextArguments
+                    )
             }
         }
         is JavaField -> {
@@ -295,7 +302,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                 else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(
                     "No source found for setter of Java method property: ${jvmSignature.getterMethod}"
                 )
-            CallerImpl.Method.Instance(method, boundReceiver)
+            CallerImpl.Method.Instance(method, boundReceiver, boundContextArguments = emptyList())
         }
         is MappedKotlinProperty -> {
             val signature =
@@ -306,7 +313,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                     ?: throw KotlinReflectionInternalError("No accessor found for property $property")
             assert(!Modifier.isStatic(accessor.modifiers)) { "Mapped property cannot have a static accessor: $property" }
 
-            return CallerImpl.Method.Instance(accessor, boundReceiver)
+            return CallerImpl.Method.Instance(accessor, boundReceiver, boundContextArguments = emptyList())
         }
     }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }

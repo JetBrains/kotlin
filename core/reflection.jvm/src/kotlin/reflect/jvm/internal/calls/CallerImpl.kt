@@ -93,6 +93,9 @@ internal sealed class CallerImpl<out M : Member>(
             return if (isVoidMethod) Unit else result
         }
 
+        protected fun prependBoundArguments(boundArgs: List<Any?>, args: Array<*>): Array<*> =
+            if (boundArgs.isEmpty()) args else arrayOf(*boundArgs.toTypedArray(), *args)
+
         /**
          * @param isCallByToValueClassMangledMethod true if this is a `callBy` caller whose original caller is an instance method that is
          *  mangled due to value classes in the signature.
@@ -110,45 +113,59 @@ internal sealed class CallerImpl<out M : Member>(
         class Static(
             method: ReflectMethod,
             internal val isCallByToValueClassMangledMethod: Boolean,
-            private val boundReceiver: Any?,
+            boundReceiver: Any?,
+            boundContextArguments: List<Any?>,
         ) : Method(
             method,
             requiresInstance = false,
-            parameterTypes = if (boundReceiver !== CallableReference.NO_RECEIVER) method.genericParameterTypes.dropFirst()
-            else method.genericParameterTypes
+            parameterTypes = method.genericParameterTypes
+                .drop(boundContextArguments.size + (if (boundReceiver !== CallableReference.NO_RECEIVER) 1 else 0)).toTypedArray()
         ) {
-            internal val isBound: Boolean get() = boundReceiver !== CallableReference.NO_RECEIVER
+            private val boundArgs: List<Any?> =
+                if (boundReceiver !== CallableReference.NO_RECEIVER) boundContextArguments + boundReceiver else boundContextArguments
+
+            internal val boundArgumentCount: Int get() = boundArgs.size
 
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
-                return callMethod(null, if (isBound) arrayOf(boundReceiver, *args) else args)
+                return callMethod(null, prependBoundArguments(boundArgs, args))
             }
         }
 
         class Instance(
             method: ReflectMethod,
             private val boundReceiver: Any?,
-        ) : Method(method, requiresInstance = boundReceiver === CallableReference.NO_RECEIVER) {
+            private val boundContextArguments: List<Any?>,
+        ) : Method(
+            method,
+            requiresInstance = boundReceiver === CallableReference.NO_RECEIVER,
+            parameterTypes = method.genericParameterTypes.drop(boundContextArguments.size).toTypedArray()
+        ) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return if (boundReceiver !== CallableReference.NO_RECEIVER)
-                    callMethod(boundReceiver, args)
+                    callMethod(boundReceiver, prependBoundArguments(boundContextArguments, args))
                 else
-                    callMethod(args[0], args.dropFirst())
+                    callMethod(args[0], prependBoundArguments(boundContextArguments, args.dropFirst()))
             }
         }
 
         class JvmStaticInObject(
             method: ReflectMethod,
             private val boundReceiver: Any?,
-        ) : Method(method, requiresInstance = boundReceiver === CallableReference.NO_RECEIVER) {
+            private val boundContextArguments: List<Any?>,
+        ) : Method(
+            method,
+            requiresInstance = boundReceiver === CallableReference.NO_RECEIVER,
+            parameterTypes = method.genericParameterTypes.drop(boundContextArguments.size).toTypedArray()
+        ) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return if (boundReceiver !== CallableReference.NO_RECEIVER) {
-                    callMethod(null, args)
+                    callMethod(null, prependBoundArguments(boundContextArguments, args))
                 } else {
                     checkObjectInstance(args.firstOrNull())
-                    callMethod(null, args.dropFirst())
+                    callMethod(null, prependBoundArguments(boundContextArguments, args.dropFirst()))
                 }
             }
         }

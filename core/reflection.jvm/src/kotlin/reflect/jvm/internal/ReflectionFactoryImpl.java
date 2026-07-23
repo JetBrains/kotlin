@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             }
             else if (container instanceof KPackageImpl) {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
-                return new KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, KCallableOverriddenStorage.EMPTY);
+                return new KotlinKNamedFunction(container, signature, boundReceiver, rawBoundContextArguments(f), kmFunction, KCallableOverriddenStorage.EMPTY);
             }
             else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                 if (isJava) {
@@ -112,7 +113,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 }
             }
         }
-        return new DescriptorKFunction(container, name, signature, boundReceiver);
+        return new DescriptorKFunction(container, name, signature, boundReceiver, rawBoundContextArguments(f));
     }
 
     // Properties
@@ -143,12 +144,12 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 }
                 if (container instanceof KPackageImpl) {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
-                    return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
+                    return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments(p));
                 }
-                return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver());
+                return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
             });
         }
-        return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver());
+        return new DescriptorKProperty0(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
     }
 
     @Override
@@ -172,13 +173,13 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 if (container instanceof KPackageImpl) {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty0(
-                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments(p)
                     );
                 }
-                return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver());
+                return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
             });
         }
-        return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver());
+        return new DescriptorKMutableProperty0(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
     }
 
     @Override
@@ -190,12 +191,12 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             return new LazyKProperty1(name, () -> {
                 if (container instanceof KPackageImpl) {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
-                    return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY);
+                    return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments(p));
                 }
-                return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver());
+                return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
             });
         }
-        return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver());
+        return new DescriptorKProperty1(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
     }
 
     @Override
@@ -208,13 +209,13 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 if (container instanceof KPackageImpl) {
                     KmProperty kmProperty = container.findPropertyMetadata(name, signature);
                     return new KotlinKMutableProperty1(
-                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY
+                            container, signature, p.getBoundReceiver(), kmProperty, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments(p)
                     );
                 }
-                return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver());
+                return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
             });
         }
-        return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver());
+        return new DescriptorKMutableProperty1(container, name, signature, p.getBoundReceiver(), rawBoundContextArguments(p));
     }
 
     @Override
@@ -230,6 +231,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     private static KDeclarationContainerImpl getOwner(CallableReference reference) {
         KDeclarationContainer owner = reference.getOwner();
         return owner instanceof KDeclarationContainerImpl ? ((KDeclarationContainerImpl) owner) : EmptyContainerForLocal.INSTANCE;
+    }
+
+    private static List<?> rawBoundContextArguments(CallableReference reference) {
+        Object[] args = reference.getBoundContextArguments();
+        return args == null ? Collections.emptyList() : Arrays.asList(args);
     }
 
     // typeOf

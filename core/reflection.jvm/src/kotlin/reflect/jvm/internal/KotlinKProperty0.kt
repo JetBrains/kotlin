@@ -13,8 +13,8 @@ import kotlin.reflect.KProperty0
 
 internal open class KotlinKProperty0<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-    overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KProperty0<V> {
+    overriddenStorage: KCallableOverriddenStorage, rawBoundContextArguments: List<Any?>,
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments), KProperty0<V> {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
@@ -26,13 +26,13 @@ internal open class KotlinKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        KotlinKProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+        KotlinKProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        KotlinKProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage)
+        KotlinKProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun unbindToHigherArity(): ReflectKProperty<V> =
-        KotlinKProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+        KotlinKProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
@@ -44,20 +44,20 @@ internal open class KotlinKProperty0<out V>(
 
 internal class KotlinKMutableProperty0<V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-    overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
-) : KotlinKProperty0<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KMutableProperty0<V> {
+    overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY, rawBoundContextArguments: List<Any?>,
+) : KotlinKProperty0<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments), KMutableProperty0<V> {
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(value: V): Unit = setter.call(value)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        KotlinKMutableProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+        KotlinKMutableProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        KotlinKMutableProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage)
+        KotlinKMutableProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun unbindToHigherArity(): ReflectKProperty<V> =
-        KotlinKMutableProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+        KotlinKMutableProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList())
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")

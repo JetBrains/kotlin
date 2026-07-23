@@ -18,9 +18,10 @@ internal class KotlinKNamedFunction(
     container: KDeclarationContainerImpl,
     signature: String,
     rawBoundReceiver: Any?,
+    rawBoundContextArguments: List<Any?>,
     private val kmFunction: KmFunction,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKFunction(container, signature, rawBoundReceiver, overriddenStorage) {
+) : KotlinKFunction(container, signature, rawBoundReceiver, rawBoundContextArguments, overriddenStorage) {
     override val contextParameters: List<KmValueParameter> get() = kmFunction.contextParameters
 
     override val extensionReceiverType: KmType? by lazy(PUBLICATION) {
@@ -59,9 +60,9 @@ internal class KotlinKNamedFunction(
     override val isPrimaryConstructor: Boolean get() = false
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
+        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), kmFunction, overriddenStorage)
 
     override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
+        if (this.rawBoundReceiver === boundReceiver && rawBoundContextArguments.isEmpty()) this
+        else KotlinKNamedFunction(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), kmFunction, overriddenStorage)
 }

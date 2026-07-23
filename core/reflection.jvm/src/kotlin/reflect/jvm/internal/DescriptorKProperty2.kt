@@ -24,7 +24,7 @@ import kotlin.reflect.KProperty2
 
 internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(
-        container, name, signature, CallableReference.NO_RECEIVER
+        container, name, signature, CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList()
     )
 
     constructor(

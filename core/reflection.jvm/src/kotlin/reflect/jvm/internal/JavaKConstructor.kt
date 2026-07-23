@@ -64,7 +64,7 @@ internal class JavaKConstructor(
     }
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
-        if (isBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)
+        if (isReceiverBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)
         else CallerImpl.Constructor(jConstructor)
     }
 

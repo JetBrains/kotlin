@@ -30,8 +30,8 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
         overriddenStorage: KCallableOverriddenStorage,
     ) : super(container, descriptor, boundReceiver, overriddenStorage)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, rawBoundContextArguments
     )
 
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
@@ -69,8 +69,8 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
         overriddenStorage: KCallableOverriddenStorage,
     ) : super(container, descriptor, boundReceiver, overriddenStorage)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
-        container, name, signature, boundReceiver
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?, rawBoundContextArguments: List<Any?>) : super(
+        container, name, signature, boundReceiver, rawBoundContextArguments
     )
 
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }

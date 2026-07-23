@@ -28,10 +28,11 @@ internal fun KotlinKCallable<*>.computeParameters(
     receiverParameterType: KmType?,
     valueParameters: List<KmValueParameter>,
     typeParameterTable: TypeParameterTable,
-    includeReceivers: Boolean,
+    includeReceiver: Boolean,
+    includeContext: Boolean,
 ): List<KParameter> = buildList {
     val callable = this@computeParameters
-    if (includeReceivers) {
+    if (includeReceiver) {
         val container = container
         if (container is KClassImpl<*>) {
             if (isConstructor) {
@@ -44,15 +45,17 @@ internal fun KotlinKCallable<*>.computeParameters(
                 }
             }
         }
+    }
+    if (includeContext) {
         for (contextParameter in contextParameters) {
             add(KotlinKParameter(callable, contextParameter, size, KParameter.Kind.CONTEXT, typeParameterTable))
         }
-        if (receiverParameterType != null) {
-            // The name below is only used to create an instance of `KmValueParameter`. It should not leak to the user, because
-            // `KotlinKParameter.name` returns null if the name is special (starts with a `<`).
-            val kmParameter = KmValueParameter(SpecialNames.THIS.asString()).apply { type = receiverParameterType }
-            add(KotlinKParameter(callable, kmParameter, size, KParameter.Kind.EXTENSION_RECEIVER, typeParameterTable))
-        }
+    }
+    if (includeReceiver && receiverParameterType != null) {
+        // The name below is only used to create an instance of `KmValueParameter`. It should not leak to the user, because
+        // `KotlinKParameter.name` returns null if the name is special (starts with a `<`).
+        val kmParameter = KmValueParameter(SpecialNames.THIS.asString()).apply { type = receiverParameterType }
+        add(KotlinKParameter(callable, kmParameter, size, KParameter.Kind.EXTENSION_RECEIVER, typeParameterTable))
     }
     for (valueParameter in valueParameters) {
         add(KotlinKParameter(callable, valueParameter, size, KParameter.Kind.VALUE, typeParameterTable))

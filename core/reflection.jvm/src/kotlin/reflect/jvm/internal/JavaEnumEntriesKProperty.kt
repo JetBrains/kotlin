@@ -23,6 +23,7 @@ internal class JavaEnumEntriesKProperty(
 
     override val container: KDeclarationContainerImpl get() = enumClass
     override val rawBoundReceiver: Any? get() = null
+    override val rawBoundContextArguments: List<Any?> get() = emptyList()
     override val signature: String get() = ENUM_ENTRIES_SIGNATURE
 
     override val name: String get() = "entries"
@@ -81,6 +82,7 @@ internal class JavaEnumEntriesKProperty(
         override val property: ReflectKProperty<EnumEntries<*>> get() = this@JavaEnumEntriesKProperty
         override val container: KDeclarationContainerImpl get() = property.container
         override val rawBoundReceiver: Any? get() = null
+        override val rawBoundContextArguments: List<Any?> get() = emptyList()
 
         override val name: String get() = "<get-${property.name}>"
 

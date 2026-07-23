@@ -24,14 +24,15 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, 
 
     override fun rebind(boundReceiver: Any?): ReflectKCallable<V> =
         when {
-            this.rawBoundReceiver === boundReceiver -> this
+            this.rawBoundReceiver === boundReceiver && rawBoundContextArguments.isEmpty() -> this
             this.rawBoundReceiver !== CallableReference.NO_RECEIVER -> when {
                 boundReceiver !== CallableReference.NO_RECEIVER -> rebindSameArity(boundReceiver)
                 else -> unbindToHigherArity()
             }
             else -> when {
                 boundReceiver !== CallableReference.NO_RECEIVER -> bindToLowerArity(boundReceiver)
-                else -> this
+                // The receiver stays unbound; this copy only drops the bound context arguments.
+                else -> rebindSameArity(boundReceiver)
             }
         }
 
@@ -56,8 +57,8 @@ internal fun ReflectKProperty<*>.getDelegateImpl(fieldOrMethod: Member?, receive
             }
         }
 
-        val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
-        val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+        val realReceiver1 = (if (isReceiverBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+        val realReceiver2 = (if (isReceiverBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
         (fieldOrMethod as? AccessibleObject)?.isAccessible = isAccessible
         when (fieldOrMethod) {
             null -> null

@@ -13,7 +13,7 @@ import kotlin.reflect.KMutableProperty
 internal open class KotlinKPropertyN<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage) {
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage, rawBoundContextArguments = emptyList()) {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =

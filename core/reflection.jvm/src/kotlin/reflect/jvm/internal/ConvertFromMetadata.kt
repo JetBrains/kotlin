@@ -325,14 +325,14 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     return when {
         !property.isVar -> when (receiverCount) {
             -1 -> KotlinKPropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments = emptyList())
+            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments = emptyList())
             else -> null
         }
         else -> when (receiverCount) {
             -1 -> KotlinKMutablePropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments = emptyList())
+            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY, rawBoundContextArguments = emptyList())
             else -> null
         }
     } ?: throw KotlinReflectionInternalError(
@@ -343,7 +343,7 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
 internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
     val signature = function.signature?.toString()
         ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
-    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
+    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function, KCallableOverriddenStorage.EMPTY)
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {
