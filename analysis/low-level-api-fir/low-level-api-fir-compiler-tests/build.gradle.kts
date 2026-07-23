@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -52,6 +55,7 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestGeneratorKt", generateTestsInBuildDirectory = true)
