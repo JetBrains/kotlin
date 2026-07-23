@@ -267,6 +267,13 @@ interface KotlinHierarchyBuilder {
     fun withIosArm64()
 
     /**
+     * Only includes Kotlin's Apple/iosArm64e (Pointer Authentication / PAC) target in this [group].
+     *
+     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
+     */
+    fun withIosArm64e()
+
+    /**
      * Only includes Kotlin's Apple/iosX64 target in this [group].
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).

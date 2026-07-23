@@ -63,6 +63,7 @@ open class HostManager() {
         MACOS_X64,
         MACOS_ARM64,
         IOS_ARM64,
+        IOS_ARM64E,
         IOS_X64,
         IOS_SIMULATOR_ARM64,
         WATCHOS_ARM32,

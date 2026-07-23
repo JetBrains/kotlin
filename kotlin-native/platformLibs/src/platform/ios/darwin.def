@@ -11,7 +11,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     fmtmsg.h fstab.h \
     gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \
     langinfo.h \
-    libgen.h libunwind.h \
+    libgen.h \
     membership.h monetary.h mpool.h \
     nameser.h ndbm.h nl_types.h \
     notify.h notify_keys.h ntsid.h \
@@ -49,3 +49,12 @@ linkerOpts = -ldl -lz -lbz2 -lcompression -late
 ---
 
 // menu.h is excluded so far due to interop issues.
+//
+// libunwind.h is temporarily dropped from the headers list above (was: `libgen.h libunwind.h`).
+// Apple's <libunwind.h> declares fields like `unw_word_t reg[34]` using the `__ptrauth`
+// qualifier (specifically `ptrauth_restricted_intptr_qualifier`, which Apple's downstream
+// clang accepts on plain integer types such as `unsigned long`). Kotlin's bundled LLVM 19
+// (`kotlin/llvm-19-apple`) does not yet recognize that qualifier, so cinterop fails to
+// parse the header on every ios target — not just arm64e. Restore the header on the
+// `headers = ...` line once `ptrauth_restricted_intptr_qualifier` is cherry-picked into
+// `kotlin/llvm-19-apple` (the qualifier is present in Apple-LLVM 26.4+).

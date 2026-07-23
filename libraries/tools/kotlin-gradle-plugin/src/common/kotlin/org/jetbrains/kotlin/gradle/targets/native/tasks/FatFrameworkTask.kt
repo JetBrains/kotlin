@@ -301,7 +301,7 @@ internal constructor(
             // remove `is ...` after Gradle Configuration Cache deserialization for Objects of a Sealed Class is fixed
             // https://github.com/gradle/gradle/issues/22347
             is MACOS_X64, is MACOS_ARM64 -> "MacOSX"
-            is IOS_ARM64, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
+            is IOS_ARM64, is IOS_ARM64E, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
             is TVOS_ARM64, is TVOS_X64, is TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
             is WATCHOS_ARM32, is WATCHOS_ARM64, is WATCHOS_X64, is WATCHOS_SIMULATOR_ARM64, is WATCHOS_DEVICE_ARM64 -> "WatchOS"
             else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
@@ -490,7 +490,7 @@ internal constructor(
 
     companion object {
         private val supportedTargets = listOf(
-            IOS_ARM64, IOS_X64,
+            IOS_ARM64, IOS_ARM64E, IOS_X64,
             WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X64, WATCHOS_DEVICE_ARM64,
             TVOS_ARM64, TVOS_X64,
             MACOS_X64, MACOS_ARM64

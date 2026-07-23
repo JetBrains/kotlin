@@ -107,7 +107,7 @@ internal class InfoPListBuilder(
             else -> {}
         }
 
-        if (target == KonanTarget.IOS_ARM64) {
+        if (target == KonanTarget.IOS_ARM64 || target == KonanTarget.IOS_ARM64E) {
             contents.append("""
                 |    <key>UIRequiredDeviceCapabilities</key>
                 |    <array>

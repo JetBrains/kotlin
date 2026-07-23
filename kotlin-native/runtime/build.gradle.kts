@@ -95,7 +95,7 @@ bitcode {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
                 "TARGET_OS_OSX" to "1",
             )
-            KonanTarget.IOS_ARM64 -> hashMapOf(
+            KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM64E -> hashMapOf(
                 "TARGET_OS_EMBEDDED" to "1",
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_IOS" to "1",
