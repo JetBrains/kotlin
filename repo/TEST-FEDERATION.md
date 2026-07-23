@@ -5,6 +5,22 @@ The CI can verify commits into such Domains independently.
 'Plain old tests' of 'unaffected Domains' are not required for commits to prove correctness.
 All tests, however, will be executed on master builds.
 
+## Table of contents
+
+- [What is a Domain? (Quick intuition)](#what-is-a-domain-quick-intuition)
+- [Defining Domains](#defining-domains)
+- [`^affects` commit command](#affects-commit-command)
+  - [Domains fully affecting other Domains](#domains-fully-affecting-other-domains)
+- [Local testing](#local-testing)
+  - [Verifying domains](#verifying-domains)
+  - [Updating the dump](#updating-the-dump)
+  - [Checking domain dependencies](#checking-domain-dependencies)
+- [Smoke Tests: Verifying commits on the federal level](#smoke-tests-verifying-commits-on-the-federal-level)
+- [Running a small subset of tests, as smoke tests, automatically](#running-a-small-subset-of-tests-as-smoke-tests-automatically)
+- [Contracts between Domains](#contracts-between-domains--single-tests--test-suites-affected-by-other-domains)
+  - [Contracts require approval from the target team](#contracts-require-approval-from-the-target-team)
+- [Nightly Tests](#nightly-tests)
+
 ### What is a Domain? (Quick intuition)
 
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
@@ -61,12 +77,14 @@ a change isolated within the 'Native' domain will not affect the 'Compiler' doma
 Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. 
 This allows for some modules acting as 'API' boundaries.
 
-### Verifying the declaration: [domains.dump.txt](./domains.dump.txt)
+### Local testing
+
+#### Verifying domains
 
 The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file will be verified on CI.
+The file can be found here [domains.dump.txt](domains.dump.txt).
 
-#### Verifying domains or updating the dump
-
+Locally, it can be ran us:
 ```shell
 ./gradlew :gradle-build-conventions:test-federation-convention:test --tests "org.jetbrains.kotlin.testFederation.DomainsDumpTest" --rerun
 ```
@@ -80,6 +98,17 @@ This can be done by executing the 'update-domains' script:
 cd ..
 ./scripts/update-domains.sh
 ```
+
+#### Checking domain dependencies
+
+You can verify dependencies between domains by making a relevant change,
+committing it locally and then invoking this command:
+```shell
+./gradlew -Ptest.federation.enabled=true inferAffectedDomains
+```
+
+For more granular testing you can look into `testFederation/runtimeEnvironment.kt` properties
+(example: `-Ptest.federation.mode=Smoke -Ptest.federation.affected.domains=CompilerPlugins`)
 
 ### Smoke Tests: Verifying commits on the federal level
 
