@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:ownPropGetter(p: PsiType:int): PsiType:int
