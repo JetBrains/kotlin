@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.createFilePhases
 import org.jetbrains.kotlin.backend.common.phaser.createModulePhases
 import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceFusionLowering
 import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
 
 private val jvmModulePhases1 = createModulePhases(
@@ -38,6 +39,7 @@ private val jvmFilePhases = createFilePhases(
     ::AnnotationLowering,
     ::JvmAnnotationImplementationLowering,
     ::PolymorphicSignatureLowering,
+    ::SequenceFusionLowering,
     ::VarargLowering,
 
     ::JvmLateinitLowering,
