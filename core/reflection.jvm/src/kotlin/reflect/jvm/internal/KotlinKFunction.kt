@@ -74,9 +74,9 @@ internal abstract class KotlinKFunction(
             is Constructor<*> -> createConstructorCaller(member, isDefault = false)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) ->
-                    createInstanceMethodCaller(member)
+                    CallerImpl.Method.Instance(member, boundReceiver)
                 member.getAnnotation(JvmStatic::class.java) != null ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
                 else ->
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
@@ -121,7 +121,7 @@ internal abstract class KotlinKFunction(
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
                 // as opposed to companion objects where the first parameter is the companion object instance.
                 (caller.member as? Method)?.getAnnotation(JvmStatic::class.java) != null && !(container as KClass<*>).isCompanion ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
                 else ->
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
             }
@@ -140,17 +140,10 @@ internal abstract class KotlinKFunction(
                 member.parameterTypes.firstOrNull()?.isInterface == true
 
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(
-                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
-            )
-        else CallerImpl.Method.Static(member)
-
-    private fun createJvmStaticInObjectCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
-
-    private fun createInstanceMethodCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
+        CallerImpl.Method.Static(
+            member, isCallByToValueClassMangledMethod,
+            boundReceiver = if (isBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+        )
 
     private fun createConstructorCaller(member: Constructor<*>, isDefault: Boolean): CallerImpl<Constructor<*>> {
         return if (!isDefault && this is KotlinKConstructor && shouldHideConstructorDueToValueClassTypeValueParameters(this)) {

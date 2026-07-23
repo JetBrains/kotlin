@@ -139,18 +139,11 @@ internal class JavaKNamedFunction(
         get() = enhancedSignature?.allParameters ?: originalParameters
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
-        if (Modifier.isStatic(jMethod.modifiers)) createStaticMethodCaller(jMethod)
-        else createInstanceMethodCaller(jMethod)
+        if (Modifier.isStatic(jMethod.modifiers))
+            CallerImpl.Method.Static(jMethod, isCallByToValueClassMangledMethod = false, boundReceiver)
+        else
+            CallerImpl.Method.Instance(jMethod, boundReceiver)
     }
-
-    private fun createInstanceMethodCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver)
-        else CallerImpl.Method.Instance(member)
-
-    private fun createStaticMethodCaller(member: Method): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(member, isCallByToValueClassMangledMethod = false, boundReceiver)
-        else CallerImpl.Method.Static(member)
 
     override val callerWithDefaults: Caller<*>? get() = null
 

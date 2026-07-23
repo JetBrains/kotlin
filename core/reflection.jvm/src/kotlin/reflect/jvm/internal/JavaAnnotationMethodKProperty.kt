@@ -35,7 +35,7 @@ internal abstract class JavaAnnotationMethodKProperty<out V>(
 
         override val caller: Caller<*> by lazy(PUBLICATION) {
             val method = property.jMethod
-            if (isBound) CallerImpl.Method.BoundInstance(method, boundReceiver) else CallerImpl.Method.Instance(method)
+            CallerImpl.Method.Instance(method, boundReceiver)
         }
     }
 }
