@@ -7,11 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.InlineClassesUtils
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
@@ -27,10 +22,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -73,7 +66,7 @@ internal class NativeGenerationState(
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config), CommonBackendContext, BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicNativeBackendPhaseContext(config), CommonBackendContext by context, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -131,6 +124,11 @@ internal class NativeGenerationState(
         super<BasicNativeBackendPhaseContext>.log(message)
     }
 
+    // Keep the phase-context reporter: the CommonBackendContext delegation would otherwise
+    // silently replace the one initialized in BasicNativeBackendPhaseContext with `context`'s.
+    override val diagnosticReporter: IrDiagnosticReporter
+        get() = super<BasicNativeBackendPhaseContext>.diagnosticReporter
+
     override fun dispose() {
         if (isDisposed) return
 
@@ -149,33 +147,14 @@ internal class NativeGenerationState(
         isDisposed = true
     }
 
-    override val heldBackendContext: NativeBackendContext
-        get() = context
-
     override val llvmModule: LLVMModuleRef
         get() = llvm.module
 
-    override val configuration: CompilerConfiguration
-        get() = context.configuration
-
+    // CommonBackendContext is implemented by delegation to `context` (see the class header),
+    // but `symbols` needs an explicit override to narrow the type to BackendNativeSymbols.
     override val symbols: BackendNativeSymbols
         get() = context.symbols
-    override val typeSystem: IrTypeSystemContext
-        get() = context.typeSystem
-    override val irBuiltIns: IrBuiltIns
-        get() = context.irBuiltIns
-    override val irFactory: IrFactory
-        get() = context.irFactory
-    override val sharedVariablesManager: SharedVariablesManager
-        get() = context.sharedVariablesManager
-    override val inlineClassesUtils: InlineClassesUtils
-        get() = context.inlineClassesUtils
-    override val innerClassesSupport: InnerClassesSupport
-        get() = context.innerClassesSupport
-    override val optimizeLoopsOverUnsignedArrays: Boolean
-        get() = context.optimizeLoopsOverUnsignedArrays
-    override val partialLinkageSupport: PartialLinkageSupportForLowerings
-        get() = context.partialLinkageSupport
+
     val symbolTable: ReferenceSymbolTable
         get() = context.symbolTable
 }
