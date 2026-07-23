@@ -123,6 +123,28 @@ fun main(args: Array<String>) {
                     scriptBlackBoxInit()
                 }
             }
+
+            this.run {
+                fun TestGroup.TestClass.diagnosticsGeneralInit() {
+                    model(
+                        "diagnostics/general",
+                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                        pattern = KT_OR_KTS.canFreezeIDE,
+                    )
+                }
+
+                testClass<AbstractLLDiagnosticsTest>("LLDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
+                }
+
+                testClass<AbstractLLReversedDiagnosticsTest>("LLReversedDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
+                }
+
+                testClass<AbstractLLPartialDiagnosticsTest>("LLPartialDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
+                }
+            }
         }
 
         testGroup(generatedTestRoot, "compiler/testData/diagnostics") {
