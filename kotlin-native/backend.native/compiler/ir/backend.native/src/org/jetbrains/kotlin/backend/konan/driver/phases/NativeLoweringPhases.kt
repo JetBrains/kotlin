@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -175,7 +177,19 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors() = createNativePhas
         ::SyntheticAccessorLowering,
 )
 
-internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = createNativePhases(
+internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = getLoweringsAfterInlining(
+        generateTestDumper = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE,
+        optimizationsEnabled = optimizationsEnabled,
+        genericSafeCasts = genericSafeCasts,
+        isCache = produce.isCache,
+)
+
+private fun getLoweringsAfterInlining(
+        generateTestDumper: Boolean,
+        optimizationsEnabled: Boolean,
+        genericSafeCasts: Boolean,
+        isCache: Boolean,
+) = createNativePhases(
         ::ConstEvaluationLowering,
         ::ReifiedFunctionLowering,
         ::TypeOfProcessingLowering,
@@ -183,7 +197,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = cr
         ::InteropLowering,
         ::SpecialInteropIntrinsicsLowering,
         ::TestsInitializer,
-        ::TestsDumper.takeIf { this.configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
+        ::TestsDumper.takeIf { generateTestDumper },
         ::ExpectDeclarationsRemoveLowering,
         ::StripTypeAliasDeclarationsLowering,
         ::NativeAssertionRemoverLowering,
@@ -215,7 +229,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = cr
 
         ::FlattenStringConcatenationLowering,
         ::StringConcatenationLowering,
-        ::StringConcatenationTypeNarrowing.takeIf { this.optimizationsEnabled },
+        ::StringConcatenationTypeNarrowing.takeIf { optimizationsEnabled },
 
         ::NativeDefaultArgumentStubGenerator,
         ::NativeDefaultParameterCleaner,
@@ -248,7 +262,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = cr
         // Running 2nd time not only helps the following heavy analysis but also corrects some lowerings' inaccuracies in IR types.
         ::ComputeTypesPass,
         ::RemoveCastsFromNothingLowering,
-        ::CastsOptimization.takeIf { this.genericSafeCasts },
+        ::CastsOptimization.takeIf { genericSafeCasts },
 
         ::TypeOperatorLowering,
         ::BuiltinOperatorLowering,
@@ -256,14 +270,32 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining() = cr
         ::BridgesBuilding,
         ::WorkersBridgesBuilding,
 
-        ::ExportCachesAbiVisitor.takeIf { this.produce.isCache },
+        ::ExportCachesAbiVisitor.takeIf { isCache },
         ::ImportCachesAbiTransformer,
 
         ::GenericCallsReturnTypeEraser,
         ::Autoboxing,
         ::ConstructorsLowering,
         ::ReturnsInsertionLowering,
-        ::CastsLowering.takeUnless { this.optimizationsEnabled },
+        ::CastsLowering.takeUnless { optimizationsEnabled },
+)
+
+@TestOnly
+internal fun getNativeLoweringPhaseListsForTests(
+        generateTestDumper: Boolean,
+        optimizationsEnabled: Boolean,
+        genericSafeCasts: Boolean,
+        isCache: Boolean,
+): List<List<AnyNamedPhase>> = listOf(
+        getLoweringsUpToAndIncludingSyntheticAccessors(),
+        // Note: `inlineAllFunctionsPhase` is a physical barrier between the two lists (see how everything is called in TopLevelPhases.kt)
+        // Thus there are no prerequisites on it.
+        getLoweringsAfterInlining(
+                generateTestDumper = generateTestDumper,
+                optimizationsEnabled = optimizationsEnabled,
+                genericSafeCasts = genericSafeCasts,
+                isCache = isCache,
+        ),
 )
 
 private fun createFileLoweringPhase(
