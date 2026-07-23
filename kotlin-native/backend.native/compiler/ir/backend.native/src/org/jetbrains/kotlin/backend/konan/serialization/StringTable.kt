@@ -58,7 +58,7 @@ internal class StringTableBuilder {
     private var index = 0
 
     operator fun String.unaryPlus() {
-        this@StringTableBuilder.indices.getOrPut(this) { index++ }
+        this@StringTableBuilder.indices.computeIfAbsent(this) { index++ }
     }
 
     fun build() = StringTable(indices)
