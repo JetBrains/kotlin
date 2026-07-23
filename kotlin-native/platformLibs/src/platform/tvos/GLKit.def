@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.GLKit
 modules = GLKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework GLKit
 linkerOpts = -framework GLKit

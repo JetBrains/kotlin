@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreVideo dar
 language = Objective-C
 package = platform.Accelerate
 modules = Accelerate
+apiNotesSwiftName = true
 
 compilerOpts = -framework Accelerate
 linkerOpts = -framework Accelerate

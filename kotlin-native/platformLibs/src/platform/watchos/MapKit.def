@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreLocation 
 language = Objective-C
 package = platform.MapKit
 modules = MapKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework MapKit
 linkerOpts = -framework MapKit

@@ -2,6 +2,7 @@ depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreA
 language = Objective-C
 package = platform.Speech
 modules = Speech
+apiNotesSwiftName = true
 
 compilerOpts = -framework Speech
 linkerOpts = -framework Speech

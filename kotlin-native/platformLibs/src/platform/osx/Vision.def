@@ -2,6 +2,7 @@ depends = ApplicationServices CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreF
 language = Objective-C
 package = platform.Vision
 modules = Vision
+apiNotesSwiftName = true
 
 compilerOpts = -framework Vision
 linkerOpts = -framework Vision

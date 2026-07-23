@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.CoreNFC
 modules = CoreNFC
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreNFC
 linkerOpts = -framework CoreNFC

@@ -2,6 +2,7 @@ depends = AddressBook CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Core
 language = Objective-C
 package = platform.EventKitUI
 modules = EventKitUI
+apiNotesSwiftName = true
 
 compilerOpts = -framework EventKitUI
 linkerOpts = -framework EventKitUI

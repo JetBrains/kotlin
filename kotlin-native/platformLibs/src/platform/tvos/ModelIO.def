@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Fou
 language = Objective-C
 package = platform.ModelIO
 modules = ModelIO
+apiNotesSwiftName = true
 
 compilerOpts = -framework ModelIO
 linkerOpts = -framework ModelIO

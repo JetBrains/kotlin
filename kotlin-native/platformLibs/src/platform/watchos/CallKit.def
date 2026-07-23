@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.CallKit
 
 modules = CallKit
+apiNotesSwiftName = true
 compilerOpts = -framework CallKit
 linkerOpts = -framework CallKit

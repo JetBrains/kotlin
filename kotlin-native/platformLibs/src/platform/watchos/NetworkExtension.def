@@ -2,5 +2,6 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Network Securit
 language = Objective-C
 package = platform.NetworkExtension
 modules = NetworkExtension
+apiNotesSwiftName = true
 compilerOpts = -framework NetworkExtension
 linkerOpts = -framework NetworkExtension

@@ -2,6 +2,7 @@ depends = AVFAudio CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundat
 language = Objective-C
 package = platform.AVFoundation
 modules = AVFoundation
+apiNotesSwiftName = true
 
 excludedFunctions = AVCaptureLensPositionCurrent
 

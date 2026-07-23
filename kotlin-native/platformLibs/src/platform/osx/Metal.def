@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.Metal
 modules = Metal
+apiNotesSwiftName = true
 
 excludedFunctions = MTLRenderPipelineErrorDomain
 compilerOpts = -framework Metal

@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.UniformTypeIdentifiers
 
 modules = UniformTypeIdentifiers
+apiNotesSwiftName = true
 compilerOpts = -framework UniformTypeIdentifiers
 linkerOpts = -framework UniformTypeIdentifiers

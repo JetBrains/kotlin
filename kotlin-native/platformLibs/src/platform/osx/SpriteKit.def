@@ -2,6 +2,7 @@ depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit Cocoa CoreData
 language = Objective-C
 package = platform.SpriteKit
 modules = SpriteKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework SpriteKit
 linkerOpts = -framework SpriteKit

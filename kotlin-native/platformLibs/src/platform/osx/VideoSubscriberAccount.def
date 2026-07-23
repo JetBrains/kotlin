@@ -2,5 +2,6 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.VideoSubscriberAccount
 modules = VideoSubscriberAccount
+apiNotesSwiftName = true
 compilerOpts = -framework VideoSubscriberAccount
 linkerOpts = -framework VideoSubscriberAccount

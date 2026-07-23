@@ -2,6 +2,7 @@ depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreA
 language = Objective-C
 package = platform.GameKit
 modules = GameKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework GameKit
 linkerOpts = -framework GameKit

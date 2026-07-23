@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.QuickLook
 modules = QuickLook
+apiNotesSwiftName = true
 
 compilerOpts = -framework QuickLook
 linkerOpts = -framework QuickLook
