@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR
-// ^KT-86452, KT-87390
 
 object O {
     context(s: String, c: Char)
