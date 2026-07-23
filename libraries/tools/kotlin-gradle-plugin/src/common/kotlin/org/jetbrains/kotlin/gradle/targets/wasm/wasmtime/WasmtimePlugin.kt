@@ -62,7 +62,7 @@ abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
             installationDirectory.convention(
                 gradleHome.dir("wasmtime")
             )
-            version.convention("46.0.1")
+            version.convention("47.0.2")
             command.convention("wasmtime")
         }
     }

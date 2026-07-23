@@ -8,30 +8,12 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeExec
-import org.jetbrains.kotlin.gradle.targets.wasm.wasmtimeProposalArgs
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class WasmtimeArgsTest {
-
-    @OptIn(ExperimentalWasmDsl::class)
-    @Test
-    fun checkDefaultWasmtimeRunArgs() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                wasmWasi {
-                    wasmtime()
-                    binaries.executable()
-                }
-            }
-        }.evaluate()
-
-        val expected = wasmtimeProposalArgs()
-        assertEquals(expected, project.wasmtimeRunArgs(DEVELOPMENT_RUN_TASK))
-        assertEquals(expected, project.wasmtimeRunArgs(PRODUCTION_RUN_TASK))
-    }
 
     @OptIn(ExperimentalWasmDsl::class)
     @Test
@@ -47,7 +29,7 @@ class WasmtimeArgsTest {
             }
         }.evaluate()
 
-        val expected = wasmtimeProposalArgs() + "--dir=."
+        val expected = listOf("--dir=.")
         assertEquals(expected, project.wasmtimeRunArgs(DEVELOPMENT_RUN_TASK))
         assertEquals(expected, project.wasmtimeRunArgs(PRODUCTION_RUN_TASK))
     }
