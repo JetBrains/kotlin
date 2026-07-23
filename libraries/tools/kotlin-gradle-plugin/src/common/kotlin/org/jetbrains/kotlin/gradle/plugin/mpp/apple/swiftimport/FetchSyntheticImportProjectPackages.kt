@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 import org.gradle.api.tasks.Optional
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
@@ -124,6 +125,9 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
 
+    @get:Internal
+    abstract val persistedPackageResolved: RegularFileProperty
+
     @TaskAction
     fun fetchPackages() {
         val errorFile = ideImportError.get().asFile
@@ -198,12 +202,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             params.ideaSyncEnabled.set(ideaSyncEnabled)
             params.errorFile.set(ideImportError)
             params.testExecutionService.set(testExecutionService)
+            params.persistedPackageResolved.set(persistedPackageResolved)
+            params.syntheticLockFile.set(syntheticLockFile)
+            params.workspaceStateJson.set(workspaceStateJson)
 
             if (isCoordinationEnabled) {
                 params.coordinationService.set(coordinationService)
                 params.syntheticPackageHash.set(syntheticPackageHash!!)
-                params.syntheticLockFile.set(syntheticLockFile)
-                params.workspaceStateJson.set(workspaceStateJson)
             }
         }
     }

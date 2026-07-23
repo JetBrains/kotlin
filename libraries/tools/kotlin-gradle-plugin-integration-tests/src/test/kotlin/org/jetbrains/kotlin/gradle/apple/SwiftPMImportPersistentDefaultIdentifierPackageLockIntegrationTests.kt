@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -677,7 +675,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
                         ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
-                        ":$sharedProjectName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}"
                     )
                 }
@@ -800,7 +797,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     )
                 }
@@ -833,7 +829,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                     )
                 }
 
@@ -983,9 +978,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":right:validateLocalSwiftPMDependencies",
                         ":right:computeLocalPackageDependencyInputFiles",
                         ":right:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
-                        ":right:syncPersistedPackageResolvedToSynthetic",
                         ":right:fetchSyntheticImportProjectPackages",
-                        ":right:syncSyntheticPackageResolvedToPersisted",
                         ":right:dumpXcodebuildArgsIphonesimulator",
                         ":right:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":right:compileKotlinIosSimulatorArm64",
@@ -1007,7 +1000,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":generateUmbrellaPackageIdentifierBasedResolutionForDefault",
                         ":fetchUmbrellaPackageIdentifierForDefault",
                         ":left:iosSimulatorArm64ProcessResources",
-                        ":left:syncPersistedPackageResolvedToSynthetic",
                         ":left:fetchSyntheticImportProjectPackages",
                         ":left:fingerprintXcodebuildIphonesimulator",
                         ":left:dumpXcodebuildArgsIphonesimulator",

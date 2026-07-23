@@ -155,10 +155,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         generateTask.syntheticProductType.set(GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC)
     }
 
-    val syncPersistedPackageResolvedToSyntheticSwiftPMPackage = project.locateOrRegisterTask<SyncPackageResolvedTask>(
-        SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME
-    )
-
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
@@ -169,7 +165,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.testExecutionHooks.set(swiftPMImportExtension.testExecutionHooks)
         it.testExecutionService.set(swiftPMImportExtension.testExecutionService)
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
-        it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
         it.dependsOn(hasLocalSwiftPMDependencies.map { hasLocal ->
             if (hasLocal) listOf(validateLocalSwiftPMDependencies) else emptyList()
@@ -184,10 +179,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
     }
 
-    val syncSyntheticPackageResolvedToPersisted = project.locateOrRegisterTask<SyncPackageResolvedTask>(
-        SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
-    )
-
     val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
         this,
         provideXcodeDumpsDir(),
@@ -197,16 +188,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
     project.launch {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-
-        val persistedPackageResolved = providePersistedPackageResolved()
-
-        syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
-            taskProvider.sourceFile.set(persistedPackageResolved)
-        }
-
-        syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
-            taskProvider.destinationFile.set(persistedPackageResolved)
-        }
 
         fingerprintSyntheticPackageTask.configure {
             it.packageResolvedSynchronizationFingerprint.set(
@@ -224,8 +205,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider,
                     directSwiftPMMetadata = directSwiftPMMetadataProvider,
                     fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage = syncPersistedPackageResolvedToSyntheticSwiftPMPackage,
-                    syncSyntheticPackageResolvedToPersisted = syncSyntheticPackageResolvedToPersisted,
                 )
 
                 if (multiplatformExtension.awaitTargets().any { it.supportsSwiftPMImport() }) {
@@ -254,39 +233,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         isMacOSHost = isMacOSHost,
                     )
 
-                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
+                    fetchSyntheticImportProjectPackages.configure {
                         it.dependsOn(actualFetchClaimer)
-                        it.onlyIf("Shared Package.resolved exists") {
-                            persistedPackageResolved.asFile.exists()
-                        }
                     }
                 }
             }
-            // If none, after resolution in synthetic we sync back to persisted location.
-            // With identifier, it would cause the umbrella package to be overridden
-            else -> {
-                syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
-                    taskProvider.sourceFile.set(
-                        fetchSyntheticImportProjectPackages.map { task ->
-                            task.syntheticLockFile.get()
-                        }
-                    )
-                    taskProvider.destinationFile.set(persistedPackageResolved)
-                    taskProvider.onlyIf("Synthetic Package.resolved exists") {
-                        taskProvider.sourceFile.get().asFile.exists()
-                    }
-                }
-                syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
-                    taskProvider.destinationFile.set(
-                        fetchSyntheticImportProjectPackages.map { task ->
-                            task.syntheticLockFile.get()
-                        }
-                    )
-                }
-                fetchSyntheticImportProjectPackages.configure {
-                    it.finalizedBy(syncSyntheticPackageResolvedToPersisted)
-                }
-            }
+            else -> Unit
         }
     }
 
@@ -380,6 +332,11 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         project.afterEvaluate {
+
+            fetchSyntheticImportProjectPackages.configure {
+                it.persistedPackageResolved.set(providePersistedPackageResolved())
+            }
+
             when (identifierSynchronizationOrNull()) {
                 is PackageResolvedSynchronization.Identifier -> {
                     xcodebuildDumpTask.configure {
@@ -609,47 +566,22 @@ private fun Project.updateDependenciesWithAggregatedResults(
     )
 }
 
-private fun Project.enableFingerprintCoordination(
+private fun enableFingerprintCoordination(
     fingerprintCoordinationService: Provider<SwiftImportFingerprintedCoordinationService>,
     generateSyntheticPackageTask: TaskProvider<GenerateSyntheticLinkageImportProject>,
     fingerprintSyntheticPackageTask: TaskProvider<FingerprintSyntheticPackage>,
     transitiveSwiftPMMetadataProvider: Provider<TransitiveSwiftPMMetadata>,
     fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
     directSwiftPMMetadata: Provider<SwiftPMImportMetadata>,
-    syncPersistedPackageResolvedToSyntheticSwiftPMPackage: TaskProvider<SyncPackageResolvedTask>,
-    syncSyntheticPackageResolvedToPersisted: TaskProvider<SyncPackageResolvedTask>,
 ) {
-    val fingerprintedSwiftPMDependencyGraph = transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
-        fingerprintSwiftPMDependencyGraph(
-            directMetadata,
-            transitiveMetadata,
-            normalizeVersions = false,
-        )
-    }
-
-    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
-        // dest files is fixed to synthetic package
-        it.syntheticPackagesRoot.set(
-            provideSyntheticPackageDir()
-        )
-        it.packageFingerprint.set(
-            fingerprintSyntheticPackageTask.map {
-                it.syntheticPackageFingerprint.get()
-            }
-        )
-        it.dependsOn(fingerprintSyntheticPackageTask)
-    }
-
-    syncSyntheticPackageResolvedToPersisted.configure {
-        it.syntheticPackagesRoot.set(
-            provideSyntheticPackageDir()
-        )
-        it.packageFingerprint.set(
-            fingerprintSyntheticPackageTask.map {
-                it.syntheticPackageFingerprint.get()
-            }
-        )
-    }
+    val fingerprintedSwiftPMDependencyGraph =
+        transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
+            fingerprintSwiftPMDependencyGraph(
+                directMetadata,
+                transitiveMetadata,
+                normalizeVersions = false,
+            )
+        }
 
     generateSyntheticPackageTask.configure {
         it.useOnlyTransitiveImportedDependencies()
@@ -1086,7 +1018,7 @@ internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeM
             hasDirectOrTransitiveSwiftPMDependencies,
             ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
             SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-            project.directSwiftPMDependencies().map directSwiftPMDependencies@ { dependencies ->
+            project.directSwiftPMDependencies().map directSwiftPMDependencies@{ dependencies ->
                 val declaredDependencies = dependencies.map {
                     when (it) {
                         is SwiftPMDependency.Local -> LocalSwiftPMDependencyForIde(it.absolutePath)

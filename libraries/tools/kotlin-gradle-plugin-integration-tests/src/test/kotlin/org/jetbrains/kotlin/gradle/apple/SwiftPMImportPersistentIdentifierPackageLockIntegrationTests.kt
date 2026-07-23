@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -233,7 +231,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `identifier synchronization keeps overlapping pinned versions in root umbrella lock when two projects depend on the same package with different versions`(
+    fun   `identifier synchronization keeps overlapping pinned versions in root umbrella lock when two projects depend on the same package with different versions`(
         version: GradleVersion,
     ) {
         val commonIdentifier = "common"
@@ -831,7 +829,6 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         }",
                         ":$sharedProjectName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(sharedIdentifier)}",
                         ":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
-                        ":$sharedProjectName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
                     )
 
                     assertFileExists(
@@ -870,7 +867,6 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ":${FingerprintSyntheticPackage.TASK_NAME}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
                     )
 
 
@@ -881,7 +877,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertFileNotExists(
                         rootPersistedPackageResolved,
-                        "Umbrella Package.resolved should be generated"
+                        "Umbrella Package.resolved should not be generated"
                     )
                 }
             }
@@ -946,7 +942,6 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ":$projectWithoutDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
                         ":$projectWithoutDepsName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$projectWithoutDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
-                        ":$projectWithoutDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":$projectWithoutDepsName:${
                             GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(
                                 emptyIdentifier
@@ -973,7 +968,6 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ":$projectWithDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
                         ":$projectWithDepsName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$projectWithDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
-                        ":$projectWithDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         depsGenerateUmbrellaTask,
                         depsFetchUmbrellaTask,
                         ":$projectWithDepsName:${FetchSyntheticImportProjectPackages.TASK_NAME}",

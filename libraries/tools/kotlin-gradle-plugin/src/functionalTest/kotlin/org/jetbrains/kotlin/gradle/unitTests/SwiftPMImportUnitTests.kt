@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPM
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -451,67 +450,6 @@ class SwiftPMImportUnitTests {
             validateTask.validate()
         }
         assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName.id)
-    }
-
-    @Test
-    fun `test fetchSyntheticImportProjectPackages depends on syncPackageSwiftLockFileToSyntheticSwiftPMPackage when noSynchronization is set`() {
-        val project = swiftPMImportProject(
-            swiftPMDependencies = { layout ->
-
-                packageResolvedSynchronization = noSynchronization()
-
-                localSwiftPackage(
-                    directory = layout.projectDirectory.dir("my-custom-pkg"),
-                    products = listOf("ManifestPackage"),
-                )
-            }
-        )
-        project.evaluate()
-
-        val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToPSyntheticSwiftPMPackageTask =
-            project.tasks.findByName(SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME)
-
-        assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(
-            syncLockFileToPSyntheticSwiftPMPackageTask,
-            "${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME} should be registered"
-        )
-
-        fetchTask.assertDependsOn(
-            syncLockFileToPSyntheticSwiftPMPackageTask
-        )
-    }
-
-    @Test
-    fun `test syncPackageSwiftLockFileToProjectDirectory depends on fetchSyntheticImportProjectPackages when noSynchronization is set`() {
-        val project = swiftPMImportProject(
-            swiftPMDependencies = { layout ->
-
-                packageResolvedSynchronization = noSynchronization()
-
-                localSwiftPackage(
-                    directory = layout.projectDirectory.dir("my-custom-pkg"),
-                    products = listOf("ManifestPackage"),
-                )
-            }
-        )
-
-        project.evaluate()
-
-        val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToProjectDirectoryTask =
-            project.tasks.findByName(SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME)
-
-        assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(
-            syncLockFileToProjectDirectoryTask,
-            "${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME} should be registered"
-        )
-
-        syncLockFileToProjectDirectoryTask.assertDependsOn(
-            fetchTask
-        )
     }
 
     @Test

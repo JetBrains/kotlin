@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
 import java.util.concurrent.CountDownLatch
 
@@ -262,8 +263,6 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     }
 
     companion object {
-        private const val SERVICE_NAME = "SwiftImportFingerprintedCoordinationService"
-
         /**
          * Registers the shared service once per build.
          */
@@ -273,9 +272,8 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
             checkoutDir: Provider<Directory>,
             generatePackageDir: Provider<Directory>,
         ): Provider<SwiftImportFingerprintedCoordinationService> =
-            project.gradle.sharedServices.registerIfAbsent(
-                SERVICE_NAME,
-                SwiftImportFingerprintedCoordinationService::class.java
+            project.gradle.registerClassLoaderScopedBuildService(
+                SwiftImportFingerprintedCoordinationService::class
             ) { buildServiceSpec ->
                 buildServiceSpec.parameters.sharedXcodeDumpRoot.set(
                     xcodeDumpsDir
