@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
 import org.jetbrains.kotlin.backend.konan.lower.CachesAbiSupport
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
  * so a lowering that needs nothing beyond [CommonBackendContext] plus the Native-specific members
  * declared here should take this type instead of either concrete class.
  */
-internal interface NativeLoweringContext : CommonBackendContext, ConfigChecks {
+internal interface NativeLoweringContext : CommonBackendContext, NativeBackendPhaseContext {
     override val symbols: BackendNativeSymbols
 
     val symbolTable: ReferenceSymbolTable
