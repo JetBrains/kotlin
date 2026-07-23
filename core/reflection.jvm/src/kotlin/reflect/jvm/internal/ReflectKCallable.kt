@@ -87,6 +87,7 @@ internal val ReflectKCallable<*>.boundReceiver: Any?
     get() = rawBoundReceiver.coerceToExpectedReceiverType(this)
 
 private fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>): Any? {
+    if (this === CallableReference.NO_RECEIVER) return this
     if (callable is ReflectKProperty<*> && callable.isUnderlyingPropertyOfValueClass()) return this
 
     val expectedReceiverType = callable.allParameters.singleOrNull { it.kind != KParameter.Kind.VALUE }?.type

@@ -35,7 +35,7 @@ internal sealed class InternalUnderlyingValOfInlineClass(
     class Bound(
         unboxMethod: ReflectMethod,
         private val boundReceiver: Any?
-    ) : InternalUnderlyingValOfInlineClass(unboxMethod, emptyList()), BoundCaller {
+    ) : InternalUnderlyingValOfInlineClass(unboxMethod, emptyList()) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(boundReceiver, args)

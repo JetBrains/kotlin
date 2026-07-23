@@ -120,13 +120,10 @@ internal class JavaKNamedFunction(
     }
 
     private fun createInstanceMethodCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver)
-        else CallerImpl.Method.Instance(member)
+        CallerImpl.Method.Instance(member, boundReceiver)
 
     private fun createStaticMethodCaller(member: Method): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(member, isCallByToValueClassMangledMethod = false, boundReceiver)
-        else CallerImpl.Method.Static(member)
+        CallerImpl.Method.Static(member, isCallByToValueClassMangledMethod = false, boundReceiver)
 
     override val callerWithDefaults: Caller<*>? get() = null
 

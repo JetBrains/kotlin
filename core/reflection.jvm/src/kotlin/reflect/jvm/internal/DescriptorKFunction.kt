@@ -186,17 +186,17 @@ internal class DescriptorKFunction private constructor(
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(
-                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
-            )
-        else CallerImpl.Method.Static(member)
+        CallerImpl.Method.Static(
+            member, isCallByToValueClassMangledMethod,
+            // Check `isBound` first so that `useBoxedBoundReceiver` is only invoked for actually bound references.
+            boundReceiver = if (isBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+        )
 
     private fun createJvmStaticInObjectCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
+        CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
 
     private fun createInstanceMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
+        CallerImpl.Method.Instance(member, boundReceiver)
 
     private fun createConstructorCaller(
         member: Constructor<*>, descriptor: FunctionDescriptor, isDefault: Boolean

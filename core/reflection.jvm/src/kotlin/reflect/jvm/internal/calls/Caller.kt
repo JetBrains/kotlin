@@ -28,7 +28,7 @@ internal interface Caller<out M : Member?> {
     fun call(args: Array<*>): Any?
 
     /**
-     * @see [CallerImpl.Method.BoundStatic.isCallByToValueClassMangledMethod]
+     * @see [CallerImpl.Method.Static.isCallByToValueClassMangledMethod]
      */
     val isBoundInstanceCallWithValueClasses: Boolean
         get() = false
@@ -36,8 +36,3 @@ internal interface Caller<out M : Member?> {
 
 internal val Caller<*>.arity: Int
     get() = parameterTypes.size
-
-/**
- * A marker interface that signifies that this caller has a "bound receiver" object which should be used as the dispatch receiver instance.
- */
-interface BoundCaller

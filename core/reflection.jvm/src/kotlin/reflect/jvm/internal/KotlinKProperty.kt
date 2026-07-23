@@ -258,14 +258,11 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
             }
         }
         !Modifier.isStatic(accessor.modifiers) ->
-            if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
-            else CallerImpl.Method.Instance(accessor)
+            CallerImpl.Method.Instance(accessor, boundReceiver)
         isJvmStaticProperty() ->
-            if (isBound) CallerImpl.Method.BoundJvmStaticInObject(accessor)
-            else CallerImpl.Method.JvmStaticInObject(accessor)
+            CallerImpl.Method.JvmStaticInObject(accessor, boundReceiver)
         else ->
-            if (isBound) CallerImpl.Method.BoundStatic(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
-            else CallerImpl.Method.Static(accessor)
+            CallerImpl.Method.Static(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
     }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }
 

@@ -36,8 +36,8 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val parameterTypes: List<Type>
         get() = caller.parameterTypes
 
-    override val isBoundInstanceCallWithValueClasses: Boolean
-        get() = caller is CallerImpl.Method.BoundInstance
+    override val isBoundInstanceCallWithValueClasses: Boolean =
+        caller is CallerImpl.Method.Instance && callable.isBound
 
     private class BoxUnboxData(
         val argumentRange: IntRange,
@@ -63,14 +63,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val shift = when {
-            caller is CallerImpl.Method.BoundStatic && !caller.isCallByToValueClassMangledMethod -> {
+            caller is CallerImpl.Method.Static && caller.isBound && !caller.isCallByToValueClassMangledMethod -> {
                 // Bound reference to a static method is only possible for a top level extension function/property,
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
 
             callable.isConstructor ->
-                if (caller is BoundCaller) -1 else 0
+                if (callable.isBound) -1 else 0
 
             callable.parameters.any { it.kind == KParameter.Kind.INSTANCE } -> {
                 // If we have an unbound reference to the value class member,
