@@ -526,6 +526,7 @@ enum class LanguageFeature(
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_5, "KTLC-287"),
     AllowAnnotationsOnArgumentsOfAnnotations(KOTLIN_2_5, "KT-87016"),
+    ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions(KOTLIN_2_5, "KT-29890"),
     ReportDeprecatedCompanionInDelegation(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-408"),
     ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
