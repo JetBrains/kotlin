@@ -1377,41 +1377,42 @@ abstract class AbstractComposeLowering(
     private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal.EnumLite")
 
     private fun IrExpression.ordinalIfEnum(): IrExpression {
-        val cls = type.classOrNull?.owner
-        return when (cls?.kind) {
-            ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY -> {
-                val function = if (cls.isSubclassOf(protobufEnumClassId)) {
-                    // For protobuf enums, we need to use the `getNumber` method instead of `ordinal`
-                    cls.functions
-                        .single {
-                            it.name.asString() == "getNumber" &&
-                                    it.parameters.size == 1 &&
-                                    it.parameters[0].kind == IrParameterKind.DispatchReceiver
-                        }
-                } else {
-                    irEnumOrdinal
+        val cls = type.classOrNull?.owner ?: return this
+        val isEnum = cls.kind == ClassKind.ENUM_CLASS || cls.kind == ClassKind.ENUM_ENTRY
+        val isProtobufEnum = (isEnum || cls.kind == ClassKind.CLASS) && cls.isSubclassOf(protobufEnumClassId)
+
+        if (!isEnum && !isProtobufEnum) {
+            return this
+        }
+
+        val function = if (isProtobufEnum) {
+            // For protobuf enums, we need to use the `getNumber` method instead of `ordinal`
+            cls.functions
+                .single {
+                    it.name.asString() == "getNumber" &&
+                            it.parameters.size == 1 &&
+                            it.parameters[0].kind == IrParameterKind.DispatchReceiver
                 }
-                if (type.isNullable()) {
-                    val enumValue = irTemporary(this, "tmpEnum")
-                    irBlock(
-                        context.irBuiltIns.intType,
-                        statements = listOf(
-                            enumValue,
-                            irIfThenElse(
-                                type = context.irBuiltIns.intType,
-                                condition = irEqual(irGet(enumValue), irNull()),
-                                thenPart = irConst(-1),
-                                elsePart = irCall(function.symbol, dispatchReceiver = irGet(enumValue))
-                            )
-                        )
+        } else {
+            irEnumOrdinal
+        }
+
+        return if (type.isNullable()) {
+            val enumValue = irTemporary(this, "tmpEnum")
+            irBlock(
+                context.irBuiltIns.intType,
+                statements = listOf(
+                    enumValue,
+                    irIfThenElse(
+                        type = context.irBuiltIns.intType,
+                        condition = irEqual(irGet(enumValue), irNull()),
+                        thenPart = irConst(-1),
+                        elsePart = irCall(function.symbol, dispatchReceiver = irGet(enumValue))
                     )
-                } else {
-                    irCall(function.symbol, dispatchReceiver = this)
-                }
-            }
-            else -> {
-                this
-            }
+                )
+            )
+        } else {
+            irCall(function.symbol, dispatchReceiver = this)
         }
     }
 
