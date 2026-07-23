@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.light.classes.symbol.source
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByFqNameTest
 import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJsTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJvmTestConfigurator
+import org.jetbrains.kotlin.testFederation.SmokeTest
 
+@SmokeTest
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
     configurator = SymbolLightClassSourceJvmTestConfigurator,
     isTestAgainstCompiledCode = false,
