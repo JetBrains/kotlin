@@ -925,7 +925,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         createCallable: (name: Name) -> K
     ) {
         if (name !in existingNames) {
-            getOrPut(name) { createCallable(name) }
+            val _ = getOrPut(name) { createCallable(name) }
         }
     }
 

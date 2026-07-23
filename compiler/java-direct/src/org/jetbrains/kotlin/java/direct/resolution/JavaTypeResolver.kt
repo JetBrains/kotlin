@@ -173,8 +173,10 @@ private fun resolveFromSameFile(
     simpleName: String,
     fullResolution: Boolean,
 ): ClassId? {
-    c.scopeContext.sameFileTopLevelClassProvider(Name.identifier(simpleName)) ?: return null
-    val classId = ClassId(c.packageFqName, Name.identifier(simpleName))
+    val simpleNameIdentifier = Name.identifier(simpleName)
+    if (c.scopeContext.sameFileTopLevelClassProvider(simpleNameIdentifier) == null) return null
+
+    val classId = ClassId(c.packageFqName, simpleNameIdentifier)
     return if (classExists(classId, fullResolution)) classId else null
 }
 
