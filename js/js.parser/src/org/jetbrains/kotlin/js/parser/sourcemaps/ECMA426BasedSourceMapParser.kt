@@ -352,9 +352,10 @@ object ECMA426BasedSourceMapParser {
         // 14. Let ranges be DecodeGeneratedRanges(rangesField, sources, namesField).
         val ranges = decodeGeneratedRanges(rangesField, sources, namesField).ifFailure { return it }
         // 15. Let mappings be DecodeMappings(mappingsField, namesField, sources).
-        val mappings = decodeMappings(mappingsField, namesField, sources).ifFailure { return it }
         // 16. Sort mappings in ascending order, with a Decoded Mapping Record a being less than a Decoded Mapping Record b if ComparePositions(a.[[GeneratedPosition]], b.[[GeneratedPosition]]) is lesser.
-        mappings.sortedWith { record1, record2 -> comparePositions(record1.generatedPosition, record2.generatedPosition).value }
+        val mappings = decodeMappings(mappingsField, namesField, sources)
+            .ifFailure { return it }
+            .sortedWith { record1, record2 -> comparePositions(record1.generatedPosition, record2.generatedPosition).value }
         // 17. Return the Decoded Source Map Record { [[File]]: fileField, [[Sources]]: sources, [[Mappings]]: mappings, [[Ranges]]: ranges }.
         return Success(DecodedSourceMapRecord(fileField, sources, mappings, ranges))
     }
