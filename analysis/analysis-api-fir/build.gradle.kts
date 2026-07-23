@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
@@ -76,8 +74,7 @@ projectTests {
     ) {
         useJUnitPlatform()
 
-        @OptIn(TemporaryTestFederationApi::class)
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 3)
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
