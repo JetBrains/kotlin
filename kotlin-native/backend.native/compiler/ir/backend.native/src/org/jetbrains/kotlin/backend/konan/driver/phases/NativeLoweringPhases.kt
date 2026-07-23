@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKlibSecondStagePhase
 import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
@@ -42,8 +41,14 @@ internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, Ir
 
 internal fun PhaseEngine<NativeGenerationState>.runLowerings(
         lowerings: LoweringList,
+        module: IrModuleFragment,
+        performanceManager: PerformanceManager? = context.performanceManager,
+) = runLowerings(lowerings, listOf(module), performanceManager)
+
+internal fun PhaseEngine<NativeGenerationState>.runLowerings(
+        lowerings: LoweringList,
         modules: List<IrModuleFragment>,
-        performanceManager: PerformanceManager?,
+        performanceManager: PerformanceManager? = context.performanceManager,
 ) {
     for (module in modules) {
         for (file in module.files) {
@@ -136,32 +141,7 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = ::NativeAllFunctionInlining,
 )
 
-internal val CoroutinesVarSpillingPhase = createFileLoweringPhase(
-        name = "CoroutinesVarSpilling",
-        lowering = ::CoroutinesVarSpillingLowering,
-)
-
-internal val InlineClassPropertyAccessorsPhase = createFileLoweringPhase(
-        name = "InlineClassPropertyAccessorsLowering",
-        lowering = ::InlineClassPropertyAccessorsLowering,
-)
-
-internal val RedundantCoercionsCleaningPhase = createFileLoweringPhase(
-        name = "RedundantCoercionsCleaning",
-        lowering = ::RedundantCoercionsCleaner,
-)
-
-internal val PropertyAccessorInlinePhase = createFileLoweringPhase(
-        name = "PropertyAccessorInline",
-        lowering = ::PropertyAccessorInlineLowering,
-)
-
-internal val UnboxInlinePhase = createFileLoweringPhase(
-        name = "UnboxInline",
-        lowering = ::UnboxInlineLowering,
-)
-
-internal fun createNativePhases(vararg phases: ((NativeGenerationState) -> FileLoweringPass)?) =
+internal fun <Context : NativeLoweringContext> createNativePhases(vararg phases: ((Context) -> FileLoweringPass)?) =
         createFilePhases(*phases, actions = getDefaultIrActions())
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors() = createNativePhases(
