@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class InvokeLoopFromInlineFunKt {
+    // source: 'InvokeLoopFromInlineFun.kt'
+    private final static field _v1: int
+    private final static field _v2: int
+    private final static field _v3: int
+    private final static field _v4: int
+    private final static field a1: int
+    private final static field a2: int
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicIntegerArray
+    private static field delta: int
+    private final static field i1: int
+    private final static field i2: int
+    private synthetic final static field i: java.util.concurrent.atomic.AtomicInteger
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getAndUpdate$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final static method getAndUpdate$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): int
+    private synthetic final static method getI(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method loop$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final static method loop$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): void
+    public final static method topLevel(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+    private synthetic final static method update$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final static method update$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): void
+    private synthetic final static method updateAndGet$atomicfu$ATOMIC_ARRAY$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final static method updateAndGet$atomicfu$BOXED_ATOMIC$Int(p0: java.util.concurrent.atomic.AtomicInteger, p1: kotlin.jvm.functions.Function1): int
+}
