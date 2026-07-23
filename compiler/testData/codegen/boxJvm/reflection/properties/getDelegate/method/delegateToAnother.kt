@@ -19,6 +19,13 @@ var x = 1
 var y by ::x
 var z by C(1)::x
 
+val anyC: Any = C(1)
+var castY by (anyC as C)::x
+
+class E {
+    var y by (anyC as C)::x
+}
+
 var _x = -99
 var Int.x
     get() = this + _x
@@ -45,12 +52,24 @@ fun <T> KMutableProperty1<T, Int>.test(receiver: T, receiver2: T) =
 fun <R1, R2> KMutableProperty2<R1, R2, Int>.test(receiver1: R1, receiver2: R2) =
     test({ getDelegate(receiver1, receiver2) as KMutableProperty1<R2, Int> }, { get(receiver2) }, { set(receiver2, it) })
 
+fun testSmartCast(a: Any) {
+    require(a is C) { "$a is not C" }
+    class Local {
+        var y by a::x
+    }
+    Local()::y.test()
+}
+
 fun box(): String {
     C::y.test(C(100), C(1))
     C::z.test(C(1))
     D::y.test(D(C(1)))
     ::y.test()
     ::z.test()
+    ::castY.test()
+    E()::y.test()
+    E::y.test(E())
+    testSmartCast(C(1))
     Int::y.test({ getExtensionDelegate() as KMutableProperty1<Int, Int> }, { get(100) }, { set(100, it) })
 
     val w = D::class.members.single { it.name == "w" } as KMutableProperty2<D, C, Int>
