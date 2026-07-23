@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiDiagnosticsTes
 import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiEvaluationTest
 import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsCodegenTest
 import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsDiagnosticsTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirLightTreeCustomScriptCodegenTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirPsiCustomScriptCodegenTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -35,6 +39,24 @@ fun main(args: Array<String>) {
 
             testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
                 model("testData/codegen/scriptsWithCustomDefinitions", extension = "kts")
+            }
+
+            testClass<AbstractFirPsiBlackBoxCodegenTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.FirScriptingPsiBlackBoxCodegenTestGenerated"
+            ) {
+                model("testData/codegen/regularBox")
+            }
+
+            testClass<AbstractFirScriptCodegenTest> {
+                model("testData/codegen/scripting", pattern = "^(.*)\\.kts?$", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirPsiCustomScriptCodegenTest> {
+                model("testData/codegen/customScript", pattern = "^(.*)$")
+            }
+
+            testClass<AbstractFirLightTreeCustomScriptCodegenTest> {
+                model("testData/codegen/customScript", pattern = "^(.*)$")
             }
 
             testClass<AbstractReplWithTestExtensionsDiagnosticsTest> {

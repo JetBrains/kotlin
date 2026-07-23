@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_R
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptAndReplCodegenTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.computeTestRuntimeClasspath
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptAndReplCodegenTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator

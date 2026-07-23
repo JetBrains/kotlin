@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.test.definitions
 
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestBase
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptCodegenTest
 
 open class AbstractScriptWithCustomDefDiagnosticsTestBase : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {

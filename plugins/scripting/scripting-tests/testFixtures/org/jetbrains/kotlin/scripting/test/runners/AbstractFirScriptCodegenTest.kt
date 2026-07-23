@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners.codegen
+package org.jetbrains.kotlin.scripting.test.runners
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -208,6 +209,8 @@ class ScriptingPluginEnvironmentConfigurator(testServices: TestServices) : Envir
         val pluginClassLoader = URLClassLoader(pluginClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
 
         val pluginK2RegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_K2_REGISTRAR_NAME)
+
+        @OptIn(ExperimentalCompilerApi::class)
         (pluginK2RegistrarClass.getDeclaredConstructor().newInstance() as? CompilerPluginRegistrar)?.also {
             configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, it)
         }

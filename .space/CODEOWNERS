@@ -190,13 +190,11 @@
 /compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Frontend"
 /compiler/testData/codegen/composeLike/ "Kotlin JVM"
 /compiler/testData/codegen/composeLikeBytecodeText/ "Kotlin JVM"
-/compiler/testData/codegen/customScript/ "Kotlin Frontend"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
 /compiler/testData/codegen/reflection/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
-/compiler/testData/codegen/script/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/codegen/sourceInfo/
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"

@@ -109,6 +109,20 @@ fun main(args: Array<String>) {
                     scriptCustomDefBackBoxInit()
                 }
             }
+
+            this.run {
+                fun TestGroup.TestClass.scriptBlackBoxInit() {
+                    model("codegen/scripting", pattern = TestGeneratorUtil.KTS)
+                }
+
+                testClass<AbstractLLScriptBlackBoxTest> {
+                    scriptBlackBoxInit()
+                }
+
+                testClass<AbstractLLReversedScriptBlackBoxTest> {
+                    scriptBlackBoxInit()
+                }
+            }
         }
 
         testGroup(generatedTestRoot, "compiler/testData/diagnostics") {
@@ -209,20 +223,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLLReversedBlackBoxTest>(suiteTestClassName = "LLReversedBlackBoxModernJdkTestGenerated") {
                 model("codegen/boxModernJdk")
-            }
-
-            this.run {
-                fun TestGroup.TestClass.scriptBlackBoxInit() {
-                    model("codegen/script", pattern = TestGeneratorUtil.KTS)
-                }
-
-                testClass<AbstractLLScriptBlackBoxTest> {
-                    scriptBlackBoxInit()
-                }
-
-                testClass<AbstractLLReversedScriptBlackBoxTest> {
-                    scriptBlackBoxInit()
-                }
             }
 
             testClass<AbstractLLMetadataDiagnosticsTest> {

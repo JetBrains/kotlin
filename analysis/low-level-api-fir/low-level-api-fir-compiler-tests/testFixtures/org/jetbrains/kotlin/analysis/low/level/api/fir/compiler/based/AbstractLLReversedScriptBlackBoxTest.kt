@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.runners.codegen.ScriptingPluginEnvironmentConfigurator
+import org.jetbrains.kotlin.scripting.test.runners.ScriptingPluginEnvironmentConfigurator
 
 abstract class AbstractLLReversedScriptBlackBoxTest : AbstractLLReversedBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
