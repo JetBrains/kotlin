@@ -28,4 +28,5 @@ object NativeRuntimeConstants {
     const val GC_MARK_SINGLE_THREADED: String = "Kotlin_gcMarkSingleThreaded"
     const val FIXED_BLOCK_PAGE_SIZE: String = "Kotlin_fixedBlockPageSize"
     const val PAGED_ALLOCATOR: String = "Kotlin_pagedAllocator"
+    const val HOT_RELOAD: String = "Kotlin_hotReload"
 }
