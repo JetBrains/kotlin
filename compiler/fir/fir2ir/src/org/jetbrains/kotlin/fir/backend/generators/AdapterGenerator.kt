@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -265,12 +266,12 @@ class AdapterGenerator(
         val irAdapterFunction = createAdapterFunctionForCallableReference(isSetter)
 
         if (!isForDelegate) {
-            irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
+            irAdapterFunction.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val irCall = createCall(irAdapterFunction)
                 if (isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
                     statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
                 } else {
-                    statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
+                    statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, builtins.nothingType, irAdapterFunction.symbol, irCall))
                 }
             }
         }
