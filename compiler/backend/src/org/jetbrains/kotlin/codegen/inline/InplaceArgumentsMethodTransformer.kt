@@ -121,7 +121,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                     val next = insn.next
                     return when {
                         next is VarInsnNode && next.opcode in Opcodes.ISTORE..Opcodes.ASTORE -> {
-                            iter.next()
+                            val _ = iter.next()
                             ArgContext(start, insn, calls, next)
                         }
                         insn.previous.isInplaceArgumentStartMarker() -> {

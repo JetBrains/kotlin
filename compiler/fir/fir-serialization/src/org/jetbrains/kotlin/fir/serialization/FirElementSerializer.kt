@@ -1519,7 +1519,7 @@ class FirElementSerializer private constructor(
 
     private inline fun <M : GeneratedMessageLite.ExtendableMessage<M>, B : GeneratedMessageLite.Builder<M, B>> B.serializeCompilerPluginMetadata(
         declaration: FirDeclaration,
-        addCompilerPluginData: B.(ProtoBuf.CompilerPluginData.Builder) -> B
+        addCompilerPluginData: B.(ProtoBuf.CompilerPluginData.Builder) -> Unit
     ) {
         extension.additionalMetadataProvider?.findMetadataExtensionsFor(declaration)?.forEach { [pluginId, data] ->
             val pluginData = ProtoBuf.CompilerPluginData.newBuilder().apply {

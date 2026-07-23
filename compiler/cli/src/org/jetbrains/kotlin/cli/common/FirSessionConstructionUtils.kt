@@ -287,7 +287,7 @@ object SessionConstructionUtils {
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
         additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplierForHmpp? = null,
         createSharedLibrarySession: () -> FirSession,
-        createLibrarySession: (sharedLibrarySession: FirSession) -> FirSession,
+        createLibrarySession: (sharedLibrarySession: FirSession) -> Unit,
         createSourceSession: FirSessionProducer,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings

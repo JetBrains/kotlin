@@ -712,9 +712,10 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         trace: BindingTrace,
         position: QualifierPosition
     ) {
-        path.foldRight(packageView) { qualifierPart, currentView ->
+        var currentView = packageView
+        for (qualifierPart in path.asReversed()) {
             storeResult(trace, qualifierPart.expression, currentView, shouldBeVisibleFrom = null, position = position)
-            currentView.containingDeclaration
+            currentView = currentView.containingDeclaration
                 ?: error(
                     "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
                             "path: ${path.joinToString()}, packageView fqName: ${packageView.fqName}"

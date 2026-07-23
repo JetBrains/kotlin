@@ -27,7 +27,7 @@ fun MethodBridge.valueParametersAssociated(
          * Skip logic is bound to [this.valueParameters] array construction
          * at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.bridgeMethodImpl]
          */
-        kotlinParameters.next()
+        val _ = kotlinParameters.next()
     }
 
     return this.valueParameters.map {

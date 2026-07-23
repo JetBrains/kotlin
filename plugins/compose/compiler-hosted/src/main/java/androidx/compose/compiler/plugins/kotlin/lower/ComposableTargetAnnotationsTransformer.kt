@@ -663,7 +663,7 @@ class InferenceFunctionDeclaration(
             transformer.addAnnotationToDeclaration(function, scheme)
         } else {
             transformer.addAnnotationToDeclaration(function, scheme.target)
-            parameters().zip(scheme.parameters) { parameter, parameterScheme ->
+            parameters().zip(scheme.parameters).forEach { [parameter, parameterScheme] ->
                 parameter.updateScheme(parameterScheme)
             }
         }

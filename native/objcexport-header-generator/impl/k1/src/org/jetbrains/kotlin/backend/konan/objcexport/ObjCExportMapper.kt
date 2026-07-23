@@ -435,12 +435,12 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
     val isTopLevel = isTopLevel(descriptor)
 
     val receiver = if (descriptor is ConstructorDescriptor && descriptor.constructedClass.isArray) {
-        kotlinParameters.next()
+        val _ = kotlinParameters.next()
         MethodBridgeReceiver.Factory
     } else if (isTopLevel) {
         MethodBridgeReceiver.Static
     } else {
-        kotlinParameters.next()
+        val _ = kotlinParameters.next()
         MethodBridgeReceiver.Instance
     }
 

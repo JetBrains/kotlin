@@ -338,7 +338,7 @@ class FirTypeIntersectionScopeContext(
             return
         }
 
-        scope.processDirectOverridden(symbol) { overridden, baseScope ->
+        val _ = scope.processDirectOverridden(symbol) { overridden, baseScope ->
             collectRealOverridden(overridden, baseScope, result, visited, processDirectOverridden)
             ProcessorAction.NEXT
         }

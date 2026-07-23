@@ -25,7 +25,9 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->
             ErrorResistanceServiceRegistrar.handleInterruption {
-                mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                // we should get diagnostics before we resolve the whole file by ktFile.getOrBuildFir
+                val _ = mainFile
+                    .diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
                     .count()
             }
 

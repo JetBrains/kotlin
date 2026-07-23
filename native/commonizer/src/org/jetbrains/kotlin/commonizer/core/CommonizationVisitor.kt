@@ -20,7 +20,7 @@ internal class CommonizationVisitor(
     }
 
     override fun visitModuleNode(node: CirModuleNode, data: Unit) {
-        node.commonDeclaration() // commonize module
+        val _ = node.commonDeclaration() // commonize module
 
         node.packages.values.forEach { pkg ->
             pkg.accept(this, Unit)
@@ -29,7 +29,7 @@ internal class CommonizationVisitor(
 
     @Suppress("DuplicatedCode")
     override fun visitPackageNode(node: CirPackageNode, data: Unit) {
-        node.commonDeclaration() // commonize package
+        val _ = node.commonDeclaration() // commonize package
 
         node.properties.values.forEach { property ->
             property.accept(this, Unit)
@@ -49,11 +49,11 @@ internal class CommonizationVisitor(
     }
 
     override fun visitPropertyNode(node: CirPropertyNode, data: Unit) {
-        node.commonDeclaration() // commonize property
+        val _ = node.commonDeclaration() // commonize property
     }
 
     override fun visitFunctionNode(node: CirFunctionNode, data: Unit) {
-        node.commonDeclaration() // commonize function
+        val _ = node.commonDeclaration() // commonize function
     }
 
     @Suppress("DuplicatedCode")
@@ -91,10 +91,10 @@ internal class CommonizationVisitor(
     }
 
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: Unit) {
-        node.commonDeclaration() // commonize constructor
+        val _ = node.commonDeclaration() // commonize constructor
     }
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: Unit) {
-        node.commonDeclaration() // commonize type alias
+        val _ = node.commonDeclaration() // commonize type alias
     }
 }

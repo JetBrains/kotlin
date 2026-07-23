@@ -1114,7 +1114,7 @@ class AllCandidatesCollector(
 
         // To preserve the behavior of a HashSet which keeps the first added item, we use getOrPut instead of put.
         // Changing this behavior breaks testData/components/callResolver/resolveCandidates/singleCandidate/functionTypeVariableCall_extensionReceiver.kt
-        allCandidatesMap.getOrPut(key) { candidate }
+        val _ = allCandidatesMap.getOrPut(key) { candidate }
         return super.consumeCandidate(group, candidate, context)
     }
 

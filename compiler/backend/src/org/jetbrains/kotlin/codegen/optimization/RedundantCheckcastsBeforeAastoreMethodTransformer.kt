@@ -19,8 +19,8 @@ object RedundantCheckcastsBeforeAastoreMethodTransformer : MethodTransformer() {
                 val isReified = isOperationReifiedMarker(insn.previous)
                 iter.remove()
                 if (isReified) {
-                    for (i in 1..3) {
-                        iter.previous()
+                    repeat(3) {
+                        val _ = iter.previous()
                         iter.remove()
                     }
                 }

@@ -117,7 +117,7 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
     private fun IrClass.findOrCreate(
         indirectSubclass: Boolean,
         matcher: (IrSimpleFunction) -> Boolean,
-        fallback: (ToArrayBridge?) -> IrSimpleFunction
+        fallback: (ToArrayBridge?) -> Unit
     ) {
         val existing = functions.find(matcher)
         if (existing != null) {

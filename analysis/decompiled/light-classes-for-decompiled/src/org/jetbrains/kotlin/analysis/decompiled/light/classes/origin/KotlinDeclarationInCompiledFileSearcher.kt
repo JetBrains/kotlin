@@ -338,7 +338,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
     private fun doTypeParametersMatchByName(member: PsiMethod, callableDeclaration: KtCallableDeclaration): Boolean {
         if (member.typeParameters.size != callableDeclaration.typeParameters.size) return false
-        member.typeParameters.zip(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.zip(callableDeclaration.typeParameters).forEach { [psiTypeParam, ktTypeParameter] ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) {
                 return false
             }
@@ -417,7 +417,7 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doTypeParameters(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
         if (member.typeParameters.size != ktNamedFunction.typeParameters.size) return false
         val boundsByName = ktNamedFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
-        member.typeParameters.zip(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.zip(ktNamedFunction.typeParameters).forEach { [psiTypeParam, ktTypeParameter] ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) return false
             val psiBounds = mutableListOf<KtTypeReference>()
             psiBounds.addIfNotNull(ktTypeParameter.extendsBound)
@@ -426,7 +426,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             }
             val expectedBounds = psiTypeParam.extendsListTypes
             if (psiBounds.size != expectedBounds.size) return false
-            expectedBounds.zip(psiBounds) { expectedBound, candidateBound ->
+            expectedBounds.zip(psiBounds).forEach { [expectedBound, candidateBound] ->
                 if (!areTypesTheSame(candidateBound, expectedBound, false)) {
                     return false
                 }
