@@ -1,0 +1,57 @@
+{
+  "name": "main-java-production",
+  "timeStampMs": $UINT$,
+  "platform": "JVM",
+  "compilerType": "K2",
+  "hasErrors": false,
+  "filesCount": 1,
+  "linesCount": 3,
+  "measuredCpuAndUserTime": true,
+  "initStats": {
+    "nanos": $UINT$
+  },
+  "analysisStats": {
+    "nanos": $UINT$
+  },
+  "translationToIrStats": {
+    "nanos": $UINT$
+  },
+  "klibWritingStats": {
+    "nanos": $UINT$
+  },
+  "irLoweringStats": {
+    "nanos": $UINT$
+  },
+  "backendStats": {
+    "nanos": $UINT$
+  },
+  "dynamicStats": [
+  ],
+  "klibElementStats": [
+  ],
+  "findJavaClassStats": {
+    "count": 1,
+    "time": {
+      "nanos": $UINT$
+    }
+  },
+  "findKotlinClassStats": {
+    "count": $UINT$,
+    "time": {
+      "nanos": $UINT$
+    }
+  },
+  "gcStats": [
+    {
+      "kind": $QUOTEDSTRING$,
+      "count": $UINT$,
+      "millis": $UINT$
+    },
+    {
+      "kind": $QUOTEDSTRING$,
+      "count": $UINT$,
+      "millis": $UINT$
+    }
+  ],
+  "jitTimeMillis": $UINT$
+}
