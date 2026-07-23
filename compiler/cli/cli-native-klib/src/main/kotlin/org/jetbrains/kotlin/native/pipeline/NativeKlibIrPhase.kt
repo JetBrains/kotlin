@@ -70,8 +70,8 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
 
 object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
     name = "NativeKlibWritingPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.KlibIrWritingStarted),
+    postActions = setOf(PerformanceNotifications.KlibIrWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeSerializationArtifact): NativeKlibSerializedArtifact {
         val (serializerOutput, configuration, phaseContext) = input

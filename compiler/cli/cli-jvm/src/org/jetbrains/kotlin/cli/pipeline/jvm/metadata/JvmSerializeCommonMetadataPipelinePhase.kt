@@ -27,8 +27,8 @@ import kotlin.io.path.readBytes
 
 internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmSerializeCommonMetadataPipelinePhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = setOf(PerformanceNotifications.KlibMetadataWritingStarted),
+    postActions = setOf(PerformanceNotifications.KlibMetadataWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFrontendPipelineArtifact {
         serializeFragmentsIfNeeded(input)

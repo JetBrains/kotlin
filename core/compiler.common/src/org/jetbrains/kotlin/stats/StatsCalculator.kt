@@ -100,7 +100,8 @@ class StatsCalculator(val reportsData: ReportsData) {
         var translationToIrStats: Time = Time.ZERO
         var irPreLoweringStats: Time = Time.ZERO
         var irSerializationStats: Time = Time.ZERO
-        var klibWritingStats: Time = Time.ZERO
+        var klibIrWritingStats: Time = Time.ZERO
+        var klibMetadataWritingStats: Time = Time.ZERO
         var irLinkingStats: Time = Time.ZERO
         var irLoweringStats: Time = Time.ZERO
         var backendStats: Time = Time.ZERO
@@ -138,7 +139,8 @@ class StatsCalculator(val reportsData: ReportsData) {
             translationToIrStats += moduleStats.translationToIrStats
             irPreLoweringStats += moduleStats.irPreLoweringStats
             irSerializationStats += moduleStats.irSerializationStats
-            klibWritingStats += moduleStats.klibWritingStats
+            klibIrWritingStats += moduleStats.klibIrWritingStats
+            klibMetadataWritingStats += moduleStats.klibMetadataWritingStats
             irLinkingStats += moduleStats.irLinkingStats
             irLoweringStats += moduleStats.irLoweringStats
             backendStats += moduleStats.backendStats
@@ -175,7 +177,8 @@ class StatsCalculator(val reportsData: ReportsData) {
                 translationToIrStats = translationToIrStats.let { if (total) it else it / size },
                 irPreLoweringStats = irPreLoweringStats.let { if (total) it else it / size },
                 irSerializationStats = irSerializationStats.let { if (total) it else it / size },
-                klibWritingStats = klibWritingStats.let { if (total) it else it / size },
+                klibIrWritingStats = klibIrWritingStats.let { if (total) it else it / size },
+                klibMetadataWritingStats = klibMetadataWritingStats.let { if (total) it else it / size },
                 irLinkingStats = irLinkingStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
