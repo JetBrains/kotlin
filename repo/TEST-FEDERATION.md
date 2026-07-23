@@ -61,7 +61,7 @@ a change isolated within the 'Native' domain will not affect the 'Compiler' doma
 Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. 
 This allows for some modules acting as 'API' boundaries.
 
-### Verifying the declaration: [domain.dump.txt](./domain.dump.txt)
+### Verifying the declaration: [domains.dump.txt](./domains.dump.txt)
 
 The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file will be verified on CI.
 
