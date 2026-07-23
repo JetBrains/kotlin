@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -292,7 +294,7 @@ open class FirDeclarationsResolveTransformer(
             if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
                 !property.isConst &&
                 property.returnTypeRef !is FirImplicitTypeRef &&
-                property.initializer !is FirAnonymousObjectExpression
+                !property.hasAnonymousReturnType(session)
             ) {
                 property.replaceInitializer(null)
             }
@@ -1690,4 +1692,10 @@ open class FirDeclarationsResolveTransformer(
 
     private val FirFunction.bodyResolved: Boolean
         get() = body?.hasResolvedType == true
+
+    private fun FirProperty.hasAnonymousReturnType(session: FirSession): Boolean {
+        return returnTypeRef.coneTypeOrNull?.contains { coneType ->
+            coneType.toSymbol(session)?.fir is FirAnonymousObject
+        } == true
+    }
 }
