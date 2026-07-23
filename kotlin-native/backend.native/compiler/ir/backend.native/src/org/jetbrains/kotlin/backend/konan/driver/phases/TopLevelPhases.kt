@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.SpecialObjCValidationLowering
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -537,12 +538,15 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
     val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && runGlobalOptimizations
-    module.files.forEach {
-        // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
-        // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
-        runAndMeasurePhase(PropertyAccessorInlinePhase, it, disable = !optimize)
-        runAndMeasurePhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
-    }
+    runLowerings(
+            // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
+            // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
+            createNativePhases(
+                    ::PropertyAccessorInlineLowering.takeIf { optimize },
+                    ::InlineClassPropertyAccessorsLowering.takeIf { optimize },
+            ),
+            module,
+    )
     val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !runGlobalOptimizations)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
@@ -550,16 +554,21 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     // KT-72336: This is more optimal but contradicts with the pre-codegen inliner.
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !runGlobalOptimizations)
     runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !runGlobalOptimizations)
-    module.files.forEach {
-        runAndMeasurePhase(RedundantCoercionsCleaningPhase, it)
-        // depends on redundantCoercionsCleaningPhase
-        runAndMeasurePhase(UnboxInlinePhase, it, disable = !optimize)
-    }
+    runLowerings(
+            createNativePhases(
+                    ::RedundantCoercionsCleaner,
+                    ::UnboxInlineLowering.takeIf { optimize },
+            ),
+            module,
+    )
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
     val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !runGlobalOptimizations)
-    module.files.forEach {
-        runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
-    }
+    runLowerings(
+            createNativePhases(
+                    ::CoroutinesVarSpillingLowering,
+            ),
+            module,
+    )
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
