@@ -332,9 +332,17 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
 
     compilerArgument {
         name = "Xdetailed-perf"
-        description = ("Enable more detailed performance statistics (Experimental).\n" +
-                "For Native, the performance report includes execution time and lines processed per second for every individual lowering.\n" +
-                "For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.").asReleaseDependent()
+        val commonDescriptionPart = """
+            |Enable more detailed performance statistics (Experimental).
+            |For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+            |For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+        """.trimMargin()
+        description = ReleaseDependent(commonDescriptionPart + '\n' + """
+            |Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+            |  machines, so use this mode with caution.
+        """.trimMargin(),
+            KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_4_20 to commonDescriptionPart
+        )
         valueType = BooleanType.defaultFalse
         affectsCompilationOutcome = false
 

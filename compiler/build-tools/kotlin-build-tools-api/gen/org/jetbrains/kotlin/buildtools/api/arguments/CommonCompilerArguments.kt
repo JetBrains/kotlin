@@ -290,6 +290,8 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable more detailed performance statistics (Experimental).
      * For Native, the performance report includes execution time and lines processed per second for every individual lowering.
      * For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+     * Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+     *   machines, so use this mode with caution.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

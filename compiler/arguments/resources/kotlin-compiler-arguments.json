@@ -3355,8 +3355,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Enable more detailed performance statistics (Experimental).\nFor Native, the performance report includes execution time and lines processed per second for every individual lowering.\nFor WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.",
-                            "valueInVersions": []
+                            "current": "Enable more detailed performance statistics (Experimental).\nFor Native, the performance report includes execution time and lines processed per second for every individual lowering.\nFor WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.\nAdditionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux\n  machines, so use this mode with caution.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.3.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Enable more detailed performance statistics (Experimental).\nFor Native, the performance report includes execution time and lines processed per second for every individual lowering.\nFor WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,

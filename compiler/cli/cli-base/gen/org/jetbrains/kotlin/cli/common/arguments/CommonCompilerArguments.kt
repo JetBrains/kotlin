@@ -345,7 +345,9 @@ Multiple constraints can be specified by repeating this option. Cycles in constr
         value = "-Xdetailed-perf",
         description = """Enable more detailed performance statistics (Experimental).
 For Native, the performance report includes execution time and lines processed per second for every individual lowering.
-For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.""",
+For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+  machines, so use this mode with caution.""",
     )
     var detailedPerf: Boolean = false
         set(value) {
