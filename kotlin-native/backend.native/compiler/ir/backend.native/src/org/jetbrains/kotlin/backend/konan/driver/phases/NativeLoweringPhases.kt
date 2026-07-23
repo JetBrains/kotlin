@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -279,7 +278,7 @@ private fun createFileLoweringPhase(
 }
 
 private fun createFileLoweringPhase(
-        lowering: (NativeBackendContext) -> FileLoweringPass,
+        lowering: (NativeLoweringContext) -> FileLoweringPass,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
 ) = createFileLoweringPhaseImpl(

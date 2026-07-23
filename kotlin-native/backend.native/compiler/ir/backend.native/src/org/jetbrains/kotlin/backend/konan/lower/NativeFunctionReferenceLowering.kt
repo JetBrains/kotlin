@@ -148,7 +148,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
 
     private fun IrBuilderWithScope.irKFunctionDescription(functionReference: IrRichFunctionReference, description: KFunctionDescription, reflectionTargetLinkageError: PartialLinkageCase?): IrConstantValue {
         if (reflectionTargetLinkageError != null) {
-            val errorMessage = generationState.context.partialLinkageSupport.renderAndLogLinkageError(
+            val errorMessage = generationState.partialLinkageSupport.renderAndLogLinkageError(
                     reflectionTargetLinkageError,
                     functionReference,
                     PLFile.determineFileFor(functionReference.invokeFunction),

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AbstractAddContinuationToFunctionCallsLowering
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.overrides
 
 internal class NativeAddContinuationToFunctionCallsLowering(
-        override val context: NativeGenerationState
+        override val context: NativeLoweringContext
 ) : AbstractAddContinuationToFunctionCallsLowering() {
     /*
      * In complex cases suspend functions are converted to state-machine class with invokeSuspend method.

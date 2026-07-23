@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -101,7 +101,8 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNa
         }
     }
 }
-internal class WorkersBridgesBuilding(val context: NativeGenerationState) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
+
+internal class WorkersBridgesBuilding(val context: NativeLoweringContext) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
     private val bridgesPolicy = context.config.bridgesPolicy
     val symbols = context.symbols
     lateinit var runtimeJobFunction: IrSimpleFunction
@@ -193,7 +194,7 @@ internal class WorkersBridgesBuilding(val context: NativeGenerationState) : Decl
     }
 }
 
-internal class BridgesBuilding(val context: NativeGenerationState) : ClassLoweringPass {
+internal class BridgesBuilding(val context: NativeLoweringContext) : ClassLoweringPass {
     private val bridgesPolicy = context.config.bridgesPolicy
 
     override fun lower(irClass: IrClass) {
@@ -297,11 +298,11 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
     }
 }
 
-private fun NativeGenerationState.buildBridge(startOffset: Int, endOffset: Int,
+private fun NativeLoweringContext.buildBridge(startOffset: Int, endOffset: Int,
                                              overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
                                              superQualifierSymbol: IrClassSymbol? = null): IrFunction {
     val target = targetSymbol.owner.target
-    val bridge = context.bridgesSupport.getBridge(overriddenFunction)
+    val bridge = bridgesSupport.getBridge(overriddenFunction)
 
     if (bridge.modality == Modality.ABSTRACT) {
         return bridge

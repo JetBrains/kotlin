@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.lower.KlibAssertionRemoverLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 @PhasePrerequisites(NativeAssertionWrapperLowering::class)
-internal class NativeAssertionRemoverLowering(context: NativeGenerationState) : KlibAssertionRemoverLowering(
+internal class NativeAssertionRemoverLowering(context: NativeLoweringContext) : KlibAssertionRemoverLowering(
         context, context.config.assertsEnabled, context.config.assertsEnabled
 ) {
     override val isAssertionThrowingErrorEnabled: IrSimpleFunctionSymbol = context.symbols.isAssertionThrowingErrorEnabled

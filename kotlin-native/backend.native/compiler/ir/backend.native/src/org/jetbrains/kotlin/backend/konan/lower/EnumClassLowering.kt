@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -95,14 +95,14 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
-        val enumEntriesMap = (context as NativeBackendContext).enumsSupport.enumEntriesMap(entry.parentAsClass)
+        val enumEntriesMap = generationState.enumsSupport.enumEntriesMap(entry.parentAsClass)
         return enumEntriesMap[entry.name]!!.ordinal
     }
 }
 
 @PhasePrerequisites(EnumClassLowering::class)
-internal class EnumUsageLowering(val context: NativeGenerationState) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
-    private val enumsSupport = context.context.enumsSupport
+internal class EnumUsageLowering(val context: NativeLoweringContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+    private val enumsSupport = context.enumsSupport
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile, data = null)
@@ -178,8 +178,8 @@ internal class EnumUsageLowering(val context: NativeGenerationState) : IrTransfo
 }
 
 @PhasePrerequisites(EnumWhenLowering::class)
-internal class EnumClassLowering(val context: NativeGenerationState) : FileLoweringPass {
-    private val enumsSupport = context.context.enumsSupport
+internal class EnumClassLowering(val context: NativeLoweringContext) : FileLoweringPass {
+    private val enumsSupport = context.enumsSupport
     private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries

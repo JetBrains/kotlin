@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-internal class EnumConstructorsLowering(val context: NativeGenerationState) : ClassLoweringPass {
+internal class EnumConstructorsLowering(val context: NativeLoweringContext) : ClassLoweringPass {
 
     fun run(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -221,7 +221,7 @@ internal class EnumConstructorsLowering(val context: NativeGenerationState) : Cl
 
             override fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression {
                 val name = enumEntry.name.asString()
-                val ordinal = context.context.enumsSupport.enumEntriesMap(enumEntry.parentAsClass)[enumEntry.name]!!.ordinal
+                val ordinal = context.enumsSupport.enumEntriesMap(enumEntry.parentAsClass)[enumEntry.name]!!.ordinal
 
                 val startOffset = enumConstructorCall.startOffset
                 val endOffset = enumConstructorCall.endOffset

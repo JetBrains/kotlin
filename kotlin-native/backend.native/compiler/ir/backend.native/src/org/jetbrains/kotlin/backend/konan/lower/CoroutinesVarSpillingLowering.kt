@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -34,8 +34,7 @@ internal val DECLARATION_ORIGIN_COROUTINE_VAR_SPILLING = IrDeclarationOriginImpl
  * Saves/restores coroutines variables before/after suspension.
  */
 @PhasePrerequisites(NativeSuspendFunctionsLowering::class)
-internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerationState) : BodyLoweringPass {
-    private val context = generationState.context
+internal class CoroutinesVarSpillingLowering(val context: NativeLoweringContext) : BodyLoweringPass {
     private val irFactory = context.irFactory
     private val symbols = context.symbols
     private val invokeSuspendFunction = symbols.invokeSuspendFunction

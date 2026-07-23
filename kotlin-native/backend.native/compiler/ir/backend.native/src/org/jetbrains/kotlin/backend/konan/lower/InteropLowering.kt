@@ -47,13 +47,13 @@ import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         // TODO: merge these lowerings.
-        InteropLoweringPart1(generationState.context, generationState.fileLowerState).lower(irFile)
-        InteropLoweringPart2(generationState.context, generationState.fileLowerState).lower(irFile)
+        InteropLoweringPart1(generationState, generationState.fileLowerState).lower(irFile)
+        InteropLoweringPart2(generationState, generationState.fileLowerState).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        InteropLoweringPart1(generationState.context, generationState.fileLowerState).lower(irBody, container)
-        InteropLoweringPart2(generationState.context, generationState.fileLowerState).lower(irBody, container)
+        InteropLoweringPart1(generationState, generationState.fileLowerState).lower(irBody, container)
+        InteropLoweringPart2(generationState, generationState.fileLowerState).lower(irBody, container)
     }
 
     companion object {
@@ -79,7 +79,7 @@ private class NameCounter {
 }
 
 private abstract class BaseInteropIrTransformer(
-        protected val context: NativeBackendContext,
+        protected val context: NativeLoweringContext,
         protected val fileLowerState: FileLowerState,
         protected val irFile: IrFile?,
 ) : IrBuildingTransformer(context) {
@@ -169,7 +169,7 @@ private abstract class BaseInteropIrTransformer(
             renderCompilerError(irFile, element, message)
 }
 
-private class InteropLoweringPart1(val context: NativeBackendContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+private class InteropLoweringPart1(val context: NativeLoweringContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     private var topLevelInitializersCounter = 0
 
     override fun lower(irFile: IrFile) {
@@ -213,7 +213,7 @@ private class InteropLoweringPart1(val context: NativeBackendContext, val fileLo
 }
 
 private class InteropTransformerPart1(
-        context: NativeBackendContext,
+        context: NativeLoweringContext,
         fileLowerState: FileLowerState,
         irFile: IrFile?,
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
@@ -726,7 +726,7 @@ private class InteropTransformerPart1(
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val context: NativeBackendContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
+private class InteropLoweringPart2(val context: NativeLoweringContext, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformerPart2(context, fileLowerState, irFile)
         irFile.transformChildrenVoid(transformer)
@@ -739,7 +739,7 @@ private class InteropLoweringPart2(val context: NativeBackendContext, val fileLo
 }
 
 private class InteropTransformerPart2(
-        context: NativeBackendContext,
+        context: NativeLoweringContext,
         fileLowerState: FileLowerState,
         irFile: IrFile?,
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {

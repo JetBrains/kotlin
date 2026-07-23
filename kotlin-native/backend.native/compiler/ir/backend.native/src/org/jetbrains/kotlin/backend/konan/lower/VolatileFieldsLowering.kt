@@ -38,7 +38,7 @@ enum class AtomicFunctionType {
 private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 internal var IrSimpleFunction.volatileField: IrField? by irAttribute(copyByDefault = false)
 
-internal class VolatileFieldsLowering(val context: NativeGenerationState) : FileLoweringPass {
+internal class VolatileFieldsLowering(val context: NativeLoweringContext) : FileLoweringPass {
     private val symbols = context.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
