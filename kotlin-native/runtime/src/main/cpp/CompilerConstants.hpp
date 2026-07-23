@@ -85,7 +85,7 @@ ALWAYS_INLINE inline bool pagedAllocator() noexcept {
     return Kotlin_pagedAllocator != 0;
 }
 
-ALWAYS_INLINE intline bool hotReloadEnabled() noexcept {
+ALWAYS_INLINE inline bool hotReloadEnabled() noexcept {
     return Kotlin_hotReload != 0;
 }
 
