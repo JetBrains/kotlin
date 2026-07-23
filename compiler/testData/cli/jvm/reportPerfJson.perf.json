@@ -6,35 +6,24 @@
   "hasErrors": false,
   "filesCount": 1,
   "linesCount": 3,
+  "measuredCpuAndUserTime": false,
   "initStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "analysisStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "translationToIrStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "klibWritingStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "irLoweringStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "backendStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "dynamicStats": [
   ],
@@ -43,17 +32,13 @@
   "findJavaClassStats": {
     "count": 1,
     "time": {
-      "nanos": $UINT$,
-      "userNanos": $UINT$,
-      "cpuNanos": $UINT$
+      "nanos": $UINT$
     }
   },
   "findKotlinClassStats": {
     "count": $UINT$,
     "time": {
-      "nanos": $UINT$,
-      "userNanos": $UINT$,
-      "cpuNanos": $UINT$
+      "nanos": $UINT$
     }
   },
   "gcStats": [

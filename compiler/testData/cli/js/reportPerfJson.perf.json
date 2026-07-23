@@ -6,197 +6,150 @@
   "hasErrors": true,
   "filesCount": 1,
   "linesCount": 1,
+  "measuredCpuAndUserTime": false,
   "initStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "analysisStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "translationToIrStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "irPreLoweringStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "irSerializationStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "klibWritingStats": {
-    "nanos": $UINT$,
-    "userNanos": $UINT$,
-    "cpuNanos": $UINT$
+    "nanos": $UINT$
   },
   "dynamicStats": [
     {
       "parentPhaseType": IrPreLowering,
       "name": "UpgradeCallableReferences",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "JsCodeOutliningLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "AvoidLocalFOsInInlineFunctionsLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "VersionOverloadsLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "InlineCallCycleCheckerLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "LateinitLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "SharedVariablesLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "LocalClassesInInlineLambdasLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "ArrayConstructorLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "PreSerializationPrivateFunctionInlining",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "InlineDeclarationCheckerLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "OuterThisInInlineFunctionsSpecialAccessorLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "SyntheticAccessorLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "FunctionInlining",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "InlineFunctionSerializationPreProcessing",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "RedundantCastsRemoverLowering",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     },
     {
       "parentPhaseType": IrPreLowering,
       "name": "IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase",
       "time": {
-        "nanos": $UINT$,
-        "userNanos": $UINT$,
-        "cpuNanos": $UINT$
+        "nanos": $UINT$
       }
     }
   ],

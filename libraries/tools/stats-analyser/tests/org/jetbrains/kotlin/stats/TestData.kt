@@ -48,6 +48,7 @@ object TestData {
             hasErrors = hasErrors,
             filesCount = increment,
             linesCount = increment * 64 + 128,
+            measuredCpuAndUserTime = true,
             initStats = totalTime * 0.1,
             analysisStats = totalTime * 0.4,
             translationToIrStats = totalTime * 0.2,

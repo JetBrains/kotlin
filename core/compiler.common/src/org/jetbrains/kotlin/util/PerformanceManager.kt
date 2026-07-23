@@ -37,7 +37,13 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         initializeCurrentThread()
     }
 
-    private fun currentTime(): Time = Time(System.nanoTime(), threadMXBean.currentThreadUserTime, threadMXBean.currentThreadCpuTime)
+    private fun currentTime(): Time {
+        val nanos = System.nanoTime()
+        return when {
+            detailedPerf -> Time(nanos, threadMXBean.currentThreadUserTime, threadMXBean.currentThreadCpuTime)
+            else -> Time(nanos, userNanos = 0, cpuNanos = 0)
+        }
+    }
 
     private var currentPhaseType: PhaseType = PhaseType.Initialization
     private var phaseStartTime: Time? = currentTime()
@@ -131,6 +137,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             hasErrors,
             files,
             lines,
+            measuredCpuAndUserTime = detailedPerf,
             initTime,
             analysisTime,
             translationToIrTime,

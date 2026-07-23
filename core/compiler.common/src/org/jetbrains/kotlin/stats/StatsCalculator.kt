@@ -109,6 +109,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         var findKotlinClassStats: SideStats = SideStats.EMPTY
         val gcStats = mutableMapOf<String, Pair<GarbageCollectionStats, Long>>()
         var jitTimeMillis: Long = 0
+        var measuredCpuAndUserTime = true
 
         for (moduleStats in this) {
             if (name == null) {
@@ -158,6 +159,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                     ) to count + 1
             }
             jitTimeMillis += moduleStats.jitTimeMillis ?: 0
+            measuredCpuAndUserTime = measuredCpuAndUserTime && moduleStats.measuredCpuAndUserTime
         }
 
         fun getStats(total: Boolean): UnitStats {
@@ -170,6 +172,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 hasErrors = hasErrors,
                 filesCount = filesCount.let { if (total) it else it / size }.toInt(),
                 linesCount = linesCount.let { if (total) it else it / size }.toInt(),
+                measuredCpuAndUserTime = measuredCpuAndUserTime,
                 initStats = initStats.let { if (total) it else it / size },
                 analysisStats = analysisStats.let { if (total) it else it / size },
                 translationToIrStats = translationToIrStats.let { if (total) it else it / size },
