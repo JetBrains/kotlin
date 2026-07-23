@@ -726,6 +726,6 @@ private val GradleProject.darwinBuildProductsDir: Path
 
 private fun GradleProject.iosBuildProductsDir(writeProtected: Boolean = false): Path = darwinBuildProductsDir.apply {
     if (writeProtected) {
-        setPosixFilePermissions(setOf(PosixFilePermission.OWNER_READ))
+        val _ = setPosixFilePermissions(setOf(PosixFilePermission.OWNER_READ))
     }
 }

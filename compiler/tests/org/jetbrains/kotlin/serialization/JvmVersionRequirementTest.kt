@@ -47,14 +47,15 @@ class JvmVersionRequirementTest : TestCaseWithTmpdir() {
             val requirements = extractRequirement(descriptor)
             if (requirements.isEmpty()) throw AssertionError("No VersionRequirement for $descriptor")
 
-            requirements.firstOrNull {
+            val requiredVersion = requirements.firstOrNull {
                 expectedVersionRequirement == it.version &&
                         expectedLevel == it.level &&
                         expectedMessage == it.message &&
                         expectedVersionKind == it.kind &&
                         expectedErrorCode == it.errorCode
             }
-                ?: throw AssertionError(
+            if (requiredVersion == null)
+                throw AssertionError(
                     "Version requirement not found, expected:\n" +
                             "versionRequirement=" + expectedVersionRequirement +
                             "; level=" + expectedLevel +

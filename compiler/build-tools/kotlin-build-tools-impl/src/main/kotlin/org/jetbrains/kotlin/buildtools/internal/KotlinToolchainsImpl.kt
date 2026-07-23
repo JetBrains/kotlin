@@ -94,7 +94,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                 // For an operation that uses the shared application environment, pin it just before, so that it is kept
                 // alive for reuse by subsequent operations and only disposed when the session ends.
                 if (operation.usesApplicationEnvironment) {
-                    applicationEnvironmentPin.value
+                    val _ = applicationEnvironmentPin.value
                 }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {

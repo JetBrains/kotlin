@@ -261,7 +261,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     private companion object {
         val JAVA_APPLICABILITY_TYPES = mutableMapOf<String, AnnotationQualifierApplicabilityType>().apply {
             for (type in AnnotationQualifierApplicabilityType.values()) {
-                getOrPut(type.javaTarget) { type }
+                val _ = getOrPut(type.javaTarget) { type }
             }
         }
     }
