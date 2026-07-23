@@ -132,13 +132,13 @@ internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<NativeB
  * The second phase of inlining (inline all functions).
  */
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
-        lowering = ::NativeAllFunctionInlining,
         name = "InlineAllFunctions",
+        lowering = ::NativeAllFunctionInlining,
 )
 
 internal val CoroutinesVarSpillingPhase = createFileLoweringPhase(
-        lowering = ::CoroutinesVarSpillingLowering,
         name = "CoroutinesVarSpilling",
+        lowering = ::CoroutinesVarSpillingLowering,
 )
 
 internal val InlineClassPropertyAccessorsPhase = createFileLoweringPhase(
@@ -153,12 +153,12 @@ internal val RedundantCoercionsCleaningPhase = createFileLoweringPhase(
 
 internal val PropertyAccessorInlinePhase = createFileLoweringPhase(
         name = "PropertyAccessorInline",
-        lowering = { context: NativeGenerationState -> PropertyAccessorInlineLowering(context) },
+        lowering = ::PropertyAccessorInlineLowering,
 )
 
 internal val UnboxInlinePhase = createFileLoweringPhase(
         name = "UnboxInline",
-        lowering = { context: NativeGenerationState -> UnboxInlineLowering(context) },
+        lowering = ::UnboxInlineLowering,
 )
 
 internal fun createNativePhases(vararg phases: ((NativeGenerationState) -> FileLoweringPass)?) =
@@ -301,34 +301,16 @@ internal fun getNativeLoweringPhaseListsForTests(
 private fun createFileLoweringPhase(
         name: String,
         lowering: (NativeGenerationState) -> FileLoweringPass,
-        prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-) = createFileLoweringPhaseImpl(
-        name,
-        prerequisite
-) { context, irFile ->
-    lowering(context).lower(irFile)
-}
-
-private fun createFileLoweringPhase(
-        lowering: (NativeLoweringContext) -> FileLoweringPass,
-        name: String,
-        prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-) = createFileLoweringPhaseImpl(
-        name,
-        prerequisite
-) { context, irFile ->
-    lowering(context.context).lower(irFile)
-}
+) = createFileLoweringPhaseImpl(name) { context, irFile -> lowering(context).lower(irFile) }
 
 private fun createFileLoweringPhaseImpl(
         name: String,
-        prerequisite: Set<NamedCompilerPhase<*, *, *>>,
         op: (NativeGenerationState, IrFile) -> Unit
 ): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-        prerequisite = prerequisite,
+        prerequisite = emptySet(),
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
             try {
