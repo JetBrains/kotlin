@@ -48,8 +48,8 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            export(dependencies.project(":subproject"))
-                            export(dependencies.project(":not-good-looking-project-name"))
+                            export(dependencies.project(mapOf("path" to ":subproject")))
+                            export(dependencies.project(mapOf("path" to ":not-good-looking-project-name")))
                         }
 
                         sourceSets.commonMain {
@@ -140,7 +140,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         iosArm64()
                         with(swiftExport) {
                             moduleName.set("CustomShared")
-                            export(dependencies.project(":subproject")) {
+                            export(dependencies.project(mapOf("path" to ":subproject"))) {
                                 moduleName.set("CustomSubproject")
                             }
                         }
@@ -218,7 +218,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         iosArm64()
                         with(swiftExport) {
                             flattenPackage.set("com.github.jetbrains.swiftexport")
-                            export(dependencies.project(":subproject")) {
+                            export(dependencies.project(mapOf("path" to ":subproject"))) {
                                 flattenPackage.set("com.subproject.library")
                             }
                         }
@@ -336,8 +336,8 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            export(dependencies.project(":subproject"))
-                            export(dependencies.project(":not-good-looking-project-name"))
+                            export(dependencies.project(mapOf("path" to ":subproject")))
+                            export(dependencies.project(mapOf("path" to ":not-good-looking-project-name")))
                         }
                     }
                 }
