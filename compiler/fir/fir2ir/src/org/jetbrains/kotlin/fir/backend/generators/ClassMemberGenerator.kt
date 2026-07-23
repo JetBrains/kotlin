@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.utils.unwrapCallRepresentative
@@ -304,32 +305,61 @@ internal class ClassMemberGenerator(
                     val fieldSymbol = backingField?.symbol
                     val declaration = this
                     if (fieldSymbol != null && !configuration.skipBodies) {
-                        body = factory.createBlockBody(
-                            startOffset, endOffset,
-                            listOf(
-                                if (isSetter) {
-                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
-                                        setReceiver(declaration)
-                                        value = IrGetValueImpl(
-                                            startOffset,
-                                            endOffset,
-                                            fieldType,
-                                            parameters.first { it.kind == IrParameterKind.Regular }.symbol
+                        val headerMode = configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+                        body = if (!headerMode || isEnclosingScopeInline(propertyAccessor, correspondingProperty)) {
+                            factory.createBlockBody(
+                                startOffset, endOffset,
+                                listOf(
+                                    if (isSetter) {
+                                        IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
+                                            setReceiver(declaration)
+                                            value = IrGetValueImpl(
+                                                startOffset,
+                                                endOffset,
+                                                fieldType,
+                                                parameters.first { it.kind == IrParameterKind.Regular }.symbol
+                                            )
+                                        }
+                                    } else {
+                                        IrReturnImpl(
+                                            startOffset, endOffset, builtins.nothingType, symbol,
+                                            IrGetFieldImpl(startOffset, endOffset, fieldSymbol, fieldType).setReceiver(declaration)
                                         )
                                     }
-                                } else {
-                                    IrReturnImpl(
-                                        startOffset, endOffset, builtins.nothingType, symbol,
-                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, fieldType).setReceiver(declaration)
-                                    )
-                                }
+                                )
                             )
-                        )
+                        } else {
+                            factory.createBlockBody(startOffset, endOffset)
+                        }
                     }
                     declarationStorage.leaveScope(this.symbol)
                 }
             }
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun IrSimpleFunction.isEnclosingScopeInline(
+        propertyAccessor: FirPropertyAccessor?,
+        correspondingProperty: IrProperty,
+    ): Boolean {
+        if (this.isInline) return true
+        if (propertyAccessor?.isInline == true) return true
+        if (correspondingProperty.getter?.isInline == true || correspondingProperty.setter?.isInline == true) return true
+
+        if (conversionScope.functionStack.any { it.isInline }) return true
+        if (conversionScope.propertyStack.any { pair ->
+                val irProp = pair.first
+                val firProp = pair.second
+                firProp?.isInline == true || irProp.getter?.isInline == true || irProp.setter?.isInline == true
+            }) return true
+
+        for (parent in conversionScope.parentStack) {
+            if (parent is IrFunction && parent.isInline) return true
+            if (parent is IrProperty && (parent.getter?.isInline == true || parent.setter?.isInline == true)) return true
+        }
+
+        return false
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)

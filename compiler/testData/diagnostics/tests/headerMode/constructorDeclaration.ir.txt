@@ -7,18 +7,12 @@ FILE fqName:<root> fileName:/constructorDeclaration.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
         correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Int declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
     CONSTRUCTOR visibility:public returnType:<root>.A
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.String
@@ -46,18 +40,12 @@ FILE fqName:<root> fileName:/constructorDeclaration.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
         correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in <root>.B'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-a>' type=<root>.B origin=null
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Int declared in <root>.B'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-b>' type=<root>.B origin=null
     CONSTRUCTOR visibility:private returnType:<root>.B [primary]
       VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.String
       VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.Int

@@ -7,18 +7,17 @@ FILE fqName:<root> fileName:/dataClassDeclaration.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
         correspondingProperty: PROPERTY name:name visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-name> (): kotlin.String declared in <root>.User'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.User declared in <root>.User.<get-name>' type=<root>.User origin=null
-    PROPERTY name:age visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private [final]
+    PROPERTY name:age visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
-        correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-age> (): kotlin.Int declared in <root>.User'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.User declared in <root>.User.<get-age>' type=<root>.User origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-age> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [var]
+        BLOCK_BODY
     CONSTRUCTOR visibility:public returnType:<root>.User [primary]
       VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
       VALUE_PARAMETER kind:Regular name:age index:1 type:kotlin.Int

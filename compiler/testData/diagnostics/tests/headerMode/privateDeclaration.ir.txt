@@ -7,61 +7,40 @@ FILE fqName:<root> fileName:/privateDeclaration.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         correspondingProperty: PROPERTY name:publicProperty visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-publicProperty> (): kotlin.String declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicProperty type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-publicProperty>' type=<root>.TestClass origin=null
     PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-publicBackingField> visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         correspondingProperty: PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-publicBackingField> (): kotlin.String declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-publicBackingField>' type=<root>.TestClass origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-publicBackingField> visibility:public modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
         correspondingProperty: PROPERTY name:publicBackingField visibility:public modality:FINAL [var]
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicBackingField type:kotlin.String visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<set-publicBackingField>' type=<root>.TestClass origin=null
-            value: GET_VAR '<set-?>: kotlin.String declared in <root>.TestClass.<set-publicBackingField>' type=kotlin.String origin=null
     PROPERTY name:usedPropertyByInline visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:usedPropertyByInline type:kotlin.String visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-usedPropertyByInline> visibility:private modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         correspondingProperty: PROPERTY name:usedPropertyByInline visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-usedPropertyByInline> (): kotlin.String declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedPropertyByInline type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-usedPropertyByInline>' type=<root>.TestClass origin=null
     PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-usedBackingFieldByInline> visibility:private modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         correspondingProperty: PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-usedBackingFieldByInline> (): kotlin.Int declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-usedBackingFieldByInline>' type=<root>.TestClass origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-usedBackingFieldByInline> visibility:private modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
         correspondingProperty: PROPERTY name:usedBackingFieldByInline visibility:private modality:FINAL [var]
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:usedBackingFieldByInline type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<set-usedBackingFieldByInline>' type=<root>.TestClass origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestClass.<set-usedBackingFieldByInline>' type=kotlin.Int origin=null
     PROPERTY name:aliasUser visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:aliasUser type:kotlin.String visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aliasUser> visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestClass
         correspondingProperty: PROPERTY name:aliasUser visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-aliasUser> (): kotlin.String declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aliasUser type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-aliasUser>' type=<root>.TestClass origin=null
     CLASS CLASS name:InlineChain modality:FINAL visibility:private superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestClass.InlineChain
       CONSTRUCTOR visibility:public returnType:<root>.TestClass.InlineChain [primary]
