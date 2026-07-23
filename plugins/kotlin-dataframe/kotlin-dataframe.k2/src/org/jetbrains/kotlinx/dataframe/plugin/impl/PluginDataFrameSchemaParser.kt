@@ -92,7 +92,7 @@ class PluginDataFrameSchemaParser {
             }
 
             parseColumn(name, value).fold(
-                onSuccess = { columns.add(it) },
+                onSuccess = { val _ = columns.add(it) },
                 onFailure = { return Result.failure(it) }
             )
         }
@@ -148,7 +148,7 @@ class PluginDataFrameSchemaParser {
             }
 
             parseColumn(key, value).fold(
-                onSuccess = { columns.add(it) },
+                onSuccess = { val _ = columns.add(it) },
                 onFailure = { return Result.failure(it) }
             )
         }
