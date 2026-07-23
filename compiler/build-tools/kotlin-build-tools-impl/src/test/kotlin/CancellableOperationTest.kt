@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.progress.CompilationCanceledException
+import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -24,6 +25,7 @@ private class ExampleCancellableOperation(override val options: Options = Option
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>,
     ) {
         repeat(10) {
             Thread.sleep(100)
@@ -49,7 +51,7 @@ class CancellableOperationTest {
                         operation.execute(
                             ProjectId.RandomProjectUUID(),
                             KotlinToolchainsImpl().createInProcessExecutionPolicy(),
-                            null
+                            sessionIsAliveFlagFile = lazy { File.createTempFile("session", "alive").apply { deleteOnExit() } }
                         )
                     )
                 } catch (_: CompilationCanceledException) {

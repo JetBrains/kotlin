@@ -5,24 +5,21 @@
 
 package org.jetbrains.kotlin.buildtools.internal.wasm
 
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.wasm.operations.WasmKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.operations.WasmLinkingOperationImpl
-import java.io.File
 import java.nio.file.Path
 
-internal class WasmPlatformToolchainImpl(private val compilerVersion: String, private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : WasmPlatformToolchain {
+internal class WasmPlatformToolchainImpl(private val compilerVersion: String) : WasmPlatformToolchain {
     override fun wasmLinkingOperationBuilder(klib: Path, destination: Path): WasmLinkingOperation.Builder =
-        WasmLinkingOperationImpl(klib, destination, buildIdToSessionFlagFile = buildIdToSessionFlagFile)
+        WasmLinkingOperationImpl(klib, destination)
 
     override fun wasmKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): WasmKlibCompilationOperation.Builder =
         WasmKlibCompilationOperationImpl(
             sources,
             destination,
-            buildIdToSessionFlagFile = buildIdToSessionFlagFile,
             compilerVersion = compilerVersion
         )
 }

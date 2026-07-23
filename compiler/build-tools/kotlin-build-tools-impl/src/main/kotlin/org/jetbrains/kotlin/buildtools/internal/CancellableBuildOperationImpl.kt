@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.AtomicReference
@@ -52,10 +53,16 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>,
     ): R
 
-    final override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): R {
-        val returnValue = executeCancellableImpl(projectId, executionPolicy, logger)
+    final override fun executeImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>,
+    ): R {
+        val returnValue = executeCancellableImpl(projectId, executionPolicy, logger, sessionIsAliveFlagFile)
         return if (isCancelled.load()) {
             throw OperationCancelledException()
         } else {

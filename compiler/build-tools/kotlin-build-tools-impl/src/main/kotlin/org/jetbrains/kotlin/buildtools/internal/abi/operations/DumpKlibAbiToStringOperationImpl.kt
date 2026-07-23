@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationUtils
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import java.io.File
 import java.nio.file.Path
 
 internal class DumpKlibAbiToStringOperationImpl private constructor(
@@ -39,7 +40,12 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
-    override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?) {
+    override fun executeImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>
+    ) {
         val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
 
         val mergedDump = abiTools.createKlibDump()

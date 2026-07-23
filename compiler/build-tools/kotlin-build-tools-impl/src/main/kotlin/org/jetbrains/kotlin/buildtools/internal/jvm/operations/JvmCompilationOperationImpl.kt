@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
-import java.io.File
 import java.nio.file.Path
 
 internal class JvmCompilationOperationImpl private constructor(
@@ -57,9 +55,8 @@ internal class JvmCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destinationDirectory: Path,
     compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
@@ -68,14 +65,12 @@ internal class JvmCompilationOperationImpl private constructor(
         sources: List<Path>,
         destinationDirectory: Path,
         compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
         options = Options(JvmCompilationOperation::class),
         sources = sources,
         destinationDirectory = destinationDirectory,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -91,7 +86,6 @@ internal class JvmCompilationOperationImpl private constructor(
             sources,
             destinationDirectory,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion,
         )
     }

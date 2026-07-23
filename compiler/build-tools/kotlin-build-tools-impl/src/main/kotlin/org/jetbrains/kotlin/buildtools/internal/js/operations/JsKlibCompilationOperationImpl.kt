@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
-import java.io.File
 import java.nio.file.Path
 
 internal class JsKlibCompilationOperationImpl private constructor(
@@ -52,23 +50,20 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
         options = Options(JsKlibCompilationOperation::class),
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile,
         compilerVersion = compilerVersion,
     ) {
         initializeOptions(this::class, options)
@@ -91,7 +86,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
             compilerVersion
         )
     }

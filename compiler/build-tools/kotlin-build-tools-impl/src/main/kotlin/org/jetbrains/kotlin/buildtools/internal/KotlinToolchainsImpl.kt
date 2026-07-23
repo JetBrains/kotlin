@@ -22,24 +22,19 @@ import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.incremental.clearJarCaches
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import java.io.File
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
-                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(
-                    getCompilerVersion(),
-                    buildIdToSessionFlagFile
-                )
+                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion())
+                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion())
+                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion())
+                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(getCompilerVersion())
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type.")
@@ -61,14 +56,14 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
     override fun createBuildSession(): KotlinToolchains.BuildSession {
-        return BuildSessionImpl(this, RandomProjectUUID(), buildIdToSessionFlagFile)
+        return BuildSessionImpl(this, RandomProjectUUID())
     }
 
     private class BuildSessionImpl(
         override val kotlinToolchains: KotlinToolchains,
         override val projectId: ProjectId,
-        private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     ) : KotlinToolchains.BuildSession {
+        private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
         }
@@ -84,7 +79,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             logger: KotlinLogger?,
         ): R {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-            val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger) }
+            val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger, sessionIsAliveFlagFile) }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
@@ -109,8 +104,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             if (executorDelegate.isInitialized()) {
                 executor.shutdown()
             }
-            val file = buildIdToSessionFlagFile.remove(projectId) ?: return
-            file.delete()
+            if (sessionIsAliveFlagFile.isInitialized()) {
+                sessionIsAliveFlagFile.value.delete()
+            }
         }
     }
 

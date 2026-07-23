@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRendererWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocation
+import org.jetbrains.kotlin.buildtools.api.KotlinCompilationProcessFailedException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -27,7 +28,7 @@ class KotlinLoggerMessageCollectorAdapterTest {
         val call = logger.calls.single()
         assertEquals(LogMethod.ERROR_WITH_THROWABLE, call.method)
         assertEquals("crash", call.message)
-        assertIs<RuntimeException>(call.throwable)
+        assertIs<KotlinCompilationProcessFailedException>(call.throwable)
     }
 
     @Test
