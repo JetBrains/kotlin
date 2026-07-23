@@ -1,6 +1,6 @@
 // TARGET_BACKEND: WASM
 
-@file:OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmJsInterop::class)
+@file:OptIn(ExperimentalWasmJsInterop::class)
 
 import kotlin.wasm.unsafe.*
 
@@ -40,7 +40,7 @@ fun box(): String {
     val stdlibMemory = wasmMemory;
     if (getConsoleError() != "") return "FAIL6"
 
-    val stdlibBuffer = getBuffer(memory);
+    val stdlibBuffer = getBuffer(stdlibMemory);
     if (getConsoleError() != "") return "FAIL7"
 
     if (buffer !== stdlibBuffer) return "FAIL8"
@@ -53,4 +53,3 @@ fun box(): String {
 
     return "FAIL9"
 }
-
