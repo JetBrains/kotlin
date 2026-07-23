@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
@@ -171,14 +172,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
 
     private fun propertyReferenceClassFor(expression: IrRichPropertyReference): IrClassSymbol {
-        val boundReceivers = expression.boundValues
-        val getterFunction = expression.getterFunction
-        val needReceiversCount = getterFunction.parameters.size
-        check(boundReceivers.size < 2 && boundReceivers.size <= needReceiversCount) {
-            "Property reference with two and more receivers is not supported: ${expression.dump()}"
-        }
         val mutable = expression.setterFunction != null
-        val unboundParameterCount = needReceiversCount - boundReceivers.size
+        val unboundParameterCount = expression.getterFunction.parameters.size - expression.boundValues.size
         check(unboundParameterCount in 0..2) { "Incorrect number of receivers ($unboundParameterCount) for property reference: ${expression.render()}" }
         return context.symbols.getPropertyReferenceClass(mutable, unboundParameterCount, true)
     }
@@ -316,16 +311,24 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     // does not support local variables and is slower, but takes up less space in the output binary.
     // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
     private fun createReflectedKProperty(expression: IrRichPropertyReference): IrExpression {
-        require(expression.boundValues.size <= 1) { "Property references can not capture more than one receiver: ${expression.dump()}" }
-        val boundReceiver = expression.boundValues.firstOrNull()
+        val boundContextArguments = expression.boundValues.take(expression.boundContextArgumentCount)
+        val boundReceiver = expression.boundReceiverOrNull
         val referenceClass = propertyReferenceClassFor(expression)
         return context.createJvmIrBuilder(currentScope!!, expression).run {
-            val arity = when {
-                boundReceiver != null -> 5 // (receiver, jClass, name, desc, flags)
-                else -> 4 // (jClass, name, desc, flags)
+            // Possible shapes:
+            // (jClass, name, desc, flags),
+            // (receiver, jClass, name, desc, flags),
+            // (contextArguments, jClass, name, desc, flags),
+            // (contextArguments, receiver, jClass, name, desc, flags).
+            // The two 5-argument shapes are distinguished by the first parameter.
+            val arity = 4 + (if (boundContextArguments.isNotEmpty()) 1 else 0) + (if (boundReceiver != null) 1 else 0)
+            val constructor = referenceClass.constructors.single {
+                val parameters = it.owner.parameters
+                parameters.size == arity &&
+                        (parameters.first().name.asString() == "contextArguments") == boundContextArguments.isNotEmpty()
             }
-            irCall(referenceClass.constructors.single { it.owner.parameters.size == arity }).apply {
-                fillReflectedPropertyArguments(this, expression, boundReceiver)
+            irCall(constructor).apply {
+                fillReflectedPropertyArguments(this, expression, boundContextArguments, boundReceiver)
             }
         }
     }
@@ -333,14 +336,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private fun JvmIrBuilder.fillReflectedPropertyArguments(
         call: IrFunctionAccessExpression,
         expression: IrRichPropertyReference,
+        contextArguments: List<IrExpression>,
         receiver: IrExpression?,
     ) {
         val container = expression.propertyContainer
         val containerClass = kClassToJavaClass(calculateOwnerKClass(container))
         val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
+        val contextArgumentsArray = if (contextArguments.isEmpty()) null else
+            irArrayOf(context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType), contextArguments)
         call.arguments.assignFrom(
             listOfNotNull(
-                receiver, containerClass,
+                contextArgumentsArray, receiver, containerClass,
                 irString((expression.symbol.owner as IrDeclarationWithName).name.asString()),
                 computeSignatureString(expression),
                 irInt((if (isPackage) 1 else 0) or (if (expression.isJavaSyntheticPropertyReference) 2 else 0))
@@ -379,7 +385,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
             // We do not reuse classes for non-reflective property references because they would not have
             // a valid enclosing method if the same property is referenced at many points.
-            val referenceClass = createKPropertySubclass(expression, expression.boundValues)
+            val referenceClass = createKPropertySubclass(expression)
             +referenceClass
             +irCall(referenceClass.constructors.single()).apply {
                 arguments.assignFrom(expression.boundValues)
@@ -387,10 +393,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
     }
 
-    private fun createKPropertySubclass(
-        expression: IrRichPropertyReference,
-        boundValues: List<IrExpression>
-    ): IrClass {
+    private fun createKPropertySubclass(expression: IrRichPropertyReference): IrClass {
         val superClass = propertyReferenceClassFor(expression).owner
         val referenceClass = context.irFactory.buildClass {
             setSourceRange(expression)
@@ -404,20 +407,32 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             copyAttributes(expression)
         }
 
-        addConstructor(expression, referenceClass, superClass)
+        val boundContextArgumentsField =
+            with(FunctionReferenceLowering) { referenceClass.getBoundContextArgumentsField(this@PropertyReferenceLowering.context) }
+
+        addConstructor(expression, referenceClass, superClass, boundContextArgumentsField)
 
         val get = superClass.functions.find { it.name.asString() == "get" }
         val set = superClass.functions.find { it.name.asString() == "set" }
         val invoke = superClass.functions.find { it.name.asString() == "invoke" }
 
-        fun IrBuilder.getArguments(boundParameters: List<IrExpression>, function: IrSimpleFunction): List<() -> IrExpression> {
-            require(boundParameters.size <= 1) { "Property references can not capture more than one receiver: ${function.dump()}" }
-            val boundExpressions = boundParameters.map {
-                {
-                    val field = with(FunctionReferenceLowering) {
-                        referenceClass.getReceiverField(this@PropertyReferenceLowering.context)
+        fun JvmIrBuilder.getArguments(function: IrSimpleFunction): List<() -> IrExpression> {
+            val boundExpressions = buildList<() -> IrExpression> {
+                for (contextIndex in 0 until expression.boundContextArgumentCount) {
+                    add {
+                        irCall(arrayItemGetter).apply {
+                            arguments[0] = irGetField(irGet(function.dispatchReceiverParameter!!), boundContextArgumentsField)
+                            arguments[1] = irInt(contextIndex)
+                        }
                     }
-                    irGetField(irGet(function.dispatchReceiverParameter!!), field)
+                }
+                if (expression.hasBoundReceiver) {
+                    add {
+                        val field = with(FunctionReferenceLowering) {
+                            referenceClass.getReceiverField(this@PropertyReferenceLowering.context)
+                        }
+                        irGetField(irGet(function.dispatchReceiverParameter!!), field)
+                    }
                 }
             }
             val unboundExpressions = function.nonDispatchParameters.map { { irGet(it) } }
@@ -427,7 +442,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         expression.getterFunction.let { getter ->
             referenceClass.addOverride(get!!) { function ->
                 expression.constInitializer?.let { return@addOverride irExprBody(it) }
-                val arguments = getArguments(boundValues, function)
+                val arguments = getArguments(function)
                 getter.inlineWithoutTemporaryVariables(function, arguments)
             }
             referenceClass.addFakeOverride(invoke!!)
@@ -435,7 +450,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         expression.setterFunction?.let { setter ->
             referenceClass.addOverride(set!!) { function ->
-                val arguments = getArguments(boundValues, function)
+                val arguments = getArguments(function)
                 setter.inlineWithoutTemporaryVariables(function, arguments)
             }
         }
@@ -466,22 +481,44 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }, null)
     }
 
-    private fun addConstructor(expression: IrRichPropertyReference, referenceClass: IrClass, superClass: IrClass) {
-        val hasBoundReceiver = expression.boundValues.isNotEmpty()
-        val numOfSuperArgs = (if (hasBoundReceiver) 1 else 0) + 4
-        val superConstructor = superClass.constructors.single { it.parameters.size == numOfSuperArgs }
+    private fun addConstructor(
+        expression: IrRichPropertyReference,
+        referenceClass: IrClass,
+        superClass: IrClass,
+        boundContextArgumentsField: IrField,
+    ) {
+        // The generated subclass stores the bound context arguments in a field itself, so it always delegates to a super constructor
+        // without the `contextArguments` parameter.
+        val numOfSuperArgs = (if (expression.hasBoundReceiver) 1 else 0) + 4
+        val superConstructor = superClass.constructors.single {
+            it.parameters.size == numOfSuperArgs && it.parameters.none { parameter -> parameter.name.asString() == "contextArguments" }
+        }
 
         referenceClass.addConstructor {
             origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
             isPrimary = true
         }.apply {
-            val receiverParameter = if (hasBoundReceiver) addValueParameter("receiver", context.irBuiltIns.anyNType) else null
+            val boundContextValuesParams = mutableListOf<IrValueParameter>()
+            for (contextIndex in 0 until expression.boundContextArgumentCount) {
+                boundContextValuesParams += addValueParameter("context\$$contextIndex", context.irBuiltIns.anyNType)
+            }
+            val receiverParameter = if (expression.hasBoundReceiver) addValueParameter("receiver", context.irBuiltIns.anyNType) else null
             body = context.createJvmIrBuilder(symbol).run {
                 irBlockBody(startOffset, endOffset) {
                     +irDelegatingConstructorCall(superConstructor).apply {
-                        fillReflectedPropertyArguments(this, expression, receiverParameter?.let(::irGet))
+                        fillReflectedPropertyArguments(this, expression, contextArguments = emptyList(), receiverParameter?.let(::irGet))
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, referenceClass.symbol, context.irBuiltIns.unitType)
+                    if (expression.boundContextArgumentCount > 0) {
+                        +irSetField(
+                            irGet(referenceClass.thisReceiver!!),
+                            boundContextArgumentsField,
+                            this@run.irArrayOf(
+                                context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType),
+                                boundContextValuesParams.map { irGet(it) },
+                            ),
+                        )
+                    }
                 }
             }
         }

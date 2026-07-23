@@ -41,7 +41,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private sealed class BoundValue {
     class StoredInVariable(val symbol: IrVariable) : BoundValue()
-    class StoredInField(val symbol: IrField): BoundValue()
+    class StoredInReceiverField(val symbol: IrField) : BoundValue()
+    class StoredInBoundContextValuesArray(val arrayField: IrField, val index: Int) : BoundValue()
 }
 
 /**
@@ -49,6 +50,9 @@ private sealed class BoundValue {
  */
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
+
+    private val arrayOfAnyNType: IrType = context.symbols.arrayOfAnyNType
+    private val arrayGetFunctionSymbol = context.symbols.arrayElementGetter(arrayOfAnyNType, context.irBuiltIns.intType)
 
     private val IrRichFunctionReference.isInlineLambda: Boolean
         get() = origin == IrStatementOrigin.INLINE_LAMBDA
@@ -189,13 +193,20 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val isHeavyweightLambda = isLambda && !isLightweightLambda
         private val isSuspend = irFunctionReference.overriddenFunctionSymbol.isSuspend
 
+        private val boundContextArgumentCount: Int =
+            irFunctionReference.reflectionTargetSymbol?.owner?.parameters?.count { it.kind == IrParameterKind.Context } ?: 0
+        private val hasBoundReceiver get() = irFunctionReference.boundValues.size > boundContextArgumentCount
+
         // Only function references can bind a receiver and even then we can only bind either an extension or a dispatch receiver.
         // However, when we bind a value of an inline class type as a receiver, the receiver will turn into an argument of
         // the function in question. Yet we still need to record it as the "receiver" in CallableReference in order for reflection
         // to work correctly.
         private val boundReceivers: Map<IrValueParameter, IrExpression> =
-            if (callee.isJvmStaticInObject()) mapOf(createFakeBoundReceiverForJvmStaticInObject())
-            else (irFunctionReference.invokeFunction.parameters zip irFunctionReference.boundValues).toMap()
+            when {
+                callee.isJvmStaticInObject() -> mapOf(createFakeBoundReceiverForJvmStaticInObject())
+                hasBoundReceiver -> mapOf(irFunctionReference.invokeFunction.parameters.last() to irFunctionReference.boundValues.last())
+                else -> emptyMap()
+            }
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
@@ -281,6 +292,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
+        private val boundContextArgumentsField: IrField = functionReferenceClass.getBoundContextArgumentsField(context)
+
         private fun createFakeFormalTypeParameters(sourceTypeParameters: List<IrTypeParameter>, irClass: IrClass): List<IrTypeParameter> {
             if (sourceTypeParameters.isEmpty()) return emptyList()
 
@@ -302,10 +315,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!).run {
             irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
-                require(irFunctionReference.boundValues.size <= 1) { "Function references with multiple bound values are not supported yet" }
                 +functionReferenceClass
 
-                // For function references the bound receiver parameter is stored in a field of the superclass.
+                // For function references the bound receiver and context parameters are stored in a field of the superclass.
                 // For sam references, we just capture the value in a local variable, and LocalDeclarationsLowering
                 // will put it into a field.
                 if (samSuperType != null) {
@@ -316,8 +328,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     }
                     +irCall(constructor.symbol)
                 } else {
-                    val boundValues = irFunctionReference.boundValues.map {
-                        BoundValue.StoredInField(functionReferenceClass.getReceiverField(backendContext))
+                    val receiverField = functionReferenceClass.getReceiverField(backendContext)
+                    val boundValues = buildList {
+                        for (index in 0 until boundContextArgumentCount) {
+                            add(BoundValue.StoredInBoundContextValuesArray(boundContextArgumentsField, index))
+                        }
+                        if (hasBoundReceiver) {
+                            add(BoundValue.StoredInReceiverField(receiverField))
+                        }
                     }
                     createInvokeMethod(boundValues)
                     +irCall(constructor.symbol).apply {
@@ -349,7 +367,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     it.parameters.size == 1 + boundReceivers.size + 4
                 }
                 irCallConstructor(constructor.symbol, emptyList()).apply {
-                    generateConstructorCallArguments(this) { irGet(boundReceiverVars[it].symbol) }
+                    generateConstructorCallArguments(this) { irGet(boundReceiverVars.last().symbol) }
                 }
             }.generate()
         }
@@ -360,12 +378,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
             }.apply {
+                val boundContextValuesParams = mutableListOf<IrValueParameter>()
                 if (samSuperType == null) {
-                    for (index in boundReceivers.entries.indices) {
-                        addValueParameter("receiver$index", context.irBuiltIns.anyNType)
+                    for (contextIndex in 0 until boundContextArgumentCount) {
+                        boundContextValuesParams += addValueParameter($$"context$$$contextIndex", context.irBuiltIns.anyNType)
+                    }
+                    if (hasBoundReceiver) {
+                        addValueParameter("receiver", context.irBuiltIns.anyNType,)
                     }
                 }
-
                 // Super constructor:
                 // - For fun interface constructor references, super class is kotlin.jvm.internal.FunInterfaceConstructorReference
                 //   with single constructor 'public FunInterfaceConstructorReference(Class funInterface)'
@@ -396,10 +417,17 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     irBlockBody(startOffset, endOffset) {
                         +irDelegatingConstructorCall(constructor).also { call ->
                             if (samSuperType == null) {
-                                generateConstructorCallArguments(call) { irGet(parameters.first()) }
+                                generateConstructorCallArguments(call) { irGet(parameters.last()) }
                             }
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
+                        if (samSuperType == null && boundContextArgumentCount > 0) {
+                            +irSetField(
+                                irGet(functionReferenceClass.thisReceiver!!),
+                                boundContextArgumentsField,
+                                this@run.irArrayOf(arrayOfAnyNType, boundContextValuesParams.map { irGet(it) }),
+                            )
+                        }
                     }
                 }
             }
@@ -499,11 +527,22 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                             val invokeParameter = invokeFunction.parameters[index]
                             val capturedValueLocal = when (capturedValue) {
                                 is BoundValue.StoredInVariable -> capturedValue.symbol
-                                is BoundValue.StoredInField -> irTemporary(
+                                is BoundValue.StoredInReceiverField -> irTemporary(
                                     irImplicitCast(
                                         irGetField(
                                             irGet(dispatchReceiverParameter!!),
                                             capturedValue.symbol
+                                        ),
+                                        invokeParameter.type,
+                                    )
+                                )
+                                is BoundValue.StoredInBoundContextValuesArray -> irTemporary(
+                                    irImplicitCast(
+                                        irCallOp(
+                                            arrayGetFunctionSymbol.symbol,
+                                            context.irBuiltIns.anyNType,
+                                            irGetField(irGet(dispatchReceiverParameter!!), capturedValue.arrayField),
+                                            irInt(capturedValue.index),
                                         ),
                                         invokeParameter.type,
                                     )
@@ -587,12 +626,23 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }.apply {
                 parent = this@getReceiverField
             }
+
+        // Same trick as [getReceiverField] for the inherited `kotlin.jvm.internal.CallableReference.boundContextArguments` field,
+        // which holds the bound context arguments of a reference to a declaration with context parameters.
+        internal fun IrClass.getBoundContextArgumentsField(context: JvmBackendContext): IrField =
+            context.irFactory.buildField {
+                name = Name.identifier("boundContextArguments")
+                type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)
+                visibility = DescriptorVisibilities.PROTECTED
+            }.apply {
+                parent = this@getBoundContextArgumentsField
+            }
     }
 }
 
 data class IndyCallData(
     val forceSerializability: Boolean,
-    val plainLambda: Boolean
+    val plainLambda: Boolean,
 )
 
 var IrRichFunctionReference.indyCallData by irAttribute<_, IndyCallData>(copyByDefault = true)
