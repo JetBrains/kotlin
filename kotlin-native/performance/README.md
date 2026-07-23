@@ -1,12 +1,19 @@
 # Micro Benchmarks for Kotlin/Native
 
-To run the benchmarks you need a built Kotlin/Native distribution with the platform libraries:
-* either specify the full path to the existing distribution with `-Pkotlin.native.home=<path>`
-* or run `./gradlew -Pkotlin.native.enabled=true :kotlin-native:dist :kotlin-native:distPlatformLibs`
-  in the root of the `git` repository (that is in the `kotlin` folder not in the current `kotlin/kotlin-native/performance`)
-  to build the distribution from sources
+## Prerequisites
 
-To run all the benchmarks just run `./gradlew :konanRun` from this folder. The output will be placed in `build/nativeReport.json`.
+You need a locally built Kotlin compiler distribution.
+
+In the root directory of kotlin.git, execute:
+```bash
+./gradlew -Pkotlin.native.enabled=true publish
+```
+
+Now you may sync this project in your IDEA.
+
+## Running benchmarks
+
+To run all the benchmarks, just run `./gradlew :konanRun` from this folder. The output will be placed in `build/nativeReport.json`.
 
 **NOTE**: consider running with `-PdryRun` beforehand to build everything before running the benchmarks, this will
 make the benchmarking results a bit more stable
