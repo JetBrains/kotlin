@@ -101,8 +101,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 prepareReq.setSuspendPolicy(SUSPEND_ALL)
                                 EXCLUDED_PACKAGES.forEach { prepareReq.addClassExclusionFilter(it) }
                             }
-                            manager.stepRequests().map { it.enable() }
-                            manager.classPrepareRequests().map { it.enable() }
+                            manager.stepRequests().forEach { it.enable() }
+                            manager.classPrepareRequests().forEach { it.enable() }
                             inBoxMethod = true
                             storeStep(loggedItems, event)
                         }
@@ -113,9 +113,9 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                             if (event.location().method().name() == "main" &&
                                 event.location().declaringType().name().contains(BOX_MAIN_FILE_CLASS_NAME)
                             ) {
-                                manager.stepRequests().map { it.disable() }
-                                manager.classPrepareRequests().map { it.disable() }
-                                manager.breakpointRequests().map { it.disable() }
+                                manager.stepRequests().forEach { it.disable() }
+                                manager.classPrepareRequests().forEach { it.disable() }
+                                manager.breakpointRequests().forEach { it.disable() }
                                 break@vmLoop
                             }
                             storeStep(loggedItems, event)
@@ -123,9 +123,9 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                     }
                     is MethodExitEvent -> {
                         if (event.location().method().name() == "box") {
-                            manager.stepRequests().map { it.disable() }
-                            manager.classPrepareRequests().map { it.disable() }
-                            manager.breakpointRequests().map { it.disable() }
+                            manager.stepRequests().forEach { it.disable() }
+                            manager.classPrepareRequests().forEach { it.disable() }
+                            manager.breakpointRequests().forEach { it.disable() }
                             break@vmLoop
                         }
                     }

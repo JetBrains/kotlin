@@ -55,7 +55,7 @@ fun <D : FirCallableSymbol<*>> overrides(
 
     var result = false
 
-    fScope.processAllOverridden(fMember) { overridden ->
+    val _ = fScope.processAllOverridden(fMember) { overridden ->
         if (overridden == gMember) {
             result = true
             ProcessorAction.STOP

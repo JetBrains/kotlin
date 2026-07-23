@@ -31,7 +31,7 @@ internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean)
     fun addInnerClass(innerClass: String, outerClass: String?) {
         if (outerClass == null) return
         if (removePrivateClasses) {
-            innerClassToOuter.getOrPut(innerClass) { outerClass }
+            innerClassToOuter.computeIfAbsent(innerClass) { outerClass }
         }
     }
 

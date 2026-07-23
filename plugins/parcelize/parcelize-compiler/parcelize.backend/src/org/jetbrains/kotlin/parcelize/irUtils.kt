@@ -217,7 +217,7 @@ fun IrTypeArgument.upperBound(builtIns: IrBuiltIns): IrType =
     upperBoundOrNull() ?: builtIns.anyNType
 
 fun IrClass.typeParameterMapping(instantiation: IrType): Map<IrTypeParameterSymbol, IrType> = buildMap {
-    (instantiation as? IrSimpleType)?.arguments?.zip(typeParameters) { arg, parameter ->
+    (instantiation as? IrSimpleType)?.arguments?.zip(typeParameters)?.forEach { [arg, parameter] ->
         put(parameter.symbol, arg.upperBoundOrNull() ?: parameter.representativeUpperBound)
     }
 }

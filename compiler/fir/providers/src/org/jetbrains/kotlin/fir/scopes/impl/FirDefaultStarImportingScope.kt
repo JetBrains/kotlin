@@ -43,7 +43,9 @@ class FirDefaultStarImportingScope(
         }
 
         if (!wasFoundAny) {
-            second.processClassifiersByNameWithSubstitution(name, processor::invoke)
+            second.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
+                val _ = processor.invoke(symbol, substitutor)
+            }
         }
     }
 

@@ -85,7 +85,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
             }
 
             withFunctionSymbol { functionSymbol ->
-                functionSymbol.valueParameters.mapIndexed { index, parameter ->
+                functionSymbol.valueParameters.forEachIndexed { index, parameter ->
                     val needToSkip = valueParameterPickMask?.get(index) == false
                     if (!needToSkip) {
                         builder.addParameter(createValueParameter(parameter, index))

@@ -78,7 +78,8 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, project: Proje
         bindingContext: BindingContext
     ): CallableMemberDescriptor? {
         val parents = generateSequence({ startExpression.parent }) { it.parent }
-        parents.fold<PsiElement, PsiElement>(startExpression) { child, parent ->
+        var child: PsiElement = startExpression
+        for (parent in parents) {
             if (parent is KtClassBody &&
                 descriptorToSearch == bindingContext.get(BindingContext.CLASS, parent.parent)
             ) {
@@ -87,7 +88,8 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, project: Proje
                     is KtProperty -> bindingContext.get(BindingContext.VARIABLE, child) as? PropertyDescriptor
                     else -> null
                 }
-            } else parent
+            }
+            child = parent
         }
 
         return null

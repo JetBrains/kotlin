@@ -764,7 +764,7 @@ class LightTreeRawFirDeclarationBuilder(
                     val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                     registerSelfType(delegatedSelfType)
 
-                    superTypeRefs.ifEmpty {
+                    if (superTypeRefs.isEmpty()) {
                         superTypeRefs += implicitAnyType
                         delegatedSuperTypeRef = implicitAnyType
                     }
