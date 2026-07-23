@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleBareInferenceFailed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -16,6 +19,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
+
+context(onDiagnostic: (ConeDiagnostic) -> Unit)
 fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
     originalType.lowerBoundIfFlexible().fullyExpandedType().let {
         if (it !== originalType) return computeRepresentativeTypeForBareType(type, it)
@@ -54,6 +59,36 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
             correspondingSupertype
     }
 
+    val substitution = trySimpleInference(castClass, originalType, superTypeWithParameters) ?: run {
+        onDiagnostic(
+            ConeSimpleBareInferenceFailed(
+                "originalType: $originalType; castClass: ${castClass.defaultType()}, superTypeWithParameters: $superTypeWithParameters"
+            )
+        )
+        tryLegacyInference(castClass, originalType, superTypeWithParameters)
+    } ?: return null
+
+    val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
+    return expandedCastType.withArguments(newArguments.toTypedArray())
+}
+
+
+private fun BodyResolveComponents.tryLegacyInference(
+    castClass: FirRegularClass,
+    originalType: ConeKotlinType,
+    superTypeWithParameters: ConeClassLikeType,
+): Map<FirTypeParameterSymbol, ConeTypeProjection>? {
+    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+    val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
+    if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution)) return null
+    return substitution
+}
+
+private fun trySimpleInference(
+    castClass: FirRegularClass,
+    originalType: ConeKotlinType,
+    superTypeWithParameters: ConeClassLikeType,
+): Map<FirTypeParameterSymbol, ConeTypeProjection>? {
     val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
     val originalArguments = originalType.typeArguments
@@ -67,9 +102,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         if (typeParameterSymbol !in typeParameters || typeParameterSymbol in substitution) return null
         substitution[typeParameterSymbol] = originalArgument
     }
-
-    val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
-    return expandedCastType.withArguments(newArguments.toTypedArray())
+    return substitution
 }
 
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {

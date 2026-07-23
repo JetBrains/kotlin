@@ -1334,7 +1334,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         ) as FirFunctionCall
     }
 
-    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
+    private fun FirTypeRef.withTypeArgumentsForBareType(
+        argument: FirExpression,
+        operation: FirOperation,
+        onDiagnostic: (ConeDiagnostic) -> Unit
+    ): FirTypeRef {
         val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return this
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
@@ -1347,7 +1351,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         val outerClasses by lazy(LazyThreadSafetyMode.NONE) { firClass.symbol.getClassAndItsOuterClassesWhenLocal(session) }
-        val newType = components.computeRepresentativeTypeForBareType(type, originalType)
+        val newType = context(onDiagnostic) { components.computeRepresentativeTypeForBareType(type, originalType) }
             ?: if (
                 firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
                 (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
@@ -1381,7 +1385,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             resolved.prepareCSRHintForTypeOperatorIfNeeded()
         }
 
-        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
+        val onDiagnostic = { coneDiagnostic: ConeDiagnostic ->
+            typeOperatorCall.replaceNonFatalDiagnostics(typeOperatorCall.nonFatalDiagnostics + coneDiagnostic)
+        }
+        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation, onDiagnostic)
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
             override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 return element
