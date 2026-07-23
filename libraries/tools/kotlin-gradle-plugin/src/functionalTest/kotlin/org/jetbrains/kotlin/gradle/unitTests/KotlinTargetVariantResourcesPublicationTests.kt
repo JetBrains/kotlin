@@ -117,7 +117,7 @@ class KotlinTargetVariantResourcesPublicationTests {
         ) {
             kotlin {
                 targetsToTest.forEach { createTarget ->
-                    createTarget()
+                    val _ = createTarget()
                 }
             }
         }.evaluate()

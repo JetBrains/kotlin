@@ -52,9 +52,8 @@ class KlibMockDSL(val currentDir: Path, val parent: KlibMockDSL?) {
          */
         fun mockKlib(klibDir: Path, init: KlibMockDSL.() -> Unit): Path {
             klibDir.createDirectories()
-            KlibMockDSL(currentDir = klibDir, parent = null).apply {
-                dir(KLIB_DEFAULT_COMPONENT_NAME, init)
-            }
+            KlibMockDSL(currentDir = klibDir, parent = null)
+                .dir(KLIB_DEFAULT_COMPONENT_NAME, init)
             return klibDir
         }
 

@@ -207,7 +207,7 @@ class KotlinPluginLifecycleTest {
             assertFalse(exceptionWasProvoked.getAndSet(true))
             throw thrownException
         }
-        runCatching { project.evaluate() }
+        val _ = runCatching { project.evaluate() }
         assertTrue(exceptionWasProvoked.get(), "Exception during '.evaluate()' was not provoked")
 
         /* Assert: The 'AfterEvaluate' based stage should not have been executed */
@@ -239,7 +239,7 @@ class KotlinPluginLifecycleTest {
             assertFalse(exceptionWasProvoked.getAndSet(true))
             throw thrownException
         }
-        runCatching { project.evaluate() }
+        val _ = runCatching { project.evaluate() }
         assertTrue(exceptionWasProvoked.get(), "Exception during '.evaluate()' was not provoked")
         assertTrue(executedAfterLifecycleFinished.get(), "Expected coroutine waiting for '.finished' to be executed")
     }

@@ -31,6 +31,6 @@ fun KotlinMultiplatformExtension.enableAllKotlinTargets(
         .filter { it.returnType.isSubtypeOf(KotlinTarget::class.starProjectedType) }
         .filter { it.name !in excludedTargets }
         .forEach {
-            it.call(this)
+            val _ = it.call(this)
         }
 }

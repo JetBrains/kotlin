@@ -43,7 +43,7 @@ class IdeMultiplatformImportPriorityTest {
         assertEquals(predefinedValues, predefinedValues.sorted())
         assertEquals(predefinedValues.reversed(), predefinedValues.sortedDescending())
 
-        predefinedValues.zipWithNext { lower, higher ->
+        for ((lower, higher) in predefinedValues.zipWithNext()) {
             assertNotEquals(lower, higher)
             assertTrue(lower < higher)
         }
