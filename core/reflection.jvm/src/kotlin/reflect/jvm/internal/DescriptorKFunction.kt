@@ -92,9 +92,9 @@ internal class DescriptorKFunction private constructor(
                 createConstructorCaller(member, descriptor, false)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) ->
-                    createInstanceMethodCaller(member)
+                    CallerImpl.Method.Instance(member, boundReceiver)
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
                 else ->
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
@@ -156,7 +156,7 @@ internal class DescriptorKFunction private constructor(
                 // as opposed to companion objects where the first parameter is the companion object instance.
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null &&
                         !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver)
 
                 else -> {
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
@@ -188,17 +188,11 @@ internal class DescriptorKFunction private constructor(
         descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
 
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(
-                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
-            )
-        else CallerImpl.Method.Static(member)
-
-    private fun createJvmStaticInObjectCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
-
-    private fun createInstanceMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
+        CallerImpl.Method.Static(
+            member, isCallByToValueClassMangledMethod,
+            // Check `isBound` first so that `useBoxedBoundReceiver` is only invoked for actually bound references.
+            boundReceiver = if (isBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+        )
 
     private fun createConstructorCaller(
         member: Constructor<*>, descriptor: FunctionDescriptor, isDefault: Boolean

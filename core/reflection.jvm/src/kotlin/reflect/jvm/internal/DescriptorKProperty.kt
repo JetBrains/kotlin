@@ -279,14 +279,11 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                     }
                 }
                 !Modifier.isStatic(accessor.modifiers) ->
-                    if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
-                    else CallerImpl.Method.Instance(accessor)
+                    CallerImpl.Method.Instance(accessor, boundReceiver)
                 isJvmStaticProperty() ->
-                    if (isBound) CallerImpl.Method.BoundJvmStaticInObject(accessor)
-                    else CallerImpl.Method.JvmStaticInObject(accessor)
+                    CallerImpl.Method.JvmStaticInObject(accessor, boundReceiver)
                 else ->
-                    if (isBound) CallerImpl.Method.BoundStatic(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
-                    else CallerImpl.Method.Static(accessor)
+                    CallerImpl.Method.Static(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
             }
         }
         is JavaField -> {
@@ -298,8 +295,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                 else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(
                     "No source found for setter of Java method property: ${jvmSignature.getterMethod}"
                 )
-            if (isBound) CallerImpl.Method.BoundInstance(method, boundReceiver)
-            else CallerImpl.Method.Instance(method)
+            CallerImpl.Method.Instance(method, boundReceiver)
         }
         is MappedKotlinProperty -> {
             val signature =
@@ -310,8 +306,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                     ?: throw KotlinReflectionInternalError("No accessor found for property $property")
             assert(!Modifier.isStatic(accessor.modifiers)) { "Mapped property cannot have a static accessor: $property" }
 
-            return if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
-            else CallerImpl.Method.Instance(accessor)
+            return CallerImpl.Method.Instance(accessor, boundReceiver)
         }
     }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }
