@@ -15,20 +15,89 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
+import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
+import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.argument
+import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
 import java.util.*
 
 sealed class DataFlowVariable {
     abstract val originalType: ConeKotlinType
+
+    companion object {
+        /**
+         * Create a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
+         * return a [RealVariable], otherwise a [SyntheticVariable].
+         *
+         * @param unwrap When multiple [RealVariable]s are known to have the same value in every execution, this lambda
+         * can map them to some "representative" variable so that type information about all these variables is shared. It can also
+         * return `null` to abort the entire [of] operation, making it also return `null`.
+         *
+         * @param unwrapInReceivers Same as [unwrap], but used when looking up [RealVariable]s for receivers of [fir]
+         * if it is a qualified access expression.
+         */
+        context(holder: SessionHolder)
+        fun of(
+            fir: FirExpression,
+            unwrap: (RealVariable) -> RealVariable? = { it },
+            unwrapInReceivers: (RealVariable) -> RealVariable?,
+        ): DataFlowVariable? {
+            val unwrapped = fir.unwrapElement() ?: return null
+            val isImplicit = unwrapped is FirThisReceiverExpression ||
+                    unwrapped.toResolvedCallableSymbol(holder.session)?.isContextParameter() == true
+            val symbol = when (unwrapped) {
+                is FirResolvedQualifier -> unwrapped.qualifierSymbol?.fullyExpandedClass(holder.session)
+                is FirCallableReferenceAccess -> null
+                is FirResolvable -> unwrapped.calleeReference.symbol
+                else -> null
+            }?.takeIf {
+                isImplicit || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
+            }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
+
+            val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
+            val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
+                val variable = of(it, unwrapInReceivers, unwrapInReceivers) ?: return null
+                variable as? RealVariable ?: return SyntheticVariable(unwrapped)
+            }
+            val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
+                val variable = of(it, unwrapInReceivers, unwrapInReceivers) ?: return null
+                variable as? RealVariable ?: return SyntheticVariable(unwrapped)
+            }
+            return unwrap(
+                RealVariable(
+                    symbol,
+                    isImplicit,
+                    dispatchReceiverVar,
+                    extensionReceiverVar,
+                    originalType = unwrapped.resolvedType,
+                )
+            )
+        }
+    }
 }
 
 private enum class PropertyStability(
@@ -180,4 +249,29 @@ private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean 
     val propertyModuleData = originalOrSelf().moduleData
     val currentModuleData = session.moduleData
     return currentModuleData.canSeeInternalsOf(propertyModuleData)
+}
+
+private tailrec fun FirExpression.unwrapElement(): FirExpression? {
+    return when (this) {
+        is FirSmartCastExpression -> originalExpression.unwrapElement()
+        // Safe assignments (a?.x = b) have non-expression selectors. In this case the entire safe call
+        // is not really an expression either, so we shouldn't produce any kinds of statements on it.
+        // For example, saying that `(a?.x = b) != null => a != null` makes no sense, since an assignment
+        // has no value in the first place, null or otherwise.
+        is FirSafeCallExpression -> (selector as? FirExpression ?: return null).unwrapElement()
+        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
+        is FirCheckNotNullCall -> argument.unwrapElement()
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
+        else -> this
+    }
+}
+
+private fun FirBasedSymbol<*>.unwrapFakeOverridesIfNecessary(): FirBasedSymbol<*> {
+    if (this !is FirCallableSymbol) return this
+    // This is necessary only for sake of optimizations necessary because this is a really hot place.
+    // Not having `dispatchReceiverType` means that this is a local/top-level property that can't be a fake override.
+    // And at the same time, checking a field is much faster than a couple of attributes (0.3 secs at MT Full Kotlin)
+    if (this.dispatchReceiverType == null) return this
+
+    return unwrapFakeOverridesAccountingForExplicitBackingFields()
 }

@@ -19,8 +19,6 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     private val nullableNothingType = session.builtinTypes.nullableNothingType.coneType
     private val anyType = session.builtinTypes.anyType.coneType
 
-    abstract val variableStorage: VariableStorage
-
     protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
         return !isNullableNothing
     }
@@ -44,6 +42,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // and joining that with a non-empty flow from another branch will fail.
         val commonFlow = flows.reduce { a, b -> a.lowestCommonAncestor(b) ?: error("no common ancestor in $a, $b") }
         val result = commonFlow.fork()
+        result.mergeVariables(flows)
         result.mergeAssignments(flows)
         if (union) {
             result.copyNonConflictingAliases(flows, commonFlow)
@@ -152,6 +151,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun isSameValueIn(a: PersistentFlow, b: MutableFlow, variable: RealVariable): Boolean {
         return a.assignmentIndex[variable] == b.assignmentIndex[variable]
+    }
+
+    private fun MutableFlow.mergeVariables(flows: Collection<PersistentFlow>) {
+        for (flow in flows) {
+            realVariables += flow.realVariables
+            for ([key, values] in flow.memberVariables) {
+                memberVariables.addAll(key, values)
+            }
+        }
     }
 
     private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>) {
@@ -271,7 +279,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val backwardsAliases = backwardsAliasMap.remove(variable)
             // If asked to remove the variable but there are aliases, replace with a new representative for the alias group instead.
             val replacementOrNext = replacement ?: backwardsAliases?.first()
-            variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
+            replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
 
