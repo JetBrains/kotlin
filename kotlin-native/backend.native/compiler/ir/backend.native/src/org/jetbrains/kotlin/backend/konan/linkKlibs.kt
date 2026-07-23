@@ -119,10 +119,6 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
-    modules.values.forEach { module ->
-        module.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(module.descriptor)) }
-    }
-
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
         LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irLinker)
