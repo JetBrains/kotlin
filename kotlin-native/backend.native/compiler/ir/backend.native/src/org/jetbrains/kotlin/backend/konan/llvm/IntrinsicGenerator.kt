@@ -541,7 +541,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val elementSize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, callSite.llvmReturnType).toInt()
         val vectorSize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, vector.type).toInt()
 
-        assert(callSite.llvmReturnType.isVectorElementType()
+        assert(callSite.llvmReturnType.isVectorElementType
                 && vectorSize % elementSize == 0
         ) { "Invalid vector element type ${LLVMGetTypeKind(callSite.llvmReturnType)}"}
 
@@ -559,7 +559,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitPlus(args: List<LLVMValueRef>): LLVMValueRef {
         val [first, second] = args
-        return if (first.type.isFloatingPoint()) {
+        return if (first.type.isFloatingPoint) {
             fadd(first, second)
         } else {
             add(first, second)
@@ -630,7 +630,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitMinus(args: List<LLVMValueRef>): LLVMValueRef {
         val [first, second] = args
-        return if (first.type.isFloatingPoint()) {
+        return if (first.type.isFloatingPoint) {
             fsub(first, second)
         } else {
             sub(first, second)
@@ -639,7 +639,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitTimes(args: List<LLVMValueRef>): LLVMValueRef {
         val [first, second] = args
-        return if (first.type.isFloatingPoint()) {
+        return if (first.type.isFloatingPoint) {
             LLVMBuildFMul(builder, first, second, "")
         } else {
             LLVMBuildMul(builder, first, second, "")
@@ -665,7 +665,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitSignedDiv(args: List<LLVMValueRef>): LLVMValueRef {
         val [dividend, divisor] = args
         val divisorType = divisor.type
-        return if (!divisorType.isFloatingPoint()) {
+        return if (!divisorType.isFloatingPoint) {
             emitThrowIfZero(divisor)
             emitSignedDivisionWithOverflow(dividend, divisor, divisorType, retZeroOnOverflow = false) {
                 LLVMBuildSDiv(builder, dividend, divisor, "")!!
@@ -678,7 +678,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitSignedRem(args: List<LLVMValueRef>): LLVMValueRef {
         val [dividend, divisor] = args
         val divisorType = divisor.type
-        return if (!divisorType.isFloatingPoint()) {
+        return if (!divisorType.isFloatingPoint) {
             emitThrowIfZero(divisor)
             emitSignedDivisionWithOverflow(dividend, divisor, divisorType, retZeroOnOverflow = true) {
                 LLVMBuildSRem(builder, dividend, divisor, "")!!
@@ -710,7 +710,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitInc(args: List<LLVMValueRef>): LLVMValueRef {
         val first = args[0]
         val const1 = makeConstOfType(first.type, 1)
-        return if (first.type.isFloatingPoint()) {
+        return if (first.type.isFloatingPoint) {
             fadd(first, const1)
         } else {
             add(first, const1)
@@ -720,7 +720,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitDec(args: List<LLVMValueRef>): LLVMValueRef {
         val first = args[0]
         val const1 = makeConstOfType(first.type, 1)
-        return if (first.type.isFloatingPoint()) {
+        return if (first.type.isFloatingPoint) {
             fsub(first, const1)
         } else {
             sub(first, const1)
@@ -733,7 +733,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitUnaryMinus(args: List<LLVMValueRef>): LLVMValueRef {
         val first = args[0]
         val destTy = first.type
-        return if (destTy.isFloatingPoint()) {
+        return if (destTy.isFloatingPoint) {
             fneg(first)
         } else {
             val const0 = makeConstOfType(destTy, 0)
