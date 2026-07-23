@@ -30,8 +30,9 @@ fun box(): String {
     checkSupertype(HashMap::class, "kotlin.collections.MutableMap<K, V>")
     checkSupertype(TreeMap::class, "kotlin.collections.MutableMap<K, V>")
     checkSupertype(LinkedHashMap::class, "kotlin.collections.MutableMap<K, V>")
-    checkSupertype(ConcurrentHashMap::class, "kotlin.collections.MutableMap<K, V>")
-    checkSupertype(ConcurrentSkipListMap::class, "kotlin.collections.MutableMap<K, V>")
+    checkSupertype(ConcurrentHashMap::class, "java.util.concurrent.ConcurrentMap<K, V>")
+    checkSupertype(ConcurrentSkipListMap::class, "java.util.concurrent.ConcurrentMap<K, V>")
+    checkSupertype(ConcurrentMap::class, "kotlin.collections.MutableMap<K, V>")
 
     checkSupertype(UnaryOperator::class, "java.util.function.Function<T, T>")
     checkSupertype(BinaryOperator::class, "java.util.function.BiFunction<T, T, T>")

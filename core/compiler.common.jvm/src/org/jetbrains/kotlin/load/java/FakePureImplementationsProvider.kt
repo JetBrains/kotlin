@@ -26,7 +26,9 @@ object FakePureImplementationsProvider {
             "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
             "java.util.concurrent.ConcurrentMap"
         )
-        ClassId.topLevel(FqName("java.util.concurrent.ConcurrentMap")) implementedWith fqNameListOf("java.util.concurrent.ConcurrentHashMap")
+        ClassId.topLevel(FqName("java.util.concurrent.ConcurrentMap")) implementedWith fqNameListOf(
+            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
+        )
         ClassId.topLevel(FqName("java.util.function.Function")) implementedWith fqNameListOf("java.util.function.UnaryOperator")
         ClassId.topLevel(FqName("java.util.function.BiFunction")) implementedWith fqNameListOf("java.util.function.BinaryOperator")
     }
