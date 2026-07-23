@@ -43,19 +43,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-@PhasePrerequisites(SharedVariablesLowering::class)
-internal class NativeSharedVariablesPrimitiveBoxSpecializationLowering(context: NativeGenerationState)
-    : SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols)
-
-@PhasePrerequisites(SharedVariablesLowering::class, LocalDelegatedPropertiesLowering::class, InteropBridgesNameInventor::class)
-internal class NativeLocalDeclarationsLowering(context: LoweringContext) : LocalDeclarationsLowering(context)
-
-@PhasePrerequisites(LocalDeclarationPopupLowering::class)
-internal class NativeTailrecLowering(context: LoweringContext) : TailrecLowering(context)
-
-@PhasePrerequisites(InitializersLowering::class, LocalDeclarationPopupLowering::class, TailrecLowering::class)
-internal class NativeFinallyBlocksLowering(context: CommonBackendContext) : FinallyBlocksLowering(context)
-
 @PhasePrerequisites(LocalClassesInInlineLambdasLowering::class)
 internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
