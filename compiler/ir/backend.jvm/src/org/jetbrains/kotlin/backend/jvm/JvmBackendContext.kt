@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -60,7 +61,7 @@ class JvmBackendContext(
     override val irFactory: IrFactory = IrFactoryImpl
 
     val specialAnnotationsProvider: JvmIrSpecialAnnotationSymbolProvider =
-        JvmIrSpecialAnnotationSymbolProvider()
+        JvmIrSpecialAnnotationSymbolProvider(irBuiltIns.anyClass.owner.moduleFragment)
     override val typeSystem: IrTypeSystemContext = JvmIrTypeSystemContext(irBuiltIns)
     val defaultTypeMapper = IrTypeMapper(this)
     val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)

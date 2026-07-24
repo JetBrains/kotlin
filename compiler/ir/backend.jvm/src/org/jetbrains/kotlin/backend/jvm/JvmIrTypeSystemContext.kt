@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
@@ -21,7 +22,7 @@ class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystem
     override val treatFullValueClassesWithOneFieldAsBasic: Boolean get() = false
 
     private val specialAnnotations: JvmIrSpecialAnnotationSymbolProvider =
-        JvmIrSpecialAnnotationSymbolProvider()
+        JvmIrSpecialAnnotationSymbolProvider(irBuiltIns.anyClass.owner.moduleFragment)
 
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? =
         (this as IrType).asJvmFlexibleType(irBuiltIns, specialAnnotations)

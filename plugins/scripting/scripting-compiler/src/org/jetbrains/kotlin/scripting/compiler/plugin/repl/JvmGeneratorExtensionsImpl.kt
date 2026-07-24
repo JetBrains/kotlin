@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 open class JvmGeneratorExtensionsImpl(
@@ -151,8 +153,9 @@ open class JvmGeneratorExtensionsImpl(
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
+    // This is deprecated code, so for the sake of simplicity, just ErrorModuleDescriptor is passed here instead of looking for a real module.
     private val specialAnnotations: JvmIrSpecialAnnotationSymbolProvider =
-        JvmIrSpecialAnnotationSymbolProvider()
+        JvmIrSpecialAnnotationSymbolProvider(IrModuleFragmentImpl(ErrorModuleDescriptor))
 
     override fun generateFlexibleNullabilityAnnotation(): IrAnnotation =
         specialAnnotations.generateFlexibleNullabilityAnnotation()
