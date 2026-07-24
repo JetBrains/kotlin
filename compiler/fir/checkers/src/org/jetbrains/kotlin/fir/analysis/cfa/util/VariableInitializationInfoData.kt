@@ -25,9 +25,9 @@ abstract class VariableInitializationInfoData {
 
 @Suppress("unused") // Can be used from the debugger
 fun VariableInitializationInfoData.render(node: CFGNode<*>): String = buildString {
-    for ((path, data) in getValue(node)) {
+    for ([path, data] in getValue(node)) {
         appendLine(path.label ?: "NormalPath")
-        for ((symbol, range) in data) {
+        for ([symbol, range] in data) {
             appendLine("$symbol ${range.range.withoutMarker}")
         }
         appendLine()

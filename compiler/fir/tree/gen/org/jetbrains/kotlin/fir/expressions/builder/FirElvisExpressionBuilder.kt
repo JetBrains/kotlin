@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirElvisExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     var calleeReference: FirReference = FirStubReference
     lateinit var lhs: FirExpression
     lateinit var rhs: FirExpression

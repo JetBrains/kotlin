@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
+@K1Deprecation
 open class DeserializedAnnotations(
     storageManager: StorageManager,
     compute: () -> List<AnnotationDescriptor>
@@ -32,6 +34,7 @@ open class DeserializedAnnotations(
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 }
 
+@K1Deprecation
 class NonEmptyDeserializedAnnotations(
     storageManager: StorageManager,
     compute: () -> List<AnnotationDescriptor>

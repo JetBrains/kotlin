@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configu
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -20,4 +21,11 @@ internal class LLMetadataSessionConfiguration(private val project: Project) : LL
                 scope,
             )
         }
+
+    override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
+        session: LLFirBuiltinsAndCloneableSession
+    ): List<FirSymbolProvider> {
+        /** Aligned with [org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory] (adds `Cloneable` similarly to JVM). */
+        return listOf(createCloneableSymbolProvider(session))
+    }
 }

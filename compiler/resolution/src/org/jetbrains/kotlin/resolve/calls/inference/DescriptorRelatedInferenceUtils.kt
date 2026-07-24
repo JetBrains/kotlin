@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
+@K1Deprecation
 fun ConstraintStorage.buildResultingSubstitutor(
     context: TypeSystemInferenceExtensionContext,
     transformTypeVariablesToErrorTypes: Boolean = true
@@ -24,6 +26,7 @@ fun ConstraintStorage.buildResultingSubstitutor(
     return buildAbstractResultingSubstitutor(context, transformTypeVariablesToErrorTypes) as NewTypeSubstitutor
 }
 
+@K1Deprecation
 val CallableDescriptor.returnTypeOrNothing: UnwrappedType
     get() {
         returnType?.let { return it.unwrap() }
@@ -31,8 +34,10 @@ val CallableDescriptor.returnTypeOrNothing: UnwrappedType
         return builtIns.nothingType
     }
 
+@K1Deprecation
 fun TypeSubstitutor.substitute(type: UnwrappedType): UnwrappedType = safeSubstitute(type, Variance.INVARIANT).unwrap()
 
+@K1Deprecation
 fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDescriptor {
     if (substitutor.isEmpty) return this
 
@@ -43,6 +48,7 @@ fun CallableDescriptor.substitute(substitutor: NewTypeSubstitutor): CallableDesc
     return substitute(TypeSubstitutor.create(wrappedSubstitution))
 }
 
+@K1Deprecation
 fun CallableDescriptor.substituteAndApproximateTypes(
     substitutor: NewTypeSubstitutor,
     typeApproximator: TypeApproximator?,
@@ -66,6 +72,7 @@ fun CallableDescriptor.substituteAndApproximateTypes(
     return substitute(TypeSubstitutor.create(wrappedSubstitution)) ?: this
 }
 
+@K1Deprecation
 fun PostponedArgumentsAnalyzerContext.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
     return when (argument) {
         is SubKotlinCallArgument -> {

@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.coroutines
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 
+@K1Deprecation
 val CallableDescriptor.isSuspendLambda get() = this is AnonymousFunctionDescriptor && this.isSuspend
 
+@K1Deprecation
 val ValueParameterDescriptor.hasSuspendFunctionType get() = returnType?.isSuspendFunctionType == true
 
+@K1Deprecation
 val ValueParameterDescriptor.hasFunctionOrSuspendFunctionType get() = returnType?.isFunctionOrSuspendFunctionType == true

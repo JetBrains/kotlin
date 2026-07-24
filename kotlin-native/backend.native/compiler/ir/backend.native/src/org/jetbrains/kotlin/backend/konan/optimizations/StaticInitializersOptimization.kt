@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
@@ -64,12 +64,12 @@ internal object StaticInitializersOptimization {
 
     private val invalidContainerId = 0
 
-    private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph,
+    private class InterproceduralAnalysis(val context: NativeBackendContext, val callGraph: CallGraph,
                                           val rootSet: Set<IrSimpleFunction>) {
         fun analyze(): AnalysisResult {
             context.logMultiple {
                 +"CALL GRAPH"
-                callGraph.directEdges.forEach { (t, u) ->
+                callGraph.directEdges.forEach { [t, u] ->
                     +"    FUN $t"
                     u.callSites.forEach {
                         val label = when {
@@ -158,7 +158,7 @@ internal object StaticInitializersOptimization {
                     functionsWhoseInitializerCallCanBeExtractedToCallSites: Set<IrSimpleFunction>
             ): Set<IrSimpleFunction> {
                 val result = mutableSetOf<IrSimpleFunction>()
-                initializedFiles.forEach { (function, functionInitializedFiles) ->
+                initializedFiles.forEach { [function, functionInitializedFiles] ->
                     val containter = function.calledInitializer ?: return@forEach
                     val backingField = function.correspondingPropertySymbol?.owner?.backingField
                     val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -16,10 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslator
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.ReadWriteProperty
 
+@K1Deprecation
 interface Psi2IrLazyDeclarationBase : IrLazyDeclarationBase {
     val stubGenerator: DeclarationStubGenerator
     val typeTranslator: TypeTranslator

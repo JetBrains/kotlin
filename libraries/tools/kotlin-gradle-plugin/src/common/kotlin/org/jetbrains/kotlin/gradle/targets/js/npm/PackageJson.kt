@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
+import kotlin.io.path.createDirectories
 
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
     var name: String,
-    var version: String
+    var version: String,
 ) : Serializable {
     internal val customFields = mutableMapOf<String, Any?>()
 
@@ -97,13 +99,16 @@ class PackageJson(
             .registerTypeAdapterFactory(PackageJsonTypeAdapter())
             .create()
 
-        packageJsonFile.ensureParentDirsCreated()
+        packageJsonFile.toPath().parent.createDirectories()
+
         val jsonTree = gson.toJsonTree(this)
         val previous = if (packageJsonFile.exists()) {
             packageJsonFile.reader().use {
                 JsonParser.parseReader(it)
             }
-        } else null
+        } else {
+            null
+        }
 
         if (jsonTree != previous) {
             packageJsonFile.writer().use {
@@ -124,7 +129,7 @@ internal fun packageJson(
     main: String,
     types: String? = null,
     npmDependencies: Collection<NpmDependencyDeclaration>,
-    packageJsonHandlers: List<Action<PackageJson>>
+    packageJsonHandlers: List<Action<PackageJson>>,
 ): PackageJson {
 
     val packageJson = PackageJson(
@@ -162,7 +167,7 @@ internal fun packageJson(
 private fun chooseVersion(
     module: String,
     oldVersion: String?,
-    newVersion: String
+    newVersion: String,
 ): String {
     if (oldVersion == null) {
         return newVersion

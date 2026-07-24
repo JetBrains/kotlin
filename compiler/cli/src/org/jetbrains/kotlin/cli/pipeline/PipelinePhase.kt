@@ -37,7 +37,7 @@ class PipelineContext(
  *
  * These phases are built over [org.jetbrains.kotlin.config.phaser.CompilerPhase] infrastructure, and the CLI uses it to make
  *   a compound phases which consists of several pipeline steps. But also these phases have other usages, like test infrastructure,
- *   which manually calls some steps. Because of that, the main method of [PipelinePhase] ([executePhase]) doesn't contain the [context]
+ *   which manually calls some steps. Because of that, the main method of [PipelinePhase] ([executePhase]) doesn't contain the `context`
  *   parameter, which is supposed to be used only in CLI pipeline.
  *
  * To control the execution of the pipeline, the [PipelineStepException] is used. Throwing it stops the pipeline

@@ -52,9 +52,9 @@ fun KaLibraryModule.readKtObjCExportFiles(): List<KtObjCExportFile> {
 
 internal fun createKtObjCExportFiles(addresses: Iterable<KlibDeclarationAddress>): List<KtObjCExportFile> {
     val addressesByPackageName = addresses.groupBy { it.packageFqName }
-    return addressesByPackageName.flatMap { (packageName, addresses) ->
+    return addressesByPackageName.flatMap { [packageName, addresses] ->
         val addressesByFile = addresses.groupBy { it.sourceFileName }
-        addressesByFile.mapNotNull { (fileName, addresses) ->
+        addressesByFile.mapNotNull { [fileName, addresses] ->
             fileName ?: return@mapNotNull null
             KtKlibObjCExportFile(FileUtil.getNameWithoutExtension(fileName), packageName, addresses.toSet())
         }

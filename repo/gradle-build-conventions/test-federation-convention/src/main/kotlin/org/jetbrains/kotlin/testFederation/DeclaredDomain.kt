@@ -10,13 +10,6 @@ package org.jetbrains.kotlin.testFederation
  */
 internal data class DeclaredDomain(
     val name: String,
-    /**
-     * The 'home' directory of the subsystem.
-     * The home directory is used for storing contract dumps.
-     * The directory must be a relative path to from the repository root.
-     * Note: The home directory is not automatically included!
-     */
-    val home: String,
 
     /**
      * Files matching these 'glob' patterns will be included in this subsystem.

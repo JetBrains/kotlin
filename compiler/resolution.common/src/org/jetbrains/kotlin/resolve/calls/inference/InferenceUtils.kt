@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.extractProjectionsForAllCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
@@ -24,13 +27,13 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
     if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
     val uninferredSubstitutorMap = if (transformTypeVariablesToErrorTypes) {
-        notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+        notFixedTypeVariables.entries.associate { [freshTypeConstructor, typeVariable] ->
             freshTypeConstructor to context.createUninferredType(
                 (typeVariable.typeVariable).freshTypeConstructor()
             )
         }
     } else {
-        notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
+        notFixedTypeVariables.entries.associate { [freshTypeConstructor, typeVariable] ->
             freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
         }
     }
@@ -110,4 +113,8 @@ private fun KotlinTypeMarker.extractAllContainingTypeVariablesNoCaptureTypeProce
         }
         false
     }
+}
+
+fun EmptyIntersectionTypeKind.isError(settings: LanguageVersionSettings): Boolean {
+    return isDefinitelyEmpty && settings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
 }

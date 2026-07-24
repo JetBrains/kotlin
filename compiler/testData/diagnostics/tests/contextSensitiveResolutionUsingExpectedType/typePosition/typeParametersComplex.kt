@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 sealed class SealedGeneric<T> {
     class SGOption1<T>(val prop1: Int): SealedGeneric<T>()

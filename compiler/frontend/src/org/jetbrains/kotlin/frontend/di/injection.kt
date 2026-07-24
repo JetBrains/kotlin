@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.util.ProgressManagerBasedCancellationChecker
     level = DeprecationLevel.HIDDEN,
     message = "configureModule\$default provided for binary backward compatibility",
 )
+@K1Deprecation
 fun StorageComponentContainer.`configureModule$default`(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
@@ -85,6 +87,7 @@ fun StorageComponentContainer.`configureModule$default`(
             )"""
     )
 )
+@K1Deprecation
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
@@ -94,6 +97,7 @@ fun StorageComponentContainer.configureModule(
     sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
 ) = configureModule(moduleContext, platform, analyzerServices, trace, languageVersionSettings, sealedProvider, null, null)
 
+@K1Deprecation
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
     platform: TargetPlatform,
@@ -175,12 +179,14 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
  *
  * If you're not doing some trickery with containers, you should use them.
  */
+@K1Deprecation
 fun StorageComponentContainer.configureStandardResolveComponents() {
     useImpl<ResolveSession>()
     useImpl<LazyTopDownAnalyzer>()
     useImpl<AnnotationResolverImpl>()
 }
 
+@K1Deprecation
 fun StorageComponentContainer.configureIncrementalCompilation(
     lookupTracker: LookupTracker,
     expectActualTracker: ExpectActualTracker,
@@ -212,6 +218,7 @@ fun StorageComponentContainer.configureIncrementalCompilation(
             )"""
     )
 )
+@K1Deprecation
 fun createContainerForBodyResolve(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
@@ -235,6 +242,7 @@ fun createContainerForBodyResolve(
     null
 )
 
+@K1Deprecation
 fun createContainerForBodyResolve(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
@@ -271,6 +279,7 @@ fun createContainerForBodyResolve(
     level = DeprecationLevel.HIDDEN,
     message = "createContainerForLazyBodyResolve\$default provided for binary backward compatibility",
 )
+@K1Deprecation
 fun `createContainerForLazyBodyResolve$default`(
     moduleContext: ModuleContext,
     kotlinCodeAnalyzer: KotlinCodeAnalyzer,
@@ -325,6 +334,7 @@ fun `createContainerForLazyBodyResolve$default`(
             ) """
     )
 )
+@K1Deprecation
 fun createContainerForLazyBodyResolve(
     moduleContext: ModuleContext,
     kotlinCodeAnalyzer: KotlinCodeAnalyzer,
@@ -374,6 +384,7 @@ fun createContainerForLazyBodyResolve(
             ) """
     )
 )
+@K1Deprecation
 fun createContainerForLazyBodyResolve(
     moduleContext: ModuleContext,
     kotlinCodeAnalyzer: KotlinCodeAnalyzer,
@@ -403,6 +414,7 @@ fun createContainerForLazyBodyResolve(
     null,
 )
 
+@K1Deprecation
 fun createContainerForLazyBodyResolve(
     moduleContext: ModuleContext,
     kotlinCodeAnalyzer: KotlinCodeAnalyzer,
@@ -446,6 +458,7 @@ fun createContainerForLazyBodyResolve(
     if (platform.isCommon()) useImpl<ExpectedActualDeclarationChecker>()
 }
 
+@K1Deprecation
 fun createContainerForLazyLocalClassifierAnalyzer(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
@@ -510,6 +523,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         """
     )
 )
+@K1Deprecation
 fun createContainerForLazyResolve(
     moduleContext: ModuleContext,
     declarationProviderFactory: DeclarationProviderFactory,
@@ -529,6 +543,7 @@ fun createContainerForLazyResolve(
     null
 )
 
+@K1Deprecation
 fun createContainerForLazyResolve(
     moduleContext: ModuleContext,
     declarationProviderFactory: DeclarationProviderFactory,

@@ -1,11 +1,17 @@
 description = "Kotlin NoArg Compiler Plugin (K2)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
 dependencies {
     compileOnly(project(":kotlin-noarg-compiler-plugin.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:compiler.common.jvm"))
 
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))

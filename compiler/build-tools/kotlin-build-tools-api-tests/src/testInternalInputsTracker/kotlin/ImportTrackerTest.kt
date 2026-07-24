@@ -19,7 +19,7 @@ class ImportTrackerTest : BaseCompilationTest() {
     @DisplayName("Check internal import tracker output in non-incremental mode in-process")
     @Test
     fun importsNonIncremental() {
-        val moduleName = "jvm-module-3"
+        val moduleName = "basic-multimodule-project/module-3"
         // also check order and quantity
         val expectedFileToImport =
             listOf(

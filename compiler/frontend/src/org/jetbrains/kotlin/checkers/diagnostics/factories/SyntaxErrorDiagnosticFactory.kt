@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.checkers.diagnostics.factories
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 
+@K1Deprecation
 class SyntaxErrorDiagnosticFactory private constructor() : DiagnosticFactory<SyntaxErrorDiagnostic>(Severity.ERROR) {
     override val name: String
         get() = "SYNTAX"

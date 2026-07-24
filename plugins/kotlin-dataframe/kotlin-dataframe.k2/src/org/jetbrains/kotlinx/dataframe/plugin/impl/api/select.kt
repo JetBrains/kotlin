@@ -35,9 +35,24 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val df = receiver.insertImpliedColumns(columns)
-        return df.modify { select { columns.toColumnSet() } }
+        return receiver.select(columns)
     }
+}
+
+internal class DataFrameGetColumns : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.first: String by arg()
+    val Arguments.other: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = listOf(first) + other
+        return receiver.select(columns)
+    }
+}
+
+context(_: Arguments)
+private fun PluginDataFrameSchema.select(columns: List<String>): PluginDataFrameSchema {
+    return insertImpliedColumns(columns).modify { select { columns.toColumnSet() } }
 }
 
 internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
@@ -481,9 +496,18 @@ internal class ColumnRange : AbstractInterpreter<ColumnsResolver>() {
 internal class Cols0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver by ignore()
     val Arguments.firstCol: SingleColumnApproximation by arg()
-    val Arguments.otherCols: List<Interpreter.Success<*>> by arg()
+    val Arguments.otherCols: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
     override fun Arguments.interpret(): ColumnsResolver {
-        return columnsResolver { cols(firstCol, *otherCols.map { it.value as SingleColumnApproximation }.toTypedArray()) }
+        return object : ColumnsResolver, ColumnsList<Any?> {
+            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                return columns.flatMap { it.resolve(df) }
+            }
+
+            override val columns: List<SingleColumnApproximation> = buildList {
+                add(firstCol)
+                addAll(otherCols.map { it.value as SingleColumnApproximation })
+            }
+        }
     }
 }
 
@@ -699,12 +723,12 @@ internal class ValueCols2 : AbstractInterpreter<ColumnsResolver>() {
     }
 }
 
-internal class Named0 : AbstractInterpreter<ColumnsResolver>() {
+internal class Named0 : AbstractInterpreter<SingleColumnApproximation>() {
     val Arguments.receiver: SingleColumnApproximation by arg()
     val Arguments.newName: String by arg()
 
-    override fun Arguments.interpret(): ColumnsResolver {
-        return columnsResolver { receiver named newName }
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return receiver.rename(newName)
     }
 }
 
@@ -718,30 +742,30 @@ internal class NestedSelect : AbstractInterpreter<ColumnsResolver>() {
 }
 
 // "myCol"()
-internal class StringInvokeUntyped : AbstractInterpreter<ColumnsResolver>() {
+internal class StringInvokeUntyped : AbstractInterpreter<SingleColumnApproximation>() {
     val Arguments.receiver: String by arg()
 
-    override fun Arguments.interpret(): ColumnsResolver {
+    override fun Arguments.interpret(): SingleColumnApproximation {
         return stringApiColumnResolver(path = pathOf(receiver), session.builtinTypes.nullableAnyType.coneType)
     }
 }
 
 // "myCol"<Int>()
-internal class StringInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
+internal class StringInvokeTyped : AbstractInterpreter<SingleColumnApproximation>() {
     val Arguments.receiver: String by arg()
     val Arguments.typeArg0 by type()
 
-    override fun Arguments.interpret(): ColumnsResolver {
+    override fun Arguments.interpret(): SingleColumnApproximation {
         return stringApiColumnResolver(path = pathOf(receiver), typeArg0.coneType)
     }
 }
 
 // "group"["myCol"]<Int>()
-internal class ColumnPathInvokeTyped : AbstractInterpreter<ColumnsResolver>() {
+internal class ColumnPathInvokeTyped : AbstractInterpreter<SingleColumnApproximation>() {
     val Arguments.receiver: ColumnPathApproximation by arg()
     val Arguments.typeArg0 by type()
 
-    override fun Arguments.interpret(): ColumnsResolver {
+    override fun Arguments.interpret(): SingleColumnApproximation {
         return stringApiColumnResolver(receiver.path, typeArg0.coneType)
     }
 }

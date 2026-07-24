@@ -33,17 +33,9 @@ gradlePlugin {
     }
 }
 
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-    gradlePluginPortal()
-}
-
 dependencies {
     api(project(":utilities"))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
+    implementation(kotlinBuildHelpers())
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
 

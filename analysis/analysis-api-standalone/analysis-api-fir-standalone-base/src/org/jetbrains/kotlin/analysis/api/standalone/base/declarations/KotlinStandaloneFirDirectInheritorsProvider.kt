@@ -90,6 +90,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         return isSubclassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun ClassId.toFirSymbol(module: KaModule): FirClassLikeSymbol<*>? {
         // Using a resolve session/source-preferred session will cause class stubs from binary libraries to be AST-loaded in IDE mode tests,
         // which results in an exception since we don't have a decompiler for them. See KT-64898, KT-64899, and KT-64900. If not for these

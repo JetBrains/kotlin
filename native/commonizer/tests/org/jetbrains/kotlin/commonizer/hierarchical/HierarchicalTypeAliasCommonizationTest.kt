@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test simple type alias`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -27,6 +29,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
     /**
      * See: https://youtrack.jetbrains.com/issue/KT-45992
      */
+    @Test
     fun `test typealias and class`() {
         val result = commonize {
             outputTarget("(a,b)")
@@ -42,6 +45,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a,b)", "expect class X()")
     }
 
+    @Test
     fun `test typealias to different classes`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(e, f)", "(a, b, c, d)", "(a, b, c, d, e, f)")
@@ -103,6 +107,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
     }
 
 
+    @Test
     fun `test typealias chain`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -130,6 +135,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         )
     }
 
+    @Test
     fun `test long typealias chain`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -163,6 +169,7 @@ class HierarchicalTypeAliasCommonizationTest : AbstractInlineSourcesCommonizatio
         )
     }
 
+    @Test
     fun `test typealias with phantom type`() {
         val result = commonize {
             outputTarget("(a, b)")

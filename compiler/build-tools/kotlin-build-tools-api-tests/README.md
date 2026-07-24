@@ -22,6 +22,8 @@ The module defines test suites using the `jvm-test-suite` plugin.
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testEscapableCharacters` to run them
 * Restricted arguments: verifies that arguments not supported via `applyArgumentStrings` (e.g. `-Xbuild-file`, `-d`) are properly rejected
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testRestrictedArguments` to run them
+* Classpath metadata: verifies the experimental incremental compilation feature for KMP projects targeting the JVM
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testClasspathMetadata` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -35,36 +36,37 @@ import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
 
 internal class AllCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class NullableCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
     }
 }
@@ -86,7 +88,7 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<C
 }
 
 private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<CommonArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = commonCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
@@ -94,7 +96,7 @@ private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentTestDes
             if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("[v1]")) return@mapNotNull null
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                CommonArgumentConfiguration(namedKotlinToolchains.payload, namedArgumentDescriptor.payload)
+                CommonArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
             )
         }
     }
@@ -145,7 +147,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
     ),
     CommonArgumentTestDescriptor(
         argumentName = "Xsuppress-warning",
-        argument = X_SUPPRESS_WARNING,
+        argument = @OptIn(DeprecatedCompilerArgument::class) X_SUPPRESS_WARNING,
         argumentValues = listOf(listOf("warning1", "warning2", "warning3")),
         argumentRawValues = listOf(listOf("warning1", "warning2", "warning3").joinToString(",")),
         valueString = { value -> value?.joinToString(",") },
@@ -235,6 +237,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argument = X_DUMP_DIRECTORY,
         argumentValues = listOf(testBaseDir.resolve("path/to/dump")),
         argumentRawValues = listOf(testBaseDir.resolve("path/to/dump").toFile().absolutePath),
+        runsNullableTest = true,
         valueString = { value -> value?.toFile()?.absolutePath },
         expectedArgumentStringsFor = { value -> listOf("-Xdump-directory=$value") },
     ),
@@ -243,6 +246,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argument = X_DUMP_PERF,
         argumentValues = listOf(testBaseDir.resolve("path/to/perf.log")),
         argumentRawValues = listOf(testBaseDir.resolve("path/to/perf.log").toFile().absolutePath),
+        runsNullableTest = true,
         valueString = { value -> value?.toFile()?.absolutePath },
         expectedArgumentStringsFor = { value -> listOf("-Xdump-perf=$value") },
     ),

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.context
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import java.util.*
 
+@K1Deprecation
 interface ResolutionResultsCache {
     data class CachedData(
         val resolutionResults: OverloadResolutionResultsImpl<*>,
@@ -43,6 +45,7 @@ interface ResolutionResultsCache {
     operator fun get(call: Call): CachedData?
 }
 
+@K1Deprecation
 class ResolutionResultsCacheImpl : ResolutionResultsCache {
     private val data = HashMap<Call, CachedData>()
 
@@ -63,6 +66,7 @@ class ResolutionResultsCacheImpl : ResolutionResultsCache {
     }
 }
 
+@K1Deprecation
 class TemporaryResolutionResultsCache(private val parentCache: ResolutionResultsCache) : ResolutionResultsCache {
     private val innerCache = ResolutionResultsCacheImpl()
 

@@ -10,10 +10,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModificationType
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 
-@OptIn(LLFirInternals::class)
 internal class KaFirSourceModificationService(private val project: Project) : KaSourceModificationService {
     override fun detectLocality(element: PsiElement, modificationType: KaElementModificationType): KaSourceModificationLocality =
         LLFirDeclarationModificationService.getInstance(project).detectLocality(element, modificationType)

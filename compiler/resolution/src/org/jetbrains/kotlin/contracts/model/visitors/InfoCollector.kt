@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.visitors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 
+@K1Deprecation
 class InfoCollector(private val observedEffect: ESEffect, private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<MutableContextInfo> {
     private var isInverted: Boolean = false
 

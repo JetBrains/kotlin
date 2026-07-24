@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.NOT_NULL_ASSERTION
 import org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.OR
@@ -69,6 +70,7 @@ import java.util.*
 
 typealias DeferredGenerator = (ControlFlowBuilder) -> Unit
 
+@K1Deprecation
 class ControlFlowProcessor(
     private val trace: BindingTrace,
     private val languageVersionSettings: LanguageVersionSettings

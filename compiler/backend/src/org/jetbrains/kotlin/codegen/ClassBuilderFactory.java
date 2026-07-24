@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.ir.declarations.IrClass;
 
 public interface ClassBuilderFactory {
     @NotNull
     ClassBuilderMode getClassBuilderMode();
 
     @NotNull
-    ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin);
+    ClassBuilder newClassBuilder(@Nullable IrClass origin);
 
     String asText(ClassBuilder builder);
 

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
@@ -28,7 +30,7 @@ internal data class CompatLayerConfig(
 
 @OptIn(ExperimentalArgumentApi::class)
 internal class BtaImplOptionsGenerator(
-    private val targetPackage: String,
+    override val targetPackage: String,
     private val skipXX: Boolean,
     /**
      * The Kotlin version that is used for generating arguments from SSoT.
@@ -44,7 +46,11 @@ internal class BtaImplOptionsGenerator(
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(
+        level: KotlinCompilerArgumentsLevel,
+        parentClass: ClassName?,
+        additionalInterfaces: List<ClassName>,
+    ): GeneratorOutputs {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
@@ -62,6 +68,17 @@ internal class BtaImplOptionsGenerator(
                 if (!level.isLeaf()) {
                     addModifiers(KModifier.ABSTRACT)
                 }
+                val syntheticInterfaces = syntheticArgumentInterfaces.filter { it.concreteClassName == implClassName }
+                if (syntheticInterfaces.isEmpty()) {
+                    addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
+                    addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()).nestedClass("Builder"))
+                } else {
+                    syntheticInterfaces.forEach {
+                        addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, it.name))
+                        addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, it.name).nestedClass("Builder"))
+                    }
+                }
+
                 if (parentClass != null) {
                     superclass(parentClass)
                     addSuperclassConstructorParameter("adapter")
@@ -79,9 +96,6 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
 
-                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
-                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()).nestedClass("Builder"))
-
                 val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)
                 val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
@@ -89,11 +103,22 @@ internal class BtaImplOptionsGenerator(
 
                 val argumentTypeNameString =
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
-                val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
                 val constructorSpecBuilder = constructorSpecBuilder(argumentTypeNameString)
 
-                generateGetPutFunctions(argumentTypeName, argumentImplTypeName, level)
+                val mapProperty = generateOptionsMap()
+                generateOwnGetPutFunctions(argumentImplTypeName, mapProperty, level)
+
+                if (syntheticInterfaces.isEmpty()) {
+                    val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
+                    generateGetPutFunctions(argumentTypeName, mapProperty, level)
+                } else {
+                    syntheticInterfaces.forEach { syntheticInterface ->
+                        val argumentTypeName =
+                            ClassName(API_ARGUMENTS_PACKAGE, syntheticInterface.name, syntheticInterface.name.removeSuffix("s"))
+                        generateGetPutFunctions(argumentTypeName, mapProperty, level)
+                    }
+                }
 
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
@@ -110,7 +135,6 @@ internal class BtaImplOptionsGenerator(
                         applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                         toCompilerConverterFun = toCompilerConverterFun,
                         toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
-                        defaultsInitializer = defaultsInitializer,
                     )
                 }.build())
 
@@ -130,7 +154,7 @@ internal class BtaImplOptionsGenerator(
                     }
                     function("build") {
                         addModifiers(KModifier.OVERRIDE)
-                        returns(ClassName(API_ARGUMENTS_PACKAGE, apiClassName))
+                        returns(ClassName(targetPackage, implClassName))
                         addStatement("return deepCopy()")
                     }
                     addSuperinterface(
@@ -150,6 +174,11 @@ internal class BtaImplOptionsGenerator(
                         )
                     }
                     constructorSpecBuilder.addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
+                } else {
+                    function("build") {
+                        addModifiers(KModifier.OVERRIDE, KModifier.ABSTRACT)
+                        returns(ClassName(targetPackage, implClassName))
+                    }
                 }
 
                 primaryConstructor(constructorSpecBuilder.build())
@@ -225,7 +254,6 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         toCompilerConverterFun: FunSpec.Builder,
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
-        defaultsInitializer: CodeBlock.Builder,
     ) {
         arguments.forEach { argument ->
             val name = argument.extractName()
@@ -256,6 +284,9 @@ internal class BtaImplOptionsGenerator(
                         classifier.java.isEnum -> {
                             val classifier = type.classifier as KClass<*>
                             classifier.toBtaEnumClassName()
+                        }
+                        classifier == List::class && (type.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
+                            listTypeNameOf((type.arguments.first().type?.classifier as KClass<*>).toBtaEnumClassName())
                         }
                         else -> {
                             type.asTypeName()
@@ -339,9 +370,18 @@ internal class BtaImplOptionsGenerator(
             }
         }
 
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
-        }.build(), failOnNoSuchMethod = false)
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(
+            CodeBlock.builder().apply {
+                add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
+            }.build(),
+            catches =
+                buildList {
+                    if (!generateCompatLayer) {
+                        add(catchCompilerArgumentsParseException())
+                    }
+                    add(catchNoSuchMethodError())
+                },
+        )
     }
 
     /**
@@ -394,7 +434,15 @@ internal class BtaImplOptionsGenerator(
         val compilerToBtaStatement = buildCompilerToBtaValueTransform(
             member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
         )
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(compilerToBtaStatement, failOnNoSuchMethod = false)
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(
+            compilerToBtaStatement,
+            catches = buildList {
+                if (!generateCompatLayer && (type.isGeneratedEnum || type.isGeneratedEnumList())) {
+                    add(catchCompilerArgumentsParseException())
+                }
+                add(catchNoSuchMethodError())
+            },
+        )
     }
 
     /**
@@ -410,6 +458,9 @@ internal class BtaImplOptionsGenerator(
             type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument) + ".stringValue")
             }
+            type.isGeneratedEnumList() -> {
+                add(maybeGetNullabilitySign(argument) + ".map { it.stringValue }.toTypedArray()")
+            }
             argument.valueType.origin is IntType -> {
                 add(maybeGetNullabilitySign(argument) + ".toString()")
             }
@@ -424,11 +475,11 @@ internal class BtaImplOptionsGenerator(
                 )
             }
             argument.valueType.origin is StringArrayType -> {
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(" ?: emptyArray()")
             }
             argument.valueType.origin is StringListType -> {
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -440,7 +491,7 @@ internal class BtaImplOptionsGenerator(
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
                 )
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
                     MemberName(KOTLIN_COLLECTIONS, "joinToString"),
@@ -453,7 +504,7 @@ internal class BtaImplOptionsGenerator(
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
                 )
-                maybeAddValidation(argument)
+                maybeAddDelimiterValidation(argument)
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -496,7 +547,12 @@ internal class BtaImplOptionsGenerator(
     ): CodeBlock = CodeBlock.builder().apply {
         add("this[%M] = ", member)
         if (wasRemoved) {
-            add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
+            add(
+                "arguments.%M<%T>(%S)",
+                MemberName(targetPackage, "getUsingReflection", isExtension = true),
+                argument.getTypeArgumentForReflection(),
+                effectiveCompilerName,
+            )
         } else {
             add("arguments.%N", effectiveCompilerName)
         }
@@ -504,10 +560,28 @@ internal class BtaImplOptionsGenerator(
         when {
             type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument))
+                if (!generateCompatLayer) {
+                    add(
+                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                        argumentTypeParameter.copy(nullable = false),
+                        MemberName(targetPackage, "checkCaseMatches"),
+                        effectiveCompilerName,
+                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                    )
+                } else {
+                    add(
+                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                        argumentTypeParameter.copy(nullable = false),
+                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                    )
+                }
+            }
+            type.isGeneratedEnumList() -> {
+                val enumType = type.typeArguments[0]
                 add(
-                    $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
-                    argumentTypeParameter.copy(nullable = false),
-                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                    $$".map { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    enumType.copy(nullable = false),
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
                 )
             }
             argument.valueType.origin is IntType -> {
@@ -544,6 +618,22 @@ internal class BtaImplOptionsGenerator(
         }
     }.build()
 
+    /**
+     * The type of the property, used as the explicit type argument for `getUsingReflection` when an argument was removed from the compiler
+     * and is accessed reflectively. It's needed for chained transforms, otherwise the type argument cannot be inferred.
+     * See `Main.generateProperty` in the CLI arguments generator for similar code.
+     */
+    private fun BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>.getTypeArgumentForReflection(): TypeName {
+        val stringType = ClassName("kotlin", "String")
+        return when (valueType.origin) {
+            is StringArrayType, is StringListType, is PathListType, is EnumListType<*> ->
+                ClassName("kotlin", "Array").parameterizedBy(stringType)
+            is BooleanType -> ClassName("kotlin", "Boolean").copy(nullable = valueType.isNullable)
+            is SearchPathType -> stringType.copy(nullable = true)
+            else -> stringType.copy(nullable = valueType.isNullable)
+        }
+    }
+
     private fun TypeSpec.Builder.generateToCompilationInputsFun(
         level: KotlinCompilerArgumentsLevel,
         implClassName: String,
@@ -561,18 +651,48 @@ internal class BtaImplOptionsGenerator(
                 """.trimIndent()
             )
             returns(listTypeNameOf<String>())
-            addStatement("return toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()")
+            addStatement("return toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()")
         }
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName, level: KotlinCompilerArgumentsLevel) {
-        val mapProperty = property(
-            "optionsMap",
-            ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
-        ) {
-            addModifiers(KModifier.PRIVATE)
-            initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
+    private fun TypeSpec.Builder.generateOptionsMap(): PropertySpec = property(
+        "optionsMap",
+        ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
+    ) {
+        addModifiers(KModifier.PRIVATE)
+        initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
+    }
+
+    fun TypeSpec.Builder.generateOwnGetPutFunctions(implParameter: ClassName, mapProperty: PropertySpec, level: KotlinCompilerArgumentsLevel) {
+        function("get") {
+            val typeParameter = TypeVariableName("V")
+            annotation<Suppress> {
+                addMember("%S", "UNCHECKED_CAST")
+            }
+            returns(typeParameter)
+            addModifiers(KModifier.OPERATOR)
+            addTypeVariable(typeParameter)
+            addParameter("key", implParameter.parameterizedBy(typeParameter))
+            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
+        function("set") {
+            val typeParameter = TypeVariableName("V")
+            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addTypeVariable(typeParameter)
+            addParameter("key", implParameter.parameterizedBy(typeParameter))
+            addParameter("value", typeParameter)
+            addStatement("%N[key.id] = %N", mapProperty, "value")
+        }
+
+        function("contains") {
+            addModifiers(KModifier.OPERATOR)
+            returns(BOOLEAN)
+            addParameter("key", implParameter.parameterizedBy(STAR))
+            addStatement("return key.id in optionsMap")
+        }
+    }
+
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, mapProperty: PropertySpec, level: KotlinCompilerArgumentsLevel) {
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -646,33 +766,6 @@ internal class BtaImplOptionsGenerator(
                 }
             }
         }
-
-        function("get") {
-            val typeParameter = TypeVariableName("V")
-            annotation<Suppress> {
-                addMember("%S", "UNCHECKED_CAST")
-            }
-            returns(typeParameter)
-            addModifiers(KModifier.OPERATOR)
-            addTypeVariable(typeParameter)
-            addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
-        }
-        function("set") {
-            val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
-            addTypeVariable(typeParameter)
-            addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addParameter("value", typeParameter)
-            addStatement("%N[key.id] = %N", mapProperty, "value")
-        }
-
-        function("contains") {
-            addModifiers(KModifier.OPERATOR)
-            returns(BOOLEAN)
-            addParameter("key", implParameter.parameterizedBy(STAR))
-            addStatement("return key.id in optionsMap")
-        }
     }
 
     private fun TypeSpec.Builder.generateRestrictedArgViolationCollection(
@@ -741,6 +834,9 @@ internal class BtaImplOptionsGenerator(
             if (hasActiveViolations) {
                 function("collectRestrictedArgViolations") {
                     addModifiers(KModifier.INTERNAL, KModifier.OVERRIDE)
+                    addAnnotation(
+                        AnnotationSpec.builder(ClassName("kotlin", "Suppress")).addMember("%S", "DEPRECATION").build()
+                    )
                     addParameter("compilerArgs", rootCompilerArgsClass)
                     addParameter("defaultArgs", rootCompilerArgsClass)
                     addStatement("super.collectRestrictedArgViolations(compilerArgs, defaultArgs)")
@@ -772,7 +868,7 @@ internal class BtaImplOptionsGenerator(
                 append(" This warning will become an error starting from Kotlin ${info.errorSince.releaseName}.")
             }
         }
-        val (violationType, message) = when {
+        val [violationType, message] = when {
             info.errorSince != null && kotlinVersion >= info.errorSince -> "Error" to baseMessage
             kotlinVersion >= info.warningSince -> "Warning" to warningMessage
             else -> return
@@ -786,16 +882,45 @@ internal class BtaImplOptionsGenerator(
         )
     }
 
-    private fun CodeBlock.Builder.maybeAddValidation(argument: BtaCompilerArgument<*>) {
+    private fun CodeBlock.Builder.maybeAddDelimiterValidation(argument: BtaCompilerArgument<*>) {
         if (argument.delimiter == null) {
             return
         }
 
         add(
-            maybeGetNullabilitySign(argument) + ".also { list -> list.%M(\"${argument.delimiter}\") }",
+            maybeGetNullabilitySign(argument) + ".also { list -> list.%M(",
             MemberName(targetPackage, "checkNoneContains", isExtension = true)
         )
+        add(argument.delimiter)
+        add(") }")
     }
+
+    private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {
+        if (!level.isLeaf()) {
+            return
+        }
+        function("toArgumentStrings") {
+            addModifiers(KModifier.OVERRIDE)
+            if (parentClass == null) {
+                addModifiers(KModifier.OPEN)
+            }
+            returns(listTypeNameOf<String>())
+            if (generateCompatLayer) {
+                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings()")
+            } else {
+                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)")
+            }
+            addStatement("return arguments")
+        }
+    }
+}
+
+private fun TypeName.isGeneratedEnumList(): Boolean {
+    @OptIn(ExperimentalContracts::class)
+    contract {
+        returns(true) implies (this@isGeneratedEnumList is ParameterizedTypeName)
+    }
+    return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
 }
 
 internal fun FunSpec.Builder.addSafeSetStatement(
@@ -822,28 +947,16 @@ internal fun FunSpec.Builder.addSafeSetStatement(
                 }
             }
         )
-        addSafeMethodAccessStatement(setStatement, failOnNoSuchMethod = true, errorMessage = errorMessage)
+        addSafeMethodAccessStatement(
+            setStatement,
+            catches = listOf(catchNoSuchMethodError(errorMessage)),
+        )
     } else {
         addStatement("%L", setStatement)
     }
 }
 
 private fun maybeGetNullabilitySign(argument: BtaCompilerArgument<*>): String = (if (argument.valueType.isNullable) "?" else "")
-
-private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {
-    if (!level.isLeaf()) {
-        return
-    }
-    function("toArgumentStrings") {
-        addModifiers(KModifier.OVERRIDE)
-        if (parentClass == null) {
-            addModifiers(KModifier.OPEN)
-        }
-        returns(listTypeNameOf<String>())
-        addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings()")
-        addStatement("return arguments")
-    }
-}
 
 private fun toCompilerArgumentsAffectingOutcomeFunBuilder(
     level: KotlinCompilerArgumentsLevel,
@@ -912,41 +1025,25 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             addModifiers(KModifier.OPEN)
         }
         addParameter("arguments", listTypeNameOf<String>())
-        val bodyCode = CodeBlock.builder().apply {
+        addStatement(
+            "val compilerArgs: %T = %M(arguments)",
+            compilerArgumentsClass,
+            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+        )
+        if (!generateCompatLayer) {
+            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
             addStatement(
-                "val compilerArgs: %T = %M(arguments)",
-                compilerArgumentsClass,
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
             )
-            if (!generateCompatLayer) {
-                addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-            }
+        } else {
             addStatement(
                 "%M(compilerArgs.errors)?.let { throw %M(it) }",
                 MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
                 MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
             )
-            addStatement("applyCompilerArguments(compilerArgs)")
-        }.build()
-        if (!generateCompatLayer) {
-            addCode(
-                CodeBlock.builder()
-                    .beginControlFlow("try")
-                    .add(bodyCode)
-                    .nextControlFlow(
-                        "catch (e: %T)",
-                        ClassName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
-                    )
-                    .addStatement(
-                        "_argumentValidationErrors.add(e.message ?: %S)",
-                        "Error parsing compiler arguments"
-                    )
-                    .endControlFlow()
-                    .build()
-            )
-        } else {
-            addCode(bodyCode)
         }
+        addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
 
@@ -962,6 +1059,7 @@ private fun applyCompilerArgumentsFunBuilder(
     annotation<Suppress> {
         addMember("%S", "DEPRECATION")
     }
+    addModifiers(KModifier.PROTECTED)
 }
 
 private fun KotlinCompilerArgumentsLevel.getCompilerArgumentsClassName(): ClassName {
@@ -972,19 +1070,24 @@ private fun KotlinCompilerArgumentsLevel.getCompilerArgumentsClassName(): ClassN
 
 private fun FunSpec.Builder.addSafeMethodAccessStatement(
     codeBlock: CodeBlock,
-    failOnNoSuchMethod: Boolean = true,
-    errorMessage: CodeBlock? = null,
+    catches: List<CodeBlock>,
 ): FunSpec.Builder {
-    return if (failOnNoSuchMethod) {
-        addStatement(
-            "try { %L } catch (e: NoSuchMethodError) { throw IllegalStateException(%L).initCause(e) }",
-            codeBlock,
-            errorMessage ?: CodeBlock.of("%S", "Unknown parameter")
-        )
-    } else {
-        addStatement(
-            "try { %L } catch (_: NoSuchMethodError) {  }",
-            codeBlock
-        )
+    val format = buildString {
+        append("try { %L }")
+        repeat(catches.size) { append(" %L") }
     }
+    return addStatement(format, codeBlock, *catches.toTypedArray())
 }
+
+private fun catchCompilerArgumentsParseException(): CodeBlock = CodeBlock.of(
+    "catch (ex: %M) { _argumentValidationErrors.add(ex.message ?: %S) }",
+    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+    "Error parsing compiler arguments",
+)
+
+private fun catchNoSuchMethodError(errorMessage: CodeBlock? = null): CodeBlock =
+    if (errorMessage == null) {
+        CodeBlock.of("catch (_: NoSuchMethodError) {  }")
+    } else {
+        CodeBlock.of("catch (e: NoSuchMethodError) { throw IllegalStateException(%L).initCause(e) }", errorMessage)
+    }

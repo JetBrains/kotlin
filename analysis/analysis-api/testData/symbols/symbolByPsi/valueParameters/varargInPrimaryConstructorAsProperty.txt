@@ -1,8 +1,9 @@
 KaConstructorSymbol:
+  anchorPsi: KtPrimaryConstructor
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: Foo
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: SOURCE
+  psi: KtPrimaryConstructor
+  realPsi: KtPrimaryConstructor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -22,126 +25,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotations: []
-        backingFieldSymbol: KaBackingFieldSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Private
-          contextReceivers: []
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isNotDefault: false
-          isVal: true
-          location: PROPERTY
-          modality: FINAL
-          name: field
-          origin: PROPERTY_BACKING_FIELD
-          owningProperty: KaKotlinPropertySymbol(/Foo.ints)
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/IntArray
-          visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Foo
-          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
-          getContainingJvmClassName: Foo
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
-          importableFqName: null
-        callableId: /Foo.ints
-        compilerVisibility: Public
-        contextParameters: []
-        contextReceivers: []
-        getter: KaPropertyGetterSymbol:
-          annotations: []
-          callableId: null
-          compilerVisibility: Public
-          contextReceivers: []
-          hasStableParameterNames: true
-          isActual: false
-          isCompanion: false
-          isExpect: false
-          isExtension: false
-          isExternal: false
-          isInline: false
-          isNotDefault: false
-          isOverride: false
-          location: PROPERTY
-          modality: FINAL
-          origin: SOURCE
-          receiverParameter: null
-          returnType: KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: kotlin/IntArray
-          valueParameters: []
-          visibility: PUBLIC
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: Foo
-          getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
-          getContainingJvmClassName: Foo
-          getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
-          importableFqName: null
-        hasBackingField: true
-        hasGetter: true
-        hasSetter: false
-        initializer: KaNonConstantInitializerValue(vararg val ints: Int)
-        isActual: false
-        isCompanion: false
-        isConst: false
-        isDelegatedProperty: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isFromPrimaryConstructor: true
-        isLateInit: false
-        isOverride: false
-        isStatic: false
-        isVal: true
-        location: CLASS
-        modality: FINAL
-        name: ints
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/IntArray
-        setter: null
-        typeParameters: []
-        visibility: PUBLIC
-        getDispatchReceiver(): KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: Foo
-        getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
-        getContainingJvmClassName: Foo
-        getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
-        javaGetterName: getInts
-        javaSetterName: null
-        isInline: false
-        importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -153,31 +47,35 @@ KaConstructorSymbol:
       modality: FINAL
       name: ints
       origin: SOURCE
+      primaryConstructorProperty: KaKotlinPropertySymbol(/Foo.ints)
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -190,6 +88,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Foo
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -200,6 +100,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: Foo

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.tests
 
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.StubRenderer
+import org.jetbrains.kotlin.backend.konan.testUtils.BaseDeclarationsGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.baseDeclarationsDir
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
@@ -42,9 +42,5 @@ class ObjCExportBaseDeclarationsTest(
             .joinToString(System.lineSeparator())
 
         TestDataAssertions.assertEqualsToFile(headerFile, renderedDeclarations)
-    }
-
-    fun interface BaseDeclarationsGenerator {
-        operator fun invoke(topLevelPrefix: String): List<ObjCTopLevel>
     }
 }

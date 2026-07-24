@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
@@ -46,6 +47,7 @@ private val ALLOWED_CLASSES = setOf(
 /**
  * Checks that there are no usages of reflection API which will fail at runtime.
  */
+@K1Deprecation
 abstract class AbstractReflectionApiCallChecker(
     private val reflectionTypes: ReflectionTypes,
     storageManager: StorageManager

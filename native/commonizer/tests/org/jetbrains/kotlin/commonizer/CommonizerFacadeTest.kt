@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -100,7 +100,7 @@ class CommonizerFacadeTest {
             manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
             commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
         ): CommonizerParameters {
-            val targetDependentModuleNames = mapKeys { (targetName, _) -> LeafCommonizerTarget(targetName) }.toTargetDependent()
+            val targetDependentModuleNames = mapKeys { [targetName, _] -> LeafCommonizerTarget(targetName) }.toTargetDependent()
             val sharedTarget = SharedCommonizerTarget(targetDependentModuleNames.targets.allLeaves())
 
             return CommonizerParameters(

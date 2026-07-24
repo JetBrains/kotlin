@@ -16,27 +16,26 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameElements;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InnerClassInfoGenTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
-
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
     }
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
     }
@@ -47,6 +46,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         return "innerClassInfo";
     }
 
+    @Test
     public void testInnerClassInfo() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$B", "A", "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         InnerClassAttribute innerC = new InnerClassAttribute("A$B$C", "A$B", "C", ACC_PUBLIC | ACC_FINAL);
@@ -60,6 +60,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$" + companionObjectDefaultName, innerACompanionObject);
     }
 
+    @Test
     public void testLocalClass() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$foo$B", null, "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
 
@@ -67,6 +68,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$foo$B", innerB);
     }
 
+    @Test
     public void testAnonymousClass() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$B$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         InnerClassAttribute innerC = new InnerClassAttribute("A$foo$C$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
@@ -76,11 +78,13 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$foo$C$1", innerC);
     }
 
+    @Test
     public void testAnonymousObjectInline() {
         InnerClassAttribute objectInInlineFun = new InnerClassAttribute("A$inlineFun$s$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         extractAndCompareInnerClasses("A", objectInInlineFun);
     }
 
+    @Test
     public void testEnumEntry() {
         InnerClassAttribute innerE2 = new InnerClassAttribute("E$E2", "E", "E2", ACC_STATIC | ACC_FINAL);
 
@@ -88,6 +92,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("E$E2", innerE2);
     }
 
+    @Test
     public void testInnerAccessFlags() {
         checkAccess("A", "Annotation", ACC_PUBLIC | ACC_STATIC | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION);
         checkAccess("A", "Enum", ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_ENUM);

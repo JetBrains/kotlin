@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtElement
  */
 @KaImplementationDetail
 class LLFirInBlockModificationTracker : SimpleModificationTracker() {
+    @KaImplementationDetail
     companion object {
         fun getInstance(project: Project): ModificationTracker = project.service<LLFirInBlockModificationTracker>()
     }

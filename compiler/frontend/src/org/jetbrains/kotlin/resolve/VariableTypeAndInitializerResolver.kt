@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorWithInitializerImpl
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
+@K1Deprecation
 class VariableTypeAndInitializerResolver(
     private val storageManager: StorageManager,
     private val expressionTypingServices: ExpressionTypingServices,

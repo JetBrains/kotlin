@@ -50,6 +50,12 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingDeclarationProvide
   }
 
   @Test
+  @TestMetadata("delegationOverride.kt")
+  public void testDelegationOverride() {
+    run("delegationOverride.kt");
+  }
+
+  @Test
   @TestMetadata("intersectionOverride.kt")
   public void testIntersectionOverride() {
     run("intersectionOverride.kt");

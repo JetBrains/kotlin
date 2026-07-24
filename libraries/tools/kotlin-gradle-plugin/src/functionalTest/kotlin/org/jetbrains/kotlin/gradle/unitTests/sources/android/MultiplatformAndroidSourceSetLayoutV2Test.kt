@@ -40,7 +40,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     @Test
-    fun `test - main SourceSet - is called 'androidMain'`() {
+    fun `test - main SourceSet - is called androidMain`() {
         @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidMain", project.getKotlinSourceSetOrFail(android.sourceSets.main).name)
@@ -54,7 +54,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     @Test
-    fun `test - unitTest SourceSet - is called 'androidUnitTest'`() {
+    fun `test - unitTest SourceSet - is called androidUnitTest`() {
         @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidUnitTest", project.getKotlinSourceSetOrFail(android.sourceSets.test).name)
@@ -68,7 +68,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
     }
 
     @Test
-    fun `test - instrumentedTest SourceSet - is called 'androidInstrumentedTest'`() {
+    fun `test - instrumentedTest SourceSet - is called androidInstrumentedTest`() {
         @Suppress("DEPRECATION")
         kotlin.androidTarget()
         assertEquals("androidInstrumentedTest", project.getKotlinSourceSetOrFail(android.sourceSets.androidTest).name)

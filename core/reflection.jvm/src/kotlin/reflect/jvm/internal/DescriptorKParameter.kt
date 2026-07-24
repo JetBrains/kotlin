@@ -58,12 +58,7 @@ internal class DescriptorKParameter(
                     callable.caller.parameterTypes[index]
                 }
             }
-            return when (kind) {
-                KParameter.Kind.INSTANCE -> type
-                else -> callable.overriddenStorage.getTypeSubstitutor(callable.typeParameters, memberNameForDebug = callable.name)
-                    .substitute(type).type
-                    ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = callable.name)
-            }
+            return if (kind == KParameter.Kind.INSTANCE) type else callable.substituteType(type)
         }
 
     override val isOptional: Boolean

@@ -1,0 +1,5 @@
+{
+  "include": [ "./*" ],
+  "exclude": [ "./typealiases.d.ts" ],
+  "extends": "../../common.tsconfig.json"
+}

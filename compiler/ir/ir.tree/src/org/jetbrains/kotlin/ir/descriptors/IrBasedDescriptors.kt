@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -587,7 +588,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
-    override fun isInline() = owner.isSingleFieldValueClass
+    override fun isInline() = error("Should not be called, use K2")
 
     override fun isFun() = owner.isFun
 
@@ -1276,14 +1277,14 @@ private fun IrElement.toConstantValue(): ConstantValue<*> {
 
         is IrClassReference -> KClassValue((classType.classifierOrFail.owner as IrClass).toIrBasedDescriptor().classId!!, /*TODO*/0)
 
-        is IrConstructorCall -> AnnotationValue(this.toAnnotationDescriptor())
+        is IrAnnotation -> AnnotationValue(this.toAnnotationDescriptor())
 
         else -> error("$this is not expected: ${this.dump()}")
     }
 }
 
-private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
-    val annotationClass = symbol.owner.parentAsClass
+private fun IrAnnotation.toAnnotationDescriptor(): AnnotationDescriptor {
+    val annotationClass = classSymbol.owner
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     if (annotationClass.symbol.descriptor == ErrorUtils.errorClass || type is IrErrorType) {
@@ -1298,14 +1299,15 @@ private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
     }
     return AnnotationDescriptorImpl(
         annotationClass.defaultType.toIrBasedKotlinType(),
-        symbol.owner.parameters.memoryOptimizedMap { it.name to arguments[it.indexInParameters] }
-            .filter { it.second != null }
-            .associate { it.first to it.second!!.toConstantValue() },
+        argumentMapping
+            .filter { it.value != null }
+            .map { it.key to it.value!!.toConstantValue() }
+            .toMap(),
         source
     )
 }
 
 private fun IrDeclaration.toAnnotations(): Annotations {
     val ownerAnnotations = (this as? IrAnnotationContainer)?.annotations ?: return Annotations.EMPTY
-    return Annotations.create(ownerAnnotations.memoryOptimizedMap(IrConstructorCall::toAnnotationDescriptor))
+    return Annotations.create(ownerAnnotations.memoryOptimizedMap(IrAnnotation::toAnnotationDescriptor))
 }

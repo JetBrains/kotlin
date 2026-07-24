@@ -104,7 +104,7 @@ abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
 
 // ----------------------------- grouping phase -----------------------------
 
-abstract class AbstractGroupingPhaseTestFacade<InputArtifact, OutputArtifact> : AbstractTestFacadeBase<InputArtifact, OutputArtifact>()
+abstract class AbstractGroupingStageTestFacade<InputArtifact, OutputArtifact> : AbstractTestFacadeBase<InputArtifact, OutputArtifact>()
         where InputArtifact : ResultingArtifact<InputArtifact>,
               OutputArtifact : ResultingArtifact<OutputArtifact>
 {

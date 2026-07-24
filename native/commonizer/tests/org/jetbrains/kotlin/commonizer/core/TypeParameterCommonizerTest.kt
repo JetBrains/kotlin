@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.types.Variance
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter?>() {
     override fun createCommonizer() = TypeParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS, DefaultCommonizerSettings))
@@ -32,50 +32,50 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
         mockTypeParam(isReified = false)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun someAreReified1() = doTestFailure(
+    @Test
+    fun someAreReified1() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(isReified = true),
         mockTypeParam(isReified = true),
         mockTypeParam(isReified = false)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun someAreReified2() = doTestFailure(
+    @Test
+    fun someAreReified2() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(isReified = false),
         mockTypeParam(isReified = false),
         mockTypeParam(isReified = true)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentVariance1() = doTestFailure(
+    @Test
+    fun differentVariance1() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(variance = Variance.IN_VARIANCE),
         mockTypeParam(variance = Variance.IN_VARIANCE),
         mockTypeParam(variance = Variance.OUT_VARIANCE)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentVariance2() = doTestFailure(
+    @Test
+    fun differentVariance2() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(variance = Variance.OUT_VARIANCE),
         mockTypeParam(variance = Variance.OUT_VARIANCE),
         mockTypeParam(variance = Variance.INVARIANT)
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentUpperBounds1() = doTestFailure(
+    @Test
+    fun differentUpperBounds1() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(upperBounds = listOf("kotlin/String")),
         mockTypeParam(upperBounds = listOf("kotlin/String")),
         mockTypeParam(upperBounds = listOf("kotlin/Int"))
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentUpperBounds2() = doTestFailure(
+    @Test
+    fun differentUpperBounds2() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
         mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
         mockTypeParam(upperBounds = listOf("kotlin/String"))
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun differentUpperBounds3() = doTestFailure(
+    @Test
+    fun differentUpperBounds3() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
         mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
         mockTypeParam(upperBounds = listOf("kotlin/Int", "kotlin/String"))

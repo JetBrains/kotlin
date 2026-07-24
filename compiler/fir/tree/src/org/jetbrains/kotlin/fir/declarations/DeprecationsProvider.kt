@@ -28,7 +28,7 @@ class DeprecationsProviderImpl(
             DeprecationsPerUseSite(
                 all?.computeDeprecationInfoOrNull(languageVersionSettings),
                 bySpecificSite
-                    ?.mapValues { (_, info) -> info.computeDeprecationInfoOrNull(languageVersionSettings) }
+                    ?.mapValues { [_, info] -> info.computeDeprecationInfoOrNull(languageVersionSettings) }
                     ?.filterValues { it != null } as Map<AnnotationUseSiteTarget, FirDeprecationInfo>?
             )
         }

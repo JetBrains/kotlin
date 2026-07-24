@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
-import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 
@@ -26,6 +22,7 @@ internal class ExternalDeclarationFileNameProvider(
 
         is IrExternalPackageFragment -> {
             val moduleDescriptor = packageFragment.moduleDescriptor
+
             val moduleDeserializer = moduleDeserializerProvider.getDeserializerOrNull(moduleDescriptor.kotlinLibrary)
                     ?: error("No module deserializer for $moduleDescriptor")
             moduleDeserializer.getFileNameOf(declaration)

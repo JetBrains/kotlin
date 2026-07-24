@@ -181,7 +181,7 @@ abstract class IrElementBase : IrElement {
         }
 
         var i = 0
-        for ((attr, value) in mergedAttributes) {
+        for ([attr, value] in mergedAttributes) {
             dstAttributes[i] = attr
             dstAttributes[i + 1] = value
             i += 2

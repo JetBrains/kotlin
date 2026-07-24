@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class TypeArgumentsToParametersMapper {
 
     sealed class TypeArgumentsMapping(val diagnostics: List<KotlinCallDiagnostic>) :

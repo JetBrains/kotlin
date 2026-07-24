@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.sir.lightclasses.utils
 
-import org.jetbrains.kotlin.analysis.api.components.containingSymbol
-import org.jetbrains.kotlin.analysis.api.components.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -18,12 +18,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.allParameters
-import org.jetbrains.sir.lightclasses.nodes.SirBinaryMathOperatorTrampolineFunction
-import org.jetbrains.sir.lightclasses.nodes.SirComparisonOperatorTrampolineFunction
-import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtSymbol
-import org.jetbrains.sir.lightclasses.nodes.SirRenamedFunction
-import org.jetbrains.sir.lightclasses.nodes.SirSubscriptTrampoline
-import org.jetbrains.sir.lightclasses.nodes.SirUnaryMathOperatorTrampolineFunction
+import org.jetbrains.sir.lightclasses.nodes.*
 
 public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedFunctionSymbol) {
     public companion object {

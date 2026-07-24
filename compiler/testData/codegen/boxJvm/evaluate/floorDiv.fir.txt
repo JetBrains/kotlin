@@ -1,24 +1,24 @@
 FILE: floorDiv.kt
     @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
-        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.b] b: R|kotlin/Byte|, [CorrespondingProperty=/Ann.s] s: R|kotlin/Short|, [CorrespondingProperty=/Ann.i] i: R|kotlin/Int|, [CorrespondingProperty=/Ann.l] l: R|kotlin/Long|): R|Ann| {
+        public constructor(b: R|kotlin/Byte|, s: R|kotlin/Short|, i: R|kotlin/Int|, l: R|kotlin/Long|): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val b: R|kotlin/Byte| = R|<local>/b|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Byte|
+        public final val b: R|kotlin/Byte| = R|<local>/b|
+            public get(): R|kotlin/Byte|
 
-        public final [IsFromPrimaryConstructor=true] val s: R|kotlin/Short| = R|<local>/s|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Short|
+        public final val s: R|kotlin/Short| = R|<local>/s|
+            public get(): R|kotlin/Short|
 
-        public final [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
 
-        public final [IsFromPrimaryConstructor=true] val l: R|kotlin/Long| = R|<local>/l|
-            public [ContainingClassKey=Ann] get(): R|kotlin/Long|
+        public final val l: R|kotlin/Long| = R|<local>/l|
+            public get(): R|kotlin/Long|
 
     }
     @R|Ann|(b = Int(10).R|kotlin/floorDiv|(Int(3)) [evaluated = Byte(3)], s = Int(10).R|kotlin/floorDiv|(Int(-4)) [evaluated = Short(-3)], i = Int(-10).R|kotlin/floorDiv|(Int(5)) [evaluated = Int(-2)], l = Int(-10).R|kotlin/floorDiv|(Int(-6)) [evaluated = Long(1)]) public final class MyClass : R|kotlin/Any| {
-        public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+        public constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 

@@ -13,6 +13,7 @@ class Test : ITest {
   }
 
   @Composable
+  @FunctionKeyMeta(key = 1182334366, startOffset = 194, endOffset = 257)
   override fun test(lambda: Function0<Unit>, /* var */ $composer: Composer?, $changed: Int) {
     var $composer: Composer? = $composer
     { // BLOCK
@@ -50,6 +51,7 @@ class Test : ITest {
 
 interface ITest {
   @Composable
+  @FunctionKeyMeta(key = -721169117, startOffset = 112, endOffset = 140)
   abstract fun test(lambda: Function0<Unit>, /* var */ $composer: Composer?, $changed: Int)
 
 }
@@ -63,6 +65,7 @@ fun Test$stableprop_getter(): Int {
 // FILE: module_main_testOverrideLambda.kt
 
 @Composable
+@FunctionKeyMeta(key = -519357155, startOffset = 94, endOffset = 130)
 fun Content(/* var */ $composer: Composer?, $changed: Int) {
   var $composer: Composer? = $composer
   { // BLOCK

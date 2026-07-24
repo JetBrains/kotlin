@@ -1,0 +1,9 @@
+org/jetbrains/kotlin/extensions/ExtensionPointDescriptor
+    org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider
+
+org/jetbrains/kotlin/load/java/structure/JavaAnnotation
+    org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleJavaAnnotationsProvider
+
+org/jetbrains/kotlin/load/kotlin/PackagePartProvider
+    org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory
+    org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactoryKt

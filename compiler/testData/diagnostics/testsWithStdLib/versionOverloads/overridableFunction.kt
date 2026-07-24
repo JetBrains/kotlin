@@ -3,7 +3,7 @@
 @file:OptIn(ExperimentalVersionOverloading::class)
 
 open class C {
-    open fun <!INVALID_VERSIONING_ON_NONFINAL_FUNCTION!>foo<!>(
+    open fun <!INVALID_VERSIONING_ON_NONFINAL_CLASS!>foo<!>(
         @IntroducedAt("1") a: Int = 1,
         @IntroducedAt("2") b: Int = 2,
     ){ }
@@ -15,7 +15,7 @@ open class C {
 }
 
 abstract class D {
-    abstract fun <!INVALID_VERSIONING_ON_NONFINAL_FUNCTION!>foo<!>(
+    abstract fun <!INVALID_VERSIONING_ON_NONFINAL_CLASS!>foo<!>(
         @IntroducedAt("1") a: Int = 1,
         @IntroducedAt("2") b: Int = 2,
     )

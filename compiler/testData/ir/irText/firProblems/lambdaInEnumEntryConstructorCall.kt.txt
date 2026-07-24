@@ -25,12 +25,12 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
 
   }
 
-  /* static */ fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<ConfigurationParameter> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<ConfigurationParameter> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<ConfigurationParameter>
-    get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<ConfigurationParameter>
+    companion get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

@@ -53,7 +53,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         if (sizeDiff != 0) {
             return sizeDiff
         }
-        for ((aTypeProjection, bTypeProjection) in a.zip(b)) {
+        for ([aTypeProjection, bTypeProjection] in a.zip(b)) {
             val typeProjectionDiff = compare(aTypeProjection, bTypeProjection)
             if (typeProjectionDiff != 0) {
                 return typeProjectionDiff

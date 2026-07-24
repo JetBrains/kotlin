@@ -28,6 +28,7 @@ interface ReferencedSymbolRemapper {
      * - [IrReplSnippet.stateObject]
      * - [IrReplSnippet.targetClass]
      * - [IrSimpleFunction.companionExtensionClass]
+     * - [IrAnnotation.classSymbol]
      * - [IrGetObjectValue.symbol]
      * - [IrCall.superQualifierSymbol]
      * - [IrInstanceInitializerCall.classSymbol]

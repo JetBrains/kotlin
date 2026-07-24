@@ -125,7 +125,7 @@ fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclarat
  */
 fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrTransformer<D>, data: D): List<T> {
     var result: ArrayList<T>? = null
-    for ((i, item) in withIndex()) {
+    for ([i, item] in withIndex()) {
         @Suppress("UNCHECKED_CAST")
         val transformed = item.transform(transformer, data) as T
         if (transformed !== item && result == null) {

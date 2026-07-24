@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // CHECK_TYPE
-// SKIP_TXT
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

@@ -1,5 +1,5 @@
 library {
-  // module name: <property_accessors.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test
@@ -44,6 +44,9 @@ library {
       public open var l: kotlin/Int
         public open get
         protected open /* non-default */ set(value: kotlin/Int)
+    }
+
+    package {
     }
   }
 }

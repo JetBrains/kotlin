@@ -1,6 +1,14 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("java-test-fixtures")
+    id("test-inputs-check-v2")
 }
 
 kotlin {
@@ -21,22 +29,23 @@ dependencies {
     implementation(project(":native:analysis-api-based-export-common"))
 
     testRuntimeOnly(libs.junit.platform.launcher)
-    testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(projectTests(":native:objcexport-header-generator"))
-    testImplementation(project(":native:analysis-api-based-test-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":native:objcexport-header-generator")))
+    testFixturesApi(project(":native:analysis-api-based-test-utils"))
     testImplementation(project(":analysis:analysis-api-standalone"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
-
-testsJar()
 
 projectTests {
     objCExportHeaderGeneratorTestTask(
         "test",
         allowUnsafe = true, // KT-85212
-    )
+    ) {
+        smokeTestConfig = SmokeTestConfig.RunAllTests
+    }
 }

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
+@K1Deprecation
 class LexicalWritableScope(
     parent: LexicalScope,
     override val ownerDescriptor: DeclarationDescriptor,

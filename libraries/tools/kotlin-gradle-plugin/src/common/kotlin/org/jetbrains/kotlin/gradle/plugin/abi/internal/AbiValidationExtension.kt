@@ -37,10 +37,10 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 ) : AbiValidationExtension {
     private var activated = false
 
-    internal fun activate() {
+    internal fun activate(compilerVersion: Provider<String>) {
         if (!activated) {
             activated = true
-            registerTasks(projectName, tasks, layout, buildSessionService, configurations)
+            registerTasks(projectName, tasks, layout, buildSessionService, configurations, compilerVersion)
         }
     }
 

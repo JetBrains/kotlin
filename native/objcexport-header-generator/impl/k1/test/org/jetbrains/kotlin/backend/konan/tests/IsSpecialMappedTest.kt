@@ -4,8 +4,8 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.konan.objcexport.isSpecialMapped
 import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertFalse
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

@@ -1,5 +1,5 @@
 // DUMP_IR
-// WASM_FAILS_IN: WasmEdge
+// WASM_IGNORE_FOR: vm=WasmEdge
 
 fun box(): String {
     var variable = 0

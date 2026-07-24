@@ -10,11 +10,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
-import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
-import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
+import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -43,6 +40,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JKlibSourceRootConfigurator,
+            ::JKlibEnvironmentConfigurator,
             ::JKlibJavaSourceConfigurator,
         )
 
@@ -55,18 +53,22 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
-            useHandlers(::NoFirCompilationErrorsHandler)
+            commonFirHandlersForCodegenTest()
         }
 
         facadeStep(::Fir2IrCliJKlibFacade)
-        irHandlersStep()
+        irHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
+            commonIrHandlersForCodegenTest()
+            setupIrTextDumpHandlers()
+        }
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
         deserializedIrHandlersStep {
-            setupIrTextDumpHandlers()
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = true) })
         }
 
         setupDefaultDirectivesForIrTextTest()
@@ -101,3 +103,4 @@ class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(test
         return testServices.moduleStructure.allDirectives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT)
     }
 }
+

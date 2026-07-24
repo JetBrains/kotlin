@@ -50,12 +50,12 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
         visitTypeRecursively(container, type)
     }
 
-    open fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+    open fun visitAnnotationUsage(annotationUsage: IrAnnotation) {
         visitElement(annotationUsage)
         visitTypeRecursively(annotationUsage, annotationUsage.type)
     }
 
-    final override fun visitAnnotationUsage(annotationUsage: IrConstructorCall, data: Nothing?) {
+    final override fun visitAnnotationUsage(annotationUsage: IrAnnotation, data: Nothing?) {
         visitAnnotationUsage(annotationUsage)
     }
 

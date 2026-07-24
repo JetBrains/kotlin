@@ -27,21 +27,7 @@ FILE: propertyDeclaration.kt
         }
     public final const val i: R|kotlin/Int| = Int(123)
         public get(): R|kotlin/Int|
-    public final val j: R|kotlin/Any| = object : R|kotlin/Any| {
-        private constructor(): R|<anonymous>| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final fun foo(): R|kotlin/String| {
-            ^foo String(foo)
-        }
-
-        public final fun bar(): R|kotlin/String| {
-            ^bar String(bar)
-        }
-
-    }
-
+    public final val j: R|kotlin/Any|
         public get(): R|kotlin/Any|
     public final val k: R|(kotlin/String) -> kotlin/String|
         public get(): R|(kotlin/String) -> kotlin/String|

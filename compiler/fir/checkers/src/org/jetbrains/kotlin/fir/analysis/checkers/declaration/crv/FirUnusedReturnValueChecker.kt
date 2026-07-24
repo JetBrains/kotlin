@@ -153,9 +153,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
                 else -> if (!expression.hasSideEffect()) return // Do not report anything FirUnusedExpressionChecker already reported
             }
 
-            context(context, reporter) {
-                checkIfExpressionUnused(expression, data)
-            }
+            checkIfExpressionUnused(expression, data, context = context, reporter = reporter)
         }
 
         override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: UsageState) {

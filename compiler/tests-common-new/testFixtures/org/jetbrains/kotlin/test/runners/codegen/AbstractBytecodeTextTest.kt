@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
 abstract class AbstractBytecodeTextTestBase(
@@ -24,6 +25,7 @@ abstract class AbstractBytecodeTextTestBase(
         defaultDirectives {
             +WITH_STDLIB
             +WITH_REFLECT
+            +ALLOW_KOTLIN_PACKAGE
         }
 
         setupJvmPipelineSteps(parser)

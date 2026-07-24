@@ -17,7 +17,7 @@ internal class ImplementationPrinter(
     printer: ImportCollectingPrinter
 ) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
 
-    override val implementationOptInAnnotation: ClassRef<*>
+    override val implementationOptInAnnotation: PrintableAnnotation
         get() = swiftIrImplementationDetailAnnotation
 
     override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =

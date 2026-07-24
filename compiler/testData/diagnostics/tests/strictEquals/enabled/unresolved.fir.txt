@@ -1,0 +1,41 @@
+FILE: unresolved.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(<Unresolved name: Unresolved>#) [evaluated = <getClass>(<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = Int(42) [evaluated = Int(42)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(Int(42)) [evaluated = <getClass>(Int(42))]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(Q|D|.<Unresolved name: Unresolved>#) [evaluated = <getClass>(Q|D|.<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }

@@ -183,7 +183,10 @@ class AtomicfuJvmIrTransformer(
         with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
             return when {
                 atomicfuProperty.isNotDelegatedAtomic() -> {
-                    if (isTopLevel) {
+                    // Top-level atomic properties are treated as effectively static properties,
+                    // and properties with static backing fields are already static.
+                    // Atomic field updaters don't support static fields, so we have to keep them boxed.
+                    if (isTopLevel || atomicfuProperty.hasStaticBackingField) {
                         buildBoxedAtomic(atomicfuProperty, parentContainer)
                     } else {
                         buildAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)

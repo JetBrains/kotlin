@@ -1,0 +1,424 @@
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: lib/myContext
+  contextParameters: [
+    KaContextParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      isActual: false
+      isCompanion: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <unused var>
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T1
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+  ]
+  contextReceivers: [
+    KaContextReceiver:
+      label: <unused var>
+      type: KaTypeParameterType:
+        annotations: []
+        type: T1
+  ]
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: true
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: myContext
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: R
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T1
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T2
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: R
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: p1
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: p2
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: [
+          lib/MyAnnotation()
+            psi: null
+        ]
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: p3
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: (context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int)?
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: p4
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/A
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: lib/B
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: suspend context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: block
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaTypeParameterType:
+            annotations: []
+            type: T2
+          KaTypeParameterType:
+            annotations: []
+            type: R
+        ]
+        type: context(T2) () -> R
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: lib.LibKt
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: lib.LibKt
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  importableFqName: lib.myContext

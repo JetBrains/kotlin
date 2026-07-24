@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import java.io.File
 import java.nio.file.Paths
 import kotlin.io.path.readText
@@ -30,8 +31,22 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
         ).buildFirFile(path)
         val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
-        val expectedFile = File(expectedPath(filePath, ".txt"))
+        val originalExpectedFile = File(expectedPath(filePath, ".txt"))
+        val lightTreeExpectedFile = File(expectedPath(filePath, ".lt.txt"))
+        val expectedFile = lightTreeExpectedFile.takeIf { it.exists() } ?: originalExpectedFile
         TestDataAssertions.assertEqualsToFile(expectedFile, firDump)
+
+        if (lightTreeExpectedFile.exists()) {
+            val lightTreeFileContent = lightTreeExpectedFile.readText().trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd()
+            val originalFileContent = originalExpectedFile.readText().trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd()
+            if (lightTreeFileContent == originalFileContent) {
+                error(
+                    "'${lightTreeExpectedFile.name}' has the same content as '${originalExpectedFile.name}'. " +
+                            "Remove '${lightTreeExpectedFile.name}'"
+                )
+            }
+        }
+
         checkAnnotationOwners(filePath, firFile)
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.danglingFileAnalysis
 
+import com.intellij.psi.impl.file.PsiFileImplUtil
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionModeProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -19,7 +20,7 @@ abstract class AbstractDanglingFileResolutionModeProviderTest : AbstractAnalysis
         val copyFile = testModules.singleOrNull { it.name == "copy" }?.ktFiles?.single()
             ?: error("No 'copy' module was found. Expected `copy` module with a single file.")
         copyFile.originalFile = originalFile
-        copyFile.name = originalFile.name
+        PsiFileImplUtil.setName(copyFile, originalFile.name)
         val resolutionMode = KaDanglingFileResolutionModeProvider.calculateMode(copyFile)
         val result = buildString {
             appendLine("RESOLUTION_MODE: $resolutionMode")

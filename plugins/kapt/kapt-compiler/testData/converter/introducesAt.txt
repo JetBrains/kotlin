@@ -1,0 +1,35 @@
+/**
+ * package {
+ *
+ *   // signature: topLevelFun(ILjava/lang/String;Z)Ljava/lang/String;
+ *   public final fun topLevelFun(a: kotlin/Int, @kotlin/IntroducedAt(version = "1") b: kotlin/String (* = ... *), @kotlin/IntroducedAt(version = "2") c: kotlin/Boolean (* = ... *)): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalVersionOverloading.class})
+public final class IntroducesAtKt {
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String topLevelFun(int a) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public static final java.lang.String topLevelFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String topLevelFun(int a, @kotlin.IntroducedAt(version = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String b, @kotlin.IntroducedAt(version = "2")
+    boolean c) {
+        return null;
+    }
+}

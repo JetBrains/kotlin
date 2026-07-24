@@ -1,7 +1,14 @@
 // KT-66098: ClassCastException
-// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR_ES6
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_BACKEND: JS_IR_ES6
+// ^^^^
+// org.jetbrains.kotlin.js.engine.ScriptExecutionException: ERROR:
+// AssertionError: Expected <159>, actual <[object Generator]>.
+// KT-82349: ClassCastException
+
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.3,2.4
+// ^^^ KT-78040 is available in 2.4.20-Beta2
 
 import kotlin.test.*
 

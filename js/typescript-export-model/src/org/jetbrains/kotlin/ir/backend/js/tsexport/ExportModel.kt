@@ -119,13 +119,23 @@ public data class ExportedPropertySetter(
 // TODO: Cover all cases with frontend and disable error declarations
 public class ErrorDeclaration(public val message: String) : ExportedDeclaration()
 
+public data class ExportedTypeAlias(
+    override val name: String,
+    val typeParameters: List<ExportedTypeParameter>,
+    val aliasedType: ExportedType,
+    val originalClassId: ClassId? = null,
+) : ExportedClassLikeDeclaration()
 
-public sealed class ExportedClass : ExportedDeclaration() {
+
+public sealed class ExportedClassLikeDeclaration : ExportedDeclaration() {
     public abstract val name: String
+}
+
+public sealed class ExportedClass : ExportedClassLikeDeclaration() {
     public abstract val members: List<ExportedDeclaration>
     public abstract val superClasses: List<ExportedType>
     public abstract val superInterfaces: List<ExportedType>
-    public abstract val nestedClasses: List<ExportedClass>
+    public abstract val nestedClasses: List<ExportedClassLikeDeclaration>
     public abstract val originalClassId: ClassId?
     public abstract val isCompanion: Boolean
     public abstract val isExternal: Boolean
@@ -140,7 +150,7 @@ public data class ExportedRegularClass(
     override val superInterfaces: List<ExportedType> = emptyList(),
     val typeParameters: List<ExportedTypeParameter>,
     override val members: List<ExportedDeclaration>,
-    override val nestedClasses: List<ExportedClass>,
+    override val nestedClasses: List<ExportedClassLikeDeclaration>,
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,
 ) : ExportedClass() {
@@ -153,7 +163,7 @@ public data class ExportedObject(
     override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
     override val members: List<ExportedDeclaration>,
-    override val nestedClasses: List<ExportedClass>,
+    override val nestedClasses: List<ExportedClassLikeDeclaration>,
     val typeParameters: List<ExportedTypeParameter> = emptyList(),
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,

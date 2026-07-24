@@ -34,7 +34,8 @@ public fun __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028S
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
         { arg0: Function2<UInt, UInt, kotlin.ranges.IntRange> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -47,7 +48,8 @@ public fun __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU202
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
         { arg0: Function2<UInt, UInt, kotlin.ranges.IntRange> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -62,12 +64,12 @@ public fun __root___foo_consume_producing__TypesOfArguments__U2829202D_U20282920
         {
             val _result = kotlinFun()
             run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
-        {
-            val _result = kotlinFun()
-            run<Unit> { _result }
-        }
-    }
+                val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
+                {
+                    val _result = kotlinFun()
+                    run<Unit> { _result }
+                }
+            }
         }
     }
     val _result = run { foo_consume_producing(__block) }

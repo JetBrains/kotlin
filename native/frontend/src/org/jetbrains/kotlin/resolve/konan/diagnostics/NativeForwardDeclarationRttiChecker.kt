@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.konan.getForwardDeclarationKindOrNull
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ClassLiteralChecker
 
+@K1Deprecation
 class NativeForwardDeclarationRttiChecker : RttiExpressionChecker, ClassLiteralChecker {
     override fun check(rttiInformation: RttiExpressionInformation, reportOn: PsiElement, trace: BindingTrace) {
         val sourceType = rttiInformation.sourceType

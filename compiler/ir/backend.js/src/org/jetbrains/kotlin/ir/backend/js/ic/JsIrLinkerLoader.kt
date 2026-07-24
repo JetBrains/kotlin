@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
@@ -34,14 +36,13 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
 internal class LoadedJsIr(
     loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
+    val irBuiltIns: IrBuiltIns,
     private val linker: JsIrLinker,
 ) {
     // This property is supposed to be accessed after all symbols have been deserialized.
@@ -58,14 +59,16 @@ internal class LoadedJsIr(
         ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
 
         val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
-            .map { (libraryFile, moduleFragment) -> libraryFile to moduleFragment }
-            .sortedBy { (_, moduleFragment) -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
+            .map { [libraryFile, moduleFragment] -> libraryFile to moduleFragment }
+            .sortedBy { [_, moduleFragment] -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
             .toMap()
 
         orderedLoadedFragments
     }
 
-    val irBuiltIns = linker.builtIns
+    val symbolTable: SymbolTable
+        get() = linker.symbolTable
+
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
     private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()
@@ -99,7 +102,7 @@ internal class LoadedJsIr(
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
         ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-        linker.postProcess(inOrAfterLinkageStep = true)
+        linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
         linker.clear()
     }
@@ -133,22 +136,15 @@ internal class JsIrLinkerLoader(
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): JsIrLinker {
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
         val symbolTable = SymbolTable(signaturer, icContext.createIrFactory())
-        val moduleDescriptor = loadedModules.keys.last()
-        val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
-        val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             compilerConfiguration.diagnosticsCollector,
             compilerConfiguration.languageVersionSettings,
         )
         return JsIrLinker(
             configuration = compilerConfiguration,
-            builtIns = irBuiltIns,
             symbolTable = symbolTable,
-            partialLinkageSupport = createPartialLinkageSupportForLinker(
-                partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
-                builtIns = irBuiltIns,
-                diagnosticReporter = irDiagnosticReporter,
-            ),
+            partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
+            irDiagnosticReporter = irDiagnosticReporter,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )
     }
@@ -166,6 +162,7 @@ internal class JsIrLinkerLoader(
             val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
             val lookupTracker = LookupTracker.DO_NOTHING
+
             val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 current,
                 compilerConfiguration.languageVersionSettings,
@@ -181,7 +178,7 @@ internal class JsIrLinkerLoader(
 
         val moduleDescriptorToKotlinLibrary = orderedLibraries.associateBy { klib -> getModuleDescriptor(klib) }
         return moduleDescriptorToKotlinLibrary
-            .onEach { (key, _) -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
+            .onEach { [key, _] -> key.setDependencies(moduleDescriptorToKotlinLibrary.keys.toList()) }
             .map<ModuleDescriptorImpl, KotlinLibrary, Pair<ModuleDescriptor, KotlinLibrary>> { it.key to it.value }
             .toMap()
     }
@@ -193,7 +190,7 @@ internal class JsIrLinkerLoader(
         val loadedModules = loadModules()
         val linker = createLinker(loadedModules)
 
-        val irModules = loadedModules.entries.associate { (descriptor, module) ->
+        val irModules = loadedModules.entries.associate { [descriptor, module] ->
             val libraryFile = KotlinLibraryFile(module)
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
@@ -211,9 +208,11 @@ internal class JsIrLinkerLoader(
         }
 
         linker.init(null)
+        @OptIn(InternalSymbolFinderAPI::class)
+        val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings)
 
         if (!loadAllIr) {
-            for ((loadingLibFile, loadingSrcFiles) in modifiedFiles) {
+            for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
                 val loadingIrModule = irModules[loadingLibFile] ?: notFoundIcError("loading fragment", loadingLibFile)
                 val moduleDeserializer = linker.moduleDeserializer(loadingIrModule.descriptor)
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {
@@ -240,12 +239,13 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        val loadedIr = LoadedJsIr(irModules, linker)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        val loadedIr = LoadedJsIr(irModules, irBuiltIns, linker)
 
         // This should be done because referenced declaration from the compiler should be loaded as well
         val mainLibraryFile = KotlinLibraryFile(mainLibrary)
         val mainModuleFragment = loadedIr.orderedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
+        icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, loadedIr.symbolTable, compilerConfiguration)
 
         loadedIr.loadUnboundSymbols()
         return loadedIr

@@ -19,6 +19,7 @@ Tower Data Context:
                 FirValueParameterSymbol a: R|kotlin/Int|
                 FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|
                 FirValueParameterSymbol c: R|kotlin/Int| = R|<local>/b|
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterDefaultValue.kt
     public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

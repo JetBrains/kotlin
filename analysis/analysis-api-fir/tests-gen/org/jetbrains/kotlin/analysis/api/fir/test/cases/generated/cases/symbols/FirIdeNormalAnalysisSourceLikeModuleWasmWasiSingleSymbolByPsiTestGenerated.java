@@ -99,6 +99,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmWasiSingleSymbolByPsiTestGe
   }
 
   @Test
+  @TestMetadata("delegatedLocalVariable.kt")
+  public void testDelegatedLocalVariable() {
+    run("delegatedLocalVariable.kt");
+  }
+
+  @Test
   @TestMetadata("ExpandedParameterType.kt")
   public void testExpandedParameterType() {
     run("ExpandedParameterType.kt");
@@ -309,9 +315,39 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmWasiSingleSymbolByPsiTestGe
   }
 
   @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInActualConstructor.kt")
+  public void testParameterWithImplicitDefaultValueInActualConstructor() {
+    run("parameterWithImplicitDefaultValueInActualConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInActualSecondaryConstructor.kt")
+  public void testParameterWithImplicitDefaultValueInActualSecondaryConstructor() {
+    run("parameterWithImplicitDefaultValueInActualSecondaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInExpectSuperclass.kt")
+  public void testParameterWithImplicitDefaultValueInExpectSuperclass() {
+    run("parameterWithImplicitDefaultValueInExpectSuperclass.kt");
+  }
+
+  @Test
   @TestMetadata("parameterWithImplicitDefaultValueInOverride.kt")
   public void testParameterWithImplicitDefaultValueInOverride() {
     run("parameterWithImplicitDefaultValueInOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInOverrideAndActual.kt")
+  public void testParameterWithImplicitDefaultValueInOverrideAndActual() {
+    run("parameterWithImplicitDefaultValueInOverrideAndActual.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInTransitiveOverride.kt")
+  public void testParameterWithImplicitDefaultValueInTransitiveOverride() {
+    run("parameterWithImplicitDefaultValueInTransitiveOverride.kt");
   }
 
   @Test
@@ -1451,6 +1487,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmWasiSingleSymbolByPsiTestGe
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       run("incompleteFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteLateinitVariable1.kt")
+    public void testIncompleteLateinitVariable1() {
+      run("incompleteLateinitVariable1.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteLateinitVariable2.kt")
+    public void testIncompleteLateinitVariable2() {
+      run("incompleteLateinitVariable2.kt");
     }
 
     @Test

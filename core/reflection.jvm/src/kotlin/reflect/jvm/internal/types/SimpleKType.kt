@@ -16,7 +16,7 @@ internal class SimpleKType(
     override val classifier: KClassifier,
     override val arguments: List<KTypeProjection>,
     override val isMarkedNullable: Boolean,
-    override val annotations: List<Annotation>,
+    override val lazyAnnotations: Lazy<List<Annotation>>,
     override val abbreviation: KType?,
     override val isDefinitelyNotNullType: Boolean,
     override val isNothingType: Boolean,
@@ -25,7 +25,7 @@ internal class SimpleKType(
     computeJavaType: (() -> Type)? = null,
 ) : AbstractKType(computeJavaType), KTypeBase {
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType = SimpleKType(
-        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, annotations, abbreviation, isDefinitelyNotNullType = false,
+        classifier.toWrapperClassIfNeeded(nullable), arguments, nullable, lazyAnnotations, abbreviation, isDefinitelyNotNullType = false,
         isNothingType, isSuspendFunctionType, mutableCollectionClass,
     )
 
@@ -35,8 +35,8 @@ internal class SimpleKType(
     }
 
     override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType = SimpleKType(
-        classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, annotations, abbreviation, isDefinitelyNotNull,
-        isNothingType, isSuspendFunctionType, mutableCollectionClass,
+        classifier, arguments, isMarkedNullable = isMarkedNullable && !isDefinitelyNotNull, lazyAnnotations, abbreviation,
+        isDefinitelyNotNull, isNothingType, isSuspendFunctionType, mutableCollectionClass,
     )
 
     override fun lowerBoundIfFlexible(): AbstractKType? = null

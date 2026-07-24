@@ -54,14 +54,14 @@ fun main(args: Array<String>) {
         }
     }
 
-    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys) { (target, source) ->
+    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys) { (val target, val sourceFile) ->
         val targetDir = targetBaseDirs[target] ?: error("Target $target directory is not configured")
         val platformSuffix = when (val platform = target.platform) {
             Platform.Common -> ""
             Platform.Native -> if (target.backend == Backend.Wasm) "Wasm" else "Native"
             else -> platform.name.lowercase().capitalize()
         }
-        targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
+        targetDir.resolve("_${sourceFile.name.capitalize()}$platformSuffix.kt")
     }
 }
 

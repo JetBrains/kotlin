@@ -57,6 +57,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.crossCompilationMetadata.setFrom(crossCompilationSharedData.files)
         task.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
+        task.generateCompilerRefIndex.value(false).disallowChanges() // CRI requires BTA, which is not supported for K/N
 
         task.explicitApiMode.value(
             project.providers.provider {

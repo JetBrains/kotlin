@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /MyList.Companion.of
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: of
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -34,8 +36,8 @@ KaNamedFunctionSymbol:
     type: MyList<T1>
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -44,26 +46,29 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T1
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(ofOperator.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -75,15 +80,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: vals
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: T1
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(ofOperator.kt)
       getContainingJvmClassName: MyList.Companion
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -95,6 +104,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyList.Companion
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyList.Companion.of

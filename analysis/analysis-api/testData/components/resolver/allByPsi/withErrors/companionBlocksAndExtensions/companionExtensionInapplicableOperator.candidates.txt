@@ -1,0 +1,240 @@
+KtFile: 'companionExtensionInapplicableOperator.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(51,63): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,63): 'test'
+  NO_CANDIDATES
+
+KtImportList(63,63): ''
+  NO_CANDIDATES
+
+KtClass(65,72): 'class C'
+  NO_CANDIDATES
+
+KtNamedFunction(74,120): 'companion operator fun C.plus(i: Int): C = C()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(74,92): 'companion operator'
+  NO_CANDIDATES
+
+KtTypeReference(97,98): 'C'
+  NO_CANDIDATES
+
+KtUserType(97,98): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(97,98): 'C'
+  NO_CANDIDATES
+
+KtParameterList(103,111): '(i: Int)'
+  NO_CANDIDATES
+
+KtParameter(104,110): 'i: Int'
+  NO_CANDIDATES
+
+KtTypeReference(107,110): 'Int'
+  NO_CANDIDATES
+
+KtUserType(107,110): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(107,110): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(113,114): 'C'
+  NO_CANDIDATES
+
+KtUserType(113,114): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(113,114): 'C'
+  NO_CANDIDATES
+
+KtCallExpression(117,120): 'C()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(117,118): 'C'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(118,120): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(122,151): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(131,133): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(134,151): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(140,149): 'C.plus(1)'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(140,141): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(142,149): 'plus(1)'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(142,146): 'plus'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(146,149): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(147,148): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(147,148): '1'
+  NO_CANDIDATES

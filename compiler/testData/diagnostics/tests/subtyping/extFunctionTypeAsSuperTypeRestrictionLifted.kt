@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
-// SKIP_TXT
 class A : Double.() -> Unit {
     override fun invoke(p1: Double) {}
 }

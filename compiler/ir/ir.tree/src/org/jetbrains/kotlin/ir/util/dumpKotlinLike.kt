@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -127,7 +128,7 @@ enum class VisibilityPrintingStrategy {
  */
 interface CustomKotlinLikeDumpStrategy {
 
-    fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer): Boolean = true
+    fun shouldPrintAnnotation(annotation: IrAnnotation, container: IrAnnotationContainer): Boolean = true
 
     /**
      * Customize how a class name is rendered in expressions. The default returns the simple name.
@@ -255,7 +256,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             it !is IrClassSymbol || !it.owner.isInterface
         } ?: true
 
-        val (classTypes, interfaceTypes) = partition(::isNonInterfaceType)
+        val [classTypes, interfaceTypes] = partition(::isNonInterfaceType)
 
         return classTypes.sortedBy(IrType::render) + interfaceTypes.sortedBy(IrType::render)
     }
@@ -483,7 +484,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(this, Variance.INVARIANT) { label }
     }
 
-    private fun filterAnnotations(annotations: List<IrConstructorCall>, container: IrAnnotationContainer): List<IrConstructorCall> =
+    private fun filterAnnotations(annotations: List<IrAnnotation>, container: IrAnnotationContainer): List<IrAnnotation> =
         annotations.filter { options.customDumpStrategy.shouldPrintAnnotation(it, container) }
 
     private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
@@ -501,7 +502,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
+    private fun IrAnnotation.printAnAnnotationWithNoIndent(prefix: String = "") {
         p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
         visitConstructorCall(this, null)
     }
@@ -642,10 +643,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
         if (declaration.isExpect && !options.printExpectDeclarations) return
         val keyword = buildString {
-            if (declaration.isStatic) {
-                append(customModifier("static"))
-                append(' ')
-            }
             append("fun ")
         }
         declaration.printSimpleFunction(
@@ -738,7 +735,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     isInline = isInline,
                     isInfix = isInfix,
                     isOperator = isOperator,
-                    isCompanion = companionExtensionClass != null
+                    isCompanion = isStatic || companionExtensionClass != null
                 ),
             )
             p.printWithNoIndent(keyword)
@@ -865,6 +862,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     isSuspend = getter?.isSuspend == true,
                     // could be used on property if all accessors have same state, otherwise must be defined on each accessor
                     isInline = false,
+                    isCompanion = declaration.getter?.isStatic == true || declaration.getter?.companionExtensionClass != null
                 ),
             )
         }
@@ -873,7 +871,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO we can omit type for set parameter
 
         p(declaration.isConst, "const")
-        p(declaration.getter?.isStatic == true, customModifier("static"))
         p.printWithNoIndent(if (declaration.isVar) "var" else "val")
         p.printWithNoIndent(" ")
 
@@ -1155,6 +1152,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         )
     }
 
+    @OptIn(DeprecatedCompilerApi::class)
+    override fun visitAnnotation(expression: IrAnnotation, data: IrDeclaration?) = wrap(expression, data) {
+        expression.printMemberAccessExpressionWithNoIndent(
+            expression.symbol.safeParentClassName,
+            expression.symbol.safeParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = expression.symbol.safeParentClassOrNull?.isAnnotationClass == true,
+            data = data,
+        )
+    }
+
     private fun IrMemberAccessExpression<*>.printMemberAccessExpressionWithNoIndent(
         name: String,
         valueParameters: List<IrValueParameter>?,
@@ -1205,7 +1213,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         if (typeArguments.isNotEmpty()) {
             p.printWithNoIndent("<")
-            for ((i, param) in typeArguments.withIndex()) {
+            for ([i, param] in typeArguments.withIndex()) {
                 p(i > 0, ",")
                 // TODO flag to print type param name?
                 param?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
@@ -1453,7 +1461,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitConst(expression: IrConst, data: IrDeclaration?) = wrap(expression, data) {
         val kind = expression.kind
 
-        val (prefix, postfix) = when (kind) {
+        val [prefix, postfix] = when (kind) {
             is IrConstKind.Null -> "" to ""
             is IrConstKind.Boolean -> "" to ""
             is IrConstKind.Char -> "'" to "'"
@@ -1497,7 +1505,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclaration?) = wrap(expression, data) {
-        val (operator, after) = when (expression.operator) {
+        val [operator, after] = when (expression.operator) {
             IrTypeOperator.CAST -> "as" to ""
             IrTypeOperator.IMPLICIT_CAST -> "/*as" to " */"
             IrTypeOperator.IMPLICIT_NOTNULL -> "/*!!" to " */"

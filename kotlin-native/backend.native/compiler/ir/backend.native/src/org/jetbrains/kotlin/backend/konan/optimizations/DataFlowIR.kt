@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCMethodInfo
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -458,7 +460,7 @@ internal object DataFlowIR {
         }
     }
 
-    class SymbolTable(val context: Context, val module: Module) {
+    class SymbolTable(val context: NativeBackendContext, val module: Module) {
         private val TAKE_NAMES = true // Take fqNames for all functions and types (for debug purposes).
 
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
@@ -641,6 +643,7 @@ internal object DataFlowIR {
                 attributes = attributes or FunctionAttributes.RETURNS_NOTHING
             if (it.hasAnnotation(RuntimeNames.exportForCppRuntime)
                     || it.hasAnnotation(RuntimeNames.exportedBridge)
+                    || it.hasAnnotation(RuntimeNames.bindReverseBridgeToMethod)
                     || it.getExternalObjCMethodInfo() != null // TODO-DCE-OBJC-INIT
                     || it.hasAnnotation(RuntimeNames.objCMethodImp)) {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED

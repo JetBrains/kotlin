@@ -1,0 +1,9 @@
+Name: swiftNameLib
+Classes:
+- Name: NotesRenamed
+  SwiftName: NotesRenamedSwift
+- Name: Overridden
+  SwiftName: OverriddenNotesSwift
+Protocols:
+- Name: NotesProtocol
+  SwiftName: NotesProtocolSwift

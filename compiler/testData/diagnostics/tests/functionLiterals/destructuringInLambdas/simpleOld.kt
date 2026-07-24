@@ -48,10 +48,10 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    foo <!ARGUMENT_TYPE_MISMATCH!>{ (a, b): B ->
+    foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
         a checkType { _<Double>() }
         b checkType { _<Short>() }
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

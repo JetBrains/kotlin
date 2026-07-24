@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.name.FqName
 import javax.lang.model.element.Element
 
+@K1Deprecation
 abstract class SymbolBasedClassifier<out T : Element>(
         element: T,
         javac: JavacWrapper

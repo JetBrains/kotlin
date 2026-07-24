@@ -18,7 +18,11 @@ internal class FlexibleKType private constructor(
     computeJavaType: (() -> Type)?,
 ) : AbstractKType(computeJavaType) {
     override val classifier: KClassifier?
-        get() = lowerBound.classifier
+        get() = lowerBound.classifier.let {
+            // If the classifier is a primitive type, then this type is nullability-flexible, which means that `KType.classifier` should
+            // return the wrapper class.
+            if (it is KClass<*>) it.javaObjectType.kotlin else it
+        }
 
     override val arguments: List<KTypeProjection>
         get() = lowerBound.arguments
@@ -54,8 +58,8 @@ internal class FlexibleKType private constructor(
     override fun lowerBoundIfFlexible(): AbstractKType? = lowerBound
     override fun upperBoundIfFlexible(): AbstractKType? = upperBound
 
-    override val annotations: List<Annotation>
-        get() = lowerBound.annotations
+    override val lazyAnnotations: Lazy<List<Annotation>>
+        get() = lowerBound.lazyAnnotations
 
     companion object {
         fun create(

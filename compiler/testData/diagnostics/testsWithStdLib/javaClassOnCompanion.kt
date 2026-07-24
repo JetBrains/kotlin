@@ -6,15 +6,24 @@ class A {
     companion object
 }
 
+typealias T = A
+
+class G<T> {
+    companion object
+}
+
 object O
+
+typealias U = O
 
 enum class E {
     ENTRY
 }
 
-
 val a0 = A.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
+val a01 = T.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val a1 = test.A.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
+val a11 = test.T.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val a2 = A.Companion.javaClass
 val a21 = A.Companion.let { it.javaClass }
 val a22 = A.Companion.run { javaClass }
@@ -23,6 +32,7 @@ val a4 = test.A::class.java
 val a5 = A.Companion::class.java
 
 val o0 = O.javaClass
+val o01 = U.javaClass
 val o1 = O::class.java
 
 val e0 = E.<!UNRESOLVED_REFERENCE!>javaClass<!>
@@ -34,6 +44,8 @@ val int1 = Int::class.java
 
 val string0 = String.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 val string1 = String::class.java
+
+val g1 = G.<!JAVA_CLASS_ON_COMPANION!>javaClass<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, enumDeclaration, enumEntry, objectDeclaration,
 propertyDeclaration */

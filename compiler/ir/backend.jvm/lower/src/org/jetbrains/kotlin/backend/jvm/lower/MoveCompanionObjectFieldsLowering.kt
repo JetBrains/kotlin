@@ -70,7 +70,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
         } else {
             // Anonymous initializers must also be moved and their ordering relative to the fields
             // must be preserved, as the fields can have expression initializers themselves.
-            for ((i, newField) in newDeclarations.withIndex()) {
+            for ([i, newField] in newDeclarations.withIndex()) {
                 if (newField != null)
                     newParent.declarations += newField
                 if (declarations[i] is IrAnonymousInitializer)

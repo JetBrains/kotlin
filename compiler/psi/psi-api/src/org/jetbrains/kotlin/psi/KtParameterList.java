@@ -59,27 +59,52 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendParameter(this, parameter)}
+     * instead.
+     */
     @NotNull
+    @Deprecated
     public KtParameter addParameter(@NotNull KtParameter parameter) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getParameters(), parameter);
+        return KtPsiMutationService.getInstance().appendParameter(this, parameter);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterBefore(this, parameter, anchor)}
+     * instead.
+     */
     @NotNull
+    @Deprecated
     public KtParameter addParameterBefore(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItemBefore(this, getParameters(), parameter, anchor);
+        return KtPsiMutationService.getInstance().insertParameterBefore(this, parameter, anchor);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterAfter(this, parameter, anchor)}
+     * instead.
+     */
     @NotNull
+    @Deprecated
     public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItemAfter(this, getParameters(), parameter, anchor);
+        return KtPsiMutationService.getInstance().insertParameterAfter(this, parameter, anchor);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, parameter)}
+     * instead.
+     */
+    @Deprecated
     public void removeParameter(@NotNull KtParameter parameter) {
-        EditCommaSeparatedListHelper.INSTANCE.removeItem(parameter);
+        KtPsiMutationService.getInstance().deleteParameter(this, parameter);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, index)}
+     * instead.
+     */
+    @Deprecated
     public void removeParameter(int index) {
-        removeParameter(getParameters().get(index));
+        KtPsiMutationService.getInstance().deleteParameter(this, index);
     }
 
     public KtDeclarationWithBody getOwnerFunction() {

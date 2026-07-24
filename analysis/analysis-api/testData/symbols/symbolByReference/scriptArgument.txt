@@ -1,12 +1,15 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtProperty
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -17,6 +20,8 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -27,6 +32,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -35,16 +41,16 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtProperty
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -58,6 +64,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -68,6 +76,7 @@ KaKotlinPropertySymbol:
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -77,7 +86,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -86,11 +95,10 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -99,6 +107,9 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: args
   origin: LIBRARY
+  primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -119,7 +130,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
   getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getArgs
   javaSetterName: null
   isInline: false

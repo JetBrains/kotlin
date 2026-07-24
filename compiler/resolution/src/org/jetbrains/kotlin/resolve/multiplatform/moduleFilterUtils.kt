@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 typealias ModuleFilter = (ModuleDescriptor) -> Boolean
 
+@K1Deprecation
 fun onlyFromThisModule(module: ModuleDescriptor): ModuleFilter = { it == module }
 
+@K1Deprecation
 val ALL_MODULES: ModuleFilter = { true }
 
+@K1Deprecation
 fun allModulesProvidingExpectsFor(platformModule: ModuleDescriptor): ModuleFilter = {
     it == platformModule || it in platformModule.allExpectedByModules
 }
@@ -30,6 +34,7 @@ fun allModulesProvidingExpectsFor(platformModule: ModuleDescriptor): ModuleFilte
  * and therefore has to be passed into this filter as well to manually check if an actual was provided by this module.
  * This parameter can be dropped and removed once 'non-hmpp' mode shall not be supported anymore.
  */
+@K1Deprecation
 fun allModulesProvidingActualsFor(
     commonModule: ModuleDescriptor,
     platformModule: ModuleDescriptor
@@ -43,4 +48,5 @@ fun allModulesProvidingActualsFor(
     }
 }
 
+@K1Deprecation
 fun <T : DeclarationDescriptor> Iterable<T>.applyFilter(filter: ModuleFilter): List<T> = filter { filter(it.module) }

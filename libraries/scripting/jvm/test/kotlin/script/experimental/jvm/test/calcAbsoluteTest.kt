@@ -5,8 +5,8 @@
 
 package kotlin.script.experimental.jvm.test
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.jvm.util.calcAbsolute
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
@@ -27,8 +27,8 @@ class CalcAbsoluteTest {
 
         val absPos = pos.calcAbsolute(source)
 
-        Assert.assertEquals('1', source.text[absPos])
-        Assert.assertEquals(17, 17.toSourceCodePosition(source).calcAbsolute(source))
+        assertEquals('1', source.text[absPos])
+        assertEquals(17, 17.toSourceCodePosition(source).calcAbsolute(source))
     }
 
     fun String.toSource() = SourceCodeTestImpl(this)

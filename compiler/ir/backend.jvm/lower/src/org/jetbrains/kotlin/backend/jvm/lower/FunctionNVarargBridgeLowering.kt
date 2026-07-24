@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
  * from the generic FunctionN class which has a vararg `invoke` method. This phase adds a bridge method for such large arity functions,
  * which checks the number of arguments dynamically.
  */
+@PhasePrerequisites(JvmInlineClassLowering::class) // BigArity functions with inline classes should already be exposed
 internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
@@ -92,13 +94,12 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
 
             // Add vararg invoke bridge
             val invokeFunction = declaration.functions.single { function ->
+                if (function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)) return@single false
+
                 val overridesInvoke = function.overriddenSymbols.any { symbol ->
                     symbol.owner.name.asString() == "invoke"
                 }
-                overridesInvoke && function.nonDispatchParameters.size == superType.arguments.sumOf {
-                    if (it.typeOrNull?.needsMfvcFlattening() != true) 1
-                    else context.multiFieldValueClassReplacements.getRootMfvcNode(it.typeOrNull!!.erasedUpperBound).leavesCount
-                } - if (function.isSuspend) 0 else 1
+                overridesInvoke && function.nonDispatchParameters.size == superType.arguments.size - if (function.isSuspend) 0 else 1
             }
             invokeFunction.overriddenSymbols = emptyList()
             declaration.addBridge(invokeFunction, functionNInvokeFun.owner)

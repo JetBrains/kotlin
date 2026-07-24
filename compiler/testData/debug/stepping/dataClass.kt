@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
+
 // FILE: test.kt
 
 data class D(val i: Int, val s: String)
@@ -107,24 +107,13 @@ fun box() {
 // test.kt:4 <init>
 // test.kt:4 <init>
 // test.kt:15 box
-// test.kt:1 protoOf.equals
-// test.kt:1 protoOf.equals
-// test.kt:1 protoOf.equals
-// test.kt:1 protoOf.equals
-// test.kt:1 protoOf.equals
 // test.kt:16 box
-// test.kt:1 protoOf.hashCode
-// test.kt:1 protoOf.hashCode
 // test.kt:17 box
-// test.kt:1 protoOf.toString
 // test.kt:18 box
-// test.kt:1 protoOf.component1_7eebsc_k$
 // test.kt:18 box
-// test.kt:1 protoOf.component2_7eebsb_k$
 // test.kt:19 box
 // test.kt:1 protoOf.copy$default_8mg6yi_k$
 // test.kt:1 protoOf.copy$default_8mg6yi_k$
-// test.kt:1 protoOf.copy_xhhsuv_k$
 // test.kt:4 <init>
 // test.kt:4 <init>
 // test.kt:4 <init>
@@ -143,9 +132,7 @@ fun box() {
 // test.kt:23 box
 // test.kt:7 toString
 // test.kt:24 box
-// test.kt:1 protoOf.component1_7eebsc_k$
 // test.kt:24 box
-// test.kt:1 protoOf.component2_7eebsb_k$
 // test.kt:25 box
 // test.kt:10 copy
 // test.kt:6 <init>
@@ -161,7 +148,7 @@ fun box() {
 // test.kt:15 $box (6)
 // test.kt:16 $box (4, 6)
 // test.kt:17 $box (4, 6)
-// test.kt:18 $box (17, 9, 17, 12)
+// test.kt:18 $box (17, 9, 12)
 // test.kt:19 $box (4, 6)
 // test.kt:4 $D.<init> (13, 25, 39)
 // test.kt:19 $box (6)
@@ -178,7 +165,7 @@ fun box() {
 // test.kt:23 $box (4, 6)
 // test.kt:7 $E.toString (30, 34)
 // test.kt:23 $box (6)
-// test.kt:24 $box (19, 9, 19, 13)
+// test.kt:24 $box (19, 9, 13)
 // test.kt:25 $box (4, 6)
 // test.kt:10 $E.copy (17, 19, 22, 17)
 // test.kt:6 $E.<init> (13, 25, 39)

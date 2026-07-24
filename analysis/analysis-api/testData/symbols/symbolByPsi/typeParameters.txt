@@ -1,6 +1,6 @@
 KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -9,6 +9,8 @@ KaTypeParameterSymbol:
   modality: FINAL
   name: T
   origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
   upperBounds: [
     KaClassErrorType:
       annotations: []
@@ -18,16 +20,18 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaLocalVariableSymbol:
+  anchorPsi: KtProperty
   annotations: []
   callableId: null
-  compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -37,22 +41,25 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /f
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -74,6 +81,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -86,6 +95,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: TypeParametersKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: f

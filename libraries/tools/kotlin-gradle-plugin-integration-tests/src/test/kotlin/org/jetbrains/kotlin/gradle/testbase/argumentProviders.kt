@@ -16,10 +16,13 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.support.AnnotationConsumerInitializer
+import org.junit.jupiter.params.support.ParameterDeclaration
+import org.junit.jupiter.params.support.ParameterDeclarations
 import org.junit.platform.commons.JUnitException
 import org.junit.platform.commons.util.AnnotationUtils
 import org.junit.platform.commons.util.ReflectionUtils
 import java.io.File
+import java.util.Optional
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
@@ -119,6 +122,7 @@ open class GradleParameterResolver : ParameterResolver {
 
 open class GradleArgumentsProvider : ArgumentsProvider {
     override fun provideArguments(
+        parameters: ParameterDeclarations,
         context: ExtensionContext,
     ): Stream<out Arguments> {
         val gradleVersions = gradleVersions(context)
@@ -141,10 +145,9 @@ open class GradleArgumentsProvider : ArgumentsProvider {
     protected fun gradleVersions(context: ExtensionContext): Set<GradleVersion> {
         val versionsAnnotation = findAnnotationOrNull<GradleTestVersions>(context) ?: GradleTestVersions()
 
-        fun max(a: GradleVersion, b: GradleVersion) = if (a >= b) a else b
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
-        val maxGradleVersion = max(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
+        val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
         if (testFederationMode == TestFederationMode.Smoke) return setOf(maxGradleVersion)
 
         val additionalGradleVersions = versionsAnnotation
@@ -204,6 +207,7 @@ annotation class GradleWithJdkTest
 
 class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
     override fun provideArguments(
+        parameters: ParameterDeclarations,
         context: ExtensionContext,
     ): Stream<out Arguments> {
         val jdkAnnotation = findAnnotation<JdkVersions>(context)
@@ -240,7 +244,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                     .map { it to providedJdk }
             }
             .asSequence()
-            .filter { (gradleVersion, _) -> versionFilter.map { gradleVersion == it }.orElse(true) }
+            .filter { [gradleVersion, _] -> versionFilter.map { gradleVersion == it }.orElse(true) }
             .map {
                 Arguments.of(it.first, it.second)
             }
@@ -339,6 +343,7 @@ annotation class GradleAndroidTest
 
 class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
     override fun provideArguments(
+        parameters: ParameterDeclarations,
         context: ExtensionContext,
     ): Stream<out Arguments> {
         val agpVersionsAnnotation = findAnnotation<AndroidTestVersions>(context)
@@ -421,11 +426,32 @@ class DisabledIfNoArgumentsProvided : ExecutionCondition {
             .map(ArgumentsSource::value)
             .map { instantiateArgumentsProvider(it.java) }
             .map { provider -> AnnotationConsumerInitializer.initialize(context.requiredTestMethod, provider) }
+        val parameterDeclarations = createParameterDeclarations(context)
 
-        return if (argumentProviders.any { it.provideArguments(context).count() == 0L })
+        return if (argumentProviders.any { it.provideArguments(parameterDeclarations, context).count() == 0L })
             ConditionEvaluationResult.disabled("No arguments provided")
         else
             ConditionEvaluationResult.enabled("Arguments provided")
+    }
+
+    private fun createParameterDeclarations(context: ExtensionContext): ParameterDeclarations {
+        val source = context.requiredTestMethod
+        val declarations = source.parameters.mapIndexed { index, parameter ->
+            object : ParameterDeclaration {
+                override fun getAnnotatedElement() = parameter
+                override fun getParameterType() = parameter.type
+                override fun getParameterIndex() = index
+                override fun getParameterName(): Optional<String> =
+                    if (parameter.isNamePresent) Optional.of(parameter.name) else Optional.empty()
+            }
+        }
+        return object : ParameterDeclarations {
+            override fun getAll(): List<ParameterDeclaration> = declarations
+            override fun getFirst(): Optional<ParameterDeclaration> = Optional.ofNullable(declarations.firstOrNull())
+            override fun get(parameterIndex: Int): Optional<ParameterDeclaration> = Optional.ofNullable(declarations.getOrNull(parameterIndex))
+            override fun getSourceElement() = source
+            override fun getSourceElementDescription(): String = source.toGenericString()
+        }
     }
 
     private fun instantiateArgumentsProvider(clazz: Class<out ArgumentsProvider>): ArgumentsProvider {

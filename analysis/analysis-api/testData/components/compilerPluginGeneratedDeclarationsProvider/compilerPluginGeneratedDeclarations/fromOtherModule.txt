@@ -1,11 +1,11 @@
 packages: 0
 classifiers: 1
   KaNamedClassSymbol:
+    anchorPsi: null
     annotations: []
     classId: foo/AllOpenGenerated
     classKind: CLASS
     companionObject: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -18,6 +18,8 @@ classifiers: 1
     modality: FINAL
     name: AllOpenGenerated
     origin: PLUGIN
+    psi: null
+    realPsi: null
     superTypes: [
       KaUsualClassType:
         annotations: []
@@ -28,9 +30,9 @@ classifiers: 1
     visibility: PUBLIC
 callables: 1
   KaNamedFunctionSymbol:
+    anchorPsi: null
     annotations: []
     callableId: dependency/dummyTest
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -52,6 +54,8 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -60,16 +64,17 @@ callables: 1
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -81,11 +86,15 @@ callables: 1
         modality: FINAL
         name: value
         origin: PLUGIN
+        primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: dependency/Test
+        typeParameters: []
         visibility: PUBLIC
     ]
     visibility: PUBLIC

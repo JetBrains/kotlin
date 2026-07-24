@@ -1,6 +1,9 @@
 description = "Kotlin Serialization Compiler Plugin (K2)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -17,6 +20,9 @@ dependencies {
     compileOnly(project(":native:native.config"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
 }

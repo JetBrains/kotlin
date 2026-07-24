@@ -3,6 +3,9 @@ import org.gradle.plugin.compatibility.compatibility
 description = "Kotlin lombok compiler plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
 }
 

@@ -1,10 +1,10 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: RegularClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -17,6 +17,8 @@ CLASS:
   modality: FINAL
   name: RegularClass
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -38,8 +40,8 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(regularClass.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: RegularClass
 
 FUNCTIONAL INTERFACE FUNCTION:

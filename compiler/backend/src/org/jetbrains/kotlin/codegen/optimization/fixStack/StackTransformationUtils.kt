@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
@@ -114,15 +113,6 @@ fun generateStoreInstructions(methodNode: MethodNode, location: AbstractInsnNode
         methodNode.instructions.insertBefore(location, VarInsnNode(value.storeOpcode, localVarIndex))
     }
 }
-
-fun getPopInstruction(top: BasicValue) =
-    InsnNode(
-        when (top.size) {
-            1 -> Opcodes.POP
-            2 -> Opcodes.POP2
-            else -> throw AssertionError("Unexpected value type size")
-        }
-    )
 
 fun removeAlwaysFalseIfeq(methodNode: MethodNode, node: AbstractInsnNode) {
     with(methodNode.instructions) {

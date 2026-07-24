@@ -24,7 +24,7 @@ final class helpers/ResultContinuation : kotlin.coroutines/Continuation<kotlin/A
     constructor <init>() // helpers/ResultContinuation.<init>|<init>(){}[0]
     final fun resumeWith(kotlin/Result<kotlin/Any?>) // helpers/ResultContinuation.resumeWith|resumeWith(kotlin.Result<kotlin.Any?>){}[0]
 }
-final suspend fun /bar(): kotlin/Function0<kotlin/String> // /bar|bar#companion@A(){}[0]
+final suspend companion fun (/A)./bar(): kotlin/Function0<kotlin/String> // /bar|bar#companion@A(){}[0]
 final fun /box(): kotlin/String // /box|box(){}[0]
 final fun /builder(kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // /builder|builder(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
 final fun helpers/handleExceptionContinuation(kotlin/Function1<kotlin/Throwable, kotlin/Unit>): kotlin.coroutines/Continuation<kotlin/Any?> // helpers/handleExceptionContinuation|handleExceptionContinuation(kotlin.Function1<kotlin.Throwable,kotlin.Unit>){}[0]

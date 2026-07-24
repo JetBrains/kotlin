@@ -1,8 +1,11 @@
 KaFileSymbol:
+  anchorPsi: KtFile
   annotations: []
   location: TOP_LEVEL
   origin: SOURCE
+  psi: KtFile
+  realPsi: KtFile
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

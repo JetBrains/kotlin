@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.contains
 
+@K1Deprecation
 fun substituteAlternativesInPublicType(type: KotlinType): UnwrappedType {
     val substitutor = object : NewTypeSubstitutor {
         override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {

@@ -14,8 +14,8 @@ fun foo() {
     C::lam<!SYNTAX!>(::lam)<!>
     C::lam<!SYNTAX!>(fun() {})<!>
 
-    <!UNRESOLVED_REFERENCE("invoke")!>String::class<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
-    <!UNRESOLVED_REFERENCE("invoke")!>String::class<!>(fun() {})
+    <!UNRESOLVED_REFERENCE("invoke;  on receiver of type 'KClass<String>'")!>String::class<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    <!UNRESOLVED_REFERENCE("invoke;  on receiver of type 'KClass<String>'")!>String::class<!>(fun() {})
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, lambdaLiteral, propertyDeclaration, stringLiteral */

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.ExecutableElement
 
+@K1Deprecation
 class SymbolBasedMethod(
         element: ExecutableElement,
         containingClass: JavaClass,

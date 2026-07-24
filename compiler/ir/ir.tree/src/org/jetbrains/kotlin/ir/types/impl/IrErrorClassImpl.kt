@@ -44,10 +44,9 @@ private val ErrorFile = IrFileImpl(
         override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = shouldNotBeCalled()
     },
     symbol = IrFileSymbolImpl(),
-    packageFqName = FqName("<error-package>")
-).apply {
+    packageFqName = FqName("<error-package>"),
     module = IrModuleFragmentImpl(ErrorModuleDescriptor)
-}
+)
 
 val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     startOffset = UNDEFINED_OFFSET,

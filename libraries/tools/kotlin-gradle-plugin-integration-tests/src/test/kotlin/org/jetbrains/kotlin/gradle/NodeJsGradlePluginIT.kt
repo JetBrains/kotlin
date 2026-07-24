@@ -136,4 +136,18 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
             build(":kotlinNodeJsSetup")
         }
     }
+
+    @DisplayName("error warning for deprecated clean task")
+    @GradleTest
+    @TestMetadata("subprojects-nodejs-setup")
+    fun testDeprecatedCleanTask(gradleVersion: GradleVersion) {
+        project(
+            "subprojects-nodejs-setup",
+            gradleVersion
+        ) {
+            buildAndFail("nodeKotlinClean") {
+                assertOutputContains("The task ':nodeKotlinClean' is deprecated. Scheduled for removal in Kotlin 2.4.")
+            }
+        }
+    }
 }

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.commonizer
 
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
+import org.junit.jupiter.api.Test
 
 class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizationTest() {
+    @Test
     fun `test reference module with error diagnostics breaks tests`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -21,6 +23,7 @@ class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizat
         }
     }
 
+    @Test
     fun `test duplicated settings are forbidden`() {
         assertFailsWith<IllegalStateException>("Defining a setting multiple times should be forbidden") {
             commonize {

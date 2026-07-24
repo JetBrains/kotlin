@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
+import java.io.File
 
 class RemoteIncrementalCacheClient(
     @Suppress("DEPRECATION") val facade: org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade,
@@ -37,6 +38,8 @@ class RemoteIncrementalCacheClient(
     override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? = profiler.withMeasure(this) { facade.incrementalCache_getPackagePartData(target, partInternalName) }
 
     override fun getModuleMappingData(): ByteArray? = profiler.withMeasure(this) { facade.incrementalCache_getModuleMappingData(target) }
+
+    override fun getMetadata(fragmentName: String): Map<File, ByteArray> = profiler.withMeasure(this) { facade.incrementalCache_getMetadata(target, fragmentName) }
 
     override fun getClassFilePath(internalClassName: String): String = profiler.withMeasure(this) { facade.incrementalCache_getClassFilePath(target,internalClassName) }
 

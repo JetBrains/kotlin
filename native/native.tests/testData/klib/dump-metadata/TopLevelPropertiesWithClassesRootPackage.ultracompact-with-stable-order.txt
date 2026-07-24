@@ -1,0 +1,13 @@
+public final object Bar : kotlin/Any
+private constructor Bar.<init>()
+public final class Foo : kotlin/Any
+public constructor Foo.<init>()
+public final val v1: kotlin/Int /* = ... */
+public final /* getter */ v1.<get-v1>
+public final val v2: kotlin/String /* = ... */
+public final /* getter */ v2.<get-v2>
+public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+public final /* getter */ v3.<get-v3>
+public final val v4: kotlin/Function1<kotlin/String, kotlin/Int>
+public final /* getter */ v4.<get-v4>
+public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int>

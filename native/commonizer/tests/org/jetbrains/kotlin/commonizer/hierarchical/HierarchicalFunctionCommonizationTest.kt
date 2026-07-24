@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test simple function 1`() {
         val result = commonize {
             outputTarget("(a,b)", "(c,d)", "(a, b, c, d)")
@@ -24,6 +26,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(c,d)", "expect fun x(): Int")
     }
 
+    @Test
     fun `test simple function 2`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
@@ -36,6 +39,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(a,b)", "expect fun x(): Int")
     }
 
+    @Test
     fun `test function with returnType`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -88,6 +92,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         )
     }
 
+    @Test
     fun `test function with returnType from dependency 1`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -103,6 +108,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("((a,b), (c,d))", "expect fun x(): ABCD")
     }
 
+    @Test
     fun `test function with returnType from dependency 2`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -122,6 +128,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("((a,b), (c,d))", "")
     }
 
+    @Test
     fun `test function with returnType from dependency 3`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
@@ -136,6 +143,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("((a,b), c)", "expect fun x(): ABCD")
     }
 
+    @Test
     fun `test function with simple annotation`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -147,6 +155,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(a, b)", "@FooAnnotation expect fun x()")
     }
 
+    @Test
     fun `test function with non-simple annotation - 1`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -158,6 +167,7 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(a, b)", "expect fun x()")
     }
 
+    @Test
     fun `test function with non-simple annotation - 2`() {
         val result = commonize {
             outputTarget("(a, b)")

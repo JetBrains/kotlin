@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.tools.tests
 import org.codehaus.mojo.animal_sniffer.*
 import org.codehaus.mojo.animal_sniffer.logging.Logger
 import org.codehaus.mojo.animal_sniffer.logging.PrintWriterLogger
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.*
@@ -17,10 +19,9 @@ class JdkApiUsageTest {
     @Test
     fun kotlinReflect() {
         testApiUsage(
-            // TODO: try to pass these paths from Gradle
             // Do not use the final jar artifact. It's shrunk by proguard.
-            jarArtifact("../../reflect/build/libs", "kotlin-reflect", "shadow"),
-            dependencies = listOf(jarArtifact("../../stdlib/build/libs", "kotlin-stdlib"))
+            ForTestCompileRuntime.getFileFromProperty(TestCompilePaths.KOTLIN_REFLECT_SHADOW_JAR_PATH).toPath(),
+            dependencies = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath())
         )
     }
 
@@ -72,18 +73,6 @@ class JdkApiUsageTest {
         }
 
         return mergedSignaturesFile
-    }
-
-    private fun jarArtifact(basePath: String, jarBaseName: String, jarClassifier: String? = null): Path {
-        val kotlinVersion = System.getProperty("kotlinVersion")
-            .let { requireNotNull(it) { "Specify kotlinVersion with a system property" } }
-
-        val jarFullName = "$jarBaseName-$kotlinVersion${jarClassifier?.let { "-$it" } ?: ""}.jar"
-        val base = Path(basePath).absolute().normalize()
-        val file = base.listDirectoryEntries()
-            .firstOrNull { it.name == jarFullName }
-
-        return file ?: throw Exception("No file with name $jarFullName in $base")
     }
 }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 
+@K1Deprecation
 class ConditionalJumpInstruction(
     element: KtElement,
     val onTrue: Boolean,

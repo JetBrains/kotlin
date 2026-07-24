@@ -33,6 +33,7 @@
  *   // getter: getUnit()Lkotlin/Unit;
  *   // setter: setUnit(Lkotlin/Unit;)V
  *   // synthetic method for annotations: getUnit$annotations()V
+ *   @kotlin/Deprecated(message = "")
  *   public final var unit: kotlin/Unit
  *     public final get
  *     public final set
@@ -41,6 +42,7 @@
  *   // getter: isBoolean()Z
  *   // setter: setBoolean(Z)V
  *   // synthetic method for annotations: isBoolean$annotations()V
+ *   @kotlin/Deprecated(message = "")
  *   public final var isBoolean: kotlin/Boolean
  *     public final get
  *     public final set

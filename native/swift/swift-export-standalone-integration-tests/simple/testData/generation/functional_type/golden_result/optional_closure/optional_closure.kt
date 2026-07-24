@@ -1,15 +1,31 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_MyInterface")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ExportedBridge("MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___")
+public fun MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(arg);
+        {
+            val _result = kotlinFun()
+            run<Unit> { _result }
+        }
+    }
+    val _result = run { __self.foo(__arg) }
+    return run { _result; true }
+}
 
 @ExportedBridge("__root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___")
 public fun __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___(arg: kotlin.native.internal.NativePtr): Boolean {
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(arg);
         { arg0: Function0<kotlin.String>? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -37,12 +53,12 @@ public fun __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optio
         {
             val _result = kotlinFun()
             if (_result == kotlin.native.internal.NativePtr.NULL) null else run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
-        {
-            val _result = kotlinFun()
-            run<Unit> { _result }
-        }
-    }
+                val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
+                {
+                    val _result = kotlinFun()
+                    run<Unit> { _result }
+                }
+            }
         }
     }
     val _result = run { consume_producing_opt_closure(__arg) }

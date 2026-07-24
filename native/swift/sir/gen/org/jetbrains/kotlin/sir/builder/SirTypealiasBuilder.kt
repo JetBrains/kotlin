@@ -19,7 +19,7 @@ class SirTypealiasBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     lateinit var name: String
     lateinit var type: SirType
 

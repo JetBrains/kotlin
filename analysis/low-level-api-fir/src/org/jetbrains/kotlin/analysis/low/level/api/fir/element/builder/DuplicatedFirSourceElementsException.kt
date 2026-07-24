@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtElement
 
-class DuplicatedFirSourceElementsException(
+internal class DuplicatedFirSourceElementsException(
     existingFir: FirElement,
     newFir: FirElement,
     psi: KtElement

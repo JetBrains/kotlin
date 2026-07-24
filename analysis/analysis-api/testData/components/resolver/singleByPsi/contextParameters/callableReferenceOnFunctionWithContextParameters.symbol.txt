@@ -1,5 +1,6 @@
 KtCallableReferenceExpression(81,86): '::foo'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       /foo(b: kotlin.Boolean): kotlin.Unit
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'param1: Int' found.>

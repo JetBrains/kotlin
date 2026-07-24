@@ -16,5 +16,6 @@ public enum class DuplicatedUniqueNameStrategy(
   DENY("deny"),
   ALLOW_ALL_WITH_WARNING("allow-all-with-warning"),
   ALLOW_FIRST_WITH_WARNING("allow-first-with-warning"),
+  ALLOW_ALL("allow-all"),
   ;
 }

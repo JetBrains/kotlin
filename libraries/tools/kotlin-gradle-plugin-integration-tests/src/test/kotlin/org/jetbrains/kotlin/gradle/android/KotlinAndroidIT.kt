@@ -298,6 +298,8 @@ class KotlinAndroidIT : KGPBaseTest() {
 
     @DisplayName("KT-77288: android.kotlinOptions should not cause generated accessors compilation error")
     @GradleAndroidTest
+    // Precompiled plugin in buildSrc; AGP 9+ stub compilation refuses kotlin-android + com.android.library.
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKotlinOptionsDeprecation(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -364,7 +366,10 @@ class KotlinAndroidIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                enableLegacyAgpDsl = false,
+            ),
         ) {
             plugins {
                 kotlin("android")
@@ -403,15 +408,6 @@ class KotlinAndroidIT : KGPBaseTest() {
                 kotlin("android")
                 id("com.android.library")
             }
-
-            gradleProperties.appendText(
-                //language=properties
-                """
-                |
-                |android.builtInKotlin=false
-                |android.newDsl=false
-                """.trimMargin()
-            )
 
             buildScriptInjection {
                 with(androidLibrary) {
@@ -475,7 +471,10 @@ class KotlinAndroidIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                enableLegacyAgpDsl = false,
+            ),
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -522,7 +521,10 @@ class KotlinAndroidIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                enableLegacyAgpDsl = false,
+            ),
         ) {
             plugins {
                 /*
@@ -566,7 +568,10 @@ class KotlinAndroidIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                enableLegacyAgpDsl = false,
+            ),
         ) {
             plugins {
                 /*

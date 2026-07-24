@@ -67,6 +67,22 @@ fun main(args: Array<String>) {
             }
         }
 
+        // Native incremental compilation tests.
+        testGroup(testsRoot, "native/native.tests/testData/caches/ic") {
+            testClass<AbstractNativeIncrementalCompilationTest>(
+                suiteTestClassName = "NativeIncrementalCompilationTestGenerated",
+                annotations = listOf(
+                    forceHostTarget(),
+                    forceDebugMode()
+                )
+            ) {
+                val nestedDirs = listOf("basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped")
+                nestedDirs.forEach {
+                    model(it, pattern = "^([^_](.+))$", recursive = false)
+                }
+            }
+        }
+
         // CInterop tests.
         testGroup(testsRoot, "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
@@ -77,6 +93,7 @@ fun main(args: Array<String>) {
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
@@ -86,6 +103,17 @@ fun main(args: Array<String>) {
                 model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropHeaderModeTest>(
+                suiteTestClassName = "CInteropHeaderModeTestGenerated",
+            ) {
+                model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",
@@ -109,7 +137,7 @@ fun main(args: Array<String>) {
                 "Libclangext" to AbstractNativeCInteropFModulesLibclangextMacroCollectionTest::class.java,
                 "LibclangextParallel" to AbstractNativeCInteropFModulesLibclangextParallelMacroCollectionTest::class.java,
             )
-            macroCollectionVariants.forEach { (variantName, testKClass) ->
+            macroCollectionVariants.forEach { [variantName, testKClass] ->
                 testClass(
                     testKClass = testKClass,
                     suiteTestClassName = "CInteropFModules${variantName}MacroCollectionTestGenerated",
@@ -280,6 +308,7 @@ fun standalone() = annotation(
     "property" to ClassLevelProperty.TEST_KIND,
     "propertyValue" to "STANDALONE"
 )
+
 fun standaloneNoTR() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
@@ -288,6 +317,7 @@ fun standaloneNoTR() = arrayOf(
         "propertyValue" to "STANDALONE_NO_TR"
     )
 )
+
 private fun stepping() = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.TEST_KIND,
@@ -299,12 +329,15 @@ private fun binaryLibraryKind(kind: String = "DYNAMIC") = annotation(
     "property" to ClassLevelProperty.BINARY_LIBRARY_KIND,
     "propertyValue" to kind
 )
+
 private fun cinterfaceMode(mode: String = "V1") = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.C_INTERFACE_MODE,
     "propertyValue" to mode
 )
+
 private fun gc() = arrayOf(
     annotation(Tag::class.java, "gc"),
 )
+
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)

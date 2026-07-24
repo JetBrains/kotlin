@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 
+@K1Deprecation
 interface PossiblyExternalAnnotationDescriptor : AnnotationDescriptor {
     val isIdeExternalAnnotation: Boolean
 }

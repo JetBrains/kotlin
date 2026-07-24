@@ -1,0 +1,19 @@
+public final data class test/DataClass : kotlin/Any
+public constructor test/DataClass.<init>(intProp: kotlin/Int, stringProp: kotlin/String)
+public final /* synthesized */ operator fun test/DataClass.component1(): kotlin/Int
+public final /* synthesized */ operator fun test/DataClass.component2(): kotlin/String
+public final /* synthesized */ fun test/DataClass.copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
+public open /* synthesized */ operator fun test/DataClass.equals(other: kotlin/Any?): kotlin/Boolean
+public open /* synthesized */ fun test/DataClass.hashCode(): kotlin/Int
+public open /* synthesized */ fun test/DataClass.toString(): kotlin/String
+public final val test/DataClass.intProp: kotlin/Int
+public final /* getter */ test/DataClass.intProp.<get-intProp>
+public final val test/DataClass.nonConstructorProp: kotlin/Int /* = ... */
+public final /* getter */ test/DataClass.nonConstructorProp.<get-nonConstructorProp>
+public final val test/DataClass.stringProp: kotlin/String
+public final /* getter */ test/DataClass.stringProp.<get-stringProp>
+public final data object test/DataObject : kotlin/Any
+private constructor test/DataObject.<init>()
+public open /* synthesized */ operator fun test/DataObject.equals(other: kotlin/Any?): kotlin/Boolean
+public open /* synthesized */ fun test/DataObject.hashCode(): kotlin/Int
+public open /* synthesized */ fun test/DataObject.toString(): kotlin/String

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 abstract class AbstractMockedKlibLoaderTest(
     private val stdlibUniqueName: String,
@@ -20,36 +22,36 @@ abstract class AbstractMockedKlibLoaderTest(
         mockKlib(
             uniqueName = stdlibUniqueName,
             klibDir = tmpDir.resolve("stdlib"),
-        ).path
+            withCompanionBlocksAndExtensionsFeature = false,
+        ).pathString
     }
 
     final override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
+        parameters: CompilationParameters
     ) {
-        val klibDir = if (asFile)
-            klibLocation.resolveSibling(klibLocation.name + "-dir")
+        val klibDir = if (parameters.asFile)
+            parameters.klibLocation.resolveSibling(parameters.klibLocation.name + "-dir")
         else
-            tmpDir.resolve(klibLocation.name)
+            tmpDir.resolve(parameters.klibLocation.name)
 
         mockKlib(
-            uniqueName = sourceFile.nameWithoutExtension,
+            uniqueName = parameters.sourceFile.nameWithoutExtension,
             klibDir = klibDir,
-            abiVersion = abiVersion,
+            abiVersion = parameters.abiVersion,
+            withCompanionBlocksAndExtensionsFeature = parameters.withCompanionBlocksAndExtensionsFeature,
         )
 
-        if (asFile) {
-            klibDir.zipDirAs(klibLocation)
+        if (parameters.asFile) {
+            klibDir.zipDirAs(parameters.klibLocation)
         }
     }
 
     private fun mockKlib(
-        klibDir: File,
+        klibDir: Path,
         uniqueName: String,
         abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
-    ): File = mockKlib(klibDir) {
+        withCompanionBlocksAndExtensionsFeature: Boolean,
+    ): Path = mockKlib(klibDir) {
         manifest(
             uniqueName = uniqueName,
             builtInsPlatform = builtInsPlatform,
@@ -61,14 +63,7 @@ abstract class AbstractMockedKlibLoaderTest(
         ) {
             // This is only needed to simulate that the mock KLIB has some ABI.
             this[KLIB_PROPERTY_IR_PROVIDER] = "simulation_of_some_ir_provider"
+            this[KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION] = withCompanionBlocksAndExtensionsFeature.toString()
         }
-    }
-
-    companion object {
-        private fun File.zipDirAs(zipFile: File) {
-            toKlibFile().zipDirAs(zipFile.toKlibFile())
-        }
-
-        private fun File.toKlibFile() = KlibFile(absolutePath)
     }
 }

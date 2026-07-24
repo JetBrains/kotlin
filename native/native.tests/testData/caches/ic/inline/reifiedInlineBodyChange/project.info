@@ -1,0 +1,10 @@
+// This is a reproducer for KT-86133
+// DISABLE_NATIVE: targetFamily=MINGW
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main

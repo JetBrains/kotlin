@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: kotlin/Any
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,11 +16,13 @@ KaNamedClassSymbol:
   modality: OPEN
   name: Any
   origin: LIBRARY
+  psi: KtClass
+  realPsi: KtClass
   superTypes: []
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: kotlin.Any

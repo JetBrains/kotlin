@@ -1,0 +1,6 @@
+Resulting Content Scopes:
+Module LIBRARY:
+    + Foo.class
+    + fake.kotlin_builtins
+Module MAIN:
+    + main.kt

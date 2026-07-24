@@ -30,6 +30,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 10
         Scope: FirLocalScope
+Expression Stability: ALIEN_PUBLIC_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_initializerWithLambda.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> myRun([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }

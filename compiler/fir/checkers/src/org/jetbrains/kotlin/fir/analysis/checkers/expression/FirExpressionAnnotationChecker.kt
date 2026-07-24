@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReference
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
+object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {
         // Declarations are checked separately
@@ -42,13 +45,14 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
         val annotations = expression.annotations
         if (annotations.isEmpty()) return
 
-        val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+        val annotationSet = hashSetOf<ConeKotlinType>()
         val inRealBlock = expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
 
         for (annotation in annotations) {
             val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation)
-            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
-
+            val coneType = annotation.annotationTypeRef.coneType.applyIf(
+                LanguageFeature.ForbidAliasedRepeatedAnnotationsOnExpressionsInMultiplatform.isEnabled()
+            ) { fullyExpandedType() }
             val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
             // We don't want to report WRONG_ANNOTATION_TARGET on a block according to KT-52175
             if (!inRealBlock && KotlinTarget.EXPRESSION !in allowedAnnotationTargets) {
@@ -57,9 +61,10 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION)
             }
 
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, annotation.source)
-
-            existingTargetsForAnnotation.add(useSiteTarget)
+            if (coneType in annotationSet) {
+                checkRepeatedAnnotation(annotation, annotation.source)
+            }
+            annotationSet.add(coneType)
         }
     }
 }

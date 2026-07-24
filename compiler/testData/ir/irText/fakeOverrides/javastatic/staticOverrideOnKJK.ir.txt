@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Int
       overridden:
         public abstract fun foo (t: kotlin.Int): kotlin.Unit declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/test.kt
         Override
       overridden:
         public open fun foo (t: kotlin.Int): kotlin.Unit declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java2
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java2

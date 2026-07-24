@@ -6,12 +6,14 @@ package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
 import org.jetbrains.kotlin.native.interop.gen.jvm.Interop
 import org.jetbrains.kotlin.native.interop.tool.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 
 // TODO: this function should eventually be eliminated from 'utilities'. 
 // The interaction of interop and the compiler should be streamlined.
@@ -28,17 +30,16 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
     val noDefaultLibs = arguments.nodefaultlibs || arguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = arguments.noendorsedlibs
     val purgeUserLibs = arguments.purgeUserLibs
     val nopack = arguments.nopack
     val temporaryFilesDir = arguments.tempDir
     val moduleName = arguments.moduleName
     val shortModuleName = arguments.shortModuleName
 
-    val buildDir = File("$outputFileName-build")
-    val generatedDir = File(buildDir, "kotlin")
-    val nativesDir = File(buildDir,"natives")
-    val manifest = File(buildDir, "manifest.properties")
+    val buildDir = Path("$outputFileName-build")
+    val generatedDir = buildDir.resolve("kotlin")
+    val nativesDir = buildDir.resolve("natives")
+    val manifest = buildDir.resolve("manifest.properties")
     val cstubsName ="cstubs"
     val libraries = arguments.library
     val targetRequest = arguments.target
@@ -47,29 +48,28 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         konanDataDir = arguments.konanDataDir).targetManager(targetRequest).target
 
     val cinteropArgsToCompiler = Interop().interop("native", args,
-            InternalInteropOptions(generatedDir.absolutePath,
-                    nativesDir.absolutePath,manifest.path,
+            InternalInteropOptions(generatedDir.absolutePathString(),
+                    nativesDir.absolutePathString(), manifest.pathString,
                     cstubsName
             ),
             runFromDaemon
     ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
     val nativeStubs =
-            arrayOf("-native-library", File(nativesDir, "$cstubsName.bc").path)
+            arrayOf("-native-library", nativesDir.resolve("$cstubsName.bc").pathString)
 
     return arrayOf(
-        generatedDir.path,
+        generatedDir.pathString,
         "-produce", "library",
         "-o", outputFileName,
         "-target", target.visibleName,
-        "-manifest", manifest.path,
+        "-manifest", manifest.pathString,
         "-opt-in=kotlin.native.SymbolNameIsInternal",
         "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
         cinteropArgsToCompiler +
         libraries.flatMap { listOf("-library", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
-        (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +

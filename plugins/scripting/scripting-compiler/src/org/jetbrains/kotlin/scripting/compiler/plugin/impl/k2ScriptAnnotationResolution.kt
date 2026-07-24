@@ -181,7 +181,7 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
     val mapping =
         tryCreateCallableMappingFromNamedArgs(
             ctor,
-            evalRes.map { (name, result) ->
+            evalRes.map { [name, result] ->
                 val argName = name.asString()
                 argName to result.toArgument(argName)
             }
@@ -217,7 +217,7 @@ private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: Fi
 
     val transformer = dispatcher.expressionsTransformer
     val resolvedAnnotation =
-        transformer.context.withFile(firFile, transformer.components) {
+        transformer.context.withFile(firFile, holder = transformer.components) {
             withFileAnalysisExceptionWrapping(firFile) {
                 transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent) as FirAnnotationCall
             }

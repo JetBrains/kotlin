@@ -5,12 +5,14 @@ KtCallExpression(205,216): 'funMember()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -20,22 +22,27 @@ KtCallExpression(205,216): 'funMember()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -45,11 +52,14 @@ KtCallExpression(205,216): 'funMember()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: Base
+          typeParameters: []
           visibility: PUBLIC
         type = Base
       extensionReceiver = null

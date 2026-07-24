@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-45796
-// SKIP_TXT
 
 // MODULE: m1-common
 expect sealed class SealedClass()

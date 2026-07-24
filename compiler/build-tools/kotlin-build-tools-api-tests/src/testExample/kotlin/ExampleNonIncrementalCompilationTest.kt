@@ -12,16 +12,18 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWi
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
+@SmokeTest
 class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             // this is not the scenario DSL, so the modules are not built at this moment
 
@@ -68,7 +70,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun failedCompilationTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
 

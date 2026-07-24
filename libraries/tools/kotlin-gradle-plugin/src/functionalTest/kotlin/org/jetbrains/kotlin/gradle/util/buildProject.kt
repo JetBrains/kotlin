@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExten
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-
-
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
@@ -166,6 +164,10 @@ fun Project.enableCrossCompilation(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
 }
 
+fun Project.enableKmpSeparateCompilation(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION, enabled.toString())
+}
+
 internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY, strategy.propertyName)
 }
@@ -218,4 +220,8 @@ fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true)
 
 fun Project.enableUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
+}
+
+fun Project.withTemporaryKotlinNativeHome() {
+    project.extraProperties.set("kotlin.native.home", System.getProperty("kotlin.native.home"))
 }

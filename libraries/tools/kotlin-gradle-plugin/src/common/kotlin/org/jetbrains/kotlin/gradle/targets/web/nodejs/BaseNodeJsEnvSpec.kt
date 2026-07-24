@@ -10,9 +10,13 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -39,6 +43,12 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
             val nodeDirName = "node-v$versionValue-$name-$architecture"
             val nodeDir = installationDirectory.getFile().resolve(nodeDirName)
             val isWindows = platformValue.isWindows()
+            val nodeLibBinDir = if (isWindows) {
+                nodeDir.resolve("node_modules/npm/bin")
+            } else {
+                nodeDir.resolve("lib/node_modules/npm/bin")
+            }
+
             val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
             val downloadValue = download.get()
@@ -56,7 +66,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
             NodeJsEnv(
                 download = downloadValue,
                 dir = nodeDir,
-                nodeBinDir = nodeBinDir,
+                nodeBinDir = nodeLibBinDir,
                 executable = getExecutable("node", command.get(), "exe"),
                 platformName = name,
                 architectureName = architecture,
@@ -69,3 +79,9 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
 
     abstract val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
 }
+
+internal val KotlinJsIrCompilation.nodeJsEnvSpec: BaseNodeJsEnvSpec
+    get() = webTargetVariant(
+        jsVariant = { NodeJsPlugin.apply(project) },
+        wasmVariant = { WasmNodeJsPlugin.apply(project) },
+    )

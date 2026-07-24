@@ -43,6 +43,7 @@ Tower Data Context:
                 FirValueParameterSymbol foo: R|kotlin/Int|
     Element 12
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] insideTopLevelFunction.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideTopLevelFunction.kts>

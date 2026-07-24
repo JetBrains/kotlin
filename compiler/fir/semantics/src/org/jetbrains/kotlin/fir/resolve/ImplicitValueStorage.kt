@@ -48,9 +48,9 @@ class ImplicitValueStorage private constructor(
     }
 
     fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): ImplicitValueStorage {
-        val stack = implicitReceiverStack.add(value)
+        val stack = implicitReceiverStack.adding(value)
         val receiversPerLabel = implicitReceiversByLabel.putIfNameIsNotNull(name, value)
-        val implicitValuesBySymbol = implicitValuesBySymbol.put(value.boundSymbol, value)
+        val implicitValuesBySymbol = implicitValuesBySymbol.putting(value.boundSymbol, value)
 
         return ImplicitValueStorage(
             stack,
@@ -78,7 +78,7 @@ class ImplicitValueStorage private constructor(
         contextParameters: List<ImplicitValue<*>>,
     ): PersistentMap<FirBasedSymbol<*>, ImplicitValue<*>> {
         return contextParameters.fold(this) { acc, value ->
-            acc.put(value.boundSymbol, value)
+            acc.putting(value.boundSymbol, value)
         }
     }
 
@@ -127,6 +127,20 @@ class ImplicitValueStorage private constructor(
 
     fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = implicitReceiverStack.asReversed()
 
+    private val labelByImplicitValueMap: Map<ImplicitReceiverValue<*>, Name> by lazy {
+        buildMap {
+            implicitReceiversByLabel.entries.forEach { entry ->
+                entry.value.forEach {
+                    this[it] = entry.key
+                }
+            }
+        }
+    }
+
+    fun ImplicitReceiverValue<*>.label(): Name? {
+        return labelByImplicitValueMap[this@label]
+    }
+
     /**
      * Applies smart-casted type to an [ImplicitValue] identified by its [symbol].
      *
@@ -141,12 +155,12 @@ class ImplicitValueStorage private constructor(
 
     internal fun createSnapshot(mapper: ImplicitValueMapper): ImplicitValueStorage = ImplicitValueStorage(
         implicitReceiverStack = implicitReceiverStack.map { mapper(it) }.toPersistentList(),
-        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, (name, receiverValues) ->
+        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, [name, receiverValues] ->
             receiverValues.fold(accOuterMap) { accMap, receiverValue ->
                 accMap.put(name, mapper(receiverValue))
             }
         },
-        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> mapper(v) }.toPersistentMap(),
+        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { [_, v] -> mapper(v) }.toPersistentMap(),
     )
 }
 

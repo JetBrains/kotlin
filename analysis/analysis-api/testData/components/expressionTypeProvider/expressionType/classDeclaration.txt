@@ -1,0 +1,3 @@
+expression: class MyClass
+expression PSI: KtClass
+type: kotlin.Unit

@@ -1,0 +1,31 @@
+IS_THE_SAME_SYMBOL: true
+FAKE_OVERRIDE_ORIGINAL:
+  KaBackingFieldSymbol:
+    anchorPsi: KtProperty
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: false
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/MyClass.value)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PRIVATE
+    containingDeclaration: test/MyClass.value

@@ -139,12 +139,16 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      * - types of annotations (without resolution of annotation arguments)
      *   for [annotation containers][org.jetbrains.kotlin.fir.FirAnnotationContainer].
      *
+     * Also resolves explicitly written [equality bounds][org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType].
+     *
      * @see IMPLICIT_TYPES_BODY_RESOLVE
      */
     TYPES,
 
     /**
      * The compiler resolves modality, visibility, and modifiers for [member declarations][FirMemberDeclaration].
+     *
+     * Also resolves inherited [equality bounds][org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType].
      *
      * Note: A member's modality and its modifiers may depend on super declarations when "this" member overrides some other member.
      *

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.keysToMap
 
+@K1Deprecation
 class ClassicExpectActualMatchingContext(
     val platformModule: ModuleDescriptor,
     /**
@@ -435,7 +437,7 @@ class ClassicExpectActualMatchingContext(
             this,
         )
         return buildMap {
-            for ((compatibility, expectMembers) in compatibilityToExpects.entries) {
+            for ([compatibility, expectMembers] in compatibilityToExpects.entries) {
                 for (expectMember in expectMembers) {
                     val oldValue = put(expectMember, compatibility)
                     if (oldValue != null) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Type
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
@@ -44,21 +45,21 @@ internal class DescriptorKType(
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
                 if (KotlinBuiltIns.isArray(type)) {
-                    val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
+                    val argument = type.arguments.singleOrNull()?.type ?: return jClass.kotlin
                     // Make the array element type nullable to make sure that `kotlin.Array<Int>` is mapped to `[Ljava/lang/Integer;`
                     // instead of `[I`. Also, `kotlin.Array<T>`, where `T` is a type parameter and `T : Int`, should be mapped to
                     // `[Ljava/lang/Integer;`.
                     val elementClassifier =
                         convert(argument.makeNullable())
                             ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
-                    return KClassImpl(elementClassifier.jvmErasure.javaObjectType.createArrayType())
+                    return elementClassifier.jvmErasure.javaObjectType.createArrayType().kotlin
                 }
 
                 if (!TypeUtils.isNullableType(type)) {
-                    return KClassImpl(jClass.primitiveByWrapper ?: jClass)
+                    return (jClass.primitiveByWrapper ?: jClass).kotlin
                 }
 
-                return KClassImpl(jClass)
+                return jClass.kotlin
             }
             is TypeParameterDescriptor -> return KTypeParameterImpl(descriptor.toContainer(), descriptor)
             else -> return null
@@ -88,8 +89,8 @@ internal class DescriptorKType(
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 
-    override val annotations: List<Annotation>
-        get() = type.computeAnnotations()
+    override val lazyAnnotations: Lazy<List<Annotation>> =
+        lazy(PUBLICATION) { type.computeAnnotations() }
 
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType {
         // If the type is not marked nullable, it's either a non-null type or a platform type.
@@ -121,18 +122,9 @@ internal class DescriptorKType(
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             if (!JavaToKotlinClassMapper.isMutable(classDescriptor)) return null
             if (useK1Implementation) {
-                return MutableCollectionKClass(
-                    classifier as KClass<*>,
-                    classDescriptor.fqNameSafe.asString(),
-                    { container ->
-                        classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
-                    },
-                    {
-                        classDescriptor.typeConstructor.supertypes.map(::DescriptorKType)
-                    },
-                )
+                return DescriptorMutableCollectionKClass(classifier as KClass<*>, classDescriptor)
             }
-            return getMutableCollectionKClass(classDescriptor.fqNameSafe, classifier as KClass<*>)
+            return getMutableCollectionKClass(classifier as KClass<*>)
         }
 
     override val isSuspendFunctionType: Boolean

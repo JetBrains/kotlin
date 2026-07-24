@@ -14,17 +14,17 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.model.ListField
 import org.jetbrains.kotlin.fir.tree.generator.toMutableOrEmptyImport
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
-import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.PrintableAnnotation
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 
 internal class BuilderPrinter(
     printer: ImportCollectingPrinter
 ) : AbstractBuilderPrinter<Element, Implementation, Field>(printer) {
 
-    override val implementationDetailAnnotation: ClassRef<*>
+    override val implementationDetailAnnotation: PrintableAnnotation
         get() = firImplementationDetailType
 
-    override val builderDslAnnotation: ClassRef<*>
+    override val builderDslAnnotation: PrintableAnnotation
         get() = firBuilderDslAnnotation
 
     override fun actualTypeOfField(field: Field) = field.getMutableType(forBuilder = true)

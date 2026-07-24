@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.utils.*
@@ -59,7 +59,7 @@ internal constructor(
     final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
-) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
+) : DefaultTask(), RequiresNpmDependenciesTask, WebpackRulesDsl, UsesBuildMetricsService {
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
@@ -214,7 +214,8 @@ internal constructor(
      * KT-77145 Workaround because [KotlinWebpackConfig] doesn't use Provider API.
      */
     private val fakeWebpackConfig: KotlinWebpackConfig = KotlinWebpackConfig(
-        rules = project.objects.webpackRulesContainer()
+        rules = project.objects.webpackRulesContainer(),
+        defineNonBrowserEnvironmentProperties = objects.property<Boolean>().convention(getIsWasm),
     )
 
     fun webpackConfigApplier(body: Action<KotlinWebpackConfig>) {
@@ -251,7 +252,8 @@ internal constructor(
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
-        resolveLoadersFromKotlinToolingDir = getIsWasm.get()
+        resolveLoadersFromKotlinToolingDir = getIsWasm.get(),
+        defineNonBrowserEnvironmentProperties = objects.property<Boolean>().convention(getIsWasm),
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -274,7 +276,9 @@ internal constructor(
         }
 
         return KotlinWebpackRunner(
-            npmProject = npmProject,
+            name = npmProject.compilationName,
+            npmProjectDir = npmProject.dir.get().asFile,
+            nodeExecutable = npmProject.nodeExecutable,
             logger = logger,
             configFile = configFile.get(),
             tool = bin,

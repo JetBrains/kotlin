@@ -83,7 +83,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
                 it.owner.name.asString() == "set"
             }
 
-            for ((index, element) in elements.withIndex()) {
+            for ([index, element] in elements.withIndex()) {
                 +irCall(set).apply {
                     arguments[0] = irGet(result)
                     arguments[1] = irInt(index)

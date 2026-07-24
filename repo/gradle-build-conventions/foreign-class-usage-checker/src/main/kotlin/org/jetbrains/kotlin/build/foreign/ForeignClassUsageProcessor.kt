@@ -14,7 +14,7 @@ import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.File
+import java.io.InputStream
 import kotlin.metadata.ExperimentalContextReceivers
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument
@@ -64,25 +64,23 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
         return collectedUsages[className].orEmpty()
     }
 
-    fun process(classFile: File) {
-        classFile.inputStream().buffered().use { inputStream ->
-            val classReader = ClassReader(inputStream)
-            val classNode = ClassNode()
+    fun process(inputStream: InputStream) {
+        val classReader = ClassReader(inputStream)
+        val classNode = ClassNode()
 
-            classReader.accept(classNode, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
+        classReader.accept(classNode, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG)
 
-            visitedClassNames.add(classNode.name)
-            currentClassName = classNode.name
+        visitedClassNames.add(classNode.name)
+        currentClassName = classNode.name
 
-            val kotlinMetadataAnnotation = classNode.visibleAnnotations.orEmpty().find { it.desc == KOTLIN_METADATA_DESCRIPTOR }
-            if (kotlinMetadataAnnotation != null) {
-                val kotlinMetadata = readMetadata(kotlinMetadataAnnotation)
-                if (kotlinMetadata != null) {
-                    processKotlinMetadata(kotlinMetadata, classNode)
-                }
-            } else {
-                processJavaClass(classNode)
+        val kotlinMetadataAnnotation = classNode.visibleAnnotations.orEmpty().find { it.desc == KOTLIN_METADATA_DESCRIPTOR }
+        if (kotlinMetadataAnnotation != null) {
+            val kotlinMetadata = readMetadata(kotlinMetadataAnnotation)
+            if (kotlinMetadata != null) {
+                processKotlinMetadata(kotlinMetadata, classNode)
             }
+        } else {
+            processJavaClass(classNode)
         }
     }
 

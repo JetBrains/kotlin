@@ -32,14 +32,14 @@ public interface SameType<T> {
 // FILE: test.kt
 
 fun test() {
-    val a: DifferentTypes = <!UNRESOLVED_REFERENCE!>[]<!>
-    val b: DifferentTypes = <!UNRESOLVED_REFERENCE!>[42L]<!>
-    val c: DifferentTypes = <!UNRESOLVED_REFERENCE!>[42]<!>
+    val a: DifferentTypes = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val b: DifferentTypes = <!UNRESOLVED_COLLECTION_LITERAL!>[42L]<!>
+    val c: DifferentTypes = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
 
-    val d: SameType<Int> = <!UNRESOLVED_REFERENCE!>[]<!>
-    val e: SameType<Int> = <!UNRESOLVED_REFERENCE!>[42]<!>
-    val f: SameType<Int> = <!UNRESOLVED_REFERENCE!>[4, 2]<!>
-    val g: SameType<*> = <!UNRESOLVED_REFERENCE!>["a", "b", "c"]<!>
+    val d: SameType<Int> = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val e: SameType<Int> = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
+    val f: SameType<Int> = <!UNRESOLVED_COLLECTION_LITERAL!>[4, 2]<!>
+    val g: SameType<*> = <!UNRESOLVED_COLLECTION_LITERAL!>["a", "b", "c"]<!>
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, javaType, localProperty,

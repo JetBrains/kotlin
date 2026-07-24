@@ -1,0 +1,38 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] companionBlockDanglingModifier.kt
+    public final data [ResolvedTo(BODY_RESOLVE)] class Vector : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Double|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Double|): R|Vector| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Double| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Double|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Double| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Double|
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun t(): R|kotlin/Unit| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
+        public final static [ResolvedTo(BODY_RESOLVE)] fun t2(): R|kotlin/Unit| {
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        @<ERROR TYPE REF: Symbol not found for Anno2>[Types]() public final static [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] fun t3(): R|kotlin/Unit| {
+            }
+
+            ERROR_EXPR(Strange annotated expression: ???)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for Anno4>[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Double|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Double|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Double| = this@R|/Vector|.R|/Vector.x|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Double| = this@R|/Vector|.R|/Vector.y|): R|Vector|
+
+    }

@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
-import org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker
-import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirVisibilityChecker(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaVisibilityChecker, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsVisibilityChecker, KaFirSessionComponent {
     override fun createUseSiteVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,
@@ -76,16 +76,16 @@ internal class KaFirVisibilityChecker(
         return nonLocalLazilyResolvedContainers + localFullyResolvedContainers
     }
 
-    override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
-        if (this is KaReceiverParameterSymbol) {
+    override fun isVisibleInClass(symbol: KaCallableSymbol, classSymbol: KaClassSymbol): Boolean = symbol.withValidityAssertion {
+        if (symbol is KaReceiverParameterSymbol) {
             // Receiver parameters are local
             return false
         }
 
-        require(this is KaFirSymbol<*>)
+        require(symbol is KaFirSymbol<*>)
         require(classSymbol is KaFirSymbol<*>)
 
-        val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return false
+        val memberFir = symbol.firSymbol.fir as? FirCallableDeclaration ?: return false
         val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
 
         // Inspecting visibility requires resolving to status
@@ -116,7 +116,7 @@ private class KaFirUseSiteVisibilityChecker(
     private val useSiteFile: KaFirFileSymbol,
     private val analysisSession: KaFirSession,
     override val token: KaLifetimeToken,
-) : KaUseSiteVisibilityChecker {
+) : org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker {
     override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
         require(candidateSymbol is KaFirSymbol<*>)
 

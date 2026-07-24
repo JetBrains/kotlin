@@ -8,15 +8,15 @@ expect class Foo
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:1:18: error: 'public actual constructor(): Foo' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:1:18: error: 'public actual constructor(): Foo' has no corresponding 'expect' declaration
 actual class Foo actual constructor() {
                  ^^^^^^^^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: 'public actual constructor(s: String): Foo' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: 'public actual constructor(s: String): Foo' has no corresponding 'expect' declaration
     actual constructor(s: String) : this()
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: 'public final actual fun nonPlatformFun(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: 'public final actual fun nonPlatformFun(): Unit' has no corresponding 'expect' declaration
     actual fun nonPlatformFun() {}
                ^^^^^^^^^^^^^^
-compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: 'public final actual val nonPlatformVal: String' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: 'public final actual val nonPlatformVal: String' has no corresponding 'expect' declaration
     actual val nonPlatformVal = ""
                ^^^^^^^^^^^^^^

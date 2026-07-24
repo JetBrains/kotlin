@@ -26,6 +26,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
 
+@Deprecated("Deprecated. Use K2-based implementation instead.", ReplaceWith("kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmInvocableScriptEngine"))
 @Suppress("unused") // used externally (kotlin.script.utils)
 interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 
@@ -60,7 +61,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { (klass, instance, _, invokeWrapper) ->
+        val [fn, mapping, invokeWrapper] = prioritizedCallOrder.asSequence().map { (val klass, val instance, val _ = classLoader, val invokeWrapper) ->
             val candidates = klass.functions.filter { it.name == name }
             candidates.findMapping(listOf(instance) + args)?.let {
                 Triple(it.first, it.second, invokeWrapper)

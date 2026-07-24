@@ -56,7 +56,7 @@ class SelectorBuilder(private val lineBuilder: LineBuilder) {
         requireNotNull(selector)
         selector!!()
         selector = null
-        args.forEachIndexed { index, (name, arg) ->
+        args.forEachIndexed { index, [name, arg] ->
             if (index == 0) {
                 append(name.replaceFirstChar { it.uppercase() })
             } else {

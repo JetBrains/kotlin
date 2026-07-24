@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.indexOrMinusOne
 import org.jetbrains.kotlin.ir.util.isCrossinline
 import org.jetbrains.kotlin.ir.util.isNoinline
 import org.jetbrains.kotlin.ir.util.varargElementType
@@ -164,7 +163,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
                 irScript.statements += irProperty
                 valueParameter to irProperty.symbol
-            }.unzip().let { (params, props) ->
+            }.unzip().let { [params, props] ->
                 irScript.providedProperties = props
                 irScript.providedPropertiesParameters = params
             }
@@ -243,7 +242,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
                         val callGenerator = CallGenerator(statementGenerator)
 
-                        for ((index, ktEntry) in d.entries.withIndex()) {
+                        for ([index, ktEntry] in d.entries.withIndex()) {
                             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)
 
                             val componentSubstitutedCall = statementGenerator.pregenerateCall(componentResolvedCall)

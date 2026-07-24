@@ -19,10 +19,10 @@ class SirExtensionBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
-    val declarations: MutableList<SirDeclaration> = mutableListOf()
-    val constraints: MutableList<SirTypeConstraint> = mutableListOf()
-    val protocols: MutableList<SirProtocol> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
+    val declarations: MutableList<SirDeclaration> = []
+    val constraints: MutableList<SirTypeConstraint> = []
+    val protocols: MutableList<SirProtocol> = []
     lateinit var extendedType: SirType
 
     fun build(): SirExtension {

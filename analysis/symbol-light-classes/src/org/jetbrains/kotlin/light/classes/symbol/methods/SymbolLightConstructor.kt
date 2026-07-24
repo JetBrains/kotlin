@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
@@ -96,7 +99,8 @@ internal class SymbolLightConstructor private constructor(
     override fun getReturnType(): PsiType? = null
 
     companion object {
-        internal fun KaSession.createConstructors(
+        context(_: KaSession)
+        internal fun createConstructors(
             lightClass: SymbolLightClassBase,
             declarations: Sequence<KaConstructorSymbol>,
             result: MutableList<PsiMethod>,
@@ -118,7 +122,11 @@ internal class SymbolLightConstructor private constructor(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE && (hasValueClassInParameterType || destinationClassIsValueClass)) {
+                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
+                        (hasValueClassInParameterType || destinationClassIsValueClass) &&
+                        // Private declarations are inaccessible from Java, so they are never exposed as boxed
+                        !isEffectivelyPrivate(constructor)
+                    ) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -143,14 +151,14 @@ internal class SymbolLightConstructor private constructor(
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
                 when {
-                    !destinationClassIsValueClass && !hasValueClassInSignature(primaryConstructor) -> {
+                    !destinationClassIsValueClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = false,
                         )
                     }
 
-                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE -> {
+                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = true,
@@ -160,16 +168,19 @@ internal class SymbolLightConstructor private constructor(
             }
         }
 
+        context(_: KaSession)
         private fun shouldGenerateNoArgOverload(
             lightClass: SymbolLightClassBase,
             primaryConstructor: KaConstructorSymbol,
             constructors: Iterable<KaConstructorSymbol>,
         ): Boolean {
             val classOrObject = lightClass.kotlinOrigin ?: return false
+            val valueParameters = primaryConstructor.valueParameters
+            val defaultValueMask = defaultParameterValueMask(primaryConstructor)
             return !classOrObject.hasModifier(INNER_KEYWORD) &&
                     !classOrObject.hasModifier(SEALED_KEYWORD) &&
                     !lightClass.isEnum &&
-                    primaryConstructor.valueParameters.all { it.hasDeclaredDefaultValue && !it.hasIntroducedAtAnnotation() } &&
+                    valueParameters.indices.all { defaultValueMask[it] && !valueParameters[it].hasIntroducedAtAnnotation() } &&
                     constructors.none { it.isEffectivelyParameterless } &&
                     primaryConstructor.visibility != KaSymbolVisibility.PRIVATE
         }
@@ -177,9 +188,14 @@ internal class SymbolLightConstructor private constructor(
         /**
          * Whether the constructor either has no arguments or has [JvmOverloads] which would result in a method with no arguments.
          * */
+        context(_: KaSession)
         private val KaConstructorSymbol.isEffectivelyParameterless: Boolean
-            get() = valueParameters.isEmpty() ||
-                    valueParameters.all(KaValueParameterSymbol::hasDeclaredDefaultValue) && hasJvmOverloadsAnnotation()
+            get() {
+                val valueParameters = valueParameters
+                return valueParameters.isEmpty() ||
+                        hasJvmOverloadsAnnotation() &&
+                        defaultParameterValueMask(this).nextClearBit(0) >= valueParameters.size
+            }
 
         private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
             val classOrObject = kotlinOrigin
@@ -203,7 +219,7 @@ internal class SymbolLightConstructor private constructor(
             primaryConstructor: KaConstructorSymbol,
             isJvmExposedBoxed: Boolean,
         ): KtLightMethod = noArgConstructor(
-            visibility = primaryConstructor.compilerVisibility.externalDisplayName,
+            visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
             declaration = primaryConstructor.sourcePsiSafe(),
             methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
             isJvmExposedBoxed = isJvmExposedBoxed,
@@ -229,5 +245,14 @@ internal class SymbolLightConstructor private constructor(
             isJvmExposedBoxed = isJvmExposedBoxed,
             functionSymbolPointer = functionSymbolPointer,
         )
+    }
+}
+
+private fun KaSymbolVisibility.asJavaVisibilityModifier(): String {
+    return when (this) {
+        KaSymbolVisibility.PUBLIC -> PsiModifier.PUBLIC
+        KaSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+        KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
+        else -> PsiModifier.PACKAGE_LOCAL
     }
 }

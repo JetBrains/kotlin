@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-
 //FILE:file1.kt
 package a
 

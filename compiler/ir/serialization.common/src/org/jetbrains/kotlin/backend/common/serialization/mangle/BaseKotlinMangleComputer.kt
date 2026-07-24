@@ -284,7 +284,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
             val typeParameters = if (useEffectiveTypeVariances) type.typeConstructor().getParameters() else null
             @Suppress("UNUSED_DESTRUCTURED_PARAMETER_ENTRY")
-            typeArguments.withIndex().collectForMangler(tBuilder, MangleConstant.TYPE_ARGUMENTS) { (index, typeArgument) ->
+            typeArguments.withIndex().collectForMangler(tBuilder, MangleConstant.TYPE_ARGUMENTS) { [index, typeArgument] ->
                 when {
                     typeArgument.isStarProjection() -> appendSignature(MangleConstant.STAR_MARK)
                     else -> {

@@ -12,32 +12,42 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JKlibIrLinker(
     module: ModuleDescriptor,
     configuration: CompilerConfiguration,
-    irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    val stubGenerator: DeclarationStubGenerator,
-    val mangler: JKlibDescriptorMangler,
-) : KotlinIrLinker(module, configuration, irBuiltIns, symbolTable, emptyList()) {
+    val descriptorMangler: JKlibDescriptorMangler,
+    private val typeSystemContextFactory: (IrBuiltIns) -> IrTypeSystemContext,
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
+) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
+    lateinit var stubGenerator: DeclarationStubGenerator
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
 
@@ -55,11 +65,12 @@ class JKlibIrLinker(
         return symbol.descriptor.isJavaDescriptor()
     }
 
+    override val irMangler: KotlinMangler.IrMangler = JKlibIrMangler()
+
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JKlibIrMangler(),
-        typeSystem = IrTypeSystemContextImpl(builtIns),
+        mangler = irMangler,
         friendModules = emptyMap(),
         partialLinkageSupport = partialLinkageSupport,
         // Do not construct fake overrides for Java classes. These classes are created with the
@@ -72,7 +83,11 @@ class JKlibIrLinker(
             override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
                 clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         },
+        externalOverridabilityConditions = externalOverridabilityConditions
     )
+
+    override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
+        typeSystemContextFactory(irBuiltIns)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
@@ -112,11 +127,13 @@ class JKlibIrLinker(
     ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
         override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
 
-        override fun contains(idSig: IdSignature): Boolean = true
+        override fun contains(idSig: IdSignature): Boolean = resolveDescriptor(idSig) != null
+
+        override fun getDefinedPackageNames(): Set<FqName>? = null
 
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor,
-            mangler,
+            descriptorMangler,
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
         )
 
@@ -161,23 +178,45 @@ class JKlibIrLinker(
     }
     private inner class JKlibModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val klib: KotlinLibrary,
+        klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(
         this,
         moduleDescriptor,
+        klib,
         strategyResolver,
         libraryAbiVersion,
     ) {
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor,
-            mangler,
+            descriptorMangler,
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
         )
 
         private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
+
+        override fun contains(idSig: IdSignature): Boolean =
+            super.contains(idSig) || descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+
+        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleDescriptor)
+
+        private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+            val result = mutableSetOf<FqName>()
+            val packageFragmentProvider = (module as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+
+            fun getSubPackages(fqName: FqName) {
+                if (!packageFragmentProvider.isEmpty(fqName))
+                    result += fqName
+                val subPackages = packageFragmentProvider.getSubPackagesOf(fqName) { true }
+                subPackages.forEach { getSubPackages(it) }
+            }
+
+            getSubPackages(FqName.ROOT)
+            return result
+        }
+
 
         override fun tryDeserializeIrSymbol(
             idSig: IdSignature,
@@ -222,6 +261,32 @@ class JKlibIrLinker(
             }
 
             super.declareIrSymbol(symbol)
+        }
+    }
+
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
+        if (inOrAfterLinkageStep) {
+            clearFakeOverrideFields()
+        }
+    }
+
+    private fun clearFakeOverrideFields() {
+        val visitor = object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitProperty(declaration: IrProperty) {
+                if (declaration.isFakeOverride && declaration.getter == null) {
+                    declaration.backingField = null
+                }
+                super.visitProperty(declaration)
+            }
+        }
+
+        deserializersForModules.values.forEach { deserializer ->
+            deserializer.moduleFragment.acceptVoid(visitor)
         }
     }
 }

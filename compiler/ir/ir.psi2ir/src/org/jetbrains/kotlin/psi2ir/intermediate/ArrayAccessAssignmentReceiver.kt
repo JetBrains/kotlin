@@ -102,7 +102,7 @@ internal class ArrayAccessAssignmentReceiver(
         if (samConversionsCollector.samConversionsPerVariable.isEmpty()) return
 
         val samConvertedVars = hashMapOf<IrVariable, IrVariable>()
-        for ((irIndexVar, samConversions) in samConversionsCollector.samConversionsPerVariable) {
+        for ([irIndexVar, samConversions] in samConversionsCollector.samConversionsPerVariable) {
             var mostSpecificSamConversion: IrTypeOperatorCall = samConversions.first()
             for (samConversion in samConversions) {
                 if (samConversion === mostSpecificSamConversion) continue
@@ -207,7 +207,7 @@ internal class ArrayAccessAssignmentReceiver(
         createIndexValue: (Int, IrExpression) -> IntermediateValue
     ): LValueWithGetterAndSetterCalls {
         val ktExpressionToIrIndexValue = HashMap<KtExpression, IntermediateValue>()
-        for ((i, irIndex) in irIndexExpressions.withIndex()) {
+        for ([i, irIndex] in irIndexExpressions.withIndex()) {
             ktExpressionToIrIndexValue[ktIndexExpressions[i]] =
                 createIndexValue(i, irIndex)
         }

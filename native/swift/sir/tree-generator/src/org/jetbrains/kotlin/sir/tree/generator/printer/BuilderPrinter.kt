@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.sir.tree.generator.printer
 
 import org.jetbrains.kotlin.generators.tree.AbstractBuilderPrinter
-import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.PrintableAnnotation
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.sir.tree.generator.model.Element
 import org.jetbrains.kotlin.sir.tree.generator.model.Field
@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.sir.tree.generator.swiftIrImplementationDetailAnnota
 
 internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilderPrinter<Element, Implementation, Field>(printer) {
 
-    override val implementationDetailAnnotation: ClassRef<*>
+    override val implementationDetailAnnotation: PrintableAnnotation
         get() = swiftIrImplementationDetailAnnotation
 
-    override val builderDslAnnotation: ClassRef<*>
+    override val builderDslAnnotation: PrintableAnnotation
         get() = swiftIrBuilderDslAnnotation
 }

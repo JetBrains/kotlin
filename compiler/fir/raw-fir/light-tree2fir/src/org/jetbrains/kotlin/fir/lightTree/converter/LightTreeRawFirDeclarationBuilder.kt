@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
@@ -983,9 +983,7 @@ class LightTreeRawFirDeclarationBuilder(
         firDeclarations: MutableList<FirDeclaration>,
     ) {
         for (node in modifierLists) {
-            firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node).apply {
-                containingClassAttr = currentDispatchReceiverType()?.lookupTag
-            }
+            firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node)
         }
     }
 
@@ -1011,6 +1009,8 @@ class LightTreeRawFirDeclarationBuilder(
                 contextParameters.addContextParameters(modifiers.contextLists, symbol)
                 modifiers.convertAnnotationsTo(annotations)
             }
+        }.apply {
+            containingClassAttr = currentDispatchReceiverType()?.lookupTag
         }
     }
 
@@ -1275,7 +1275,7 @@ class LightTreeRawFirDeclarationBuilder(
                 modifiers?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
-                val (body, contractDescription) = withForcedLocalContext {
+                val [body, contractDescription] = withForcedLocalContext {
                     convertFunctionBody(block, null, allowLegacyContractDescription = true)
                 }
                 this.body = body?.takeIf { it.statements.isNotEmpty() }
@@ -1478,6 +1478,7 @@ class LightTreeRawFirDeclarationBuilder(
 
             val calculatedModifiers = modifiers ?: ModifierList()
             val propertyAnnotations = calculatedModifiers.convertAnnotations()
+            val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
 
             return buildProperty {
                 source = propertySource
@@ -1506,7 +1507,12 @@ class LightTreeRawFirDeclarationBuilder(
                         it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
                     },
                     property,
-                )
+                    isStatic,
+                ).also {
+                    if (!isLocal) {
+                        it.initContainingClassAttr()
+                    }
+                }
 
                 if (isLocal) {
                     val delegateBuilder = delegate?.let {
@@ -1543,8 +1549,6 @@ class LightTreeRawFirDeclarationBuilder(
                         }
 
                         val propertyVisibility = calculatedModifiers.getVisibility()
-
-                        val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
 
                         fun defaultAccessorStatus() =
                             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
@@ -1637,13 +1641,13 @@ class LightTreeRawFirDeclarationBuilder(
     internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
-        var isPositional = false
+        var hasSquareBrackets = false
         val entries = mutableListOf<DestructuringEntry>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
-                LBRACKET -> isPositional = true
+                LBRACKET -> hasSquareBrackets = true
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it, isVar)
@@ -1656,7 +1660,7 @@ class LightTreeRawFirDeclarationBuilder(
 
         return DestructuringDeclaration(
             isVar = isVar,
-            isNameBased = !isPositional && (entries.any { it.isFullForm } || nameBasedDestructuringShortForm),
+            kind = destructuringKindOf(hasSquareBrackets = hasSquareBrackets, isFullForm = entries.any { it.isFullForm }),
             entries,
             firExpression ?: buildErrorExpression(
                 destructingDeclaration.toFirSourceElement(),
@@ -1846,6 +1850,7 @@ class LightTreeRawFirDeclarationBuilder(
         isVar: Boolean,
         annotationsFromProperty: List<FirAnnotationCall>,
         property: LighterASTNode,
+        isStatic: Boolean,
     ): FirBackingField {
         var modifiers: ModifierList? = null
         var returnType: FirTypeRef = implicitType
@@ -1862,7 +1867,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
         val calculatedModifiers = modifiers ?: ModifierList()
-        val status = obtainPropertyComponentStatus(Visibilities.Private, calculatedModifiers, propertyModifiers)
+        val status = obtainPropertyComponentStatus(Visibilities.Private, calculatedModifiers, propertyModifiers, isStatic)
         val sourceElement = this?.toFirSourceElement()
         return if (this != null) {
             buildBackingField {
@@ -1898,12 +1903,14 @@ class LightTreeRawFirDeclarationBuilder(
         componentVisibility: Visibility,
         modifiers: ModifierList,
         propertyModifiers: ModifierList,
+        isStatic: Boolean,
     ): FirDeclarationStatus {
         // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
         return FirDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
             isInline = propertyModifiers.hasInline() || modifiers.hasInline()
             isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             isLateInit = modifiers.hasLateinit()
+            this.isStatic = isStatic
         }
     }
 

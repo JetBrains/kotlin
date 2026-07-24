@@ -1,24 +1,30 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("project-tests-convention")
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.common"))
 
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:cli-base"))
     implementation(project(":native:native.config"))
-    implementation(project(":native:frontend.native"))
+    runtimeOnly(project(":native:frontend.native"))
     implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
 

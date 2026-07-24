@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 
 open class FirAnnotationArgumentsTransformer(
@@ -74,11 +72,6 @@ open class FirAnnotationArgumentsTransformer(
         }
 }
 
-/**
- *  Set of enum class IDs that are resolved in COMPILER_REQUIRED_ANNOTATIONS phase that need to be rechecked here.
- */
-private val classIdsToCheck: Set<ClassId> = setOf(StandardClassIds.DeprecationLevel, StandardClassIds.AnnotationTarget)
-
 private class FirExpressionTransformerForAnnotationArguments(
     private val annotationArgumentsTransformer: FirAnnotationArgumentsTransformer,
 ) : FirExpressionsResolveTransformer(annotationArgumentsTransformer) {
@@ -103,7 +96,7 @@ private class FirExpressionTransformerForAnnotationArguments(
             val calleeReference = qualifiedAccessExpression.calleeReference
             if (calleeReference is FirResolvedNamedReference) {
                 val resolvedSymbol = calleeReference.resolvedSymbol
-                if (resolvedSymbol is FirEnumEntrySymbol && resolvedSymbol.containingClassLookupTag()?.classId in classIdsToCheck) {
+                if (resolvedSymbol is FirEnumEntrySymbol && resolvedSymbol.containingClassLookupTag()?.classId in session.annotationPlatformSupport.requiredArguments) {
                     return resolveSpecialPropertyAccess(qualifiedAccessExpression, calleeReference, resolvedSymbol, data)
                 }
             }
@@ -125,7 +118,7 @@ private class FirExpressionTransformerForAnnotationArguments(
             val originalResolvedQualifier = originalAccess.explicitReceiver?.unwrapSmartcastExpression()
             if (originalResolvedQualifier is FirResolvedQualifier) {
                 val fqName = originalResolvedQualifier.classId
-                    ?.let { if (originalResolvedQualifier.isFullyQualified) it.asSingleFqName() else it.relativeClassName }
+                    ?.let { if (originalResolvedQualifier.explicitParent != null) it.asSingleFqName() else it.relativeClassName }
                     ?: originalResolvedQualifier.packageFqName
                 explicitReceiver = generatePropertyAccessExpression(fqName, originalResolvedQualifier.source)
             }
@@ -158,7 +151,7 @@ private class FirExpressionTransformerForAnnotationArguments(
         var result: FirPropertyAccessExpression? = null
 
         val pathSegments = fqName.pathSegments()
-        for ((index, pathSegment) in pathSegments.withIndex()) {
+        for ([index, pathSegment] in pathSegments.withIndex()) {
             result = buildPropertyAccessExpression {
                 calleeReference = buildSimpleNamedReference { name = pathSegment }
                 explicitReceiver = result
@@ -177,7 +170,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun withFile(file: FirFile, action: () -> FirFile): FirFile {
-        return context.withFile(file, components) {
+        return context.withFile(file) {
             action()
         }
     }
@@ -198,14 +191,14 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
 
     override fun forRegularClassBody(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
         return context.withContainingClass(regularClass) {
-            context.forRegularClassBody(regularClass, components) {
+            context.forRegularClassBody(regularClass) {
                 action()
             }
         }
     }
 
     override fun withScript(script: FirScript, action: () -> FirScript): FirScript {
-        return context.withScript(script, components) {
+        return context.withScript(script) {
             action()
         }
     }
@@ -253,7 +246,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                     it.transformSingle(transformer, data)
                 }
 
-            context.forConstructorParameters(constructor, containingClass, components) {
+            context.forConstructorParameters(constructor, containingClass) {
                 constructor.transformValueParameters(transformer, data)
             }
         }

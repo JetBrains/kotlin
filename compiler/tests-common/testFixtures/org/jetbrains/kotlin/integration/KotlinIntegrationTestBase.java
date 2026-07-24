@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.integration;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -30,31 +27,25 @@ import kotlin.text.Regex;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.config.KotlinCompilerVersion;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.test.TestDataAssertions;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.util.regex.Pattern;
 
-@WithMutedInDatabaseRunTest
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     static {
         System.setProperty("java.awt.headless", "true");
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
-        //noinspection Convert2MethodRef
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
 
     protected int runJava(@NotNull File testDataDir, @Nullable String logName, @NotNull String... arguments) {
@@ -71,7 +62,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         }
 
         if (logName == null) {
-            assertEquals("Non-zero exit code", 0, exitCode);
+            Assertions.assertEquals(0, exitCode, "Non-zero exit code");
         }
         else {
             check(testDataDir, logName, executionLog.toString());
@@ -146,7 +137,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
 
         File runtime = new File(javaHome, "bin" + File.separator + javaExe);
-        assertTrue("No java runtime at " + runtime, runtime.isFile());
+        assertTrue(runtime.isFile(), () -> "No java runtime at " + runtime);
 
         return runtime;
     }
@@ -157,7 +148,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
 
     public static KotlinPaths getKotlinPaths() {
         KotlinPaths paths = new KotlinPathsFromHomeDir(ForTestCompileRuntime.distKotlincForTests());
-        assertTrue("Compiler dist not found. Build 'dist' target.", paths.getLibPath().isDirectory());
+        assertTrue(paths.getLibPath().isDirectory(), () -> "Compiler dist not found. Build 'dist' target.");
         return paths;
     }
 
@@ -167,7 +158,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         return distPath != null ? new File(distPath).getParentFile() : new File(KtTestUtil.getHomeDirectory());
     }
 
-    private static class OutputListener extends ProcessAdapter {
+    private static class OutputListener implements ProcessListener {
         private final StringBuilder out;
         private final StringBuilder err;
 
@@ -188,8 +179,5 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
                 out.append(event.getText());
             }
         }
-
-        @Override
-        public void processTerminated(@NotNull ProcessEvent event) {}
     }
 }

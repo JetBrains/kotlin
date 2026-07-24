@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.artifacts.createKlibArtifact
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -75,6 +74,9 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
         val interopOutput = project.files(interopTask.map { it.outputFileProvider })
         with(compilation) {
             compileDependencyFiles += interopOutput
+            // Accumulate this cinterop output so that KotlinNativeCompilationAssociator can forward
+            // all main cinterop klibs to every associated compilation (test, swiftExportMain, etc.).
+            cinteropOutputs.from(interopOutput)
             if (isMain()) {
                 // Add interop library to special CInteropApiElements configuration
                 createCInteropApiElementsKlibArtifact(compilation, interop, interopTask)
@@ -86,16 +88,6 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                         classifier = interop.classifier,
                         klibProducingTask = interopTask,
                     )
-                }
-
-                // We cannot add the interop library in an compilation output because in this case
-                // IDE doesn't see this library in module dependencies. So we have to manually add
-                // main interop libraries in dependencies of the default test compilation.
-                target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                    testCompilation.compileDependencyFiles += interopOutput
-                    testCompilation.cinterops.all {
-                        it.dependencyFiles += interopOutput
-                    }
                 }
             }
         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+@K1Deprecation
 object JvmDefaultImportsProvider : DefaultImportsProvider() {
     private val storageManager = LockBasedStorageManager("JvmDefaultImports")
     override val platformSpecificDefaultImports: List<ImportPath> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {

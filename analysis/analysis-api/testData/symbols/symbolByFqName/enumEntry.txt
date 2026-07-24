@@ -1,11 +1,13 @@
 KaEnumEntrySymbol:
+  anchorPsi: KtEnumEntry
   annotations: []
   callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -14,14 +16,17 @@ KaEnumEntrySymbol:
   modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
+  psi: KtEnumEntry
+  realPsi: KtEnumEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.LazyThreadSafetyMode
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.LazyThreadSafetyMode.SYNCHRONIZED

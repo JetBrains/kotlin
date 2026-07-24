@@ -1,0 +1,14 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+kotlin/Int <: kotlin/Number (Original: kotlin/Int <: kotlin/Number)
+
+ASSIGN_RIGHT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+kotlin/Int <: kotlin/Number (Original: kotlin/Int <: kotlin/Number)
+
+ASSIGN_ALL:
+Substitutor: <empty substitutor>
+Substituted pairs:
+kotlin/Int <: kotlin/Number (Original: kotlin/Int <: kotlin/Number)

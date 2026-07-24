@@ -2,9 +2,6 @@ plugins {
     java
 }
 
-repositories {
-    mavenCentral()
-}
 
 val protobufVersion: String by rootProject.extra
 

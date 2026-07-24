@@ -7,6 +7,4 @@ package org.jetbrains.kotlin.noarg
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object NoArgPluginKey : GeneratedDeclarationKey() {
-    override fun toString(): String = "KotlinNoArgPlugin"
-}
+data object NoArgPluginKey : GeneratedDeclarationKey()

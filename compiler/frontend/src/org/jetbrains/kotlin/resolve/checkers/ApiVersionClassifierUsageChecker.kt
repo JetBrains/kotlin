@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.SinceKotlinAccessibility
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 
+@K1Deprecation
 object ApiVersionClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
         val accessibility = targetDescriptor.checkSinceKotlinVersionAccessibility(context.languageVersionSettings)

@@ -222,7 +222,7 @@ class PrimitiveComparison(
 ) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val parameterType = Type.getType(JvmPrimitiveType.get(primitiveNumberType).desc)
-        val (left, right) = expression.receiverAndArgs()
+        val [left, right] = expression.receiverAndArgs()
         val a = left.accept(codegen, data).materializedAt(parameterType, left.type)
         val b = right.accept(codegen, data).materializedAt(parameterType, right.type)
 

@@ -25,6 +25,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval localProperty: R|kotlin/Int|
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {

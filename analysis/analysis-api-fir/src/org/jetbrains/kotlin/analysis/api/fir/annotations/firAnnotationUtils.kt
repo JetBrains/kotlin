@@ -43,7 +43,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
         annotation.toReferenceUnsafe()?.let { withClassEntry("calleeReference", it) }
     }
 
-    return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }
+    return annotation.argumentMapping.mapping.mapKeys { [name, _] -> name }
 }
 
 internal fun annotationsByClassId(

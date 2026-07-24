@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.model.ESEffect
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import java.util.*
 
 
+@K1Deprecation
 interface ESReceiver : ESValue {
     val receiverValue: ReceiverValue
 
@@ -34,11 +36,13 @@ interface ESReceiver : ESValue {
 }
 
 
+@K1Deprecation
 abstract class AbstractESValue(override val type: ESType?) : ESValue {
     override val effects: List<ESEffect> = listOf()
 }
 
 
+@K1Deprecation
 open class ESReceiverValue(override val receiverValue: ReceiverValue) : AbstractESValue(null), ESReceiver
 
 
@@ -55,6 +59,7 @@ open class ESReceiverValue(override val receiverValue: ReceiverValue) : Abstract
  *
  * [ESVariable] at points 2 and 3 must has consistent equality according to using them as keys
  */
+@K1Deprecation
 open class ESVariable(val descriptor: ValueDescriptor) : AbstractESValue(descriptor.type.toESType()) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitVariable(this)
 
@@ -80,6 +85,7 @@ open class ESVariable(val descriptor: ValueDescriptor) : AbstractESValue(descrip
  *
  * There is only few constants are supported (@see [ESConstant.Companion])
  */
+@K1Deprecation
 class ESConstant internal constructor(val constantReference: ConstantReference, override val type: ESType) : AbstractESValue(type) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitConstant(this)
 
@@ -93,6 +99,7 @@ class ESConstant internal constructor(val constantReference: ConstantReference, 
         constantReference == ConstantReference.NULL || constantReference == ConstantReference.NOT_NULL
 }
 
+@K1Deprecation
 object ESConstants {
     val trueValue = ESConstant(BooleanConstantReference.TRUE, ESBooleanType)
     val falseValue = ESConstant(BooleanConstantReference.FALSE, ESBooleanType)

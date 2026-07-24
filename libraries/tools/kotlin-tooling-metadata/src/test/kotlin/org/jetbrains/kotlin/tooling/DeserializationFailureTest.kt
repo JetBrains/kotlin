@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.tooling
 
 import org.intellij.lang.annotations.Language
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -28,7 +28,7 @@ class DeserializationFailureTest {
         @Language("JSON") val json =
             """
             {
-              "schemaVersion": ${SchemaVersion.current},
+              "schemaVersion": "${SchemaVersion.current}",
               "buildSystem": "Gradle",
               "buildSystemVersion": "6.7",
               "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.firstQualifierPart
 import org.jetbrains.kotlin.fir.resolve.*
@@ -28,7 +30,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -121,7 +126,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
 
         if (collector.applicability != CandidateApplicability.RESOLVED) {
-            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { (symbol, resolvedSymbolOrigin) ->
+            qualifierResolver.resolveFullyQualifiedSymbol(qualifier)?.let { [symbol, resolvedSymbolOrigin] ->
                 collector.processCandidate(symbol, substitutor = null, resolvedSymbolOrigin)
             }
         }
@@ -190,7 +195,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         topContainer: FirDeclaration?,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
-        val (symbol, substitutor) = when (result) {
+        val [symbol, substitutor] = when (result) {
             is TypeResolutionResult.Resolved -> {
                 result.typeCandidate.symbol to result.typeCandidate.substitutor
             }
@@ -344,7 +349,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        for ((typeParameterIndex, typeParameter) in symbol.fir.typeParameters.withIndex()) {
+        for ([typeParameterIndex, typeParameter] in symbol.fir.typeParameters.withIndex()) {
             if (typeParameterIndex < explicitTypeArgumentsNumber) {
                 // Ignore explicit type parameters since only outer type parameters are relevant
                 continue
@@ -434,7 +439,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                 addOwnTypeArguments(currentQualifier)
 
-                when (val nextClass = currentQualifier.explicitParent?.symbol) {
+                when (val nextClass = currentQualifier.explicitParent?.qualifierSymbol) {
                     is FirClassLikeSymbol if currentClass.isInner -> {
                         currentClass = nextClass
                         currentQualifier = currentQualifier.explicitParent!!
@@ -451,7 +456,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         configuration: TypeResolutionConfiguration,
     ): ConeSubstitutor? {
         // if the first part is a package, a substitutor is never needed
-        val firstQualifierSymbol = qualifier.firstQualifierPart().symbol ?: return null
+        val firstQualifierSymbol = qualifier.firstQualifierPart().qualifierSymbol ?: return null
         val name = firstQualifierSymbol.name
 
         var result: ConeSubstitutor? = null
@@ -471,7 +476,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
     ): CallableReferenceLhsAsType? {
-        val classSymbol = qualifier.symbol ?: return null
+        val classSymbol = qualifier.qualifierSymbol ?: return null
 
         val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
         var diagnostic: ConeDiagnostic? = null
@@ -492,10 +497,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 allTypeArguments.add(coneTypeArgument)
             }
 
-            val (_, diagnosticFromMatching) = matchQualifierPartsAndClassesForLhs(qualifier, classSymbol)
+            val [_, diagnosticFromMatching] = matchQualifierPartsAndClassesForLhs(qualifier, classSymbol)
             if (diagnostic == null) diagnostic = diagnosticFromMatching
         } else {
-            matchQualifierPartsAndClassesForLhs(qualifier, classSymbol).let { (arguments, diagnosticFromMatching) ->
+            matchQualifierPartsAndClassesForLhs(qualifier, classSymbol).let { [arguments, diagnosticFromMatching] ->
                 allTypeArguments.addAll(arguments)
                 diagnostic = diagnosticFromMatching
             }
@@ -521,6 +526,34 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             hasNullableMark = qualifier.isNullableLhsForCallableReference,
             hasExplicitTypeArguments = qualifier.typeArguments.isNotEmpty(),
         )
+    }
+
+    override fun resolveEqualityBoundTypeOrNull(
+        getClassLhs: FirExpression,
+        configuration: TypeResolutionConfiguration,
+    ): ConeKotlinType? {
+        var currentPropertyAccess: FirPropertyAccessExpression? = getClassLhs as? FirPropertyAccessExpression ?: return null
+        val segmentNames = buildList {
+            while (currentPropertyAccess != null) {
+                add(currentPropertyAccess.calleeReference.name to currentPropertyAccess.source)
+                val receiver = currentPropertyAccess.explicitReceiver
+                if (receiver !is FirPropertyAccessExpression?) return null
+                currentPropertyAccess = receiver
+            }
+        }
+        val fakeTypeRef = buildUserTypeRef {
+            isMarkedNullable = false
+            source = getClassLhs.source!!
+            qualifier.addAll(segmentNames.map { [name, source] -> FirQualifierPartImpl(source, name, FirTypeArgumentListImpl(null)) })
+        }
+        val symbol = resolveUserTypeToSymbol(fakeTypeRef, configuration, SupertypeSupplier.Default, resolveDeprecations = true)
+            .resolvedCandidateOrNull()
+            ?.symbol as? FirClassLikeSymbol ?: return null
+        val unexpandedType = symbol.constructStarProjectedType()
+        return when {
+            aliasedTypeExpansionGloballyDisabled -> unexpandedType
+            else -> unexpandedType.fullyExpandedType(session)
+        }
     }
 
     override fun resolveType(

@@ -1,0 +1,9 @@
+Resulting Resolution Scope:
+Module LIBRARY:
+    - Bar.java
+    + Foo.class
+    - main.kt
+Module MAIN:
+    - Bar.java
+    + Foo.class
+    + main.kt

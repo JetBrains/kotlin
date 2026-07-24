@@ -1,10 +1,15 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.java"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
@@ -16,3 +21,5 @@ sourceSets {
     }
     "test" { }
 }
+
+optInToK1Deprecation()

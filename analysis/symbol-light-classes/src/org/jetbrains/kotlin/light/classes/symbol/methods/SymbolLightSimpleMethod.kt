@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,10 +9,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -103,7 +105,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             } else {
                 isTopLevel
                         || containingClass is SymbolLightClassForInterfaceDefaultImpls
-                        || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
+                        || withFunctionSymbol { @OptIn(KaExperimentalApi::class) (it.isCompanion || it.hasJvmStaticAnnotation()) }
             }
 
             mapOf(modifier to isStatic)
@@ -190,7 +192,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
         withFunctionSymbol { it.isOverride }
     }
 
-    private fun KaSession.isVoidType(type: KaType): Boolean {
+    context(session: KaSession)
+    private fun isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
         return expandedType.isUnitType && !expandedType.isMarkedNullable
     }
@@ -227,7 +230,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
          * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
          *  * inside the containing class
          */
-        internal fun KaSession.createSimpleMethods(
+        context(_: KaSession)
+        internal fun createSimpleMethods(
             containingClass: SymbolLightClassBase,
             result: MutableList<PsiMethod>,
             functionSymbol: KaNamedFunctionSymbol,
@@ -256,6 +260,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
             val isSuspend = functionSymbol.isSuspend
             val isOverridable = functionSymbol.isOverridable()
+            val isEffectivelyPrivate = isEffectivelyPrivate(functionSymbol)
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,
@@ -273,7 +278,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassFunction,
                     hasJvmNameAnnotation = hasJvmNameAnnotation,
                     isSuspend = isSuspend,
-                    isOverridable = isOverridable
+                    isOverridable = isOverridable,
+                    isEffectivelyPrivate = isEffectivelyPrivate,
                 )
 
                 if (generationResult.isBoxedMethodRequired) {

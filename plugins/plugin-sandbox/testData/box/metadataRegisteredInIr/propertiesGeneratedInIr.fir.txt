@@ -1,0 +1,77 @@
+Module: a
+FILE: module_a_propertiesGeneratedInIr.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllPropertiesConstructor|() public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|A| = R|/A.A|(String(a))
+            public get(): R|A|
+
+        public final val b: R|B| = R|/B.B|(String(b))
+            public get(): R|B|
+
+    }
+Module: b
+FILE: module_b_propertiesGeneratedInIr.kt
+    public final fun box(): R|kotlin/String| {
+        lval base: R|Base| = R|/Base.Base|()
+        when () {
+            !=(R|<local>/base|.R|/Base.propertiesCount|, Int(2)) ->  {
+                ^box <strcat>(String(FAIL propertiesCount: ), R|<local>/base|.R|/Base.propertiesCount|)
+            }
+        }
+
+        R|kotlin/with|<R|Base|, R|kotlin/Unit|>(R|<local>/base|, <L> = with@fun R|Base|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            when () {
+                !=((this@R|special/anonymous|, String(x)).R|/Base.extensionProp|, String(ext)) ->  {
+                    ^box String(FAIL extensionProp)
+                }
+            }
+
+            when () {
+                !=((this@R|special/anonymous|, String(y)).R|/Base.genericExtensionProp|<R|kotlin/String|>, String(y)) ->  {
+                    ^box String(FAIL genericExtensionProp)
+                }
+            }
+
+        }
+        )
+        R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(ctx), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            when () {
+                !=(context(this@R|special/anonymous|) R|<local>/base|.R|/Base.contextProp|, String(ctx)) ->  {
+                    ^box String(FAIL contextProp)
+                }
+            }
+
+        }
+        )
+        ^box String(OK)
+    }

@@ -85,7 +85,7 @@ class RelocatableCachesTest {
 
     private fun <K, V> MultiMap<K, V>.reversedMultiMap(): MultiMap<K, V> {
         val newMap = MultiMap.createOrderedSet<K, V>()
-        for ((key, values) in entrySet().reversedSet()) {
+        for ([key, values] in entrySet().reversedSet()) {
             newMap.putValues(key, values.reversed())
         }
         return newMap

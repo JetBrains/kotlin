@@ -13,10 +13,11 @@ import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
@@ -49,6 +50,8 @@ data class BuildOptions(
     val buildCacheEnabled: Boolean = false,
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
+    /** Sets `android.newDsl=false` + `android.builtInKotlin=false` so AGP 9+ keeps the legacy DSL KGP integrates with. */
+    val enableLegacyAgpDsl: Boolean = true,
     val jsOptions: JsOptions? = JsOptions(),
     val wasmOptions: WasmOptions? = WasmOptions(),
     val buildReport: List<BuildReportType> = emptyList(),
@@ -90,6 +93,7 @@ data class BuildOptions(
      */
     val continuousBuild: Boolean? = null,
     val generateCompilerRefIndex: Boolean? = null,
+    val jvmClasspathMetadata: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -158,8 +162,9 @@ data class BuildOptions(
         val yarn: Boolean? = null,
     )
 
+    @Suppress("EXPOSED_PARAMETER_TYPE")
     data class WasmOptions(
-        val perModule: Boolean? = null,
+        val compilationMode: WasmCompilationMode? = null,
     )
 
     data class NativeOptions(
@@ -260,13 +265,15 @@ data class BuildOptions(
             jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
         }
 
-        if (wasmOptions != null) {
-            wasmOptions.perModule?.let { arguments.add("-Pkotlin.internal.wasm.perModule=$it") }
-        }
+        wasmOptions?.compilationMode?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
         if (androidVersion != null) {
             arguments.add("-Dandroid_tools_version=${androidVersion}")
             arguments.add("-Pandroid_tools_version=${androidVersion}")
+        }
+        if (enableLegacyAgpDsl) {
+            arguments.add("-Pandroid.newDsl=false")
+            arguments.add("-Pandroid.builtInKotlin=false")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
 
@@ -301,6 +308,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
         }
 
+        if (jvmClasspathMetadata != null) {
+            arguments.add("-Pkotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation=$jvmClasspathMetadata")
+        }
+
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
 
         if (useParsableDiagnosticsFormatting) {
@@ -313,6 +324,9 @@ data class BuildOptions(
 
         if (runViaBuildToolsApi != null) {
             arguments.add("-Pkotlin.compiler.runViaBuildToolsApi=$runViaBuildToolsApi")
+            arguments.add("-Pkotlin.js.runViaBuildToolsApi=$runViaBuildToolsApi")
+            arguments.add("-Pkotlin.wasm.runViaBuildToolsApi=$runViaBuildToolsApi")
+            arguments.add("-Pkotlin.metadata.runViaBuildToolsApi=$runViaBuildToolsApi")
         }
 
         if (showDiagnosticsStacktrace != null) {
@@ -458,7 +472,7 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
 
 // KMP dependencies checker does not work with Gradle isolated projects feature in older Gradle releases
 fun BuildOptions.disableIsolatedProjectsForKmpDependenciesChecker(
-    gradleVersion: GradleVersion
+    gradleVersion: GradleVersion,
 ) = copy(
     isolatedProjects = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
         IsolatedProjectsMode.DISABLED
@@ -494,7 +508,7 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
             reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
         )
         currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812-> copy(warningMode = warningMode)
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> copy(warningMode = warningMode)
         else -> this
     }
 }

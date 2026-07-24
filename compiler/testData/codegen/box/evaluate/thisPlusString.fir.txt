@@ -1,6 +1,6 @@
 FILE: thisPlusString.kt
     public final object Test : R|kotlin/Any| {
-        private [ContainingClassKey=Test] constructor(): R|Test| {
+        private constructor(): R|Test| {
             super<R|kotlin/Any|>()
         }
 

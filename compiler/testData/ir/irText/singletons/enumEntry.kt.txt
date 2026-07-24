@@ -32,12 +32,12 @@ open enum class Z : Enum<Z> {
 
   }
 
-  /* static */ fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<Z>
-    get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<Z>
+    companion get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

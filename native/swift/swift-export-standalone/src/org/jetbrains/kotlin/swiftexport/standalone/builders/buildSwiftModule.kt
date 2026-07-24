@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -36,11 +38,26 @@ internal fun buildSirSession(
     unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
     moduleForPackageEnums = buildModule { name = config.moduleForPackagesName },
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
-    moduleProvider = SirOneToOneModuleProvider(kaModules.platformLibraries),
+    moduleProvider = SirOneToOneModuleProvider(
+        platformLibs = kaModules.platformLibraries,
+        cinteropReexportLib = kaModules.cinteropReexportLibrary?.let { it to it.reexportedObjCModuleNames() },
+    ),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
 )
+
+/**
+ * The ObjC module names a cinterop reexport klib provides, read from its manifest `modules` property
+ * (a single cinterop klib may bundle several Clang modules). Empty when the klib declares no ObjC
+ * modules to import — e.g. a header-based cinterop klib, which the reexport strategy cannot serve.
+ */
+internal fun KaLibraryModule.reexportedObjCModuleNames(): List<String> {
+    val klibPath = binaryRoots.firstOrNull() ?: return emptyList()
+    val library = KlibLoader { libraryPaths(klibPath.toString()) }.load().librariesStdlibFirst.singleOrNull()
+        ?: return emptyList()
+    return library.manifestProperties.propertyList("modules", escapeInQuotes = true)
+}
 
 /**
  * Translates the given [module] to a [SirModule].
@@ -54,10 +71,10 @@ internal fun translateModule(
 ): SirModule = analyze(sir.useSiteModule) {
     extractAllTransitively(moduleToDeclarations(module))
         .toList()
-        .forEach { (oldParent, children) ->
+        .forEach { [oldParent, children] ->
             children
                 .mapNotNull { declaration -> (declaration.parent as? SirMutableDeclarationContainer)?.let { it to declaration } }
-                .forEach { (newParent, declaration) ->
+                .forEach { [newParent, declaration] ->
                     (oldParent as? SirMutableDeclarationContainer)?.apply { declarations.remove(declaration) }
                     newParent.addChild { declaration }
                 }
@@ -73,7 +90,7 @@ private fun extractAllTransitively(
         .flatMap { listOf(it) + it.trampolineDeclarations() }
         .groupBy { it.parent }.toList()
 ) {
-    it.flatMap { (_, children) ->
+    it.flatMap { [_, children] ->
         children
             .filterIsInstance<SirDeclarationContainer>()
             .map { it to it.declarations }

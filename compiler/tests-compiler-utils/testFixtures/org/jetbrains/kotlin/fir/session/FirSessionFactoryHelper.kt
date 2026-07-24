@@ -72,7 +72,7 @@ object FirSessionFactoryHelper {
             configuration,
             context,
             needRegisterJavaElementFinder,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             registerComponent(FirBuiltinSyntheticFunctionInterfaceProvider::class, librarySession.syntheticFunctionInterfacesSymbolProvider)
             sessionConfigurator()

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange;
 import org.jetbrains.kotlin.contracts.model.Computation;
 import org.jetbrains.kotlin.descriptors.*;
@@ -284,6 +285,8 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, Ref<VariableDescriptor>> NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER = Slices.createSimpleSlice();
     WritableSlice<PsiElement, Boolean> NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE = Slices.createSimpleSlice();
+
+    WritableSlice<ModuleDescriptor, CompilerConfiguration> COMPILER_CONFIGURATION = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

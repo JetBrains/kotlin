@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import java.io.Serializable
 
 class TasksRequirements : Serializable {
     private val _byTask = mutableMapOf<String, Set<RequiredKotlinJsDependency>>()
     private val byCompilation = mutableMapOf<String, MutableSet<NpmDependencyDeclaration>>()
 
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.7.")
     val byTask: Map<String, Set<RequiredKotlinJsDependency>>
         get() = _byTask
 
@@ -23,10 +21,16 @@ class TasksRequirements : Serializable {
         byCompilation["$projectPath:$compilationName"]
             ?: setOf()
 
+    @Deprecated("Internal utility. Scheduled for removal in Kotlin 2.7.")
     fun addTaskRequirements(task: RequiresNpmDependencies) {
+        if (task !is RequiresNpmDependenciesTask) return
+        addTaskRequirements(task)
+    }
+
+    internal fun addTaskRequirements(task: RequiresNpmDependenciesTask) {
         val requirements = task.requiredNpmDependencies
 
-        _byTask[task.getPath()] = requirements
+        _byTask[task.path] = requirements
 
         val requiredNpmDependencies = requirements
             .asSequence()

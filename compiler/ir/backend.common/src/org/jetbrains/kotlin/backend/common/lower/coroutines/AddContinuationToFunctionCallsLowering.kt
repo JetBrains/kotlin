@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -32,6 +33,12 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
     protected open val IrSimpleFunction.continuationOwner: IrSimpleFunction
         get() = this
+
+    protected open fun suspendFunctionReturnTypeAtCallSite(expression: IrCall, newFun: IrSimpleFunction): IrType =
+        newFun.returnType
+
+    protected open fun loweredSuspendFunctionReturnType(suspendFunReturnType: IrType): IrType =
+        defaultLoweredSuspendFunctionReturnType(suspendFunReturnType, context.irBuiltIns)
 
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
@@ -57,7 +64,8 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 val oldFun = expression.symbol.owner as? IrSimpleFunction
 
                 if (oldFun?.isSuspend == true) {
-                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                    expression.symbol =
+                        oldFun.getOrCreateFunctionWithContinuationStub(context, ::loweredSuspendFunctionReturnType).symbol
                 }
 
                 return super.visitRawFunctionReference(expression)
@@ -73,11 +81,12 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
 
                 val oldFun = expression.symbol.owner
-                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(context)
+                val newFun: IrSimpleFunction =
+                    oldFun.getOrCreateFunctionWithContinuationStub(context, ::loweredSuspendFunctionReturnType)
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    newFun.returnType,
+                    suspendFunctionReturnTypeAtCallSite(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,
@@ -111,10 +120,11 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         }
     }
 
-    private fun IrCall.throwLinkageError(file: PLFile): IrCall =
+    private fun IrCall.throwLinkageError(file: PLFile): IrCall = context(context.irBuiltIns) {
         context.partialLinkageSupport.throwLinkageError(
             SuspendableFunctionCallWithoutCoroutineContext(this),
             element = this,
             file
         )
+    }
 }

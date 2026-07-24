@@ -2448,7 +2448,7 @@ KtBlockExpression(1378,1506): '{'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1384,1397): '::withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2477,10 +2477,11 @@ KtCallableReferenceExpression(1384,1397): '::withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1386,1397): 'withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2509,10 +2510,11 @@ KtNameReferenceExpression(1386,1397): 'withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2541,10 +2543,11 @@ KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1404,1415): 'withContext'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2573,6 +2576,7 @@ KtNameReferenceExpression(1404,1415): 'withContext'
         ]
         callableId = pack/withContext
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtValueArgumentList(1415,1435): '(LoggerContext(), 1)'
@@ -2627,7 +2631,7 @@ KtConstantExpression(1433,1434): '1'
   NO_CANDIDATES
 
 KtCallableReferenceExpression(1440,1461): '::withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2648,10 +2652,11 @@ KtCallableReferenceExpression(1440,1461): '::withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2672,10 +2677,11 @@ KtNameReferenceExpression(1442,1461): 'withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2696,10 +2702,11 @@ KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext()
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2720,6 +2727,7 @@ KtNameReferenceExpression(1468,1487): 'withContextProperty'
         ]
         callableId = pack/withContextProperty
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
     isInBestCandidates = true
 
 KtValueArgumentList(1487,1504): '(LoggerContext())'
@@ -2765,4 +2773,383 @@ KtNameReferenceExpression(1488,1501): 'LoggerContext'
     isInBestCandidates = true
 
 KtValueArgumentList(1501,1503): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(1508,1717): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1508,1533): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtContextReceiverList(1508,1533): 'context(c: LoggerContext)'
+  NO_CANDIDATES
+
+KtParameter(1516,1532): 'c: LoggerContext'
+  NO_CANDIDATES
+
+KtTypeReference(1519,1532): 'LoggerContext'
+  NO_CANDIDATES
+
+KtUserType(1519,1532): 'LoggerContext'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1519,1532): 'LoggerContext'
+  NO_CANDIDATES
+
+KtParameterList(1586,1588): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1589,1717): '{'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1595,1608): '::withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1597,1608): 'withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(1613,1646): '::withContext(LoggerContext(), 1)'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1615,1626): 'withContext'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pack/withContext(x: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContext
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1626,1646): '(LoggerContext(), 1)'
+  NO_CANDIDATES
+
+KtValueArgument(1627,1642): 'LoggerContext()'
+  NO_CANDIDATES
+
+KtCallExpression(1627,1642): 'LoggerContext()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1627,1640): 'LoggerContext'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1640,1642): '()'
+  NO_CANDIDATES
+
+KtValueArgument(1644,1645): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(1644,1645): '1'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(1651,1672): '::withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1653,1672): 'withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(1677,1715): '::withContextProperty(LoggerContext())'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1679,1698): 'withContextProperty'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = c: pack.LoggerContext
+          type = pack.LoggerContext
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = withContextProperty
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val withContextProperty: kotlin.Int
+        contextParameters = [
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = pack.LoggerContext
+            symbol = c: pack.LoggerContext
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = pack/withContextProperty
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1698,1715): '(LoggerContext())'
+  NO_CANDIDATES
+
+KtValueArgument(1699,1714): 'LoggerContext()'
+  NO_CANDIDATES
+
+KtCallExpression(1699,1714): 'LoggerContext()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1699,1712): 'LoggerContext'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.LoggerContext
+        symbol = <constructor>(): pack.LoggerContext
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(1712,1714): '()'
   NO_CANDIDATES

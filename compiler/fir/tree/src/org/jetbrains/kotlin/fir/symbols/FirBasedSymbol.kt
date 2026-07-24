@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -103,13 +104,29 @@ private fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: F
     anchorElement.lazyResolveToPhase(phase)
 }
 
-private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymbol<*>): Boolean {
-    if (annotations.isEmpty()) {
-        if (anchorElement !is FirBackingFieldSymbol) return true
-        if (anchorElement.propertySymbol.annotations.none { it.useSiteTarget == null }) return true
+private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymbol<*>): Boolean = when {
+    annotations.isNotEmpty() -> false
+
+    // Annotations on the backing field could appear later during resolution
+    anchorElement is FirBackingFieldSymbol -> anchorElement.propertySymbol.annotations.any {
+        when (it.useSiteTarget) {
+            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.ALL -> false
+            else -> true
+        }
     }
-    return false
+
+    else -> true
 }
+
+
+/**
+ * Whether [this] symbol might have annotations.
+ *
+ * - `false` means that [this] symbol definitely doesn't have annotations.
+ * - `true` means that [this] symbol might have annotations.
+ */
+val FirBasedSymbol<*>.mightHaveAnnotations: Boolean
+    get() = !fir.isDefinitelyEmpty(this)
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {

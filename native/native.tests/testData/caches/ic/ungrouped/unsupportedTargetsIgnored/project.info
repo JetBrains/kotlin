@@ -1,0 +1,15 @@
+// Per-file caches are sensitive to how the path is computed.
+// Given that Windows paths are trickier than Unix ones, IC tests do not work on Windows for now
+// This scenario checks that enabled IC does not break compilation or execution on Windows.
+// TODO: KT-74972.
+
+// DISABLE_NATIVE: isAppleTarget=true
+// DISABLE_NATIVE: targetFamily=LINUX
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main

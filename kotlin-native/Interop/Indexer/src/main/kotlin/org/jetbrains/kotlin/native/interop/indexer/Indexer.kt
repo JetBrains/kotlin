@@ -50,6 +50,7 @@ private class EnumDefImpl(
 private interface ObjCContainerImpl {
     val protocols: MutableList<ObjCProtocol>
     val methods: MutableList<ObjCMethod>
+    val unavailableMethods: MutableList<ObjCUnavailableMethod>
     val properties: MutableList<ObjCProperty>
 }
 
@@ -62,6 +63,7 @@ private class ObjCProtocolImpl(
 ) : ObjCProtocol(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
     override val properties = mutableListOf<ObjCProperty>()
 }
 
@@ -75,6 +77,7 @@ private class ObjCClassImpl(
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
     override val properties = mutableListOf<ObjCProperty>()
     override var baseClass: ObjCClass? = null
     override val includedCategories = mutableListOf<ObjCCategory>()
@@ -86,10 +89,35 @@ private class ObjCCategoryImpl(
 ) : ObjCCategory(name, clazz), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
     override val properties = mutableListOf<ObjCProperty>()
 }
 
 public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
+
+    private val apiNotes: ApiNotes? by lazy {
+        if (library.apiNotesSwiftName) {
+            ApiNotes.load(library)
+        } else {
+            null
+        }
+    }
+
+    /**
+     * The API notes [ApiNotes.Context] for the Objective-C class/protocol (or the class behind a category)
+     * that [memberCursor] — a method or property — belongs to, or `null` if there are no notes for it.
+     */
+    private fun apiNotesContainer(memberCursor: CValue<CXCursor>): ApiNotes.Context? {
+        return apiNotes?.let {
+            val parent = clang_getCursorSemanticParent(memberCursor)
+            return when (parent.kind) {
+                CXCursorKind.CXCursor_ObjCInterfaceDecl -> it.objCClass(getCursorSpelling(parent))
+                CXCursorKind.CXCursor_ObjCProtocolDecl -> it.protocol(getCursorSpelling(parent))
+                CXCursorKind.CXCursor_ObjCCategoryDecl -> it.objCClass(getCursorSpelling(getObjCCategoryClassCursor(parent)))
+                else -> null
+            }
+        }
+    }
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
@@ -453,7 +481,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     isForwardDeclaration = false,
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name },
                     typeParameters = parameters,
-                    swiftName = readSwiftName(cursor)
+                    // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                    swiftName = apiNotes?.objCClass(name)?.swiftName ?: readSwiftName(cursor)
             )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
@@ -527,7 +556,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = binaryName,
                     location = getLocation(cursor),
                     isForwardDeclaration = false,
-                    swiftName = readSwiftName(cursor)
+                    // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                    swiftName = apiNotes?.protocol(name)?.swiftName ?: readSwiftName(cursor)
             )
         }) {
             addChildrenToObjCContainer(cursor, it)
@@ -579,7 +609,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 CXCursorKind.CXCursor_ObjCClassMethodDecl, CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> {
                     getObjCMethod(child)?.let { method ->
                         result.methods.removeAll { method.replaces(it) }
-                        result.methods.add(method)
+                        result.unavailableMethods.removeAll { method.replaces(it) }
+                        when (method) {
+                            is ObjCMethod -> result.methods.add(method)
+                            is ObjCUnavailableMethod -> result.unavailableMethods.add(method)
+                        }
                     }
                 }
                 else -> {
@@ -1061,13 +1095,16 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
                 if (isAvailable(cursor) && isAvailable(container) && classIfCategory?.let(::isAvailable) ?: true) {
                     val propertyInfo = clang_index_getObjCPropertyDeclInfo(info.ptr)!!.pointed
-                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())
+                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue()) as? ObjCMethod
                     val setter = propertyInfo.setter?.let {
-                        getObjCMethod(it.pointed.cursor.readValue())
+                        getObjCMethod(it.pointed.cursor.readValue()) as? ObjCMethod
                     }
 
                     if (getter != null) {
-                        val property = ObjCProperty(entityName!!, getter, setter, readSwiftName(cursor))
+                        // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                        val swiftName = apiNotesContainer(cursor)?.property(entityName!!, isInstance = !getter.isClass)?.swiftName
+                                ?: readSwiftName(cursor)
+                        val property = ObjCProperty(entityName!!, getter, setter, swiftName)
                         val objCContainer: ObjCContainerImpl? = when (container.kind) {
                             CXCursorKind.CXCursor_ObjCCategoryDecl -> getObjCCategoryAt(container)
                             CXCursorKind.CXCursor_ObjCInterfaceDecl -> getObjCClassAt(container)
@@ -1138,16 +1175,22 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return FunctionDecl(name, parameters, returnType, isVararg, directAccess)
     }
 
-    private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethod? {
-        if (!isAvailable(cursor)) {
-            return null
-        }
-
+    private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethodOrUnavailableMethod? {
         val selector = clang_getCursorDisplayName(cursor).convertAndDispose()
 
         // Ignore some very special methods:
         when (selector) {
             "dealloc", "retain", "release", "autorelease", "retainCount", "self" -> return null
+        }
+
+        val isClass = when (cursor.kind) {
+            CXCursorKind.CXCursor_ObjCClassMethodDecl -> true
+            CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> false
+            else -> error(cursor.kind)
+        }
+
+        if (!isAvailable(cursor)) {
+            return ObjCUnavailableMethod(selector, isClass)
         }
 
         val encoding = clang_getDeclObjCTypeEncoding(cursor).convertAndDispose()
@@ -1158,14 +1201,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return null // TODO: make a more universal fix.
         }
 
-        val isClass = when (cursor.kind) {
-            CXCursorKind.CXCursor_ObjCClassMethodDecl -> true
-            CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> false
-            else -> error(cursor.kind)
-        }
-
         return ObjCMethod(
-                selector, encoding, parameters, returnType,
+                selector = selector,
+                encoding = encoding,
+                parameters = parameters,
+                returnType = returnType,
                 isVariadic = clang_Cursor_isVariadic(cursor) != 0,
                 isClass = isClass,
                 nsConsumesSelf = clang_Cursor_isObjCConsumingSelfMethod(cursor) != 0,
@@ -1174,7 +1214,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
                 isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
                 isDirect = hasAttribute(cursor, OBJC_DIRECT),
-                swiftName = readSwiftName(cursor)
+                // API notes supersede the in-header `swift_name` attribute, matching Clang.
+                swiftName = apiNotesContainer(cursor)?.method(selector, isInstance = !isClass)?.swiftName ?: readSwiftName(cursor),
         )
     }
 

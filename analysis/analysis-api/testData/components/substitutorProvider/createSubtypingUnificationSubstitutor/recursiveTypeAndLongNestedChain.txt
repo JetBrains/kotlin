@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: null
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {T = Base<Base<kotlin/Int>>}>
+Substituted pairs:
+Base<Base<Base<kotlin/Int>>> <: Base<Base<Base<kotlin/Int>>> (Original: Base<Base<Base<kotlin/Int>>> <: Base<T>)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {T = Base<Base<kotlin/Int>>}>
+Substituted pairs:
+Base<Base<Base<kotlin/Int>>> <: Base<Base<Base<kotlin/Int>>> (Original: Base<Base<Base<kotlin/Int>>> <: Base<T>)

@@ -4,6 +4,6 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final fun /bar(): kotlin/String // /bar|bar#companion@kotlin/collections/MutableList(){}[0]
+final companion fun (kotlin.collections/MutableList)./bar(): kotlin/String // /bar|bar#companion@kotlin/collections/MutableList(){}[0]
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun /foo(): kotlin/String // /foo|foo#companion@kotlin/collections/MutableList(){}[0]
+final companion fun (kotlin.collections/MutableList)./foo(): kotlin/String // /foo|foo#companion@kotlin/collections/MutableList(){}[0]

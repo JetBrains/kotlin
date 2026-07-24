@@ -8,11 +8,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.*
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("native-dependencies")
+    id("test-inputs-check-v2")
 }
 
-val testCppRuntime by configurations.creating {
+val testCppRuntime = configurations.create("testCppRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -27,6 +31,8 @@ dependencies {
     api(project(":kotlin-native:Interop:Runtime"))
     api(project(":kotlin-native:libclangInterop"))
     implementation(project(":native:kotlin-native-utils"))
+    implementation(libs.jackson.dataformat.yaml)
+    implementation(libs.jackson.module.kotlin)
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":native:unsafe-mem"))

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
+import kotlin.collections.map
+import kotlin.collections.toTypedArray
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
@@ -92,6 +94,9 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Input
     internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
+    @get:Input
+    internal val enableJvmClasspathMetadata: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
@@ -242,8 +247,8 @@ abstract class KotlinCompile @Inject constructor(
                     )
                 }
 
+                @Suppress("DEPRECATION")
                 args.useFirIC = true
-                args.useFirLT = true
             }
 
             args.separateKmpCompilationScheme = separateKmpCompilation.get()
@@ -279,6 +284,9 @@ abstract class KotlinCompile @Inject constructor(
                         args.fragmentDependencies = emptyArray()
                         args.fragmentFriendDependencies = emptyArray()
                     }
+                    if (isIncrementalCompilationEnabled() && enableUnsafeIncrementalCompilationForMultiplatform.get() && enableJvmClasspathMetadata.get()) {
+                        args.useMetadataOnIncrementalClasspath = true
+                    }
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
@@ -310,13 +318,13 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinVersionsInPresenceOfKotlinDslPlugin(args: KotlinJvmCompilerOptions) {
         if (!kotlinDslPluginIsPresent.get()) return
 
-        fun KotlinVersion?.unsupportedLevel(): ToolingDiagnostic.Severity? {
+        fun KotlinVersion?.unsupportedLevel(): KotlinToolingDiagnosticsSeverity? {
             if (this == null) return null
             val metadata = UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[this]
             return when {
                 metadata == null -> null
-                metadata.removalVersion != null && metadata.removalVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.STRONG_WARNING
-                metadata.deprecationVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.WARNING
+                metadata.removalVersion != null && metadata.removalVersion <= kotlinCompilerVersion.get() -> KotlinToolingDiagnosticsSeverity.STRONG_WARNING
+                metadata.deprecationVersion <= kotlinCompilerVersion.get() -> KotlinToolingDiagnosticsSeverity.WARNING
                 else -> null
             }
         }
@@ -352,7 +360,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
-        args: K2JVMCompilerArguments
+        args: K2JVMCompilerArguments,
     ) {
         val kotlinCompilerVersion = kotlinCompilerVersion.orNull
         val shouldSkipCheck = runViaBuildToolsApi.get() &&
@@ -434,7 +442,9 @@ abstract class KotlinCompile @Inject constructor(
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray(),
-            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+            toolingDiagnosticsCollector = toolingDiagnosticsCollector,
+            toolingDiagnosticsContext = toolingDiagnosticsContext,
         )
         compilerRunner.runJvmCompilerAsync(
             args,
@@ -454,8 +464,8 @@ abstract class KotlinCompile @Inject constructor(
         ) return
 
         val severity = when (jvmTargetValidationMode.get()) {
-            JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
-            JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING
+            JvmTargetValidationMode.ERROR -> KotlinToolingDiagnosticsSeverity.FATAL
+            JvmTargetValidationMode.WARNING -> KotlinToolingDiagnosticsSeverity.WARNING
             else -> return
         }
 

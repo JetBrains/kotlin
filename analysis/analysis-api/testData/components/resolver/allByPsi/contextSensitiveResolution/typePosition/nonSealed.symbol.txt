@@ -38,6 +38,8 @@ KtUserType(122,128): 'String'
     ]
 
 KtNameReferenceExpression(122,128): 'String'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -65,6 +67,8 @@ KtUserType(131,140): 'NonSealed'
     ]
 
 KtNameReferenceExpression(131,140): 'NonSealed'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /NonSealed
@@ -95,6 +99,8 @@ KtUserType(164,170): 'String'
     ]
 
 KtNameReferenceExpression(164,170): 'String'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -122,6 +128,8 @@ KtUserType(173,182): 'NonSealed'
     ]
 
 KtNameReferenceExpression(173,182): 'NonSealed'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /NonSealed
@@ -143,6 +151,8 @@ KtUserType(190,199): 'NonSealed'
     ]
 
 KtNameReferenceExpression(190,199): 'NonSealed'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /NonSealed
@@ -158,12 +168,14 @@ KtThisExpression(220,224): 'this'
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -173,24 +185,31 @@ KtThisExpression(220,224): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: NonSealed
+        typeParameters: []
         visibility: PUBLIC
     ]
 
 KtNameReferenceExpression(220,224): 'this'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -200,11 +219,14 @@ KtNameReferenceExpression(220,224): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: NonSealed
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -225,11 +247,15 @@ KtUserType(235,239): 'Left'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(235,239): 'Left'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(243,244): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
@@ -251,11 +277,15 @@ KtUserType(252,257): 'Right'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(252,257): 'Right'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(261,262): 'y'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

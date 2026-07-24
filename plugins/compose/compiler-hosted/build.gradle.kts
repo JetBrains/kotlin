@@ -3,18 +3,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
-    composeGoogleMaven(libs.versions.compose.stable.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
@@ -25,7 +26,7 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
-val testJsRuntime: Configuration by configurations.creating {
+val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
@@ -36,6 +37,15 @@ val testJsRuntime: Configuration by configurations.creating {
 
 dependencies {
     implementation(project(":kotlin-stdlib"))
+    compileOnly(project(":compiler:backend.common.jvm"))
+    compileOnly(project(":compiler:container"))
+    compileOnly(project(":compiler:resolution"))
+    compileOnly(project(":compiler:serialization"))
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":core:descriptors.jvm"))
+    compileOnly(project(":core:language.targets.jvm"))
+    compileOnly(project(":js:js.frontend"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:cli-base"))
@@ -49,8 +59,6 @@ dependencies {
 
     testCompileOnly(project(":compiler:ir.tree"))
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
@@ -112,6 +120,8 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 base {
     archivesName = "kotlin-compose-compiler-plugin"
 }
@@ -133,14 +143,14 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
         addClasspathProperty(runtimeJar.get().outputs.files, "compose.compiler.hosted.jar.path")
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
-        testInputsCheck {
-            allowFlightRecorder.set(true)
-        }
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)

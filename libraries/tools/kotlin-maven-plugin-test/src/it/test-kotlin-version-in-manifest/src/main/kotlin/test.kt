@@ -65,7 +65,6 @@ fun main(args: Array<String>) {
         if (value != null) append(" (actual value: $value)")
         else append(" (attribute is not found)")
     }
-
     val incorrectVersionValues = versionValues.filterValues { it != KOTLIN_VERSION_VALUE }
     if (incorrectVersionValues.isNotEmpty()) {
         errors.appendLine("Manifests at these locations do not have the correct value of the $KOTLIN_VERSION attribute ($KOTLIN_VERSION_VALUE). " +

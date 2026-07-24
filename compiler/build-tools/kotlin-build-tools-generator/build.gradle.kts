@@ -1,4 +1,6 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
     kotlin("jvm")
     application
     id("project-tests-convention")
@@ -29,7 +31,5 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        useJUnitPlatform()
-    }
+    testTask()
 }

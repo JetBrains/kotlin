@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Encloses repeated annotations in a container annotation, generating a container class if needed.
@@ -81,12 +82,12 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         if (!context.state.classBuilderMode.generateBodies) return annotations
         if (annotations.size < 2) return annotations
 
-        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
+        val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.classSymbol.owner }
         if (annotationsByClass.values.none { it.size > 1 }) return annotations
 
         val result = mutableListOf<IrAnnotation>()
         for (annotation in annotations) {
-            val annotationClass = annotation.symbol.owner.constructedClass
+            val annotationClass = annotation.classSymbol.owner
             val grouped = annotationsByClass.remove(annotationClass) ?: continue
             if (grouped.size < 2) {
                 result.add(grouped.single())
@@ -103,7 +104,7 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         val metaAnnotations = annotationClass.annotations
         val jvmRepeatable = metaAnnotations.find { it.isAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION) }
         return if (jvmRepeatable != null) {
-            val containerClassReference = jvmRepeatable.arguments[0]
+            val containerClassReference = jvmRepeatable.argumentMapping[Name.identifier("value")]
             require(containerClassReference is IrClassReference) {
                 "Repeatable annotation container value must be a class reference: $annotationClass"
             }

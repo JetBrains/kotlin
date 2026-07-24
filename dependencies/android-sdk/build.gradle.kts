@@ -2,30 +2,13 @@ import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 import java.io.File
 
-repositories {
-    ivy {
-        url = URI("https://dl.google.com/android/repository")
-        patternLayout {
-            artifact("[artifact]-[revision].[ext]")
-            artifact("[artifact]_[revision](-[classifier]).[ext]")
-            artifact("[artifact]_[revision](_[classifier]).[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-    ivy {
-        url = URI("https://dl.google.com/android/repository/sys-img/android")
-        patternLayout {
-            artifact("[artifact]-[revision](_[classifier]).[ext]")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
+// Repo content: https://dl.google.com/android/repository/repository2-1.xml
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
 }
 
-// Repo content: https://dl.google.com/android/repository/repository2-1.xml
 val platformToolsVersion = "r36.0.0"
 val commandLineToolsVersion = "13114758" /*19.0*/
 val emulatorVersion = "14433334" // v36.4.1
@@ -46,9 +29,9 @@ dependencies {
     implicitDependencies("google:emulator-darwin_aarch64:$emulatorVersion@zip")
 }
 
-val androidSdk by configurations.creating
-val androidJar by configurations.creating
-val androidEmulator by configurations.creating
+val androidSdk = configurations.create("androidSdk")
+val androidJar = configurations.create("androidJar")
+val androidEmulator = configurations.create("androidEmulator")
 
 val sdkDestDirName = "androidSdk"
 
@@ -92,16 +75,16 @@ val toolsOsDarwinArch = when {
     }
 }
 
-val preparePlatform by task<DefaultTask> {
+val preparePlatform = tasks.register<DefaultTask>("preparePlatform") {
     doLast {}
 }
 
-val prepareSdk by task<DefaultTask> {
+val prepareSdk = tasks.register<DefaultTask>("prepareSdk") {
     doLast {}
     dependsOn(preparePlatform)
 }
 
-val prepareEmulator by task<DefaultTask> {
+val prepareEmulator = tasks.register<DefaultTask>("prepareEmulator") {
     doLast {}
     dependsOn(prepareSdk)
 }
@@ -333,7 +316,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
 unzipSdkTask("commandlinetools-$toolsOsShort", "${commandLineToolsVersion}_latest", "", "")
 
-val clean by task<Delete> {
+val clean = tasks.register<Delete>("clean") {
     delete(layout.buildDirectory)
 }
 

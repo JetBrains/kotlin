@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
@@ -38,7 +36,7 @@ class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
     private val reportErrorsOn: IrElement,
     private val containingFile: IrFile,
-) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
+) : ReifiedTypeInliner.IntrinsicsSupport {
     override val config: JvmBackendConfig
         get() = classCodegen.context.config
 
@@ -106,8 +104,6 @@ class IrInlineIntrinsicsSupport(
         val classifier = type.classOrNull
         return classifier != null && JavaToKotlinClassMap.isMutable(classifier.owner.fqNameWhenAvailable?.toUnsafe())
     }
-
-    override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
 
     override fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType): FieldInsnNode? =
         generateExternalEntriesForEnumTypeIfNeeded(type, classCodegen)

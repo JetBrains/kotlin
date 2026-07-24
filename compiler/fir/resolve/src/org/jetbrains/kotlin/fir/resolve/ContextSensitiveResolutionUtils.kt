@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
@@ -14,11 +15,14 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
@@ -32,7 +36,8 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     for (representativeClass in expectedType.getParentChainForContextSensitiveResolutionOfExpressions(session)) {
         val additionalQualifier = representativeClass.toImplicitResolvedQualifierReceiver(
             this,
-            originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
+            originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution),
+            definitelyNotCompanion = false,
         )
 
         val newAccess = buildPropertyAccessExpression {
@@ -58,6 +63,15 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
                 val newCalleeReference = newExpression.calleeReference
                 val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
                 if (shouldTake) {
+                    if (newExpression.extensionReceiver === additionalQualifier) {
+                        // By KEEP, we have to filter here properties with extension receiver
+                        if (!isValidContextSensitiveResolutionToExtension(
+                                newCalleeReference, newExpression.dispatchReceiver, representativeClass
+                            )
+                        ) {
+                            return null
+                        }
+                    }
                     newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
                 }
                 shouldTake
@@ -77,6 +91,25 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     }
 
     return null
+}
+
+fun BodyResolveComponents.isValidContextSensitiveResolutionToExtension(
+    calleeReference: FirResolvedNamedReference,
+    calleeDispatchReceiver: FirExpression?,
+    contextRepresentativeClass: FirRegularClassSymbol,
+): Boolean {
+    val newResolvedSymbol = calleeReference.symbol as? FirPropertySymbol
+    // We shouldn't have declaration-site dispatch receiver matched with use-site resolved qualifier
+    // (imported from object seems the only case here)
+    if (newResolvedSymbol?.dispatchReceiverType != null && calleeDispatchReceiver is FirResolvedQualifier) {
+        return false
+    }
+    // Only properties extending the static and companion object scopes of the contextual types are included
+    val receiverOfNewResolvedSymbol =
+        (newResolvedSymbol?.receiverParameterSymbol?.resolvedType?.toSymbol() as? FirRegularClassSymbol)?.let {
+            if (it.isCompanion) it.getContainingClassSymbol() as? FirRegularClassSymbol else it
+        }
+    return receiverOfNewResolvedSymbol === contextRepresentativeClass
 }
 
 fun FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode(): Boolean {
@@ -99,6 +132,7 @@ private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =
         is ConeAmbiguityError -> candidates.all {
             it.applicability == CandidateApplicability.HIDDEN || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR
         }
+        is ConeInapplicableWrongReceiver -> true
         else -> false
     }
 
@@ -115,9 +149,14 @@ fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIf
 
     if (symbol is FirCallableSymbol<*> && symbol.hadImplicitTypeInSource()) return false
 
+    val diagnostic = when (obtainOrigin()) {
+        FirResolvedSymbolOrigin.ExplicitImport, FirResolvedSymbolOrigin.StarImport -> ContextSensitiveResolutionMightBeUsedInsteadOfImport
+        else -> ContextSensitiveResolutionMightBeUsed
+    }
+
     when (this) {
-        is FirPropertyAccessExpression -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
-        is FirResolvedQualifier -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
+        is FirPropertyAccessExpression -> appendNonFatalDiagnostics(diagnostic)
+        is FirResolvedQualifier -> appendNonFatalDiagnostics(diagnostic)
     }
 
     return true
@@ -130,6 +169,12 @@ private fun FirCallableSymbol<*>.hadImplicitTypeInSource(): Boolean {
 
 private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {
     is FirPropertyAccessExpression -> toResolvedCallableSymbol()
-    is FirResolvedQualifier -> symbol
+    is FirResolvedQualifier -> qualifierSymbol
+    else -> null
+}
+
+private fun FirExpression.obtainOrigin(): FirResolvedSymbolOrigin? = when (this) {
+    is FirPropertyAccessExpression -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbolOrigin
+    is FirResolvedQualifier -> resolvedSymbolOrigin
     else -> null
 }

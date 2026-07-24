@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.FunctionSymbol.Declared)
@@ -55,7 +54,7 @@ internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared
 }
 
 internal class CallGraphBuilder(
-        val context: Context,
+        val context: NativeBackendContext,
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizedCallSitesUnfoldFactor: Int,

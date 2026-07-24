@@ -1,2 +1,2 @@
-KtNamedFunction(76,117): '/**'
+KDocName(84,92): 'A.toName'
   null

@@ -17,4 +17,12 @@ object DataFrameDirectives : SimpleDirectivesContainer() {
     val DUMP_SCHEMAS by directive(
         description = "Whether checkers should report schemas as info warnings"
     )
+
+    val DISABLE_TEST_UTILS by directive(
+        description = "Do not add files in TestUtilsSourceProvider, helps to avoid unnecessary declarations in IR/bytecode listings"
+    )
+
+    val WITHOUT_HANDLE_EXTENSION_PROPERTY_EXCEPTIONS by directive(
+        description = "Simulate older KDF runtime versions without org.jetbrains.kotlinx.dataframe.exceptions.handleExtensionPropertyException"
+    )
 }

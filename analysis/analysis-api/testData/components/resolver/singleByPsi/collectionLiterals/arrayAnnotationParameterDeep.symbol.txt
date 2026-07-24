@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(58,60): '[]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]

@@ -11,13 +11,6 @@ IllegalStateException#(String(Something is not defined.))
 
 1. `kotlin/String <: kotlin/String!` _from Argument String(Something is not defined.)_
 
-#### Candidate 2: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: Throwable!): {kotlin/IllegalStateException=} IllegalStateException`
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String <: kotlin/Throwable!` _from Argument String(Something is not defined.)_
-2. __NewConstraintError: `kotlin/String <: kotlin/Throwable!`__
-
-#### Candidate 1: `FirConstructorSymbol java/lang/IllegalStateException.IllegalStateException` --- `constructor(p0: String!): {kotlin/IllegalStateException=} IllegalStateException`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `{kotlin/IllegalStateException=} java/lang/IllegalStateException <: kotlin/Throwable` _from ExpectedType for some call_
@@ -52,6 +45,7 @@ parse#(R|<local>/data|)
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -73,7 +67,7 @@ when () {
 
 ```
 
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL` --- `fun <K> WHEN_CALL(vararg branches: K): K↩`
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL` --- `fun <K> WHEN_CALL(vararg branches: K): K`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL`s parameter 0
@@ -100,6 +94,7 @@ when () {
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -115,6 +110,7 @@ when () {
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -133,6 +129,7 @@ when () {
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -147,7 +144,7 @@ when () {
 TODO#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `kotlin/Nothing <: T` _from ExpectedType for some call_

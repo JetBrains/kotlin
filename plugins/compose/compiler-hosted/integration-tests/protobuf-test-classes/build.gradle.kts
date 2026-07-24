@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("com.google.protobuf") version "0.9.6"
     id("java")
 }
@@ -15,9 +18,11 @@ protobuf {
 
     generateProtoTasks.all().configureEach {
         builtins {
-            val java by getting {
+            val java = getByName("java") {
                 option("lite")
             }
         }
     }
 }
+
+registerInAggregateGenerateSources("generateProto")

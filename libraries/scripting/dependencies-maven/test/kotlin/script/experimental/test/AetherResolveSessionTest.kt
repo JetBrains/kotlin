@@ -5,18 +5,20 @@
 
 package kotlin.script.experimental.test
 
-import junit.framework.TestCase
 import org.apache.maven.settings.Mirror
 import org.apache.maven.settings.Server
 import org.apache.maven.settings.Settings
 import org.eclipse.aether.repository.RemoteRepository
 import org.eclipse.aether.util.repository.AuthenticationBuilder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
 
-class AetherResolveSessionTest : TestCase() {
+class AetherResolveSessionTest {
 
     private fun sessionFrom(settings: Settings) = AetherResolveSession(settingsFactory = { settings })
 
+    @Test
     fun testWorksWithEmptySettings() {
         val aether = sessionFrom(Settings())
 
@@ -28,6 +30,7 @@ class AetherResolveSessionTest : TestCase() {
         assertEquals("http://example.org", result.url)
     }
 
+    @Test
     fun testMirror() {
         val aether = sessionFrom(Settings().apply {
             mirrors = listOf(Mirror().apply {
@@ -45,6 +48,7 @@ class AetherResolveSessionTest : TestCase() {
         assertEquals("http://myMirror.org", result.url)
     }
 
+    @Test
     fun testAuthenticateBasedOnId() {
         val aether = sessionFrom(Settings().apply {
             servers = listOf(Server().apply {
@@ -68,6 +72,7 @@ class AetherResolveSessionTest : TestCase() {
         )
     }
 
+    @Test
     fun testAuthenticateBasedOnIdWithMirror() {
         val aether = sessionFrom(Settings().apply {
             servers = listOf(
@@ -105,6 +110,7 @@ class AetherResolveSessionTest : TestCase() {
         )
     }
 
+    @Test
     fun testDoNotOverwriteCredentials() {
         val aether = sessionFrom(Settings().apply {
             servers = listOf(Server().apply {

@@ -1,0 +1,29 @@
+IS_THE_SAME_SYMBOL: false
+FAKE_OVERRIDE_ORIGINAL:
+  KaJavaFieldSymbol:
+    anchorPsi: PsiFieldImpl
+    annotations: []
+    callableId: test/JavaBase.value
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isStatic: false
+    isVal: false
+    location: CLASS
+    modality: FINAL
+    name: value
+    origin: JAVA_SOURCE
+    psi: PsiFieldImpl
+    realPsi: PsiFieldImpl
+    receiverParameter: null
+    returnType: KaFlexibleType:
+      annotations: []
+      type: T!
+    typeParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/JavaBase

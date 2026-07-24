@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 enum class E {
     X, Y

@@ -48,3 +48,16 @@ public annotation class ExperimentalAnnotationsInMetadata
 )
 @MustBeDocumented
 public annotation class ExperimentalMustUseStatus
+
+/**
+ * Marks an API related to the experimental feature "companion blocks and extensions" [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md).
+ *
+ * Functions and properties introduced in companion blocks and extensions are compiled as static on JVM,
+ * and have [KmFunction.isStatic] and [KmProperty.isStatic] attributes set to `true`.
+ */
+@RequiresOptIn(
+    "This API is related to the experimental feature \"companion blocks and extensions\" (see KEEP-449) and may be changed or removed in any future release.",
+    RequiresOptIn.Level.ERROR,
+)
+@MustBeDocumented
+public annotation class ExperimentalCompanionBlocksAndExtensions

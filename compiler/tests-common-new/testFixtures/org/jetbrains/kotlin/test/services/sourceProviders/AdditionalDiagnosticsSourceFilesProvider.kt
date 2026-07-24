@@ -36,7 +36,7 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : Add
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         return buildList {
-            for ((directive, path) in directiveToFileMap) {
+            for ([directive, path] in directiveToFileMap) {
                 if (directive in module.directives) {
                     add(this::class.java.classLoader.getResource(path)!!.toTestFile())
                 }

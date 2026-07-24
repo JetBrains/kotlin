@@ -16,6 +16,9 @@ sealed class DirectivesContainer {
 }
 
 abstract class SimpleDirectivesContainer : DirectivesContainer() {
+    @RequiresOptIn
+    annotation class SensitiveDirectiveAPI(val reason: String)
+
     private val registeredDirectives: MutableMap<String, Directive> = mutableMapOf()
 
     override operator fun get(name: String): Directive? = registeredDirectives[name]
@@ -42,15 +45,25 @@ abstract class SimpleDirectivesContainer : DirectivesContainer() {
     ): DirectiveDelegateProvider<ValueDirective<T>> {
         val possibleValues = enumValues<T>()
         val parser: (String) -> T? = { value -> possibleValues.firstOrNull { it.name == value } ?: additionalParser?.invoke(value) }
-        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser) }
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces = true) }
     }
 
     protected fun <T : Any> valueDirective(
         description: String,
         applicability: DirectiveApplicability = DirectiveApplicability.Global,
-        parser: (String) -> T?
+        parser: (String) -> T?,
     ): DirectiveDelegateProvider<ValueDirective<T>> {
-        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser) }
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces = true) }
+    }
+
+    @SensitiveDirectiveAPI("Not splitting values of a directive on spaces should be well-thought out, to not introduce confusion with existing directives that do split on spaces")
+    protected fun <T : Any> valueDirective(
+        description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
+        splitValuesOnSpaces: Boolean,
+        parser: (String) -> T?,
+    ): DirectiveDelegateProvider<ValueDirective<T>> {
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces) }
     }
 
     protected fun registerDirective(directive: Directive) {

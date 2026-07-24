@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 
+@K1Deprecation
 class OptionalExpectationUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
         if (!OptionalAnnotationUtil.isOptionalAnnotationClass(targetDescriptor)) return
@@ -25,6 +28,7 @@ class OptionalExpectationUsageChecker : ClassifierUsageChecker {
         val ktFile = element.containingFile as KtFile
         // TODO(dsavvinov): unify for compiler/IDE
         // The first part is for the compiler, and the second one is for IDE
+        @OptIn(KtImplementationDetail::class)
         if (ktFile.isCommonSource != true && !targetDescriptor.platform.isCommon()) {
             context.trace.report(Errors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE.on(element))
         }

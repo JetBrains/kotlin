@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
@@ -20,9 +19,14 @@ import java.io.File
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
-    testServices: TestServices
+    testServices: TestServices,
+    executeWithNodeJsOnly: Boolean = false, // Klib backward compatibility testsuite needs only one best Wasi runner
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    internal val vmsToCheck: List<WasmVM> = if (executeWithNodeJsOnly) {
+        listOf(WasmVM.NodeJs)
+    } else {
+        listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -76,7 +80,6 @@ class WasiBoxRunner(
             }
 
             val testFileText = originalFile.readText()
-            val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
             val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
@@ -85,7 +88,7 @@ class WasiBoxRunner(
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    failsIn = failsIn,
+                    useStackSwitching = false,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir

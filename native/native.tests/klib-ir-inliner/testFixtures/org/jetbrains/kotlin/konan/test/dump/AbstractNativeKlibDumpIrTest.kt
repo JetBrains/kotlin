@@ -5,66 +5,31 @@
 
 package org.jetbrains.kotlin.konan.test.dump
 
-import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
-import org.jetbrains.kotlin.konan.test.blackbox.muteTestIfNecessary
-import org.jetbrains.kotlin.konan.test.blackbox.support.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import org.junit.jupiter.api.Tag
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import java.io.File
 
-@Tag("klib")
-abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
-    protected fun runTest(@TestDataFile testPath: String) {
-        val testPathFull = getAbsoluteFile(testPath)
-        muteTestIfNecessary(testPathFull)
+abstract class AbstractNativeKlibDumpIrTest : AbstractKlibToolDumpTest() {
+    override fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler<*>>> = listOf(::KlibToolIrDumpHandler)
+}
 
-        val testCase: TestCase = generateTestCaseWithSingleSource(
-            testPathFull,
-            listOf("-Xklib-relative-path-base=${testPathFull.parent}")
+private object IrDumpSingleVariation : KlibToolDumpHandlerVariation {
+    override val dumpFileSuffix: String
+        get() = ".ir" // TODO: test for all signature versions, KT-62828
+}
+
+private class KlibToolIrDumpHandler(testServices: TestServices) : AbstractKlibToolDumpHandler<IrDumpSingleVariation>(testServices) {
+    override val variation get() = IrDumpSingleVariation
+
+    override fun makeDump(klib: File, module: TestModule): String {
+        return klib.dumpIr(
+            kotlinNativeClassLoader = testServices.testRunSettings.get<KotlinNativeClassLoader>().classLoader,
+            absolutePathPrefixes = module.independentSourceDirectoryPathsTransitive(testServices),
         )
-        val testCompilationResult: TestCompilationResult.Success<out TestCompilationArtifact.KLIB> = compileToLibrary(testCase)
-
-        val testPathNoExtension = testPathFull.canonicalPath.substringBeforeLast(".")
-
-        val expectedContentsNoSig = File("$testPathNoExtension.ir.txt")
-        assertIrMatchesExpected(testCompilationResult, expectedContentsNoSig)
-    }
-
-    private fun assertIrMatchesExpected(
-        compilationResult: TestCompilationResult<out TestCompilationArtifact.KLIB>,
-        expectedContents: File,
-    ) {
-        val artifact = compilationResult.assertSuccess().resultingArtifact
-        val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
-        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader) // TODO: test for all signature versions, KT-62828
-        assertEqualsToFile(expectedContents, klibIr)
-    }
-
-    private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
-        val moduleName: String = source.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
-        module.files += TestFile.createCommitted(source, module)
-
-        return TestCase(
-            id = TestCaseId.Named(moduleName),
-            kind = TestKind.STANDALONE,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs(extraArgs),
-            nominalPackageName = PackageName.EMPTY,
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-            extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
-        ).apply {
-            initialize(null, null)
-        }
     }
 }

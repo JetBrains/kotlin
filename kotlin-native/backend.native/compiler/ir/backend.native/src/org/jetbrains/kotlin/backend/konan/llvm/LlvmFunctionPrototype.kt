@@ -9,7 +9,7 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
@@ -75,7 +75,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addCallSiteAttributes(callSite: LLVMValueRef) {
-        attributesForCallSite.withIndex().forEach { (listIndex, attributeList) ->
+        attributesForCallSite.withIndex().forEach { [listIndex, attributeList] ->
             attributeList.forEach { attributeRef ->
                 LLVMAddCallSiteAttribute(callSite, LLVMAttributeFunctionIndex + listIndex, attributeRef)
             }
@@ -83,7 +83,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addFunctionAttributes(function: LLVMValueRef) {
-        attributesForFunctionDeclaration.withIndex().forEach { (listIndex, attributeList) ->
+        attributesForFunctionDeclaration.withIndex().forEach { [listIndex, attributeList] ->
             attributeList.forEach { attributeRef ->
                 LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex + listIndex, attributeRef)
             }
@@ -198,7 +198,7 @@ internal class LlvmFunctionProto(
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
 
-    fun createLlvmFunction(context: Context, llvmModule: LLVMModuleRef): LlvmCallable {
+    fun createLlvmFunction(context: NativeBackendContext, llvmModule: LLVMModuleRef): LlvmCallable {
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)
@@ -213,7 +213,7 @@ internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?
 
 
 
-private fun mustNotInline(context: Context, irFunction: IrSimpleFunction): Boolean {
+private fun mustNotInline(context: NativeBackendContext, irFunction: IrSimpleFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {
         if (irFunction.originalConstructor?.let { it.isPrimary && it.returnType.isThrowable() } == true) {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.

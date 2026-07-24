@@ -6,25 +6,23 @@
 package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 
-class ClassesFqNamesTest : KtUsefulTestCase() {
+class ClassesFqNamesTest {
     private lateinit var workingDir: File
 
-    @Before
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         workingDir = FileUtil.createTempDirectory("ClassesFqNamesTest", null)
     }
 
-    @After
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         workingDir.deleteRecursively()
-        super.tearDown()
     }
 
     @Test

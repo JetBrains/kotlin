@@ -34,12 +34,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
 /**
  * The Richards benchmark simulates the task dispatcher of an
  * operating system.
  **/
-class RichardsBenchmark {
-    fun runRichards() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class RichardsHideName {
+    @Benchmark
+    fun Richards(bh: Blackhole) {
         val scheduler = Scheduler()
         scheduler.addIdleTask(ID_IDLE, 0, null, COUNT)
 
@@ -70,6 +76,8 @@ class RichardsBenchmark {
                 ", holdCount = " + scheduler.holdCount + "."
             throw Error(msg)
         }
+
+        bh.consume(scheduler)
     }
 }
 

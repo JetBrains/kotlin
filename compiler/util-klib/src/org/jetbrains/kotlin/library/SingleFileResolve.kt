@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.util.DummyLogger
@@ -16,7 +15,8 @@ import org.jetbrains.kotlin.util.Logger
     level = DeprecationLevel.HIDDEN
 )
 fun interface SingleFileKlibResolveStrategy {
-    fun resolve(libraryFile: File, logger: Logger): KotlinLibrary
+    @Suppress("DEPRECATION_ERROR")
+    fun resolve(libraryFile: org.jetbrains.kotlin.konan.file.File, logger: Logger): KotlinLibrary
 }
 
 @Deprecated(
@@ -26,10 +26,11 @@ fun interface SingleFileKlibResolveStrategy {
     level = DeprecationLevel.ERROR
 )
 fun resolveSingleFileKlib(
-    libraryFile: File,
+    @Suppress("DEPRECATION_ERROR")
+    libraryFile: org.jetbrains.kotlin.konan.file.File,
     logger: Logger = DummyLogger,
     @Suppress("DEPRECATION", "DEPRECATION_ERROR") strategy: SingleFileKlibResolveStrategy = object : SingleFileKlibResolveStrategy {
-        override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary {
+        override fun resolve(libraryFile: org.jetbrains.kotlin.konan.file.File, logger: Logger): KotlinLibrary {
             val klibLoadingResult = KlibLoader { libraryPaths(libraryFile.path) }.load()
             klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
                 // N.B. A call to the @Deprecated Logger.fatal() function is intentional here.

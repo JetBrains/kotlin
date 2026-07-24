@@ -29,7 +29,7 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClassLikeDeclarations(
 
     val localClassesNavigationInfo = collectLocalClassesNavigationInfo()
 
-    for ((nested, outer) in localClassesNavigationInfo.parentForClass) {
+    for ([nested, outer] in localClassesNavigationInfo.parentForClass) {
         if (outer == null) continue
         components.context.outerLocalClassForNested[nested.symbol] = outer.symbol
     }

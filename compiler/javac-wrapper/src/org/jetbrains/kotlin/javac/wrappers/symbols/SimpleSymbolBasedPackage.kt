@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.PackageElement
 
+@K1Deprecation
 class SimpleSymbolBasedPackage(
     element: PackageElement,
     javac: JavacWrapper

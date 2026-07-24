@@ -6,12 +6,29 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
+import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
+import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
+import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
+import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
+import org.jetbrains.kotlin.util.OperatorNameConventions.GET
+import org.jetbrains.kotlin.util.OperatorNameConventions.GET_VALUE
+import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.INC
+import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
+import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
+import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.PROVIDE_DELEGATE
+import org.jetbrains.kotlin.util.OperatorNameConventions.SET
+import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
+import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.isComponentN
 import java.lang.reflect.*
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
@@ -21,7 +38,6 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
-import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure
@@ -120,7 +136,7 @@ private fun createJavaSimpleType(
     mutableCollectionClass: KClass<*>? = null,
 ): SimpleKType = SimpleKType(
     classifier, arguments, isMarkedNullable,
-    annotations = emptyList(),
+    lazyAnnotations = lazyOf(emptyList()),
     abbreviation = null,
     isDefinitelyNotNullType = false,
     isNothingType = false,
@@ -173,11 +189,8 @@ internal val KClass<*>.isMappedBuiltin: Boolean
 
 private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
     val klass = classifier as? KClass<*> ?: return null
-    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(klass.qualifiedName?.let(::FqNameUnsafe)) ?: return null
-    return createJavaSimpleType(
-        javaType, classifier, arguments, isMarkedNullable,
-        mutableCollectionClass = getMutableCollectionKClass(mutableFqName, klass),
-    )
+    val mutableCollectionClass = getMutableCollectionKClass(klass) ?: return null
+    return createJavaSimpleType(javaType, classifier, arguments, isMarkedNullable, mutableCollectionClass)
 }
 
 private fun Class<*>.convertJavaClass(isForAnnotationParameter: Boolean): KClass<*> =
@@ -230,9 +243,6 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
                 )
         }
         is Method -> {
-            require(Modifier.isStatic(container.modifiers)) {
-                "Only static methods are supported for now: $container"
-            }
             val containingClass = container.declaringClass.kotlin as KClassImpl<*>
             containingClass.functions.singleOrNull { it.javaMethod == container } as JavaKFunction?
                 ?: throw KotlinReflectionInternalError(
@@ -247,7 +257,7 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
 // when the KTypeParameter instances are already created, but not yet stored in `KClass.typeParameters`.
 private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KTypeParameter =
     knownTypeParameters[this]
-        ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
+        ?: kotlinContainer.typeParameters.getOrNull(genericDeclaration.typeParameters.indexOf(this))
         ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
@@ -328,3 +338,34 @@ internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
     val result = createJavaSimpleType(superClass, superClass.kotlin, typeArguments, isMarkedNullable = false)
     return result.createMutableCollectionType(superClass) ?: result
 }
+
+// Based on `OperatorFunctionChecks` from the compiler.
+internal fun Method.isJavaMethodAnOperator(): Boolean {
+    if (Modifier.isStatic(modifiers)) return false
+    val name = Name.identifier(name)
+    val paramCount = parameterTypes.size
+    val notVararg = !isVarArgs
+    return when (name) {
+        GET -> paramCount >= 1
+        SET -> paramCount >= 2 && notVararg
+        GET_VALUE -> notVararg && paramCount == 2 && isKPropertySupertype(parameterTypes[1])
+        SET_VALUE -> notVararg && paramCount == 3 && isKPropertySupertype(parameterTypes[1])
+        PROVIDE_DELEGATE -> notVararg && paramCount == 2 && isKPropertySupertype(parameterTypes[1])
+        INVOKE -> true
+        CONTAINS -> paramCount == 1 && notVararg && returnType == Boolean::class.javaPrimitiveType
+        ITERATOR -> paramCount == 0
+        NEXT -> paramCount == 0
+        HAS_NEXT -> paramCount == 0 && returnType == Boolean::class.javaPrimitiveType
+        EQUALS -> paramCount == 1 && parameterTypes[0] == Any::class.java
+        COMPARE_TO -> returnType == Int::class.javaPrimitiveType && paramCount == 1 && notVararg
+        in BINARY_OPERATION_NAMES -> paramCount == 1 && notVararg
+        in SIMPLE_UNARY_OPERATION_NAMES -> paramCount == 0
+        INC, DEC -> declaringClass.isAssignableFrom(returnType)
+        in ASSIGNMENT_OPERATIONS -> returnType == Void.TYPE && paramCount == 1 && notVararg
+        // TODO (KT-86404): support `of`.
+        else -> isComponentN(name)
+    }
+}
+
+private fun isKPropertySupertype(type: Class<*>): Boolean =
+    type.isAssignableFrom(KProperty::class.java)

@@ -1,28 +1,28 @@
 import GenerateKgpBuildConstantsTask.Companion.registerGenerateKgpBuildConstantsTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
+import gradle.enableKotlinSerializationPlugin
 import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
     id("project-tests-convention")
+    id("native-bootstrap-distribution-provisioner")
     `java-test-fixtures`
-}
-
-repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
 }
 
 kotlin {
@@ -37,6 +37,8 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
                 "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
+                "org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl",
+                "org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi",
             )
         )
     }
@@ -55,6 +57,16 @@ registerKotlinSourceForVersionRange(
 registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_MIN,
     GradlePluginVariant.GRADLE_811,
+)
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_96,
+)
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_86,
+    GradlePluginVariant.GRADLE_96,
 )
 
 tasks.test {
@@ -240,6 +252,15 @@ dependencies {
         exclude(group = "*")
     }
 
+    commonCompileOnly(libs.playwright) {
+        exclude(group = "com.microsoft.playwright", module = "driver-bundle")
+    }
+    embedded(libs.playwright) {
+        exclude(group = "com.microsoft.playwright", module = "driver-bundle")
+    }
+
+    embedded(libs.org.tukaani.xz)
+
     commonCompileOnly(libs.apache.commons.compress)
     embedded(libs.apache.commons.compress)
 
@@ -264,8 +285,10 @@ dependencies {
     testImplementation(libs.lincheck)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(libs.slf4j.api)
-
+    testRuntimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
 }
+
+optInToK1Deprecation()
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
 
@@ -407,6 +430,8 @@ tasks {
             }
         }
 
+        relocate("com.microsoft.playwright", "${baseTargetPackage}.com.microsoft.playwright")
+
         /*
         Disable Kotlin Module remapping to allow our own 'KotlinModuleMetadataVersionBasedSkippingTransformer' to run
          */
@@ -477,7 +502,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
         workingDir = rootDir
     }
 }
@@ -601,7 +626,7 @@ val functionalTestSourceSet = sourceSets.create("functionalTest") {
     }
 }
 
-sourceSets.getByName("testFixtures") {
+sourceSets.testFixtures {
     /*
      * testFixtures source set is closer to regular dependencies,
      * so that it already has access to main and its transitive API dependencies.
@@ -617,13 +642,6 @@ sourceSets.getByName("testFixtures") {
         add(implementationConfigurationName, gradleApi())
         add(implementationConfigurationName, libs.junit.jupiter.api)
     }
-}
-
-fun KotlinWithJavaCompilation<*, *>.enableKotlinSerializationPlugin() {
-    val version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    configurations.pluginConfiguration.dependencies.add(
-        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${version}")
-    )
 }
 
 // Enforce lowest jvm version to make testFixtures compatible with KGP-IT injections
@@ -656,11 +674,25 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("co
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
 tasks.register<Test>("functionalTest") {
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     useJUnitPlatform()
 
     @OptIn(TemporaryTestFederationApi::class)
-    isSmokeTest = true
+    smokeTestConfig = SmokeTestConfig.RunAllTests
+
+    // These two lines are required for AGP 9+ to work with current KGP in tests
+    systemProperty("org.gradle.project.android.builtInKotlin", "false")
+    systemProperty("org.gradle.project.android.newDsl", "false")
+
+    // Fixme: KT-87883
+    systemProperty("org.gradle.project.android.sourceset.disallowProvider", "false")
+
+    /* Provide a temp kotlin native distribution for the tests */
+    useProvidedNativeBootstrapDistribution { distribution ->
+        doFirst {
+            systemProperty("kotlin.native.home", distribution.get().root)
+        }
+    }
 }
 
 val acceptLicensesTask = with(androidSdkProvisioner) {
@@ -675,7 +707,18 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    dependsOnKotlinGradlePluginInstall()
+
+    // Publish Kotlin build artifacts to <root>/build/repo and pass its path to the test JVM.
+    // Content is tracked via classpath normalization (jar/metadata hashes, no absolute paths).
+    // Both dev and CI use the same path — no maven.repo.local involved.
+    dependsOnKotlinGradlePluginPublishToBuildRepo()
+    val buildRepoDir = rootProject.isolated.projectDirectory.dir("build/repo")
+    addClasspathDirectoryProperty(
+        directory = buildRepoDir,
+        classpath = project.fileTree(buildRepoDir) { exclude("**/*.md5", "**/*.sha1") },
+        property = "kotlinBuildRepo",
+    )
+
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
         dependsOn(acceptLicensesTask)
@@ -693,30 +736,20 @@ tasks.withType<Test>().configureEach {
     )
 
     addFileProperty(
-        rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
+        rootProject.isolated.projectDirectory.file("kotlin-native/konan/konan.properties"),
         "konanProperties"
     )
-
-    //region custom Maven Local directory
-    // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
-    // The functional tests require artifacts are published to Maven Local.
-    // To make sure the tests uses the same `maven.repo.local` as is configured
-    // in the buildscript, forward the value of `maven.repo.local` into the test process.
-    val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
-    if (mavenRepoLocal != null) {
-        // Only set `maven.repo.local` if it's present in the buildscript,
-        // to avoid `maven.repo.local` being `null`.
-        systemProperty("maven.repo.local", mavenRepoLocal)
-    }
-    //endregion
 }
 
 dependencies {
     val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
     val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
+    val runtimeOnly = project.configurations.getByName(functionalTestSourceSet.runtimeOnlyConfigurationName)
 
-    implementation(libs.android.gradle.plugin.gradle)
-    implementation(libs.android.gradle.plugin.gradle.api)
+    compileOnly(libs.android.gradle.plugin.gradle)
+    compileOnly(libs.android.gradle.plugin.gradle.api)
+    runtimeOnly(libs.android.gradle.plugin.gradle.latest)
+    runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
     compileOnly(libs.android.tools.common)
     implementation(gradleKotlinDsl())
     implementation(project(":kotlin-gradle-plugin-tcs-android"))
@@ -775,6 +808,7 @@ kotlin.sourceSets.common {
 
 node {
     version = nodejsVersion
+    distBaseUrl.set(null as String?)
 }
 
 tasks.test {

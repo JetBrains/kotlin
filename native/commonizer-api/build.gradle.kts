@@ -1,7 +1,14 @@
+import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
+
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
+    id("native-bootstrap-distribution-provisioner")
+    id("test-inputs-check-v2")
 }
 
 kotlin {
@@ -14,15 +21,10 @@ publish()
 dependencies {
     implementation(kotlinStdlib())
     implementation(project(":native:kotlin-native-utils"))
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
-    testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
-    testImplementation(gradleApi())
-    testImplementation(gradleTestKit())
-    testImplementation(gradleKotlinDsl())
 }
 
 sourceSets {
@@ -31,8 +33,13 @@ sourceSets {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-        workingDir = projectDir
+    testTask(javaLauncher = JdkMajorVersion.JDK_21_0) {
+        useProvidedNativeBootstrapDistribution { distribution ->
+            addClasspathProperty("konan.home") {
+                from(distribution.map { it.root })
+            }
+        }
+        testData(project.isolated, "testData")
     }
 }
 

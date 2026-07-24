@@ -98,7 +98,7 @@ abstract class InteropTestsBase {
 
     protected fun mockImports(vararg dependencies: Pair<IndexerResult, String>): Imports {
         val headerToPackage = buildMap<HeaderId, String> {
-            dependencies.forEach { (dependency, packageName) ->
+            dependencies.forEach { [dependency, packageName] ->
                 dependency.index.includedHeaders.forEach { headerId ->
                     put(headerId, packageName)
                 }

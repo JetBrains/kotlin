@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class SmartTypeRenderer(private val baseRenderer: DescriptorRenderer) : DiagnosticParameterRenderer<KotlinType> {
     override fun render(obj: KotlinType, renderingContext: RenderingContext): String {
         val adaptiveRenderer = baseRenderer.withOptions {
@@ -29,6 +31,7 @@ class SmartTypeRenderer(private val baseRenderer: DescriptorRenderer) : Diagnost
     }
 }
 
+@K1Deprecation
 class SmartDescriptorRenderer(private val baseRenderer: DescriptorRenderer) : DiagnosticParameterRenderer<DeclarationDescriptor> {
     override fun render(obj: DeclarationDescriptor, renderingContext: RenderingContext): String {
         val adaptiveRenderer = baseRenderer.withOptions {

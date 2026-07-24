@@ -40,7 +40,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
         requireNotNull(typeParameters) { "Containing declaration symbol: ${containingDeclarationSymbol::class.simpleName}" }
 
         KaFirTypeParameterSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             index = typeParameters.indexOf(firSymbol),
             originalSymbol = this

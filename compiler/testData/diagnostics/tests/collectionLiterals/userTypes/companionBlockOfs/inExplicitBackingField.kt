@@ -1,4 +1,4 @@
-// LANGUAGE: +CollectionLiterals +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals +CompanionBlocks +CompanionExtensions
 // RUN_PIPELINE_TILL: BACKEND
 
 class E<T>(val t: T) {

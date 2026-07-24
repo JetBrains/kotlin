@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
+@K1Deprecation
 object JvmOverloadFilter : OverloadFilter {
     override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
         val result = ArrayList<DeclarationDescriptorNonRoot>()

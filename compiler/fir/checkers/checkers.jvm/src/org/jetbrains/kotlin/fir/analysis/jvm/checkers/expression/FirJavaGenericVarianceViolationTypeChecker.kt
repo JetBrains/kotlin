@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -62,7 +62,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             }
         }
         val typeParameterSubstitutor = substitutorByMap(typeArgumentMap, context.session)
-        for ((arg, param) in argumentMapping) {
+        for ([arg, param] in argumentMapping) {
             val expectedType = typeParameterSubstitutor.substituteOrSelf(param.returnTypeRef.coneType)
 
             // optimization: if no arguments or flexibility, everything is OK
@@ -76,8 +76,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound
             val typeContext = context.session.typeContext
-            val lowerConstructor = lowerBound.typeConstructor(typeContext)
-            val upperConstructor = upperBound.typeConstructor(typeContext)
+            val lowerConstructor = lowerBound.typeConstructor(c = typeContext)
+            val upperConstructor = upperBound.typeConstructor(c = typeContext)
 
             // Use site variance projection is always the same for flexible types. So there is no need to check if declaration site is the
             // same.
@@ -148,13 +148,15 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
     private fun ConeSimpleKotlinType.removeOutProjection(typeContext: ConeTypeContext, isCovariant: Boolean): ConeSimpleKotlinType {
         return when (this) {
             is ConeIntersectionType -> mapTypes { it.removeOutProjection(typeContext, isCovariant) }
-            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
+            is ConeClassLikeType -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(typeContext, isCovariant) }.toTypedArray(),
                 isMarkedNullable,
                 attributes
             )
             is ConeCapturedType -> error("There shouldn't be any captured types here as we call `approximate()`")
+            // Type parameter-based types don't have projections themselves
+            is ConeTypeParameterType -> this
             else -> this
         }
     }

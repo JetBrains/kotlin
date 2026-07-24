@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : lib2.file2.kt -> lib2.file2.kt
+    added cache: lib2.file2.kt
+
+STEP 1:
+    modifications:
+        U : lib2.file1.kt -> lib2.file1.kt
+    added cache: lib2.file1.kt
+    modified cache: lib2.file2.kt

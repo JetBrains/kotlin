@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatibl
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -52,7 +53,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration
 
         val isExpectedTypeReflectionType = candidate.callInfo.expectedType?.isReflectFunctionType(candidate.callInfo.session) == true
-        val (rawResultingType, callableReferenceAdaptation) = buildResultingTypeAndAdaptation(
+        val [rawResultingType, callableReferenceAdaptation] = buildResultingTypeAndAdaptation(
             fir,
             resultingReceiverType,
             candidate,
@@ -68,6 +69,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
 
         if (callableReferenceAdaptation != null) {
             if (enableCompatibilityModeForNewInference()) {
+                @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // DisableCompatibilityModeForNewInference
                 sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
 
@@ -170,7 +172,6 @@ private fun buildResultingTypeAndAdaptation(
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
-                contextParameters = fir.contextParameters.map { it.returnTypeRef.coneType }
             ) to callableReferenceAdaptation
         }
         is FirVariable -> {
@@ -200,7 +201,8 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     // Do not adapt references against KCallable type as it's impossible to map defaults/vararg to absent parameters of KCallable
     if (expectedType.isKCallableType()) return null
 
-    val (inputTypes, returnExpectedType) = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session) ?: return null
+    (val inputTypes, val returnExpectedType = outputType) = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)
+        ?: return null
     val expectedArgumentsCount = inputTypes.size - unboundReceiverCount
     if (expectedArgumentsCount < 0) return null
 
@@ -223,7 +225,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeResolutionAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
 
-    for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
+    for ([valueParameter, resolvedArgument] in argumentMapping.parameterToCallArgumentMap) {
         for (fakeArgumentAtom in resolvedArgument.arguments) {
             val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
@@ -231,7 +233,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
 
             val mappedArgument: ConeKotlinType?
             if (substitutedParameter.isVararg) {
-                val (varargType, newVarargMappingState) = varargParameterTypeByExpectedParameter(
+                val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                     candidate,
                     inputTypes[index + unboundReceiverCount],
                     substitutedParameter,
@@ -265,7 +267,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     }
     if (mappedArgumentTypes.any { it == null }) return null
 
-    for ((valueParameter, varargElements) in mappedVarargElements) {
+    for ([valueParameter, varargElements] in mappedVarargElements) {
         mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
     }
 

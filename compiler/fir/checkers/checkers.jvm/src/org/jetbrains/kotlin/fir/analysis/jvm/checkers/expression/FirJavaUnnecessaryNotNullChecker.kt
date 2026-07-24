@@ -29,7 +29,7 @@ object FirJavaUnnecessaryNotNullChecker: FirCheckNotNullCallChecker(MppCheckerKi
             .substituteOrNull(argument.resolvedType)
             ?.fullyExpandedType() ?: return
 
-        if (!argumentType.canBeNull(context.session) && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+        if (!argumentType.canBeNull() && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, argumentType)
         }
     }

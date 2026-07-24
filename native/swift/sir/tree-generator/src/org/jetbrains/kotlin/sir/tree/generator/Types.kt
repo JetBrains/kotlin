@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.tree.generator
 
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.toAnnotation
 import org.jetbrains.kotlin.generators.tree.type
 
 val pureAbstractElementType = type(BASE_PACKAGE, "SirElementBase", TypeKind.Class)
@@ -22,5 +23,5 @@ val typeConstraintType = type(BASE_PACKAGE, "SirTypeConstraint", TypeKind.Class)
 val fixityType = type(BASE_PACKAGE, "SirFixity", TypeKind.Class)
 val bridgeType = type(BASE_PACKAGE, "SirBridge", TypeKind.Class)
 
-val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)
-val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class)
+val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class).toAnnotation()
+val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class).toAnnotation()

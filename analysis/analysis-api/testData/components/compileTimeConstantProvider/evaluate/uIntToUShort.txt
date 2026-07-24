@@ -1,5 +1,5 @@
 expression: 0u.toUShort()
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED
+constant: 0u
+constantValueKind: UShortValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: 0u.toUShort()

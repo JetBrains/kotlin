@@ -24,6 +24,7 @@ class UnitStatsSerializationTest {
             hasErrors = true,
             filesCount = 10,
             linesCount = 11,
+            measuredCpuAndUserTime = true,
 
             initStats = Time(1_000_000L, 1_000_001L, 1_000_002L),
             analysisStats = Time(2_000_000L, 2_000_001L, 2_000_002L),

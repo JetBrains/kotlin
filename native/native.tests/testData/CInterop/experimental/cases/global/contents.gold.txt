@@ -7,7 +7,7 @@ library {
     package {
 
       @kotlinx/cinterop/internal/CCall.Direct(name = "getValue")
-      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency0_getValue")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency_getValue_0")
       @kotlinx/cinterop/ExperimentalForeignApi
       public final external fun getValue(): kotlin/Int
 
@@ -17,16 +17,16 @@ library {
 
       @kotlinx/cinterop/ExperimentalForeignApi
       public final val MACRO_GLOBAL: kotlin/Int
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency3_MACRO_GLOBAL_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency_MACRO_GLOBAL_getter_0")
         public final /* non-default */ external get
 
       @kotlinx/cinterop/ExperimentalForeignApi
       public final var global: kotlin/Int
         @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency1_global_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency_global_getter_0")
         public final /* non-default */ external get
         @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency2_global_setter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_dependency_global_setter_0")
         public final /* non-default */ external set(value: kotlin/Int)
     }
   }

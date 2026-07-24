@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.*
 import java.nio.file.Path
 
+@Suppress("DEPRECATION_ERROR")
 internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress("DEPRECATION") private constructor(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
@@ -24,6 +26,10 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
     sourcesChanges,
     dependenciesSnapshotFiles,
     shrunkClasspathSnapshot,
+    /**
+     * Required for forward compatibility 2.3 -> 2.4
+     */
+    DummyOptions,
 ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
     DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationImpl>,
     HasSnapshotBasedIcOptionsAccessor {
@@ -129,6 +135,27 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
         val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", true)
 
         val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS", false)
+    }
+}
+
+/**
+ * Required for forward compatibility 2.3 -> 2.4
+ */
+@Suppress("DEPRECATION_ERROR")
+private object DummyOptions : JvmSnapshotBasedIncrementalCompilationOptions {
+    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
+        error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
+    }
+
+    override fun <V> set(
+        key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
+        value: V,
+    ) {
+        error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.set to set option values")
+    }
+
+    override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+        error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
     }
 }
 

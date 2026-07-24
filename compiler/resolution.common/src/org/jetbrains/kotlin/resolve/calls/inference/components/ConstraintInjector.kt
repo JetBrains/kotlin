@@ -98,9 +98,9 @@ class ConstraintInjector(
 
     context(c: Context)
     fun addInitialEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
-        val (typeVariable, equalType) = when {
-            a.typeConstructor(c) is TypeVariableTypeConstructorMarker -> a to b
-            b.typeConstructor(c) is TypeVariableTypeConstructorMarker -> b to a
+        val [typeVariable, equalType] = when {
+            a.typeConstructor() is TypeVariableTypeConstructorMarker -> a to b
+            b.typeConstructor() is TypeVariableTypeConstructorMarker -> b to a
             else -> return
         }
         val initialConstraint = InitialConstraint(typeVariable, equalType, EQUALITY, position).also { c.addInitialConstraint(it) }
@@ -133,7 +133,7 @@ class ConstraintInjector(
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun addEqualityConstraintAndIncorporateIt(typeVariable: KotlinTypeMarker, equalType: KotlinTypeMarker) {
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(typeVariable, equalType)
-        typeCheckerState.addEqualityConstraint(typeVariable.typeConstructor(c), equalType)
+        typeCheckerState.addEqualityConstraint(typeVariable.typeConstructor(c = c), equalType)
 
         processConstraints()
     }
@@ -177,7 +177,7 @@ class ConstraintInjector(
 
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun processGivenConstraints(constraintsToProcess: Collection<Pair<TypeVariableMarker, Constraint>>) {
-        for ((typeVariable, constraint) in constraintsToProcess) {
+        for ([typeVariable, constraint] in constraintsToProcess) {
             if (shouldWeSkipConstraint(typeVariable, constraint)) continue
 
             val typeVariableConstructor = typeVariable.freshTypeConstructor(c)
@@ -185,7 +185,7 @@ class ConstraintInjector(
                 c.notFixedTypeVariables[typeVariableConstructor] ?: typeCheckerState.fixedTypeVariable(typeVariable)
 
             // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
-            val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint, inferenceLogger)
+            val [addedOrNonRedundantExistedConstraint, wasAdded] = constraints.addConstraint(constraint, inferenceLogger)
             val positionFrom = constraint.position.from
             val constraintToIncorporate = when {
                 wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
@@ -523,7 +523,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isNoInfer) = constraintContext
+            (val kind, val derivedFrom, val inputTypePosition = inputTypePositionBeforeIncorporation, val isNullabilityConstraint, val isNoInfer) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {

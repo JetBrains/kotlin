@@ -129,7 +129,7 @@ fun <K, V> setMultimapOf(): SetMultimap<K, V> = SetMultimap()
 fun <K, V> listMultimapOf(): ListMultimap<K, V> = ListMultimap()
 
 operator fun <K, V> MutableMultimap<K, V, *>.plusAssign(map: Map<K, Collection<V>>) {
-    for ((key, values) in map) {
+    for ([key, values] in map) {
         this.putAll(key, values)
     }
 }

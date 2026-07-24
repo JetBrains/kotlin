@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.KotlinInterface]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.A.bar? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.A.bar? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
         public open fun bar <T> (): @[FlexibleNullability] T of <root>.Java1.bar? declared in <root>.Java1
@@ -38,12 +38,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:t index:1 type:T of <root>.A.foo
       overridden:
         public open fun foo <T> (t: T of <root>.KotlinInterface.foo): kotlin.Unit declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.A.foo?
       overridden:
         public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.A.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.A.foo?
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java3
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.B.bar? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.B.bar? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
         public open fun bar <T> (): @[FlexibleNullability] T of <root>.Java1.bar? declared in <root>.Java1
@@ -130,12 +130,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:t2 index:2 type:@[FlexibleNullability] kotlin.Number?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Number?, t2: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java3
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.B.foo?
       overridden:
         public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.B.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.B.foo?
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KotlinClass'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.KotlinClass; <root>.Java2]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.C.bar? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.C.bar? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
         public open fun bar <T> (): @[FlexibleNullability] T of <root>.KotlinClass.bar? declared in <root>.KotlinClass
@@ -218,12 +218,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinClass
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.C.foo?
       overridden:
         public open fun foo <T> (t: @[FlexibleNullability] T of <root>.KotlinClass.foo?): kotlin.Unit declared in <root>.KotlinClass
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.C.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.C.foo?
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java4; <root>.Java2]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.D.bar? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.D.bar? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
         public open fun bar <T> (): @[FlexibleNullability] T of <root>.Java4.bar? declared in <root>.Java4
@@ -299,12 +299,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java4
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.D.foo?
       overridden:
         public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java4.foo?): kotlin.Unit declared in <root>.Java4
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.D.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.D.foo?
@@ -370,7 +370,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.KotlinClass.bar? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.KotlinClass.bar? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
         public open fun bar <T> (): @[FlexibleNullability] T of <root>.Java1.bar? declared in <root>.Java1
@@ -379,12 +379,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.KotlinClass.foo?
       overridden:
         public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.KotlinClass.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.KotlinClass.foo?

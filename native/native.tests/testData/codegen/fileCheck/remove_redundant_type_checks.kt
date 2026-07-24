@@ -1,6 +1,8 @@
 // TARGET_BACKEND: NATIVE
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // FILECHECK_STAGE: CStubs
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 class A(val s: String, val x: Int, val y: Int) {
     fun sum(z: Int) = x + y + z
@@ -1043,6 +1045,84 @@ fun test46x(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
+// CHECK-LABEL: define i32 @"kfun:#test47(A;kotlin.Any){}kotlin.Int
+fun test47(a: A, o: Any): Int {
+    val s = baz(a)
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+    if (s || o is A) {
+        if (!s) {
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
+            return (o as A).x
+        }
+    }
+    return -1
+// CHECK-LABEL: epilogue:
+}
+
+fun sideEffect() {
+    println("side effect")
+}
+
+// KT-86947: a safe cast which is known to always fail must still evaluate its
+// argument, otherwise the argument's side effects are silently dropped.
+// CHECK-LABEL: define i32 @"kfun:#test48a(kotlin.Any){}kotlin.Int
+fun test48a(o: Any): Int {
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+    if (o is A) return -1
+// CHECK: call void @"kfun:#sideEffect
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    val alwaysNull = run {
+        sideEffect()
+        o
+    } as? A
+    return alwaysNull?.x ?: 42
+// CHECK-LABEL: epilogue:
+}
+
+// KT-86947: a type check which is known to always fail must still evaluate its
+// argument, otherwise the argument's side effects are silently dropped.
+// CHECK-LABEL: define i32 @"kfun:#test48b(kotlin.Any){}kotlin.Int
+fun test48b(o: Any): Int {
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+    if (o is A) return -1
+// CHECK: call void @"kfun:#sideEffect
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    val isA = run {
+        sideEffect()
+        o
+    } is A
+    return if (isA) 1 else 42
+// CHECK-LABEL: epilogue:
+}
+
+// KT-86947: a type check which is known to always succeed must still evaluate
+// its argument, otherwise the argument's side effects are silently dropped.
+// CHECK-LABEL: define i32 @"kfun:#test48c(kotlin.Any){}kotlin.Int
+fun test48c(o: Any): Int {
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+    if (o is A) return -1
+// CHECK: call void @"kfun:#sideEffect
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    val notA = run {
+        sideEffect()
+        o
+    } !is A
+    return if (notA) 42 else 1
+// CHECK-LABEL: epilogue:
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
@@ -1099,5 +1179,10 @@ fun box(): String {
     println(test45(Any(), 2))
     println(test46("zzz"))
     println(test46x("zzz"))
+    println(test47(a, a))
+    println(test48a(Any()))
+    println(test48b(Any()))
+    println(test48c(Any()))
+
     return "OK"
 }

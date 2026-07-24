@@ -1,0 +1,34 @@
+// MODULE: lib
+// FILE: first.kt
+package lib
+
+private sealed class SealedClass {
+  class Implementation : SealedClass {
+    constructor() /* primary */
+
+  }
+
+  protected constructor() /* primary */
+
+}
+
+fun myFunc() {
+}
+
+// MODULE: main
+// FILE: main.kt
+package main
+
+class App {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun run() {
+    myFunc()
+  }
+
+}
+

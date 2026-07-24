@@ -1,0 +1,269 @@
+KtFile: 'assignOnObject.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,11): 'package one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'one'
+  NO_CANDIDATES
+
+KtImportList(11,11): ''
+  NO_CANDIDATES
+
+KtObjectDeclaration(13,123): 'object ClientTransaction {'
+  NO_CANDIDATES
+
+KtClassBody(38,123): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(44,78): 'operator fun plusAssign(a: Int) {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(44,52): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(67,75): '(a: Int)'
+  NO_CANDIDATES
+
+KtParameter(68,74): 'a: Int'
+  NO_CANDIDATES
+
+KtTypeReference(71,74): 'Int'
+  NO_CANDIDATES
+
+KtUserType(71,74): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(71,74): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(76,78): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(83,121): 'operator fun minusAssign(b: String) {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(83,91): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(107,118): '(b: String)'
+  NO_CANDIDATES
+
+KtParameter(108,117): 'b: String'
+  NO_CANDIDATES
+
+KtTypeReference(111,117): 'String'
+  NO_CANDIDATES
+
+KtUserType(111,117): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(111,117): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(119,121): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(125,198): 'fun main() {'
+  NO_CANDIDATES
+
+KtParameterList(133,135): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(136,198): '{'
+  NO_CANDIDATES
+
+KtBinaryExpression(142,165): 'ClientTransaction += 10'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.plusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(142,159): 'ClientTransaction'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.ClientTransaction
+        symbol = <constructor>(): one.ClientTransaction
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(160,162): '+='
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.plusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(163,165): '10'
+  NO_CANDIDATES
+
+KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.minusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(170,187): 'ClientTransaction'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.ClientTransaction
+        symbol = <constructor>(): one.ClientTransaction
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(188,190): '-='
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.minusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtStringTemplateExpression(191,196): '"foo"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(192,195): 'foo'
+  NO_CANDIDATES

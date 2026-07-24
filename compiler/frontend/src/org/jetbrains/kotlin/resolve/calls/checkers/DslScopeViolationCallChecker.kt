@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils.extractDslMarkerFqNames
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
+@K1Deprecation
 object DslScopeViolationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) return
@@ -57,13 +59,15 @@ object DslScopeViolationCallChecker : CallChecker {
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
-        val (callDslMarkers, additionalCallDslMarkers) = extractDslMarkerFqNames(callImplicitReceiver)
+        (val callDslMarkers = common, val additionalCallDslMarkers = fromContainingFunctionType) = extractDslMarkerFqNames(
+            callImplicitReceiver
+        )
         if (callDslMarkers.isEmpty() && additionalCallDslMarkers.isEmpty()) return
 
         val dslMarkersFromOuterReceivers = receiversUntilOneFromTheCall.map(::extractDslMarkerFqNames)
 
         val closestAnotherReceiverWithSameDslMarker =
-            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, _) ->
+            dslMarkersFromOuterReceivers.firstOrNull { (val dslMarkersFromReceiver = common, val _ = fromContainingFunctionType) ->
                 dslMarkersFromReceiver.any(callDslMarkers::contains)
             }
 
@@ -76,7 +80,7 @@ object DslScopeViolationCallChecker : CallChecker {
         val allDslMarkersFromCall = callDslMarkers + additionalCallDslMarkers
 
         val closestAnotherReceiverWithSameDslMarkerWithDeprecation =
-            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, additionalDslMarkersFromReceiver) ->
+            dslMarkersFromOuterReceivers.firstOrNull { (val dslMarkersFromReceiver = common, val additionalDslMarkersFromReceiver = fromContainingFunctionType) ->
                 val allMarkersFromReceiver = dslMarkersFromReceiver + additionalDslMarkersFromReceiver
                 allDslMarkersFromCall.any(allMarkersFromReceiver::contains)
             }

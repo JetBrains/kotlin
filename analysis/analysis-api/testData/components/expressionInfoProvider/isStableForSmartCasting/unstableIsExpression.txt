@@ -1,0 +1,3 @@
+expression: IS_EXPRESSION
+text: value is String
+isStableForSmartCasting: false

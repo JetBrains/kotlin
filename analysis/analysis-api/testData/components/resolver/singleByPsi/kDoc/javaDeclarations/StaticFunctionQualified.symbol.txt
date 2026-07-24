@@ -1,2 +1,5 @@
-KtNamedFunction(46,92): '/**'
-  null
+KDocName(54,73): 'JavaClass.staticFun'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      dependency/JavaClass.staticFun(): kotlin.Unit
+    ]

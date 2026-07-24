@@ -21,9 +21,10 @@ internal class SirVariableImpl(
     override val isInstance: Boolean,
     override val modality: SirModality,
     override val bridges: MutableList<SirBridge>,
+    override val isConstant: Boolean,
     override val name: String,
     override val type: SirType,
-    override val getter: SirGetter,
+    override val getter: SirGetter?,
     override val setter: SirSetter?,
 ) : SirVariable() {
     override lateinit var parent: SirDeclarationParent

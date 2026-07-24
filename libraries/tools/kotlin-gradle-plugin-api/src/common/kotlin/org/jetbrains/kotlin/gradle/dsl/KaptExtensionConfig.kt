@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.provider.Property
 
 /**
  * A plugin DSL extension for configuring kapt annotation processing.
@@ -69,6 +70,17 @@ interface KaptExtensionConfig {
      * Default: `false`
      */
     var stripMetadata: Boolean
+
+    /**
+     * Selects how kapt generates Java stubs.
+     *
+     * Possible values: [KaptStubGenerationScheme.JTREE], [KaptStubGenerationScheme.DIRECT].
+     * [KaptStubGenerationScheme.JTREE] is the historical scheme that uses javac AST and will be deprecated eventually.
+     * [KaptStubGenerationScheme.DIRECT] is a new experimental scheme that generates Java text directly.
+     *
+     * Default: [KaptStubGenerationScheme.JTREE]
+     */
+    val stubGenerationScheme: Property<KaptStubGenerationScheme>
 
     /**
      * Shows annotation processor statistics in the verbose kapt log output.
@@ -142,6 +154,21 @@ interface KaptExtensionConfig {
      * Gets all the javac options used to run kapt annotation processing.
      */
     fun getJavacOptions(): Map<String, String>
+}
+
+/**
+ * Selects how kapt generates Java stubs.
+ */
+enum class KaptStubGenerationScheme {
+    /**
+     * Generates Java stubs as text directly.
+     */
+    DIRECT,
+
+    /**
+     * Generates Java stubs through javac AST.
+     */
+    JTREE,
 }
 
 /**

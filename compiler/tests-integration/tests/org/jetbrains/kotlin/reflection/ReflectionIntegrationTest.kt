@@ -5,27 +5,48 @@
 
 package org.jetbrains.kotlin.reflection
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.load.kotlin.internalName
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.compileJavaFiles
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
+import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.reflect.KClass
+import kotlin.test.junit.JUnitAsserter.fail
 
-class ReflectionIntegrationTest : KtUsefulTestCase() {
+class ReflectionIntegrationTest {
+    private lateinit var testInfo: TestInfo
+
+    @BeforeEach
+    fun setUp(info: TestInfo) {
+        testInfo = info
+    }
+
     // This test checks that we use the correct class loader to load .kotlin_builtins resource files.
     // On Android, the class loader used to load the application classes differs from the boot class loader (which loads core JDK classes),
     // so attempting to find kotlin/kotlin.kotlin_builtins in the same class loader that found java.lang.Object can fail.
     // We should always use the class loader that loads stdlib class files to locate .kotlin_builtins resource files
+    @Test
     fun testClassLoaderForBuiltIns() {
-        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
 
         val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/classLoaderForBuiltIns").path
         compileJavaFiles(
@@ -49,6 +70,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // This test checks that simultaneous access to kotlin-reflect from different threads works, in case the URLClassLoader instance is
     // being closed in one of the threads. It creates two threads that for several seconds continuously load kotlin-reflect in a new
     // class loader, call something from it, and close the class loader.
+    @Test
     fun testParallelAccess() {
         val urls = arrayOf(
             ForTestCompileRuntime.reflectJarForTests().toURI().toURL(),
@@ -87,10 +109,12 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         error.get()?.let { throw it }
     }
 
+    @Test
     fun testConcurrentAccessToPropertyDelegate() {
         compileAndRunProgram(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/concurrentAccessToPropertyDelegate").path)
     }
 
+    @Test
     fun testConcurrentAccessToPrivateFunction() {
         compileAndRunProgram(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/concurrentAccessToPrivateFunction").path)
     }
@@ -101,6 +125,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // `Reflection.property0/1/2` methods. If these methods start to read metadata or perform anything that can hurt performance, it will
     // introduce performance regression in the old code (compiled by Kotlin < 2.3.20) if it has the new kotlin-reflect in classpath.
     // So, effectively this test checks that `Reflection.property0/1/2` are still fast enough to be called from the old code.
+    @Test
     fun testLazyInitializationForDelegatedProperty() {
         checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/lazyInitializationForDelegatedProperty").path)
     }
@@ -108,6 +133,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // This test checks that we don't initialize full reflection (and specifically never read any metadata or parse protobuf) for
     // calls of `typeOf<T>()`.
     // Before the fix, such calls caused unexpected application slowdown when full kotlin-reflect added to the classpath.
+    @Test
     fun testLightweightTypeOf() {
         checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/lightweightTypeOf").path)
     }
@@ -123,13 +149,48 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
+    fun testBuiltinClasses() {
+        val fqNames = mutableListOf<String>()
+        val classLoader = ForTestCompileRuntime.runtimeJarClassLoader()
+        for (packageFqName in StandardNames.BUILT_INS_PACKAGE_FQ_NAMES) {
+            val bytes = classLoader.getResourceAsStream(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))?.readBytes()
+                ?: error(".kotlin_builtins file for built-in package $packageFqName not found in stdlib")
+            val fragment = KotlinCommonMetadata.read(bytes)?.kmModuleFragment
+                ?: error(".kotlin_builtins file for $packageFqName cannot be read by kotlin-metadata-jvm")
+            for (klass in fragment.classes) {
+                val classId = ClassId.fromString(klass.name)
+                val fqName = classId.asSingleFqName()
+                val primitiveArrayType = StandardNames.FqNames.arrayClassFqNameToPrimitiveType[fqName.toUnsafe()]
+                // For arrays and primitive types, there are exceptions both in K1 reflect and new reflect.
+                if (fqName.toUnsafe() != StandardNames.FqNames.array && primitiveArrayType == null &&
+                    PrimitiveType.entries.none { fqName == it.typeFqName }
+                ) {
+                    fqNames.add(classId.internalName.replace("/", "."))
+                }
+            }
+        }
+
+        val (k1ReflectDumpResult, newReflectDumpResult) = JvmNewKotlinReflectCompatibilityCheck.dumpK1AndNewReflect(
+            fqNames,
+            emptyArray(),
+            StandardLibrariesPathProviderForKotlinProject,
+        )
+        val k1ReflectDump = k1ReflectDumpResult.getOrThrow()
+        val newReflectDump = newReflectDumpResult.getOrThrow()
+        JUnit5Assertions.assertEquals(k1ReflectDump, newReflectDump)
+        JUnit5Assertions.assertEqualsToFile(
+            KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/builtin-classes.txt"), k1ReflectDump,
+        )
+    }
+
     private fun compileAndRunProgram(
         root: String,
         jvmArgs: List<String> = emptyList(),
     ): TestOutput {
         val javaSources = File(root).walkTopDown().filter { it.extension == "java" }.toList()
         val extraClasspath = if (javaSources.isNotEmpty()) {
-            KotlinTestUtils.tmpDirForTest(this).also { output ->
+            KotlinTestUtils.tmpDirForTest(testInfo).also { output ->
                 compileJavaFiles(javaSources, listOf("-d", output.absolutePath)).assertSuccessful()
             }
         } else null
@@ -156,7 +217,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
             ?: File(javaHome, "bin/java").takeIf(File::exists)
             ?: error("Can't find 'java' executable in $javaHome")
 
-        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
         val stdoutFile = tmpdir.resolve("stdout.txt")
         val stderrFile = tmpdir.resolve("stderr.txt")
         val process = ProcessBuilder(javaExe.absolutePath, *args)
@@ -168,7 +229,9 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         val stdout = stdoutFile.readText()
         val stderr = stderrFile.readText()
         val exitCode = process.exitValue()
-        assertEquals("Program exited with exit code $exitCode.\nStdout:\n$stdout\nStderr:\n$stderr", 0, exitCode)
+        assertEquals(0, exitCode) {
+            "Program exited with exit code $exitCode.\nStdout:\n$stdout\nStderr:\n$stderr"
+        }
         return TestOutput(stdout, stderr)
     }
 

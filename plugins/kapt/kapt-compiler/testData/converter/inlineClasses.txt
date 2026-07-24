@@ -1,35 +1,81 @@
-@kotlin.jvm.JvmInline()
 /**
- * public final value class Cl : kotlin/Any {
+ * public open class Base : kotlin/Any {
  *
- *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
- *   public constructor(a: kotlin/String)
- *
- *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
- *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
- *
- *   // signature: hashCode-impl(Ljava/lang/String;)I
- *   public open (* synthesized *) fun hashCode(): kotlin/Int
- *
- *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
- *   public open (* synthesized *) fun toString(): kotlin/String
- *
- *   // field: a:Ljava/lang/String;
- *   // getter: getA()Ljava/lang/String;
- *   public final val a: kotlin/String
- *     public final get
- *
- *   // underlying property: a
- *
- *   // underlying type: kotlin/String
+ *   // signature: <init>(ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+ *   public constructor(id: Id)
  *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-public final class Cl {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a = null;
+public class Base {
+
+    private Base(int id) {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Derived : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Derived extends Base {
+
+    public Derived() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: constructor-impl(I)I
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(I)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(I)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+    private final int value = 0;
+
+    public final int getValue() {
+        return 0;
+    }
 
     @java.lang.Override()
     public boolean equals(java.lang.Object other) {
@@ -43,11 +89,6 @@ public final class Cl {
 
     @java.lang.Override()
     public java.lang.String toString() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getA() {
         return null;
     }
 }

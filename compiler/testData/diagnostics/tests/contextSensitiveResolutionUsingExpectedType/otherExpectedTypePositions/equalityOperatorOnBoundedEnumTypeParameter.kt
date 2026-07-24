@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76548
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 enum class MyEnum {
     X, Y

@@ -31,7 +31,7 @@ internal class ObjCMethodMangler {
             val attribute = mangledMethods[key] ?: error("No cached item for $member")
             val mangledAttribute = attribute.mangleAttribute()
             val cloned = member.copy(
-                mangledSelectors = buildMangledSelectors(mangledAttribute),
+                mangledSelectors = buildMangledSelectors(mangledAttribute.postfix, member.selectors),
                 mangledParameters = buildMangledParameters(mangledAttribute),
                 swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
                 containingStubName = containingStub.name

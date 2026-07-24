@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 
+@K1Deprecation
 object SenselessComparisonChecker {
     @JvmStatic
     fun checkSenselessComparisonWithNull(

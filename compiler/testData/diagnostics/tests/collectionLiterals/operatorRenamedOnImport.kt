@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-83537
-// LANGUAGE: +CollectionLiterals
 // FILE: a.kt
 package a
 

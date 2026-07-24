@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+data object MemberFunctionWithAnnotatedParametersGeneratorKey : GeneratedDeclarationKey()
+
 class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         val FOO_NAME = Name.identifier("foo")
@@ -56,7 +58,12 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context == null) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
-        val function = createMemberFunction(context.owner, Key, callableId.callableName, session.builtinTypes.unitType.coneType) {
+        val function = createMemberFunction(
+            context.owner,
+            MemberFunctionWithAnnotatedParametersGeneratorKey,
+            callableId.callableName,
+            session.builtinTypes.unitType.coneType,
+        ) {
             valueParameter(
                 name = Name.identifier("x"),
                 type = session.builtinTypes.intType.coneType,
@@ -113,12 +120,6 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
         return when {
             classSymbol in matchedClasses -> setOf(FOO_NAME)
             else -> emptySet()
-        }
-    }
-
-    object Key : GeneratedDeclarationKey() {
-        override fun toString(): String {
-            return "MemberFunctionWithAnnotatedParametersGeneratorKey"
         }
     }
 

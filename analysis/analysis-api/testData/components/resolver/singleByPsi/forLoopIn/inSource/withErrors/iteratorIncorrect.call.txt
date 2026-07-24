@@ -2,7 +2,7 @@ KtForExpression(23,37): 'for(i in f) {}'
   KaForLoopCallResolutionAttempt:
     hasNextCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext' on receiver of type 'Any'.>
     iteratorCallAttempt = KaCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
@@ -26,4 +26,4 @@ KtForExpression(23,37): 'for(i in f) {}'
       diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.iterator(): Any' is inapplicable because of a receiver type mismatch.>
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Any'.>

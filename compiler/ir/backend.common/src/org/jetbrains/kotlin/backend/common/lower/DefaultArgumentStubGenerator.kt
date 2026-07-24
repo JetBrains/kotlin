@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue as canHaveDefaultValueImpl
@@ -267,13 +265,12 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             currentDeclaration.symbol, startOffset = expression.startOffset, endOffset = expression.endOffset
         ).irBlock {
             val newCall = builder(symbol).apply {
-                val offset = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
                 for (i in typeArguments.indices) {
-                    typeArguments[i] = expression.typeArguments[i + offset]
+                    typeArguments[i] = expression.typeArguments[i]
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
 
-                for ((parameter, argument) in parameter2arguments) {
+                for ([parameter, argument] in parameter2arguments) {
                     log { "call::params@$${parameter.indexInParameters}/${parameter.name}: ${ir2string(argument)}" }
                     if (argument != null) {
                         arguments[parameter.indexInParameters] = argument
@@ -284,9 +281,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             +irCastIfNeeded(newCall, expression.type)
         }.unwrapBlock()
     }
-
-    private fun needsTypeArgumentOffset(declaration: IrFunction) =
-        isStatic(declaration) && declaration.parentAsClass.isMultiFieldValueClass && declaration is IrSimpleFunction
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
         expression.transformChildrenVoid()
@@ -329,13 +323,11 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
-        val declaration = expression.symbol.owner
-        val typeParametersToRemove = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
         with(expression) {
             return visitFunctionAccessExpression(expression) {
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
-                    typeArgumentsCount = typeArguments.size - typeParametersToRemove,
+                    typeArgumentsCount = typeArguments.size,
                     origin = IrStatementOrigin.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
@@ -514,9 +506,6 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
                 IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION
             )
         }
-        context.remapMultiFieldValueClassStructure(
-            original, this, parametersMappingOrNull = original.parameters.zip(parameters).toMap()
-        )
     }
 }
 

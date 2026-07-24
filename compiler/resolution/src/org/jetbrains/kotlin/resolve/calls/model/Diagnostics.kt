@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
+@K1Deprecation
 abstract class KotlinCallDiagnostic(val candidateApplicability: CandidateApplicability) {
     abstract fun report(reporter: DiagnosticReporter)
 }
 
+@K1Deprecation
 interface DiagnosticReporter {
     fun onExplicitReceiver(diagnostic: KotlinCallDiagnostic)
 

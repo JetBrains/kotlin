@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.finalizePath
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -51,18 +50,14 @@ class CustomJsCompilerSecondStageFacade(
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
     ): BinaryArtifacts.Js {
-        val jsArtifactFile = File(
-            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name).finalizePath(
-                JsEnvironmentConfigurator.getModuleKind(
-                    testServices,
-                    module
-                )
-            )
-        )
+        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
+
+        val finalJsArtifactFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name).finalizePath(moduleKind))
+        val outputDir: File = finalJsArtifactFile.parentFile
+        val tempJsArtifactFile = outputDir.resolve(module.name.finalizePath(moduleKind))
 
         val compilerXmlOutput = ByteArrayOutputStream()
 
-        val outputDir = jsArtifactFile.parentFile
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val regularAndFriendDependencies = regularDependencies + friendDependencies
             customJsCompilerSettings.customKlibCompiler.callCompiler(
@@ -73,8 +68,9 @@ class CustomJsCompilerSecondStageFacade(
                     K2JSCompilerArguments::sourceMapEmbedSources.cliArgument(SOURCE_MAP_SOURCE_CONTENT_NEVER),
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),
 
+                    K2JSCompilerArguments::moduleKind.cliArgument, moduleKind.type,
                     K2JSCompilerArguments::outputDir.cliArgument, outputDir.path,
-                    K2JSCompilerArguments::moduleName.cliArgument, module.name,
+                    K2JSCompilerArguments::moduleName.cliArgument, tempJsArtifactFile.nameWithoutExtension,
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
@@ -92,25 +88,24 @@ class CustomJsCompilerSecondStageFacade(
 
         if (exitCode == ExitCode.OK) {
             // Successfully compiled. Return the artifact.
-            File(outputDir.path, module.name + ".js")
-                .renameFollowingTestInfraConvention(jsArtifactFile)
+            tempJsArtifactFile.renameTo(finalJsArtifactFile)
 
             return JsIrArtifact(
-                outputFile = jsArtifactFile,
+                outputFile = finalJsArtifactFile,
                 compilerResult = CompilerResult(
                     listOf(
                         CompilationOutputsBuilt(
                             artifactConfiguration = WebArtifactConfiguration(
-                                moduleKind = ModuleKind.PLAIN,
+                                moduleKind = moduleKind,
                                 moduleName = module.name,
                                 outputDirectory = outputDir,
-                                outputName = module.name,
+                                outputName = finalJsArtifactFile.nameWithoutExtension,
                                 granularity = JsGenerationGranularity.WHOLE_PROGRAM,
                                 tsCompilationStrategy = TsCompilationStrategy.NONE,
                                 production = false,
                                 minimizedMemberNames = false,
                             ),
-                            rawJsCode = jsArtifactFile.readText(),
+                            rawJsCode = finalJsArtifactFile.readText(),
                             sourceMap = null,
                             tsDefinitions = null,
                             jsProgram = null,
@@ -121,25 +116,6 @@ class CustomJsCompilerSecondStageFacade(
         } else {
             // Throw an exception to abort further test execution.
             throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))
-        }
-    }
-
-    // CLI compilation creates an output file of different name than testInfra usually does.
-    // A rename is needed, in order the testInfra runner can use its usual logic to run the test script.
-    private fun File.renameFollowingTestInfraConvention(outputFile: File) {
-        require(exists()) {
-            "Internal testinfra error: Couldn't find expected generated js script ${absolutePath}"
-        }
-
-        renameTo(outputFile)
-
-        // Move SourceMap file as well
-        with(withExtension(".js.map")) {
-            require(exists()) {
-                "Internal testinfra error: Couldn't find expected generated js source map ${absolutePath}"
-            }
-
-            renameTo(outputFile.withExtension(".js.map"))
         }
     }
 }

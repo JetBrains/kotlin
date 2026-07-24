@@ -7,24 +7,24 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.utils.konanHome
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import kotlin.test.Test
 
-public class CliCommonizerTest {
+class CliCommonizerTest {
 
-    @get:Rule
-    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    lateinit var temporaryOutputDirectory: File
 
     @Test
-    public fun invokeCliWithEmptyArguments() {
+    fun invokeCliWithEmptyArguments() {
         val commonizer = CliCommonizer(this::class.java.classLoader)
         commonizer.commonizeLibraries(
             konanHome = konanHome,
             inputLibraries = emptySet(),
             dependencyLibraries = emptySet(),
             outputTargets = setOf(CommonizerTarget(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64)),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             additionalSettings = emptyList(),
         )
     }

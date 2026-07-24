@@ -279,9 +279,11 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
             Visibilities.Protected -> {
                 val ownerId = symbol.getOwnerLookupTag()
                 ownerId != null && canSeeProtectedMemberOf(
-                    symbol, containingDeclarations, dispatchReceiver, ownerId, session,
-                    isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
-                    symbol.fir is FirSyntheticPropertyAccessor,
+                    symbol,
+                    containingDeclarations,
+                    dispatchReceiver,
+                    ownerId,
+                    session,
                     supertypeSupplier
                 )
             }
@@ -470,15 +472,19 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
         dispatchReceiver: FirExpression?,
         ownerLookupTag: ConeClassLikeLookupTag,
         session: FirSession,
-        isVariableOrNamedFunction: Boolean,
-        isSyntheticProperty: Boolean,
-        supertypeSupplier: SupertypeSupplier
+        supertypeSupplier: SupertypeSupplier,
     ): Boolean {
+        // Note: dispatch receiver isn't relevant for protected static
+        // See e.g. diagnostics/tests/visibility/packagePrivateStatic.kt
+        val isStatic = usedSymbol is FirCallableSymbol && usedSymbol.isStatic
+        val isVariableOrNamedFunction = usedSymbol.isVariableOrNamedFunction()
+        val isSyntheticProperty = usedSymbol.fir is FirSyntheticPropertyAccessor
+
         if (canSeePrivateMemberOf(
                 usedSymbol,
                 containingDeclarationOfUseSite,
                 ownerLookupTag,
-                dispatchReceiver,
+                dispatchReceiver.takeUnless { isStatic },
                 isVariableOrNamedFunction,
                 session
             )
@@ -489,7 +495,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
                 val boundSymbol = containingDeclaration.symbol
                 if (canSeeProtectedMemberOf(
                         boundSymbol.fir,
-                        dispatchReceiver,
+                        dispatchReceiver.takeUnless { isStatic },
                         ownerLookupTag,
                         session,
                         isVariableOrNamedFunction,

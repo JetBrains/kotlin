@@ -71,7 +71,7 @@ internal fun findStdlib(
     allFragments: Map<KotlinLibraryFile, IrModuleFragment>
 ): Pair<KotlinLibraryFile, IrModuleFragment> {
     val stdlibDescriptor = mainFragment.descriptor.builtIns.builtInsModule
-    val (stdlibFile, stdlibIr) = allFragments.entries.find {
+    val [stdlibFile, stdlibIr] = allFragments.entries.find {
         it.value.descriptor === stdlibDescriptor
     } ?: notFoundIcError("stdlib fragment")
     return stdlibFile to stdlibIr

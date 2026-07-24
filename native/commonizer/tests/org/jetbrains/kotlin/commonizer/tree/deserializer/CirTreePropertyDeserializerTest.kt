@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameterType
 import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 
 
 class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
+    @Test
     fun `test simple val property`() {
         val module = createCirTreeFromSourceCode("val x: Int = 42")
 
@@ -30,6 +32,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertNull(property.extensionReceiver, "Expected property to *not* have extension receiver")
     }
 
+    @Test
     fun `test simple var property`() {
         val module = createCirTreeFromSourceCode("var x: Int = 42")
         val property = module.assertSingleProperty()
@@ -39,6 +42,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertTrue(property.isVar, "Expected property to be var")
     }
 
+    @Test
     fun `test lateinit var property`() {
         val module = createCirTreeFromSourceCode("lateinit var x: Unit")
         val property = module.assertSingleProperty()
@@ -49,6 +53,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertTrue(property.isVar, "Expected property to be var")
     }
 
+    @Test
     fun `test generic var property`() {
         val module = createCirTreeFromSourceCode(
             """
@@ -66,6 +71,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
         )
     }
 
+    @Test
     fun `test multiple properties`() {
         val module = createCirTreeFromSourceCode(
             """

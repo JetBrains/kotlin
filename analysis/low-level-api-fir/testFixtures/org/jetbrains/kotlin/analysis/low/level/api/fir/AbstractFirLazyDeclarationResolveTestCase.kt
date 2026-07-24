@@ -121,7 +121,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             directives.singleOrZeroValue(Directives.MEMBER_NAME_FILTER),
         ).ifEmpty { return symbol }
 
-        val (classSymbol, declarations) = when (symbol) {
+        val [classSymbol, declarations] = when (symbol) {
             is FirClassSymbol -> symbol to symbol.declarationSymbols
             is FirScriptSymbol -> {
                 symbol to symbol.fir.let { it.parameters + it.declarations }.map { it.symbol }

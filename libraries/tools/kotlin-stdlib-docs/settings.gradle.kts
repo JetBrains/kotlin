@@ -29,6 +29,9 @@ dependencyResolutionManagement {
 rootProject.name = "kotlin-stdlib-docs"
 
 include("kotlin_big")
+include("kotlin-stdlib")
+include("kotlin-reflect")
+include("kotlin-test")
 include("plugins")
 include("plugins:dokka-samples-transformer-plugin")
 include("plugins:dokka-version-filter-plugin")

@@ -62,7 +62,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
         when (result) {
             is PreSerializationKlibSymbols.SharedVariableBoxClassInfo -> validate(result.klass, klass)
             is Iterable<*> -> result.forEach { validateRecursive(it, klass) }
-            is Map<*, *> -> result.entries.forEach { (key, value) ->
+            is Map<*, *> -> result.entries.forEach { [key, value] ->
                 validateRecursive(key, klass)
                 validateRecursive(value, klass)
             }
@@ -74,6 +74,8 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is ReflectionSymbols -> validateContainer(result)
             is BackendWasmSymbols.JsRelatedSymbols -> validateContainer(result)
             is BackendWasmSymbols.JsInteropAdapters -> validateContainer(result)
+            is BackendWasmSymbols.CoroutinesStackSwitchingIntrinsics -> validateContainer(result)
+            is BackendWasmSymbols.CoroutinesStateMachineIntrinsics -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
             null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
             is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder -> Unit // do nothing
@@ -86,7 +88,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
     protected fun checkForSpecialAnnotation(declaration: IrDeclaration) {
         val annotations = declaration.annotations +
                 (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.annotations.orEmpty()
-        if (annotations.none { it.symbol.owner.constructedClass.classId == StandardClassIds.Annotations.UsedFromCompilerGeneratedCode }) {
+        if (annotations.none { it.classId == StandardClassIds.Annotations.UsedFromCompilerGeneratedCode }) {
             error("Declaration ${declaration.render()} is not annotated with @${StandardClassIds.Annotations.UsedFromCompilerGeneratedCode}")
         }
     }
@@ -132,7 +134,7 @@ class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices
     }
 }
 
-abstract class IrSecondPhaseSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
+abstract class IrSecondStageSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
     override fun validate(symbol: IrSymbol, symbolsClass: KClass<*>) {
         val owner = symbol.owner as IrDeclarationWithVisibility
         validateVisibility(owner, symbolsClass)

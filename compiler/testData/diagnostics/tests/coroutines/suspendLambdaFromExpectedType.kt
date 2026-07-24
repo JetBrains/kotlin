@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 fun <T> runBlocking(block: suspend () -> T): T = TODO()
 

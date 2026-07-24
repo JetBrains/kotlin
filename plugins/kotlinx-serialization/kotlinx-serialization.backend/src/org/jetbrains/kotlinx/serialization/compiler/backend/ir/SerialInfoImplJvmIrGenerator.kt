@@ -91,7 +91,8 @@ class SerialInfoImplJvmIrGenerator(
 
     private fun createPackage(packageName: String): IrPackageFragment =
         createEmptyExternalPackageFragment(
-            moduleFragment.descriptor,
+            // TODO(KT-87315): Use `stdlib` module instead of this one.
+            moduleFragment,
             FqName(packageName)
         )
 

@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.spec.parsing;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,159 +18,177 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/tests-spec/testData/psi")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("compiler/tests-spec/testData/psi/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates");
   }
 
+  @Nested
   @TestMetadata("compiler/tests-spec/testData/psi/linked")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Linked extends AbstractParsingTestSpec {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+  public class Linked {
+    private void run(String fileName) {
+      runTest("compiler/tests-spec/testData/psi/linked/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInLinked() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @Nested
     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Expressions extends AbstractParsingTestSpec {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+    public class Expressions {
+      private void run(String fileName) {
+        runTest("compiler/tests-spec/testData/psi/linked/expressions/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInExpressions() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
+      @Nested
       @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals")
       @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class Constant_literals extends AbstractParsingTestSpec {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      public class Constant_literals {
+        private void run(String fileName) {
+          runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/" + fileName);
         }
 
+        @Test
         public void testAllFilesPresentInConstant_literals() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Integer_literals extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class Integer_literals {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInInteger_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Binary_integer_literals extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Binary_integer_literals {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInBinary_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class P_1 extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class P_1 {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/" + fileName);
               }
 
+              @Test
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Neg extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Neg {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.2.kt");
+                  run("1.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/2.1.kt");
+                  run("2.1.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Pos extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Pos {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.2.kt");
+                  run("1.2.kt");
                 }
 
+                @Test
                 @TestMetadata("1.3.kt")
                 public void test1_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.3.kt");
+                  run("1.3.kt");
                 }
 
+                @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt");
+                  run("2.1.kt");
                 }
 
+                @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.2.kt");
+                  run("2.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.3.kt");
+                  run("2.3.kt");
                 }
 
+                @Test
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.4.kt");
+                  run("2.4.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
@@ -179,102 +196,113 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Decimal_integer_literals extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Decimal_integer_literals {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInDecimal_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class P_1 extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class P_1 {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/" + fileName);
               }
 
+              @Test
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Neg extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Neg {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Pos extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Pos {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.1.kt");
+                  run("2.1.kt");
                 }
 
+                @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.2.kt");
+                  run("2.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos/2.3.kt");
+                  run("2.3.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class P_2 extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class P_2 {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/" + fileName);
               }
 
+              @Test
               public void testAllFilesPresentInP_2() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Neg extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Neg {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg/" + fileName);
                 }
 
+                @Test
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
@@ -282,96 +310,109 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Hexadecimal_integer_literals extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Hexadecimal_integer_literals {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInHexadecimal_integer_literals() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class P_1 extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class P_1 {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/" + fileName);
               }
 
+              @Test
               public void testAllFilesPresentInP_1() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Neg extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Neg {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.kt");
+                  run("1.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt");
+                  run("2.1.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInNeg() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
               }
 
+              @Nested
               @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos")
               @TestDataPath("$PROJECT_ROOT")
-              @RunWith(JUnit3RunnerWithInners.class)
-              public static class Pos extends AbstractParsingTestSpec {
-                private void runTest(String testDataFilePath) {
-                  KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+              public class Pos {
+                private void run(String fileName) {
+                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/" + fileName);
                 }
 
+                @Test
                 @TestMetadata("1.1.kt")
                 public void test1_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt");
+                  run("1.1.kt");
                 }
 
+                @Test
                 @TestMetadata("1.2.kt")
                 public void test1_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.2.kt");
+                  run("1.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.1.kt")
                 public void test2_1() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt");
+                  run("2.1.kt");
                 }
 
+                @Test
                 @TestMetadata("2.2.kt")
                 public void test2_2() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.2.kt");
+                  run("2.2.kt");
                 }
 
+                @Test
                 @TestMetadata("2.3.kt")
                 public void test2_3() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.3.kt");
+                  run("2.3.kt");
                 }
 
+                @Test
                 @TestMetadata("2.4.kt")
                 public void test2_4() {
-                  runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.4.kt");
+                  run("2.4.kt");
                 }
 
+                @Test
                 public void testAllFilesPresentInPos() {
                   KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
@@ -380,469 +421,539 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
           }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Real_literals extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class Real_literals {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInReal_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_1 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_1 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.1.kt");
+                run("2.1.kt");
               }
 
+              @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.2.kt");
+                run("2.2.kt");
               }
 
+              @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/2.3.kt");
+                run("2.3.kt");
               }
 
+              @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.1.kt");
+                run("3.1.kt");
               }
 
+              @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.2.kt");
+                run("3.2.kt");
               }
 
+              @Test
               @TestMetadata("3.3.kt")
               public void test3_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg/3.3.kt");
+                run("3.3.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Pos extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Pos {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.1.kt");
+                run("3.1.kt");
               }
 
+              @Test
               @TestMetadata("3.2.kt")
               public void test3_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos/3.2.kt");
+                run("3.2.kt");
               }
 
+              @Test
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_2 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_2 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_2() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Pos extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Pos {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.5.kt");
+                run("1.5.kt");
               }
 
+              @Test
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.6.kt");
+                run("1.6.kt");
               }
 
+              @Test
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_3 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_3 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_3() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/1.5.kt");
+                run("1.5.kt");
               }
 
+              @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/2.1.kt");
+                run("2.1.kt");
               }
 
+              @Test
               @TestMetadata("3.1.kt")
               public void test3_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg/3.1.kt");
+                run("3.1.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Pos extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Pos {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.5.kt");
+                run("1.5.kt");
               }
 
+              @Test
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/1.6.kt");
+                run("1.6.kt");
               }
 
+              @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.1.kt");
+                run("2.1.kt");
               }
 
+              @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.2.kt");
+                run("2.2.kt");
               }
 
+              @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.3.kt");
+                run("2.3.kt");
               }
 
+              @Test
               @TestMetadata("2.4.kt")
               public void test2_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos/2.4.kt");
+                run("2.4.kt");
               }
 
+              @Test
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_4 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_4 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_4() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Pos extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Pos {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.5.kt");
+                run("1.5.kt");
               }
 
+              @Test
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.6.kt");
+                run("1.6.kt");
               }
 
+              @Test
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/1.7.kt");
+                run("1.7.kt");
               }
 
+              @Test
               @TestMetadata("2.1.kt")
               public void test2_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.1.kt");
+                run("2.1.kt");
               }
 
+              @Test
               @TestMetadata("2.2.kt")
               public void test2_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.2.kt");
+                run("2.2.kt");
               }
 
+              @Test
               @TestMetadata("2.3.kt")
               public void test2_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos/2.3.kt");
+                run("2.3.kt");
               }
 
+              @Test
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_6 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_6 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_6() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
@@ -850,121 +961,139 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
           }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class The_types_for_integer_literals extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class The_types_for_integer_literals {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInThe_types_for_integer_literals() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class P_1 extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class P_1 {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/" + fileName);
             }
 
+            @Test
             public void testAllFilesPresentInP_1() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Neg extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Neg {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               public void testAllFilesPresentInNeg() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
             }
 
+            @Nested
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos")
             @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Pos extends AbstractParsingTestSpec {
-              private void runTest(String testDataFilePath) {
-                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            public class Pos {
+              private void run(String fileName) {
+                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/" + fileName);
               }
 
+              @Test
               @TestMetadata("1.1.kt")
               public void test1_1() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt");
+                run("1.1.kt");
               }
 
+              @Test
               @TestMetadata("1.10.kt")
               public void test1_10() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.10.kt");
+                run("1.10.kt");
               }
 
+              @Test
               @TestMetadata("1.2.kt")
               public void test1_2() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt");
+                run("1.2.kt");
               }
 
+              @Test
               @TestMetadata("1.3.kt")
               public void test1_3() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt");
+                run("1.3.kt");
               }
 
+              @Test
               @TestMetadata("1.4.kt")
               public void test1_4() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.4.kt");
+                run("1.4.kt");
               }
 
+              @Test
               @TestMetadata("1.5.kt")
               public void test1_5() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.5.kt");
+                run("1.5.kt");
               }
 
+              @Test
               @TestMetadata("1.6.kt")
               public void test1_6() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.6.kt");
+                run("1.6.kt");
               }
 
+              @Test
               @TestMetadata("1.7.kt")
               public void test1_7() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.7.kt");
+                run("1.7.kt");
               }
 
+              @Test
               @TestMetadata("1.8.kt")
               public void test1_8() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.8.kt");
+                run("1.8.kt");
               }
 
+              @Test
               @TestMetadata("1.9.kt")
               public void test1_9() {
-                runTest("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.9.kt");
+                run("1.9.kt");
               }
 
+              @Test
               public void testAllFilesPresentInPos() {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
               }
@@ -973,209 +1102,235 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
         }
       }
 
+      @Nested
       @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression")
       @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class When_expression extends AbstractParsingTestSpec {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      public class When_expression {
+        private void run(String fileName) {
+          runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/" + fileName);
         }
 
+        @Test
         public void testAllFilesPresentInWhen_expression() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class P_1 extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class P_1 {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInP_1() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Neg extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Neg {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/" + fileName);
             }
 
+            @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.1.kt");
+              run("3.1.kt");
             }
 
+            @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg/3.2.kt");
+              run("3.2.kt");
             }
 
+            @Test
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Pos extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Pos {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/" + fileName);
             }
 
+            @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.1.kt");
+              run("3.1.kt");
             }
 
+            @Test
             @TestMetadata("3.2.kt")
             public void test3_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos/3.2.kt");
+              run("3.2.kt");
             }
 
+            @Test
             public void testAllFilesPresentInPos() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
           }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class P_2 extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class P_2 {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInP_2() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Neg extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Neg {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/" + fileName);
             }
 
+            @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.1.kt");
+              run("1.1.kt");
             }
 
+            @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/1.2.kt");
+              run("1.2.kt");
             }
 
+            @Test
             @TestMetadata("2.1.kt")
             public void test2_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.1.kt");
+              run("2.1.kt");
             }
 
+            @Test
             @TestMetadata("2.2.kt")
             public void test2_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg/2.2.kt");
+              run("2.2.kt");
             }
 
+            @Test
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
           }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class P_5 extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class P_5 {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInP_5() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Neg extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Neg {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/" + fileName);
             }
 
+            @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.1.kt");
+              run("1.1.kt");
             }
 
+            @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.2.kt");
+              run("1.2.kt");
             }
 
+            @Test
             @TestMetadata("1.3.kt")
             public void test1_3() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg/1.3.kt");
+              run("1.3.kt");
             }
 
+            @Test
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
           }
         }
 
+        @Nested
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6")
         @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class P_6 extends AbstractParsingTestSpec {
-          private void runTest(String testDataFilePath) {
-            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        public class P_6 {
+          private void run(String fileName) {
+            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/" + fileName);
           }
 
+          @Test
           public void testAllFilesPresentInP_6() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
+          @Nested
           @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg")
           @TestDataPath("$PROJECT_ROOT")
-          @RunWith(JUnit3RunnerWithInners.class)
-          public static class Neg extends AbstractParsingTestSpec {
-            private void runTest(String testDataFilePath) {
-              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          public class Neg {
+            private void run(String fileName) {
+              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/" + fileName);
             }
 
+            @Test
             @TestMetadata("1.1.kt")
             public void test1_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.1.kt");
+              run("1.1.kt");
             }
 
+            @Test
             @TestMetadata("1.2.kt")
             public void test1_2() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.2.kt");
+              run("1.2.kt");
             }
 
+            @Test
             @TestMetadata("3.1.kt")
             public void test3_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/3.1.kt");
+              run("3.1.kt");
             }
 
+            @Test
             @TestMetadata("5.1.kt")
             public void test5_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/5.1.kt");
+              run("5.1.kt");
             }
 
+            @Test
             @TestMetadata("7.1.kt")
             public void test7_1() {
-              runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/7.1.kt");
+              run("7.1.kt");
             }
 
+            @Test
             public void testAllFilesPresentInNeg() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }

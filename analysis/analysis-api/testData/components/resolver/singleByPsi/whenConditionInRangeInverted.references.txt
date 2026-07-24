@@ -1,7 +1,0 @@
-KtOperationReferenceExpression(177,180): '!in'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean

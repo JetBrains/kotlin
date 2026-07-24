@@ -1,11 +1,12 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
 }
 
-val runtimeOnly by configurations
-val compileOnly by configurations
-runtimeOnly.extendsFrom(compileOnly)
+configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
 
 dependencies {
     implementation(project(":generators:tree-generator-common"))

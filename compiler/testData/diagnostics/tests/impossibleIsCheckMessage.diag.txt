@@ -1,0 +1,1 @@
+/impossibleIsCheckMessage.kt:11:13: warning: Check for instance is always 'false'.

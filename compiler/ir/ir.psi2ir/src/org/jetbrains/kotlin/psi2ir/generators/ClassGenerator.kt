@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 internal class ClassGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
+    @OptIn(ValueClassBackendAgnosticApi::class)
     fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
@@ -93,16 +95,12 @@ internal class ClassGenerator(
                 type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
             }
 
-            if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
-                generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+            if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = false) && ktClassOrObject is KtClassOrObject) {
+                generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
             }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
-            }
-
-            if (irClass.isMultiFieldValueClass && ktClassOrObject is KtClassOrObject) {
-                generateAdditionalMembersForMultiFieldValueClasses(irClass, ktClassOrObject)
             }
 
             if (DescriptorUtils.isEnumClass(classDescriptor)) {
@@ -410,18 +408,14 @@ internal class ClassGenerator(
         val values = delegatedDescriptor.propertyIfAccessor.typeParameters
 
         val typeArguments = newHashMapWithExpectedSize<TypeParameterDescriptor, KotlinType>(keys.size)
-        for ((i, overriddenTypeParameter) in keys.withIndex()) {
+        for ([i, overriddenTypeParameter] in keys.withIndex()) {
             typeArguments[overriddenTypeParameter] = values[i].defaultType
         }
         return typeArguments
     }
 
-    private fun generateAdditionalMembersForSingleFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateSingleFieldValueClassMembers(ktClassOrObject, irClass)
-    }
-
-    private fun generateAdditionalMembersForMultiFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateMultiFieldValueClassMembers(ktClassOrObject, irClass)
+    private fun generateAdditionalMembersForInlineClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateInlineClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
@@ -438,7 +432,7 @@ internal class ClassGenerator(
     }
 
     private fun generateFieldsForContextReceivers(irClass: IrClass, classDescriptor: ClassDescriptor) {
-        for ((fieldIndex, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
+        for ([fieldIndex, receiverDescriptor] in classDescriptor.contextReceivers.withIndex()) {
             val irField = context.irFactory.createField(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
@@ -480,7 +474,7 @@ internal class ClassGenerator(
             irPrimaryConstructor.parameters
                 .filter { it.kind == IrParameterKind.Regular }
                 .zip(ktPrimaryConstructor.valueParameters)
-                .forEach { (irValueParameter, ktParameter) ->
+                .forEach { [irValueParameter, ktParameter] ->
                     if (ktParameter.hasValOrVar()) {
                         val irProperty = PropertyGenerator(declarationGenerator)
                             .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)
@@ -541,6 +535,7 @@ internal class ClassGenerator(
     }
 }
 
+@K1Deprecation
 fun IrClass.setThisReceiverParameter(context: GeneratorContext) {
     thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
         startOffset, endOffset,

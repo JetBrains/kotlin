@@ -16,14 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.*
 
 // this receiver used only for resolution. see subtypes
+@K1Deprecation
 interface DetailedReceiver
 
+@K1Deprecation
 class ReceiverValueWithSmartCastInfo(
     val receiverValue: ReceiverValue,
     /*
@@ -42,6 +45,7 @@ class ReceiverValueWithSmartCastInfo(
     override fun toString() = receiverValue.toString()
 }
 
+@K1Deprecation
 interface QualifierReceiver : Receiver, DetailedReceiver {
     val descriptor: DeclarationDescriptor
 
@@ -54,6 +58,7 @@ interface QualifierReceiver : Receiver, DetailedReceiver {
         get() = classValueReceiver?.let { ReceiverValueWithSmartCastInfo(it, emptySet(), true) }
 }
 
+@K1Deprecation
 fun ReceiverValueWithSmartCastInfo.prepareReceiverRegardingCaptureTypes(): ReceiverValueWithSmartCastInfo {
     val preparedBaseType = prepareArgumentTypeRegardingCaptureTypes(receiverValue.type.unwrap()) ?: return this
 

@@ -54,13 +54,18 @@ abstract class SupertypeSupplier {
 }
 
 fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): List<FirClassSymbol<*>> {
-    val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
+    val lookupTags = SmartSet.create<ConeClassLikeLookupTag>()
 
     fun ConeKotlinType.collectClassIds() {
         when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
-            else -> {}
+
+            is ConeCapturedType -> unwrappedType.constructor.supertypes?.forEach { it.collectClassIds() }
+            is ConeIntegerLiteralType -> {}
+            is ConeTypeParameterType -> unwrappedType.toTypeParameterSymbol(useSiteSession)?.resolvedBounds?.forEach { it.coneType.collectClassIds() }
+            is ConeStubType -> {}
+            is ConeTypeVariableType -> {}
         }
     }
 
@@ -191,7 +196,7 @@ fun createSubstitutionForScope(
     val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
     val capturedTypeArguments = capturedOrType.typeArguments
 
-    return typeParameters.withIndex().mapNotNull { (index, typeParameter) ->
+    return typeParameters.withIndex().mapNotNull { [index, typeParameter] ->
         val capturedTypeArgument = capturedTypeArguments.getOrNull(index) ?: return@mapNotNull null
         require(capturedTypeArgument is ConeKotlinType) {
             "There should left no projections after capture conversion, but $capturedTypeArgument found at $index"
@@ -277,7 +282,7 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
     val substitutor: ConeSubstitutor = ConeSubstitutor.Empty
 
     (this to substitutor).traverseDepthFirstWithoutDuplicates(
-        getSubsequent = act@{ (next, substitutor) ->
+        getSubsequent = act@{ [next, substitutor] ->
             return@act when (next) {
                 is FirClassSymbol<*> -> {
                     val superClassTypes =
@@ -308,8 +313,8 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
                 }
             }
         },
-        toStackElement = { _, (it, substitutor) -> it.lookupTag.toSymbol(useSiteSession)?.to(substitutor) },
-        visit = { (symbol, _) -> visitedSymbols.add(symbol) },
+        toStackElement = { _, [it, substitutor] -> it.lookupTag.toSymbol(useSiteSession)?.to(substitutor) },
+        visit = { [symbol, _] -> visitedSymbols.add(symbol) },
     )
 }
 
@@ -354,7 +359,7 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
 /**
  * @return `null` only if symbol for `kotlin.Any` is not found (in no-runtime environments)
  */
-fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol? {
+fun FirClassSymbol<*>.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol? {
     for (superType in resolvedSuperTypes) {
         val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
         if (symbol.classKind == ClassKind.CLASS) return symbol

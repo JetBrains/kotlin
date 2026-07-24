@@ -57,6 +57,42 @@ public class KotlinFunctionBridge(
 )
 
 /**
+ * A reverse bridge that allows Kotlin to call into Swift overrides.
+ * This is the mirror of [SirFunctionBridge]: instead of Swift calling Kotlin,
+ * Kotlin dispatches through this bridge to reach a Swift override.
+ */
+public class SirReverseFunctionBridge(
+    name: String,
+    public val kotlinFunctionBridge: KotlinFunctionBridge,
+    public val swiftFunctionBridge: SwiftFunctionBridge,
+    public val cDeclarationBridge: CFunctionBridge,
+) : SirBridge(name) {
+    override fun equals(other: Any?): Boolean {
+        return other is SirReverseFunctionBridge && name == other.name &&
+                kotlinFunctionBridge.lines.firstOrNull() == other.kotlinFunctionBridge.lines.firstOrNull() &&
+                swiftFunctionBridge.lines.firstOrNull() == other.swiftFunctionBridge.lines.firstOrNull() &&
+                cDeclarationBridge.lines.firstOrNull() == other.cDeclarationBridge.lines.firstOrNull()
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + kotlinFunctionBridge.hashCode()
+        result = 31 * result + swiftFunctionBridge.hashCode()
+        result = 31 * result + cDeclarationBridge.hashCode()
+        return result
+    }
+}
+
+/**
+ * Swift part of [SirReverseFunctionBridge].
+ *
+ * @param lines definition of the Swift `@_cdecl` bridge function.
+ */
+public class SwiftFunctionBridge(
+    public val lines: List<String>,
+)
+
+/**
  * Bridge that implements mapping from Kotlin type name to Swift type name.
  *
  * @see TypeBindingBridgeRequest

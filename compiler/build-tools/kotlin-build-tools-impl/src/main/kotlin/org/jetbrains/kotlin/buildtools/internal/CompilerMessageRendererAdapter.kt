@@ -6,23 +6,43 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.api.render
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
+internal interface MessageRendererWithDiagnosticId : MessageRenderer {
+    fun render(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ): String
+}
+
 internal class CompilerMessageRendererAdapter(
     private val compilerMessageRenderer: CompilerMessageRenderer,
-) : MessageRenderer {
+) : MessageRendererWithDiagnosticId {
 
     override fun render(
         severity: CompilerMessageSeverity,
         message: String,
         location: CompilerMessageSourceLocation?,
     ): String {
+        return render(severity, message, location, diagnosticId = null)
+    }
+
+    override fun render(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ): String {
         return compilerMessageRenderer.render(
             severity.asCompilerMessageRendererSeverity(),
             message,
-            location?.asCompilerMessageRendererSourceLocation()
+            location?.asCompilerMessageRendererSourceLocation(),
+            diagnosticId
         )
     }
 
@@ -62,3 +82,15 @@ internal class CompilerMessageRendererAdapter(
 }
 
 internal fun CompilerMessageRenderer.asMessageRenderer(): MessageRenderer = CompilerMessageRendererAdapter(this)
+
+internal fun MessageRenderer.render(
+    severity: CompilerMessageSeverity,
+    message: String,
+    location: CompilerMessageSourceLocation?,
+    diagnosticId: String?,
+): String {
+    return when (this) {
+        is MessageRendererWithDiagnosticId -> render(severity, message, location, diagnosticId)
+        else -> render(severity, message, location)
+    }
+}

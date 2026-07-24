@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class Delegator {
+    // source: 'InitializationOrderTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field a$volatile: java.lang.Object
+    private synthetic final static field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field b$volatile: int
+    private synthetic volatile field d$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getA$volatile(): java.lang.Object
+    private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getB$volatile(): int
+    private final method getBDelegate(): int
+    private final method getD(): java.lang.String
+    private synthetic final method setA$volatile(p0: java.lang.Object): void
+    private synthetic final method setB$volatile(p0: int): void
+    private final method setBDelegate(p0: int): void
+    private final method setD(p0: java.lang.String): void
+    public final method test(): void
+}
+
+@kotlin.Metadata
+public final class InitializationOrderTestKt {
+    // source: 'InitializationOrderTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

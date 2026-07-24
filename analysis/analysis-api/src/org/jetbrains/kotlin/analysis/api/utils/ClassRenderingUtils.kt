@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.utils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
+@KaExperimentalApi
 internal fun Any.renderAsDataClassToString(): String = prettyPrint {
     append(this@renderAsDataClassToString::class.qualifiedName)
     append("(")

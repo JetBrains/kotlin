@@ -32,13 +32,14 @@ import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendInput
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.testInfraError
 
 @InternalFir2IrConverterAPI
 internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
     override fun createIrMangler(): KotlinMangler.IrMangler = JvmIrMangler
 
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): JvmFir2IrExtensions {
-        return JvmFir2IrExtensions(compilerConfiguration)
+        return JvmFir2IrExtensions()
     }
 
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter {
@@ -50,7 +51,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     }
 
     override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider {
-        return JvmIrSpecialAnnotationSymbolProvider
+        return JvmIrSpecialAnnotationSymbolProvider()
     }
 
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> {
@@ -67,7 +68,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     }
 
     override val klibFactories: KlibMetadataFactories
-        get() = error("Should not be called")
+        get() = testInfraError("Should not be called")
 
     override fun createFir2IrConfiguration(
         compilerConfiguration: CompilerConfiguration,
@@ -92,7 +93,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
             fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,
             fir2IrResult.components.irProviders,
-            createFir2IrExtensions(compilerConfiguration),
+            debuggerExtensions = null,
             FirJvmBackendExtension(
                 fir2IrResult.components,
                 fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations(),

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
+import org.jetbrains.kotlin.test.testInfraError
 
 @RequiresOptIn("Please use common converter `Fir2IrResultsConverter` instead")
 annotation class InternalFir2IrConverterAPI
@@ -52,7 +53,7 @@ class Fir2IrResultsConverter(
             targetPlatform.isWasm() -> {
                 wasmResultsConverter.transform(module, inputArtifact)
             }
-            else -> error("Unsupported platform: $targetPlatform")
+            else -> testInfraError("Unsupported platform: $targetPlatform")
         }
     }
 }

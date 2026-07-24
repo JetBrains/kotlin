@@ -1,0 +1,31 @@
+KaLocalVariableSymbol:
+  anchorPsi: KtProperty
+  annotations: []
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: false
+  isDelegated: true
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: prop
+  origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
+  receiverParameter: null
+  returnType: KaErrorType:
+    annotations: []
+    type: ERROR_TYPE
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(incompleteLateinitVariable2.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

@@ -1,5 +1,4 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
-// SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -33,6 +32,6 @@ fun <T> case_4() {
 // TESTCASE NUMBER: 5
 fun <T, K> case_5(x: T) where T: Number?, K: Number {
     if (x == null) {
-        class Case5 constructor(y: K <!INITIALIZER_TYPE_MISMATCH!>=<!> x)
+        class Case5 constructor(y: K = <!INITIALIZER_TYPE_MISMATCH!>x<!>)
     }
 }

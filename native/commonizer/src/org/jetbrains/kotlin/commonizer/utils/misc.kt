@@ -87,7 +87,7 @@ internal inline fun <reified T, reified K : Any> Collection<T>.foldToMap(keySele
         accumulator
     }
 
-    return result.compactMapValues { (_, elements) -> elements.compact() }
+    return result.compactMapValues { [_, elements] -> elements.compact() }
 }
 
 internal fun Any?.isNull(): Boolean = this == null

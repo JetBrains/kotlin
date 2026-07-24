@@ -184,7 +184,7 @@ internal object ProjectionRelationCheckerImpl {
 
         val substitutedType = previousSubstitutor.substituteOrSelf(type)
 
-        for ((index, argument) in type.typeArguments.withIndex()) {
+        for ([index, argument] in type.typeArguments.withIndex()) {
             val unsubstitutedType = argument.type ?: continue
             collectPotentiallyProblematicArguments(unsubstitutedType, previousSubstitutor, parametersToSources, result, session)
 

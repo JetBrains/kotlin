@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
+@K1Deprecation
 class PostponedArgumentsAnalyzer(
     private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
     private val languageVersionSettings: LanguageVersionSettings
@@ -214,7 +216,7 @@ class PostponedArgumentsAnalyzer(
             // and will limit usability
             // Nevertheless, proper design should be done before fixing this
             // Causes KT-53740
-            for ((constructor, resultType) in postponedVariables) {
+            for ([constructor, resultType] in postponedVariables) {
                 val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable
 

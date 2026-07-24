@@ -31,14 +31,17 @@ class KaBaseScopeImplicitReceiverValue(
     private val backingType: KaType,
     ownerSymbol: KaSymbol,
     scopeIndexInTower: Int,
+    label: String?,
 ) : KaImplicitReceiver {
     private val backingOwnerSymbol: KaSymbol = ownerSymbol
     private val backingScopeIndexInTower: Int = scopeIndexInTower
+    private val backingLabel: String? = label
     override val token: KaLifetimeToken get() = backingType.token
 
     override val type: KaType get() = withValidityAssertion { backingType }
     override val ownerSymbol: KaSymbol get() = withValidityAssertion { backingOwnerSymbol }
     override val scopeIndexInTower: Int get() = withValidityAssertion { backingScopeIndexInTower }
+    override val label: String? get() = withValidityAssertion { backingLabel }
 }
 
 @KaImplementationDetail

@@ -21,25 +21,31 @@ import java.io.PrintStream
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 class ContainerConsistencyException(message: String) : Exception(message)
 
+@K1Deprecation
 interface ComponentContainer {
     val containerId: String
 
     fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext
 }
 
+@K1Deprecation
 interface ComponentProvider {
     fun resolve(request: Type): ValueDescriptor?
     fun <T> create(request: Class<T>): T
 }
 
+@K1Deprecation
 object DynamicComponentDescriptor : ValueDescriptor {
     override fun getValue(): Any = throw UnsupportedOperationException()
     override fun toString(): String = "Dynamic"
 }
 
+@K1Deprecation
 class StorageComponentContainer(
     private val id: String,
     parent: StorageComponentContainer? = null
@@ -124,18 +130,22 @@ class StorageComponentContainer(
     override fun toString() = containerId
 }
 
+@K1Deprecation
 fun StorageComponentContainer.registerSingleton(klass: Class<*>): StorageComponentContainer {
     return registerDescriptors(listOf(SingletonTypeComponentDescriptor(this, klass)))
 }
 
+@K1Deprecation
 fun StorageComponentContainer.registerInstance(instance: Any): StorageComponentContainer {
     return registerDescriptors(listOf(InstanceComponentDescriptor(instance)))
 }
 
+@K1Deprecation
 inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
     return resolve(T::class.java, context)
 }
 
+@K1Deprecation
 inline fun <reified T : Any> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
     return resolveMultiple(T::class.java, context)
 }

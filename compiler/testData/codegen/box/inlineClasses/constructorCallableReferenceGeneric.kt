@@ -2,7 +2,6 @@
 // KJS_FULL_RUNTIME
 // SKIP_MANGLE_VERIFICATION
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 interface I {
     companion object {

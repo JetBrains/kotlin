@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -266,7 +265,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
         val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
         val effectiveVisibility = visibility.toLazyEffectiveVisibility(classSymbol)
-        val isStatic = Flags.IS_STATIC_PROPERTY.get(proto.flags)
+        val isStatic = Flags.IS_STATIC_PROPERTY.get(proto.flags) || proto.hasCompanionExtensionReceiver()
         return if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
@@ -321,7 +320,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
         val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
         val effectiveVisibility = visibility.toLazyEffectiveVisibility(classSymbol)
-        val isStatic = Flags.IS_STATIC_PROPERTY.get(proto.flags)
+        val isStatic = Flags.IS_STATIC_PROPERTY.get(proto.flags) || proto.hasCompanionExtensionReceiver()
         return if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
@@ -414,7 +413,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.returnTypeRef = returnTypeRef
-            receiverParameter = proto.receiverType(c.typeTable)?.toTypeRef(local)?.let { receiverType ->
+            receiverParameter = proto.receiverOrCompanionExtensionReceiverType(c.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
@@ -428,7 +427,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
-            val isStatic = Flags.IS_STATIC_PROPERTY.get(flags)
+            val isStatic = Flags.IS_STATIC_PROPERTY.get(flags) || proto.hasCompanionExtensionReceiver()
             dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
 
@@ -564,6 +563,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isDeserializedPropertyFromAnnotation = true
             }
 
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+            }
+
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Property::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)
@@ -663,12 +666,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
 
         val versionRequirements = VersionRequirement.create(proto, c)
-        val isStatic = Flags.IS_STATIC_FUNCTION.get(flags)
+        val isStatic = Flags.IS_STATIC_FUNCTION.get(flags) || proto.hasCompanionExtensionReceiver()
         val namedFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = deserializationOrigin
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
-            receiverParameter = proto.receiverType(local.typeTable)?.toTypeRef(local)?.let { receiverType ->
+            receiverParameter = proto.receiverOrCompanionExtensionReceiverType(local.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
@@ -732,6 +735,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             applyKDoc(c.kdocDeserializer.loadFunctionKDoc(proto))
         }.apply {
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+            }
             this.versionRequirements = versionRequirements
             setLazyPublishedVisibility(c.session)
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Function::getCompilerPluginDataList)
@@ -763,7 +769,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val delegatedSelfType = buildResolvedTypeRef {
             coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterType(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }
@@ -902,6 +908,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     index,
                 )
                 valueParameterKind = kind
+            }.also { parameter ->
+                proto.equalityBoundType(c.typeTable)?.let { type ->
+                    parameter.equalityBoundType = c.typeDeserializer.type(type)
+                }
             }
         }
     }

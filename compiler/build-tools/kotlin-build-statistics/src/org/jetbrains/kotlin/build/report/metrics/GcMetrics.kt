@@ -12,7 +12,7 @@ class GcMetrics : Serializable {
 
     private val myGcMetrics = HashMap<String, GcMetric>()
     fun addAll(gcMetrics: GcMetrics) {
-        gcMetrics.myGcMetrics.forEach { (key, value) ->
+        gcMetrics.myGcMetrics.forEach { [key, value] ->
             val gcMetric = myGcMetrics[key]
             myGcMetrics[key] = gcMetric?.let { gcMetric + value } ?: value
         }

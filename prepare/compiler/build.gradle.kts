@@ -8,6 +8,9 @@ import java.util.regex.Pattern.quote
 description = "Kotlin Compiler"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
     // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
     `java-library`
@@ -16,67 +19,65 @@ plugins {
 }
 
 
-val fatJarContents by configurations.creating {
+val fatJarContents = configurations.create("fatJarContents") {
     isCanBeResolved = true
     isCanBeConsumed = false
     attributes {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }
-val fatJarContentsStripMetadata by configurations.creating
-val fatJarContentsStripServices by configurations.creating
-val fatJarContentsStripVersions by configurations.creating
+val fatJarContentsStripMetadata = configurations.create("fatJarContentsStripMetadata")
+val fatJarContentsStripServices = configurations.create("fatJarContentsStripServices")
+val fatJarContentsStripVersions = configurations.create("fatJarContentsStripVersions")
 
-val compilerVersion by configurations.creating
+val compilerVersion = configurations.create("compilerVersion")
 
-val builtinsMetadata by configurations.creating
+val builtinsMetadata = configurations.create("builtinsMetadata")
 
-val api by configurations
-val proguardLibraries by configurations.creating {
+val api = configurations.api.get()
+val proguardLibraries = configurations.create("proguardLibraries") {
     extendsFrom(api)
 }
 
 // Libraries to copy to the lib directory
-val libraries by configurations.creating {
+val libraries = configurations.create("libraries") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 }
 
-val librariesStripVersion by configurations.creating
+val librariesStripVersion = configurations.create("librariesStripVersion")
 
 // for sbom only
-val librariesKotlinTest by configurations.creating
+val librariesKotlinTest = configurations.create("librariesKotlinTest")
 
 // Compiler plugins should be copied without `kotlin-` prefix
-val compilerPlugins by configurations.creating {
+val compilerPlugins = configurations.create("compilerPlugins") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 
     isCanBeConsumed = false
     isCanBeResolved = true
 }
-val compilerPluginsCompat by configurations.creating {
+val compilerPluginsCompat = configurations.create("compilerPluginsCompat") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val sources by configurations.creating {
+val sources = configurations.create("sources") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
     isTransitive = false
 }
 
 // contents of dist/maven directory
-val distMavenContents by configurations.creating {
+val distMavenContents = configurations.create("distMavenContents") {
     isTransitive = false
 }
 // contents of dist/common directory
-val distCommonContents by configurations.creating
-val distStdlibMinimalForTests by configurations.creating
-val buildNumber by configurations.creating
+val distCommonContents = configurations.create("distCommonContents")
+val distStdlibMinimalForTests = configurations.create("distStdlibMinimalForTests")
+val buildNumber = configurations.create("buildNumber")
 
 val compilerBaseName = name
-
-val compilerModules: Array<String> by rootProject.extra
 
 val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing-cli",
@@ -143,7 +144,7 @@ dependencies {
 
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))
-    compilerModules
+    CompilerModules.compilerModules
         .filter { it != ":compiler:compiler.version" } // Version will be added directly to the final jar excluding proguard and relocation
         .forEach {
             fatJarContents(project(it)) { isTransitive = false }
@@ -154,6 +155,7 @@ dependencies {
     libraries(kotlinStdlib(classifier = "distJsJar"))
     libraries(kotlinStdlib(classifier = "distJsKlib"))
     libraries(kotlinStdlib(classifier = "distWasmJsKlib"))
+    libraries(kotlinStdlib(classifier = "distWasmWasiKlib"))
 
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 
@@ -255,7 +257,7 @@ val distSbomTask = configureSbom(
     )
 )
 
-val packCompiler by task<Jar> {
+val packCompiler = tasks.register<Jar>("packCompiler") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
@@ -297,7 +299,7 @@ val packCompiler by task<Jar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(packCompiler)
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
@@ -315,6 +317,7 @@ val proguard by task<CacheableProguardTask> {
             !org/mozilla/javascript/xml/impl/xmlbeans/**,
             !net/sf/cglib/**,
             !META-INF/maven**,
+            !META-INF/versions/**,
             **.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
             custom-formatters.js,
             META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
@@ -351,7 +354,7 @@ val proguard by task<CacheableProguardTask> {
 }
 
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
-val distDir: String by rootProject.extra
+val distDir = rootProject.extra["distDir"] as String
 
 val jar = runtimeJar {
     dependsOn(pack)
@@ -365,13 +368,20 @@ val jar = runtimeJar {
         compilerVersion.map(::zipTree)
     }
 
+    // ProGuard does not preserve the META-INF/versions/9 multi-release layout, it rewrites classes to paths derived from their FQ name.
+    // To fix it, we exclude VarHandleWrapperImpl.class from injars (see above) and add it here to the correct location manually.
+    from(packCompiler.map { zipTree(it.archiveFile.get().asFile) }) {
+        include("META-INF/versions/9/com/intellij/concurrency/VarHandleWrapperImpl.class")
+    }
+
     manifest.attributes["Class-Path"] = compilerManifestClassPath
     manifest.attributes["Main-Class"] = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+    manifest.attributes["Multi-Release"] = "true"
 }
 
 sourcesJar {
     from {
-        compilerModules.map {
+        CompilerModules.compilerModules.map {
             project(it).mainSourceSet.allSource
         }
     }

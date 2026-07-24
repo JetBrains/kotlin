@@ -1,3 +1,4 @@
+annotation class MyAnno
 class A
 
 val xx = A()

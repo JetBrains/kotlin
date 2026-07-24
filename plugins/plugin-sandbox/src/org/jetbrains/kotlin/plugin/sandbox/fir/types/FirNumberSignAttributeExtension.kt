@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMappi
 import org.jetbrains.kotlin.fir.extensions.FirTypeAttributeExtension
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.foldMap
@@ -106,7 +105,7 @@ class ConeErrorType(
     override fun hashCode(): Int = System.identityHashCode(this)
 }
 
-abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
+sealed class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     abstract val lookupTag: ConeClassifierLookupTag
     abstract val isMarkedNullable: Boolean
 
@@ -130,8 +129,17 @@ abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
     }
 }
 
-abstract class ConeClassLikeType : ConeLookupTagBasedType() {
+sealed class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
+}
+
+class ConeTypeParameterType(
+    override val lookupTag: ConeTypeParameterLookupTag,
+    override val isMarkedNullable: Boolean,
+    override val attributes: ConeAttributes = ConeAttributes.Empty
+) : ConeLookupTagBasedType() {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
 }
 
 /**
@@ -289,6 +297,9 @@ class ConeRawType private constructor(
     }
 }
 
+@RequiresOptIn("When modifying an existing intersection type, consider using the `mapTypes` extension. Otherwise, make sure to not forget about upperBoundForApproximation.")
+annotation class DelicateIntersectionConstructor
+
 /**
  * This class represents so-called intersection type like T1&T2&T3 [intersectedTypes] = listOf(T1, T2, T3).
  *
@@ -307,9 +318,9 @@ class ConeRawType private constructor(
  * @param intersectedTypes collection of types to be intersected. None of them is allowed to be another intersection type.
  * @param upperBoundForApproximation a super-type (upper bound), if it's known, to be used as an approximation.
  */
-class ConeIntersectionType(
+class ConeIntersectionType @DelicateIntersectionConstructor constructor(
     val intersectedTypes: Collection<ConeKotlinType>,
-    val upperBoundForApproximation: ConeKotlinType? = null,
+    val upperBoundForApproximation: ConeKotlinType?,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker, ConeTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
     override val typeArguments: Array<out ConeTypeProjection>

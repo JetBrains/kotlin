@@ -8,16 +8,17 @@ package org.jetbrains.ring
 
 import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.random.Random
+import kotlinx.benchmark.*
 import kotlinx.cinterop.StableRef
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+private const val BENCHMARK_SIZE = 10000
 
 private const val REPEAT_COUNT = BENCHMARK_SIZE
 private const val REFERENCES_COUNT = 3
 
-private class Data(var x: Int = Random.nextInt(1000) + 1)
+private class Data(var x: Int)
 
 private class ReferenceWrapper private constructor(
     data: Data
@@ -41,7 +42,7 @@ private class ReferenceWrapper private constructor(
     }
 
     companion object {
-        fun create() = ReferenceWrapper(Data())
+        fun create(rnd: Random) = ReferenceWrapper(Data(rnd.nextInt(1000) + 1))
     }
 }
 
@@ -54,35 +55,47 @@ private fun ReferenceWrapper.stress(): Int {
 }
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-open class WeakRefBenchmark {
-    private val weight = Array(BENCHMARK_SIZE) { ReferenceWrapper.create() }
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class WeakRefBenchmark : SkipWhenBaseOnly() {
+    // Use the same seed for reproducibility
+    private val rnd = Random(85140)
 
-    private val aliveRef = ReferenceWrapper.create()
-    private val deadRef = ReferenceWrapper.create().apply {
+    private val weight = Array(BENCHMARK_SIZE) { ReferenceWrapper.create(rnd) }
+
+    private val aliveRef = ReferenceWrapper.create(rnd)
+    private val deadRef = ReferenceWrapper.create(rnd).apply {
         dispose()
         GC.collect()
     }
 
     // Access alive reference.
-    fun aliveReference() {
-        assertNotEquals(0, aliveRef.stress())
+    @Benchmark
+    fun aliveReference(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(aliveRef.stress())
     }
 
     // Access dead reference.
-    fun deadReference() {
-        assertEquals(0, deadRef.stress())
+    @Benchmark
+    fun deadReference(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(deadRef.stress())
     }
 
     // Access reference that is nulled out in the middle.
-    fun dyingReference() {
-        val ref = ReferenceWrapper.create()
+    @Benchmark
+    fun dyingReference(bh: Blackhole) {
+        skipWhenBaseOnly()
+        val ref = ReferenceWrapper.create(rnd)
 
         ref.dispose()
         GC.schedule()
 
-        Blackhole.consume(ref.stress())
+        bh.consume(ref.stress())
     }
 
+    @TearDown
     fun clean() {
         weight.forEach { it.dispose() }
     }

@@ -8,19 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
@@ -30,14 +24,9 @@ import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -248,10 +237,6 @@ internal fun deserializeClassToSymbol(
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
 
-        if (classId == StandardClassIds.Enum) {
-            addCloneForEnumIfNeeded(classOrObject, sourceElement, context.dispatchReceiver)
-        }
-
         session.deserializationExtension?.run {
             configureDeserializedClass(classId)
         }
@@ -313,13 +298,6 @@ private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRe
         return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
     }
 
-    @OptIn(SuspiciousValueClassCheck::class)
-    if (klass.isValue) {
-        return MultiFieldValueClassRepresentation(constructor.valueParameters.map { parameter ->
-            parameter.name to parameter.coneRigidType()
-        })
-    }
-
     return null
 }
 
@@ -331,45 +309,4 @@ private fun FirValueParameter.coneRigidType(): ConeRigidType {
     }
 
     return type
-}
-
-private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
-    classOrObject: KtClassOrObject,
-    classSourceElement: KtSourceElement,
-    dispatchReceiver: ConeClassLikeType?,
-) {
-    val hasCloneFunction = classOrObject.declarations
-        .any { it is KtNamedFunction && it.name == "clone" && it.valueParameters.isEmpty() }
-
-    if (hasCloneFunction) {
-        return
-    }
-
-    val anyLookupId = StandardClassIds.Any.toLookupTag()
-    val cloneCallableId = StandardClassIds.Callables.clone
-
-    val sourceElement = classSourceElement.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.CloneFunction)
-
-    declarations += buildNamedFunction {
-        moduleData = this@addCloneForEnumIfNeeded.moduleData
-        origin = this@addCloneForEnumIfNeeded.origin
-        source = sourceElement
-
-        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-
-        returnTypeRef = buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = emptyArray(), isMarkedNullable = false)
-        }
-
-        status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Protected,
-            Modality.FINAL,
-            EffectiveVisibility.Protected(anyLookupId)
-        )
-        isLocal = false
-
-        name = cloneCallableId.callableName
-        symbol = FirNamedFunctionSymbol(cloneCallableId)
-        dispatchReceiverType = dispatchReceiver!!
-    }
 }

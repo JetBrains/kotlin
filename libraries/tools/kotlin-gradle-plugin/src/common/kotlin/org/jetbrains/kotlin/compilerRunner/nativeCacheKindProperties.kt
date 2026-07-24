@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 
 internal fun Project.isKonanIncrementalCompilationEnabled(): Boolean {
-    return PropertiesProvider(this).incrementalNative ?: false
+    return PropertiesProvider(this).incrementalNative ?: true
 }
 
 internal fun Project.getKonanParallelThreads(): Int {

@@ -1,9 +1,12 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -18,6 +21,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
@@ -44,7 +48,7 @@ tasks.compileTestKotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
 
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
 

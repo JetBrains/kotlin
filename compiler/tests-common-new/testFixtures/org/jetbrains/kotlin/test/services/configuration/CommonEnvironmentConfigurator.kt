@@ -88,7 +88,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                 }
 
             val sourceDependencies = buildMap {
-                for ((testModule, cliModule) in hmppModules) {
+                for ([testModule, cliModule] in hmppModules) {
                     put(cliModule, testModule.dependsOnDependencies.map { hmppModules.getValue(it.dependencyModule) })
                 }
             }
@@ -97,7 +97,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             val friendDependencies = mutableMapOf<HmppCliModule, List<String>>()
 
             if (SEPARATE_KMP_COMPILATION in module.directives) {
-                for ((testModule, cliModule) in hmppModules) {
+                for ([testModule, cliModule] in hmppModules) {
                     val dependencies = mutableListOf<String>()
                     val friends = mutableListOf<String>()
 

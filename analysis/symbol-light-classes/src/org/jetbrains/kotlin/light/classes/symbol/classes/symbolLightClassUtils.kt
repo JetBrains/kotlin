@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,18 +8,20 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -71,7 +73,7 @@ internal fun createLightClassNoCache(
 }
 
 internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTracker> {
-    val outOfBlockTracker = KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
+    val outOfBlockTracker = KotlinAsJavaSupport.getInstance(project).sourceModificationTracker()
     return if (isLocal) {
         val file = containingKtFile
         listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
@@ -119,7 +121,8 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
  * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
  * inside the containing class
  */
-internal fun KaSession.createMethods(
+context(_: KaSession)
+internal fun createMethods(
     lightClass: SymbolLightClassBase,
     declarations: Sequence<KaCallableSymbol>,
     result: MutableList<PsiMethod>,
@@ -127,9 +130,12 @@ internal fun KaSession.createMethods(
     suppressStatic: Boolean = false,
     staticsFromCompanion: Boolean = false,
 ) {
-    val (ctorProperties, regularMembers) = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+    val [ctorProperties, regularMembers] = declarations.partition {
+        it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null
+    }
 
-    fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
+    context(_: KaSession)
+    fun handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
             is KaNamedFunctionSymbol -> createSimpleMethods(
                 containingClass = lightClass,
@@ -158,11 +164,11 @@ internal fun KaSession.createMethods(
 
     // Regular members
     regularMembers.forEach {
-        this@createMethods.handleDeclaration(it)
+        handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
-        this@createMethods.handleDeclaration(it)
+        handleDeclaration(it)
     }
 }
 
@@ -182,7 +188,8 @@ internal fun interface LightMethodCreator {
 }
 
 /** @see LightMethodCreator */
-internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
+context(_: KaSession)
+internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
     declaration: T,
     methodIndexBase: Int,
     lightMethodCreator: LightMethodCreator,
@@ -227,9 +234,9 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
 
     val parameterMaskFilter = valueParameterMaskFilter(valueParameters, parameterCount)
 
+    val defaultValueMask = defaultParameterValueMask(declaration)
     for (index in parameterCount - 1 downTo 0) {
-        val valueParameter = valueParameters[index]
-        if (!valueParameter.hasDeclaredDefaultValue || !pickMask[index]) continue
+        if (!defaultValueMask[index] || !pickMask[index]) continue
         pickMask.clear(index)
 
         if (parameterMaskFilter.accepts(pickMask)) {
@@ -240,6 +247,43 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
             )
         }
     }
+}
+
+/**
+ * For each value parameter of the [declaration] (a function or a constructor), tells whether it has a default value
+ * that the compiler takes into account when generating `@JvmOverloads` variants (or the synthetic no-arg constructor)
+ * *on this very declaration*.
+ *
+ * - A default value declared on the parameter itself always counts;
+ * - For an `actual` declaration, a default value declared on the corresponding `expect` parameter counts, because the
+ *   overloads are emitted on the `actual` declaration (the `expect` one has no body);
+ * - A default value inherited from an *overridden* function is intentionally ignored: `@JvmOverloads` has no effect on
+ *   an override, the overloads belong to the base declaration.
+ */
+@OptIn(KaContextParameterApi::class)
+context(_: KaSession)
+internal fun defaultParameterValueMask(declaration: KaFunctionSymbol): BitSet {
+    val valueParameters = declaration.valueParameters
+    val mask = BitSet(valueParameters.size)
+
+    valueParameters.forEachIndexed { index, valueParameter ->
+        if (valueParameter.hasDeclaredDefaultValue) {
+            mask.set(index)
+        }
+    }
+
+    if (declaration.isActual) {
+        for (expectSymbol in declaration.getExpectsForActual()) {
+            val expectParameters = (expectSymbol as? KaFunctionSymbol)?.valueParameters ?: continue
+            for (index in valueParameters.indices) {
+                if (!mask[index] && expectParameters.getOrNull(index)?.hasDeclaredDefaultValue == true) {
+                    mask.set(index)
+                }
+            }
+        }
+    }
+
+    return mask
 }
 
 private sealed class ValueParameterMaskFilter {
@@ -458,7 +502,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     )
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegatedProperty || property.isFromPrimaryConstructor) return true
+    if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
         return hasBackingFieldByPsi
@@ -485,7 +529,8 @@ private fun PsiElement.hasBackingField(): Boolean {
     return hasInitializer() || getter?.takeIf { it.hasBody() } == null || setter?.takeIf { it.hasBody() } == null && isVar
 }
 
-internal fun KaSession.createInheritanceList(
+context(session: KaSession)
+internal fun createInheritanceList(
     lightClass: SymbolLightClassForClassLike<*>,
     forExtendsList: Boolean,
     superTypes: List<KaType>,
@@ -544,12 +589,19 @@ internal fun KaSession.createInheritanceList(
                 if (mappedToNoCollectionAsIs != null &&
                     mappedType.canonicalText != mappedToNoCollectionAsIs.canonicalText
                 ) {
+                    // The Kotlin collection type is mapped to a Java collection (e.g. `kotlin.collections.List` -> `java.util.List`).
+                    // Drop the Kotlin collection supertype and add the Java one instead.
+
                     // Add java supertype
                     listBuilder.addReference(mappedToNoCollectionAsIs)
                     // Add marker interface
                     if (superType is KaClassType) {
                         listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
                     }
+                } else {
+                    // A real `kotlin.collections` class without a dedicated Java mapping (e.g. `kotlin.collections.AbstractMap`).
+                    // Just add it as a supertype.
+                    listBuilder.addReference(mappedType)
                 }
             } else {
                 listBuilder.addReference(mappedType)
@@ -559,7 +611,8 @@ internal fun KaSession.createInheritanceList(
     return listBuilder
 }
 
-internal fun KaSession.createInnerClasses(
+context(session: KaSession)
+internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
     manager: PsiManager,
     containingClass: SymbolLightClassBase,
@@ -576,7 +629,7 @@ internal fun KaSession.createInnerClasses(
         }
     }
 
-    val languageVersionSettings = classOrObject?.let { getModule(it) as? KaSourceModule }?.languageVersionSettings
+    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
         ?: LanguageVersionSettingsImpl.DEFAULT
 
     if (containingClass is SymbolLightClassForInterface &&
@@ -597,7 +650,12 @@ internal fun KaSession.createInnerClasses(
     return result
 }
 
-internal fun KaSession.checkIsInheritor(classOrObject: KtClassOrObject, superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+context(session: KaSession)
+internal fun checkIsInheritor(
+    classOrObject: KtClassOrObject,
+    superClassOrigin: KtClassOrObject,
+    checkDeep: Boolean,
+): Boolean {
     if (classOrObject == superClassOrigin) return false
     if (superClassOrigin is KtEnumEntry) {
         return false // enum entry cannot have inheritors
@@ -638,7 +696,8 @@ internal fun KaSession.checkIsInheritor(classOrObject: KtClassOrObject, superCla
 internal val KaDeclarationSymbol.hasReifiedParameters: Boolean
     get() = typeParameters.any { it.isReified }
 
-internal fun KaSession.addPropertyBackingFields(
+context(session: KaSession)
+internal fun addPropertyBackingFields(
     lightClass: SymbolLightClassBase,
     result: MutableList<PsiField>,
     containerSymbol: KaDeclarationContainerSymbol,
@@ -654,9 +713,13 @@ internal fun KaSession.addPropertyBackingFields(
             filter { lightClass.containingClass?.isInterface == true && !it.isJvmField }
         }
 
-    val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
-    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject)
+    val [ctorProperties, memberProperties] = propertySymbols.partition {
+        it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null
+    }
+    val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
+        @OptIn(KaExperimentalApi::class)
+        val isStatic = forceIsStaticTo ?: (containerIsObject || propertySymbol.isCompanion)
         createAndAddField(
             lightClass = lightClass,
             declaration = propertySymbol,
@@ -680,7 +743,8 @@ internal fun KaSession.addPropertyBackingFields(
  * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  * @param skipReturnTypeCheck whether to skip the return type of the callable symbol during the check
  */
-internal fun KaSession.hasValueClassInSignature(
+context(_: KaSession)
+internal fun hasValueClassInSignature(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean = false,
     valueParameterPickMask: BitSet? = null,
@@ -693,7 +757,7 @@ internal fun KaSession.hasValueClassInSignature(
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
-        return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
+        return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
             valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
         }
     }
@@ -701,7 +765,8 @@ internal fun KaSession.hasValueClassInSignature(
     return false
 }
 
-internal fun KaSession.hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
+context(_: KaSession)
+internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
     val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
     val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
     // Only explicitly declared types can be checked to avoid contract violations
@@ -726,7 +791,8 @@ internal fun hasMangledNameDueValueClassesInSignature(
     else -> !isTopLevel
 }
 
-internal fun KaSession.typeForValueClass(type: KaType): Boolean {
+context(session: KaSession)
+internal fun typeForValueClass(type: KaType): Boolean {
     val symbol = type.expandedSymbol as? KaNamedClassSymbol ?: return false
     return symbol.isInline
 }

@@ -26,14 +26,14 @@ open class JvmNameResolverBase(
         }
 
         if (record.substringIndexCount >= 2) {
-            val (begin, end) = record.substringIndexList
+            val [begin, end] = record.substringIndexList
             if (0 <= begin && begin <= end && end <= string.length) {
                 string = string.substring(begin, end)
             }
         }
 
         if (record.replaceCharCount >= 2) {
-            val (from, to) = record.replaceCharList
+            val [from, to] = record.replaceCharList
             string = string.replace(from.toChar(), to.toChar())
         }
 

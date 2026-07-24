@@ -1,0 +1,264 @@
+KtFile: 'companionExtension.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  null
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,72): 'class C'
+  null
+
+KtNamedFunction(74,98): 'companion fun C.foo() {}'
+  null
+
+KtDeclarationModifierList(74,83): 'companion'
+  null
+
+KtTypeReference(88,89): 'C'
+  null
+
+KtUserType(88,89): 'C'
+  null
+
+KtNameReferenceExpression(88,89): 'C'
+  null
+
+KtParameterList(93,95): '()'
+  null
+
+KtBlockExpression(96,98): '{}'
+  null
+
+KtProperty(99,134): 'companion val C.prop: Int get() = 1'
+  null
+
+KtDeclarationModifierList(99,108): 'companion'
+  null
+
+KtTypeReference(113,114): 'C'
+  null
+
+KtUserType(113,114): 'C'
+  null
+
+KtNameReferenceExpression(113,114): 'C'
+  null
+
+KtTypeReference(121,124): 'Int'
+  null
+
+KtUserType(121,124): 'Int'
+  null
+
+KtNameReferenceExpression(121,124): 'Int'
+  null
+
+KtPropertyAccessor(125,134): 'get() = 1'
+  null
+
+KtParameterList(128,130): '()'
+  null
+
+KtConstantExpression(133,134): '1'
+  null
+
+KtNamedFunction(136,198): 'fun usage() {'
+  null
+
+KtParameterList(145,147): '()'
+  null
+
+KtBlockExpression(148,198): '{'
+  null
+
+KtDotQualifiedExpression(154,161): 'C.foo()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(154,155): 'C'
+  null
+
+KtCallExpression(156,161): 'foo()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(156,159): 'foo'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(159,161): '()'
+  null
+
+KtDotQualifiedExpression(166,172): 'C.prop'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(166,167): 'C'
+  null
+
+KtNameReferenceExpression(168,172): 'prop'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(178,184): 'C::foo'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(178,179): 'C'
+  null
+
+KtNameReferenceExpression(181,184): 'foo'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(189,196): 'C::prop'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(189,190): 'C'
+  null
+
+KtNameReferenceExpression(192,196): 'prop'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}

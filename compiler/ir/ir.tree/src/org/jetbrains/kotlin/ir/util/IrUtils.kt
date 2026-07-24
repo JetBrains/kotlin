@@ -37,8 +37,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.StringWriter
 
 /**
@@ -272,6 +275,16 @@ val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 
+val IrSymbol.fqNameWhenAvailable: FqName?
+    get() = if (isBound) (owner as IrDeclarationWithName?)?.fqNameWhenAvailable
+    else (signature as? IdSignature.CommonSignature)?.let { FqName("${it.packageFqName}.${it.declarationFqName}") }
+
+val IrClassSymbol.classIdWhenAvailable: ClassId?
+    get() = if (isBound) owner.classId
+    else (signature as? IdSignature.CommonSignature)?.let {
+        ClassId(FqName(it.packageFqName), FqName(it.declarationFqName), isLocal = false)
+    }
+
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() {
         val sb = StringBuilder()
@@ -332,6 +345,8 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
+fun IrAnnotation.isAnnotation(classId: ClassId): Boolean = isAnnotationWithEqualFqName(classId.asSingleFqName())
+
 // Just delegate to IrAnnotation.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
 fun IrAnnotation.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
@@ -346,55 +361,21 @@ fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
-        it.symbol.owner.parentAsClass.symbol == symbol
+        it.classSymbol == symbol
     }
 
-fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
-
-fun IrAnnotation.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.parameters.single { it.name.asString() == name }
-    return (arguments[parameter.indexInParameters] as IrConst).value as String
-}
-
-inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
-    getAnnotationValueOrNullImpl(name) as T?
-
-@PublishedApi
-internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
-    val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { arguments[it.indexInParameters] }
-    return (argument as IrConst?)?.value
-}
-
-inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
-    getAnnotationArgumentValueImpl(fqName, argumentName) as T?
-
-@PublishedApi
-internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
+inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (parameter in annotation.symbol.owner.parameters) {
-        if (parameter.name.asString() == argumentName) {
-            val actual = annotation.arguments[parameter.indexInParameters] as? IrConst
-            return actual?.value
-        }
-    }
-    return null
+    return annotation.getConstArgument(argumentName)
 }
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(StandardClassIds.Annotations.ParameterNames.retentionValue)
+        getAnnotation(StandardNames.FqNames.retention)?.argumentMapping[StandardClassIds.Annotations.ParameterNames.retentionValue]
                 as? IrGetEnumValue ?: return null
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.parameters.find { it.name == name }?.indexInParameters ?: return null
-    return arguments[index]
-}
-
 
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 
@@ -580,7 +561,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
                     extractTypeParameters(irFunction.parentClassOrNull!!)
                 }
             }
-        for ((index, typeParam) in parentTypeParameters.withIndex()) {
+        for ([index, typeParam] in parentTypeParameters.withIndex()) {
             dispatchReceiverTypeArguments[index].typeOrNull?.let {
                 result[typeParam.symbol] = it
             }
@@ -669,6 +650,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
     }
 
 internal fun IrConst.shallowCopy() = IrConstImpl(
+    constructorIndicator = null,
     startOffset,
     endOffset,
     type,
@@ -820,7 +802,7 @@ fun IrValueParameter.copyTo(
             endOffset = originalDefault.endOffset,
             expression = originalDefault.expression.run {
                 val symbolRemapper = object : DeepCopySymbolRemapper() {
-                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    val remapTypeSymbolMap = remapTypeMap.map { [key, value] -> key.symbol to value.symbol }.toMap()
                     override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
                         remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
 
@@ -910,7 +892,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
         }
     }
     typeParameters = typeParameters memoryOptimizedPlus newTypeParameters
-    srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
+    srcTypeParameters.zip(newTypeParameters).forEach { [srcParameter, dstParameter] ->
         dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
     return newTypeParameters
@@ -1087,7 +1069,7 @@ object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
 
 
 val IrFunction.isStatic: Boolean
-    get() = parent is IrClass && dispatchReceiverParameter == null
+    get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != DescriptorVisibilities.LOCAL
 
 val IrDeclaration.isTopLevel: Boolean
     get() {
@@ -1276,7 +1258,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
     typeParametersFromContext: List<IrTypeParameter> = listOf(),
-    remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
 ): IrSimpleFunction {
     return createSimpleFunction(
         startOffset = oldFunction.startOffset,
@@ -1301,7 +1282,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
         annotations = oldFunction.annotations
 
         copyFunctionSignatureAsStaticFrom(oldFunction, returnType, dispatchReceiverType, typeParametersFromContext)
-        remapMultiFieldValueClassStructure(oldFunction, this, null)
 
         if (copyMetadata) metadata = oldFunction.metadata
 
@@ -1312,13 +1292,14 @@ fun IrFactory.createStaticFunctionWithReceivers(
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
 
-// SAM class used as a superclass can sometimes have type projections.
-// But that's not suitable for super-types, so we erase them
-fun IrType.removeProjections(): IrType {
+fun IrType.removeProjectionsToMakeValidSuperType(): IrType {
     if (this !is IrSimpleType) return this
     val arguments = arguments.mapIndexed { index, argument ->
         val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]
-        fun erasedUpperBound() = typeParameter.erasedUpperBound.defaultType
+        fun erasedUpperBound(): IrSimpleType {
+            val wasNullable = argument.typeOrNull?.isNullable() == true
+            return typeParameter.erasedUpperBound.defaultType.withNullability(wasNullable)
+        }
 
         // Star projections are not allowed in supertype clause
         if (argument !is IrTypeProjection) return@mapIndexed erasedUpperBound()
@@ -1382,7 +1363,7 @@ private fun IrFunction.copyAndRenameConflictingTypeParametersFrom(
 
     val zipped = contextParameters.zip(newParameters)
     val parameterMap = zipped.toMap()
-    for ((oldParameter, newParameter) in zipped) {
+    for ([oldParameter, newParameter] in zipped) {
         newParameter.copySuperTypesFrom(oldParameter, parameterMap)
     }
 
@@ -1453,7 +1434,7 @@ fun IrFunction.hasShape(
     if (actualShape.contextParameterCount != contextParameters) return false
     if (actualShape.regularParameterCount != regularParameters) return false
 
-    for ((param, expectedType) in parameters zip parameterTypes) {
+    for ([param, expectedType] in parameters zip parameterTypes) {
         if (expectedType != null && param.type != expectedType) return false
     }
 
@@ -1532,7 +1513,7 @@ inline fun <reified T> convertTo(value: Any): T {
     }
 }
 
-private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
+public fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
     val constType = irType.makeNotNull().removeAnnotations()
@@ -1595,7 +1576,7 @@ fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
 
-fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
+fun IrDeclarationWithName.isTopLevelInPackage(name: String, packageFqName: FqName) =
     this.name.asString() == name && parent.kotlinFqName == packageFqName
 
 val IrValueDeclaration.isAssignable: Boolean
@@ -1629,7 +1610,7 @@ fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return arguments.filterNotNull()
 }
 
-val IrFunction.propertyIfAccessor: IrDeclaration
+val IrFunction.propertyIfAccessor: IrDeclarationWithName
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
 /**

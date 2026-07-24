@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 @Suppress("UNUSED")
 class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testSingleConjunct(): KaType {
         val type = getTypeByCaret("type")
         return session.typeCreator.intersectionType {

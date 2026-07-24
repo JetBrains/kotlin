@@ -1,24 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildExtension
-import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
-import org.jetbrains.kotlin.sir.providers.SirParentProvider
-import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.sirModule
-import org.jetbrains.kotlin.sir.providers.toSir
+import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
-import org.jetbrains.kotlin.sir.providers.withSessions
-import org.jetbrains.kotlin.sir.util.SirPlatformModule
+import org.jetbrains.kotlin.sir.util.SirPlatformLikeModule
 import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirParentProviderImpl(
@@ -48,7 +41,7 @@ public class SirParentProviderImpl(
 
             val ktModule = symbol.containingModule
             val sirModule = with(sirSession) { ktModule.sirModule() }
-            return@withSessions if (packageFqName.isRoot || sirModule is SirPlatformModule) {
+            return@withSessions if (packageFqName.isRoot || sirModule is SirPlatformLikeModule) {
                 sirModule
             } else {
                 val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }

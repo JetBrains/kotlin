@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.directives.model.*
+import org.jetbrains.kotlin.test.testInfraError
 
 class RegisteredDirectivesBuilder private constructor(
     private val simpleDirectives: MutableList<SimpleDirective>,
@@ -72,7 +73,7 @@ class RegisteredDirectivesBuilder private constructor(
             @Suppress("UNCHECKED_CAST")
             put(key, (alreadyRegistered + value) as V)
         } else {
-            error("Default values for $key directive already registered")
+            testInfraError("Default values for $key directive already registered")
         }
     }
 

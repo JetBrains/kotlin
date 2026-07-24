@@ -14,6 +14,7 @@ import A2 = JS_TESTS.foo.A2;
 import O3 = JS_TESTS.foo.O3;
 import MyRootException = JS_TESTS.foo.MyRootException;
 import MySpecificException = JS_TESTS.foo.MySpecificException;
+import Seventh = JS_TESTS.foo.Seventh;
 
 class Impl extends AC {
     z(z: number): void {
@@ -44,6 +45,8 @@ class A2Impl extends A2 {
     }
 
 }
+
+class SeventhImpl extends Seventh {}
 
 function box(): string {
     const impl = new Impl();
@@ -134,6 +137,9 @@ function box(): string {
     if (!(rootException instanceof Error)) return "Error: MyRootException should be an instance of Error";
     if (!(specificException instanceof Error)) return "Error: MySpecificException should be an instance of Error";
     if (!(specificException instanceof MyRootException)) return "Error: MySpecificException should be an instance of MySpecificException";
+
+    const seventhImpl = new SeventhImpl();
+    if (seventhImpl.foo != 42) return "Error: SeventhImpl.foo should return 42";
 
     return "OK";
 }

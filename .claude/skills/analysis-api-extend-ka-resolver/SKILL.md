@@ -232,9 +232,6 @@ Investigate:
 - `KtConstructorDelegationReferenceExpression` → needed to add `FirReference` as a handled case
 - `KtReturnExpression` → `FirReturnExpression` wasn't handled, added a new branch + helper
 
-Similarly, read the FE10 resolver:
-- **File:** `analysis/analysis-api-fe10/src/org/jetbrains/kotlin/analysis/api/descriptors/components/KaFe10Resolver.kt`
-
 Check if the `BindingContext`-based resolution handles the PSI type. Examples of needed changes:
 - `KtCallableReferenceExpression` → redirects to `psi.callableReference`
 - `KtWhenConditionInRange` → redirects to `psi.operationReference`
@@ -278,10 +275,10 @@ Read the newly generated/updated golden `.txt` files and sanity-check:
 For quick investigation of individual tests, run on a specific subdirectory or file:
 ```bash
 # By subdirectory
-./gradlew manageTestDataGlobally --mode=check --golden-only --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/<specific-subdir>/
+./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/<specific-subdir>/
 
 # By individual file
-./gradlew manageTestDataGlobally --mode=check --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/<subdir>/TestName.kt
+./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/<subdir>/TestName.kt
 ```
 
 ---

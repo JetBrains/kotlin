@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.native.compiler.embeddable
 
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.util.jar.JarFile
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 
 /**
  * Some IntelliJ dependencies should be included (embedded) into our JARs, but some don't.
@@ -40,7 +40,7 @@ class EmbeddableContentsTest {
 
     @Test
     fun `self check on trove jar`() {
-        assertFailsWith<AssertionError> {
+        assertThrows<AssertionError> {
             konanHomeJars.single {
                 it.name.startsWith("trove")
             }.let(::checkJarForTrove)

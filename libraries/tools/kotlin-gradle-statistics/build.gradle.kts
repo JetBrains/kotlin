@@ -4,6 +4,9 @@ import plugins.signLibraryPublication
 description = "kotlin-gradle-statistics"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     `java-library`
     id("org.jetbrains.kotlin.jvm")
     id("project-tests-convention")
@@ -18,14 +21,15 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly(kotlin("stdlib", coreDepsVersion))
 
-    testImplementation(libs.junit4)
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test", coreDepsVersion))
-    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask {
         workingDir = rootDir
     }
 }

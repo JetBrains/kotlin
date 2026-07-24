@@ -4,6 +4,12 @@
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.
  */
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
 val testedVersion = "1.8.20-dev-4242"
 
 val isSnapshotTest = hasProperty("kgp-idea.snapshot_test")
@@ -16,14 +22,11 @@ repositories {
         mavenLocal()
         mavenCentral()
     }
-
-    maven(url = "https://redirector.kotlinlang.org/maven/bootstrap")
-    maven(url = "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies")
 }
 
 val classpathDestination = layout.buildDirectory.dir("classpath")
 
-val incomingClasspath by configurations.creating {
+val incomingClasspath = configurations.create("incomingClasspath") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -41,7 +44,7 @@ dependencies {
     }
 }
 
-val syncClasspath by tasks.register<Sync>("syncClasspath") {
+val syncClasspath = tasks.register<Sync>("syncClasspath") {
     if (isSnapshotTest) dependsOnKotlinGradlePluginInstall()
 
     from(incomingClasspath)
@@ -55,7 +58,7 @@ val syncClasspath by tasks.register<Sync>("syncClasspath") {
     }
 }
 
-val outgoingClasspath by configurations.creating {
+val outgoingClasspath = configurations.create("outgoingClasspath") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))

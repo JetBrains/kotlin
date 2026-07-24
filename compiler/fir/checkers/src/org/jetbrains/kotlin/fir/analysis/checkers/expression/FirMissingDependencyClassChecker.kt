@@ -68,7 +68,7 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         if (expression is FirFunctionCall) {
             val argumentList = expression.argumentList as? FirResolvedArgumentList
             val visitedParameterSymbols = hashSetOf<FirValueParameterSymbol>()
-            argumentList?.mapping?.forEach { (_, parameter) ->
+            argumentList?.mapping?.forEach { [_, parameter] ->
                 visitedParameterSymbols += parameter.symbol
                 val type = parameter.returnTypeRef.coneType
                 considerType(type, missingTypes)
@@ -110,7 +110,11 @@ internal interface FirMissingDependencyClassProxy {
             is ConeDefinitelyNotNullType -> original.forEachClassLikeType(action)
             is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassLikeType(action) }
             is ConeClassLikeType -> action(this)
-            else -> {} // Ignore all type parameters.
+            // Ignore all type parameters (nothing to check there)
+            is ConeTypeParameterType -> {}
+            // Ignore also captured types (we don't want to check them mainly because of KT-73821 conclusion)
+            is ConeCapturedType -> {}
+            else -> {}
         }
     }
 

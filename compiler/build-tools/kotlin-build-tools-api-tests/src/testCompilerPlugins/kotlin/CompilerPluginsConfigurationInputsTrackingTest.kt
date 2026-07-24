@@ -22,10 +22,10 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a compiler plugin triggers non-incremental rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerPluginsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -47,10 +47,10 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing compiler plugin options triggers non-incremental rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerPluginOptionsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -75,10 +75,10 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a compiler plugin triggers non-incremental rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerPluginRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },

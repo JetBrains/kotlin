@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 /**
@@ -38,7 +39,7 @@ object DumpSyntheticAccessors {
             appendLine("/* MODULE name=${irModule.name.asString()} */")
             appendLine()
 
-            fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
+            fileDumps.entries.sortedBy { it.key }.forEach { [fileKey, dumps] ->
                 if (dumps.isNotEmpty()) {
                     appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
                     appendLine()
@@ -84,7 +85,7 @@ object DumpSyntheticAccessors {
                         val accessorTargetSymbol: IrConstructorSymbol = accessor.getSingleExpression<IrConstructorCall>().symbol
                         accessorTargetSymbol
                     }
-                    else -> error("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
+                    else -> testInfraError("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
                 }
             }
         }
@@ -167,7 +168,7 @@ private class SyntheticAccessorsDumper(
 
     private fun dumpCurrentStackIfSymbolIsObserved(symbol: IrSymbol) {
         if (symbol in accessorSymbols || symbol in accessorTargetSymbols || symbol in localDeclarations) {
-            for ((index, stackFrame) in stack.withIndex()) {
+            for ([index, stackFrame] in stack.withIndex()) {
                 stackFrame.ifNotYetPrinted { element ->
                     when (element) {
                         is IrDeclaration -> dumpDeclaration(element, index)
@@ -284,7 +285,7 @@ private class SyntheticAccessorsDumper(
             val dump = element.dumpKotlinLike(
                 KotlinLikeDumpOptions(
                     customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
-                        override fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer) = false
+                        override fun shouldPrintAnnotation(annotation: IrAnnotation, container: IrAnnotationContainer) = false
                     },
                     printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
                     bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,

@@ -5,14 +5,20 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 kotlin {
     compilerOptions {
@@ -21,9 +27,9 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
+    testData(isolated, "testData")
 
+    testTask {
         val testProjectKlib = configurations.create("testProjectKlib") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))

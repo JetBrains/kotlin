@@ -34,6 +34,8 @@ public final class JvmAnnotationNames {
     @SuppressWarnings("unused")
     public static final int METADATA_FIR_FLAG = 1 << 6;
     public static final int METADATA_PUBLIC_ABI_FLAG = 1 << 7;
+    public static final int METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST = 8;
+    public static final int METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_LAST = 10;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 

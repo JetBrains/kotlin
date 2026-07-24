@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: null
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {R = SomeClassIn}>
+Substituted pairs:
+SomeClassIn <: GenericFooIn<SomeClassIn> (Original: SomeClassIn <: GenericFooIn<R>)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {R = SomeClassIn}>
+Substituted pairs:
+SomeClassIn <: GenericFooIn<SomeClassIn> (Original: SomeClassIn <: GenericFooIn<R>)

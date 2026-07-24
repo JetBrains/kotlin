@@ -2,9 +2,9 @@ packages: 0
 classifiers: 0
 callables: 1
   KaNamedFunctionSymbol:
+    anchorPsi: null
     annotations: []
     callableId: test/nested/dummyTest
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -26,6 +26,8 @@ callables: 1
     modality: FINAL
     name: dummyTest
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -34,16 +36,17 @@ callables: 1
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
+        anchorPsi: null
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -55,11 +58,15 @@ callables: 1
         modality: FINAL
         name: value
         origin: PLUGIN
+        primaryConstructorProperty: null
+        psi: null
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: test/nested/Test
+        typeParameters: []
         visibility: PUBLIC
     ]
     visibility: PUBLIC

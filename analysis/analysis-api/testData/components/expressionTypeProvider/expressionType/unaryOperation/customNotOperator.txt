@@ -1,0 +1,3 @@
+expression: !Main()
+expression PSI: KtPrefixExpression
+type: kotlin.Int

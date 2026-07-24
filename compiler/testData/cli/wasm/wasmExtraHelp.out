@@ -5,6 +5,9 @@ where advanced options include:
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xwasm                     Use the WebAssembly compiler backend.
+                             The option is deprecated since Kotlin 2.4.0. It will be removed in one of the future releases. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
+  -Xwasm-IC-generate-unchanged-modules
+                             Regenerate unchanged modules in multimodule IC.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters
@@ -29,6 +32,8 @@ where advanced options include:
                              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
+  -Xwasm-use-stack-switching-proposal
+                             Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.
@@ -45,18 +50,10 @@ where advanced options include:
   -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
   -Xir-per-module-output-name Add a custom output name to the split .js files.
   -Xir-produce-js            Generate a JS file using the IR backend.
-  -Xir-produce-klib-dir      Generate an unpacked klib into the directory specified by '-ir-output-dir'.
-
-                             This argument is deprecated.
-
-                             The '-nopack' argument should be used to determine if a packed klib file will be produced.
-                             Setting this argument to something other than `null` overrides the value from '-nopack'.
+  -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
   -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
-
-                             This argument is deprecated. Producing a packed klib is now the default behavior.
-
-                             The '-nopack' argument can be used instead to determine if a packed klib file will be produced.
-                             Setting this argument to something other than `null` overrides the value from '-nopack'.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Producing a packed klib is now the default behavior. The '-nopack' argument can be used instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
   -Xir-property-lazy-initialization
                              Perform lazy initialization for properties.
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
@@ -75,16 +72,14 @@ where advanced options include:
                              - `disabled` mode completely disables the IR inliner
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
   -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
                              The supplied prefixes should be absolute paths to the directories containing the source code files.
                              Note: The prefixes are applied in the same order as they are passed in this CLI argument.
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
-                             This option is deprecated and will be deleted in future versions.
-                             The partial linkage engine is always turned on.
-                             If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+                             Enables partial linkage mode.
+                             The option is deprecated since Kotlin 2.4.0. It will be removed in one of the future releases. The partial linkage engine is always turned on. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
   -Xpartial-linkage-loglevel={silent|info|warning|error}
                              Define the compile-time log level for partial linkage.
   -Xskip-library-special-compatibility-checks
@@ -106,10 +101,13 @@ where advanced options include:
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xcallable-references-to-contextual
+                             Enable callable references to contextual declarations.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcollection-literals      Enable experimental language support for collection literals.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
+  -Xcompanion-blocks         Enables companion blocks.
   -Xcompanion-blocks-and-extensions
                              Enables companion blocks and extensions.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
@@ -122,16 +120,20 @@ where advanced options include:
   -Xconsistent-data-class-copy-visibility
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-parameters       Enable experimental context parameters.
-  -Xcontext-receivers        Enable experimental context receivers.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xdata-flow-based-exhaustiveness
                              Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
                              For Native, the performance report includes execution time and lines processed per second for every individual lowering.
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+                             Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+                               machines, so use this mode with caution.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
+  -Xdisable-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+                             Only has effect if '-Xverify-ir' is not 'none'.
   -Xdisable-phases           Disable backend phases.
   -Xdont-sort-source-files   Disable automatic sorting of source files.
   -Xdont-warn-on-error-suppression
@@ -141,8 +143,14 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
                              Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
                              Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
+  -Xeager-lambda-analysis    Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+  -Xenable-additional-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to enable, specified by a simple name of the checker class.
+                             It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
   -Xenable-incremental-compilation
                              Enable incremental compilation.
+  -Xescaping-functions=<+|-><fq.name>
+                             Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
   -Xexplicit-api={strict|warning|disable}
@@ -150,16 +158,15 @@ where advanced options include:
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
   -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
+  -Xfir-aggressive-pruning   Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
   -Xfragment-friend-dependency=<fragment name>:<path>
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -179,6 +186,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
@@ -207,7 +215,8 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xrepl                     Run Kotlin REPL.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
@@ -217,24 +226,22 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+                             Suppress specified warning module-wide.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
+                             The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
-  -Xverify-ir-nested-offsets Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
                              Set the severity of the given warning.
                              - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)

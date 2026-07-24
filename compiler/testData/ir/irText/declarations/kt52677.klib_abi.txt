@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /LoginSuccessPacket { // /LoginSuccessPacket|null[0]
+    final val id // /LoginSuccessPacket.id|{}id[0]
+        final fun <get-id>(): /Uuid1 // /LoginSuccessPacket.id.<get-id>|<get-id>(){}[0]
+    constructor <init>(/Uuid1) // /LoginSuccessPacket.<init>|<init>(Uuid1){}[0]
+    final fun component1(): /Uuid1 // /LoginSuccessPacket.component1|component1(){}[0]
+    final fun copy(/Uuid1 = ...): /LoginSuccessPacket // /LoginSuccessPacket.copy|copy(Uuid1){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /LoginSuccessPacket.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /LoginSuccessPacket.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /LoginSuccessPacket.toString|toString(){}[0]
+}
+open annotation class /MySerializable : kotlin/Annotation { // /MySerializable|null[0]
+    final val c // /MySerializable.c|{}c[0]
+        final fun <get-c>(): kotlin.reflect/KClass<*> // /MySerializable.c.<get-c>|<get-c>(){}[0]
+    constructor <init>(kotlin.reflect/KClass<*>) // /MySerializable.<init>|<init>(kotlin.reflect.KClass<*>){}[0]
+}
+abstract interface <#A: kotlin/Any?> /MySerializer // /MySerializer|null[0]
+final class /Uuid1 { // /Uuid1|null[0]
+    constructor <init>() // /Uuid1.<init>|<init>(){}[0]
+}
+final object /UuidSerializer : /MySerializer</Uuid1> // /UuidSerializer|null[0]
+final fun /bar(): /Uuid1 // /bar|bar(){}[0]
+final fun /foo(): /Uuid1 // /foo|foo(){}[0]

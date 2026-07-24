@@ -57,6 +57,10 @@ import java.io.IOException;
  *   public abstract fun d(): lib/IOException
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -102,6 +106,10 @@ import lib.FooBar;
  *   public abstract fun e(): error/NonExistentClass
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

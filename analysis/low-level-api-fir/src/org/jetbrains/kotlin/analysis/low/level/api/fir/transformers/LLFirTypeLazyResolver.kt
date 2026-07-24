@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -192,7 +193,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
 private object TypeStateKeepers {
     val FUNCTION: StateKeeper<FirFunction, Unit> = stateKeeper { builder, function, context ->
         builder.add(CALLABLE_DECLARATION, context)
-        builder.entityList(function.valueParameters, CALLABLE_DECLARATION, context)
+        builder.entityList(function.valueParameters, VALUE_PARAMETER, context)
     }
 
     val PROPERTY: StateKeeper<FirProperty, Unit> = stateKeeper { builder, property, context ->
@@ -204,5 +205,10 @@ private object TypeStateKeepers {
 
     private val CALLABLE_DECLARATION: StateKeeper<FirCallableDeclaration, Unit> = stateKeeper { builder, _, _ ->
         builder.add(FirCallableDeclaration::returnTypeRef, FirCallableDeclaration::replaceReturnTypeRef)
+    }
+
+    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, Unit> = stateKeeper { builder, _, context ->
+        builder.add(CALLABLE_DECLARATION, context)
+        builder.add(FirValueParameter::equalityBoundType.getter, FirValueParameter::equalityBoundType.setter)
     }
 }

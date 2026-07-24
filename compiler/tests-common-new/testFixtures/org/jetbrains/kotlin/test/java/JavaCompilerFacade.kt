@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -72,8 +73,9 @@ class JavaCompilerFacade(private val testServices: TestServices) {
                 TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
                 TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
                 TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+                TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
                 null -> JvmEnvironmentConfigurator.getJdkHomeFromProperty { null }
-                else -> error("JDK $jdkKind does not support compilation")
+                else -> testInfraError("JDK $jdkKind does not support compilation")
             }
         }
     }

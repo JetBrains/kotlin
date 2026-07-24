@@ -73,15 +73,7 @@ Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITH
 
 ## Commit Guidelines
 
-**BEFORE creating any commit, you MUST read `docs/code_authoring_and_core_review.md`** — it contains essential rules for commit messages, code review process, and MR structure.
-
-Key points (not exhaustive):
-- Reference YouTrack issues (KT-XXXXX) in commit messages when applicable
-- Use `^KT-XXXXX Fixed` in body to auto-close issues
-- Keep subject line under 72 characters, imperative mood
-- Commit messages must explain not just WHAT but also WHY and HOW
-- Commit tests together with corresponding code changes
-- Non-functional changes (refactorings, reformats) should be in separate commits
+**When creating a commit, you MUST read [`commit-guidelines.md`](commit-guidelines.md) first** — do not author or amend a commit without following it. It holds the mandatory rules for commit messages, formatting, subsystem tag prefixes, and MR structure.
 
 ## JetBrains IDE MCP - MANDATORY for the project files and operations
 
@@ -134,12 +126,16 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 
 Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
 
+Run the relevant tests after making changes. Slowness is never a reason to skip. Fix failures before declaring done.
+
 ## Working with YouTrack
 
 "KT-XXXXX", where XXXXX is the issue number, is an issue in https://youtrack.jetbrains.com/.
 The direct URL for an issue is `https://youtrack.jetbrains.com/issue/KT-XXXXX`.
 When accessing youtrack.jetbrains.com, never fetch web pages from such URLs directly.
-Use YouTrack MCP if configured. Otherwise, use YouTrack REST API, e.g. with a GET request to
+Use YouTrack MCP if configured.
+Otherwise, use `youtrack-cli` skill if configured.
+Otherwise, use YouTrack REST API, e.g. with a GET request to
 ```text
 https://youtrack.jetbrains.com/api/issues/KT-XXXXX?fields=fields=summary,description,customFields(name,value(name,login,text))
 ```

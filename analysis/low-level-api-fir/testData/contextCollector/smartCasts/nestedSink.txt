@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedSink.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int?| = Int(42)
         R|<local>/x| = <Unresolved name: getNullableInt>#()
-        R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             when () {
                 !=(R|<local>/x|, Null(null)) ->  {
                     R|<local>/x|.R|kotlin/Int.inc|()
@@ -43,3 +43,4 @@ FILE: [ResolvedTo(IMPORTS)] nestedSink.kt
         }
         )
     }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] R> run([ResolvedTo(STATUS)] block: R|() -> R|): R|kotlin/Unit| { LAZY_BLOCK }

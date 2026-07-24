@@ -9,18 +9,18 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val commonTest by getting {
+        val commonTest = getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
-        val jsTest by getting {
+        val jsTest = getByName("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
             }

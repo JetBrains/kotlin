@@ -11,4 +11,4 @@ package foo.bar
 
 import kotlin.wasm.*
 
-<!EXPORTING_JS_NAME_WASM_EXPORT_CLASH!>@WasmExport("test") fun bar() = 2<!>
+<!WASM_EXPORT_EXPORTING_JS_NAME_CLASH!>@WasmExport("test") fun bar() = 2<!>

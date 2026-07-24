@@ -47,12 +47,12 @@ public class KotlinModuleMetadata public constructor(
      */
     public fun write(): ByteArray {
         val b = JvmModuleProtoBuf.Module.newBuilder()
-        kmModule.packageParts.forEach { (fqName, packageParts) ->
+        kmModule.packageParts.forEach { [fqName, packageParts] ->
             PackageParts(fqName).apply {
                 for (fileFacade in packageParts.fileFacades) {
                     addPart(fileFacade, null)
                 }
-                for ((multiFileClassPart, multiFileFacade) in packageParts.multiFileClassParts) {
+                for ([multiFileClassPart, multiFileFacade] in packageParts.multiFileClassParts) {
                     addPart(multiFileClassPart, multiFileFacade)
                 }
 

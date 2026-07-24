@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -35,6 +36,7 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileObject
 
+@K1Deprecation
 class SymbolBasedClass(
     element: TypeElement,
     javac: JavacWrapper,

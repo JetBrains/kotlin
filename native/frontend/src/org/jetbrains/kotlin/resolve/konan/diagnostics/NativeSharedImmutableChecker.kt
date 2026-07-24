@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.hasBackingField
 
+@K1Deprecation
 object NativeSharedImmutableChecker : DeclarationChecker {
     private val sharedImmutableFqName = FqName("kotlin.native.concurrent.SharedImmutable")
 

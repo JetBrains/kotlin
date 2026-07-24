@@ -24,7 +24,7 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        for ((annotation, prefix) in ANNOTATION_TO_PREFIX) {
+        for ([annotation, prefix] in ANNOTATION_TO_PREFIX) {
             processAnnotation(roundEnv, annotation, prefix)
         }
 

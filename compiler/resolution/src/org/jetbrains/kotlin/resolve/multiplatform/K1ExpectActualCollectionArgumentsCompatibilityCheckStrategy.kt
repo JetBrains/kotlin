@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 sealed class K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
     abstract fun <T> areCompatible(
         expectArg: Collection<T>,
@@ -19,7 +21,7 @@ sealed class K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
             actualArg: Collection<T>,
             elementsEqual: (T, T) -> Boolean,
         ): Boolean {
-            return expectArg.size == actualArg.size && expectArg.zip(actualArg).all { (e1, e2) -> elementsEqual(e1, e2) }
+            return expectArg.size == actualArg.size && expectArg.zip(actualArg).all { [e1, e2] -> elementsEqual(e1, e2) }
         }
     }
 

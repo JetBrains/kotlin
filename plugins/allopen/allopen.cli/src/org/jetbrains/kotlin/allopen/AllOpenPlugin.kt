@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 object AllOpenConfigurationKeys {
@@ -52,7 +51,6 @@ class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
         }
         if (annotations.isEmpty()) return
 
-        DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
         FirExtensionRegistrar.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 

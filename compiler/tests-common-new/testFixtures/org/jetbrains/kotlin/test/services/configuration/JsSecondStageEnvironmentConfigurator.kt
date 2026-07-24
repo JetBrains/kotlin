@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.Name
@@ -19,14 +18,17 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ES6_MODE
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_DTS
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPORT_UNTYPED_AS_UNKNOWN
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_DTS_FROM_IR
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_DROP_REGION_COMMENTS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.KEEP
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -67,7 +69,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
                     outputDirectory = tmpBuildDir,
                     outputName = outputFile.nameWithoutExtension,
                     granularity = mode.granularity,
-                    tsCompilationStrategy = TsCompilationStrategy.NONE, // TS generation is handled separately in JsIrLoweringFacade
+                    tsCompilationStrategy = module.directives[TS_COMPILATION_STRATEGY].lastOrNull() ?: TsCompilationStrategy.NONE,
                     production = mode.production,
                     minimizedMemberNames = mode.minimizedMemberNames,
                 )
@@ -81,6 +83,8 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(CALL_MAIN, JSConfigurationKeys.CALL_MAIN)
         register(SAFE_EXTERNAL_BOOLEAN, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN)
         register(SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)
+        register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
+        register(EXPORT_UNTYPED_AS_UNKNOWN, JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -95,8 +99,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             .map { it.absolutePath }
 
         val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
-        val mainPath = File(mainModule.libPath).canonicalPath
+        val mainPath = klibArtifact.outputFile.canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
         configuration.includes = mainPath
@@ -109,7 +112,6 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         configuration.sourceMapEmbedSources = sourceMapSourceEmbedding
 
         configuration.generatePolyfills = true
-        configuration.generateRegionComments = true
 
         configuration.filePathsPrefixMap = mapOf(File(".").absolutePath.removeSuffix(".") to "")
 
@@ -125,7 +127,9 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         if (GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
             configuration.generateStrictImplicitExport = true
         }
-        if (GENERATE_DTS in module.directives) {
+
+        val tsCompilationStrategy = module.directives[TS_COMPILATION_STRATEGY].lastOrNull() ?: TsCompilationStrategy.NONE
+        if (GENERATE_DTS_FROM_IR in module.directives && tsCompilationStrategy != TsCompilationStrategy.NONE) {
             configuration.generateDts = true
         }
         if (ES6_MODE in module.directives || DELEGATE_JS_TRANSPILATION in module.directives) {

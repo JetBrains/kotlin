@@ -1,5 +1,9 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
+    id("binaryen-configuration")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
@@ -31,16 +35,12 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 implementation(kotlinStdlib())
             }
         }
     }
-}
-
-dependencies {
-    implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
 }
 
 sourceSets {

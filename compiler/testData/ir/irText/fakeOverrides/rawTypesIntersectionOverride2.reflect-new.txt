@@ -1,0 +1,64 @@
+KClass: abstract interface A : Any
+  members:
+    public open operator fun A<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun A<T>.foo(Inv<T!>!): kotlin.Unit
+    public open fun A<T>.hashCode(): kotlin.Int
+    public open fun A<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun A<T>.foo(Inv<T!>!): kotlin.Unit
+KClass: abstract interface B : A, Any
+  members:
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun B.foo(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun B.foo(Inv<(raw) kotlin.Any!>): kotlin.Unit
+KClass: abstract interface C : Any
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun C.foo(Inv<*>): kotlin.Unit
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun C.foo(Inv<*>): kotlin.Unit
+KClass: abstract interface D1 : C, B, Any
+  members:
+    public open operator fun D1.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun D1.foo(Inv<*>): kotlin.Unit
+    public open fun D1.hashCode(): kotlin.Int
+    public open fun D1.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface D2 : C, B, Any
+  members:
+    public open operator fun D2.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun D2.foo(Inv<*>): kotlin.Unit
+    public open fun D2.hashCode(): kotlin.Int
+    public open fun D2.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun D2.foo(Inv<*>): kotlin.Unit
+KClass: abstract interface D3 : B, C, Any
+  members:
+    public open operator fun D3.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun D3.foo(Inv<(raw) kotlin.Any!>): kotlin.Unit
+    public open fun D3.hashCode(): kotlin.Int
+    public open fun D3.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface D4 : B, C, Any
+  members:
+    public open operator fun D4.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun D4.foo(Inv<*>): kotlin.Unit
+    public open fun D4.hashCode(): kotlin.Int
+    public open fun D4.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun D4.foo(Inv<*>): kotlin.Unit
+KClass: class Inv : Any
+  constructors:
+    public final <T> fun `<init>`(T): Inv<T>
+  members:
+    public open operator fun Inv<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Inv<T>.hashCode(): kotlin.Int
+    public open fun Inv<T>.toString(): kotlin.String
+    public final val Inv<T>.t: T
+  declaredMembers:
+    public final val Inv<T>.t: T

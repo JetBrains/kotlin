@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.scopes.optimization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 @DefaultImplementation(OptimizingOptions.Default::class)
+@K1Deprecation
 interface OptimizingOptions {
     fun shouldCalculateAllNamesForLazyImportScopeOptimizing(moduleDescriptor: ModuleDescriptor?): Boolean
 

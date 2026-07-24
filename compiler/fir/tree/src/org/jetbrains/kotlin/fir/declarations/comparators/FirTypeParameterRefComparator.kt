@@ -55,7 +55,7 @@ object FirTypeParameterRefComparator : Comparator<FirTypeParameterRef> {
                 if (boundsSizeDiff != 0) {
                     return boundsSizeDiff
                 }
-                for ((aBound, bBound) in a.bounds.zip(b.bounds)) {
+                for ([aBound, bBound] in a.bounds.zip(b.bounds)) {
                     val boundDiff = FirTypeRefComparator.compare(aBound, bBound)
                     if (boundDiff != 0) {
                         return boundDiff

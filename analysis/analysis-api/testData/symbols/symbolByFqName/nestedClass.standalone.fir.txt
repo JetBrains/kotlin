@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: MutableEntry
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -31,8 +33,8 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: null
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -41,16 +43,18 @@ KaNamedClassSymbol:
       modality: FINAL
       name: K
       origin: LIBRARY
+      psi: null
+      realPsi: null
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: null
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -59,17 +63,19 @@ KaNamedClassSymbol:
       modality: FINAL
       name: V
       origin: LIBRARY
+      psi: null
+      realPsi: null
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: kotlin.collections.MutableMap.MutableEntry

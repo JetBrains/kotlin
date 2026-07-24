@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -68,7 +68,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
             is ConeClassLikeType -> this.substituteArguments()
-            is ConeLookupTagBasedType, is ConeTypeVariableType -> null
+            is ConeTypeParameterType, is ConeTypeVariableType -> null
             is ConeFlexibleType -> this.mapTypesOrNull(typeContext) { substituteOrNull(it) }
             is ConeCapturedType -> this.substitute(::substituteOrNull)
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
@@ -78,7 +78,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
     }
 
-    private fun ConeIntersectionType.substituteIntersectedTypes(): ConeIntersectionType? {
+    private fun ConeIntersectionType.substituteIntersectedTypes(): ConeKotlinType? {
         val substitutedTypes = ArrayList<ConeKotlinType>(intersectedTypes.size)
         var somethingIsSubstituted = false
         for (type in intersectedTypes) {
@@ -87,8 +87,10 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             } ?: type
             substitutedTypes += substitutedType
         }
-        if (!somethingIsSubstituted) return null
-        return ConeIntersectionType(substitutedTypes)
+        val substitutedUpperBound = substituteOrNull(upperBoundForApproximation)
+        if (!somethingIsSubstituted && substitutedUpperBound == null) return null
+
+        return ConeTypeIntersector.intersectTypes(typeContext, substitutedTypes, substitutedUpperBound ?: upperBoundForApproximation)
     }
 
     protected fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
@@ -108,14 +110,14 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         val newArguments by lazy(LazyThreadSafetyMode.NONE) { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 
-        for ((index, typeArgument) in this.typeArguments.withIndex()) {
+        for ([index, typeArgument] in this.typeArguments.withIndex()) {
             newArguments[index] = substituteArgument(typeArgument, index)?.also {
                 initialized = true
             }
         }
 
         if (initialized) {
-            for ((index, typeArgument) in this.typeArguments.withIndex()) {
+            for ([index, typeArgument] in this.typeArguments.withIndex()) {
                 if (newArguments[index] == null) {
                     newArguments[index] = typeArgument
                 }

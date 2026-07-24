@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 // TODO: remove these checkers before 1.4 is released
 
+@K1Deprecation
 object TrailingCommaChecker {
     fun check(trailingComma: PsiElement?, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.TrailingCommas) && trailingComma != null) {
@@ -29,6 +31,7 @@ object TrailingCommaChecker {
     }
 }
 
+@K1Deprecation
 object TrailingCommaDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         when (declaration) {
@@ -56,6 +59,7 @@ object TrailingCommaDeclarationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 object TrailingCommaCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         when (val callElement = resolvedCall.call.callElement) {

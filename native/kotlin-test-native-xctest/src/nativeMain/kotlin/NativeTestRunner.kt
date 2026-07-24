@@ -50,7 +50,7 @@ class XCTestCaseWrapper(invocation: NSInvocation, val testCase: TestCase) : XCTe
             // Find path and line number to create source location
             val matchResult = Regex("^\\d+ +.* \\((.*):(\\d+):.*\\)$").find(failedStackLine)
             val sourceLocation = if (matchResult != null) {
-                val (file, line) = matchResult.destructured
+                val [file, line] = matchResult.destructured
                 XCTSourceCodeLocation(file, line.toLong())
             } else {
                 // No debug info to get the path. Still have to record location

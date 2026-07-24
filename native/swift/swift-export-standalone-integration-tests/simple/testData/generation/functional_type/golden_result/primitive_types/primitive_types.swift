@@ -6,16 +6,24 @@ public func consume_block_with_byte_id(
     block: @escaping (Swift.Int8) -> Swift.Int8
 ) -> Swift.Int8 {
     return __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__({
-        let originalBlock = block
-        return { (arg0: Swift.Int8) in return originalBlock(arg0) }
+        let originalBlock: (Swift.Int8) -> Swift.Int8 = block
+        return { (arg0: Swift.Int8) in
+            let _arg0: Swift.Int8 = arg0
+            let _result = originalBlock(_arg0)
+            return _result
+        }
     }())
 }
 public func consume_block_with_uint_id(
     block: @escaping (Swift.UInt32) -> Swift.UInt32
 ) -> Swift.UInt32 {
     return __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__({
-        let originalBlock = block
-        return { (arg0: Swift.UInt32) in return originalBlock(arg0) }
+        let originalBlock: (Swift.UInt32) -> Swift.UInt32 = block
+        return { (arg0: Swift.UInt32) in
+            let _arg0: Swift.UInt32 = arg0
+            let _result = originalBlock(_arg0)
+            return _result
+        }
     }())
 }
 public func produce_block_with_byte_byte() -> (Swift.Int8, Swift.Int8, Swift.Int8) -> Swift.Int8 {

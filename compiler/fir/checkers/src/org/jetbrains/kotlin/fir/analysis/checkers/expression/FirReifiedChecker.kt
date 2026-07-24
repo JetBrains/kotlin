@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -68,7 +69,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 varargTypeParameter == typeParameter && typeArgument.isTypeVisibilityBroken(checkTypeArguments = false) && isInferred
             ) {
                 reporter.reportOn(
-                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter
+                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING, typeParameter, typeArgument, varargParameter
                 )
             }
         }
@@ -89,7 +90,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             .any { it.resolvedType is ConeErrorType || it.resolvedType.isTypeVisibilityBroken(checkTypeArguments = true) }
         if (hasNestedVisibilityErrorsInParameters) return
         if (returnType.isTypeVisibilityBroken(checkTypeArguments = true)) {
-            reporter.reportOn(expression.source, FirErrors.INFERRED_INVISIBLE_RETURN_TYPE, callableSymbol, returnType)
+            reporter.reportOn(expression.source, FirErrors.INFERRED_INVISIBLE_RETURN_TYPE_WARNING, callableSymbol, returnType)
         }
     }
 
@@ -99,6 +100,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
+    @Suppress("SuspiciousWhenOverConeKotlinType") // other kinds of types are handled higher up in the call stack
     private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true
@@ -137,7 +139,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         if (fullyExpandedType.isTypeVisibilityBroken(checkTypeArguments = false) && (!isExplicit || isPlaceHolder)) {
             reporter.reportOn(
                 source,
-                FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT,
+                FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING,
                 typeParameter,
                 fullyExpandedType,
             )

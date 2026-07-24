@@ -37,6 +37,12 @@ class BinaryJavaField(
 
     override val hasConstantNotNullInitializer: Boolean
         get() = initializerValue != null
+
+    override val hasInitializer: Boolean
+        // Binary fields only carry constant initializers — `ConstantValue` attribute reading is
+        // the sole source of `initializerValue`. A non-constant Java initializer is not encoded in
+        // class files, so this is equivalent to [hasConstantNotNullInitializer].
+        get() = initializerValue != null
 }
 
 class BinaryJavaTypeParameter(

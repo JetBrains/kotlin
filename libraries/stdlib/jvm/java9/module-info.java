@@ -11,6 +11,7 @@ module kotlin.stdlib {
     exports kotlin.contracts;
     exports kotlin.coroutines;
     exports kotlin.coroutines.cancellation;
+    exports kotlin.coroutines.debug;
     exports kotlin.coroutines.intrinsics;
     exports kotlin.coroutines.jvm.internal;
     exports kotlin.enums;

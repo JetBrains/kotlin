@@ -85,6 +85,9 @@ class ApiVersion private constructor(
         val KOTLIN_2_6 = createByLanguageVersion(LanguageVersion.KOTLIN_2_6)
 
         @JvmField
+        val KOTLIN_2_7 = createByLanguageVersion(LanguageVersion.KOTLIN_2_7)
+
+        @JvmField
         val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.entries.last())
 
         @JvmField

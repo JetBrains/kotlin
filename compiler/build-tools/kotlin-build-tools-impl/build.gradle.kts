@@ -2,9 +2,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
     kotlin("jvm")
     id("generated-sources")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -43,6 +45,7 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(intellijPlatformUtil())
     testImplementation(project(":compiler:incremental-compilation-impl"))
+    testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(kotlinTest("junit"))
 }
 
@@ -61,9 +64,6 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
     }
     transform(DontIncludeResourceTransformer::class.java) {
         resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
-    }
-    transform(DontIncludeResourceTransformer::class.java) {
-        resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
     }
 }
 
@@ -86,7 +86,7 @@ generatedSourcesTask(
             generationRoot.toString(),
             version.toString(),
             "impl",
-            "jvmCompilerArguments,wasmArguments,jsArguments",
+            "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
         )
     },
 )

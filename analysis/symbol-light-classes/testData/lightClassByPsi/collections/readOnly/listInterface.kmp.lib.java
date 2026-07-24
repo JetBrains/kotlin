@@ -8,36 +8,47 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements test.IList<Elem>
   @kotlin.SinceKotlin()
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<Elem> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.List<Elem> subList(int, int);//  subList(int, int)
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator();//  listIterator()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
-  public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList<Elem>)
-
+  @kotlin.js.JsExport.Ignore()
   public Elem get(int);//  get(int)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(Elem);//  contains(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
 
-  public int getSize();//  getSize()
-
+  @kotlin.js.JsExport.Ignore()
   public int indexOf(Elem);//  indexOf(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public int lastIndexOf(Elem);//  lastIndexOf(Elem)
+
+  public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList<Elem>)
+
+  public int getSize();//  getSize()
 }
 
 public class CList3 /* test.CList3*/<Elem>  implements test.IList<Elem> {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import org.jetbrains.kotlin.AbstractKDocCoverageTest
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
 class AnalysisApiKDocCoverageTest : AbstractKDocCoverageTest() {
@@ -15,6 +16,11 @@ class AnalysisApiKDocCoverageTest : AbstractKDocCoverageTest() {
             "api/analysis-api.undocumented",
         ),
     )
+
+    override val ignoredPackages: List<FqName>
+        get() = listOf(
+            FqName("org.jetbrains.kotlin.analysis.api.internals"),
+        )
 
     @Test
     fun testKDocCoverage() {

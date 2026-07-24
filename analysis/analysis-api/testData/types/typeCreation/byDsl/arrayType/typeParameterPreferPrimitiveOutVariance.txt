@@ -13,8 +13,8 @@ KaUsualClassType:
           annotations: []
           name: T
           symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
             annotations: []
-            compilerVisibility: Local
             isActual: false
             isExpect: false
             isExternal: false
@@ -23,6 +23,8 @@ KaUsualClassType:
             modality: FINAL
             name: T
             origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
             upperBounds: []
             variance: INVARIANT
             visibility: LOCAL
@@ -38,8 +40,8 @@ KaUsualClassType:
       annotations: []
       name: T
       symbol: KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
         annotations: []
-        compilerVisibility: Local
         isActual: false
         isExpect: false
         isExternal: false
@@ -48,6 +50,8 @@ KaUsualClassType:
         modality: FINAL
         name: T
         origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
         upperBounds: []
         variance: INVARIANT
         visibility: LOCAL

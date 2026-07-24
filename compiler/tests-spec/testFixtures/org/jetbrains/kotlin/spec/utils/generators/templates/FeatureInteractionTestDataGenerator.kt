@@ -83,8 +83,8 @@ class FeatureInteractionTestDataGenerator(private val configuration: GenerationS
 
         File(testsPartPath).parentFile.mkdirs()
 
-        for ((filename, template) in configuration.prepareAndGetFirstFeatureTemplates()) {
-            val (directives, templateWithoutDirectives) = template.extractDirectives()
+        for ([filename, template] in configuration.prepareAndGetFirstFeatureTemplates()) {
+            val [directives, templateWithoutDirectives] = template.extractDirectives()
             val code = templateWithoutDirectives
                 .substitute(filename, testNumber, SubstitutionPassType.FIRST)
                 .substitute(filename, testNumber, SubstitutionPassType.SECOND)

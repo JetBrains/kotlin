@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
@@ -79,7 +80,8 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
 
     abstract override fun isVarArgs(): Boolean
 
-    protected fun KaSession.getTypeMappingMode(type: KaType): KaTypeMappingMode = when {
+    context(session: KaSession)
+    protected fun getTypeMappingMode(type: KaType): KaTypeMappingMode = when {
         type.isSuspendFunctionType -> KaTypeMappingMode.DEFAULT
         method.isJvmExposedBoxed && typeForValueClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
         // TODO: extract type mapping mode from annotation?

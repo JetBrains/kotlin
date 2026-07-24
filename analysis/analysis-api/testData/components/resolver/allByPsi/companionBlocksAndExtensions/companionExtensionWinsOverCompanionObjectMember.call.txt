@@ -1,0 +1,131 @@
+KtFile: 'companionExtensionWinsOverCompanionObjectMember.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  null
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,128): 'class C {'
+  null
+
+KtClassBody(73,128): '{'
+  null
+
+KtObjectDeclaration(79,126): 'companion object {'
+  null
+
+KtDeclarationModifierList(79,88): 'companion'
+  null
+
+KtClassBody(96,126): '{'
+  null
+
+KtNamedFunction(106,120): 'fun same() = 1'
+  null
+
+KtParameterList(114,116): '()'
+  null
+
+KtConstantExpression(119,120): '1'
+  null
+
+KtNamedFunction(130,157): 'companion fun C.same() = ""'
+  null
+
+KtDeclarationModifierList(130,139): 'companion'
+  null
+
+KtTypeReference(144,145): 'C'
+  null
+
+KtUserType(144,145): 'C'
+  null
+
+KtNameReferenceExpression(144,145): 'C'
+  null
+
+KtParameterList(150,152): '()'
+  null
+
+KtStringTemplateExpression(155,157): '""'
+  null
+
+KtNamedFunction(159,187): 'fun usage() {'
+  null
+
+KtParameterList(168,170): '()'
+  null
+
+KtBlockExpression(171,187): '{'
+  null
+
+KtDotQualifiedExpression(177,185): 'C.same()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(177,178): 'C'
+  null
+
+KtCallExpression(179,185): 'same()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(179,183): 'same'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(183,185): '()'
+  null

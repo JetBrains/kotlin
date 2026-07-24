@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -254,7 +255,7 @@ internal abstract class IrExpectActualMatchingContext(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): TypeSubstitutorMarker {
-        val typeParametersToArguments = expectActualTypeParameters.associate { (expect, actual) ->
+        val typeParametersToArguments = expectActualTypeParameters.associate { [expect, actual] ->
             (expect as IrTypeParameterSymbol) to (actual as IrTypeParameterSymbol).owner.defaultType
         }
         val substitutor = IrTypeSubstitutor(typeParametersToArguments, allowEmptySubstitution = true)
@@ -572,7 +573,7 @@ internal abstract class IrExpectActualMatchingContext(
         expectAnnotation: AnnotationCallInfo, actualAnnotation: AnnotationCallInfo,
         collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
-        fun AnnotationCallInfo.getIrElement(): IrConstructorCall = (this as AnnotationCallInfoImpl).irElement
+        fun AnnotationCallInfo.getIrElement(): IrAnnotation = (this as AnnotationCallInfoImpl).irElement
 
         return areIrExpressionConstValuesEqual(
             expectAnnotation.getIrElement(),
@@ -585,24 +586,24 @@ internal abstract class IrExpectActualMatchingContext(
         return expectToActualClassMap[classId]?.classId ?: classId
     }
 
-    private inner class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
-        override val annotationSymbol: IrConstructorCall = irElement
+    private inner class AnnotationCallInfoImpl(val irElement: IrAnnotation) : AnnotationCallInfo {
+        override val annotationSymbol: IrAnnotation = irElement
 
         override val classId: ClassId?
-            get() = getAnnotationClass()?.classId
+            get() = getAnnotationClass().classId
 
         override val isRetentionSource: Boolean
-            get() = getAnnotationClass()?.getAnnotationRetention() == KotlinRetention.SOURCE
+            get() = getAnnotationClass().getAnnotationRetention() == KotlinRetention.SOURCE
 
         override val isOptIn: Boolean
-            get() = getAnnotationClass()?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
+            get() = getAnnotationClass().hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME)
 
         override val isOptionalExpectation: Boolean
-            get() = getAnnotationClass()?.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation) ?: false
+            get() = getAnnotationClass().hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)
 
-        private fun getAnnotationClass(): IrClass? {
-            val annotationClass = irElement.type.getClass() ?: return null
-            return expectToActualClassMap[annotationClass.classId]?.owner ?: annotationClass
+        private fun getAnnotationClass(): IrClass {
+            val annotationClass = irElement.classSymbol.owner
+            return expectToActualClassMap[irElement.classId]?.owner ?: annotationClass
         }
     }
 
@@ -687,7 +688,7 @@ internal abstract class IrExpectActualMatchingContext(
         if (expectTypeRef !is IrSimpleType || actualTypeRef !is IrSimpleType) return
         if (expectTypeRef.arguments.size != actualTypeRef.arguments.size) return
 
-        for ((expectArg, actualArg) in expectTypeRef.arguments.zip(actualTypeRef.arguments)) {
+        for ([expectArg, actualArg] in expectTypeRef.arguments.zip(actualTypeRef.arguments)) {
             val expectArgType = expectArg.typeOrNull ?: continue
             val actualArgType = actualArg.typeOrNull ?: continue
             checkAnnotationsOnTypeRefAndArguments(expectContainingSymbol, actualContainingSymbol, expectArgType, actualArgType, checker)

@@ -2,12 +2,12 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-
-    // Can't enable the plugin because Java Security Manager is not supported with JDK 24+.
-    // See KTI-3068 and https://openjdk.org/jeps/486.
-    // id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -32,7 +32,7 @@ So it is easier to compile with JDK 25.
 It is possible, though, to set `jvmTarget` to 22 and use the result when running on JDK 22+.
 But this can't be tested on the CI on JDK 22, so it is more reliable to use JDK 25 consistently everywhere.
 */
-val jdk25: SourceSet by sourceSets.creating {
+val jdk25: SourceSet = sourceSets.create("jdk25") {
     java.srcDir("srcJdk25")
 }
 
@@ -81,17 +81,16 @@ tasks.check {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         systemProperty("kotlin.unsafe.mem.test.mode", "default")
     }
 
     testTask(
         taskName = "testJdk25",
-        jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_25_0,
         skipInLocalBuild = false,
     ) {
         systemProperty("kotlin.unsafe.mem.test.mode", "jdk25")
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_25_0))
 
         // `UnsafeBasedMemoryAccess` is also tested in this task, so this flag is needed to suppress warnings.
         // See also https://openjdk.org/jeps/498.

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
 import org.jetbrains.kotlin.test.GroupingTestRunner
 import org.jetbrains.kotlin.test.NonGroupingTestRunner
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
-import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
 abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompilerTestBase() {
-    val configurationBuilder: TwoPhaseTestConfigurationBuilder.() -> Unit = {
+    val configurationBuilder: TwoStageTestConfigurationBuilder.() -> Unit = {
         commonConfiguration {
             AbstractKotlinCompilerTest.defaultConfiguration(this)
             defaultDirectives {
@@ -36,13 +36,13 @@ abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompil
             useFailureSuppressors(::IrValidationErrorChecker)
         }
 
-        nonGroupingPhase {
+        nonGroupingStage {
             startingArtifactFactory = { ResultingArtifact.Source() }
             testInfo = this@AbstractTwoStageKotlinCompilerTest.testInfo
             useGroupingTestIsolators(::MutedTestsIsolator)
         }
 
-        groupingPhase {
+        groupingStage {
             testInfo = this@AbstractTwoStageKotlinCompilerTest.testInfo
         }
 
@@ -54,13 +54,13 @@ abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompil
     final override lateinit var nonGroupingRunner: NonGroupingTestRunner
         private set
 
-    final override var nonGroupingPhaseRunnerInitialized: Boolean = false
+    final override var nonGroupingStageRunnerInitialized: Boolean = false
         private set
 
-    final override lateinit var groupingPhaseRunner: GroupingTestRunner
+    final override lateinit var groupingStageRunner: GroupingTestRunner
         private set
 
-    final override var secondPhaseRunnerInitialized: Boolean = false
+    final override var secondStageRunnerInitialized: Boolean = false
         private set
 
     open fun createApplicationDisposableProvider(): ApplicationDisposableProvider {
@@ -80,15 +80,15 @@ abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompil
         this.testInfo = testInfo
     }
 
-    abstract fun configure(builder: TwoPhaseTestConfigurationBuilder)
+    abstract fun configure(builder: TwoStageTestConfigurationBuilder)
 
     fun initTestRunners(@TestDataFile filePath: String) {
-        val configurationBuilder = TwoPhaseTestConfigurationBuilder().apply(configurationBuilder)
-        nonGroupingRunner = NonGroupingTestRunner(configurationBuilder.nonGroupingPhaseBuilder.build(filePath)).also {
-            nonGroupingPhaseRunnerInitialized = true
+        val configurationBuilder = TwoStageTestConfigurationBuilder().apply(configurationBuilder)
+        nonGroupingRunner = NonGroupingTestRunner(configurationBuilder.nonGroupingStageBuilder.build(filePath)).also {
+            nonGroupingStageRunnerInitialized = true
         }
-        groupingPhaseRunner = GroupingTestRunner(configurationBuilder.groupingPhaseBuilder.build(filePath)).also {
-            secondPhaseRunnerInitialized = true
+        groupingStageRunner = GroupingTestRunner(configurationBuilder.groupingStageBuilder.build(filePath)).also {
+            secondStageRunnerInitialized = true
         }
     }
 

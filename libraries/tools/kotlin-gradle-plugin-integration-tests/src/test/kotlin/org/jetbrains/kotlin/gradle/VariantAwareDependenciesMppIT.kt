@@ -59,7 +59,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                     sourceSets.jsMain {
                         dependencies {
                             implementation(
-                                project.dependencies.create(project.rootProject)
+                                dependencies.project(mapOf("path" to ":"))
                             )
                         }
                     }
@@ -128,7 +128,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                         |    }
                         |}
                         |
-                        |dependencies { implementation rootProject }
+                        |dependencies { implementation(project(":")) }
                         |
                         """.trimMargin()
                     )
@@ -147,7 +147,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"") +
                         """
                         |
-                        |dependencies { implementation rootProject }
+                        |dependencies { implementation(project(":")) }
                         |
                         """.trimMargin()
             }
@@ -260,7 +260,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             )
             buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { [target, suffix] ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     assertOutputContains("Variant ${target}ApiElements")
                 }

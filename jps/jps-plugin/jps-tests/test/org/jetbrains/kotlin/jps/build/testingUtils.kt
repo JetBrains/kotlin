@@ -17,20 +17,19 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase.assertTrue
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.build.JpsBuildTestCase.change
+import org.jetbrains.kotlin.jps.build.JpsBuildTestCase.Companion.change
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
 
-inline fun withSystemProperty(property: String, newValue: String?, fn: ()->Unit) {
+inline fun withSystemProperty(property: String, newValue: String?, fn: () -> Unit) {
     val backup = System.getProperty(property)
     setOrClearSysProperty(property, newValue)
 
     try {
         fn()
-    }
-    finally {
+    } finally {
         setOrClearSysProperty(property, backup)
     }
 }
@@ -40,8 +39,7 @@ inline fun withSystemProperty(property: String, newValue: String?, fn: ()->Unit)
 inline fun setOrClearSysProperty(property: String, newValue: String?) {
     if (newValue != null) {
         System.setProperty(property, newValue)
-    }
-    else {
+    } else {
         System.clearProperty(property)
     }
 }
@@ -78,26 +76,26 @@ fun withDaemon(fn: () -> Unit) {
 interface Action {
     fun apply()
     fun checkPath(path: String) {
-        assertTrue("$path does not exist", File(path).exists())
+        assertTrue(File(path).exists(), "$path does not exist")
     }
 }
 
-class TouchAction(val path: String): Action {
+class TouchAction(val path: String) : Action {
     override fun apply() {
         checkPath(path)
         change(path)
     }
 }
 
-class DeleteAction(val path: String): Action {
+class DeleteAction(val path: String) : Action {
     override fun apply() {
         val file = File(path)
         checkPath(path)
-        assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
+        assertTrue(file.delete(), """Can not delete file "${file.absolutePath}"""")
     }
 }
 
-class ChangeAction(val path: String, val newContent: String): Action {
+class ChangeAction(val path: String, val newContent: String) : Action {
     override fun apply() {
         checkPath(path)
         change(path, newContent)

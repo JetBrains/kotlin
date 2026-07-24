@@ -4,12 +4,14 @@ KtNameReferenceExpression(50,51): 'i'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -19,11 +21,14 @@ KtNameReferenceExpression(50,51): 'i'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: A
+          typeParameters: []
           visibility: PUBLIC
         type = A
       extensionReceiver = null

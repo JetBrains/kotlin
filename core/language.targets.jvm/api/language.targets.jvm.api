@@ -20,6 +20,7 @@ public final class org/jetbrains/kotlin/config/JvmTarget : java/lang/Enum, org/j
 	public static final field JVM_24 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_25 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_27 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
 	public fun getDescription ()Ljava/lang/String;

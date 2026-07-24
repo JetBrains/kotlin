@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.visitors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.contracts.model.structure.*
  * and then flattens resulting tree, producing an [EffectSchema], which describes effects
  * of this [ESExpression] with effects of arguments taken into consideration.
  */
+@K1Deprecation
 class Substitutor(
     private val substitutions: Map<ESVariable, Computation>,
     private val typeSubstitution: ESTypeSubstitution,

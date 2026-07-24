@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.populateTaskGraph
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+@Suppress("FunctionName")
 class WebTargetTests {
 
     @Test
@@ -84,5 +89,42 @@ class WebTargetTests {
         val kotlinWasmYarnSetup = project.tasks.named("kotlinWasmYarnSetup").get()
         kotlinWasmToolingSetup.assertDependsOn(kotlinWasmYarnSetup)
 
+    }
+
+    @Test
+    fun `yarn install should run with force when upgradeYarnLock task is requested`() {
+        val project = buildProjectWithMPP {
+            configureRepositoriesForTests()
+            kotlin { js { nodejs() } }
+        }
+        project.evaluate()
+
+        val upgradeYarnLock = project.tasks.findByName("kotlinUpgradeYarnLock")
+        assertNotNull(upgradeYarnLock, "kotlinUpgradeYarnLock task should exist")
+        project.populateTaskGraph(upgradeYarnLock)
+
+        val kotlinNpmInstall = project.tasks.named("kotlinNpmInstall").get() as KotlinNpmInstallTask
+        assertTrue(kotlinNpmInstall.withForce.get(), "kotlinNpmInstall must run with force")
+    }
+
+    @Test
+    fun `yarn install should not run with force when storeYarnLock task is requested`() {
+        val project = buildProjectWithMPP {
+            configureRepositoriesForTests()
+
+            kotlin {
+                js {
+                    nodejs()
+                }
+            }
+        }
+        project.evaluate()
+
+        val storeYarnLock = project.tasks.findByName("kotlinStoreYarnLock")
+        assertNotNull(storeYarnLock, "kotlinStoreYarnLock task should exist")
+        project.populateTaskGraph(storeYarnLock)
+
+        val kotlinNpmInstall = project.tasks.named("kotlinNpmInstall").get() as KotlinNpmInstallTask
+        assertTrue(!kotlinNpmInstall.withForce.get(), "kotlinNpmInstall must not run with force")
     }
 }

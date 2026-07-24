@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -61,8 +60,11 @@ open class VfsBasedProjectEnvironment(
     private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
 ) : AbstractProjectEnvironment {
 
-    constructor(project: Project, fileSystem: VirtualFileSystem, getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider) :
-            this(project, listOf(fileSystem), getPackagePartProviderFn)
+    constructor(
+        project: Project,
+        fileSystem: VirtualFileSystem,
+        getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider
+    ) : this(project, listOf(fileSystem), getPackagePartProviderFn)
 
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())
@@ -73,10 +75,14 @@ open class VfsBasedProjectEnvironment(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider =
         getPackagePartProviderFn(fileSearchScope.asPsiSearchScope())
 
+    /**
+     * A (maybe temporary) mechanism for extending the classpath handled by package providers; nop by default
+     */
+    open fun updateClasspath(classpath: List<File>) {}
+
     @OptIn(SessionConfiguration::class)
     override fun registerAsJavaElementFinder(firSession: FirSession) {
         val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
-        psiFinderExtensionPoint.unregisterFinders<JavaElementFinder>()
         psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
 
         val firJavaElementFinder = FirJavaElementFinder(firSession, project)
@@ -196,8 +202,10 @@ open class VfsBasedProjectEnvironment(
     override fun getFirJavaFacade(
         firSession: FirSession,
         baseModuleData: FirModuleData,
-        fileSearchScope: AbstractProjectFileSearchScope
+        fileSearchScope: AbstractProjectFileSearchScope,
     ): FirJavaFacadeForSource {
+        // PSI-backed default. Custom Java facades (e.g. `java-direct`) are constructed by
+        // explicit lambdas passed into `FirJvmSessionFactory.create*Session(...)`
         val javaAnnotationProvider = firSession.javaAnnotationProvider
         val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
@@ -223,7 +231,7 @@ open class VfsBasedProjectEnvironment(
     }
 }
 
-private fun AbstractProjectFileSearchScope.asPsiSearchScope() =
+fun AbstractProjectFileSearchScope.asPsiSearchScope(): GlobalSearchScope =
     when {
         this === AbstractProjectFileSearchScope.EMPTY -> GlobalSearchScope.EMPTY_SCOPE
         this === AbstractProjectFileSearchScope.ANY -> GlobalSearchScope.notScope(GlobalSearchScope.EMPTY_SCOPE)
@@ -238,8 +246,7 @@ fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnviron
             projectEnvironment.environment.jrtFileSystem,
             projectEnvironment.environment.localFileSystem,
         ),
-        { createPackagePartProvider(it) }
-    )
+    ) { createPackagePartProvider(it) }
 
 fun GlobalSearchScope.toAbstractProjectFileSearchScope(): AbstractProjectFileSearchScope =
     PsiBasedProjectFileSearchScope(this)

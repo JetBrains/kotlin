@@ -98,7 +98,7 @@ public interface KaFlexibleTypeRenderer {
                     val lowerOwnTypeArguments = lower.typeArguments
                     val upperOwnTypeArguments = upper.typeArguments
                     if (lowerOwnTypeArguments.size == upperOwnTypeArguments.size) {
-                        for ((index, kaTypeProjection) in lowerOwnTypeArguments.withIndex()) {
+                        for ([index, kaTypeProjection] in lowerOwnTypeArguments.withIndex()) {
                             if (upperOwnTypeArguments[index].type != kaTypeProjection.type) {
                                 return false
                             }

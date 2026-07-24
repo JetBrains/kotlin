@@ -21,10 +21,10 @@ val testExclExcl2: String? = J.s!!
 val testExclExcl3: String = J.m[""]!!
 val testExclExcl4: String? = J.m[""]!!
 
-val testSafeCall1: String <!INITIALIZER_TYPE_MISMATCH!>=<!> J.s?.let { it }
+val testSafeCall1: String = J.s?.<!INITIALIZER_TYPE_MISMATCH!>let<!> { it }
 val testSafeCall2: String? = J.s?.let { it }
 
-val testSafeCall3: String <!INITIALIZER_TYPE_MISMATCH!>=<!> J.m[""]?.let { it }
+val testSafeCall3: String = J.m[""]?.<!INITIALIZER_TYPE_MISMATCH!>let<!> { it }
 val testSafeCall4: String? = J.m[""]?.let { it }
 
 val testIf1: String = if (true) J.s else J.s

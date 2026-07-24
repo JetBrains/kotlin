@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,13 +35,11 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 private val SAM_PARAMETER_NAME = Name.identifier("function")
@@ -57,6 +55,7 @@ class FirSamResolver(
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     fun isSamType(type: ConeKotlinType): Boolean = when (type) {
         is ConeClassLikeType -> {
             val symbol = type.fullyExpandedType().lookupTag.toSymbol()
@@ -109,15 +108,13 @@ class FirSamResolver(
                 -> null
 
             is ConeCapturedType -> type.constructor.lowerType?.let { getSamInfoForPossibleSamType(it) }
-
-            is ConeLookupTagBasedType -> unreachableBranch(type)
         }
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
         val firRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
 
-        val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        (val _ = symbol, val unsubstitutedFunctionType = type) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val functionType = firRegularClass.buildSubstitutorWithUpperBounds(type).substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
@@ -158,7 +155,7 @@ class FirSamResolver(
 
     fun buildSamConstructorForRegularClass(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
         val firRegularClass = classSymbol.fir
-        val (functionSymbol, functionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        (val functionSymbol = symbol, val functionType = type) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val syntheticFunctionSymbol = classSymbol.createSyntheticConstructorSymbol()
 
@@ -180,7 +177,7 @@ class FirSamResolver(
 
         val newTypeParameterTypes =
             newTypeParameters
-                .map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
+                .map { ConeTypeParameterType(it.symbol.toLookupTag(), isMarkedNullable = false) }
 
         val substitutor = substitutorByMap(
             firRegularClass.typeParameters
@@ -189,7 +186,7 @@ class FirSamResolver(
             session
         )
 
-        for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
+        for ([newTypeParameter, oldTypeParameter] in newTypeParameters.zip(firRegularClass.typeParameters)) {
             val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
@@ -206,7 +203,7 @@ class FirSamResolver(
             source = fakeSource
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
-            status = firRegularClass.status.copy(modality = Modality.FINAL)
+            status = classSymbol.resolvedStatus.copy(modality = Modality.FINAL)
             isLocal = firRegularClass.isLocal
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
@@ -248,9 +245,7 @@ class FirSamResolver(
     }
 
     fun buildSamConstructorForTypeAlias(typeAliasSymbol: FirTypeAliasSymbol): FirNamedFunctionSymbol? {
-        val type =
-            typeAliasSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType()
-
+        val type = typeAliasSymbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return null
         val expansionRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null
 
@@ -328,7 +323,7 @@ context(c: SessionHolder)
 private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(type: ConeClassLikeType): ConeSubstitutor {
     if (typeParameters.isEmpty()) return ConeSubstitutor.Empty
 
-    val substitutionMap = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
+    val substitutionMap = typeParameters.zip(type.typeArguments).associate { [parameter, projection] ->
         val typeArgument =
             projection.type
             // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
@@ -361,52 +356,19 @@ context(c: SessionAndScopeSessionHolder)
 private fun FirRegularClass.getSingleAbstractMethodOrNull(): FirNamedFunction? {
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
-    val samCandidateNames = computeSamCandidateNames()
-    return findSingleAbstractMethodByNames(samCandidateNames)
-}
-
-context(c: SessionHolder)
-private fun FirRegularClass.computeSamCandidateNames(): Set<Name> {
-    val classes =
-        // Note: we search only for names in this function, so substitution is not needed      V
-        lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = c.session, substituteTypes = false)
-            .mapNotNullTo(mutableListOf(this)) {
-                (it.lookupTag.toRegularClassSymbol())?.fir
-            }
-
-    val samCandidateNames = mutableSetOf<Name>()
-    for (clazz in classes) {
-        for (declaration in clazz.declarations) {
-            when (declaration) {
-                is FirProperty -> if (declaration.resolvedIsAbstract) {
-                    samCandidateNames.add(declaration.name)
-                }
-                is FirNamedFunction -> if (declaration.resolvedIsAbstract) {
-                    samCandidateNames.add(declaration.name)
-                }
-                else -> {}
-            }
-        }
-    }
-
-    return samCandidateNames
-}
-
-context(c: SessionAndScopeSessionHolder)
-private fun FirRegularClass.findSingleAbstractMethodByNames(samCandidateNames: Set<Name>): FirNamedFunction? {
     var resultMethod: FirNamedFunction? = null
     var metIncorrectMember = false
 
     val classUseSiteMemberScope = this.unsubstitutedScope(
         withForcedTypeCalculator = false,
-        memberRequiredPhase = null,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
-    for (candidateName in samCandidateNames) {
+    for (candidateName in classUseSiteMemberScope.getCallableNames()) {
         if (metIncorrectMember) break
 
         classUseSiteMemberScope.processPropertiesByName(candidateName) {
-            if (it is FirPropertySymbol && it.fir.resolvedIsAbstract) {
+            if (it is FirPropertySymbol && it.isAbstract) {
                 metIncorrectMember = true
             }
         }

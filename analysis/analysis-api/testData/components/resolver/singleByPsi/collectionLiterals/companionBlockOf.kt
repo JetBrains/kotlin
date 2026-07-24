@@ -7,4 +7,4 @@ class MyList<T> {
 
 val myList: MyList<*> = <expr>["!"]</expr>
 
-// LANGUAGE: +CollectionLiterals +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals +CompanionBlocks +CompanionExtensions

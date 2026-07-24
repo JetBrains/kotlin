@@ -103,7 +103,7 @@ internal fun checkPropertyInitializer(
     isDefinitelyAssigned: Boolean,
     reachable: Boolean = true,
 ) {
-    val inInterface = containingClass?.isInterface == true
+    val inInterfaceAndNonStatic = containingClass?.isInterface == true && !propertySymbol.isStatic
     val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
     val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
     if (isAbstract) {
@@ -120,7 +120,7 @@ internal fun checkPropertyInitializer(
     }
 
     val backingFieldRequired = propertySymbol.hasBackingField
-    if (inInterface && backingFieldRequired && propertySymbol.hasAnyAccessorImplementation) {
+    if (inInterfaceAndNonStatic && backingFieldRequired && propertySymbol.hasAnyAccessorImplementation) {
         propertySymbol.source?.let {
             reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE)
         }
@@ -132,7 +132,7 @@ internal fun checkPropertyInitializer(
         propertySymbol.hasInitializer -> {
             propertySymbol.initializerSource?.let {
                 when {
-                    inInterface && !propertySymbol.isStatic -> {
+                    inInterfaceAndNonStatic -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
                     }
                     isExpect -> {
@@ -150,7 +150,7 @@ internal fun checkPropertyInitializer(
         propertySymbol.delegate != null -> {
             propertySymbol.delegate?.source?.let {
                 when {
-                    inInterface -> {
+                    inInterfaceAndNonStatic -> {
                         reporter.reportOn(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE)
                     }
                     isExpect -> {
@@ -177,7 +177,7 @@ internal fun checkPropertyInitializer(
             var initializationError = false
             if (
                 backingFieldRequired &&
-                !inInterface &&
+                !inInterfaceAndNonStatic &&
                 !propertySymbol.isLateInit &&
                 propertySymbol.backingFieldSymbol?.isLateInit != true &&
                 !isExpect &&
@@ -230,7 +230,7 @@ internal fun checkPropertyInitializer(
                     if (
                         backingFieldRequired &&
                         !propertySymbol.hasExplicitBackingField &&
-                        !inInterface &&
+                        !inInterfaceAndNonStatic &&
                         isCorrectlyInitialized &&
                         propertySymbol.backingFieldSymbol?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
                         !propertySymbol.hasAnnotation(KOTLINX_SERIALIZATION_TRANSIENT, context.session)
@@ -260,7 +260,7 @@ private fun reportMustBeInitialized(
             !propertySymbol.hasSetterAccessorImplementation &&
             propertySymbol.getEffectiveModality(containingClass) != Modality.FINAL &&
             isDefinitelyAssigned
-    val suggestMakingItAbstract = containingClass != null && !propertySymbol.hasAnyAccessorImplementation
+    val suggestMakingItAbstract = containingClass != null && !propertySymbol.isStatic && !propertySymbol.hasAnyAccessorImplementation
             && !propertySymbol.hasExplicitBackingField
     if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")

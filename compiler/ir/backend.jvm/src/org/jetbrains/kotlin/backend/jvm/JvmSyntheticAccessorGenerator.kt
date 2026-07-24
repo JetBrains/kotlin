@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
@@ -194,10 +196,16 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         if (constructor.hiddenConstructorMangledParams != null) return true
         return constructor.isOrShouldBeHiddenDueToOrigin &&
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&
-                !constructor.constructedClass.isValue &&
-                (constructor.originalConstructorOfThisMfvcConstructorReplacement ?: constructor).hasMangledParameters() &&
+                !constructor.constructedClass.isInlineClass &&
+                constructor.hasMangledParameters() &&
+                !constructor.hasIntroducedAtAnnotatedParameter() &&
                 !constructor.constructedClass.isAnonymousObject
     }
+
+    // @IntroducedAt already creates default constructor if some parameters are inline classes
+    // no need to duplicate it.
+    private fun IrConstructor.hasIntroducedAtAnnotatedParameter(): Boolean =
+        parameters.any { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt) }
 
     fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
         if (constructor.hiddenConstructorOfSealedClass != null) return true

@@ -54,30 +54,35 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", STRING)
         map.put(JvmBackendErrors.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", STRING)
         map.put(JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", STRING)
-        map.put(JvmBackendErrors.TYPEOF_SUSPEND_TYPE, "Suspend functional types are not supported in typeOf")
+        map.put(JvmBackendErrors.TYPEOF_SUSPEND_TYPE, "Suspend functional types are not supported in 'typeOf'.")
         map.put(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, "Non-reified type parameters with recursive bounds are not supported yet: {0}", STRING)
-        map.put(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point at {0} is inside a critical section", STRING)
+        map.put(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point at {0} is inside a critical section.", STRING)
 
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS, "Nested class {0} captures the script class instance. Try to use explicit inner modifier for both nested {0} and outer {1}", STRING, STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, "Object {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface {0} captures the script class instance. Try to use class instead", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
-        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
+        map.put(
+            JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
+            "Nested class ''{0}'' captures the script class instance. Try to use the explicit ''inner'' modifier for both the nested ''{0}'' and outer ''{1}''.",
+            STRING,
+            STRING,
+        )
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, "Object ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface ''{0}'' captures the script class instance. Try to use class instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
+        map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry ''{0}'' captures the script class instance. Try to use class or anonymous object instead.", STRING)
 
-        map.put(JvmBackendErrors.INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME)
+        map.put(JvmBackendErrors.INLINE_CALL_CYCLE, "The ''{0}'' invocation is part of an inline cycle.", NAME)
         map.put(
             JvmBackendErrors.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC,
-            "All of multi-file class parts should be annotated with @JvmSynthetic if at least one of them is"
+            "All multi-file class parts must be annotated with '@JvmSynthetic' if at least one of them is."
         )
 
         map.put(JvmBackendErrors.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING)
 
         map.put(
             JvmBackendErrors.PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
-            "Non-private inline function accesses a private class ''{0}''", CLASS_ID,
+            "Non-private inline function accesses a private class ''{0}''.", CLASS_ID,
         )
 
-        map.put(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled")
+        map.put(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled.")
 
         map.put(JvmBackendErrors.INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION, "{0}")
     }

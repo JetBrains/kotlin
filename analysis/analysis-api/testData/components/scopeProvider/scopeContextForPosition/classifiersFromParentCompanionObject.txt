@@ -8,6 +8,8 @@ implicit values:
       type: Child
     ownerSymbol = KaNamedClassSymbol:
       /Child
+    label = Child
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 4
@@ -17,6 +19,8 @@ implicit values:
       type: Base.Companion
     ownerSymbol = KaNamedClassSymbol:
       /Base.Companion
+    label = null
+
 
 scopes:
   LocalScope, index = 0
@@ -29,11 +33,11 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtObjectDeclaration
         annotations: []
         classId: Base.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -46,6 +50,8 @@ scopes:
         modality: FINAL
         name: Companion
         origin: SOURCE
+        psi: KtObjectDeclaration
+        realPsi: KtObjectDeclaration
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -56,14 +62,17 @@ scopes:
         visibility: PUBLIC
     callables: 4
       KaKotlinPropertySymbol:
+        anchorPsi: KtProperty
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
+          anchorPsi: KtProperty
           annotations: []
           callableId: null
-          compilerVisibility: Private
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -74,19 +83,22 @@ scopes:
           name: field
           origin: PROPERTY_BACKING_FIELD
           owningProperty: KaKotlinPropertySymbol(/Child.foo)
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaClassErrorType:
             annotations: []
             type: ERROR_TYPE
+          typeParameters: []
           visibility: PRIVATE
         callableId: /Child.foo
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
+          anchorPsi: KtProperty
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -100,10 +112,13 @@ scopes:
           location: PROPERTY
           modality: FINAL
           origin: SOURCE
+          psi: null
+          realPsi: null
           receiverParameter: null
           returnType: KaClassErrorType:
             annotations: []
             type: ERROR_TYPE
+          typeParameters: []
           valueParameters: []
           visibility: PUBLIC
         hasBackingField: true
@@ -113,11 +128,10 @@ scopes:
         isActual: false
         isCompanion: false
         isConst: false
-        isDelegatedProperty: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
-        isFromPrimaryConstructor: false
         isLateInit: false
         isOverride: false
         isStatic: false
@@ -126,6 +140,9 @@ scopes:
         modality: FINAL
         name: foo
         origin: SOURCE
+        primaryConstructorParameter: null
+        psi: KtProperty
+        realPsi: KtProperty
         receiverParameter: null
         returnType: KaClassErrorType:
           annotations: []
@@ -134,9 +151,9 @@ scopes:
         typeParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -158,6 +175,8 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -166,16 +185,17 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
             isCompanion: false
             isCrossinline: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -187,18 +207,22 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -220,6 +244,8 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -229,9 +255,9 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -253,6 +279,8 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -263,10 +291,11 @@ scopes:
         visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
+        anchorPsi: KtClass
         annotations: []
         callableId: null
-        compilerVisibility: Public
         containingClassId: Child
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -278,6 +307,8 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -291,11 +322,11 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtObjectDeclaration
         annotations: []
         classId: Base.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -308,6 +339,8 @@ scopes:
         modality: FINAL
         name: Companion
         origin: SOURCE
+        psi: KtObjectDeclaration
+        realPsi: KtObjectDeclaration
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -324,9 +357,9 @@ scopes:
     classifiers: 0
     callables: 4
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: /Base.Companion.bar
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -348,6 +381,8 @@ scopes:
         modality: FINAL
         name: bar
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -357,9 +392,9 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -381,6 +416,8 @@ scopes:
         modality: OPEN
         name: equals
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -389,16 +426,17 @@ scopes:
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
-            generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
             isActual: false
             isCompanion: false
             isCrossinline: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -410,18 +448,22 @@ scopes:
             modality: FINAL
             name: other
             origin: LIBRARY
+            primaryConstructorProperty: null
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any?
+            typeParameters: []
             visibility: PUBLIC
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -443,6 +485,8 @@ scopes:
         modality: OPEN
         name: hashCode
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -452,9 +496,9 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -476,6 +520,8 @@ scopes:
         modality: OPEN
         name: toString
         origin: LIBRARY
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -486,10 +532,11 @@ scopes:
         visibility: PUBLIC
     constructors: 1
       KaConstructorSymbol:
+        anchorPsi: KtObjectDeclaration
         annotations: []
         callableId: null
-        compilerVisibility: Private
         containingClassId: Base.Companion
+        contextParameters: []
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -501,6 +548,8 @@ scopes:
         location: CLASS
         modality: FINAL
         origin: SOURCE_MEMBER_GENERATED
+        psi: KtObjectDeclaration
+        realPsi: null
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
@@ -519,36 +568,54 @@ scopes:
   PackageMemberScope, index = 6
     packages: 6
       KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
     classifiers: 2
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: Base
         classKind: CLASS
         companionObject: KaNamedClassSymbol(Base.Companion)
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -561,6 +628,8 @@ scopes:
         modality: OPEN
         name: Base
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -570,11 +639,11 @@ scopes:
         typeParameters: []
         visibility: PUBLIC
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: Child
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -587,6 +656,8 @@ scopes:
         modality: FINAL
         name: Child
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []

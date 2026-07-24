@@ -13,7 +13,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.project
@@ -56,6 +55,7 @@ private enum class TestProperty(shortName: String) {
     TEAMCITY("teamcity"),
     MINIDUMP_ANALYZER("minidumpAnalyzer"),
     JDK_VERSION("jdkVersion"),
+    DEPEND_ON_PLATFORM_LIBS("dependOnPlatformLibs")
     ;
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -199,7 +199,7 @@ private open class NativeArgsProvider @Inject constructor(
                 from(distDir.dir("konan/"))
                 from(distDir.dir("tools/"))
                 from(distDir.dir("klib/common/"))
-                from(distDir.dir("klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-cache/"))
+                from(distDir.dir("klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-per-file-cache/"))
             } else {
                 from(distDir)
             }
@@ -242,7 +242,7 @@ private open class NativeArgsProvider @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE) // it doesn't matter at all how is this analyzer named, or where it's placed
     @get:Optional
     protected val minidumpAnalyzer: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (HostManager.hostIsMac && !project.hasProperty("disableBreakpad")) {
+        if (HostManager.hostIsMac && !project.providers.gradleProperty("disableBreakpad").isPresent) {
             val fileCollection = project.configurations.detachedConfiguration(
                 project.dependencies.project(":kotlin-native:tools:minidump-analyzer"),
             ).also {
@@ -281,6 +281,7 @@ private open class NativeArgsProvider @Inject constructor(
             xctestFramework.orNull?.let { "-D${XCTEST_FRAMEWORK.fullName}=$it" },
             "-D${CUSTOM_KLIBS.fullName}=${customKlibs.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { customKlibs.isNotEmpty() },
             if (minidumpAnalyzer.isEmpty) null else "-D${MINIDUMP_ANALYZER.fullName}=${minidumpAnalyzer.singleFile.absolutePath}",
+            "-D${DEPEND_ON_PLATFORM_LIBS.fullName}=${dependOnPlatformLibs.get()}"
         )
     }
 }
@@ -345,7 +346,6 @@ fun ProjectTestsExtension.nativeTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSizeMb = maxMetaspaceSizeMb,
     defineJDKEnvVariables = defineJDKEnvVariables,
@@ -358,7 +358,7 @@ fun ProjectTestsExtension.nativeTestTask(
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        if (!project.plugins.hasPlugin("test-inputs-check")) {
+        if (!project.plugins.hasPlugin("test-inputs-check") && !project.plugins.hasPlugin("test-inputs-check-v2")) {
             workingDir = project.rootDir
         }
 
@@ -403,10 +403,6 @@ fun ProjectTestsExtension.nativeTestTask(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        // Allow the test to access Kotlin/Native-specific locations.
-        // See `repo/gradle-build-conventions/project-tests-convention/Readme.md` for more details
-        extensions.findByType<TestInputsCheckExtension>()?.isNative?.set(true)
-
         jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
             this.customCompilerDependencies.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
@@ -430,7 +426,7 @@ fun ProjectTestsExtension.nativeTestTask(
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.
             // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-            val globalTags = project.findProperty("kotlin.native.tests.tags")?.toString()
+            val globalTags = project.providers.gradleProperty("kotlin.native.tests.tags").orNull
             val testTags = when {
                 tag == null -> globalTags
                 globalTags == null -> tag
@@ -453,6 +449,8 @@ fun ProjectTestsExtension.nativeTestTask(
                     }
                 }
             )
+
+            logger.info("$path task classpath: " + classpath.files.joinToString(File.pathSeparator))
         }
     } else
         doFirst {

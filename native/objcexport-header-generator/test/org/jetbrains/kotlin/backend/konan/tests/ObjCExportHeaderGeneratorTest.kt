@@ -59,7 +59,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - enumClassWithObjCEnumAndRenamedLiterals`() {
         doTest(headersTestDataDir.resolve("enumClassWithObjCEnumAndRenamedLiterals"))
     }
@@ -323,6 +322,9 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
     }
 
+    /**
+     * For equivalent AA-test, see reducedSpecialFunctionNamesExplicitMethodFamily.
+     */
     @Test
     @TodoAnalysisApi
     fun `test - special function names with explicit method family`() {
@@ -430,7 +432,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
 
     @Test
     fun `test - functionWithReservedMethodName`() {
-        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"))
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"), Configuration(frameworkName = "Shared"))
     }
 
     @Test
@@ -631,6 +633,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi // KT-86289
+    fun `test - KT-85423 mangle clashing throws and non-throws`() {
+        doTest(headersTestDataDir.resolve("mangleClashingThrowsAndNonThrows"))
+    }
+
+    @Test
     fun `test - functions annotated with @ObjCName`() {
         doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
     }
@@ -698,6 +706,32 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - extensions mangling`() {
         doTest(headersTestDataDir.resolve("extensionsMangling"))
+    }
+
+    @Test
+    fun `test - function parameters mangling`() {
+        doTest(headersTestDataDir.resolve("functionParametersMangling"))
+    }
+
+    @Test
+    fun `test - properties with reserved names`() {
+        doTest(headersTestDataDir.resolve("propertiesWithReservedNames"))
+    }
+
+    @Test
+    @TodoAnalysisApi
+    fun `test - conflict upon mangling a property or a method should be handled by the manglers`() {
+        doTest(headersTestDataDir.resolve("conflictUponManglingPropertyOrMethod"))
+    }
+
+    /**
+     * This test primarily exercises the AA impl for explicitMethodFamily=true, and not the subsequent conflict
+     * detection and mangling, as that's dependent on the resolution of KT-86289. For such a test (K1), see
+     * specialFunctionNamesExplicitMethodFamily.
+     */
+    @Test
+    fun `test - reduced set of special function names with explicit method family`() {
+        doTest(headersTestDataDir.resolve("reducedSpecialFunctionNamesExplicitMethodFamily"), Configuration(explicitMethodFamily = true))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

@@ -1,2 +1,3 @@
 expression: param: Int
+expression PSI: KtParameter
 type: kotlin.Unit

@@ -157,7 +157,7 @@ class FutureTest {
     }
 
     @Test
-    fun `test - future with CoroutineStart 'Default'`() = project.runLifecycleAwareTest {
+    fun `test - future with CoroutineStart Default`() = project.runLifecycleAwareTest {
         val future = project.future(CoroutineStart.Default) {}
         assertFailsWith<IllegalLifecycleException> { future.getOrThrow() }
         future.await()

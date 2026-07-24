@@ -1,10 +1,12 @@
 KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
   annotations: []
   callableId: /Config.minValue
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -14,10 +16,13 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: minValue
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
     type: T!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -30,5 +35,5 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: Config
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 
 @Suppress("UNUSED")
 class StarTypeProjectionCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testStarTypeProjection(): KaTypeProjection {
         return session.typeCreator.starTypeProjection()
     }

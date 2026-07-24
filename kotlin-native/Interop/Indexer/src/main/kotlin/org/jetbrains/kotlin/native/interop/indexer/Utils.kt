@@ -1028,9 +1028,12 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
         val translationUnit =
                 this.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord).ensureNoCompileErrors()
         try {
-            val (headers, _) = UnitsHolder(index).use { unitsHolder ->
-                getHeadersAndUnits(this, index, translationUnit, unitsHolder)
-            }
+            (
+                val headers, val _ = ownTranslationUnits
+            ) =
+                UnitsHolder(index).use { unitsHolder ->
+                    getHeadersAndUnits(this, index, translationUnit, unitsHolder)
+                }
 
             fun getPath(file: ClangFile?) = if (file == null) "<builtins>" else file.canonicalPath
             return NativeLibraryHeaders(
@@ -1046,7 +1049,7 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
     }
 }
 
-fun ObjCMethod.replaces(other: ObjCMethod): Boolean =
+fun ObjCMethodOrUnavailableMethod.replaces(other: ObjCMethodOrUnavailableMethod): Boolean =
         this.isClass == other.isClass && this.selector == other.selector
 
 fun ObjCProperty.replaces(other: ObjCProperty): Boolean =

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isInterface
 
 internal enum class ConstantConstructorIntrinsicType {
@@ -47,7 +47,7 @@ internal interface IntrinsicGeneratorEnvironment {
 
 private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
     val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
-    val value = annotation.getAnnotationStringValue()!!
+    val value = annotation.getConstArgument<String>("kind")!!
     return ConstantConstructorIntrinsicType.valueOf(value)
 }
 
@@ -503,8 +503,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitAreEqualByValue(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
-        assert (first.type == second.type) { "Types are different: '${llvmtype2string(first.type)}' and '${llvmtype2string(second.type)}'" }
+        val [first, second] = args
+        assert (first.type == second.type) { "Types are different: '${first.type.toTypeString()}' and '${second.type.toTypeString()}'" }
 
         return when (val typeKind = LLVMGetTypeKind(first.type)) {
             LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind,
@@ -519,12 +519,12 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitIeee754Equals(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         assert (first.type == second.type)
-                { "Types are different: '${llvmtype2string(first.type)}' and '${llvmtype2string(second.type)}'" }
+                { "Types are different: '${first.type.toTypeString()}' and '${second.type.toTypeString()}'" }
         val type = LLVMGetTypeKind(first.type)
         assert (type == LLVMTypeKind.LLVMFloatTypeKind || type == LLVMTypeKind.LLVMDoubleTypeKind)
-                { "Should be of floating point kind, not: '${llvmtype2string(first.type)}'"}
+                { "Should be of floating point kind, not: '${first.type.toTypeString()}'"}
         return fcmpEq(first, second)
     }
 
@@ -532,7 +532,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             bitcast(callSite.llvmReturnType, args[0])
 
     private fun FunctionGenerationContext.emitExtractElement(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val (vector, index) = args
+        val [vector, index] = args
         val elementSize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, callSite.llvmReturnType).toInt()
         val vectorSize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, vector.type).toInt()
 
@@ -553,7 +553,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             not(args[0])
 
     private fun FunctionGenerationContext.emitPlus(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return if (first.type.isFloatingPoint()) {
             fadd(first, second)
         } else {
@@ -583,7 +583,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             LLVMBuildFPTrunc(builder, args[0], callSite.llvmReturnType, "")!!
 
     private fun FunctionGenerationContext.emitShift(op: LLVMOpcode, args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         val shift = if (first.type == llvm.int64Type) {
             val tmp = and(second, llvm.int32(63))
             zext(tmp, llvm.int64Type)
@@ -603,17 +603,17 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             emitShift(LLVMOpcode.LLVMLShr, args)
 
     private fun FunctionGenerationContext.emitAnd(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return and(first, second)
     }
 
     private fun FunctionGenerationContext.emitOr(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return or(first, second)
     }
 
     private fun FunctionGenerationContext.emitXor(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return xor(first, second)
     }
 
@@ -624,7 +624,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitMinus(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return if (first.type.isFloatingPoint()) {
             fsub(first, second)
         } else {
@@ -633,7 +633,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitTimes(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         return if (first.type.isFloatingPoint()) {
             LLVMBuildFMul(builder, first, second, "")
         } else {
@@ -658,7 +658,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitSignedDiv(args: List<LLVMValueRef>): LLVMValueRef {
-        val (dividend, divisor) = args
+        val [dividend, divisor] = args
         val divisorType = divisor.type
         return if (!divisorType.isFloatingPoint()) {
             emitThrowIfZero(divisor)
@@ -671,7 +671,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitSignedRem(args: List<LLVMValueRef>): LLVMValueRef {
-        val (dividend, divisor) = args
+        val [dividend, divisor] = args
         val divisorType = divisor.type
         return if (!divisorType.isFloatingPoint()) {
             emitThrowIfZero(divisor)
@@ -737,7 +737,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCompareTo(args: List<LLVMValueRef>, signed: Boolean): LLVMValueRef {
-        val (first, second) = args
+        val [first, second] = args
         val equal = icmpEq(first, second)
         val less = if (signed) icmpLt(first, second) else icmpULt(first, second)
         val tmp = select(less, llvm.int32(-1), llvm.int32(1))

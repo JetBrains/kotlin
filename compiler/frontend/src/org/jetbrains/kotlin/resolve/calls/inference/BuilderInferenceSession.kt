@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
 
+@K1Deprecation
 class BuilderInferenceSession(
     psiCallResolver: PSICallResolver,
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -308,7 +310,7 @@ class BuilderInferenceSession(
     private fun createNonFixedTypeToVariableMap(): Map<TypeConstructor, UnwrappedType> {
         val bindings = hashMapOf<TypeConstructor, UnwrappedType>()
 
-        for ((variable, nonFixedType) in stubsForPostponedVariables) { // do it for nested sessions
+        for ([variable, nonFixedType] in stubsForPostponedVariables) { // do it for nested sessions
             bindings[nonFixedType.constructor] = variable.defaultType
         }
 
@@ -345,7 +347,7 @@ class BuilderInferenceSession(
             if (initialConstraint.position is BuilderInferencePosition) continue
 
             val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
-            val (lower, upper) = substituteNotFixedVariables(
+            val [lower, upper] = substituteNotFixedVariables(
                 substitutedConstraint.a as KotlinType,
                 substitutedConstraint.b as KotlinType,
                 nonFixedToVariablesSubstitutor
@@ -367,7 +369,7 @@ class BuilderInferenceSession(
         }
 
         if (shouldIntegrateAllConstraints) {
-            for ((variableConstructor, type) in storage.fixedTypeVariables) {
+            for ([variableConstructor, type] in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerTypeVariableIfNotPresent(typeVariable)
                 commonSystem.addEqualityConstraint((typeVariable as NewTypeVariable).defaultType, type, BuilderInferencePosition)
@@ -381,7 +383,7 @@ class BuilderInferenceSession(
         b: KotlinType
     ) {
         val nonFixedToVariablesSubstitutor: NewTypeSubstitutor = createNonFixedTypeToVariableSubstitutor()
-        val (lower, upper) = substituteNotFixedVariables(a, b, nonFixedToVariablesSubstitutor)
+        val [lower, upper] = substituteNotFixedVariables(a, b, nonFixedToVariablesSubstitutor)
         val position = BuilderInferenceExpectedTypeConstraintPosition(callExpression)
         val currentSubstitutor = commonSystem.buildCurrentSubstitutor()
 
@@ -429,7 +431,7 @@ class BuilderInferenceSession(
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
         for (parentSession in findAllParentBuildInferenceSessions()) {
-            for ((variable, stubType) in parentSession.stubsForPostponedVariables) {
+            for ([variable, stubType] in parentSession.stubsForPostponedVariables) {
                 commonSystem.registerTypeVariableIfNotPresent(variable)
                 commonSystem.addSubtypeConstraint(
                     variable.defaultType,
@@ -465,7 +467,7 @@ class BuilderInferenceSession(
             trace.recordType(expression, substitutor.safeSubstitute(currentExpressionType.unwrap()))
         }
 
-        val (currentDescriptorType, updateDescriptorType) = when (expression) {
+        val [currentDescriptorType, updateDescriptorType] = when (expression) {
             is KtLambdaExpression -> {
                 val descriptor = trace[BindingContext.FUNCTION, expression.functionLiteral] as? AnonymousFunctionDescriptor ?: return
                 val currentType = descriptor.returnType ?: return
@@ -646,6 +648,7 @@ class BuilderInferenceSession(
     }
 }
 
+@K1Deprecation
 class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubstitutor) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
         val rightSubstitution = right.substituteNotNullTypeWithConstructor(constructor)
@@ -655,4 +658,5 @@ class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubsti
     override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty
 }
 
+@K1Deprecation
 class BuilderInferenceExpectedTypeConstraintPosition(callElement: KtExpression) : ExpectedTypeConstraintPosition<KtExpression>(callElement)

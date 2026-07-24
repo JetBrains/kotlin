@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -37,9 +38,11 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
+@K1Deprecation
 fun KotlinType.hasEnhancedNullability(): Boolean =
     SimpleClassicTypeSystemContext.hasEnhancedNullability(this)
 
+@K1Deprecation
 class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings) {
     private class Result(val type: KotlinType?, val subtreeSize: Int)
 
@@ -199,6 +202,7 @@ private fun getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: Typ
     }
 }
 
+@K1Deprecation
 val ENHANCED_NULLABILITY_ANNOTATIONS: Annotations = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 private val ENHANCED_MUTABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION)
 

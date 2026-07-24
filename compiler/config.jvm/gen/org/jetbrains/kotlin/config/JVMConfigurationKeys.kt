@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import java.io.File
+import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 
@@ -103,10 +104,6 @@ object JVMConfigurationKeys {
     @JvmField
     val LAMBDAS = CompilerConfigurationKey.create<JvmClosureGenerationScheme>("LAMBDAS")
 
-    // Paths to .klib libraries.
-    @JvmField
-    val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("KLIB_PATHS")
-
     // ABI stability of class files produced by JVM IR and/or FIR.
     @JvmField
     val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI_STABILITY")
@@ -140,10 +137,6 @@ object JVMConfigurationKeys {
     @JvmField
     val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("VALIDATE_BYTECODE")
 
-    // Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend.
-    @JvmField
-    val LINK_VIA_SIGNATURES = CompilerConfigurationKey.create<Boolean>("LINK_VIA_SIGNATURES")
-
     @JvmField
     val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("ENABLE_DEBUG_MODE")
 
@@ -174,6 +167,18 @@ object JVMConfigurationKeys {
     // Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
+
+    // Tracks generated in-module JVM metadata for KMP JVM IC
+    @JvmField
+    val IC_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmMetadataTracker>("IC_METADATA_TRACKER")
+
+    // Use fragment metadata found on the compilation classpath to perform incremental compilation
+    @JvmField
+    val USE_METADATA_ON_INCREMENTAL_CLASSPATH = CompilerConfigurationKey.create<Boolean>("USE_METADATA_ON_INCREMENTAL_CLASSPATH")
+
+    // Use java-direct as frontend Java facade
+    @JvmField
+    val USE_JAVA_DIRECT = CompilerConfigurationKey.create<Boolean>("USE_JAVA_DIRECT")
 
 }
 
@@ -289,10 +294,6 @@ var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
     get() = get(JVMConfigurationKeys.LAMBDAS)
     set(value) { put(JVMConfigurationKeys.LAMBDAS, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.klibPaths: List<String>
-    get() = getList(JVMConfigurationKeys.KLIB_PATHS)
-    set(value) { put(JVMConfigurationKeys.KLIB_PATHS, value) }
-
 var CompilerConfiguration.abiStability: JvmAbiStability?
     get() = get(JVMConfigurationKeys.ABI_STABILITY)
     set(value) { put(JVMConfigurationKeys.ABI_STABILITY, requireNotNull(value) { "nullable values are not allowed" }) }
@@ -329,10 +330,6 @@ var CompilerConfiguration.validateBytecode: Boolean
     get() = getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
     set(value) { put(JVMConfigurationKeys.VALIDATE_BYTECODE, value) }
 
-var CompilerConfiguration.linkViaSignatures: Boolean
-    get() = getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-    set(value) { put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, value) }
-
 var CompilerConfiguration.enableDebugMode: Boolean
     get() = getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     set(value) { put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, value) }
@@ -364,4 +361,16 @@ var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
 var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
+
+var CompilerConfiguration.icMetadataTracker: ICJvmMetadataTracker?
+    get() = get(JVMConfigurationKeys.IC_METADATA_TRACKER)
+    set(value) { putIfNotNull(JVMConfigurationKeys.IC_METADATA_TRACKER, value) }
+
+var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH)
+    set(value) { put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, value) }
+
+var CompilerConfiguration.useJavaDirect: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)
+    set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
 

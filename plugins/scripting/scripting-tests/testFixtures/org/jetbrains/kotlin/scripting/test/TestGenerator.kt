@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractReplWithTestExtensionsCodegenTest> {
-                model("testData/codegen/repl", extension = "kts")
+                model("testData/codegen/repl", extension = "kts", smokeTest = true, smokeTestLimit = Int.MAX_VALUE)
             }
 
             testClass<AbstractReplViaApiEvaluationTest> {

@@ -1,0 +1,11 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+
+ASSIGN_RIGHT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+
+ASSIGN_ALL:
+Substitutor: <empty substitutor>
+Substituted pairs:

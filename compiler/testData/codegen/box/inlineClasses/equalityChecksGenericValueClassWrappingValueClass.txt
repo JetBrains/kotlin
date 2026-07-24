@@ -1,0 +1,49 @@
+@kotlin.Metadata
+public final class EqualityChecksGenericValueClassWrappingValueClassKt {
+    // source: 'equalityChecksGenericValueClassWrappingValueClass.kt'
+    public final static method boom-czs3aTU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public final static method bothGeneric-e7PaTd4(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): boolean
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method explicitEquals-czs3aTU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public final static method flipped-czs3aTU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public final static method viaLocal-czs3aTU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public final static method wrapperEquals-e7PaTd4(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): boolean
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IntValue {
+    // source: 'equalityChecksGenericValueClassWrappingValueClass.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): IntValue
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Wrapper {
+    // source: 'equalityChecksGenericValueClassWrappingValueClass.kt'
+    private final field value: java.lang.Object
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic final static method box-impl(p0: java.lang.Object): Wrapper
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final method getValue(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Object
+}

@@ -32,7 +32,7 @@ internal abstract class ProblemsReporterG811 @Inject constructor(
     private fun fillSpec(
         spec: ProblemSpec,
         diagnostic: ToolingDiagnostic,
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         throwable: KotlinDiagnosticsException?
     ) {
         spec

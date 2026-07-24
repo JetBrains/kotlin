@@ -1,5 +1,5 @@
 KtNameReferenceExpression(83,86): 'foo'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -35,4 +35,5 @@ KtNameReferenceExpression(83,86): 'foo'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'param1: Int' found.>
     isInBestCandidates = true

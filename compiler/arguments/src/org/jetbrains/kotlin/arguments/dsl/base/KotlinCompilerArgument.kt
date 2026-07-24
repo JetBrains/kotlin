@@ -20,6 +20,7 @@ import kotlin.properties.ReadOnlyProperty
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
  * @param affectsCompilationOutcome if the argument affects the compilation outcome (e.g. affects the generated code).
+ * @param restrictedToCompilerPhase if set to something else than null, that means the argument only applies to the given compiler phase
  * @param valueType the argument value type.
  * @param valueDescription describes which values are accepted by the argument.
  * The description text may have a different value for different Kotlin releases,
@@ -27,6 +28,7 @@ import kotlin.properties.ReadOnlyProperty
  * @param argumentType the type-safe representation of the argument value type. This is an experimental API that may change in future versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
  * @param compilerName alternative property name in the generated Kotlin compiler argument representation
+ * @param deprecatedMessage message to be used for the [Deprecated] annotation if the argument is deprecated
  *
  * Usually compiler arguments should either be defined via compiler argument level builder [KotlinCompilerArgumentsLevelBuilder.compilerArgument]
  * or via special standalone builder DSL - [compilerArgument].
@@ -39,6 +41,7 @@ data class KotlinCompilerArgument(
     val description: ReleaseDependent<String>,
     val delimiter: Delimiter?,
     val affectsCompilationOutcome: Boolean = true,
+    val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
 
     val valueType: KotlinArgumentValueType<*>,
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
@@ -54,10 +57,8 @@ data class KotlinCompilerArgument(
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
 
-    @kotlinx.serialization.Transient
-    val isObsolete: Boolean = false,
+    val deprecatedMessage: String? = null,
 ) : WithKotlinReleaseVersionsMetadata {
-
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
     enum class Delimiter(val constantName: String) {
         Default("default"),
@@ -66,6 +67,10 @@ data class KotlinCompilerArgument(
         Space("space"),
         Semicolon("semicolon"),
     }
+}
+
+enum class KotlinCompilerPhase {
+    KLIB_COMPILATION, BACKEND_COMPILATION
 }
 
 /**
@@ -126,6 +131,11 @@ internal class KotlinCompilerArgumentBuilder {
     var affectsCompilationOutcome: Boolean = true
 
     /**
+     * @see KotlinCompilerArgument.deprecatedMessage
+     */
+    var deprecatedMessage: String? = null
+
+    /**
      * @see KotlinCompilerArgument.releaseVersionsMetadata
      */
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
@@ -134,6 +144,11 @@ internal class KotlinCompilerArgumentBuilder {
      * @see KotlinCompilerArgument.additionalAnnotations
      */
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
+
+    /**
+     * @see KotlinCompilerArgument.restrictedToCompilerPhase
+     */
+    var restrictedToCompilerPhase: KotlinCompilerPhase? = null
 
     /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
@@ -176,6 +191,8 @@ internal class KotlinCompilerArgumentBuilder {
         compilerName = compilerName,
         delimiter = delimiter,
         affectsCompilationOutcome = affectsCompilationOutcome,
+        restrictedToCompilerPhase = restrictedToCompilerPhase,
+        deprecatedMessage = deprecatedMessage,
     )
 }
 

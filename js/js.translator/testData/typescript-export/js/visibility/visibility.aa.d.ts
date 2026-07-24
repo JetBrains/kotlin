@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     const publicVal: number;
     function publicFun(): number;
     class publicClass {
@@ -154,3 +153,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

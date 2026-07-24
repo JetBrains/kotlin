@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 
+@K1Deprecation
 fun ModuleDescriptor.findPackageFragmentForFile(ktFile: KtFile): PackageFragmentDescriptor? =
     getPackage(ktFile.packageFqName).fragments
         .filterIsInstance<LazyPackageDescriptor>()

@@ -44,7 +44,7 @@ public class CriDataSerializerImpl {
         val lookups = lookups.asSequence().map { it.toLookupEntry() }
         val serializedLookups = lookups.encodeToByteArrayWithLengthPrefix()
 
-        val fileIdsToPaths = filePathToId.asSequence().map { (filePath, fileId) ->
+        val fileIdsToPaths = filePathToId.asSequence().map { [filePath, fileId] ->
             FileIdToPathEntryImpl(fileId, filePath)
         }
         val serializedFileIdsToPaths = fileIdsToPaths.encodeToByteArrayWithLengthPrefix()
@@ -56,7 +56,7 @@ public class CriDataSerializerImpl {
     }
 
     public fun serializeSubtypes(subtypes: Map<FqName, Collection<FqName>>): ByteArray {
-        val subtypes = subtypes.asSequence().map { (className, subtypes) ->
+        val subtypes = subtypes.asSequence().map { [className, subtypes] ->
             SubtypeEntryImpl(className, subtypes)
         }
         return subtypes.encodeToByteArrayWithLengthPrefix()

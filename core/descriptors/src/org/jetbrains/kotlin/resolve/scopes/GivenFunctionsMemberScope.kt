@@ -60,8 +60,8 @@ abstract class GivenFunctionsMemberScope(
         val allSuperDescriptors = containingClass.typeConstructor.supertypes
                 .flatMap { it.memberScope.getContributedDescriptors() }
                 .filterIsInstance<CallableMemberDescriptor>()
-        for ((name, group) in allSuperDescriptors.groupBy { it.name }) {
-            for ((isFunction, descriptors) in group.groupBy { it is FunctionDescriptor }) {
+        for ([name, group] in allSuperDescriptors.groupBy { it.name }) {
+            for ([isFunction, descriptors] in group.groupBy { it is FunctionDescriptor }) {
                 OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(
                         name,
                         /* membersFromSupertypes = */ descriptors,

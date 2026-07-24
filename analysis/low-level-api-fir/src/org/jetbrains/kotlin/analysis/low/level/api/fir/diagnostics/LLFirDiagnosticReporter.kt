@@ -19,10 +19,10 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
 
     val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
     override val hasErrors: Boolean
-        get() = committedDiagnostics.any { (_, diagnostics) -> diagnostics.any { it.severity.isError } }
+        get() = committedDiagnostics.any { [_, diagnostics] -> diagnostics.any { it.severity.isError } }
 
     override val hasWarningsForWError: Boolean
-        get() = committedDiagnostics.any { (_, diagnostics) -> diagnostics.any { it.severity.isErrorWhenWError } }
+        get() = committedDiagnostics.any { [_, diagnostics] -> diagnostics.any { it.severity.isErrorWhenWError } }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
@@ -41,7 +41,7 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
     }
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
-        for ((diagnosticElement, pendingList) in pendingDiagnostics) {
+        for ([diagnosticElement, pendingList] in pendingDiagnostics) {
             val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {

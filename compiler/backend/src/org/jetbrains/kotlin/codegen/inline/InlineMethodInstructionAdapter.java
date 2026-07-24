@@ -10,12 +10,11 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 public class InlineMethodInstructionAdapter extends InstructionAdapter {
-
     InlineMethodInstructionAdapter(MethodVisitor methodVisitor) {
         super(Opcodes.API_VERSION, methodVisitor);
     }
 
+    @Override
     public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
-
     }
 }

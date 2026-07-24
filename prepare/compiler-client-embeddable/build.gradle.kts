@@ -1,18 +1,21 @@
 description = "Kotlin compiler client embeddable"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
 
-val testCompilerClasspath by configurations.creating {
+val testCompilerClasspath = configurations.create("testCompilerClasspath") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     }
 }
 
-val testCompilationClasspath by configurations.creating
+val testCompilationClasspath = configurations.create("testCompilationClasspath")
 
 dependencies {
     embedded(project(":compiler:cli-base")) { isTransitive = false }
@@ -22,8 +25,10 @@ dependencies {
     testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":daemon-common"))
     testImplementation(project(":kotlin-daemon-client"))
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testCompilerClasspath(project(":kotlin-compiler"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
@@ -37,7 +42,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask {
         dependsOn(":kotlin-compiler:jar")
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }

@@ -90,7 +90,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
         }
 
     override fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
-        for ((typePredicate, v) in finalPrimitiveClasses) {
+        for ([typePredicate, v] in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)
         }
@@ -100,7 +100,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
 
 
     override fun getOpenPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
-        for ((typePredicate, v) in openPrimitiveClasses) {
+        for ([typePredicate, v] in openPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)
         }

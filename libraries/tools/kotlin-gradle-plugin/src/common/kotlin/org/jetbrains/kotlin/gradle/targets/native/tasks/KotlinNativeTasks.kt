@@ -469,8 +469,6 @@ internal constructor(
             args.moduleName = compilerOptions.moduleName.get()
             args.shortModuleName = shortModuleName
             args.multiPlatform = true
-            @Suppress("DEPRECATION")
-            args.noendorsedlibs = true
             args.outputName = outputFile.get().absolutePath
             args.optimization = optimized
             args.debug = debuggable
@@ -950,6 +948,27 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
 
+    internal enum class MacroNamesCollectingMode {
+        LEGACY,
+        LIBCLANGEXT,
+        LIBCLANGEXT_PARALLEL;
+
+        val value: String
+            get() = when (this) {
+                LEGACY -> "legacy"
+                LIBCLANGEXT -> "libclangext"
+                LIBCLANGEXT_PARALLEL -> "libclangext_parallel"
+            }
+
+        companion object {
+            val OPTION = "-Xmacro-collection-impl"
+        }
+    }
+
+    @get:Optional
+    @get:Input
+    internal abstract val macroNamesCollectingMode: Property<MacroNamesCollectingMode>
+
     @get:Internal
     val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
@@ -1004,6 +1023,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             addArgIfNotNull("-Xkonan-data-dir", kotlinNativeProvider.get().konanDataDir.orNull)
             if (produceUnpackagedKlib.get()) {
                 add("-nopack")
+            }
+            if (macroNamesCollectingMode.isPresent) {
+                addArg(MacroNamesCollectingMode.OPTION, macroNamesCollectingMode.get().value)
             }
 
             addAll(extraOpts)

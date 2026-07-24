@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import javax.lang.model.element.Element
 
+@K1Deprecation
 open class SymbolBasedElement<out T : Element>(
         val element: T,
         val javac: JavacWrapper

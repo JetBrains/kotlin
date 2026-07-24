@@ -1,0 +1,3 @@
+public final annotation class test/Annotation : kotlin/Annotation
+public constructor test/Annotation.<init>()
+public final fun test/foo(@test/Annotation arg: kotlin/Int): kotlin/Unit

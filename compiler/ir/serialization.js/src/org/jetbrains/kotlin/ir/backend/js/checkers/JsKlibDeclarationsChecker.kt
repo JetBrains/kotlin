@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 
 interface JsKlibDeclarationsChecker<D> {
-    fun check(declarations: List<D>, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter)
+    fun check(declarations: List<D>, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter)
 }
 
 typealias JsKlibExportedDeclarationsChecker = JsKlibDeclarationsChecker<JsKlibExportingDeclaration>

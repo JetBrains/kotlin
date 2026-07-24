@@ -42,7 +42,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     open lateinit var symbol: FirFieldSymbol
 
     @OptIn(FirImplementationDetail::class)
@@ -82,7 +82,7 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
         }
 
     @Deprecated("Modification of 'contextParameters' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
 
     @Deprecated("Modification of 'delegate' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var delegate: FirExpression?

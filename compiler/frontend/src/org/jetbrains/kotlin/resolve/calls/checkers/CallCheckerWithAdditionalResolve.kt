@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.types.UnwrappedType
 
+@K1Deprecation
 interface CallCheckerWithAdditionalResolve {
     fun check(
         overloadResolutionResults: OverloadResolutionResults<*>,

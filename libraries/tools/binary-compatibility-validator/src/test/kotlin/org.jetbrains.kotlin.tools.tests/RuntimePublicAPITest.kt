@@ -8,16 +8,20 @@ package org.jetbrains.kotlin.tools.tests
 import kotlinx.validation.api.filterOutAnnotated
 import kotlinx.validation.api.filterOutNonPublic
 import kotlinx.validation.api.loadApiFromJvmClasses
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.jar.JarFile
 
 class RuntimePublicAPITest {
 
-    @[Rule JvmField]
-    val testName = TestName()
+    private lateinit var testMethodName: String
+
+    @BeforeEach
+    fun captureTestName(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
 
     @Test fun kotlinStdlibRuntimeMerged() {
         snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
@@ -53,7 +57,7 @@ class RuntimePublicAPITest {
             .filterOutAnnotated(nonPublicAnnotations.toSet())
 
         val target = File("reference-public-api")
-            .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
+            .resolve(testMethodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
 
         api.dumpAndCompareWith(target)
     }

@@ -58,7 +58,7 @@ abstract class KtCodeFragment(
         }
     }
 
-    final override fun init(elementType: IElementType, contentElementType: IElementType?) {
+    final override fun init(elementType: IElementType, contentElementType: IElementType) {
         super.init(elementType, contentElementType)
     }
 

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.expressions.*
 
+@K1Deprecation
 class ContractDescriptionRenderer(private val builder: StringBuilder) : ContractDescriptionVisitor<Unit, Unit> {
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConditionalEffectDeclaration, data: Unit) {
         conditionalEffect.effect.accept(this, data)

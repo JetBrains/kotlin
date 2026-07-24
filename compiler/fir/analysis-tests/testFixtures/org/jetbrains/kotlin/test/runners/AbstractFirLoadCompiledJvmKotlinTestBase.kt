@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.test.FirMetadataLoadingTestSuppressor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.JvmLoadedMetadataDumpHandler
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -21,9 +19,6 @@ open class AbstractFirLoadK2CompiledJvmKotlinTest : AbstractKotlinCompilerWithTa
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         setupJvmPipelineSteps(FirParser.LightTree)
 
-        configureFirHandlersStep {
-            useHandlers(::NoFirCompilationErrorsHandler)
-        }
         configureJvmArtifactsHandlersStep {
             useHandlers(::JvmLoadedMetadataDumpHandler)
         }

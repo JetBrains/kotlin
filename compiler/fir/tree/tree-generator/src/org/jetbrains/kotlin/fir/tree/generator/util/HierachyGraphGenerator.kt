@@ -25,7 +25,7 @@ fun printHierarchyGraph(model: Model) {
         }
     }
 
-    val (interfaces, classes) = elements.partition { it.kind == ImplementationKind.Interface }
+    val [interfaces, classes] = elements.partition { it.kind == ImplementationKind.Interface }
     println("Interfaces: ${interfaces.size}")
     println("Classes: ${classes.size}")
 

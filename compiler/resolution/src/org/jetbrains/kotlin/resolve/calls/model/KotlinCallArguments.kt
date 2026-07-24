@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -17,11 +18,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
+@K1Deprecation
 interface ReceiverKotlinCallArgument : KotlinCallArgument {
     val receiver: DetailedReceiver
     val isSafeCall: Boolean
 }
 
+@K1Deprecation
 class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiver) : ReceiverKotlinCallArgument {
     override val isSafeCall: Boolean
         get() = false // TODO: add warning
@@ -32,23 +35,29 @@ class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiv
     override val argumentName: Name? get() = null
 }
 
+@K1Deprecation
 interface KotlinCallArgument {
     val isSpread: Boolean
     val argumentName: Name?
 }
 
+@K1Deprecation
 interface PostponableKotlinCallArgument : KotlinCallArgument, ResolutionAtom
 
+@K1Deprecation
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
 }
 
+@K1Deprecation
 interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
+@K1Deprecation
 interface SubKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom {
     val callResult: PartialCallResolutionResult
 }
 
+@K1Deprecation
 interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
     override val isSpread: Boolean
         get() = false
@@ -72,6 +81,7 @@ interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
     val parametersTypes: Array<UnwrappedType?>?
 }
 
+@K1Deprecation
 interface FunctionExpression : LambdaKotlinCallArgument {
     override val parametersTypes: Array<UnwrappedType?>
 
@@ -92,6 +102,7 @@ interface FunctionExpression : LambdaKotlinCallArgument {
  * C::foo <-> Object
  * D.E::foo <-> Expression
  */
+@K1Deprecation
 sealed class LHSResult {
     class Type(val qualifier: QualifierReceiver?, resolvedType: UnwrappedType) : LHSResult() {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
@@ -127,6 +138,7 @@ sealed class LHSResult {
     object Error : LHSResult()
 }
 
+@K1Deprecation
 interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument, CallableReferenceResolutionAtom {
     override val isSpread: Boolean
         get() = false
@@ -136,13 +148,17 @@ interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument, C
     override val call: KotlinCall
 }
 
+@K1Deprecation
 interface CollectionLiteralKotlinCallArgument : PostponableKotlinCallArgument
 
+@K1Deprecation
 interface TypeArgument
 
 // Used as a stub or underscored type argument
+@K1Deprecation
 object TypeArgumentPlaceholder : TypeArgument
 
+@K1Deprecation
 interface SimpleTypeArgument : TypeArgument {
     val type: UnwrappedType
 }

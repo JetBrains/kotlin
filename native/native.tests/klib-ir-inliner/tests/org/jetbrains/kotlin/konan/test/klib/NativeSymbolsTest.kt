@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationNativeSymbolValidationHandler
-import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondStageSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
@@ -47,7 +47,7 @@ class NativeSymbolsTest : AbstractSymbolsValidationTest(
     }
 }
 
-class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondStageSymbolValidationHandler(testServices) {
     private val errorReportingContext = object : ErrorReportingContext {
 
         override val diagnosticReporter: IrDiagnosticReporter

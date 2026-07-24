@@ -7,45 +7,56 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements test.IList<Elem>
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<Elem> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.List<Elem> subList(int, int);//  subList(int, int)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator();//  listIterator()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public Elem get(int);//  get(int)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(Elem);//  contains(Elem)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public int getSize();//  getSize()
-
-  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public int indexOf(Elem);//  indexOf(Elem)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public int lastIndexOf(Elem);//  lastIndexOf(Elem)
+
+  @java.lang.Override()
+  public int getSize();//  getSize()
 
   public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList<Elem>)
 }

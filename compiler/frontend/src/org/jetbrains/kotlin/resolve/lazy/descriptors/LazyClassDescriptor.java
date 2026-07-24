@@ -672,35 +672,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return invalidValueClassRepresentation;
         }
         List<ValueParameterDescriptor> parameters = constructor.getValueParameters();
-        SimpleClassicTypeSystemContext context = SimpleClassicTypeSystemContext.INSTANCE;
-        if (isRecursiveInlineClass(constructor, new HashSet<>())) {
-            return new InlineClassRepresentation<>(parameters.get(0).getName(), (SimpleType) parameters.get(0).getType());
-        }
-        if (parameters.size() == 0) {
+        if (parameters.size() != 1) {
             return invalidValueClassRepresentation;
         }
-        List<Pair<Name, SimpleType>> fields = parameters.stream()
-                .map(parameter -> new Pair<>(parameter.getName(), (SimpleType) parameter.getType()))
-                .collect(Collectors.toList());
-        return ValueClassRepresentationKt.createValueClassRepresentation(context, fields);
-    }
-
-    private static boolean isRecursiveInlineClass(@Nullable ClassConstructorDescriptor constructor, @NotNull Set<ClassDescriptor> visited) {
-        if (constructor == null || constructor.getValueParameters().size() != 1 ||
-            !(constructor.getConstructedClass().isValue() || constructor.getConstructedClass().isInline())) {
-            return false;
-        }
-        if (!visited.add(constructor.getConstructedClass())) {
-            return true;
-        }
-        SimpleType type = (SimpleType) constructor.getValueParameters().get(0).getType();
-
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor) {
-            ClassConstructorDescriptor newConstructor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
-            return isRecursiveInlineClass(newConstructor, visited);
-        }
-        return false;
+        return new InlineClassRepresentation<>(parameters.get(0).getName(), (SimpleType) parameters.get(0).getType());
     }
 
     @Override

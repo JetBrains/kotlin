@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: Key.java
 public interface Key<E> {}

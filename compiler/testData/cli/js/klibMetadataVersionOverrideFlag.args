@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/klibMetadataVersionSource.kt
+-nopack
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_JS$
+-Xmetadata-version=2.3.0

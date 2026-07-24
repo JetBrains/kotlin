@@ -7,21 +7,23 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -58,7 +60,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val testModule = testServices.moduleStructure.modules.first()
         val targetPlatform = testModule.targetPlatform(testServices)
 
-        require(targetPlatform.isJvm())
+        checkTestInfrastructure(targetPlatform.isJvm()) { "Target platform $targetPlatform must be JVM" }
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
 
@@ -136,24 +138,22 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
-        require(firParser == FirParser.Psi)
+        checkTestInfrastructure(firParser == FirParser.Psi) { "FirParser must be Psi" }
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
         val project = compilerConfigurationProvider.getProject(module)
 
-        PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
-
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
-            javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),
+            javaSourcesScope = PsiBasedProjectFileSearchScope(FirFrontendFacade.newModuleSearchScope(project, ktFiles.values)),
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,
             context = replCompilationEnvironment.jvmSessionFactoryContext,
             needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
                 registerExtraCommonCheckers()

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.isPure
-import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.hasPureInitialization
@@ -96,20 +95,20 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
     }
 
     private fun IrStatement.isPureStatementForObjectInitialization(owner: IrClass): Boolean {
-        return (
-                (this is IrReturn && value.isPureStatementForObjectInitialization(owner)) ||
-                        // Only objects which don't have a class parent
-                        (this is IrDelegatingConstructorCall && symbol.owner.parent == context.irBuiltIns.anyClass.owner) ||
-                        (this is IrExpression && isPure(anyVariable = true, checkFields = false, symbols = context.symbols)) ||
-                        (this is IrContainerExpression && statements.all { it.isPureStatementForObjectInitialization(owner) }) ||
-                        (this is IrVariable && (isEs6DelegatingConstructorCallReplacement || initializer?.isPureStatementForObjectInitialization(owner) != false)) ||
-                        // Only fields of the objects are safe to not save an intermediate state of another class/object/global
-                        (this is IrGetField && receiver?.isPureStatementForObjectInitialization(owner) == true) ||
-                        (this is IrSetField && receiver?.isPureStatementForObjectInitialization(owner) == true && value.isPureStatementForObjectInitialization(owner)) ||
-                        // Only current object could be initialized inside the object constructor, so we need to ignore it as an effect
-                        (this is IrSetField && symbol.owner.isObjectInstanceField()) ||
-                        (this is IrSetValue && symbol.owner.isOriginallyLocal && value.isPureStatementForObjectInitialization(owner))
-                )
-
+        return when (this) {
+            is IrReturn if value.isPureStatementForObjectInitialization(owner) -> true
+            // Only objects which don't have a class parent
+            is IrDelegatingConstructorCall if symbol.owner.parent == context.irBuiltIns.anyClass.owner -> true
+            is IrExpression if isPure(anyVariable = true, checkFields = false, symbols = context.symbols) -> true
+            is IrContainerExpression if statements.all { it.isPureStatementForObjectInitialization(owner) } -> true
+            is IrVariable if (isEs6DelegatingConstructorCallReplacement || initializer?.isPureStatementForObjectInitialization(owner) != false) -> true
+            // Only fields of the objects are safe to not save an intermediate state of another class/object/global
+            is IrGetField if receiver?.isPureStatementForObjectInitialization(owner) == true -> true
+            is IrSetField if receiver?.isPureStatementForObjectInitialization(owner) == true && value.isPureStatementForObjectInitialization(owner) -> true
+            // Only current object could be initialized inside the object constructor, so we need to ignore it as an effect
+            is IrSetField if symbol.owner.isObjectInstanceField() -> true
+            is IrSetValue if symbol.owner.isOriginallyLocal && value.isPureStatementForObjectInitialization(owner) -> true
+            else -> false
+        }
     }
 }

@@ -11,5 +11,5 @@ import kotlin.jvm.JvmStatic
  */
 internal object BuildToolsApiVersion {
   @JvmStatic
-  internal fun `get`(): String = "2.4.20"
+  internal fun `get`(): String = "2.5.0"
 }

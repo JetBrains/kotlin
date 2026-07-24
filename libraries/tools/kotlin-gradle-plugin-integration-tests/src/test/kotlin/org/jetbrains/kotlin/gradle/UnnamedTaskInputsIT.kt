@@ -81,7 +81,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @DisplayName("Kapt")
     @GradleTest
     fun inputsKapt(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project("kapt/simple", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assemble") {

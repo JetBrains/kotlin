@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.extensions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
+@K1Deprecation
 interface AnalysisHandlerExtension : org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension {
     companion object : ProjectExtensionDescriptor<org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension>(
             "org.jetbrains.kotlin.analyzeCompleteHandlerExtension",

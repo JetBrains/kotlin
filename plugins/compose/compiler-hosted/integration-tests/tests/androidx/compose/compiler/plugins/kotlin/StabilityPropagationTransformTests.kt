@@ -1,0 +1,139 @@
+/*
+ * Copyright 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package androidx.compose.compiler.plugins.kotlin
+
+import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Test
+
+class StabilityPropagationTransformTests : AbstractIrTransformTest() {
+    private fun stabilityPropagation(
+        @Language("kotlin")
+        unchecked: String,
+        @Language("kotlin")
+        checked: String,
+        dumpTree: Boolean = false,
+    ) = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            $checked
+        """.trimIndent(),
+        """
+            import androidx.compose.runtime.Composable
+
+            $unchecked
+        """.trimIndent(),
+        dumpTree = dumpTree
+    )
+
+    @Test
+    fun testPassingLocalKnownStable(): Unit = stabilityPropagation(
+        """
+            @Composable fun A(x: Any) {}
+        """,
+        """
+            import androidx.compose.runtime.remember
+
+            class Foo(val foo: Int)
+
+            @Composable
+            fun Test(x: Foo) {
+                A(x)
+                A(Foo(0))
+                A(remember { Foo(0) })
+            }
+        """
+    )
+
+    @Test
+    fun testPassingLocalKnownUnstable(): Unit = stabilityPropagation(
+        """
+            @Composable fun A(x: Any) {}
+        """,
+        """
+            import androidx.compose.runtime.remember
+
+            class Foo(var foo: Int)
+
+            @Composable
+            fun Test(x: Foo) {
+                A(x)
+                A(Foo(0))
+                A(remember { Foo(0) })
+            }
+        """
+    )
+
+    @Test
+    fun testListOfMarkedAsStable(): Unit = stabilityPropagation(
+        """
+            @Composable fun A(x: Any) {}
+        """,
+        """
+            @Composable
+            fun Example() {
+                A(listOf("a"))
+            }
+        """
+    )
+
+    /**
+     * This test ensures that `Child.$stable` is used to compute the `$changed` mask passed to `A`
+     * and not `Parent.$stable`. This test serves as a regression test against
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun testCastStabilityPropagation(): Unit = stabilityPropagation(
+        """
+            class Parent
+
+            class Child : Parent()
+
+            @Composable fun A(c: Child) {}
+        """,
+        """
+            @Composable
+            fun Test(p: Parent) {
+                A(p as Child)
+            }
+        """
+    )
+
+    /**
+     * This test ensures that `Child.$stable` is used to compute the `$changed` mask passed to `A`
+     * and not `Parent.$stable`. This test serves as a regression test against
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun testSmartCastStabilityPropagation(): Unit = stabilityPropagation(
+        """
+            class Parent
+
+            class Child : Parent()
+
+            @Composable fun A(c: Child) {}
+        """,
+        """
+            @Composable
+            fun Test(p: Parent) {
+                if (p is Child) {
+                    A(p)
+                }
+            }
+        """
+    )
+}

@@ -3,6 +3,8 @@
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_NATIVE: optimizationMode=NO
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 import kotlinx.cinterop.*
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import kotlin.io.path.pathString
 
 /**
  * This is the entry point to load Kotlin/Native KLIBs.
@@ -94,7 +95,7 @@ private fun KlibLoaderResult.checkForUnknownIrProviders(): KlibLoaderResult {
         when (val irProviderName = library.irProviderName) {
             null, KLIB_INTEROP_IR_PROVIDER_IDENTIFIER -> librariesWithoutOrWithKnownIrProvider += library
             else -> problematicLibrariesWithUnknownIrProvider += ProblematicLibrary(
-                libraryPath = library.libraryFile.path,
+                libraryPath = library.path.pathString,
                 problemCase = UnknownIrProvider(irProviderName)
             )
         }

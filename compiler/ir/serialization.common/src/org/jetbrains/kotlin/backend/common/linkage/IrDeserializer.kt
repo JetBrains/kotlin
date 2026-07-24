@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.linkage
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -20,7 +21,19 @@ interface IrDeserializer : IrProvider {
     }
 
     fun init(moduleFragment: IrModuleFragment?)
-    fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
+
+    /**
+     * Retrieves the symbol associated with the given signature and kind.
+     *
+     * It is guaranteed that the returned symbol is not null if such a symbol belongs to the module represented by the current deserializer.
+     * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
+     *
+     * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
+     * main part of the deserialization process has been finished, i.e. after `postProcess(inOrAfterLinkageStep = true)` was called.
+     *
+     * @return The symbol for the given signature and kind if successfully found; otherwise, null.
+     */
+    fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: TopLevelSymbolKind): IrSymbol?
 
     /**
      * [postProcess] has two usages with different expectations:
@@ -30,10 +43,16 @@ interface IrDeserializer : IrProvider {
      * In the future, this function should be split into several functions with different semantics for more precise use.
      */
     @Deprecated(
-        "Use postProcess(inOrAfterLinkageStep) instead",
-        ReplaceWith("postProcess(inOrAfterLinkageStep = true)"),
-        DeprecationLevel.ERROR
+        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
+        level = DeprecationLevel.ERROR
     )
-    fun postProcess() = postProcess(inOrAfterLinkageStep = true)
-    fun postProcess(inOrAfterLinkageStep: Boolean)
+    fun postProcess(): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
+
+    @Deprecated(
+        "Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead",
+        level = DeprecationLevel.ERROR
+    )
+    fun postProcess(inOrAfterLinkageStep: Boolean): Nothing = error("Use postProcess(irBuiltIns, inOrAfterLinkageStep) instead")
+
+    fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean)
 }

@@ -16,5 +16,6 @@ internal class SymbolLightValueParameterWithCustomType(
     containingMethod: SymbolLightMethodBase,
     private val customType: PsiType,
 ) : SymbolLightValueParameter(parameterSymbol, containingMethod) {
-    override fun KaSession.computeType(parameterSymbol: KaParameterSymbol): PsiType = customType
+    context(session: KaSession)
+    override fun computeType(parameterSymbol: KaParameterSymbol): PsiType = customType
 }

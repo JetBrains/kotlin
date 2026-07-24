@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
+@K1Deprecation
 abstract class AssignedVariablesSearcher : KtTreeVisitorVoid() {
 
     data class Writer(val assignment: KtBinaryExpression, val declaration: KtDeclaration?)

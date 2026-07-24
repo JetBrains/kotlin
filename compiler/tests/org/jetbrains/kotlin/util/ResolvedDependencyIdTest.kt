@@ -7,18 +7,24 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.utils.ResolvedDependencyId
 import org.jetbrains.kotlin.utils.ResolvedDependencyVersion
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+
 
 class ResolvedDependencyIdTest {
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun failOnNoNames1() {
-        ResolvedDependencyId()
+        assertThrows<IllegalStateException> {
+            ResolvedDependencyId()
+        }
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun failOnNoNames2() {
-        ResolvedDependencyId(emptyList())
+        assertThrows<IllegalStateException> {
+            ResolvedDependencyId(emptyList())
+        }
     }
 
     @Test
@@ -28,29 +34,29 @@ class ResolvedDependencyIdTest {
             List(20) { characters.random() }.joinToString("")
         }
         val moduleId = ResolvedDependencyId(uniqueNames)
-        assertEquals(uniqueNames.sorted(), moduleId.uniqueNames.toList())
+        Assertions.assertEquals(uniqueNames.sorted(), moduleId.uniqueNames.toList())
     }
 
     @Test
     fun contains() {
-        assertTrue(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "bar"))
-        assertTrue(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "bar", "baz"))
-        assertFalse(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "baz"))
+        Assertions.assertTrue(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "bar"))
+        Assertions.assertTrue(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "bar", "baz"))
+        Assertions.assertFalse(ResolvedDependencyId("foo", "bar") in ResolvedDependencyId("foo", "baz"))
     }
 
     @Test
     fun withVersion() {
-        assertEquals("foo: 1.0.1", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion("1.0.1")))
-        assertEquals("foo", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion("")))
-        assertEquals("foo", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion.EMPTY))
+        Assertions.assertEquals("foo: 1.0.1", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion("1.0.1")))
+        Assertions.assertEquals("foo", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion("")))
+        Assertions.assertEquals("foo", ResolvedDependencyId("foo").withVersion(ResolvedDependencyVersion.EMPTY))
     }
 
     @Test
     fun toStringImplementation() {
-        assertEquals("/", ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID.toString())
-        assertEquals("foo", ResolvedDependencyId("foo").toString())
-        assertEquals("bar (foo)", ResolvedDependencyId("foo", "bar").toString())
-        assertEquals("bar (baz, foo)", ResolvedDependencyId("foo", "bar", "baz").toString())
-        assertEquals("bar (baz, foo, qux)", ResolvedDependencyId("foo", "bar", "baz", "qux").toString())
+        Assertions.assertEquals("/", ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID.toString())
+        Assertions.assertEquals("foo", ResolvedDependencyId("foo").toString())
+        Assertions.assertEquals("bar (foo)", ResolvedDependencyId("foo", "bar").toString())
+        Assertions.assertEquals("bar (baz, foo)", ResolvedDependencyId("foo", "bar", "baz").toString())
+        Assertions.assertEquals("bar (baz, foo, qux)", ResolvedDependencyId("foo", "bar", "baz", "qux").toString())
     }
 }

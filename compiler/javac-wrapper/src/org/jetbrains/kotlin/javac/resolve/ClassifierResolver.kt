@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.javac.resolve
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.source.tree.Tree
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class ClassifierResolver(private val javac: JavacWrapper) {
 
     private val cache = hashMapOf<Tree, JavaClassifier?>()
@@ -248,4 +250,5 @@ private class CurrentClassAndInnerScope(javac: JavacWrapper,
 
 }
 
+@K1Deprecation
 fun classId(packageName: String = "", className: String) = ClassId(FqName(packageName), Name.identifier(className))

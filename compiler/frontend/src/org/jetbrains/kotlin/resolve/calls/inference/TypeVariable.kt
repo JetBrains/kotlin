@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class TypeVariable(
     val call: CallHandle,
     internal val freshTypeParameter: TypeParameterDescriptor,
@@ -36,10 +38,12 @@ class TypeVariable(
         originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
 
+@K1Deprecation
 interface CallHandle {
     object NONE : CallHandle
 }
 
+@K1Deprecation
 class CallBasedCallHandle(val call: Call) : CallHandle {
     override fun equals(other: Any?) =
         other is CallBasedCallHandle && call === other.call
@@ -51,4 +55,5 @@ class CallBasedCallHandle(val call: Call) : CallHandle {
         call.toString()
 }
 
+@K1Deprecation
 fun Call.toHandle(): CallHandle = CallBasedCallHandle(this)

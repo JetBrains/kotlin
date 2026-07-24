@@ -1,8 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -22,15 +25,17 @@ dependencies {
     testFixturesApi(project(":native:binary-options"))
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:fir:fir-native"))
     testFixturesImplementation(project(":core:compiler.common.native"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":native:swift:swift-export-standalone"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testFixturesApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
+    testImplementation(project(":kotlinx-metadata-klib"))
     testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     testFixturesApi(project(":compiler:cli:cli-native-klib"))
@@ -46,8 +51,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
-testsJar {}
 
 projectTests {
     testData(isolated, "testData")
@@ -114,16 +117,9 @@ projectTests {
                 kotlinBuildProperties.stringProperty("kotlin.native.pathToDarwinDist").orNull != null
             )
         }
-
-        // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
-        // Kotlin test infra uses reflection to access JDK internals.
-        // With JDK 11, some JVM args are required to silence the warnings caused by that:
-        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }
-
-optInToK1Deprecation()

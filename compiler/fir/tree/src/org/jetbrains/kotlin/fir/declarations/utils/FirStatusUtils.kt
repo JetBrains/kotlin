@@ -85,4 +85,4 @@ val FirCallableDeclaration.isCompanionBlockMember: Boolean
     get() = isStatic && containingClassForStaticMemberAttr != null
 
 val FirCallableDeclaration.isCompanionExtension: Boolean
-    get() = isStatic && receiverParameter != null
+    get() = isStatic && containingClassForStaticMemberAttr == null && receiverParameter != null

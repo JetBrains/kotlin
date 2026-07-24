@@ -1,0 +1,10 @@
+context(param1: Int, param2: String)
+val foo: Boolean get() = false
+
+context(param1: Int, param2: String)
+fun usage() {
+    <expr>::foo</expr>
+}
+
+// LANGUAGE: +ContextParameters
+// COMPILATION_ERRORS

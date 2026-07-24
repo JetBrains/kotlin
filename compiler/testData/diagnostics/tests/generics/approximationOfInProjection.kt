@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-21463
-// SKIP_TXT
 
 class Bound<T: Number>(val value: T)
 

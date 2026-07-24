@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 
+@K1Deprecation
 interface ImplicitScopeTower {
     val lexicalScope: LexicalScope
 
@@ -83,6 +85,7 @@ interface ImplicitScopeTower {
     ): Collection<VariableDescriptor>
 }
 
+@K1Deprecation
 interface ScopeTowerLevel {
     fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
 
@@ -93,6 +96,7 @@ interface ScopeTowerLevel {
     fun recordLookup(name: Name)
 }
 
+@K1Deprecation
 class CandidateWithBoundDispatchReceiver(
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
     val descriptor: CallableDescriptor,
@@ -100,13 +104,16 @@ class CandidateWithBoundDispatchReceiver(
 )
 
 @JvmName("getResultApplicabilityForConstraintErrors")
+@K1Deprecation
 fun getResultApplicability(diagnostics: Collection<ConstraintSystemError>): CandidateApplicability =
     diagnostics.minByOrNull { it.applicability }?.applicability ?: RESOLVED
 
 @JvmName("getResultApplicabilityForCallDiagnostics")
+@K1Deprecation
 fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>): CandidateApplicability =
     diagnostics.minByOrNull { it.candidateApplicability }?.candidateApplicability ?: RESOLVED
 
+@K1Deprecation
 abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicability) :
     KotlinCallDiagnostic(candidateApplicability) {
     override fun report(reporter: DiagnosticReporter) {
@@ -114,18 +121,21 @@ abstract class ResolutionDiagnostic(candidateApplicability: CandidateApplicabili
     }
 }
 
+@K1Deprecation
 class NoMatchingContextReceiver : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
+@K1Deprecation
 class ContextReceiverAmbiguity : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
+@K1Deprecation
 class UnsupportedContextualDeclarationCall : ResolutionDiagnostic(RESOLVED_WITH_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
@@ -133,12 +143,14 @@ class UnsupportedContextualDeclarationCall : ResolutionDiagnostic(RESOLVED_WITH_
 }
 
 // todo error for this access from nested class
+@K1Deprecation
 class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility) : ResolutionDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
+@K1Deprecation
 class VisibilityErrorOnArgument(
     val argument: KotlinCallArgument,
     val invisibleMember: DeclarationDescriptorWithVisibility
@@ -148,20 +160,34 @@ class VisibilityErrorOnArgument(
     }
 }
 
+@K1Deprecation
 class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor) : ResolutionDiagnostic(K1_IMPOSSIBLE_TO_GENERATE)
+@K1Deprecation
 class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor) : ResolutionDiagnostic(K1_IMPOSSIBLE_TO_GENERATE)
+@K1Deprecation
 class UnsupportedInnerClassCall(val message: String) : ResolutionDiagnostic(K1_IMPOSSIBLE_TO_GENERATE)
+@K1Deprecation
 class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType) : ResolutionDiagnostic(RESOLVED)
 
+@K1Deprecation
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discuss and change to INAPPLICABLE
+@K1Deprecation
 object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+@K1Deprecation
 object DynamicDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+@K1Deprecation
 object UnstableSmartCastDiagnostic : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
+@K1Deprecation
 object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
+@K1Deprecation
 object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
 
+@K1Deprecation
 object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_ERROR)
+@K1Deprecation
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
+@K1Deprecation
 object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)
 
+@K1Deprecation
 class ResolvedUsingDeprecatedVisibility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)

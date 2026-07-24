@@ -310,7 +310,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
         get() = hasAnnotation("kotlin.test.AfterTest")
 
     private fun IrAnnotationContainer.hasAnnotation(fqName: String) =
-        annotations.any { it.symbol.owner.fqNameWhenAvailable?.parent()?.asString() == fqName }
+        annotations.any { it.classSymbol.owner.fqNameWhenAvailable?.asString() == fqName }
 
     private val IrSimpleType.isPromise: Boolean
         get() {

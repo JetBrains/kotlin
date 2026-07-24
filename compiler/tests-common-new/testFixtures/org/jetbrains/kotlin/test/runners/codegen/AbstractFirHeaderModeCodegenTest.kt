@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
+import org.jetbrains.kotlin.test.configuration.setupJvmPipelineStepsWithoutCompilationErrorHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_HEADER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -23,7 +24,7 @@ abstract class AbstractFirHeaderModeCodegenTestBase(
             +HEADER_MODE
         }
 
-        setupJvmPipelineSteps(parser)
+        setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
         useFailureSuppressors(
             { BlackBoxCodegenSuppressor(it, customIgnoreDirective = IGNORE_HEADER_MODE) },
         )

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.messages.report
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
@@ -74,7 +75,14 @@ fun MessageCollector.reportFromDaemon(
         ReportCategory.COMPILER_MESSAGE -> {
             val compilerSeverity = ReportSeverity.fromCode(severity).asCompilerMessageSeverity
             requireNotNullMessage(category, severity, message, attachment) {
-                report(compilerSeverity, message = it, attachment as? CompilerMessageSourceLocation)
+                // New daemons send CompilerMessageAttachment; old ones send bare CompilerMessageSourceLocation.
+                // null attachment means no location and no diagnosticId.
+                val (location, diagnosticId) = when (attachment) {
+                    is CompilerMessageAttachment -> attachment
+                    is CompilerMessageSourceLocation -> CompilerMessageAttachment(attachment, diagnosticId = null)
+                    else -> CompilerMessageAttachment(location = null, diagnosticId = null)
+                }
+                report(compilerSeverity, it, location, diagnosticId)
             }
         }
         ReportCategory.DAEMON_MESSAGE,
@@ -104,3 +112,4 @@ private val ReportSeverity.asCompilerMessageSeverity: CompilerMessageSeverity
         ReportSeverity.INFO -> CompilerMessageSeverity.INFO
         ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
+

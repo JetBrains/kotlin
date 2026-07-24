@@ -16,7 +16,7 @@ class PairTest {
     }
 
     @Test fun pairMultiAssignment() {
-        val (a, b) = p
+        val [a, b] = p
         assertEquals(1, a)
         assertEquals("a", b)
     }
@@ -64,7 +64,7 @@ class TripleTest {
     }
 
     @Test fun tripleMultiAssignment() {
-        val (a, b, c) = t
+        val [a, b, c] = t
         assertEquals(1, a)
         assertEquals("a", b)
         assertEquals(0.07, c)

@@ -60,7 +60,7 @@ internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(MppCh
         var defaultFrom = true // if no argument is passed, the default value is Json.Default
         var emptyBuilder = false
 
-        functionCall.resolvedArgumentMapping?.forEach { (argumentExpression, parameter) ->
+        functionCall.resolvedArgumentMapping?.forEach { [argumentExpression, parameter] ->
             when (parameter.name) {
                 parameterNameFrom -> {
                     defaultFrom = isDefaultFormatArgument(argumentExpression)

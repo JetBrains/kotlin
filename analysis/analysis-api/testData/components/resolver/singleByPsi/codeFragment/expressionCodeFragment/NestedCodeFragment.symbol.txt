@@ -1,4 +1,6 @@
 KtNameReferenceExpression(154,157): 'bar'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /bar(): kotlin.Unit

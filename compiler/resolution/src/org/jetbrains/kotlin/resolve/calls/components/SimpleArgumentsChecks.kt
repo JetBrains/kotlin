@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@K1Deprecation
 class ReceiverInfo(
     val isReceiver: Boolean,
     val shouldReportUnsafeCall: Boolean, // should not report if unsafe implicit invoke has been reported already
@@ -46,6 +48,7 @@ class ReceiverInfo(
     }
 }
 
+@K1Deprecation
 fun checkSimpleArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: SimpleKotlinCallArgument,
@@ -161,6 +164,7 @@ private fun checkExpressionArgument(
  * }
  *
  */
+@K1Deprecation
 fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
     val expectedTypeConstructor = expectedType.upperIfFlexible().constructor
 

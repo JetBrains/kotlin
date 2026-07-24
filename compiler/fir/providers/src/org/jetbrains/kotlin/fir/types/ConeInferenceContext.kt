@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -125,7 +123,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes,
             )
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(
+            is ConeTypeParameterLookupTag -> ConeTypeParameterType(
                 constructor,
                 nullable,
                 coneAttributes
@@ -133,10 +131,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             is ConeIntersectionType -> if (coneAttributes === constructor.attributes) {
                 constructor
             } else {
-                ConeIntersectionType(
-                    constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
-                )
+                constructor.mapTypes { it.withAttributes(coneAttributes) }
             }
             is ConeCapturedTypeConstructor,
             is ConeIntegerLiteralType,
@@ -213,7 +208,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(this is ConeRigidType)
 
         if (this is ConeClassLikeType) {
-            val fullyExpanded = fullyExpandedType(session)
+            val fullyExpanded = fullyExpandedType()
             if (this !== fullyExpanded) {
                 return fullyExpanded.typeDepth()
             }
@@ -621,7 +616,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        val rigidType = fullyExpandedType(session).lowerBoundIfFlexible().asCone()
+        val rigidType = fullyExpandedType().lowerBoundIfFlexible().asCone()
 
         return when {
             rigidType.isSomeFunctionType(session) -> this

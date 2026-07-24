@@ -1,0 +1,75 @@
+KtFile: 'companionBlockNoCompanionQualifier.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  null
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,119): 'class C {'
+  null
+
+KtClassBody(73,119): '{'
+  null
+
+KtCompanionBlock(79,117): 'companion {'
+  null
+
+KtDeclarationModifierList(79,88): 'companion'
+  null
+
+KtClassBody(89,117): '{'
+  null
+
+KtNamedFunction(99,111): 'fun foo() {}'
+  null
+
+KtParameterList(106,108): '()'
+  null
+
+KtBlockExpression(109,111): '{}'
+  null
+
+KtNamedFunction(121,274): 'fun usage() {'
+  null
+
+KtParameterList(130,132): '()'
+  null
+
+KtBlockExpression(133,274): '{'
+  null
+
+KtDotQualifiedExpression(255,272): 'C.Companion.foo()'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
+
+KtDotQualifiedExpression(255,266): 'C.Companion'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
+
+KtNameReferenceExpression(255,256): 'C'
+  null
+
+KtNameReferenceExpression(257,266): 'Companion'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
+
+KtCallExpression(267,272): 'foo()'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
+
+KtNameReferenceExpression(267,270): 'foo'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
+
+KtValueArgumentList(270,272): '()'
+  null

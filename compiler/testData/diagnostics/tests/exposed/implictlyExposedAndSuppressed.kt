@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LANGUAGE: -ReportExposedTypeForMoreCasesOfTypeParameterBounds, -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+// LANGUAGE: -ReportExposedTypeForMoreCasesOfTypeParameterBounds
 
 // MODULE: a
 

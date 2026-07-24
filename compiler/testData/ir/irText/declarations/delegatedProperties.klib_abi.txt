@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final val map // /C.map|{}map[0]
+        final fun <get-map>(): kotlin.collections/MutableMap<kotlin/String, kotlin/Any> // /C.map.<get-map>|<get-map>(){}[0]
+    final val test2 // /C.test2|{}test2[0]
+        final fun <get-test2>(): kotlin/Int // /C.test2.<get-test2>|<get-test2>(){}[0]
+    final var test3 // /C.test3|{}test3[0]
+        final fun <get-test3>(): kotlin/Any // /C.test3.<get-test3>|<get-test3>(){}[0]
+        final fun <set-test3>(kotlin/Any) // /C.test3.<set-test3>|<set-test3>(kotlin.Any){}[0]
+    constructor <init>(kotlin.collections/MutableMap<kotlin/String, kotlin/Any>) // /C.<init>|<init>(kotlin.collections.MutableMap<kotlin.String,kotlin.Any>){}[0]
+}
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/Int // /test1.<get-test1>|<get-test1>(){}[0]
+final var /test4 // /test4|{}test4[0]
+    final fun <get-test4>(): kotlin/Any // /test4.<get-test4>|<get-test4>(){}[0]
+    final fun <set-test4>(kotlin/Any) // /test4.<set-test4>|<set-test4>(kotlin.Any){}[0]

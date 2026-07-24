@@ -2,13 +2,16 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val llvmDevBinaryDataUsage by configurations.creating {
+val llvmDevBinaryDataUsage = configurations.create("llvmDevBinaryDataUsage") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
@@ -23,9 +26,12 @@ dependencies {
     testFixturesApi(project(":compiler:ir.serialization.native"))
     testFixturesApi(project(":compiler:test-infrastructure"))
     testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":compiler:ir.psi2ir"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:kotlin-native-utils")))
     testFixturesApi(testFixtures(project(":native:native.tests")))
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
+    testImplementation(project(":kotlin-util-klib-metadata"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))
@@ -83,5 +89,3 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }
-
-testsJar {}

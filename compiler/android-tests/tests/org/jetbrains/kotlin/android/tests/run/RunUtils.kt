@@ -39,6 +39,7 @@ suspend fun runProcessCancellable(
     stdin: String? = null,
     timeout: Duration? = null,
     checkExitCode: Boolean = true,
+    stdoutProcessor: (String) -> Unit = {},
 ): ProcessResult = coroutineScope {
     withContext(Dispatchers.IO) {
         val process = runInterruptible {
@@ -53,11 +54,11 @@ suspend fun runProcessCancellable(
         }
 
         val stdout = async(Dispatchers.IO) {
-            process.inputStream.readTextInterruptibly(System.out, process)
+            process.inputStream.readTextInterruptibly(System.out, process, stdoutProcessor)
         }
 
         val stderr = async(Dispatchers.IO) {
-            process.errorStream.readTextInterruptibly(System.err, process)
+            process.errorStream.readTextInterruptibly(System.err, process) {}
         }
 
         try {
@@ -70,6 +71,10 @@ suspend fun runProcessCancellable(
             val exitCode =
                 if (timeout != null) withTimeoutOrNull(timeout) { runLambda() }
                 else runLambda()
+
+            if (exitCode == null) {
+                process.kill()
+            }
 
             val result = ProcessResult(
                 command = command,
@@ -84,19 +89,24 @@ suspend fun runProcessCancellable(
 
             result
         } catch (e: CancellationException) {
-            process.destroy()
-            withContext(NonCancellable) {
-                delay(500.milliseconds)
-                process.destroyForcibly()
-            }
+            process.kill()
             throw e
         }
+    }
+}
+
+private suspend fun Process.kill() {
+    destroy()
+    withContext(NonCancellable) {
+        delay(500.milliseconds)
+        destroyForcibly()
     }
 }
 
 private suspend fun InputStream.readTextInterruptibly(
     out: PrintStream,
     process: Process,
+    stdoutProcessor: (String) -> Unit,
 ): String {
     val buffer = StringBuilder()
 
@@ -118,6 +128,7 @@ private suspend fun InputStream.readTextInterruptibly(
 
                 val chunk = String(chars, 0, read)
                 buffer.append(chunk)
+                stdoutProcessor(chunk)
                 out.print(chunk)
                 out.flush()
             }

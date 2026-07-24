@@ -976,7 +976,7 @@ KtValueArgumentList(992,994): '()'
   null
 
 KtOperationReferenceExpression(995,997): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

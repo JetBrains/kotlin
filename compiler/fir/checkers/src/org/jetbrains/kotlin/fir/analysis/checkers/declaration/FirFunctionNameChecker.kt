@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
-object FirFunctionNameChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirFunctionNameChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val source = declaration.source

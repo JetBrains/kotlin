@@ -16,11 +16,17 @@ internal class CBridgePrinter {
     fun add(bridge: SirBridge) {
         when (bridge) {
             is SirFunctionBridge -> add(bridge)
+            is SirReverseFunctionBridge -> add(bridge)
             is SirTypeBindingBridge -> Unit
         }
     }
 
     private fun add(bridge: SirFunctionBridge) {
+        functions += bridge.cDeclarationBridge.lines
+        includes += bridge.cDeclarationBridge.headerDependencies
+    }
+
+    private fun add(bridge: SirReverseFunctionBridge) {
         functions += bridge.cDeclarationBridge.lines
         includes += bridge.cDeclarationBridge.headerDependencies
     }

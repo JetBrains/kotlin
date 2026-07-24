@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.utils.Printer
 
+@K1Deprecation
 class LexicalScopeImpl @JvmOverloads constructor(
     parent: HierarchicalScope,
     override val ownerDescriptor: DeclarationDescriptor,

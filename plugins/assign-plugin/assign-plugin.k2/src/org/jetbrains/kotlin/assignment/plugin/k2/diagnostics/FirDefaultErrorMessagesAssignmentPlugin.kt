@@ -15,17 +15,17 @@ object FirDefaultErrorMessagesAssignmentPlugin : BaseDiagnosticRendererFactory()
     override val MAP by KtDiagnosticFactoryToRendererMap("ValueContainerAssignment") { map ->
         map.put(
             DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT,
-            "Function 'assign' used for '=' overload should return 'Unit'"
+            "Function 'assign' used for '=' overload must return 'Unit'."
         )
 
         map.put(
             CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT,
-            "Function 'assign' used for '=' overload should return 'Unit'"
+            "Function 'assign' used for '=' overload must return 'Unit'."
         )
 
         map.put(
             NO_APPLICABLE_ASSIGN_METHOD,
-            "No applicable 'assign' function found for '=' overload"
+            "No applicable 'assign' function found for '=' overload."
         )
     }
 }

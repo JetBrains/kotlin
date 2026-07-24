@@ -73,7 +73,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
      *    See KT-65591.
      */
     private fun searchInheritors(firClass: FirClass): List<ClassId> {
-        val (targetModule, targetFirClass) = when (val classModule = firClass.llFirModuleData.ktModule) {
+        val [targetModule, targetFirClass] = when (val classModule = firClass.llFirModuleData.ktModule) {
             is KaDanglingFileModule -> {
                 // Since we are searching for inheritors in the context module's scope, we need to search for inheritors of the *original*
                 // FIR class, not the dangling FIR class.

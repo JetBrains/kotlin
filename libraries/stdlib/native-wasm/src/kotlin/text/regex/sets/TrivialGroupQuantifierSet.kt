@@ -83,7 +83,7 @@ internal class TrivialGroupQuantifierSet private constructor(
             index = matches.removeLast()
             if (groupIdx != -1) {
                 // We're handling a capturing group, let's restore its boundaries to a previous match.
-                val (groupStartIndex, groupEndIndex) = groups.removeLast()
+                val [groupStartIndex, groupEndIndex] = groups.removeLast()
                 matchResult.setStart(groupIdx, groupStartIndex)
                 matchResult.setEnd(groupIdx, groupEndIndex)
             }

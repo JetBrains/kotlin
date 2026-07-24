@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.util
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -33,22 +34,27 @@ import org.jetbrains.kotlin.utils.sure
 
 // resolved call
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
     return call.valueArguments.all { argument -> !getArgumentMapping(argument!!).isError() }
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {
     return call.valueArguments.any { argument -> getArgumentMapping(argument!!) == ArgumentUnmapped }
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
     val parameterToArgumentMap = valueArguments
     return !parameterToArgumentMap.keys.containsAll(resultingDescriptor.valueParameters)
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped() =
     call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
     val resolvedValueArgument = valueArguments[parameter]
     if (resolvedValueArgument == null) return true
@@ -59,10 +65,12 @@ fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(par
     }
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valueArgument: ValueArgument?): ValueParameterDescriptor? {
     return (valueArgument?.let { getArgumentMapping(it) } as? ArgumentMatch)?.valueParameter
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
     return valueArgumentsByIndex?.any { it is DefaultValueArgument } ?: false
 }
@@ -70,9 +78,11 @@ fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
 
 // call
 
+@K1Deprecation
 fun <C : ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean =
     hasUnresolvedArguments(context.trace.bindingContext, context.statementFilter)
 
+@K1Deprecation
 fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter: StatementFilter): Boolean {
     val arguments = valueArguments.map { it.getArgumentExpression() }
     return arguments.any(fun(argument: KtExpression?): Boolean {
@@ -88,10 +98,13 @@ fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter:
     })
 }
 
+@K1Deprecation
 fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
+@K1Deprecation
 fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
+@K1Deprecation
 fun Call.getValueArgumentListOrElement(): KtElement =
     if (this is CallTransformer.CallForImplicitInvoke) {
         outerCall.getValueArgumentListOrElement()
@@ -102,6 +115,7 @@ fun Call.getValueArgumentListOrElement(): KtElement =
 @Suppress("UNCHECKED_CAST")
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtLambdaArgument } as List<ValueArgument>
 
+@K1Deprecation
 fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? {
     fun KtElement.deparenthesizeStructurally(): KtElement? {
         val deparenthesized = if (this is KtExpression) KtPsiUtil.deparenthesizeOnce(this) else this
@@ -126,6 +140,7 @@ fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument?
  *  Note: special construction like <code>a!!, a ?: b, if (c) a else b</code> are resolved as calls,
  *  so there is a corresponding call for them.
  */
+@K1Deprecation
 fun KtElement.getCall(context: BindingContext): Call? {
     val element = if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this
     if (element == null) return null
@@ -152,6 +167,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
     return context[CALL, element]
 }
 
+@K1Deprecation
 fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
     val callExpressionTypes = arrayOf(
         KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
@@ -166,30 +182,37 @@ fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Ca
     return parent?.getCall(context)
 }
 
+@K1Deprecation
 fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
     return context[RESOLVED_CALL, this]
 }
 
+@K1Deprecation
 fun KtElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
     return this?.getCall(context)?.getResolvedCall(context)
 }
 
+@K1Deprecation
 fun KtElement?.getParentResolvedCall(context: BindingContext, strict: Boolean = true): ResolvedCall<out CallableDescriptor>? {
     return this?.getParentCall(context, strict)?.getResolvedCall(context)
 }
 
+@K1Deprecation
 fun KtElement.getCallWithAssert(context: BindingContext): Call {
     return getCall(context).sure { "No call for ${this.getTextWithLocation()}" }
 }
 
+@K1Deprecation
 fun KtElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
     return getResolvedCall(context).sure { "No resolved call for ${this.getTextWithLocation()}" }
 }
 
+@K1Deprecation
 fun Call.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
     return getResolvedCall(context).sure { "No resolved call for ${this.callElement.getTextWithLocation()}" }
 }
 
+@K1Deprecation
 fun KtExpression.getFunctionResolvedCallWithAssert(context: BindingContext): ResolvedCall<out FunctionDescriptor> {
     val resolvedCall = getResolvedCallWithAssert(context)
     assert(resolvedCall.resultingDescriptor is FunctionDescriptor) {
@@ -199,6 +222,7 @@ fun KtExpression.getFunctionResolvedCallWithAssert(context: BindingContext): Res
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
 }
 
+@K1Deprecation
 fun KtExpression.getPropertyResolvedCallWithAssert(context: BindingContext): ResolvedCall<out PropertyDescriptor> {
     val resolvedCall = getResolvedCallWithAssert(context)
     assert(resolvedCall.resultingDescriptor is PropertyDescriptor) {
@@ -208,6 +232,7 @@ fun KtExpression.getPropertyResolvedCallWithAssert(context: BindingContext): Res
     return resolvedCall as ResolvedCall<out PropertyDescriptor>
 }
 
+@K1Deprecation
 fun KtExpression.getVariableResolvedCallWithAssert(context: BindingContext): ResolvedCall<out VariableDescriptor> {
     val resolvedCall = getResolvedCallWithAssert(context)
     assert(resolvedCall.resultingDescriptor is VariableDescriptor) {
@@ -217,6 +242,7 @@ fun KtExpression.getVariableResolvedCallWithAssert(context: BindingContext): Res
     return resolvedCall as ResolvedCall<out VariableDescriptor>
 }
 
+@K1Deprecation
 fun KtExpression.getType(context: BindingContext): KotlinType? {
     val type = context.getType(this)
     if (type != null) return type
@@ -227,6 +253,7 @@ fun KtExpression.getType(context: BindingContext): KotlinType? {
     return null
 }
 
+@K1Deprecation
 val KtElement.isFakeElement: Boolean
     get() {
         // Don't use getContainingKtFile() because in IDE we can get an element with JavaDummyHolder as containing file
@@ -234,9 +261,11 @@ val KtElement.isFakeElement: Boolean
         return file is KtFile && file.doNotAnalyze != null
     }
 
+@K1Deprecation
 val PsiElement.isFakePsiElement: Boolean
     get() = this is KtElement && isFakeElement
 
+@K1Deprecation
 fun Call.isSafeCall(): Boolean {
     if (this is CallTransformer.CallForImplicitInvoke) {
         //implicit safe 'invoke'
@@ -247,14 +276,17 @@ fun Call.isSafeCall(): Boolean {
     return isSemanticallyEquivalentToSafeCall
 }
 
+@K1Deprecation
 fun Call.isCallableReference(): Boolean {
     val callElement = callElement
     return callElement.isCallableReference()
 }
 
+@K1Deprecation
 fun PsiElement.isCallableReference(): Boolean =
     this is KtNameReferenceExpression && (parent as? KtCallableReferenceExpression)?.callableReference == this
 
+@K1Deprecation
 fun PsiElement.asCallableReferenceExpression(): KtCallableReferenceExpression? =
     when {
         isCallableReference() -> parent as KtCallableReferenceExpression
@@ -262,6 +294,7 @@ fun PsiElement.asCallableReferenceExpression(): KtCallableReferenceExpression? =
         else -> null
     }
 
+@K1Deprecation
 fun Call.createLookupLocation(): KotlinLookupLocation {
     val calleeExpression = calleeExpression
     val element =
@@ -270,15 +303,19 @@ fun Call.createLookupLocation(): KotlinLookupLocation {
     return KotlinLookupLocation(element)
 }
 
+@K1Deprecation
 fun KtExpression.createLookupLocation(): KotlinLookupLocation? =
     if (!isFakeElement) KotlinLookupLocation(this) else null
 
+@K1Deprecation
 fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
     valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() }
 
+@K1Deprecation
 fun ResolvedCall<*>.getReceiverExpression(): KtExpression? =
     (extensionReceiver as? ExpressionReceiver)?.expression ?: (dispatchReceiver as? ExpressionReceiver)?.expression
 
+@K1Deprecation
 inline fun BindingTrace.reportTrailingLambdaErrorOr(
     expression: KtExpression?,
     originalDiagnostic: (KtExpression) -> Diagnostic
@@ -292,6 +329,7 @@ inline fun BindingTrace.reportTrailingLambdaErrorOr(
     }
 }
 
+@K1Deprecation
 fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubstitution() {
     override fun get(key: KotlinType): TypeProjection? {
         return safeSubstitute(key.unwrap()).takeIf { it !== key }?.asTypeProjection()
@@ -302,13 +340,16 @@ fun NewTypeSubstitutor.toOldSubstitution(): TypeSubstitution = object : TypeSubs
     }
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCallImpl<D>.shouldBeSubstituteWithStubTypes() =
     typeArguments.any { argument -> argument.value.contains { it is StubTypeForBuilderInference } }
             || dispatchReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
             || extensionReceiver?.type?.contains { it is StubTypeForBuilderInference } == true
             || valueArguments.any { argument -> argument.key.type.contains { it is StubTypeForBuilderInference } }
 
+@K1Deprecation
 fun KotlinCall.extractCallableReferenceExpression(): KtCallableReferenceExpression? =
     psiKotlinCall.psiCall.extractCallableReferenceExpression()
 
+@K1Deprecation
 fun Call.extractCallableReferenceExpression(): KtCallableReferenceExpression? = callElement.asCallableReferenceExpression()

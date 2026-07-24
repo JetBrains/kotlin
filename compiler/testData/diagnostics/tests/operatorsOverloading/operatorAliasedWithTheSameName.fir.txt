@@ -1,0 +1,59 @@
+FILE: file1.kt
+    package f1
+
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|f1/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plus(other: R|f1/A|): R|f1/A| {
+            ^plus this@R|f1/A|
+        }
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public final operator fun R|f1/B|.minus(other: R|f1/B|): R|f1/B| {
+            ^minus this@R|f1/A.minus|
+        }
+
+    }
+    public final operator fun R|f1/A|.plusAssign(other: R|f1/A|): R|kotlin/Unit| {
+        ^plusAssign Q|kotlin/Unit|
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|f1/B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|f1/B.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg xs: R|kotlin/IntArray|): R|f1/B| {
+                ^of R|f1/B.B|()
+            }
+
+        }
+
+    }
+    public final operator fun R|f1/B|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        ^getValue Int(42)
+    }
+FILE: file2.kt
+    package f2
+
+    public final fun test(): R|kotlin/Unit| {
+        Q|f1/A|.R|f1/plusAssign|(Q|f1/A|)
+        lval p: R|kotlin/Int|by Q|f1|.R|f1/B.B|()
+            local get(): R|kotlin/Int| {
+                ^ D|<local>/p|.R|f1/getValue|(Null(null), ::R|<local>/p|)
+            }
+
+        (Q|f1/A|, Q|f1|.R|f1/B.B|()).R|f1/A.minus|(Q|f1|.R|f1/B.B|())
+        Q|f1/A|.R|f1/A.plus|(Q|f1/A|)
+        Q|f1/A|.R|f1/A.plus|(Q|f1/A|)
+        ==(Q|f1/A|, Q|f1/A|)
+    }

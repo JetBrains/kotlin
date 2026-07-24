@@ -182,21 +182,6 @@ fun IrConstantPrimitiveImpl(
     type = value.type,
 )
 
-fun <T> IrConstImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    kind: IrConstKind,
-    value: T,
-) = IrConstImpl(
-    constructorIndicator = null,
-    startOffset = startOffset,
-    endOffset = endOffset,
-    type = type,
-    kind = kind,
-    value = value,
-)
-
 fun IrContinueImpl(
     startOffset: Int,
     endOffset: Int,
@@ -949,9 +934,6 @@ fun IrAnnotationImpl(
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
-    // TODO(KT-74200): De-nullify.
-    classId = null,
-    argumentMapping = mapOf(),
 ).apply {
     initializeTargetShapeFromSymbol()
     initializeEmptyTypeArguments(typeArgumentsCount)
@@ -1006,9 +988,6 @@ fun IrAnnotationImplWithShape(
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
-    // TODO(KT-74200): De-nullify.
-    classId = null,
-    argumentMapping = mapOf(),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1071,9 +1050,6 @@ fun IrAnnotationImplRaw(
     origin = origin,
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
-    /// TODO(KT-74200): De-nullify.
-    classId = null,
-    argumentMapping = mapOf(),
 )
 
 /**

@@ -1,14 +1,15 @@
 KaValueParameterSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -20,14 +21,18 @@ KaValueParameterSymbol:
   modality: FINAL
   name: name
   origin: JAVA_LIBRARY
+  primaryConstructorProperty: null
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaAnnotation
   getContainingModule: KaLibraryModule "Library dependency"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

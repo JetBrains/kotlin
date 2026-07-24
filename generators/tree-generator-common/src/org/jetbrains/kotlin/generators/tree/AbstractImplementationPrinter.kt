@@ -20,7 +20,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
               Field : AbstractField<Field> {
 
 
-    protected abstract val implementationOptInAnnotation: ClassRef<*>
+    protected abstract val implementationOptInAnnotation: PrintableAnnotation
 
     protected abstract fun getPureAbstractElementType(implementation: Implementation): ClassRef<*>
 
@@ -51,7 +51,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
                     }
                 }
             }.ifNotEmpty {
-                println("@OptIn(", joinToString { "${it.render()}::class" }, ")")
+                println("@OptIn(", joinToString { it.asClassRefString }, ")")
             }
 
             if (!implementation.isPublic) {
@@ -75,7 +75,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
             ) {
                 var printConstructor = false
                 if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
-                    print(" @", implementationOptInAnnotation.render())
+                    print(" " + implementationOptInAnnotation.render())
                     printConstructor = true
                 }
                 if (implementation.isPublic && !implementation.isConstructorPublic) {

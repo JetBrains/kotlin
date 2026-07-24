@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.builders.NonGroupingPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.NonGroupingStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -106,7 +106,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
 
             val environmentProvider =
                 compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImplBase.environmentConfigurators)
-                    ?: error("CompilerConfigurationProvider is not initialized")
+                    ?: testInfraError("CompilerConfigurationProvider is not initialized")
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)
@@ -160,7 +160,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
 }
 
 @OptIn(TestInfrastructureInternals::class)
-class NonGroupingPhaseTestConfigurationImpl(
+class NonGroupingStageTestConfigurationImpl(
     testInfo: KotlinTestInfo,
     defaultsProvider: DefaultsProvider,
     assertions: AssertionsService,
@@ -182,24 +182,24 @@ class NonGroupingPhaseTestConfigurationImpl(
     defaultRegisteredDirectives: RegisteredDirectives,
     override var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>,
     additionalServices: List<ServiceRegistrationData>,
-    val originalBuilder: NonGroupingPhaseTestConfigurationBuilder.ReadOnlyBuilder,
+    val originalBuilder: NonGroupingStageTestConfigurationBuilder.ReadOnlyBuilder,
 ) : TestConfigurationImplBase<TestStep.NonGroupingStep<*, *>>(
     testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
     additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
     failureSuppressors, compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives,
     defaultRegisteredDirectives, additionalServices
-), NonGroupingPhaseTestConfiguration {
+), NonGroupingStageTestConfiguration {
     override val groupingTestIsolators: List<GroupingTestIsolator> = groupingTestIsolators.map { it.invoke(testServices) }.also {
         it.registerDirectivesAndServices()
     }
 }
 
 @OptIn(TestInfrastructureInternals::class)
-class GroupingPhaseTestConfigurationImpl(
+class GroupingStageTestConfigurationImpl(
     testInfo: KotlinTestInfo,
     defaultsProvider: DefaultsProvider,
     assertions: AssertionsService,
-    steps: List<TestStepBuilder<*, *, TestStep.GroupingPhaseStep<*, *>>>,
+    steps: List<TestStepBuilder<*, *, TestStep.GroupingStageStep<*, *>>>,
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
     environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
@@ -214,15 +214,15 @@ class GroupingPhaseTestConfigurationImpl(
     metaInfoHandlerEnabled: Boolean,
     directives: List<DirectivesContainer>,
     defaultRegisteredDirectives: RegisteredDirectives,
-    mergerWorkers: List<Constructor<GroupingPhaseInputsMerger.Worker>>,
+    mergerWorkers: List<Constructor<GroupingStageInputsMerger.Worker>>,
     additionalServices: List<ServiceRegistrationData>,
-) : TestConfigurationImplBase<TestStep.GroupingPhaseStep<*, *>>(
+) : TestConfigurationImplBase<TestStep.GroupingStageStep<*, *>>(
     testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
     additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
     failureSuppressors, compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives,
     defaultRegisteredDirectives, additionalServices,
-), GroupingPhaseTestConfiguration {
-    override val mergerWorkers: List<GroupingPhaseInputsMerger.Worker> = mergerWorkers.map { it.invoke(testServices) }
+), GroupingStageTestConfiguration {
+    override val mergerWorkers: List<GroupingStageInputsMerger.Worker> = mergerWorkers.map { it.invoke(testServices) }
 }
 
 
@@ -231,7 +231,7 @@ val TestServices.testConfiguration: TestConfigurationImplBase<*> by TestServices
 
 @OptIn(TestInfrastructureInternals::class)
 fun TestServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure: TestModuleStructure, fileGenerationPhase: Boolean): Boolean {
-    val groupingTestIsolators = (testConfiguration as NonGroupingPhaseTestConfiguration).groupingTestIsolators
+    val groupingTestIsolators = (testConfiguration as NonGroupingStageTestConfiguration).groupingTestIsolators
         .applyIf(fileGenerationPhase) { filter { it.affectsFileGenerators } }
     return groupingTestIsolators.any {
         it.computeBatchToken(testModuleStructure) == GroupingTestIsolator.BatchToken.Isolated

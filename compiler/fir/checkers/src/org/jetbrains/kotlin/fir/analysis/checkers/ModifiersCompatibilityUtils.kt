@@ -94,7 +94,7 @@ private fun checkModifiersCompatibility(
     reportedNodes: MutableSet<FirModifier<*>>,
 ) {
     val modifiers = modifierList.modifiers
-    for ((secondIndex, secondModifier) in modifiers.withIndex()) {
+    for ([secondIndex, secondModifier] in modifiers.withIndex()) {
         for (firstIndex in 0..<secondIndex) {
             checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, owner)
         }

@@ -1,0 +1,4 @@
+module swiftNameLib {
+    header "swiftNameLib.h"
+    export *
+}

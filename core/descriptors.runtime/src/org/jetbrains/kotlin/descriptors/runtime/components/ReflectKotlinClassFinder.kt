@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsResourceLoader
 import java.io.InputStream
 
+@K1Deprecation
 class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
     private val builtInsResourceLoader = BuiltInsResourceLoader()
 

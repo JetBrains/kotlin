@@ -28,7 +28,7 @@ object ThreadPool {
     }
 
     public fun <T> execute(f: (Int) -> T): List<Future<T>> = _workers?.mapIndexed { index, worker ->
-        worker.execute(TransferMode.SAFE, { Pair(f, index) }) { (f, index) ->
+        worker.execute(TransferMode.SAFE, { Pair(f, index) }) { [f, index] ->
             f(index)
         }
     } ?: error("Call ThreadPool.init() first")

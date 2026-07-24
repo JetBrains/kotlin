@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import java.io.File
@@ -41,7 +42,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val JDK_RELEASE by key<Int>()
     val SAM_CONVERSIONS by key<JvmClosureGenerationScheme>()
     val LAMBDAS by key<JvmClosureGenerationScheme>()
-    val KLIB_PATHS by key<List<String>>("Paths to .klib libraries.")
     val ABI_STABILITY by key<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR.")
     val DO_NOT_CLEAR_BINDING_CONTEXT by key<Boolean>("When using K1, do not clear BindingContext between psi2ir and lowerings.")
     val NO_RESET_JAR_TIMESTAMPS by key<Boolean>()
@@ -51,7 +51,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val ENABLE_JVM_PREVIEW by key<Boolean>()
     val NO_REFLECT by key<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar.")
     val VALIDATE_BYTECODE by key<Boolean>()
-    val LINK_VIA_SIGNATURES by key<Boolean>("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend.")
     val ENABLE_DEBUG_MODE by key<Boolean>()
     val ENHANCED_COROUTINES_DEBUGGING by key<Boolean>("Mark compiled generated code in coroutines.")
     val NO_NEW_JAVA_ANNOTATION_TARGETS by key<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes.")
@@ -60,4 +59,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode.", throwOnNull = false)
     val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions.")
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by key<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.")
+    val IC_METADATA_TRACKER by key<ICJvmMetadataTracker>("Tracks generated in-module JVM metadata for KMP JVM IC", throwOnNull = false)
+    val USE_METADATA_ON_INCREMENTAL_CLASSPATH by key<Boolean>("Use fragment metadata found on the compilation classpath to perform incremental compilation")
+    val USE_JAVA_DIRECT by key<Boolean>("Use java-direct as frontend Java facade")
 }

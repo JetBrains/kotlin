@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
+@IrTypeCheckers
 object IrGetFieldTypeChecker : IrElementChecker<IrGetField>(IrGetField::class) {
     override fun check(element: IrGetField, context: CheckerContext) {
         val fieldType = element.symbol.owner.type

@@ -62,7 +62,6 @@ abstract class AbstractDiagnosticsNativeTestBase(
         }
         defaultDirectives {
             LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
-            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,

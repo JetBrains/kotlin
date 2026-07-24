@@ -1,1 +1,3 @@
 an: kotlin.Int
+
+val an: kotlin.Int

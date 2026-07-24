@@ -1,0 +1,4 @@
+Symbol:
+  KaFileSymbol
+Default annotation targets:
+  FILE

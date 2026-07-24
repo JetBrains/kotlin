@@ -46,7 +46,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         }
     })
 
-    val files = topLevel.map { (sourceFile, declarations) ->
+    val files = topLevel.map { [sourceFile, declarations] ->
         val binaryName = namer.getFileClassName(sourceFile).binaryName
         val methods = declarations.toObjCMethods()
         ObjCClassForKotlinFile(binaryName, sourceFile, methods)

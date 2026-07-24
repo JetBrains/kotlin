@@ -5,32 +5,24 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-// Legacy stuff that will be dropped anyway in KT-65380
-
-// TODO: remove it, KT-65380
-private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
-    val packageFragmentProvider = (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
-
-    fun getSubPackages(fqName: FqName) {
-        result.add(fqName)
-        val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
-            ?: module.getSubPackagesOf(fqName) { true }
-        subPackages.forEach { getSubPackages(it) }
-    }
-
-    getSubPackages(FqName.ROOT)
-    return result
+internal fun createFakeModuleDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
+    val builtIns = object : KotlinBuiltIns(LockBasedStorageManager.NO_LOCKS) {}
+    val moduleDescriptor = ModuleDescriptorImpl(
+            moduleName = Name.special("<${library.uniqueName}>"),
+            storageManager = LockBasedStorageManager.NO_LOCKS,
+            builtIns = builtIns,
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(library)),
+    )
+    moduleDescriptor.setDependencies(moduleDescriptor)
+    builtIns.builtInsModule = moduleDescriptor
+    return moduleDescriptor
 }
-
-// TODO: remove it, KT-65380
-internal fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-    getPackagesFqNames(this).flatMap {
-        getPackage(it).fragments.filter { it.module == this }.toSet()
-    }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -18,14 +19,18 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 
+@K1Deprecation
 fun DescriptorBasedDeprecationInfo.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
+@K1Deprecation
 fun DescriptorBasedDeprecationInfo.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
 
 // The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
+@K1Deprecation
 fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
     (argumentValue(name) as? StringValue)?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
 
+@K1Deprecation
 fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
     val hiddenSince = annotation.getSinceVersion("hiddenSince")
     if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
@@ -82,6 +87,7 @@ internal fun createDeprecationDiagnostic(
 }
 
 @DefaultImplementation(DeprecationSettings.Default::class)
+@K1Deprecation
 interface DeprecationSettings {
     fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean
 

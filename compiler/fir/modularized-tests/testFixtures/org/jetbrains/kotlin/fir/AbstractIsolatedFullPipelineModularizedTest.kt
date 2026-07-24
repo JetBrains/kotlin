@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyK2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -89,33 +90,22 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
     private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, outputDir: File) {
         val originalArguments = moduleData.arguments as? K2JVMCompilerArguments
         if (originalArguments != null) {
-            args.apiVersion = originalArguments.apiVersion
-            args.noJdk = originalArguments.noJdk
-            args.noStdlib = originalArguments.noStdlib
-            args.noReflect = originalArguments.noReflect
-            args.jvmTarget = originalArguments.jvmTargetIfSupported()?.description
-            args.jsr305 = originalArguments.jsr305
-            args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
-            args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
-            @Suppress("DEPRECATION")
-            args.jvmDefault = originalArguments.jvmDefault
-            args.jvmDefaultStable = originalArguments.jvmDefaultStable
-            args.jdkRelease = originalArguments.jdkRelease
-            args.progressiveMode = originalArguments.progressiveMode
-            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn)).toTypedArray()
-            args.allowKotlinPackage = originalArguments.allowKotlinPackage
+            copyK2JVMCompilerArguments(originalArguments, args)
 
-            args.pluginOptions = originalArguments.pluginOptions
+            args.jvmTarget = originalArguments.jvmTargetIfSupported()?.description
+            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn)).toTypedArray()
             args.pluginClasspaths = originalArguments.pluginClasspaths.mapNotNull {
                 substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
             }.toTypedArray()
-            args.contextReceivers = originalArguments.contextReceivers
-            args.contextParameters = originalArguments.contextParameters
-            args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
-            args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
-            args.whenGuards = originalArguments.whenGuards
-            args.nestedTypeAliases = originalArguments.nestedTypeAliases
 
+            args.allowNoSourceFiles = false
+            args.classpath = null
+            args.destination = null
+            args.moduleName = null
+            args.incrementalCompilation = null
+            args.freeArgs = emptyList()
+            args.reportOutputFiles = false
+            args.allWarningsAsErrors = false
         } else {
             args.jvmTarget = config.jvmTarget
             args.allowKotlinPackage = true

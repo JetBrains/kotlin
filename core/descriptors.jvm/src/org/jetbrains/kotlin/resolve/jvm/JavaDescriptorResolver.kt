@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 
+@K1Deprecation
 class JavaDescriptorResolver(
     val packageFragmentProvider: LazyJavaPackageFragmentProvider,
     private val javaResolverCache: JavaResolverCache

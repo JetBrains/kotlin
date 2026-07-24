@@ -1,0 +1,3 @@
+expected symbols:
+@sample.Hint
+expect get()

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
@@ -117,6 +117,18 @@ internal val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
         return frameworkPathsSelfIncluding
     }
 
+/**
+ * Names of all frameworks (without the `.framework` extension) discoverable in the given [frameworkSearchPaths].
+ *
+ * Used to emit a `-framework <name>` linker option for every framework a pod brings, including its transitive vendored dependencies,
+ * rather than only the pod's own module. See the call site for why this matters with incremental compilation (KT-86995).
+ */
+private fun frameworksToLink(frameworkSearchPaths: List<String>): List<String> =
+    frameworkSearchPaths
+        .flatMap { dir -> File(dir).listFiles { file -> file.isDirectory && file.extension == "framework" }?.asList().orEmpty() }
+        .map { it.nameWithoutExtension }
+        .distinct()
+
 //Make frameworks headers discoverable with any syntax (quotes, brackets, @import, etc.)
 //https://github.com/CocoaPods/CocoaPods/blob/d18f49392c5e9ed9a2cdcb2ee89391cf7690ee5d/lib/cocoapods/target/build_settings.rb#L1188
 private val PodBuildSettingsProperties.frameworkHeadersSearchPaths: List<String>
@@ -177,13 +189,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         if (existingTask != null) return existingTask
         val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
         val directSwiftPMDependencies = provider { swiftPMImportExtension.swiftPMDependencies }
-        val transitiveSwiftPMDependencies = transitiveSwiftPMDependenciesProvider()
+        val transitiveSwiftPMDependencies = transitiveSwiftPMMetadataProvider()
 
         return registerTask<CheckCocoaPodsHasNoSwiftPMDependencies>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Check for SwiftPM dependencies and fail the build if these are present during syncFramework integration"
             task.directSwiftPMDependencies.set(directSwiftPMDependencies)
-            task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
+            task.transitiveSwiftPMMetadata.set(transitiveSwiftPMDependencies)
             task.workspacePath.set(project.providers.environmentVariable("WORKSPACE_DIR"))
             task.gradleProjectPath.set(project.path)
             task.projectPath.set(project.projectDir)
@@ -608,14 +620,20 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
                 task.doFirst {
                     val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile())
-                    val frameworkFileName = pod.moduleName + ".framework"
                     val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
 
                     val linkerOpts = task.additionalLinkerOpts
 
                     if (isExecutable || isDynamicFramework.get()) {
-                        val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
-                        if (frameworkFileExists) linkerOpts.addArg("-framework", pod.moduleName)
+                        // KT-86995: Link every framework discoverable in the pod's framework search paths, not just the pod's
+                        // own module. A pod (e.g. `FirebaseAnalytics`) ships transitive vendored frameworks
+                        // (`GoogleAppMeasurement`, `GoogleUtilities`, ...) that its binary depends on. In a non-cached build
+                        // the missing `-framework` flags go unnoticed: the final binary is compiled as a single closed-world
+                        // LLVM module, so internalization + global DCE strip the unused Kotlin interop bindings and the linker
+                        // never pulls in the framework objects. With incremental compilation each library is compiled open-world
+                        // (no internalization), so those bindings survive, the linker pulls in the framework objects
+                        // and fails with undefined symbols from transitive frameworks that were never on the link line.
+                        frameworksToLink(frameworkSearchPaths).forEach { linkerOpts.addArg("-framework", it) }
                         linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
                     }
 
@@ -807,6 +825,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             registerPodBuildTasks(project, kotlinExtension, cocoapodsExtension)
             registerPodImportTask(project, kotlinExtension, podInstallTaskProvider)
             registerPodPublishTasks(project, cocoapodsExtension)
+
+            if (!kotlinPropertiesProvider.cocoapodsSwiftPMMigrationNowarn) {
+                reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested())
+            }
 
             if (!HostManager.hostIsMac) {
                 reportDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs())

@@ -1,0 +1,5 @@
+expression: xyz
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: SomeEnum

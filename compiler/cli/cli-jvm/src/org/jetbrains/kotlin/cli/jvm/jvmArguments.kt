@@ -91,6 +91,17 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
+    when (ValhallaSupportMode.fromStringOrNull(arguments.valhallaSupport)) {
+        ValhallaSupportMode.NONE, null -> {}
+        else ->
+            if (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview) {
+                this.report(
+                    COMPILER_ARGUMENTS_ERROR,
+                    "Project Valhalla support ('-Xvalhalla-support') requires JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+                )
+            }
+    }
+
     val stringConcat = arguments.stringConcat
     if (stringConcat != null) {
         val runtimeStringConcat = JvmStringConcat.fromString(stringConcat)
@@ -129,18 +140,15 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.valueClasses) {
-        this.report(
-            COMPILER_ARGUMENTS_ERROR, "This flag is deprecated, use -XXLanguage:+JvmInlineMultiFieldValueClasses instead"
-        )
-    }
-
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 
     put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
+
+    put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, arguments.useMetadataOnIncrementalClasspath)
+    put(JVMConfigurationKeys.USE_JAVA_DIRECT, arguments.javaDirect)
 }
 
 private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
@@ -297,9 +305,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
-    @Suppress("DEPRECATION")
-    put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
-
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
     put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, arguments.enhancedCoroutinesDebugging)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
@@ -356,11 +361,6 @@ private fun CompilerConfiguration.parseBackendThreads(stringValue: String): Int 
         return 1
     }
     return value
-}
-
-fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
-    val libraries = arguments.klibLibraries ?: return
-    put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
 
 private fun getJavaVersion(): Int =

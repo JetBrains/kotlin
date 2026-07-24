@@ -26,6 +26,7 @@ internal class KotlinKConstructor(
     override val typeParameterTable: TypeParameterTable get() = (container as KClassImpl<*>).typeParameterTable
     override val jvmSignature: JvmMethodSignature
         get() = kmConstructor.signature ?: throw KotlinReflectionInternalError("No signature for constructor: $this")
+    override val metadataAnnotations: List<KmAnnotation> get() = kmConstructor.annotations
 
     override val name: String
         get() = "<init>"
@@ -48,4 +49,8 @@ internal class KotlinKConstructor(
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
     }
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
+        if (this.rawBoundReceiver === boundReceiver) this
+        else KotlinKConstructor(container, signature, boundReceiver, kmConstructor)
 }

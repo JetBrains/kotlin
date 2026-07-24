@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 // 2) to use from inliner: private one without state machine
 class SuspendForInlineCopyingMethodVisitor(
     delegate: MethodVisitor, access: Int, name: String, desc: String,
-    private val newMethod: (JvmDeclarationOrigin, Int, String, String, String?, Array<String>?) -> MethodVisitor,
+    private val newMethod: (IrFunction?, Int, String, String, String?, Array<String>?) -> MethodVisitor,
     private val keepAccess: Boolean = true
 ) : TransformationMethodVisitor(delegate, access, name, desc, null, null) {
     override fun performTransformations(methodNode: MethodNode) {
@@ -28,7 +28,7 @@ class SuspendForInlineCopyingMethodVisitor(
             MethodNode(newAccess, name + FOR_INLINE_SUFFIX, desc, signature, exceptions.toTypedArray())
         }
         val newMethodVisitor = with(newMethodNode) {
-            newMethod(JvmDeclarationOrigin.NO_ORIGIN_SUSPEND_FOR_INLINE, access, name, desc, signature, exceptions.toTypedArray())
+            newMethod(null, access, name, desc, signature, exceptions.toTypedArray())
         }
         methodNode.instructions.resetLabels()
         methodNode.accept(newMethodNode)

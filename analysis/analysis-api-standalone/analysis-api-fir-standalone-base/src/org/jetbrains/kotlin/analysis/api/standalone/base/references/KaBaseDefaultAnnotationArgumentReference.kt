@@ -1,0 +1,48 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.standalone.base.references
+
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+
+@OptIn(KtImplementationDetail::class)
+internal class KaBaseDefaultAnnotationArgumentReference(
+    element: KtValueArgument,
+) : KtDefaultAnnotationArgumentReference(element), KaBaseReference {
+    @OptIn(KaExperimentalApi::class)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
+        val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
+        val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()
+        return listOfNotNull(firstParam.takeIf { it.psi?.isDefaultAnnotationMethod == true })
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtValueArgument> {
+        override val elementClass: Class<KtValueArgument>
+            get() = KtValueArgument::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtValueArgument>
+            get() = { element ->
+                if (element.shouldProduceReference()) {
+                    listOf(KaBaseDefaultAnnotationArgumentReference(element))
+                } else {
+                    emptyList()
+                }
+            }
+    }
+}

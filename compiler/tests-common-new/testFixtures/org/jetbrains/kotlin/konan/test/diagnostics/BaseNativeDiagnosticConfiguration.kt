@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.configuration.DEFAULT_UNUSED_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -33,6 +33,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
             "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
             "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}",
         )
+        DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
     }
 
     enableMetaInfoHandler()
@@ -42,19 +43,12 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
         ::NativeFirstStageEnvironmentConfigurator,
     )
 
-    useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
     useAdditionalSourceProviders(
         ::AdditionalDiagnosticsSourceFilesProvider,
         ::CoroutineHelpersSourceFilesProvider,
     )
 
     facadeStep(frontendFacade)
-
-    forTestsMatching("testData/diagnostics/nativeTests/*") {
-        defaultDirectives {
-            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-        }
-    }
 }
 
 fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {

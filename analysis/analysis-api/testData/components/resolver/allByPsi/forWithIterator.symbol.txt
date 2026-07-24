@@ -5,6 +5,8 @@ KtPackageDirective(0,9): 'package f'
   null
 
 KtNameReferenceExpression(8,9): 'f'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       f
@@ -38,6 +40,8 @@ KtUserType(43,46): 'Int'
     ]
 
 KtNameReferenceExpression(43,46): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -59,6 +63,8 @@ KtUserType(57,60): 'Int'
     ]
 
 KtNameReferenceExpression(57,60): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -83,6 +89,8 @@ KtUserType(76,90): 'IntProgression'
     ]
 
 KtNameReferenceExpression(76,90): 'IntProgression'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       f/IntProgression
@@ -119,6 +127,8 @@ KtUserType(113,126): 'Iterator<Int>'
     ]
 
 KtNameReferenceExpression(113,121): 'Iterator'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Iterator
@@ -143,6 +153,8 @@ KtUserType(122,125): 'Int'
     ]
 
 KtNameReferenceExpression(122,125): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -164,12 +176,14 @@ KtThisExpression(147,160): 'this@iterator'
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -179,24 +193,31 @@ KtThisExpression(147,160): 'this@iterator'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
 KtNameReferenceExpression(147,151): 'this'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -206,11 +227,14 @@ KtNameReferenceExpression(147,151): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -218,12 +242,16 @@ KtContainerNode(151,160): '@iterator'
   null
 
 KtLabelReferenceExpression(151,160): '@iterator'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
     ]
 
 KtNameReferenceExpression(161,166): 'start'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val start: kotlin.Int
@@ -245,12 +273,16 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     ]
 
 KtNameReferenceExpression(196,203): 'current'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var current: kotlin.Int
     ]
 
 KtOperationReferenceExpression(204,206): '<='
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -266,12 +298,14 @@ KtThisExpression(207,220): 'this@iterator'
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -281,24 +315,31 @@ KtThisExpression(207,220): 'this@iterator'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
 KtNameReferenceExpression(207,211): 'this'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -308,11 +349,14 @@ KtNameReferenceExpression(207,211): 'this'
         name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: f/IntProgression
+        typeParameters: []
         visibility: PUBLIC
     ]
 
@@ -320,12 +364,16 @@ KtContainerNode(211,220): '@iterator'
   null
 
 KtLabelReferenceExpression(211,220): '@iterator'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
     ]
 
 KtNameReferenceExpression(221,224): 'end'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val end: kotlin.Int
@@ -353,6 +401,8 @@ KtUserType(250,253): 'Int'
     ]
 
 KtNameReferenceExpression(250,253): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -366,12 +416,16 @@ KtPostfixExpression(256,265): 'current++'
     ]
 
 KtNameReferenceExpression(256,263): 'current'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var current: kotlin.Int
     ]
 
 KtOperationReferenceExpression(263,265): '++'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -407,6 +461,8 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     ]
 
 KtNameReferenceExpression(297,311): 'IntProgression'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       f/IntProgression

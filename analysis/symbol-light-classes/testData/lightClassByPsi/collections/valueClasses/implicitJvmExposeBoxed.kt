@@ -1,4 +1,4 @@
-// WITH_STDLIB
+// STDLIB_JDK8
 // FULL_JDK
 // JVM_EXPOSE_BOXED
 package test

@@ -1,10 +1,10 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
   callableId: /Result.isFailure
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -17,11 +17,11 @@ KaNamedFunctionSymbol:
             KaContractOwnerParameterValue:
               symbol:
                 KaNamedClassSymbol:
+                  anchorPsi: KtClass
                   annotations: []
                   classId: Result
                   classKind: CLASS
                   companionObject: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   isActual: false
                   isData: false
@@ -34,6 +34,8 @@ KaNamedFunctionSymbol:
                   modality: SEALED
                   name: Result
                   origin: SOURCE
+                  psi: KtClass
+                  realPsi: KtClass
                   superTypes: [
                     KaUsualClassType:
                       annotations: []
@@ -44,8 +46,8 @@ KaNamedFunctionSymbol:
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(castForDispatchReceiver.kt)
                   getContainingModule: KaSourceModule "Sources of main"
-                  annotationApplicableTargets: null
-                  deprecationStatus: null
+                  applicableAnnotationTargets: null
+                  deprecation: null
                   importableFqName: Result
           type:
             KaUsualClassType:
@@ -72,6 +74,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: isFailure
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -88,6 +92,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Result
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

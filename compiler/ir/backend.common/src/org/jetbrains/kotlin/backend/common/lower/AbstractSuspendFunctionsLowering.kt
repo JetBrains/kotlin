@@ -306,7 +306,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                     assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)
 
-                    for ((p, f) in createValueParameters.zip(argumentToPropertiesMap.values)) {
+                    for ([p, f] in createValueParameters.zip(argumentToPropertiesMap.values)) {
                         +irSetField(irGet(instanceVal), f, irGet(p))
                     }
 

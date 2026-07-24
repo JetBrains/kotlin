@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.runners
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
+import org.jetbrains.kotlin.js.test.handlers.JsSizeHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
 import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
@@ -19,9 +20,11 @@ import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDu
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -73,6 +76,7 @@ abstract class AbstractJsTest(
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsIrRecompiledArtifactsIdentityHandler,
+                    ::JsSizeHandler,
                 )
             }
 
@@ -110,6 +114,10 @@ abstract class AbstractJsCodegenBoxTestBase(
         builder.useFailureSuppressors(
             ::FirMetaInfoDiffSuppressor
         )
+
+        builder.configureIrHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
     }
 }
 

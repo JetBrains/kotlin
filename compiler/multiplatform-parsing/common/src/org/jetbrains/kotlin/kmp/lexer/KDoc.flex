@@ -61,6 +61,40 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
       }
       return current - zzStartRead
   }
+
+  private enum class LinePos {
+      AFTER_NEWLINE,
+      AFTER_LEADING_ASTERISK,
+      IN_CONTENT,
+  }
+
+  private fun hasMatchingCloseFence(c: Char, length: Int): Boolean {
+      var pos = zzMarkedPos
+      var linePos = LinePos.IN_CONTENT
+      while (pos < zzEndRead) {
+          val ch = zzBuffer[pos]
+          if (ch == '\n') {
+              if (linePos != LinePos.IN_CONTENT) return false
+              linePos = LinePos.AFTER_NEWLINE
+              pos++
+          } else if (ch.isWhitespace()) {
+              pos++
+          } else if (linePos == LinePos.AFTER_NEWLINE && ch == '*') {
+              do { pos++ } while (pos < zzEndRead && zzBuffer[pos] == '*')
+              if (pos < zzEndRead && zzBuffer[pos] == '/') return false
+              linePos = LinePos.AFTER_LEADING_ASTERISK
+          } else if (ch == c) {
+              val fenceStart = pos
+              do { pos++ } while (pos < zzEndRead && zzBuffer[pos] == ch)
+              if (pos - fenceStart == length) return true
+              linePos = LinePos.IN_CONTENT
+          } else {
+              linePos = LinePos.IN_CONTENT
+              pos++
+          }
+      }
+      return false
+  }
 %}
 
 %function advance
@@ -180,6 +214,15 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
             return KDocTokens.MARKDOWN_LINK
     }
 
+    {BACKTICK_STRING} {
+            codeFenceChar = zzBuffer[zzStartRead]
+            codeFenceLength = countRepeating(codeFenceChar)
+            if (hasMatchingCloseFence(codeFenceChar, codeFenceLength)) {
+                yybeginAndUpdate(CODE_SPAN_CONTENTS)
+            }
+            return KDocTokens.TEXT
+      }
+
     [^] {
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.TEXT
@@ -200,8 +243,10 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
     {BACKTICK_STRING} {
             codeFenceChar = zzBuffer[zzStartRead]
             codeFenceLength = countRepeating(codeFenceChar)
-            yybeginAndUpdate(CODE_SPAN_CONTENTS)
-            return KDocTokens.TEXT;
+            if (hasMatchingCloseFence(codeFenceChar, codeFenceLength)) {
+                yybeginAndUpdate(CODE_SPAN_CONTENTS)
+            }
+            return KDocTokens.TEXT
       }
 }
 

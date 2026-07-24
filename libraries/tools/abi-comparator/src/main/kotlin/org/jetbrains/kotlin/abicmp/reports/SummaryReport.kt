@@ -64,7 +64,7 @@ class SummaryReport {
             }
         }
         table {
-            for ((attr, value) in info.attributes) {
+            for ([attr, value] in info.attributes) {
                 tableData(attr.htmlId, value.toHtmlString().withTag("code"))
             }
         }

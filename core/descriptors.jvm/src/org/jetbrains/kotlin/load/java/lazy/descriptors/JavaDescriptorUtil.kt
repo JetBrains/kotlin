@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 
 // Currently getter is null iff it's loaded from Java field
+@K1Deprecation
 val PropertyDescriptor.isJavaField: Boolean
     get() = getter == null

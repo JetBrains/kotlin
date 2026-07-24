@@ -27,7 +27,7 @@ class AnnotationsStringFormTest {
         val valuesArgMap = argumentToExpected.keys.mapIndexed { i, km ->
             "value$i" to km
         }.toMap()
-        val valuesExpected = argumentToExpected.values.withIndex().joinToString { (i, s) -> "value$i = $s" }
+        val valuesExpected = argumentToExpected.values.withIndex().joinToString { [i, s] -> "value$i = $s" }
         val anno = KmAnnotation("com/my/Foo", valuesArgMap)
         assertEquals("@com/my/Foo($valuesExpected)", anno.toString())
     }

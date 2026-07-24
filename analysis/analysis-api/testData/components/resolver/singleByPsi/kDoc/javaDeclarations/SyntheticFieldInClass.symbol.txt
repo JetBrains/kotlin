@@ -2,7 +2,7 @@
   KDocName(25,38): 'Storage.value'
     KaSymbolResolutionSuccess:
       symbols = [
-        /Storage.getValue(<dispatch receiver>: Storage): kotlin.String!
+        val value: kotlin.String!
       ]
 
 <caret_2>:

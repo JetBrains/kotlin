@@ -7,40 +7,56 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
+import org.jetbrains.kotlin.analysis.project.structure.impl.KaModuleContainerImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public class KtModuleProviderBuilder(
+public class KaModuleContainerBuilder(
     public val coreApplicationEnvironment: CoreApplicationEnvironment,
     public val project: Project,
 ) {
-    private val mainModules: MutableList<KaModule> = mutableListOf()
+    private val allModules: MutableList<KaModule> = mutableListOf()
 
     public fun <M : KaModule> addModule(module: M): M {
-        mainModules.add(module)
+        allModules.add(module)
         return module
     }
 
     public lateinit var platform: TargetPlatform
 
-    public fun build(): KotlinStaticProjectStructureProvider {
-        return KotlinStandaloneProjectStructureProvider(platform, project, mainModules)
+    /**
+     * The default [StandaloneLibraryScopeConstructionMode] for library modules created within this provider via [buildKtLibraryModule] or
+     * [buildKtSdkModule]. Individual modules may override it.
+     *
+     * The option is a **workaround** for exceptional cases. See [StandaloneLibraryScopeConstructionMode] for more information.
+     *
+     * **Caution:** Because a library module's content scope is built eagerly when the module is created, this default must be set *before*
+     * the corresponding module-building calls.
+     */
+    @StandaloneWorkaroundApi
+    public var libraryScopeConstructionMode: StandaloneLibraryScopeConstructionMode =
+        StandaloneLibraryScopeConstructionMode.ParentTraversal
+
+    public fun build(): KaModuleContainer {
+        return KaModuleContainerImpl(allModules)
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun buildProjectStructureProvider(
+internal inline fun buildModuleContainer(
     coreApplicationEnvironment: CoreApplicationEnvironment,
     project: Project,
-    init: KtModuleProviderBuilder.() -> Unit,
-): KotlinStaticProjectStructureProvider {
+    init: KaModuleContainerBuilder.() -> Unit
+): Pair<KaModuleContainer, TargetPlatform> {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtModuleProviderBuilder(coreApplicationEnvironment, project).apply(init).build()
+
+    val moduleContainerBuilder = KaModuleContainerBuilder(coreApplicationEnvironment, project).apply(init)
+    return moduleContainerBuilder.build() to moduleContainerBuilder.platform
 }

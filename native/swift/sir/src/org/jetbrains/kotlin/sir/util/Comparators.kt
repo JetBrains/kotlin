@@ -44,13 +44,22 @@ object Comparators {
             is SirFunctionBridge -> {
                 when (rhs) {
                     is SirFunctionBridge -> lhs.name.compareTo(rhs.name)
+                    is SirReverseFunctionBridge -> 1
                     is SirTypeBindingBridge -> 1
                 }
             }
             is SirTypeBindingBridge -> {
                 when (rhs) {
                     is SirFunctionBridge -> -1
+                    is SirReverseFunctionBridge -> -1
                     is SirTypeBindingBridge -> lhs.name.compareTo(rhs.name)
+                }
+            }
+            is SirReverseFunctionBridge -> {
+                when (rhs) {
+                    is SirFunctionBridge -> -1
+                    is SirTypeBindingBridge -> 1
+                    is SirReverseFunctionBridge -> lhs.name.compareTo(rhs.name)
                 }
             }
         }

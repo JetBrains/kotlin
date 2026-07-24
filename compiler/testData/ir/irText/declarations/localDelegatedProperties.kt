@@ -1,9 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Int)`
-// KT-61141: `kotlin.collections.HashMap` instead of `java.util.HashMap`
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM invokes `println (message: kotlin.Int)` instead of `println (message: kotlin.Any?)`
+//   K/JVM uses actualized `java.util.HashMap` instead of `kotlin.collections.HashMap`
 
 fun test1() {
     val x by lazy { 42 }

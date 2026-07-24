@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test non-commonized return type of top level function`() {
         val result = commonize {
             outputTarget("(a,b)")
@@ -44,6 +46,7 @@ class FunctionReturnTypeCommonizationTest : AbstractInlineSourcesCommonizationTe
     }
 
 
+    @Test
     fun `test commonized return type of top level function`() {
         val result = commonize {
             outputTarget("(a,b)")

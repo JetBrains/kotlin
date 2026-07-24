@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@K1Deprecation
 object SuspendLimitationsChecker : DeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
         OperatorNameConventions.CONTAINS,

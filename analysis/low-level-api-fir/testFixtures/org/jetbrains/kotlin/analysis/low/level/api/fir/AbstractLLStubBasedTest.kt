@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.openapi.util.Disposer
-import com.intellij.psi.AbstractFileViewProvider
-import com.intellij.psi.impl.PsiManagerEx
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLStubBasedTest.Companion.computeAstLoadingAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.testFederation.SmokeTest
 
 /**
  * This test case allows testing differences between stub-based and AST-based files.
@@ -31,10 +29,17 @@ import org.jetbrains.kotlin.testFederation.SmokeTest
  * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
  * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
  */
-@SmokeTest
 abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
+
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+
+        builder.defaultDirectives {
+            +AnalysisApiTestDirectives.STUB_BASED
+        }
+    }
 
     protected object Directives : SimpleDirectivesContainer() {
         /**
@@ -49,20 +54,10 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
 
-        val viewProvider = mainFile.viewProvider as AbstractFileViewProvider
-        val myPhysicalField = AbstractFileViewProvider::class.java.getDeclaredField("myPhysical").apply { isAccessible = true }
-
-        // A hack to enable AST loading assertion and allow stub requests
-        myPhysicalField.set(viewProvider, true)
-
-        mainFile.setTreeElementPointer(null)
-        testServices.assertions.assertNotNull(mainFile.stub) { "Stub should be present for unloaded file" }
-
+        // The main file is already put into a stub-based state by the base test via the `STUB_BASED` default directive (see `configureTest`).
         val output = withAstLoadingAssertion(mainFile) {
             withResolutionFacade(mainFile) { facade ->
-                context(facade) {
-                    doStubBasedTest(mainFile, mainModule, testServices)
-                }
+                doStubBasedTest(mainFile, mainModule, testServices, facade = facade)
             }
         }
 
@@ -72,20 +67,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
         testServices.assertions.assertTrue(mainFile.stub == null) { "Stub shouldn't be present for loaded file" }
 
         withResolutionFacade(mainFile) { facade ->
-            context(facade) {
-                doAstBasedValidation(output, mainFile, mainModule, testServices)
-            }
-        }
-    }
-
-    protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
-        val virtualFile = file.virtualFile
-        val disposable = Disposer.newDisposable("AST loading assertion")
-        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
-        return try {
-            action()
-        } finally {
-            Disposer.dispose(disposable)
+            doAstBasedValidation(output, mainFile, mainModule, testServices, facade = facade)
         }
     }
 

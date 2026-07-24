@@ -12,6 +12,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
@@ -89,7 +90,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = null,
-            expectedSeverity = ToolingDiagnostic.Severity.STRONG_WARNING,
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.STRONG_WARNING,
         )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic warning, default compiler")
@@ -99,7 +100,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = null,
-            expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
             customizedKotlinVersion = KotlinVersion.KOTLIN_2_0,
         )
 
@@ -110,7 +111,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = "2.2.10",
-            expectedSeverity = ToolingDiagnostic.Severity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
         )
 
     // Gradle 9.4.0 brings it Kotlin runtime 2.3.0 which metadata is not compatible with Kotlin compiler 2.1.20
@@ -124,7 +125,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     private fun emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
         gradleVersion: GradleVersion,
         btaVersion: String?,
-        expectedSeverity: ToolingDiagnostic.Severity?,
+        expectedSeverity: KotlinToolingDiagnosticsSeverity?,
         customizedKotlinVersion: KotlinVersion = KotlinVersion.KOTLIN_1_8,
     ) {
         val project =
@@ -166,8 +167,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             }
 
         val expectFail = when (expectedSeverity) {
-            ToolingDiagnostic.Severity.ERROR -> false // ERROR == WARNING because of warning-mode=fail
-            ToolingDiagnostic.Severity.STRONG_WARNING -> true
+            KotlinToolingDiagnosticsSeverity.ERROR -> false // ERROR == WARNING because of warning-mode=fail
+            KotlinToolingDiagnosticsSeverity.STRONG_WARNING -> true
             null -> false
             else -> error("Impossible expected severity: $expectedSeverity")
         }

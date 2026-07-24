@@ -190,3 +190,37 @@ interface Foo {
 interface Bar: Foo {
     class Conflict
 }
+
+// FILE: special_names.kt
+
+interface Baz {
+    fun foo(result: Any)
+}
+
+
+// FILE: inherited_impl_marker.kt
+
+interface InterfaceA {
+    fun foo()
+}
+
+interface InterfaceB : InterfaceA {
+    fun bar()
+}
+
+abstract class ClassC : InterfaceB {
+    fun baz() = Unit
+}
+
+// FILE: extension_receiver.kt
+
+import conflictingTypealiases.Foo
+
+interface SomeInterface {
+    fun String.repeat(count: Int): List<String>
+    context(_: Baz, _: Foo)
+    fun String.repeatWithContext(count: Int): List<String>
+    var String.something: Int
+    context(_: Baz, _: Foo)
+    var String.somethingWithContext: Int
+}

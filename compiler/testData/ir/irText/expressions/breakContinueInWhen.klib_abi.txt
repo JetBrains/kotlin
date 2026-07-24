@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testBreakDoWhile() // /testBreakDoWhile|testBreakDoWhile(){}[0]
+final fun /testBreakFor() // /testBreakFor|testBreakFor(){}[0]
+final fun /testBreakWhile() // /testBreakWhile|testBreakWhile(){}[0]
+final fun /testContinueDoWhile() // /testContinueDoWhile|testContinueDoWhile(){}[0]
+final fun /testContinueFor() // /testContinueFor|testContinueFor(){}[0]
+final fun /testContinueWhile() // /testContinueWhile|testContinueWhile(){}[0]

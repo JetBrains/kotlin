@@ -166,14 +166,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 withPsiEntry("element", element)
             }
 
-            val hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets()
-            val isNameBased = !hasSquareBrackets && (element.ownValOrVarKeyword != null || nameBasedDestructuringShortForm)
-
             return buildDestructuringVariable(
                 moduleData = baseModuleData,
                 container = container,
                 element,
-                isNameBased = isNameBased,
+                kind = destructuringKindOf(
+                    hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets(),
+                    isFullForm = element.ownValOrVarKeyword != null
+                ),
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },
@@ -237,7 +237,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
             val delegatedConstructor = firConstructor.delegatedConstructor
             if (delegatedConstructor is FirMultiDelegatedConstructorCall) {
-                for ((oldExcessiveDelegate, newExcessiveDelegate) in delegatedConstructor.delegatedConstructorCalls
+                for ([oldExcessiveDelegate, newExcessiveDelegate] in delegatedConstructor.delegatedConstructorCalls
                     .zip((newConstructor.delegatedConstructor as FirMultiDelegatedConstructorCall).delegatedConstructorCalls)) {
                     val calleeReferenceForExessiveDelegate = oldExcessiveDelegate.calleeReference
                     if (calleeReferenceForExessiveDelegate is FirSuperReference) {

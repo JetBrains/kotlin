@@ -15,7 +15,9 @@ public fun __root___barIn__TypesOfArguments__U28Swift_String_U20Swift_VoidU29202
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, Boolean)->Boolean>(block);
         { arg0: kotlin.String, arg1: Unit ->
-            val _result = kotlinFun(arg0.objcPtr(), run { arg1; true })
+            val _arg0 = arg0.objcPtr()
+            val _arg1 = run { arg1; true }
+            val _result = kotlinFun(_arg0, _arg1)
             run<Unit> { _result }
         }
     }
@@ -40,7 +42,8 @@ public fun __root___fooIn__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Void_
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(block);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -71,7 +74,9 @@ public fun unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArgum
     val ___1 = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, Boolean)->Boolean>(_1);
         { arg0: kotlin.String, arg1: Unit ->
-            val _result = kotlinFun(arg0.objcPtr(), run { arg1; true })
+            val _arg0 = arg0.objcPtr()
+            val _arg1 = run { arg1; true }
+            val _result = kotlinFun(_arg0, _arg1)
             run<Unit> { _result }
         }
     }

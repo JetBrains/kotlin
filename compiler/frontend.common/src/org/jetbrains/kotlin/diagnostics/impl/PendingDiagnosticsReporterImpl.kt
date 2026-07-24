@@ -43,7 +43,7 @@ class PendingDiagnosticsReporterImpl(private val delegate: DiagnosticReporter) :
         val pathFromContext = context.containingFile
         val pendingIterator = pendingDiagnosticsBySourceFile.iterator()
         while (pendingIterator.hasNext()) {
-            val (path, pendingList) = pendingIterator.next()
+            val [path, pendingList] = pendingIterator.next()
             assert(pathFromContext == null || path == pathFromContext) {
                 "Pending diagnostics for file $path are commited on file $pathFromContext"
             }

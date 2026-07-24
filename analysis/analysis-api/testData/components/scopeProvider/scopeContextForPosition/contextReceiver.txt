@@ -22,36 +22,54 @@ scopes:
   PackageMemberScope, index = 3
     packages: 6
       KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
         fqName: META-INF
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
         fqName: java
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
         fqName: javax
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
         fqName: kotlin
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
         fqName: org
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
       KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
         fqName: sun
         location: TOP_LEVEL
         origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
     classifiers: 1
       KaNamedClassSymbol:
+        anchorPsi: KtClass
         annotations: []
         classId: Context
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -64,6 +82,8 @@ scopes:
         modality: FINAL
         name: Context
         origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
         superTypes: [
           KaUsualClassType:
             annotations: []
@@ -74,17 +94,19 @@ scopes:
         visibility: PUBLIC
     callables: 1
       KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
         annotations: []
         callableId: /test
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
+            anchorPsi: KtContextReceiver
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -93,11 +115,14 @@ scopes:
             modality: FINAL
             name: Context
             origin: SOURCE
+            psi: KtContextReceiver
+            realPsi: KtContextReceiver
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: Context
+            typeParameters: []
             visibility: PUBLIC
         ]
         contextReceivers: [
@@ -127,6 +152,8 @@ scopes:
         modality: FINAL
         name: test
         origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []

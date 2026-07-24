@@ -66,7 +66,7 @@ class ManifestReadingTest {
             ),
         )
 
-        testData.forEach { (libraryName, originalManifest) ->
+        testData.forEach { [libraryName, originalManifest] ->
             val libraryFile = createEmptyLibraryWithSpecificManifest(libraryName, originalManifest)
             val readManifest = LibraryAbiReader.readAbiInfo(libraryFile).manifest
 

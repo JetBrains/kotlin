@@ -22,9 +22,12 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunction
 import com.google.common.annotations.VisibleForTesting
+import org.jetbrains.kotlin.backend.jvm.ir.isFullValueClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -177,7 +180,7 @@ fun Stability.forEach(callback: (Stability) -> Unit) {
 fun IrAnnotationContainer.hasStableMarker(): Boolean =
     annotations.any { it.isStableMarker() }
 
-private fun IrConstructorCall.isStableMarker(): Boolean {
+private fun IrAnnotation.isStableMarker(): Boolean {
     val owner = annotationClass?.owner ?: return false
     return owner.hasAnnotation(ComposeFqNames.StableMarker) || owner.classId in KnownStableConstructs.stableMarkers
 }
@@ -190,8 +193,7 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 }
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
-    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
-        ?.value as? Int
+    annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.getConstArgument("parameters")
 
 @VisibleForTesting
 data class SymbolForAnalysis(
@@ -211,7 +213,6 @@ data class SymbolForAnalysis(
 
 class StabilityInferencer(
     private val isTargetJvm: Boolean,
-    private val currentModule: ModuleDescriptor,
     externalStableTypeMatchers: Set<FqNameMatcher>,
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
@@ -380,7 +381,11 @@ class StabilityInferencer(
             )
         }
 
-        var stability = Stability.Stable
+        var stability = if (declaration.modality == Modality.FINAL) {
+            Stability.Stable
+        } else {
+            Stability.Unknown(declaration)
+        }
 
         for (member in declaration.declarations) {
             when (member) {
@@ -398,15 +403,14 @@ class StabilityInferencer(
         }
 
         declaration.superClass?.let {
-            stability += stabilityOf(it, substitutions, analyzing, analysisEntryFile)
+            val superClassStability = stabilityOf(it, substitutions, analyzing, analysisEntryFile)
+            if (superClassStability !is Stability.Unknown) {
+                stability += superClassStability
+            }
         }
 
         return stability
     }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrDeclaration.isInCurrentModule() =
-        module == currentModule
 
     private fun IrClass.isProtobufType(): Boolean {
         // Quick exit as all protos are final
@@ -468,6 +472,7 @@ class StabilityInferencer(
      * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
      *   call tree that led to this call.
      */
+    @OptIn(ValueClassBackendAgnosticApi::class)
     private fun stabilityOf(
         type: IrType,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
@@ -504,6 +509,20 @@ class StabilityInferencer(
                 analysisEntryFile
             )
 
+            type.isFullValueClassType() -> {
+                val valueClassDeclaration = type.getClass()
+                    ?: error("Failed to resolve the class definition of full value class type $type")
+                if (valueClassDeclaration.hasStableMarker()) {
+                    Stability.Stable
+                } else {
+                    val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
+                        ?: return Stability.Unstable // is abstract value class
+                    primaryProperties
+                        .map { [_, type] -> stabilityOf(type, substitutions, currentlyAnalyzing, analysisEntryFile) }
+                        .let { Stability.Combined(it) }
+                }
+            }
+
             type.isInlineClassType() -> {
                 val inlineClassDeclaration = type.getClass()
                     ?: error("Failed to resolve the class definition of inline type $type")
@@ -512,7 +531,7 @@ class StabilityInferencer(
                     Stability.Stable
                 } else {
                     stabilityOf(
-                        type = getInlineClassUnderlyingType(inlineClassDeclaration),
+                        type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
                         substitutions = substitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile
@@ -537,7 +556,7 @@ class StabilityInferencer(
         val cls = classOrNull ?: return emptyMap()
         val params = cls.owner.typeParameters.map { it.symbol }
         val args = arguments
-        return params.zip(args).filter { (param, arg) ->
+        return params.zip(args).filter { [param, arg] ->
             param != (arg as? IrSimpleType)?.classifier
         }.toMap()
     }

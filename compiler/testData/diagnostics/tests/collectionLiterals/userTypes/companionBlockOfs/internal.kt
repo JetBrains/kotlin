@@ -1,6 +1,6 @@
 // MODULE: lib
 // MODULE_KIND: LibrarySource
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // RUN_PIPELINE_TILL: BACKEND
 
 // FILE: MyCollection.kt
@@ -18,7 +18,7 @@ fun testInLib() {
 }
 
 // MODULE: main(lib)
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: FRONTEND
 
@@ -27,7 +27,7 @@ fun testInLib() {
 import test.MyCollection
 
 fun testInMain() {
-    val collection: MyCollection <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
+    val collection: MyCollection = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
     val collection2 = when {
         true -> MyCollection()
         else -> [1, 2, 3]

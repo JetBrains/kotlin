@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.junit.jupiter.api.Test
-import java.io.File
+import java.nio.file.Path
 import java.util.Properties
+import kotlin.io.path.nameWithoutExtension
 
 class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
     class NewNativeKlibWriterParameters : NativeParameters() {
@@ -29,7 +30,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
     }
 
     @Test
-    fun `Writing a klib with different 'targets for manifest'`() {
+    fun `Writing a klib with different targetsForManifest`() {
         listOf(
             listOf(KonanTarget.IOS_ARM64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_ARM64),
             listOf(KonanTarget.LINUX_ARM64, KonanTarget.MACOS_X64),
@@ -48,7 +49,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
             ?: parameters.target.visibleName
     }
 
-    override fun writeKlib(parameters: NewNativeKlibWriterParameters): File {
+    override fun writeKlib(parameters: NewNativeKlibWriterParameters): Path {
         val klibDir = createNewKlibDir()
         val klibLocation = if (parameters.nopack) klibDir else klibDir.resolveSibling(klibDir.nameWithoutExtension + ".klib")
 
@@ -70,14 +71,14 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
                 legacyNativeDependenciesInManifest(parameters.dependencies.map { it.uniqueName })
                 legacyNativeShortNameInManifest(parameters.shortName)
                 customProperties {
-                    parameters.customManifestProperties.forEach { (key, value) -> setProperty(key, value) }
+                    parameters.customManifestProperties.forEach { [key, value] -> setProperty(key, value) }
                 }
             }
             includeMetadata(parameters.metadata)
             includeIr(parameters.ir)
-            includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file.path })
-            includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file.path })
-        }.writeTo(klibLocation.path)
+            includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file })
+            includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file })
+        }.writeTo(klibLocation)
 
         return klibLocation
     }

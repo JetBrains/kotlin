@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EX
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
@@ -33,7 +32,6 @@ fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     defaultDirectives {
         +DUMP_IR
         +DUMP_KT_IR
-        +LINK_VIA_SIGNATURES_K1
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         DIAGNOSTICS with "-warnings"
         DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
@@ -41,7 +39,7 @@ fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     }
 }
 
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
     useHandlers(
         ::IrTextDumpHandler,
         ::IrTreeVerifierHandler,

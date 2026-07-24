@@ -11,15 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.deserialization.registeredInSerializationPluginMetadataExtension
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class IrSerializableProperty(
@@ -33,6 +31,9 @@ class IrSerializableProperty(
     val genericIndex = type.genericIndex
     fun serializableWith(ctx: SerializationBaseContext) =
         ir.annotations.serializableWith() ?: analyzeSpecialSerializers(ctx, ir.annotations)
+
+    fun getSubstitutedType(serializableClass: IrClass, originalClass: IrClass): IrType =
+        type.remapTypeParameters(serializableClass, originalClass)
 
     override val optional = !ir.annotations.hasAnnotation(SerializationAnnotations.requiredAnnotationFqName) && declaresDefaultValue
     override val transient = ir.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName) || !hasBackingField
@@ -50,14 +51,9 @@ class IrSerializableProperties(
  *
  * Returns (declaresDefaultValue, hasBackingField) boolean pair. Returns (false, false) for properties from current module.
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class, DirectDeclarationsAccess::class)
+@OptIn(DirectDeclarationsAccess::class)
 fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
-    return if (descriptor is DeserializedPropertyDescriptor) {
-        // IrLazyProperty does not deserialize backing fields correctly, so we should fall back to info from descriptor.
-        // DeserializedPropertyDescriptor can be encountered only after K1, so it is safe to check it.
-        val hasDefault = descriptor.declaresDefaultValue()
-        hasDefault to (descriptor.backingField != null || hasDefault)
-    } else if (this is Fir2IrLazyProperty) {
+    return if (this is Fir2IrLazyProperty) {
         // Deserialized properties don't contain information about backing field, so we should extract this information from the
         // attribute, which is set if the property was mentioned in SerializationPluginMetadataExtensions.
         // Also, deserialized properties do not store default value (initializer expression) for property,
@@ -97,10 +93,8 @@ fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
  *
  * Using this approach, we can correctly deserialize parent's properties in Child.Companion.deserialize()
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun serializablePropertiesForIrBackend(
     irClass: IrClass,
-    serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null,
     typeReplacement: Map<IrProperty, IrSimpleType>? = null
 ): IrSerializableProperties {
     val properties = irClass.properties.toList()
@@ -117,14 +111,14 @@ internal fun serializablePropertiesForIrBackend(
             it
         )) && it.getter?.returnType != null // For some reason, some properties from Java (like java.net.URL.hostAddress) do not have getter. Let's ignore them, as they never have worked properly in K1 either.
 
-    val (primaryCtorSerializableProps, bodySerializableProps) = properties
+    val [primaryCtorSerializableProps, bodySerializableProps] = properties
         .asSequence()
         .filter { !it.isFakeOverride && !it.isDelegated && it.origin != IrDeclarationOrigin.DELEGATED_MEMBER }
         .filter { it.isNonStaticWithField /* Compose plugin may generate static properties. Also, we are having companion blocks soon. */ }
         .filter(::isPropSerializable)
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
-            val (isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule) = it.analyzeIfFromAnotherModule()
+            val [isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule] = it.analyzeIfFromAnotherModule()
             val hasBackingField = when (it.origin) {
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> isPropertyWithBackingFieldFromAnotherModule
                 else -> it.backingField != null
@@ -154,14 +148,10 @@ internal fun serializablePropertiesForIrBackend(
             }
             serializablePropertiesForIrBackend(
                 supers,
-                serializationDescriptorSerializer,
                 originalToTypeFromFO
             ).serializableProperties + primaryCtorSerializableProps + bodySerializableProps
         }
     }
-
-    // FIXME: since descriptor from FIR does not have classProto in it(?), this line won't do anything
-    serializableProps = restoreCorrectOrderFromClassProtoExtension(irClass.descriptor, serializableProps)
 
     val isExternallySerializable =
         irClass.isInternallySerializableEnum() || primaryConstructorParams.size == primaryParamsAsProps.size

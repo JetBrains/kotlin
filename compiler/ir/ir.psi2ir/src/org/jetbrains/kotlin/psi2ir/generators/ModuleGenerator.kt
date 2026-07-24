@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 open class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
@@ -109,8 +111,8 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val fakeFile = IrFileImpl(
             fakeFileEntry,
             EmptyPackageFragmentDescriptor(context.moduleDescriptor, FqName(fakeFileEntry.name)),
+            module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         )
-        fakeFile.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         val gen = SyntheticDeclarationsGenerator(context)
         gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
         gen.visitConstructorDescriptor(

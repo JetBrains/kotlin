@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
+@K1Deprecation
 class BuilderLambdaLabelingInfo(val builderLambda: KtLambdaExpression?) {
     companion object {
         val EMPTY = BuilderLambdaLabelingInfo(null)

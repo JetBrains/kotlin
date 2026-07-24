@@ -99,10 +99,11 @@ open class LiveLiteralTransformer(
     private val usePerFileEnabledFlag: Boolean,
     private val keyVisitor: DurableKeyVisitor,
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
     ModuleLoweringPass {
 
     override fun lower(irModule: IrModuleFragment) {
@@ -123,7 +124,7 @@ open class LiveLiteralTransformer(
         getTopLevelClass(ComposeClassIds.NoLiveLiterals)
 
     private fun IrAnnotationContainer.hasNoLiveLiteralsAnnotation(): Boolean = annotations.any {
-        it.symbol.owner == NoLiveLiteralsAnnotation.owner.primaryConstructor
+        it.classSymbol == NoLiveLiteralsAnnotation
     }
 
     private fun <T> enter(key: String, block: () -> T) = keyVisitor.enter(key, block)
@@ -335,7 +336,7 @@ open class LiveLiteralTransformer(
                 /* Continue visiting expression */
             }
         }
-        val (key, success) = keyVisitor.buildPath(
+        val [key, success] = keyVisitor.buildPath(
             prefix = expression.kind.asString,
             pathSeparator = "\$",
             siblingSeparator = "-"
@@ -522,17 +523,12 @@ open class LiveLiteralTransformer(
         return aTry
     }
 
+    override fun visitAnnotation(expression: IrAnnotation): IrExpression {
+        return expression
+    }
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val owner = expression.symbol.owner
-
-        // annotations are represented as constructor calls in IR, but the parameters need to be
-        // compile-time values only, so we can't transform them at all.
-        if (
-            (expression is IrConstructorCall || expression is IrDelegatingConstructorCall) &&
-                owner.parentAsClass.isAnnotationClass
-        ) {
-            return expression
-        }
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {

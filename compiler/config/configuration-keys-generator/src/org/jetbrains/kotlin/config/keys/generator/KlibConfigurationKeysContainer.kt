@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.config.keys.generator
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 @Suppress("unused")

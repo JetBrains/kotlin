@@ -33,10 +33,10 @@ internal class StringLowercaseGenerator(
                 caseIgnorableRangesBuilder.append(line.char, line.name, line.categoryCode)
             }
         }
-        casedRangesBuilder.build().let { (start, end, _) ->
+        casedRangesBuilder.build().let { [start, end, _] ->
             start.indices.forEach { casedRanges.add(start[it]..end[it]) }
         }
-        caseIgnorableRangesBuilder.build().let { (start, end, _) ->
+        caseIgnorableRangesBuilder.build().let { [start, end, _] ->
             start.indices.forEach { caseIgnorableRanges.add(start[it]..end[it]) }
         }
     }

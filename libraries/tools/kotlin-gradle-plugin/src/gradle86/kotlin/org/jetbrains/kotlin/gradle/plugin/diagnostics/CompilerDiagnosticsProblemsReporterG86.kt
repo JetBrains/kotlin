@@ -24,6 +24,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG86 @Inject construct
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
 

@@ -3,29 +3,34 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaContextParameterApi::class, KaExperimentalApi::class)
+@file:OptIn(KaExperimentalApi::class)
 
 package org.jetbrains.kotlin.js.tsexport
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.renderer.render
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedParameter
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
-internal class TypeExporter(private val config: TypeScriptExportConfig, private val scope: TypeParameterScope) {
+internal class TypeExporter(
+    private val config: TypeScriptExportConfig,
+    private val scope: TypeParameterScope,
+    private val transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>?,
+    private val superTypeApproximator: SuperTypeApproximator?,
+) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
      * like type parameters whose upper bound references the type parameter itself.
@@ -37,6 +42,21 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
 
     context(_: KaSession)
     internal fun exportType(type: KaType, inlineClassesShouldBeUnboxed: Boolean = false): ExportedType {
+        val abbreviation = type.abbreviation
+        val typeToProcess = when (val symbol = abbreviation?.symbol) {
+            is KaTypeAliasSymbol if symbol.isEffectivelyExported(config) -> abbreviation
+            else -> type
+        }
+
+        return exportTypeOrAlias(typeToProcess, inlineClassesShouldBeUnboxed)
+    }
+
+
+    context(_: KaSession)
+    private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
+        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.isAnyType))
+            return Primitive.Unknown
+
         if (type is KaDynamicType || type in currentlyProcessedTypes)
             return Primitive.Any
 
@@ -97,7 +117,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
         if (type.isClassType(StandardClassIds.Throwable))
             return Primitive.Throwable
         if (type is KaFunctionType && !type.isKFunctionType && !type.isKSuspendFunctionType) {
-            return if (type.isSuspend) {
+            return if (type.isSuspend && !config.exportableSuspendLambdas) {
                 ErrorType("Suspend functions are not supported")
             } else {
                 Function(
@@ -123,7 +143,9 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
                             )
                         }
                     },
-                    returnType = exportType(type.returnType),
+                    returnType = exportType(type.returnType).butIf(type.isSuspend) {
+                        ClassType(name = FqName("Promise"), arguments = listOf(it))
+                    },
                 )
             }
         }
@@ -140,15 +162,19 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
     context(_: KaSession)
     private fun exportClassType(type: KaClassType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         val symbol = type.symbol
-        val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
+        val isJsImplicitExport = symbol.isJsImplicitExport()
+        if (isJsImplicitExport) {
+            transitivelyExportedClasses?.add(symbol)
+        }
+        val isExported = isJsImplicitExport || symbol.isEffectivelyExported(config)
         return when (symbol) {
             is KaNamedClassSymbol -> {
                 if (inlineClassesShouldBeUnboxed && symbol.isInline) {
-                    val underlyingType = symbol.singleFieldValueClassUnderlyingType
+                    val underlyingType = symbol.inlineClassUnderlyingType
 
                     if (underlyingType != null) {
                         val substitutedType = buildSubstitutor {
-                            for ((i, tp) in symbol.typeParameters.withIndex()) {
+                            for ([i, tp] in symbol.typeParameters.withIndex()) {
                                 type.typeArguments[i].type?.let {
                                     substitution(tp, it)
                                 }
@@ -164,8 +190,16 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
                 val name = symbol
                     .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
 
-                // TODO(KT-82340): Approximate to actual supertype
-                val exportedSupertype = Primitive.Any
+                val exportedSupertype = if (isImplicitlyExported && superTypeApproximator != null) {
+                    val transitiveExportedTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(type)
+                    if (transitiveExportedTypes.isEmpty()) {
+                        Primitive.Any
+                    } else {
+                        transitiveExportedTypes.foldMap({ exportType(it) }, ExportedType::IntersectionType)
+                    }
+                } else {
+                    Primitive.Any
+                }
 
                 val classType = ClassType(
                     name = name,
@@ -181,8 +215,16 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }
             is KaTypeAliasSymbol -> {
-                // TODO(KT-49795): Don't expand, export as a type alias reference instead.
-                exportType(type.fullyExpandedType)
+                if (isExported) {
+                    ClassType(
+                        name = symbol.getExportedFqName(shouldIncludePackage = config.generateNamespacesForPackages, config),
+                        arguments = exportAllTypeArguments(type),
+                        classId = symbol.classId,
+                    )
+                } else {
+                    // Non-exported aliases (e.g. @JsExport.Ignore, private) keep being expanded to their underlying type.
+                    exportType(type.fullyExpandedType)
+                }
             }
             is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
         }

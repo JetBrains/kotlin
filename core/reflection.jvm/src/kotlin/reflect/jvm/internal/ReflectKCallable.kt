@@ -61,6 +61,12 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
         overriddenStorage: KCallableOverriddenStorage,
     ): ReflectKCallable<R>
 
+    /**
+     * Returns a new callable with the given bound receiver. When [boundReceiver] is [CallableReference.NO_RECEIVER],
+     * the resulting callable is unbound.
+     */
+    fun rebind(boundReceiver: Any?): ReflectKCallable<R>
+
     @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {
         return caller.call(args) as R
@@ -215,4 +221,8 @@ internal val ReflectKCallable<*>.isAnnotationConstructor: Boolean
  * accessor instead.
  */
 internal fun <R> ReflectKCallable<R>.unbindAllReceivers(): ReflectKCallable<R> =
-    if (!isBound) this else shallowCopy(container, overriddenStorage)
+    if (!isBound) this else rebind(CallableReference.NO_RECEIVER)
+
+internal fun ReflectKCallable<*>.substituteType(type: KType): KType =
+    overriddenStorage.getTypeSubstitutor(typeParameters, memberNameForDebug = name)
+        .substituteTopLevelType(type, containerNameForDebug = name)

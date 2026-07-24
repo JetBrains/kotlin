@@ -93,7 +93,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         // bridges will be generated there
         if (function.modality == Modality.ABSTRACT) return null
 
-        val (bridgesDfsRoots, implementedDfsRoots) =
+        val [bridgesDfsRoots, implementedDfsRoots] =
             if (function.isRealOrOverridesInterface) function.overriddenSymbols to emptyList()
             else function.overriddenSymbols.partition { it.owner.modality == Modality.ABSTRACT }
 
@@ -119,12 +119,12 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
 
         if (bridgesToGenerate.isEmpty()) return null
 
-        val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
+        val [specialOverride: IrSimpleFunction?, specialOverrideInfo] =
             specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
         val specialOverrideSignature = specialOverride?.let(::getFunctionSignature)
 
         val result = mutableListOf<IrDeclaration>()
-        for ((bridgeSignature, bridgeMethod) in bridgesToGenerate) {
+        for ([bridgeSignature, bridgeMethod] in bridgesToGenerate) {
             result += createBridge(
                 function = function,
                 bridge = bridgeMethod,

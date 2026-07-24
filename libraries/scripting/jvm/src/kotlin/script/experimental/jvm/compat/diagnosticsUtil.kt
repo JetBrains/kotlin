@@ -56,7 +56,7 @@ fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { (m
     )
 }
 
-fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { (_, message, severity, _, location, exception) ->
+fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { (val _ = code, val message, val severity, val _ = sourcePath, val location, val exception) ->
     val reportMessage = if (exception == null) message else "$message ($exception)"
     ScriptReport(reportMessage, mapToLegacyScriptReportSeverity(severity), mapToLegacyScriptReportPosition(location))
 }

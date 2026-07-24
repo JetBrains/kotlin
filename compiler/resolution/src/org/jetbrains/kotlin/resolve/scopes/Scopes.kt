@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 // see utils/ScopeUtils.kt
 
+@K1Deprecation
 interface HierarchicalScope : ResolutionScope {
     val parent: HierarchicalScope?
 
     fun printStructure(p: Printer)
 }
 
+@K1Deprecation
 interface LexicalScope : HierarchicalScope {
     override val parent: HierarchicalScope
 
@@ -67,6 +70,7 @@ interface LexicalScope : HierarchicalScope {
     }
 }
 
+@K1Deprecation
 enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     EMPTY(false),
     THROWING(false),
@@ -110,6 +114,7 @@ enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     SYNTHETIC(false)
 }
 
+@K1Deprecation
 interface ImportingScope : HierarchicalScope {
     override val parent: ImportingScope?
 
@@ -141,6 +146,7 @@ interface ImportingScope : HierarchicalScope {
     }
 }
 
+@K1Deprecation
 abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : HierarchicalScope {
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
@@ -154,6 +160,7 @@ abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 }
 
+@K1Deprecation
 abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalScope(parent), ImportingScope {
     override val parent: ImportingScope?
         get() = super.parent as ImportingScope?
@@ -174,6 +181,7 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
     ): Collection<DeclarationDescriptor> = emptyList()
 }
 
+@K1Deprecation
 class CompositePrioritizedImportingScope(
     private val primaryScope: ImportingScope,
     private val secondaryScope: ImportingScope,

@@ -1,0 +1,12 @@
+KT element: KtPrefixExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+String(str).<Unresolved name: unaryPlus (+)>#()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryPlusStringLiteral.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        String(str).<Unresolved name: unaryPlus (+)>#()
+    }

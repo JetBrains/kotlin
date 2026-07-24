@@ -10,19 +10,18 @@ import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeCodegenTest
 import org.jetbrains.kotlin.konan.test.configuration.setupStepsForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.handlers.FileCheckHandler
-import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunnerGroupingPhase
+import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunnerGroupingStage
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
-import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
-import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
@@ -35,8 +34,8 @@ import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironm
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoPhaseNativeCoreTest() {
-    override fun configure(builder: TwoPhaseTestConfigurationBuilder): Unit = with(builder) {
+abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest() {
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
         commonConfiguration {
             defaultDirectives {
@@ -53,14 +52,14 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoPhaseNativeCoreTest
 
             commonConfigurationForNativeCodegenTest()
 
-            useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
+            useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
                 ::NativeTestsSuppressor,
             )
         }
 
-        nonGroupingPhase {
+        nonGroupingStage {
             useConfigurators(
                 ::CommonEnvironmentConfigurator,
                 ::NativeFirstStageEnvironmentConfigurator,
@@ -77,11 +76,11 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoPhaseNativeCoreTest
             )
 
             configureIrHandlersStep {
-                useHandlers(::NoIrCompilationErrorsHandler)
+                commonIrHandlersForCodegenTest()
             }
 
             configureLoweredIrHandlersStep {
-                useHandlers(::NoIrCompilationErrorsHandler)
+                commonIrHandlersForCodegenTest()
             }
 
             facadeStep(::KlibSerializerNativeCliFacade)
@@ -102,12 +101,12 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoPhaseNativeCoreTest
             enableMetaInfoHandler()
         }
 
-        groupingPhase {
+        groupingStage {
             useConfigurators(::NativeSecondStageEnvironmentConfigurator)
 
             facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings))
             handlersStep(ArtifactKinds.Native, CompilationStage.SECOND) {
-                useHandlers(::NativeBoxRunnerGroupingPhase, ::FileCheckHandler)
+                useHandlers(::NativeBoxRunnerGroupingStage, ::FileCheckHandler)
             }
         }
     }

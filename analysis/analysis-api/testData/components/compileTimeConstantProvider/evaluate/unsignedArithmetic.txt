@@ -1,0 +1,5 @@
+expression: 60u * 60u * 24u
+constant: 86400u
+constantValueKind: UIntValue
+constantValueSource: BINARY_EXPRESSION
+constantValueSourceText: 60u * 60u * 24u

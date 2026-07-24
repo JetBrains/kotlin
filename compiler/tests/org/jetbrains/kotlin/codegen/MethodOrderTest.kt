@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 open class MethodOrderTest : CodegenTestCase() {
-    override val useFir: Boolean
-        get() = true
-
     override val firParser: FirParser
         get() = FirParser.LightTree
 
+    @Test
     fun testDelegatedMethod() {
         doTest(
             """
@@ -46,6 +45,7 @@ open class MethodOrderTest : CodegenTestCase() {
     protected open fun delegatedMethodExpectation(): List<String> =
         listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
 
+    @Test
     fun testAnonymousObjectClosureOrdering() {
         doTest(
             """
@@ -64,6 +64,7 @@ open class MethodOrderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testMemberAccessor() {
         doTest(
             """
@@ -91,6 +92,7 @@ open class MethodOrderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testDeterministicDefaultMethodImplOrder() {
         doTest(
             """
@@ -127,6 +129,7 @@ open class MethodOrderTest : CodegenTestCase() {
         )
     }
 
+    @Test
     fun testBridgeOrder() {
         doTest(
             """
@@ -152,16 +155,6 @@ open class MethodOrderTest : CodegenTestCase() {
                 "visitElement(LIrElement;Ljava/lang/Object;)Ljava/lang/Object;",
             )
         )
-    }
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        if (!useFir) {
-            // Force language version 1.9 if K1 is used, otherwise the K1 compiler will pretend that it has all new language features
-            // enabled, in particular JvmDefaultEnableByDefault, which makes it report an error
-            // EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE in `testBridgeOrder`.
-            configuration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_9, ApiVersion.KOTLIN_1_9)
-        }
     }
 
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {

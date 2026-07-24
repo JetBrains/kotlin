@@ -1,0 +1,14 @@
+// LANGUAGE_FEATURE_TOGGLED: SkipHiddenObjectsInResolution
+// RUN_PIPELINE_TILL: BACKEND
+// API_VERSION: 2.3
+
+class C {
+    @SinceKotlin("2.4")
+    object Obj
+
+    val obj = <!API_NOT_AVAILABLE!>Obj<!>
+}
+
+object Obj
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, objectDeclaration, propertyDeclaration, stringLiteral */

@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
+import java.nio.file.Path
 
 class NativeKlibPlatformCheckerTest {
     @TempDir
-    private lateinit var tmpDir: File
+    private lateinit var tmpDir: Path
 
     @Test
-    fun `No or empty 'native_targets', no or empty 'commonizer_native_targets'`() {
+    fun `No or empty native_targets, no or empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = null, nativeCommonizerTargets = null),
             mockKlib(nativeTargets = emptyList(), nativeCommonizerTargets = null),
@@ -44,7 +44,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `Non-empty 'native_targets', no or empty 'commonizer_native_targets'`() {
+    fun `Non-empty native_targets, no or empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = null),
             mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = emptyList()),
@@ -62,7 +62,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `No or empty 'native_targets', non-empty 'commonizer_native_targets'`() {
+    fun `No or empty native_targets, non-empty commonizer_native_targets`() {
         listOf(
             mockKlib(nativeTargets = null, nativeCommonizerTargets = listOf("target_a", "target_b")),
             mockKlib(nativeTargets = emptyList(), nativeCommonizerTargets = listOf("target_a", "target_b")),
@@ -80,7 +80,7 @@ class NativeKlibPlatformCheckerTest {
     }
 
     @Test
-    fun `Non-empty 'native_targets', non-empty 'commonizer_native_targets'`() {
+    fun `Non-empty native_targets, non-empty commonizer_native_targets`() {
         val klib = mockKlib(nativeTargets = listOf("target_a", "target_b"), nativeCommonizerTargets = listOf("target_c", "target_d"))
 
         klib.assertLoadedWith(KlibPlatformChecker.Native())
@@ -101,7 +101,7 @@ class NativeKlibPlatformCheckerTest {
     private fun mockKlib(
         nativeTargets: List<String>?,
         nativeCommonizerTargets: List<String>?,
-    ): File = mockKlib(tmpDir.resolve(generateRandomName(10))) {
+    ): Path = mockKlib(tmpDir.resolve(generateRandomName(10))) {
         manifest(
             uniqueName = "sample",
             builtInsPlatform = BuiltInsPlatform.NATIVE,
@@ -121,7 +121,7 @@ class NativeKlibPlatformCheckerTest {
         }
     }
 
-    private fun File.assertLoadedWith(checker: KlibPlatformChecker) {
+    private fun Path.assertLoadedWith(checker: KlibPlatformChecker) {
         val result = KlibLoader {
             libraryPaths(this@assertLoadedWith)
             platformChecker(checker)
@@ -131,7 +131,7 @@ class NativeKlibPlatformCheckerTest {
         assertEquals(1, result.librariesStdlibFirst.size)
     }
 
-    private fun File.assertNotLoadedWith(checker: KlibPlatformChecker) {
+    private fun Path.assertNotLoadedWith(checker: KlibPlatformChecker) {
         val result = KlibLoader {
             libraryPaths(this@assertNotLoadedWith)
             platformChecker(checker)

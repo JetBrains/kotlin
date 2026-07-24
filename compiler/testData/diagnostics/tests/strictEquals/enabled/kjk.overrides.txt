@@ -1,0 +1,88 @@
+p.ThroughMissedJavaIF:
+  [Source]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/ThroughMissedJavaIF [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaIF [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 1]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.ThroughExplicitJavaIF:
+  [Source]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/ThroughExplicitJavaIF [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 1]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.MissedIntersectJavaAC:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedIntersectJavaAC [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 3]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.ExplicitIntersectJavaAC:
+  [Enhancement]: public abstract operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitIntersectJavaAC [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 3]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.MissedIntersectJavaAC_2:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedIntersectJavaAC_2 [id: 0]
+    [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaAC [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 2]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF_2 [id: 4]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF [id: 4]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 4]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+
+p.ExplicitIntersectJavaAC_2:
+  [Enhancement]: public abstract operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitIntersectJavaAC_2 [id: 0]
+    [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaAC [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 2]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF_2 [id: 4]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF [id: 4]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 4]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+
+p.MissedIntersectJavaAC_3:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedIntersectJavaAC_3 [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaAC [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 1]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaIF [id: 3]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 3]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.ExplicitIntersectJavaAC_3:
+  [Enhancement]: public abstract operator fun equals([EqualityBoundType=it(p/KotlinAC & p/KotlinIF)] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitIntersectJavaAC_3 [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaAC [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 1]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaIF [id: 3]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 3]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.MissedJavaIF:
+  [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedJavaIF [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 0]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 1]
+
+p.ExplicitJavaIF:
+  [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaIF [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 0]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 1]
+
+p.MissedPostSkipper:
+  [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/MissedPostSkipper [id: 0]
+    [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/Skipper [id: 0]
+      [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaAC [id: 0]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 1]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+p.ExplicitPostSkipper:
+  [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitPostSkipper [id: 0]
+    [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/Skipper [id: 1]
+      [Enhancement]: public abstract operator fun equals([EqualityBoundType=p/KotlinAC] other: R|@EnhancedNullability kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/ExplicitJavaAC [id: 1]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinAC] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinAC [id: 2]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+

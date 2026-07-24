@@ -34,7 +34,6 @@ class KaBaseCallableReferenceCall<S : KaCallableSymbol, C : KaCallableSignature<
     override val extensionReceiver: KaReceiverValue?
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.extensionReceiver }
 
-    @KaExperimentalApi
     override val contextArguments: List<KaReceiverValue>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 

@@ -9,11 +9,11 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * Boxes and unboxes values of value types when necessary.
  */
-internal class InlineClassPropertyAccessorsLowering(val context: Context) : FileLoweringPass {
+internal class InlineClassPropertyAccessorsLowering(val context: NativeBackendContext) : FileLoweringPass {
 
     private val transformer = InlineClassAccessorsTransformer(context)
 
@@ -32,7 +32,7 @@ internal class InlineClassPropertyAccessorsLowering(val context: Context) : File
 
 }
 
-private class InlineClassAccessorsTransformer(private val context: Context) : IrBuildingTransformer(context) {
+private class InlineClassAccessorsTransformer(private val context: NativeBackendContext) : IrBuildingTransformer(context) {
 
     private val symbols = context.symbols
 
@@ -42,7 +42,7 @@ private class InlineClassAccessorsTransformer(private val context: Context) : Ir
         val property = expression.symbol.owner.correspondingPropertySymbol?.owner ?: return expression
 
         property.parent.let {
-            if (it is IrClass && it.isSingleFieldValueClass && property.backingField != null) {
+            if (it is IrClass && it.isInlineClass && property.backingField != null) {
                 expression.dispatchReceiver?.let { receiver ->
                     return builder.at(expression)
                             .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))

@@ -93,8 +93,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val noNewJavaAnnotationTargets: Boolean = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
 
-    val supportJvmInlineMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)
-
     val enableDebugMode: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
 
     val enhancedCoroutinesDebugging = configuration.getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
@@ -114,7 +112,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
-            configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INLINE)
+            configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INDY)
         else JvmWhenGenerationScheme.INLINE
 
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3

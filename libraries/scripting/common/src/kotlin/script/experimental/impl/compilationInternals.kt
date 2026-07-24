@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.impl
 
+import kotlin.script.experimental.api.ReplScriptCompilationConfigurationKeys
 import kotlin.script.experimental.api.ScriptCompilationConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -15,3 +16,8 @@ val ScriptCompilationConfigurationKeys._languageVersion by PropertiesCollection.
 
 @Deprecated("Don not use. Internal key for compatibility with legacy scripting templates")
 val ScriptCompilationConfigurationKeys.fromLegacyTemplate by PropertiesCollection.key(false)
+
+/**
+ * Set by the compiler: true if the snippet is synthetic (produced by prependSyntheticSnippets callback)
+ */
+val ReplScriptCompilationConfigurationKeys._isSyntheticSnippet by PropertiesCollection.key(false)

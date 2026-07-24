@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
@@ -49,7 +50,7 @@ abstract class TestFailureSuppressorBySingleDirective(
     final override val order: Order = Order.P3,
 ) : SimpleTestFailureSuppressor(testServices) {
     init {
-        require(suppressDirective in directivesContainer)
+        checkTestInfrastructure(suppressDirective in directivesContainer) { "Directive $suppressDirective not found in directives container" }
     }
 
     override val directiveContainers: List<DirectivesContainer> = listOf(directivesContainer)

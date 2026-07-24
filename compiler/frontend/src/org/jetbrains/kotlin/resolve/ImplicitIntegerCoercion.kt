@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 
+@K1Deprecation
 object ImplicitIntegerCoercion {
 
     val MODULE_CAPABILITY = ModuleCapability<Boolean>("ImplicitIntegerCoercion")
@@ -26,6 +28,7 @@ object ImplicitIntegerCoercion {
     }
 }
 
+@K1Deprecation
 fun ModuleDescriptor.hasImplicitIntegerCoercionCapability(): Boolean {
     return getCapability(ImplicitIntegerCoercion.MODULE_CAPABILITY) == true
 }

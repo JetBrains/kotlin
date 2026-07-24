@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object ConeTypeIntersector {
     fun intersectTypes(
-        context: ConeInferenceContext,
-        types: Collection<ConeKotlinType>
+        context: ConeTypeContext,
+        types: Collection<ConeKotlinType>,
+        upperBoundForApproximation: ConeKotlinType? = null,
     ): ConeKotlinType {
         when (types.size) {
             0 -> error("Expected some types")
@@ -33,16 +34,14 @@ object ConeTypeIntersector {
         // Note: we aren't sure how to intersect raw & dynamic types properly (see KT-55762)
         if (inputTypes.any { it is ConeFlexibleType } && inputTypes.none { it.isRaw() || it is ConeDynamicType }) {
             // (A..B) & C = (A & C)..(B & C)
-            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() })
-            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() })
+            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() }, upperBoundForApproximation)
+            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() }, upperBoundForApproximation)
             // Special case - if C is `Nothing?`, then the result is `Nothing!`; but if it is non-null,
             // then this code is unreachable, so it's more useful to do resolution/diagnostics
             // under the assumption that it is purely nullable.
             return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound, isTrivial = false)
         }
-        val isResultNotNullable = with(context) {
-            inputTypes.any { !it.isNullableType() }
-        }
+        val isResultNotNullable = inputTypes.any { !it.canBeNull(context.session) }
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
             if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
@@ -68,7 +67,9 @@ object ConeTypeIntersector {
 
         resultList.removeIfNonSingleErrorOrInRelation(languageVersionSettings) { candidate, other -> AbstractTypeChecker.equalTypes(context, candidate, other) }
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
-        return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
+
+        @OptIn(DelicateIntersectionConstructor::class)
+        return resultList.singleOrNull() ?: ConeIntersectionType(resultList, upperBoundForApproximation)
     }
 
     private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(

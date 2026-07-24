@@ -6,7 +6,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
@@ -15,7 +15,7 @@ kotlin {
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.compilations.getByName("main") {
             cinterops {
-                val classes by creating {
+                val classes = create("classes") {
                     headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
                     extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
                     extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
@@ -26,6 +26,6 @@ kotlin {
     }
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "ObjCInterop"
 }

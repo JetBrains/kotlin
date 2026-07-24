@@ -90,6 +90,7 @@ open class RewriteSourceMapFilterReader(
 
         // parse json in prolog and write it back to bufferJsonWriter with transformed source paths
         val json = JsonReader(StringReader(jsonString.toString()))
+        var sourceRootSpecified = false
         try {
             json.beginObject()
             bufferJsonWriter.beginObject()
@@ -99,12 +100,18 @@ open class RewriteSourceMapFilterReader(
                 check(token == JsonToken.NAME) { "JSON key expected, but $token found" }
                 val key = json.nextName()
                 when (key) {
+                    "sourceRoot" -> {
+                        val srcSourceRootPath = transformString(json.nextString())
+                        bufferJsonWriter.name(key).value(srcSourceRootPath)
+                        sourceRootSpecified = true
+                    }
                     "sources" -> {
                         json.beginArray()
                         bufferJsonWriter.name("sources").beginArray()
                         while (json.peek() != JsonToken.END_ARRAY) {
                             val path = json.nextString()
-                            bufferJsonWriter.value(transformString(path))
+                            val transformed = if (sourceRootSpecified) path else transformString(path)
+                            bufferJsonWriter.value(transformed)
                         }
                         json.endArray()
                     }

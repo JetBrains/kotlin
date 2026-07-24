@@ -30,7 +30,7 @@ public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtE
     @NotNull
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return KtExpressionImpl.Companion.replaceExpression(this, newElement, true, this::rawReplace);
+        return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, this::rawReplace);
     }
 
     @NotNull

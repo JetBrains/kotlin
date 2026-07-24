@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
+@K1Deprecation
 object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
     // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
     private val alwaysApplicable = hashSetOf(JVM_NAME, JVM_MULTIFILE_CLASS)
@@ -60,7 +62,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
         val isMultifileClass = fileAnnotationsToCheck.any { it.second.fqNameSafe == JVM_MULTIFILE_CLASS }
 
         if (isMultifileClass) {
-            for ((entry, classDescriptor) in fileAnnotationsToCheck) {
+            for ([entry, classDescriptor] in fileAnnotationsToCheck) {
                 val classFqName = classDescriptor.fqNameSafe
                 if (classFqName in alwaysApplicable) continue
                 if (classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
@@ -68,7 +70,7 @@ object FileClassAnnotationsChecker : AdditionalAnnotationChecker {
                 }
             }
         } else {
-            for ((entry, classDescriptor) in fileAnnotationsToCheck) {
+            for ([entry, classDescriptor] in fileAnnotationsToCheck) {
                 if (classDescriptor.fqNameSafe != JVM_PACKAGE_NAME) continue
 
                 val argumentExpression = entry.valueArguments.firstOrNull()?.getArgumentExpression() ?: continue

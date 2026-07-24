@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,6 +16,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: LocalClass
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -26,14 +28,14 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsidePropertyGetter.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: null
-  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -45,9 +47,11 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: LocalTypealias
   origin: SOURCE
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsidePropertyGetter.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

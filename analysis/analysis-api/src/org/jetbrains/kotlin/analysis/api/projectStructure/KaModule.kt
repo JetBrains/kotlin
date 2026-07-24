@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import java.nio.file.Path
  * such as [dangling files][KaDanglingFileModule].
  *
  * As an Analysis API user, you will mainly interact with [KaModule]s indirectly when providing a use-site module to an
- * [analyze][org.jetbrains.kotlin.analysis.api.analyze] call (usually derived from the use-site [KtElement][org.jetbrains.kotlin.psi.KtElement]
+ * [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] call (usually derived from the use-site [KtElement][org.jetbrains.kotlin.psi.KtElement]
  * instead). However, it is possible to utilize the Analysis API's module support to explore the project structure and retrieve information
  * about individual modules when needed.
  *
@@ -124,8 +124,8 @@ public interface KaModule {
 }
 
 /**
- * Whether the given [KaModule] can be the use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.analyze] call. A module which
- * is not resolvable will be rejected by [analyze][org.jetbrains.kotlin.analysis.api.analyze] with an exception.
+ * Whether the given [KaModule] can be the use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] call. A module which
+ * is not resolvable will be rejected by [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] with an exception.
  *
  * All modules returned by [KaModuleProvider.getModule] are guaranteed to be resolvable. By extension, all possible use-site [PsiElement][com.intellij.psi.PsiElement]s
  * are also part of resolvable modules. As such, module resolvability is normally not a concern of an Analysis API user.
@@ -183,14 +183,17 @@ public interface KaSourceModule : KaModule {
  *
  * ### Platform-specific content scope restriction
  *
- * In the K2 implementation of the Analysis API, the [contentScope] of the library module is restricted to file types that are relevant for
- * the [targetPlatform]. For example, a JVM library module filters out any files that are not `.class` and `.kotlin_builtins` files. This
- * allows the Analysis API to exclude content which isn't relevant for the target platform, such as `.knm` files in a JVM library.
+ * The [contentScope] of the library module excludes file types that are harmful for the [targetPlatform]. For example, a JVM library module
+ * filters out `.kotlin_metadata` and `.knm` files, which excludes Kotlin declarations from non-JVM platforms. It also filters out source
+ * files.
  *
  * While most proper library module setups don't need such filtering, there are both pathological as well as legitimate use cases in the
  * wild. For example, certain Kotlin stdlib setups required both the `kotlin-stdlib` and `kotlin-stdlib-common` JARs to be part of the same
  * [KaLibraryModule] (this has been fixed with 2.x stdlibs). Such a library module has the JVM target platform, and we need to exclude
  * `.kotlin_metadata` files from the content scope.
+ *
+ * As another example, a JVM library module might accidentally include source JARs in its binary roots. These sources must be excluded.
+ * Otherwise, the Analysis API might accidentally try to load library declarations from them.
  */
 @SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibraryModule : KaModule {
@@ -283,10 +286,11 @@ public interface KaLibrarySourceModule : KaModule {
  * [dependentLibrary]. This allows resolving symbols defined in the dependencies of the library. In most cases, while not perfectly precise,
  * this approach resolves the correct symbols.
  *
- * The fallback dependencies module's [baseContentScope] should be the scope of all libraries excluding [dependentLibrary]. It should have
- * the same [targetPlatform] as [dependentLibrary].
+ * The fallback dependencies module's [baseContentScope] should be the scope of the *binary files* of all libraries excluding
+ * [dependentLibrary]. Source files must not be included. Additionally, the module should have the same [targetPlatform] as
+ * [dependentLibrary].
  *
- * [KaLibraryFallbackDependenciesModule] is not [resolvable][isResolvable] and thus cannot be a use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.analyze]
+ * [KaLibraryFallbackDependenciesModule] is not [resolvable][isResolvable] and thus cannot be a use-site module of an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze]
  * call. It should not be returned by [KaModuleProvider.getModule].
  *
  * The content of the fallback dependencies module is filtered by the target platform in exactly the same way as [KaLibraryModule]s. Please

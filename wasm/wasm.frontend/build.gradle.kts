@@ -1,14 +1,16 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":js:js.frontend"))
+    api(project(":compiler:config"))
     api(project(":wasm:wasm.config"))
-    compileOnly(intellijCore())
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":core:names"))
 }
 
 sourceSets {
@@ -16,4 +18,6 @@ sourceSets {
     "test" {}
 }
 
-generatedConfigurationKeys("WasmConfigurationKeys")
+optInToK1Deprecation()
+
+generatedConfigurationKeys("WasmConfigurationKeys", dependOnTaskOutput = true)

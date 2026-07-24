@@ -40,7 +40,7 @@ abstract class IntrinsicFunction(
     }
 
     private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {
-        for ((parameter, argument) in expression.symbol.owner.parameters zip expression.arguments) {
+        for ([parameter, argument] in expression.symbol.owner.parameters zip expression.arguments) {
             if (argument != null) {
                 genArg(argument, codegen, parameter.indexInParameters, data)
             } else if (parameter.isVararg) {

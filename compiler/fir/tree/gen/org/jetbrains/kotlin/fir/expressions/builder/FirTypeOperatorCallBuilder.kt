@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 class FirTypeOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var operation: FirOperation
     lateinit var conversionTypeRef: FirTypeRef
-    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
 
     override fun build(): FirTypeOperatorCall {
         return FirTypeOperatorCallImpl(

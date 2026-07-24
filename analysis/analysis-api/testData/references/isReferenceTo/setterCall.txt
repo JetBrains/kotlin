@@ -1,2 +1,0 @@
-Resolved to:
-    (in DeclSite) (psi: var x = 0)

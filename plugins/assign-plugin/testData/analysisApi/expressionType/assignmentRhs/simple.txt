@@ -1,0 +1,3 @@
+expression: "bar"
+expression PSI: KtStringTemplateExpression
+type: kotlin.String

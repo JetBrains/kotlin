@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+
+STEP 1:
+    modifications:
+        U : file2.1.kt -> file2.kt
+
+// Roll the library back to the same content as at step 0, so that its auto-cache from step 0 is reused (KT-87194).
+STEP 2:
+    modifications:
+        U : file2.kt -> file2.kt

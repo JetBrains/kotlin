@@ -2,9 +2,12 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Implementation of SwiftIR backed by Analysis API"
@@ -22,7 +25,6 @@ dependencies {
 
     api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-internal-utils"))
 
     testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -39,9 +41,6 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 }
 
@@ -49,8 +48,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-testsJar()
 
 publish()
 

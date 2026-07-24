@@ -26,7 +26,7 @@ class KlibModuleFragmentWriter(
         super.writeModuleFragment(kmPackageFragment)
 
         // TODO: This should be moved to ModuleFragmentWriter.
-        val (strings, qualifiedNames) = (c.strings as ApproximatingStringTable).buildProto()
+        val [strings, qualifiedNames] = (c.strings as ApproximatingStringTable).buildProto()
         t.strings = strings
         t.qualifiedNames = qualifiedNames
 

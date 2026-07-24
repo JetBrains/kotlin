@@ -1,9 +1,10 @@
 Resolved constructor:
   KaConstructorSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyClass
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -15,6 +16,8 @@ Resolved constructor:
     location: CLASS
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -26,7 +29,7 @@ Resolved constructor:
     getContainingFileSymbol: KaFileSymbol(regularClass.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass
 
 Original constructor if type aliased:

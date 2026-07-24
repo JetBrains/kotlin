@@ -1,2 +1,2 @@
-KtNamedFunction(33,68): '/**'
+KDocName(41,48): 'Foo.foo'
   null

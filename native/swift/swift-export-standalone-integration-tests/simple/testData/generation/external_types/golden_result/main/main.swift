@@ -3,13 +3,11 @@ import Foundation
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-@_spi(kotlinx$cinterop$ExperimentalForeignApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+@available(*, unavailable, message: "Declaration uses unsupported types")
 public var store_cgReck: Swift.Never {
-    @_spi(kotlinx$cinterop$ExperimentalForeignApi)
     get {
         fatalError()
     }
-    @_spi(kotlinx$cinterop$ExperimentalForeignApi)
     set {
         fatalError()
     }

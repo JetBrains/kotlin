@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 inline class X(val i: Int)
 fun unbox(x: X?): Int = checkNotNull(x).i

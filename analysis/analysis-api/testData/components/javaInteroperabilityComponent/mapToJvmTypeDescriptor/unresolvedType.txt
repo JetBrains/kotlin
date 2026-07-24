@@ -1,0 +1,7 @@
+Type:
+KaClassErrorType:
+  annotations: []
+  type: ERROR_TYPE
+
+mapToJvmTypeDescriptor:
+LSomeNonExistentType;

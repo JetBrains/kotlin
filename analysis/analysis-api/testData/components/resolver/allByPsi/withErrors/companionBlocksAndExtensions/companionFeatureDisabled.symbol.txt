@@ -1,0 +1,83 @@
+KtFile: 'companionFeatureDisabled.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,119): 'class C {'
+  null
+
+KtClassBody(73,119): '{'
+  null
+
+KtCompanionBlock(79,117): 'companion {'
+  null
+
+KtDeclarationModifierList(79,88): 'companion'
+  null
+
+KtClassBody(89,117): '{'
+  null
+
+KtNamedFunction(99,111): 'fun foo() {}'
+  null
+
+KtParameterList(106,108): '()'
+  null
+
+KtBlockExpression(109,111): '{}'
+  null
+
+KtNamedFunction(121,148): 'fun usage() {'
+  null
+
+KtParameterList(130,132): '()'
+  null
+
+KtBlockExpression(133,148): '{'
+  null
+
+KtDotQualifiedExpression(139,146): 'C.foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      test/C.foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+
+KtNameReferenceExpression(139,140): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(141,146): 'foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      test/C.foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+
+KtNameReferenceExpression(141,144): 'foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      test/C.foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+
+KtValueArgumentList(144,146): '()'
+  null

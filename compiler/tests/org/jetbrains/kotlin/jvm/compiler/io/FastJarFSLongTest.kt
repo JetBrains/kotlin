@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.jvm.compiler.io
 
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -22,9 +25,10 @@ class FastJarFSLongTest2M : AbstractFastJarFSTest() {
 
     // tests the zip file larger than Int.MAX_VALUE, so it doesn't fit into MappedByteBuffer, but smaller than UInt.MAX__VALUE,
     // so no ZIP64 format is triggered
+    @Test
     fun testInterleaveSmallAndBigJarEntries() {
         val fs = fs!!
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val jarFile = File(tmpDir, "tmp-2m.jar")
 
         ZipOutputStream(FileOutputStream(jarFile)).use { out ->
@@ -51,9 +55,10 @@ class FastJarFSLongTest2M : AbstractFastJarFSTest() {
 class FastJarFSLongTestZip64 : AbstractFastJarFSTest() {
 
     // tests the zip file larger than UInt.MAX_VALUE, so ZIP64 fields are used in the directory
+    @Test
     fun testInterleaveSmallAndBigJarEntriesZip64() {
         val fs = fs!!
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val jarFile = File(tmpDir, "tmp-zip64.jar")
 
         ZipOutputStream(FileOutputStream(jarFile)).use { out ->
@@ -83,10 +88,11 @@ class FastJarFSLongTestZip64 : AbstractFastJarFSTest() {
     // it will be nice to have a test that checks logic of ZIP directory reading on the directories that doesn't fit to MappedByteBuffer
     // but this tests fails with OOM on such zip file generation.
     // TODO: find out how to implement such tests
-    @Suppress("unused")
+    @Test
+    @Disabled
     fun skip_testBigJarDirectory() {
         val fs = fs ?: return
-        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
         val jarFile = File(tmpDir, "tmp.jar")
         val out = ZipOutputStream(FileOutputStream(jarFile))
 

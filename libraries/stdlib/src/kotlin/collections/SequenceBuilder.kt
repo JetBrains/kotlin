@@ -40,7 +40,7 @@ import kotlin.experimental.ExperimentalTypeInference
  */
 @SinceKotlin("1.3")
 @Suppress("DEPRECATION")
-public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
+public fun <T> sequence(block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
@@ -69,7 +69,7 @@ public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> 
  */
 @SinceKotlin("1.3")
 @Suppress("DEPRECATION")
-public fun <T> iterator(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
+public fun <T> iterator(block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = block.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator

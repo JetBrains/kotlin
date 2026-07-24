@@ -16,22 +16,26 @@
 
 package org.jetbrains.kotlin.konan.properties
 
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.io.resolvablePropertyList
+import org.jetbrains.kotlin.io.resolvablePropertyString
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.hostTargetSuffix
+import java.util.*
 
 fun Properties.hostString(name: String, host: KonanTarget): String?
-    = this.resolvablePropertyString(name, host.name)
+    = this.resolvablePropertyString(name, suffix = host.name)
 
 fun Properties.hostList(name: String, host: KonanTarget): List<String>
-    = this.resolvablePropertyList(name, host.name)
+    = this.resolvablePropertyList(name, suffix = host.name)
 
 fun Properties.targetString(name: String, target: KonanTarget): String?
-    = this.resolvablePropertyString(name, target.name)
+    = this.resolvablePropertyString(name, suffix = target.name)
 
 fun Properties.targetList(name: String, target: KonanTarget): List<String>
-    = this.resolvablePropertyList(name, target.name)
+    = this.resolvablePropertyList(name, suffix = target.name)
 
 fun Properties.hostTargetString(name: String, target: KonanTarget, host: KonanTarget): String?
-    = this.resolvablePropertyString(name, hostTargetSuffix(host, target))
+    = this.resolvablePropertyString(name, suffix = hostTargetSuffix(host, target))
 
 fun Properties.hostTargetList(name: String, target: KonanTarget, host: KonanTarget): List<String>
-    = this.resolvablePropertyList(name, hostTargetSuffix(host, target))
+    = this.resolvablePropertyList(name, suffix = hostTargetSuffix(host, target))

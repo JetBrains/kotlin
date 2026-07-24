@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("share-kotlin-wasm-custom-formatters")
 }
@@ -6,15 +9,16 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:descriptors"))
+    runtimeOnly(project(":core:deserialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:backend.js"))
     api(project(":compiler:backend.wasm"))
-    api(project(":js:js.sourcemap"))
-    api(project(":wasm:wasm.frontend"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":wasm:wasm.frontend"))
     api(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
@@ -22,7 +26,7 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-val updateWasmResources by tasks.registering(Sync::class) {
+val updateWasmResources = tasks.register("updateWasmResources", Sync::class) {
     from(configurations.wasmCustomFormattersResolver)
     into(temporaryDir)
 }
@@ -33,5 +37,3 @@ sourceSets {
         resources.srcDir(updateWasmResources)
     }
 }
-
-optInToK1Deprecation()

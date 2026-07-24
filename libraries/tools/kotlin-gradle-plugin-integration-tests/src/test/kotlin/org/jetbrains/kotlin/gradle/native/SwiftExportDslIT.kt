@@ -48,8 +48,8 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            export(project(":subproject"))
-                            export(project(":not-good-looking-project-name"))
+                            export(dependencies.project(mapOf("path" to ":subproject")))
+                            export(dependencies.project(mapOf("path" to ":not-good-looking-project-name")))
                         }
 
                         sourceSets.commonMain {
@@ -140,7 +140,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         iosArm64()
                         with(swiftExport) {
                             moduleName.set("CustomShared")
-                            export(project(":subproject")) {
+                            export(dependencies.project(mapOf("path" to ":subproject"))) {
                                 moduleName.set("CustomSubproject")
                             }
                         }
@@ -218,7 +218,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         iosArm64()
                         with(swiftExport) {
                             flattenPackage.set("com.github.jetbrains.swiftexport")
-                            export(project(":subproject")) {
+                            export(dependencies.project(mapOf("path" to ":subproject"))) {
                                 flattenPackage.set("com.subproject.library")
                             }
                         }
@@ -336,8 +336,8 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            export(project(":subproject"))
-                            export(project(":not-good-looking-project-name"))
+                            export(dependencies.project(mapOf("path" to ":subproject")))
+                            export(dependencies.project(mapOf("path" to ":not-good-looking-project-name")))
                         }
                     }
                 }
@@ -420,9 +420,10 @@ class SwiftExportDslIT : KGPBaseTest() {
                 }
             }
 
+            // Coroutines export is only supported for iOS 18.0 and above
             build(
                 ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "18.0")
             ) {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)

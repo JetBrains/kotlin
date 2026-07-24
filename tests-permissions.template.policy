@@ -70,6 +70,10 @@ grant {
     // Debugger
     {{debugger_agent_jar}}
 
+    // Test instrumenter
+    {{test_instrumenter}}
+    permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.*";
+
     // JDK
     {{jdk}}
     {{java_library_paths}}

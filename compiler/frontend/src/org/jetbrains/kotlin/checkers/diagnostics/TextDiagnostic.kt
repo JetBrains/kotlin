@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.checkers.diagnostics
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticWithParameters1Rende
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.TO_STRING
 import java.util.regex.Pattern
 
+@K1Deprecation
 class TextDiagnostic(
     override val name: String,
     override val platform: String?,

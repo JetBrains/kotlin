@@ -1,0 +1,16 @@
+[type]
+CapturedType(out kotlin.CharSequence)
+
+[direct super types]
+kotlin.CharSequence?
+
+[approximated direct super types]
+kotlin.CharSequence?
+
+[all super types]
+kotlin.CharSequence?
+kotlin.Any?
+
+[approximated all super types]
+kotlin.CharSequence?
+kotlin.Any?

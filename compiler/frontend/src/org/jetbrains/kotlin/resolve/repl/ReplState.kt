@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.repl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
+@K1Deprecation
 class ReplState {
     private val lines = hashMapOf<KtFile, LineInfo>()
     private val successfulLines = arrayListOf<LineInfo.SuccessfulLine>()

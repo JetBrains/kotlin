@@ -18,16 +18,16 @@ public class A<T> {
 
 fun main(a: A<String>, a1: A<String?>) {
     a.foo("", null)?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(null, "")<!>.length
+    a.foo("", null)<!UNSAFE_CALL!>.<!>length
+    a.foo(null, "")<!UNSAFE_CALL!>.<!>length
     a.foo("", null)!!.length
 
     a.field?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field<!>.length
+    a.field<!UNSAFE_CALL!>.<!>length
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz("")<!>.length
+    a.baz("")<!UNSAFE_CALL!>.<!>length
     a.baz("")?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(null)<!>.length
+    a.baz(null)<!UNSAFE_CALL!>.<!>length
 
     a1.baz("")!!.length
     a1.baz(null)!!.length

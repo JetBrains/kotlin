@@ -9,6 +9,8 @@ public final class Foo public constructor() {
 
     companion {
         public final val static2: kotlin.Long /* compiled code */
+
+        public final var staticVariable: kotlin.Double /* compiled code */
     }
 
     public final fun regular1(): kotlin.Unit { /* compiled code */ }
@@ -32,16 +34,20 @@ public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
 
     public final [ResolvedTo(BODY_RESOLVE)] fun regular4(): R|kotlin/Unit|
 
-    public final static [ResolvedTo(BODY_RESOLVE)] fun static3(): R|kotlin/Unit|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] fun static3(): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val regular2: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
-    public final static [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val static1: R|kotlin/Int|
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo, HasBackingFieldKey=true] val static1: R|kotlin/Int|
+        public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
 
-    public final static [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val static2: R|kotlin/Long|
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Long|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo, HasBackingFieldKey=true] val static2: R|kotlin/Long|
+        public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Long|
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo, HasBackingFieldKey=true] var staticVariable: R|kotlin/Double|
+        public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Double|
+        public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Double|): R|kotlin/Unit|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
 

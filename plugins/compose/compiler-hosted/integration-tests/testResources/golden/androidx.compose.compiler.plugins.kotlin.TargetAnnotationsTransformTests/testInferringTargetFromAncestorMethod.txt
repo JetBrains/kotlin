@@ -1,0 +1,83 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposableTarget
+import androidx.compose.runtime.ComposableOpenTarget
+
+@Composable @ComposableOpenTarget(0) fun OpenTarget() { }
+
+abstract class Base {
+  @Composable @ComposableTarget("N") abstract fun Compose()
+}
+
+class Valid : Base () {
+  @Composable override fun Compose() {
+    OpenTarget()
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableOpenTarget(index = 0)
+@FunctionKeyMeta(key = -1679111647, startOffset = 232, endOffset = 252)
+fun OpenTarget(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(OpenTarget):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    OpenTarget(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@StabilityInferred(parameters = 0)
+abstract class Base {
+  @Composable
+  @ComposableTarget(applier = "N")
+  @FunctionKeyMeta(key = -1536258881, startOffset = 346, endOffset = 359)
+  abstract fun Compose(%composer: Composer?, %changed: Int)
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class Valid : Base {
+  @Composable
+  @FunctionKeyMeta(key = 528315540, startOffset = 446, endOffset = 506)
+  override fun Compose(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(Compose)<OpenTa...>:Test.kt")
+    if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      OpenTarget(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.Compose(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

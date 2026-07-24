@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
@@ -16,12 +15,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.atMostOne
 
 interface DependenciesTracker {
     data class FileDependency(val name: String, val weak: Boolean)
@@ -76,7 +76,7 @@ private sealed class FileOrigin {
 internal class DependenciesTrackerImpl(
         private val llvmModuleSpecification: LlvmModuleSpecification,
         private val config: NativeSecondStageCompilationConfig,
-        private val context: Context,
+        private val context: NativeBackendContext,
 ) : DependenciesTracker {
     private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
 
@@ -148,7 +148,7 @@ internal class DependenciesTrackerImpl(
         }
         val library = libraryFile?.library ?: (origin as FileOrigin.EntireModule).library
         if (library !in allLibraries)
-            error("Library (${library.location}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.location.path }}")
+            error("Library (${library.path}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.path.toString() }}")
 
         var isNewDependency = usedBitcode.add(library)
         if (!onlyBitcode) {
@@ -224,8 +224,8 @@ internal class DependenciesTrackerImpl(
 
             allDependencies = moduleDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) } +
                     fileDependencies.filterNot { it.key in moduleDependencies }
-                            .map { (library, files) ->
-                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (file, weak) ->
+                            .map { [library, files] ->
+                                DependenciesTracker.ResolvedDependency.certainFiles(library, files.toList().filterNot { (val file = name, val weak) ->
                                     weak && DependenciesTracker.FileDependency(file, weak = false) in files
                                 })
                             }
@@ -257,7 +257,7 @@ internal class DependenciesTrackerImpl(
             val (library, kind) = dependency
             if (library in moduleDependencies) return
             val cachedDependency = context.config.cachedLibraries.getLibraryCache(library)
-                    ?: error("Library ${library.location} is expected to be cached")
+                    ?: error("Library ${library.path} is expected to be cached")
 
             when (kind) {
                 is DependenciesTracker.DependencyKind.WholeModule -> {
@@ -401,7 +401,7 @@ internal object DependenciesSerializer {
             }
         }
         return wholeModuleDependencies.map { DependenciesTracker.UnresolvedDependency.wholeModule(it) } +
-                fileDependencies.map { (libName, files) -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
+                fileDependencies.map { [libName, files] -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
     }
 
     private const val DEPENDENCIES_DELIMITER = '|'

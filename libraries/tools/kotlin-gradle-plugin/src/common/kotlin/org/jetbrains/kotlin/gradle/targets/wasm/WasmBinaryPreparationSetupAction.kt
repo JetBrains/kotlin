@@ -32,7 +32,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
     if (target !is KotlinJsIrTarget || target.wasmTargetType != KotlinWasmTargetType.JS) return@KotlinTargetSideEffect
 
     val project = target.project
-    if (!project.kotlinPropertiesProvider.wasmPerModule) return@KotlinTargetSideEffect
+    if (!project.kotlinPropertiesProvider.wasmCompilationMode.isOpenWorld()) return@KotlinTargetSideEffect
 
     val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 

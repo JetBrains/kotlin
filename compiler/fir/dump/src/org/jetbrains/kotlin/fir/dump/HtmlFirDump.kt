@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -92,13 +93,13 @@ private class ModuleInfo(val name: String, outputRoot: File) {
         it.mkdirs()
     }
     val errors: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.errors.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.errors.values.sum() }.withDefault { 0 }
     }
     val implicits: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.implicits.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.implicits.values.sum() }.withDefault { 0 }
     }
     val unresolved: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.unresolved.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.unresolved.values.sum() }.withDefault { 0 }
     }
 }
 
@@ -863,7 +864,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
             is ConeIntersectionType -> resolved { generate(type) }
             is ConeIntegerLiteralType -> inlineUnsupported(type)
-            is ConeLookupTagBasedType,
             is ConeStubType -> {}
         }
         generateTypeArguments(type)
@@ -1217,7 +1217,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.symbolRef(symbol: FirBasedSymbol<*>?, body: FlowContent.() -> Unit) {
-        val (link, classes) = when (symbol) {
+        val [link, classes] = when (symbol) {
             null -> null to setOf()
             is FirClassLikeSymbol<*> -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
             else -> linkResolver.nearSymbolLocation(symbol) to setOf("symbol")
@@ -1521,7 +1521,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
         resolved {
-            val symbol = resolvedQualifier.symbol
+            val symbol = resolvedQualifier.qualifierSymbol
             if (symbol != null) {
                 symbolRef(symbol) {
                     fqn(resolvedQualifier.classId?.relativeClassName ?: FqName("<???>"))

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnknownLambdaParameterTypeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
@@ -53,7 +53,7 @@ private class TypeVariableTypeRemovingSubstitutor(
         val originalTypeParameter = type.typeConstructor.originalTypeParameter
         if (originalTypeParameter != null) {
             check(originalTypeParameter is ConeTypeParameterLookupTag)
-            val typeParameterType = ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            val typeParameterType = ConeTypeParameterType(originalTypeParameter, type.isMarkedNullable, type.attributes)
             return if (replacement == TypeVariableReplacement.ErrorType) {
                 ConeErrorType(
                     ConeCannotInferTypeParameterType(typeParameter = originalTypeParameter.typeParameterSymbol),

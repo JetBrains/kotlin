@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.junit.jupiter.api.Assumptions
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -78,4 +80,40 @@ fun RegisteredDirectivesBuilder.setupCustomLanguageVersionForKlibCompatibilityTe
     LANGUAGE_VERSION with customLanguageVersion
     +ALLOW_MULTIPLE_API_VERSIONS_SETTING
     API_VERSION with ApiVersion.createByLanguageVersion(customLanguageVersion)
+}
+
+/**
+ * Set up the necessary directives for a forward KLIB compatibility test to enforce running it under
+ * a specific [secondStageCompilerDefaultLanguageVersion] and the relevant API version.
+ */
+fun RegisteredDirectivesBuilder.setupCustomLVForKlibForwardCompatibilityTest(secondStageCompilerDefaultLanguageVersion: LanguageVersion) {
+    val firstStageCompilerDefaultLanguageVersion = LanguageVersion.LATEST_STABLE
+
+    when {
+        secondStageCompilerDefaultLanguageVersion == firstStageCompilerDefaultLanguageVersion -> {
+            // OK, versions match.
+        }
+
+        secondStageCompilerDefaultLanguageVersion == LanguageVersion.entries[firstStageCompilerDefaultLanguageVersion.ordinal - 1] -> {
+            // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
+            // the language features that are not supported in the given custom LV.
+            setupCustomLanguageVersionForKlibCompatibilityTest(secondStageCompilerDefaultLanguageVersion)
+
+            LANGUAGE with "+ExportKlibToOlderAbiVersion"
+        }
+
+        secondStageCompilerDefaultLanguageVersion < firstStageCompilerDefaultLanguageVersion -> {
+            // Too old LV, we don't support exporting in it.
+            // In case there are still such tests, don't make them fails - just ignore them all.
+            Assumptions.abort<Nothing>()
+        }
+
+        else -> error(
+            """
+                Incompatible combination of default language versions:
+                - 1st stage compiler default LV: $firstStageCompilerDefaultLanguageVersion
+                - 2nd stage compiler default LV: $secondStageCompilerDefaultLanguageVersion
+            """.trimIndent()
+        )
+    }
 }

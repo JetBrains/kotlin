@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -104,7 +108,7 @@ abstract class KaptBaseIT : KGPBaseTest() {
         test = test,
     )
 
-    protected val String.withPrefix get() = "kapt2/$this"
+    protected val String.withPrefix get() = "kapt/$this"
 }
 
 /**
@@ -186,6 +190,7 @@ class KaptClassLoadersCacheIT : KaptIT() {
 
 @DisplayName("Kapt base checks")
 @OtherGradlePluginTests
+@AffectedByCompilerPlugins
 open class KaptIT : KaptBaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
@@ -397,6 +402,32 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @DisplayName("Kapt direct stub generation mode")
+    @GradleTest
+    fun testDirectGenerationMode(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+
+            buildScriptInjection {
+                val kaptExtension = project.extensions.getByType<KaptExtensionConfig>()
+                kaptExtension.stubGenerationScheme.set(KaptStubGenerationScheme.DIRECT)
+            }
+
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
+                assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/TestClassGenerated.java"))
+                assertFileExists(kotlinClassesDir().resolve("example/TestClass.class"))
+                assertFileExists(javaClassesDir().resolve("example/TestClassGenerated.class"))
+                assertFileExists(javaClassesDir().resolve("example/SourceAnnotatedTestClassGenerated.class"))
+                assertFileExists(javaClassesDir().resolve("example/BinaryAnnotatedTestClassGenerated.class"))
+                assertFileExists(javaClassesDir().resolve("example/RuntimeAnnotatedTestClassGenerated.class"))
+                assertFileNotExistsInTree("build/classes", "ExampleSourceAnnotation.class")
+                assertOutputDoesNotContain("warning: The following options were not recognized by any processor")
+                assertOutputContains("Need to discovery annotation processors in the AP classpath")
+            }
+        }
+    }
+
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
     fun testSimpleWithIC(gradleVersion: GradleVersion) {
@@ -461,7 +492,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("passes arguments from kapt configuration")
     @GradleTest
-    @TestMetadata("kapt2/arguments")
+    @TestMetadata("kapt/arguments")
     fun testArguments(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -543,7 +574,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
-    @TestMetadata("kapt2/arguments")
+    @TestMetadata("kapt/arguments")
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -1011,7 +1042,7 @@ open class KaptIT : KaptBaseIT() {
                 )
             )
         ) {
-            includeOtherProjectAsSubmodule("simple", "kapt2")
+            includeOtherProjectAsSubmodule("simple", "kapt")
             buildGradle.append("\ndependencies { implementation project(':simple') }")
 
             testResolveAllConfigurations()

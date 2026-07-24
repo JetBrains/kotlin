@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -9,7 +12,7 @@ dependencies {
     api(project(":compiler:cli-base"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:ir.serialization.common"))
-    api(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-util-klib-metadata"))
     api(project(":native:kotlin-native-utils"))
     implementation(project(":native:native.config"))
     implementation(project(":compiler:compiler.version"))
@@ -24,9 +27,8 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:compiler.common"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:deserialization"))
+    runtimeOnly(project(":core:deserialization"))
     implementation(project(":core:metadata"))
-    implementation(project(":core:util.runtime"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":compiler:ir.serialization.native"))
@@ -37,8 +39,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.inline"))
-    implementation(project(":native:frontend.native"))
+    runtimeOnly(project(":native:frontend.native"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
-optInToK1Deprecation()

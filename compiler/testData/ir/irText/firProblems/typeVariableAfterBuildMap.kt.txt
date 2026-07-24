@@ -47,7 +47,7 @@ object Visibilities {
     }
 
     override fun mustCheckInImports(): Boolean {
-      throw IllegalStateException(p0 = "This method shouldn't be invoked for INHERITED visibility")
+      throw IllegalStateException(message = "This method shouldn't be invoked for INHERITED visibility")
     }
 
   }
@@ -161,7 +161,7 @@ object Visibilities {
     }
 
     override fun mustCheckInImports(): Boolean {
-      throw IllegalStateException(p0 = "This method shouldn't be invoked for UNKNOWN visibility")
+      throw IllegalStateException(message = "This method shouldn't be invoked for UNKNOWN visibility")
     }
 
   }

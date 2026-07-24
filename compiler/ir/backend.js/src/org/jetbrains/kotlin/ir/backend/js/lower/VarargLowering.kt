@@ -160,7 +160,7 @@ private class VarargTransformer(
             }
         }
 
-        for ((parameter, argument) in expression.getAllArgumentsWithIr()) {
+        for ([parameter, argument] in expression.getAllArgumentsWithIr()) {
             val varargElementType = parameter.varargElementType
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(context, varargElementType, parameter.type)

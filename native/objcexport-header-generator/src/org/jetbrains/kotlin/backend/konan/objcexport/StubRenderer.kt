@@ -26,7 +26,7 @@ object StubRenderer {
     @InternalKotlinNativeApi
     fun render(stub: ObjCExportStub, shouldExportKDoc: Boolean): List<String> = collect {
         stub.run {
-            val (kDocEnding, commentBlockEnding) = if (comment?.contentLines == null) {
+            val [kDocEnding, commentBlockEnding] = if (comment?.contentLines == null) {
                 Pair("*/", null)  // Close kDoc with `*/`, and print nothing after empty comment
             } else {
                 Pair("", "*/")  // Don't terminate kDoc, though close comment block with `*/`
@@ -84,7 +84,7 @@ object StubRenderer {
                 is ObjCProperty -> {
                     +renderProperty(this)
                 }
-                is ObjCNSEnum -> {
+                is ObjCNSClosedEnum -> {
                     +renderNativeEnumType(this)
                 }
                 else -> throw IllegalArgumentException("unsupported stub: " + stub::class)
@@ -122,8 +122,8 @@ object StubRenderer {
         append(';')
     }
 
-    private fun renderNativeEnumType(nativeEnum: ObjCNSEnum): String = buildString {
-        append("typedef NS_ENUM(int32_t, ")
+    private fun renderNativeEnumType(nativeEnum: ObjCNSClosedEnum): String = buildString {
+        append("typedef NS_CLOSED_ENUM(int32_t, ")
         append(nativeEnum.name)
         append(") {\n")
         for (entry in nativeEnum.entries) {
@@ -134,7 +134,7 @@ object StubRenderer {
         append(");\n")
     }
 
-    private fun Appendable.appendNativeEnumEntry(entry: ObjCNSEnum.Entry) {
+    private fun Appendable.appendNativeEnumEntry(entry: ObjCNSClosedEnum.Entry) {
         append("  ")
         append(entry.objCName)
         append(" NS_SWIFT_NAME(")

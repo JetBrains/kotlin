@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.exe
 import java.io.File
 
 internal data class KotlinWebpackRunner(
-    val npmProject: NpmProject,
+    val name: String,
+    val npmProjectDir: File,
+    val nodeExecutable: String,
     val logger: Logger,
     val configFile: File,
     val tool: String,
@@ -59,7 +61,7 @@ internal data class KotlinWebpackRunner(
         val (standardClient, errorClient) = createTeamCityClients(null)
 
         return execOps.execAsync(
-            displayName = "webpack $tool ${npmProject.compilationName}"
+            displayName = "webpack $tool $name"
         ) { execSpec ->
             configureExec(
                 execSpec,
@@ -119,8 +121,8 @@ internal data class KotlinWebpackRunner(
         val args = buildArgs()
 
         val modules = NpmProjectModules(npmToolingEnvDir)
-        execSpec.workingDir(npmProject.dir)
-        execSpec.executable(npmProject.nodeExecutable)
+        execSpec.workingDir(npmProjectDir)
+        execSpec.executable(nodeExecutable)
         if (resolveModulesFromKotlinToolingDir) {
             execSpec.environment("NODE_PATH", npmToolingEnvDir.resolve("node_modules"))
             execSpec.environment("KOTLIN_TOOLING_DIR", npmToolingEnvDir.resolve("node_modules"))

@@ -12,7 +12,7 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
     var lastClass: S = classifier(this[0])
     val result = mutableListOf<Pair<List<T>, S>>()
 
-    for ((index, e) in asSequence().withIndex().drop(1)) {
+    for ([index, e] in asSequence().withIndex().drop(1)) {
         val cls = classifier(e)
         if (cls != lastClass) {
             result += Pair(subList(lastIndex, index), lastClass)

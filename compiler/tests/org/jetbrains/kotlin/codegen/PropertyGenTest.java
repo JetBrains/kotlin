@@ -21,26 +21,23 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.*;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByName;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByNameOrNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PropertyGenTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
-
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    void setUp() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
@@ -50,11 +47,13 @@ public class PropertyGenTest extends CodegenTestCase {
         return "properties";
     }
 
+    @Test
     public void testPrivateVal() throws Exception {
         loadFile();
         generateClass("PrivateVal").getDeclaredField("prop");
     }
 
+    @Test
     public void testPrivateVar() throws Exception {
         loadFile();
         Class<?> aClass = generateClass("PrivateVar");
@@ -65,6 +64,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
+    @Test
     public void testPublicVar() throws Exception {
         loadText("class PublicVar() { public var foo : Int = 0; }");
         Class<?> aClass = generateClass("PublicVar");
@@ -75,6 +75,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
+    @Test
     public void testAccessorsInInterface() {
         loadText("class AccessorsInInterface() { public var foo : Int = 0; }");
         Class<?> aClass = generateClass("AccessorsInInterface");
@@ -82,6 +83,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertNotNull(findDeclaredMethodByName(aClass, "setFoo"));
     }
 
+    @Test
     public void testPrivatePropertyInPackage() throws Exception {
         loadText("private val x = 239");
         Class<?> nsClass = generateFacadeClass();
@@ -94,6 +96,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, field.get(null));
     }
 
+    @Test
     public void testFieldPropertyAccess() throws Exception {
         loadFile();
         Method method = generateFunction("increment");
@@ -101,12 +104,14 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(2, method.invoke(null));
     }
 
+    @Test
     public void testFieldGetter() throws Exception {
         loadText("val now: Long get() = 42L; fun foo() = now");
         Method method = generateFunction("foo");
         assertEquals(Long.valueOf(42), method.invoke(null));
     }
 
+    @Test
     public void testFieldSetter() throws Exception {
         loadFile();
         Method method = generateFunction("append");
@@ -119,6 +124,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals("IntelliJ IDEA", value);
     }
 
+    @Test
     public void testFieldSetterPlusEq() throws Exception {
         loadFile();
         Method method = generateFunction("append");
@@ -127,6 +133,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals("IntelliJ IDEA", value);
     }
 
+    @Test
     public void testAccessorsWithoutBody() throws Exception {
         loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
         Class<?> aClass = generateClass("AccessorsWithoutBody");
@@ -141,6 +148,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(610, getFoo.invoke(instance));
     }
 
+    @Test
     public void testPropertyReceiverOnStack() throws Exception {
         loadFile();
         Class<?> aClass = generateClass("Evaluator");
@@ -152,12 +160,14 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(5, result.intValue());
     }
 
+    @Test
     public void testAbstractVal() throws Exception {
         loadText("abstract class Foo { public abstract val x: String }");
         Class<?> aClass = generateClass("Foo");
         assertNotNull(aClass.getMethod("getX"));
     }
 
+    @Test
     public void testKt160() throws Exception {
         loadText("internal val s = java.lang.Double.toString(1.0)");
         Method method = generateFunction("getS");
@@ -165,6 +175,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(method.invoke(null), "1.0");
     }
 
+    @Test
     public void testKt1846() {
         loadFile();
         Class<?> aClass = generateClass("A");
@@ -185,6 +196,7 @@ public class PropertyGenTest extends CodegenTestCase {
         }
     }
 
+    @Test
     public void testKt2589() throws Exception {
         loadFile();
         Class<?> aClass = generateClass("Foo");
@@ -207,6 +219,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertTrue((getBar.getModifiers() & Opcodes.ACC_FINAL) == 0);
     }
 
+    @Test
     public void testKt2677() throws Exception {
         loadFile();
         Class<?> derived = generateClass("DerivedWeatherReport");
@@ -215,31 +228,32 @@ public class PropertyGenTest extends CodegenTestCase {
         {
             Method get = derived.getDeclaredMethod("getForecast");
             Type type = get.getGenericReturnType();
-            assertInstanceOf(type, ParameterizedType.class);
+            assertInstanceOf(ParameterizedType.class, type);
             ParameterizedType parameterizedType = (ParameterizedType) type;
             assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
 
             Method set = derived.getDeclaredMethod("setForecast", (Class<?>) parameterizedType.getRawType());
             type = set.getGenericParameterTypes()[0];
             parameterizedType = (ParameterizedType) type;
-            assertInstanceOf(type, ParameterizedType.class);
+            assertInstanceOf(ParameterizedType.class, type);
             assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
         }
         {
             Method get = weatherReport.getDeclaredMethod("getForecast");
             Type type = get.getGenericReturnType();
-            assertInstanceOf(type, ParameterizedType.class);
+            assertInstanceOf(ParameterizedType.class, type);
             ParameterizedType parameterizedType = (ParameterizedType) type;
             assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
 
             Method set = weatherReport.getDeclaredMethod("setForecast", (Class<?>) parameterizedType.getRawType());
             type = set.getGenericParameterTypes()[0];
             parameterizedType = (ParameterizedType) type;
-            assertInstanceOf(type, ParameterizedType.class);
+            assertInstanceOf(ParameterizedType.class, type);
             assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
         }
     }
 
+    @Test
     public void testPrivateClassPropertyAccessors() throws Exception {
         loadFile();
         Class<?> c = generateClass("C");
@@ -256,7 +270,7 @@ public class PropertyGenTest extends CodegenTestCase {
                 "getClassObjectVal"
         );
 
-        assertNull("Property should not have a getter", findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"));
-        assertNull("Property should not have a setter", findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"));
+        assertNull(findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"), "Property should not have a getter");
+        assertNull(findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"), "Property should not have a setter");
     }
 }

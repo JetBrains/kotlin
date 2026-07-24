@@ -73,11 +73,12 @@ internal open class TypeVisitorPrinter(
 
         val irTypeFields = this.fields
             .filter {
-                val type = when (it) {
-                    is SimpleField -> it.typeRef
-                    is ListField -> it.baseType
+                val value = irTypeType.toString()
+                when (it) {
+                    is SimpleField -> it.typeRef.toString() == value
+                    is ListField -> it.baseType.toString() == value
+                    is MapField -> it.keyType.toString() == value || it.valueType.toString() == value
                 }
-                type.toString() == irTypeType.toString()
             }
 
         return irTypeFields + parentsFields
@@ -141,7 +142,7 @@ internal open class TypeVisitorPrinter(
         printFunctionDeclaration(
             name = "visitAnnotationUsage",
             parameters = listOfNotNull(
-                FunctionParameter("annotationUsage", IrTree.constructorCall),
+                FunctionParameter("annotationUsage", IrTree.annotation),
                 FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
             ),
             returnType = StandardTypes.unit,
@@ -243,6 +244,7 @@ internal open class TypeVisitorPrinter(
                         println(") }")
                     }
                 }
+                is MapField -> error("Not supported. Please implement if required.")
             }
         }
         when (element) {

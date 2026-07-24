@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -35,7 +34,6 @@ internal fun collectNewDirtySources(
     reporter: ICReporter
 ): LinkedHashSet<File> {
     val changesCollector = ChangesCollector()
-    val globalSerializationBindings = JvmSerializationBindings()
 
     fun visitFirFiles(analyzedOutput: SingleModuleFrontendOutput) {
         for (file in analyzedOutput.fir) {
@@ -49,7 +47,6 @@ internal fun collectNewDirtySources(
                         metadata,
                         analyzedOutput.session,
                         analyzedOutput.scopeSession,
-                        globalSerializationBindings,
                         data.lastOrNull(),
                         targetId,
                         configuration,
@@ -114,7 +111,7 @@ internal fun collectNewDirtySources(
                     val metadata = FirMetadataSource.Class(klass)
                     withMetadataSerializer(metadata, data) { serializer ->
                         klass.acceptChildren(this, data)
-                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { (classProto, nameTable) ->
+                        serializer.serialize(metadata, FirMetadataSource.File(file))?.let { [classProto, nameTable] ->
                             caches.platformCache.saveFrontendClassToCache(
                                 klass.classId,
                                 classProto as ProtoBuf.Class,
@@ -133,8 +130,10 @@ internal fun collectNewDirtySources(
         visitFirFiles(output)
     }
 
-    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) =
-        changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+    (val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile) = changesCollector.getChangedAndImpactedSymbols(
+        listOf(caches.platformCache),
+        reporter
+    )
 
     val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
 

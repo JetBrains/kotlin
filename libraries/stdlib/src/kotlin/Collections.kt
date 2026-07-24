@@ -475,7 +475,7 @@ public expect interface Set<out E> : Collection<E> {
  * If a particular use case does not require set's modification,
  * a read-only counterpart, [Set] could be used instead.
  *
- * [MutableSet] extends [Set] contact with functions allowing to add and remove elements.
+ * [MutableSet] extends [Set] contract with functions allowing to add and remove elements.
  *
  * Unlike [Set], an iterator returned by [iterator] allows modifying the set during iteration.
  *
@@ -659,7 +659,7 @@ public expect interface Map<K, out V> {
  *
  * If a particular use case does not require map's modification, a read-only counterpart, [Map] could be used instead.
  *
- * [MutableMap] extends [Map] contact with functions allowing to add, remove and update mapping between keys and values.
+ * [MutableMap] extends [Map] contract with functions allowing to add, remove and update mapping between keys and values.
  *
  * Unlike [Map], [keys], [values] and [entries] collections are all mutable, and changes in them update the map.
  *

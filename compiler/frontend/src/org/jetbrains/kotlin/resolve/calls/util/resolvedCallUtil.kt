@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
 // or call receiver is effectively `this` instance (explicitly or implicitly) of resulting descriptor
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 //   val x
 //   val y = other.x // return false for `other.x` as it's receiver is not `this`
 // }
+@K1Deprecation
 fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     context: BindingContext
 ): Boolean {
@@ -61,6 +64,7 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     return dispatchReceiverDescriptor == resultingDescriptor.getOwnerForEffectiveDispatchReceiverParameter()
 }
 
+@K1Deprecation
 fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
     return when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver!!
@@ -69,9 +73,11 @@ fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
     }
 }
 
+@K1Deprecation
 fun ResolvedCall<*>.getImplicitReceiverValue(): ImplicitReceiver? =
     getImplicitReceivers().firstOrNull() as? ImplicitReceiver
 
+@K1Deprecation
 fun ResolvedCall<*>.getImplicitReceivers(): Collection<ReceiverValue> =
     when (explicitReceiverKind) {
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> listOfNotNull(extensionReceiver, dispatchReceiver)
@@ -87,20 +93,25 @@ private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionConte
     return context.dataFlowInfo.getStableNullability(receiverValue).canBeNull()
 }
 
+@K1Deprecation
 fun ResolvedCall<*>.makeNullableTypeIfSafeReceiver(type: KotlinType?, context: CallResolutionContext<*>) =
     type?.let { TypeUtils.makeNullableIfNeeded(type, hasSafeNullableReceiver(context)) }
 
+@K1Deprecation
 fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionReceiver != null
 
+@K1Deprecation
 fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue? =
     getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
 
+@K1Deprecation
 fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContext): List<ValueArgument> {
     val resolvedCall = getResolvedCall(context) ?: return emptyList()
     val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return emptyList()
     return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: emptyList()
 }
 
+@K1Deprecation
 fun CallableDescriptor.isNotSimpleCall(): Boolean =
     typeParameters.isNotEmpty() ||
             (returnType?.let { type ->
@@ -112,8 +123,10 @@ fun CallableDescriptor.isNotSimpleCall(): Boolean =
                 }
             } ?: false)
 
+@K1Deprecation
 fun ResolvedCall<*>.isNewNotCompleted(): Boolean = if (this is NewAbstractResolvedCall) !isCompleted() else false
 
+@K1Deprecation
 fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     if (isNewNotCompleted()) return false
 
@@ -121,6 +134,8 @@ fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     return !returnType.contains { ErrorUtils.isUninferredTypeVariable(it) }
 }
 
+@OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+@K1Deprecation
 fun CandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
     CandidateApplicability.RESOLVED,
     CandidateApplicability.RESOLVED_LOW_PRIORITY,

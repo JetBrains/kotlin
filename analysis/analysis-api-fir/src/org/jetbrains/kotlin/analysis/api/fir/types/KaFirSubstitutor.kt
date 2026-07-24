@@ -40,7 +40,7 @@ internal class KaFirMapBackedSubstitutor(
 ) : AbstractKaFirSubstitutor<ConeSubstitutorByMap>(substitutor, builder,), KaMapBackedSubstitutor {
     override fun getAsMap(): Map<KaTypeParameterSymbol, KaType> = withValidityAssertion {
         val result = mutableMapOf<KaTypeParameterSymbol, KaType>()
-        for ((typeParameter, type) in substitutor.substitution) {
+        for ([typeParameter, type] in substitutor.substitution) {
             val typeParameterSymbol = builder.classifierBuilder.buildTypeParameterSymbol(typeParameter)
             result[typeParameterSymbol] = builder.typeBuilder.buildKtType(type)
         }

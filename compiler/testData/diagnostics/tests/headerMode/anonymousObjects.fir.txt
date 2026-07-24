@@ -1,3 +1,10 @@
 FILE: anonymousObjects.kt
-    public final fun useAnonObject(): R|kotlin/Unit| {
+    public final val publicRefToChained: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val publicRefToNested: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final fun useAnonObject(): R|kotlin/String| {
     }
+
+
+

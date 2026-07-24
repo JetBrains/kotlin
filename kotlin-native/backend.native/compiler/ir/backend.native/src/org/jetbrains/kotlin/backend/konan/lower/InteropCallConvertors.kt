@@ -4,17 +4,15 @@
  */
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.*
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -55,7 +53,7 @@ private fun InteropCallContext.findMemoryAccessFunction(isRead: Boolean, valueTy
     return nativeMemUtilsClass.functions.filter {
         val annotationArgument = it.annotations
                 .findAnnotation(RuntimeNames.typedIntrinsicAnnotation)
-                ?.getAnnotationStringValue()
+                ?.getConstArgument<String>("kind")
         annotationArgument == requiredType.name
     }.firstOrNull {
         if (isRead) {
@@ -136,7 +134,7 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
  * Perform (value != 0)
  */
 private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: IrExpression): IrExpression {
-    val (primitiveBinaryType, immZero) = when (sourceClass) {
+    val [primitiveBinaryType, immZero] = when (sourceClass) {
         // Case of regular struct field.
         irBuiltIns.byteClass -> PrimitiveBinaryType.BYTE to builder.irByte(0)
         // Case of bitfield.
@@ -157,7 +155,7 @@ private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: 
  * Perform if (value) 1 else 0
  */
 private fun InteropCallContext.castFromBoolean(targetClass: IrClassSymbol, value: IrExpression): IrExpression {
-    val (thenPart, elsePart) = when (targetClass) {
+    val [thenPart, elsePart] = when (targetClass) {
         // Case of regular struct field.
         irBuiltIns.byteClass -> builder.irByte(1) to builder.irByte(0)
         // Case of bitfield.
@@ -317,7 +315,7 @@ private fun InteropCallContext.generateEnumVarValueAccess(callSite: IrCall): IrE
 private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructMemberAt)!!
-    val offset = (memberAt.arguments[0] as IrConst).value as Long
+    val offset = memberAt.getConstArgument<Long>("offset")!!
     val fieldPointer = calculateFieldPointer(callSite.arguments[0]!!, offset)
     return when {
         accessor.isGetter -> {
@@ -349,7 +347,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
 private fun InteropCallContext.generateArrayMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructArrayMemberAt)!!
-    val offset = (memberAt.arguments[0] as IrConst).value as Long
+    val offset = memberAt.getConstArgument<Long>("offset")!!
     val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
     return interpretCPointer(fieldPointer, accessor.returnType)
 }
@@ -361,7 +359,7 @@ private fun InteropCallContext.writeBits(
         value: IrExpression,
         type: IrType
 ): IrExpression {
-    val (integralValue, fromType) = when {
+    val [integralValue, fromType] = when {
         type.isCEnumType() -> convertEnumToIntegral(value, type) to type.getCEnumPrimitiveType()
         else -> value to type
     }
@@ -406,8 +404,8 @@ private fun InteropCallContext.readBits(
 private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val bitField = accessor.getAnnotation(RuntimeNames.cStructBitField)!!
-    val offset = (bitField.arguments[0] as IrConst).value as Long
-    val size = (bitField.arguments[1] as IrConst).value as Int
+    val offset = bitField.getConstArgument<Long>("offset")!!
+    val size = bitField.getConstArgument<Int>("size")!!
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
         it.dispatchReceiver = callSite.dispatchReceiver!!
     }

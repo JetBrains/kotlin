@@ -1,0 +1,5 @@
+expression: Char(65)
+constant: `A`
+constantValueKind: CharValue
+constantValueSource: CALL_EXPRESSION
+constantValueSourceText: Char(65)

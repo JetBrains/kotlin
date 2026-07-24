@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
+@K1Deprecation
 abstract class AbstractJumpInstruction(
     element: KtElement,
     val targetLabel: Label,

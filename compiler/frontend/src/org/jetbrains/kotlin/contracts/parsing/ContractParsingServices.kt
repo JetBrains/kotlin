@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings, private val storageManager: StorageManager) {
     /**
      * ! IMPORTANT NOTICE !
@@ -100,6 +102,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false
 }
 
+@K1Deprecation
 class ContractCallContext(
     val contractCallExpression: KtExpression,
     val functionDescriptor: FunctionDescriptor,

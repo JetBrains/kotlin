@@ -1,7 +1,11 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")
@@ -17,24 +21,18 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
-val defaultSnapshotVersion: String by extra
 findProperty("deployVersion")?.let {
     assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         workingDir = rootDir
 
         @OptIn(TemporaryTestFederationApi::class)
-        isSmokeTest = true
+        smokeTestConfig = SmokeTestConfig.RunAllTests
 
-        val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
-        val kotlinVersion by extra(
-            findProperty("deployVersion")?.toString()?.let { deploySnapshotStr ->
-                if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
-            } ?: buildNumber
-        )
+        val kotlinVersion = kotlinBuildProperties.kotlinVersion.get()
         val defaultMavenLocal: String = rootProject.projectDir.resolve("build/repo").absolutePath
         val mavenLocal = System.getProperty("maven.repo.local") ?: defaultMavenLocal
         val defaultKotlincArtifactPath: String = rootProject.projectDir.resolve("dist/kotlinc").absolutePath

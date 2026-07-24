@@ -14,7 +14,7 @@ enum class A {
 val <T> T.entries: Int get() = 0
 
 fun test() {
-    val i: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> A.entries
+    val i: Int = A.<!INITIALIZER_TYPE_MISMATCH!>entries<!>
     A.Companion.entries
 }
 

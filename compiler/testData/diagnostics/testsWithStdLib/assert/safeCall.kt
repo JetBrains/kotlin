@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // IGNORE_DATA_FLOW_IN_ASSERT
-// SKIP_TXT
 // WITH_STDLIB
 
 fun test1(s: String?) {

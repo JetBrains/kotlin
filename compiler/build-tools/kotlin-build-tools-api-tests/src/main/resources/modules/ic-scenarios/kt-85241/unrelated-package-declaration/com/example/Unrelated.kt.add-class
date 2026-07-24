@@ -1,0 +1,11 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package com.example
+
+// Unrelated top-level declaration in `com.example`: same simple name `NestedClass`, but NOT a member
+// of `SomeClass` and NOT imported by foo.kt. Adding it must not recompile foo.kt once the fix records
+// the star-import scope as the class `com.example.SomeClass` rather than the package `com.example`.
+class NestedClass

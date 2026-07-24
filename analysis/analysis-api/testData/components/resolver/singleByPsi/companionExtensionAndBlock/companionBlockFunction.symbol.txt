@@ -1,0 +1,7 @@
+KtNameReferenceExpression(80,87): 'static1'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.static1(): kotlin.Unit
+    ]

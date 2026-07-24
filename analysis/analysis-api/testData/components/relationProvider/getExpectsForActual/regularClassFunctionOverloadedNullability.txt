@@ -1,0 +1,2 @@
+expected symbols:
+expect fun some(b: kotlin.Int?): kotlin.Int

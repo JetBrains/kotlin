@@ -1,6 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
-// ALLOW_PSI_PRESENCE: <local>/field
-// ^KT-85884
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 
 class Foo {
     companion {

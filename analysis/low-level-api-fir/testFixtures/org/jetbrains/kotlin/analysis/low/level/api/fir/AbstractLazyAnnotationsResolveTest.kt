@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
@@ -24,10 +26,7 @@ import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -48,7 +47,7 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->
-            val (firElement, _) = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
+            val [firElement, _] = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
             val psiElement = firElement.realPsi as? KtAnnotated
 
             // Dump FIR before any potential resolution
@@ -57,9 +56,13 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
             analyzeForTest(mainFile) {
                 val symbol = when (psiElement) {
                     null if firElement is FirBackingField -> {
-                        val ktProperty = firElement.psi as KtProperty
-                        val propertySymbol = ktProperty.symbol as KaPropertySymbol
-                        propertySymbol.backingFieldSymbol!!
+                        val variableSymbol = when (val psi = firElement.psi) {
+                            is KtProperty -> psi.symbol as KaPropertySymbol
+                            is KtParameter -> (psi.symbol as KaValueParameterSymbol).primaryConstructorProperty!!
+                            else -> error("Unexpected psi element: $psi")
+                        }
+
+                        variableSymbol.backingFieldSymbol!!
                     }
                     is KtFile -> psiElement.symbol
                     is KtDeclaration -> psiElement.symbol
@@ -126,30 +129,37 @@ abstract class AbstractSourceLikeLazyAnnotationsResolveTest : AbstractLazyAnnota
  */
 @OptIn(KaNonPublicApi::class)
 private sealed class AnnotationQuery<O : Any> {
-    fun KaSession.performAndRender(symbol: KaAnnotatedSymbol, intermediateStep: () -> Unit): String {
+    context(_: KaSession)
+    fun performAndRender(symbol: KaAnnotatedSymbol, intermediateStep: () -> Unit): String {
         val output = perform(symbol)
         intermediateStep()
         return renderOutput(output)
     }
 
-    abstract fun KaSession.perform(symbol: KaAnnotatedSymbol): O
+    context(_: KaSession)
+    abstract fun perform(symbol: KaAnnotatedSymbol): O
 
     /**
      * Note: this method may trigger additional resolution, so it should be called
      * only after the resolution state check.
      */
-    abstract fun KaSession.renderOutput(output: O): String
+    context(_: KaSession)
+    abstract fun renderOutput(output: O): String
 
     /**
      * Represents [KaAnnotationList.contains]
      */
     class Contains(val classId: ClassId) : AnnotationQuery<Boolean>() {
-        override fun KaSession.perform(symbol: KaAnnotatedSymbol): Boolean = classId in symbol.annotations
-        override fun KaSession.renderOutput(output: Boolean): String = output.toString()
+        context(_: KaSession)
+        override fun perform(symbol: KaAnnotatedSymbol): Boolean = classId in symbol.annotations
+
+        context(_: KaSession)
+        override fun renderOutput(output: Boolean): String = output.toString()
     }
 
     sealed class CollectionQuery<O : Any> : AnnotationQuery<Collection<O>>() {
-        final override fun KaSession.renderOutput(output: Collection<O>): String = prettyPrint {
+        context(_: KaSession)
+        final override fun renderOutput(output: Collection<O>): String = prettyPrint {
             if (output.isEmpty()) {
                 append("[]")
                 return@prettyPrint
@@ -160,25 +170,29 @@ private sealed class AnnotationQuery<O : Any> {
             }
         }
 
-        abstract fun KaSession.renderElementOutput(element: O): String
+        context(session: KaSession)
+        abstract fun renderElementOutput(element: O): String
 
         sealed class AnnotationQuery : CollectionQuery<KaAnnotation>() {
-            final override fun KaSession.renderElementOutput(element: KaAnnotation): String {
-                return KaDebugRenderer().renderAnnotationApplication(this, element)
+            context(session: KaSession)
+            final override fun renderElementOutput(element: KaAnnotation): String {
+                return KaDebugRenderer().renderAnnotationApplication(session, element)
             }
 
             /**
              * Represents [KaAnnotationList]
              */
             object Annotations : AnnotationQuery() {
-                override fun KaSession.perform(symbol: KaAnnotatedSymbol): List<KaAnnotation> = symbol.annotations
+                context(_: KaSession)
+                override fun perform(symbol: KaAnnotatedSymbol): List<KaAnnotation> = symbol.annotations
             }
 
             /**
              * Represents [KaAnnotationList.get]
              */
             class Get(val classId: ClassId) : AnnotationQuery() {
-                override fun KaSession.perform(symbol: KaAnnotatedSymbol): List<KaAnnotation> = symbol.annotations[classId]
+                context(_: KaSession)
+                override fun perform(symbol: KaAnnotatedSymbol): List<KaAnnotation> = symbol.annotations[classId]
             }
         }
 
@@ -186,8 +200,11 @@ private sealed class AnnotationQuery<O : Any> {
          * Represents [KaAnnotationList.classIds]
          */
         object ClassIds : CollectionQuery<ClassId>() {
-            override fun KaSession.perform(symbol: KaAnnotatedSymbol): Collection<ClassId> = symbol.annotations.classIds
-            override fun KaSession.renderElementOutput(element: ClassId): String = element.toString()
+            context(_: KaSession)
+            override fun perform(symbol: KaAnnotatedSymbol): Collection<ClassId> = symbol.annotations.classIds
+
+            context(session: KaSession)
+            override fun renderElementOutput(element: ClassId): String = element.toString()
         }
     }
 

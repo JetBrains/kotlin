@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -21,6 +22,7 @@ import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 import java.lang.reflect.Type
+import kotlin.collections.joinToString
 
 /**
  * Configuration options used to generate [webpack](https://webpack.js.org/)
@@ -43,6 +45,7 @@ import java.lang.reflect.Type
 data class KotlinWebpackConfig(
     val npmProjectDir: Provider<File>? = null,
     var mode: Mode = Mode.DEVELOPMENT,
+    /** This is main entry */
     var entry: File? = null,
     var output: KotlinWebpackOutput? = null,
     var outputPath: File? = null,
@@ -61,8 +64,19 @@ data class KotlinWebpackConfig(
     var progressReporter: Boolean = false,
     var resolveFromModulesFirst: Boolean = false,
     var resolveLoadersFromKotlinToolingDir: Boolean = false,
-) : WebpackRulesDsl {
+    /**
+     * When enabled, adds webpack [DefinePlugin](https://webpack.js.org/plugins/define-plugin/) entries
+     * that mark non-browser JS environments (Node.js, Deno, d8, etc.) as undefined.
+     * This helps the bundler remove dead code produced by the Wasm compiler
+     * that targets environments other than the browser.
+     */
+    val defineNonBrowserEnvironmentProperties: Property<Boolean>,
 
+    /**
+     * Additional JS code to be appended at the end of the webpack.config.js file.
+     */
+    internal val extraJs: MutableList<String> = mutableListOf(),
+) : WebpackRulesDsl {
     val entryInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeTo(npmProjectDir)?.invariantSeparatorsPath }
 
@@ -295,7 +309,9 @@ data class KotlinWebpackConfig(
             }
             appendErrorPlugin()
             appendFromConfigDir()
+            appendDefinePluginForBrowser()
             appendExperiments()
+            appendExtraJs()
 
             if (export) {
                 //language=JavaScript 1.8
@@ -309,6 +325,26 @@ data class KotlinWebpackConfig(
 
         appendLine()
         appendConfigsFromDir(configDirectory!!)
+        appendLine()
+    }
+
+    internal fun Appendable.appendBundledPlugin(pluginName: String, rawOptions: Map<String, Any>) {
+        val indent = "    ".repeat(7)
+        val formattedOptions = rawOptions
+            .map { "${it.key.jsQuoted()}: ${it.value}" }
+            .joinToString(separator = ",\n${indent}", prefix = indent)
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+            ;(function(config) {
+                const webpack = require("webpack"); 
+                const $pluginName = webpack.$pluginName;
+                config.plugins.push(new $pluginName({
+            $formattedOptions
+                }))
+            })(config);
+        """.trimIndent())
         appendLine()
     }
 
@@ -340,8 +376,39 @@ data class KotlinWebpackConfig(
         appendLine("}")
     }
 
+    private fun Appendable.appendDefinePluginForBrowser() {
+        if (!defineNonBrowserEnvironmentProperties.get()) return
+
+        appendBundledPlugin("DefinePlugin", defaultWasmDefinedExpressions())
+    }
+
     private fun Appendable.appendSourceMaps() {
         if (!sourceMaps) return
+
+        fun devtoolToPluginOptions(devtool: String): Pair<String, Map<String, Any>> {
+            if (devtool == "eval") return "EvalDevToolModulePlugin" to mapOf()
+
+            val hidden = "hidden" in devtool
+            val inline = "inline" in devtool
+            val evalWrapped = "eval" in devtool
+            val cheap = "cheap" in devtool
+            val moduleMaps = "module" in devtool
+            val noSources = "nosources" in devtool
+
+            val plugin = if (evalWrapped) "EvalSourceMapDevToolPlugin" else "SourceMapDevToolPlugin"
+
+            val options = buildMap {
+                if (!evalWrapped) put("test", """/\.((c|m)?js|css)($|\?)/i""")
+                if (!evalWrapped) put("filename", if (inline) "null" else "\"[file].map[query]\"")
+                if (hidden) put("append", "false")
+                put("module", if (moduleMaps) true else !cheap)
+                put("columns", !cheap)
+                put("noSources", noSources)
+                put("ignoreList", "/NATIVE_IMPLEMENTATIONS.kt/")
+            }
+
+            return plugin to options
+        }
 
         //language=JavaScript 1.8
         appendLine(
@@ -352,14 +419,18 @@ data class KotlinWebpackConfig(
                         use: ["source-map-loader"],
                         enforce: "pre"
                 });
-                config.devtool = ${devtool?.let { "'$it'" } ?: false};
+                config.devtool = false;
                 config.ignoreWarnings = [
                     /Failed to parse source map/,
                     /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
-                ]
-                
+                ];  
             """.trimIndent()
         )
+
+        devtool?.let {
+            val (plugin, options) = devtoolToPluginOptions(it)
+            appendBundledPlugin(plugin, options)
+        }
     }
 
     private fun Appendable.appendOptimization() {
@@ -453,6 +524,12 @@ data class KotlinWebpackConfig(
         )
     }
 
+    private fun Appendable.appendExtraJs() {
+        appendLine("// section: Extra JS code from KotlinWebpackConfig.extraJs")
+        extraJs.forEach { appendLine(it) }
+        appendLine("// section end")
+    }
+
     private fun json(obj: Any) = StringWriter().also {
         GsonBuilder()
             .registerTypeAdapter(DevServer::class.java, DevServer.DevServerAdapter)
@@ -507,3 +584,11 @@ private fun String.unquoteRawJsRelativePath(): String {
         "require('path').resolve(__dirname, \"" + match.groupValues[1] + "\")"
     }
 }
+
+private fun defaultWasmDefinedExpressions(): Map<String, String> = mapOf(
+    "typeof process" to "JSON.stringify('undefined')",
+    "typeof Deno" to "JSON.stringify('undefined')",
+    "typeof d8" to "JSON.stringify('undefined')",
+    "typeof inIon" to "JSON.stringify('undefined')",
+    "typeof jscOptions" to "JSON.stringify('undefined')",
+)

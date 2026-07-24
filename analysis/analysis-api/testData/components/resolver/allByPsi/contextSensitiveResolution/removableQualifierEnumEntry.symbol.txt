@@ -1,0 +1,159 @@
+KtFile: 'removableQualifierEnumEntry.kt'
+  null
+
+KtPackageDirective(70,82): 'package test'
+  null
+
+KtNameReferenceExpression(78,82): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(82,82): ''
+  null
+
+KtClass(84,106): 'enum class Foo { BAR }'
+  null
+
+KtDeclarationModifierList(84,88): 'enum'
+  null
+
+KtClassBody(99,106): '{ BAR }'
+  null
+
+KtEnumEntry(101,104): 'BAR'
+  null
+
+KtNamedFunction(108,135): 'fun expectsFoo(foo: Foo) {}'
+  null
+
+KtParameterList(122,132): '(foo: Foo)'
+  null
+
+KtParameter(123,131): 'foo: Foo'
+  null
+
+KtTypeReference(128,131): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(128,131): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(128,131): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtBlockExpression(133,135): '{}'
+  null
+
+KtNamedFunction(137,200): 'fun usage(): Foo {'
+  null
+
+KtParameterList(146,148): '()'
+  null
+
+KtTypeReference(150,153): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(150,153): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(150,153): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtBlockExpression(154,200): '{'
+  null
+
+KtCallExpression(160,179): 'expectsFoo(Foo.BAR)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(160,170): 'expectsFoo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/expectsFoo(foo: test.Foo): kotlin.Unit
+    ]
+
+KtValueArgumentList(170,179): '(Foo.BAR)'
+  null
+
+KtValueArgument(171,178): 'Foo.BAR'
+  null
+
+KtDotQualifiedExpression(171,178): 'Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]
+
+KtNameReferenceExpression(171,174): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(175,178): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]
+
+KtReturnExpression(184,198): 'return Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/usage(): test.Foo
+    ]
+
+KtDotQualifiedExpression(191,198): 'Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]
+
+KtNameReferenceExpression(191,194): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(195,198): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo.BAR
+    ]

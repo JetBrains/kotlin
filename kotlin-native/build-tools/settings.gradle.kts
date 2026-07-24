@@ -1,6 +1,10 @@
+import org.gradle.kotlin.dsl.mavenCentral
+import org.gradle.kotlin.dsl.repositories
+
 rootProject.name = "native-build-tools"
 
 pluginManagement {
+    includeBuild("../../repo/kotlin-build-helpers")
     includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
@@ -11,6 +15,7 @@ pluginManagement {
 }
 
 plugins {
+    id("kotlin-build-helpers")
     id("kotlin-bootstrap")
     id("jvm-toolchain-provisioning")
     id("develocity")
@@ -24,11 +29,13 @@ dependencyResolutionManagement {
             from(files("../../gradle/libs.versions.toml"))
         }
     }
-}
-
-buildscript {
-    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
+    repositories {
+        maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+            name = "kotlin-dependencies"
+        }
+        mavenCentral()
+        gradlePluginPortal()
     }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+
 }

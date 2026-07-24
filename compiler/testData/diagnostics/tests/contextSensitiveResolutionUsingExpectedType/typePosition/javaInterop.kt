@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 // FILE: JClass.java
 public class JClass {

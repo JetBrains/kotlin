@@ -354,7 +354,7 @@ private class MappingExtensions(
 
     fun AnnotationStub.map(): KmAnnotation {
         fun Pair<String, String>.asOptionalAnnotationArgument(): Pair<String, KmAnnotationArgument.StringValue>? {
-            val (argumentName, argumentValue) = this
+            val [argumentName, argumentValue] = this
             return if (argumentValue.isEmpty()) null else argumentName to KmAnnotationArgument.StringValue(argumentValue)
         }
 
@@ -395,6 +395,11 @@ private class MappingExtensions(
             is AnnotationStub.ObjC.ExternalClass -> mapOfNotNull(
                     ("protocolGetter" to protocolGetter).asOptionalAnnotationArgument(),
                     ("binaryName" to binaryName).asOptionalAnnotationArgument()
+            )
+            is AnnotationStub.ObjC.ObjCName -> mapOfNotNull(
+                    ("name" to name).asOptionalAnnotationArgument(),
+                    ("swiftName" to swiftName).asOptionalAnnotationArgument(),
+                    ("exact" to KmAnnotationArgument.BooleanValue(exact)).takeIf { exact }
             )
             AnnotationStub.CCall.CString -> emptyMap()
             AnnotationStub.CCall.WCString -> emptyMap()
@@ -442,6 +447,8 @@ private class MappingExtensions(
                     ("align" to KmAnnotationArgument.IntValue(align))
             )
             is AnnotationStub.ExperimentalForeignApi -> emptyMap()
+            is AnnotationStub.LowPriorityInOverloadResolution -> emptyMap()
+            AnnotationStub.ObjC.Unavailable -> emptyMap()
         }
         return KmAnnotation(classifier.fqNameSerialized, args)
     }

@@ -49,7 +49,8 @@ sealed interface DefFileProperty<T> {
         ExcludeDependentModules("excludeDependentModules"),
         DisableDesignatedInitializerChecks("disableDesignatedInitializerChecks"),
         AllowIncludingObjCCategoriesFromDefFile("allowIncludingObjCCategoriesFromDefFile"),
-        SkipNonImportableModules("skipNonImportableModules");
+        SkipNonImportableModules("skipNonImportableModules"),
+        ApiNotesSwiftName("apiNotesSwiftName");
 
         override fun parse(rawValue: String?): Boolean = rawValue.toBoolean()
     }

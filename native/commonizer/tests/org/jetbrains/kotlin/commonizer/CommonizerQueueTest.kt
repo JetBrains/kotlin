@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class CommonizerQueueTest {

@@ -1,0 +1,75 @@
+fun box(): String {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
+    test2()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3", */ that = local fun <anonymous>() {
+    test3()
+  }
+)])
+}
+
+fun powerAssert(condition: Boolean, msg: Function0<String>) {
+  when {
+    condition.not() -> throw AssertionError(p0 = msg.invoke())
+  }
+}
+
+fun powerAssert(condition: Boolean, msg: String? = null) {
+  when {
+    condition.not() -> throw AssertionError(p0 = { // BLOCK
+      val tmp_0: String? = { // BLOCK
+        val tmp_1: String? = msg
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = null) -> null
+          else -> tmp_1 /*as String */.toString()
+        }
+      }
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> "Assertion failed"
+        else -> tmp_0
+      }
+    })
+  }
+}
+
+fun test1() {
+  { // BLOCK
+    val tmp0_Explain: String = "test"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    val tmp2_Explain: Int = 5
+    val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+    powerAssert(condition = tmp3_Explain, msg = local fun <anonymous>(): String {
+      return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 426, source = "    powerAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 16, endOffset = 34, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 16, endOffset = 22, displayOffset = 16, value = tmp0_Explain), ValueExpression(startOffset = 16, endOffset = 29, displayOffset = 23, value = tmp1_Explain), LiteralExpression(startOffset = 33, endOffset = 34, displayOffset = 33, value = tmp2_Explain), EqualityExpression(startOffset = 16, endOffset = 34, displayOffset = 30, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])), null])) */)
+    }
+)
+  }
+}
+
+fun test2() {
+  { // BLOCK
+    val tmp0_Explain: String = "test"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    val tmp2_Explain: Int = 5
+    val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+    powerAssert(condition = tmp3_Explain, msg = "bad" + "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 479, source = "    powerAssert(\"test\".length == 5, msg = \"bad\")", arguments = listOf<Argument>(elements = [Argument(startOffset = 16, endOffset = 34, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 16, endOffset = 22, displayOffset = 16, value = tmp0_Explain), ValueExpression(startOffset = 16, endOffset = 29, displayOffset = 23, value = tmp1_Explain), LiteralExpression(startOffset = 33, endOffset = 34, displayOffset = 33, value = tmp2_Explain), EqualityExpression(startOffset = 16, endOffset = 34, displayOffset = 30, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])), null])) */))
+  }
+}
+
+fun test3() {
+  { // BLOCK
+    val tmp0_Explain: String = "test"
+    val tmp1_Explain: Int = tmp0_Explain.<get-length>()
+    val tmp2_Explain: Int = 5
+    val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
+    powerAssert(condition = tmp3_Explain, msg = local fun <anonymous>(): String {
+      return local fun <anonymous>(): String {
+        return "bad"
+      }
+.invoke() + "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 545, source = "    powerAssert(\"test\".length == 5, msg = { \"bad\" })", arguments = listOf<Argument>(elements = [Argument(startOffset = 16, endOffset = 34, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 16, endOffset = 22, displayOffset = 16, value = tmp0_Explain), ValueExpression(startOffset = 16, endOffset = 29, displayOffset = 23, value = tmp1_Explain), LiteralExpression(startOffset = 33, endOffset = 34, displayOffset = 33, value = tmp2_Explain), EqualityExpression(startOffset = 16, endOffset = 34, displayOffset = 30, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])), null])) */)
+    }
+)
+  }
+}

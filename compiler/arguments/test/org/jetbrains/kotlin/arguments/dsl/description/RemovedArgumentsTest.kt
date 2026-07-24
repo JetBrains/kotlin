@@ -29,8 +29,8 @@ class RemovedArgumentsTest {
     fun removedArgumentsAreInSeparateLevelDefinition(
         levelDescription: CompilerArgsLevelDescription
     ) {
-        val nonMovedArgs = levelDescription.actualLevel.arguments.filter {
-            it.releaseVersionsMetadata.removedVersion != null
+        val nonMovedArgs = levelDescription.actualLevel.arguments.filter { argument ->
+            argument.releaseVersionsMetadata.removedVersion.let { it != null && it.toKotlinVersion() <= KotlinVersion.CURRENT}
         }
 
         assertTrue(

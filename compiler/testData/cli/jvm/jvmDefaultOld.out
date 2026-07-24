@@ -1,2 +1,2 @@
-warning: -Xjvm-default is deprecated. Use -jvm-default instead.
+warning: the argument '-Xjvm-default' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use `-jvm-default` instead.
 OK

@@ -1,18 +1,20 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
   callableId: /validate
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -21,16 +23,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: a
       origin: SOURCE
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -51,12 +56,14 @@ KaNamedFunctionSymbol:
             KaContractExplicitParameterValue:
               symbol:
                 KaContextParameterSymbol:
+                  anchorPsi: KtParameter
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
+                  contextParameters: []
                   contextReceivers: []
                   isActual: false
                   isCompanion: false
+                  isDelegated: false
                   isExpect: false
                   isExtension: false
                   isExternal: false
@@ -65,16 +72,19 @@ KaNamedFunctionSymbol:
                   modality: FINAL
                   name: a
                   origin: SOURCE
+                  psi: KtParameter
+                  realPsi: KtParameter
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotations: []
                     typeArguments: []
                     type: kotlin/String?
+                  typeParameters: []
                   visibility: PUBLIC
                   getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
                   getContainingJvmClassName: BooleanContextParameterKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           isNegated: true
   ]
@@ -96,6 +106,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: validate
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -104,16 +116,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -125,16 +138,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: param
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -142,6 +159,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BooleanContextParameterKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: validate

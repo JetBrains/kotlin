@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.junit.jupiter.api.Assertions
 import kotlin.io.path.readText
 
 @OptIn(ObsoleteTestInfrastructure::class)
@@ -139,7 +139,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
         val designationBuilder = DesignationBuilder(elementToBuild)
         original.accept(designationBuilder)
         val designation = designationBuilder.resultDesignation
-        TestCase.assertTrue(designation != null)
+        Assertions.assertNotNull(designation)
 
         val firElement = RawFirNonLocalDeclarationBuilder.buildWithSymbolRebind(
             session = session,

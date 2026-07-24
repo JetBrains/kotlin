@@ -90,6 +90,8 @@ class SourceMapLocationRemapper(private val sourceMap: SourceMap, private val so
 
         override fun visitBinaryExpression(x: JsBinaryOperation) = handleNode(x, x.arg1, x.arg2)
 
+        override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) = handleNode(x, x.target, x.value)
+
         override fun visitConditional(x: JsConditional) = handleNode(x, x.testExpression, x.thenExpression, x.elseExpression)
 
         override fun visitArrayAccess(x: JsArrayAccess) = handleNode(x, x.arrayExpression, x.indexExpression)

@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
+@K1Deprecation
 fun ClassifierDescriptorWithTypeParameters.renderKindWithName(): String =
     DescriptorRenderer.getClassifierKindPrefix(this) + " '" + name + "'"
 
+@K1Deprecation
 fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassifierKindPrefix(this)
 

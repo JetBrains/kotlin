@@ -26,20 +26,20 @@ internal fun applyJsr305(
     currentValue: List<Jsr305>,
     compilerArgs: K2JVMCompilerArguments,
 ): List<Jsr305> =
-    compilerArgs.jsr305.mapOrEmpty {
-        val parts = it.split(":")
+    compilerArgs.jsr305.mapOrEmpty { fullEntry ->
+        val parts = fullEntry.split(":")
         when (parts.size) {
-            1 -> Jsr305.Global(jsr305mode(parts[0]))
+            1 -> Jsr305.Global(jsr305mode(parts[0], fullEntry))
             2 -> {
                 if (parts[0] == "under-migration") {
-                    Jsr305.UnderMigration(jsr305mode(parts[1]))
+                    Jsr305.UnderMigration(jsr305mode(parts[1], fullEntry))
                 } else {
-                    Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1]))
+                    Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1], fullEntry))
                 }
             }
-            else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $it")
+            else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $fullEntry")
         }
     }
 
-private fun jsr305mode(stringValue: String) = Jsr305.Mode.entries.firstOrNull { entry -> entry.stringValue == stringValue }
-    ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $stringValue")
+private fun jsr305mode(mode: String, fullEntry: String) = Jsr305.Mode.entries.firstOrNull { entry -> entry.stringValue == mode }
+    ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $fullEntry")

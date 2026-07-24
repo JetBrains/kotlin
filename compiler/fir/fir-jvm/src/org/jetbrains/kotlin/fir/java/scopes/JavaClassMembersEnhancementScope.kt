@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
@@ -24,7 +25,7 @@ class JavaClassMembersEnhancementScope(
     private val enhancedToOriginalFunctions = hashMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
     private val enhancedToOriginalProperties = hashMapOf<FirPropertySymbol, FirPropertySymbol>()
 
-    private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
+    private val signatureEnhancement = FirSignatureEnhancement(owner.fir as FirJavaClass, session) {
         overriddenMembers()
     }
 

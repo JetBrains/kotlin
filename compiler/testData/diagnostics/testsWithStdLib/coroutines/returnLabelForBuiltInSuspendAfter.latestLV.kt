@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // LANGUAGE: +ParseLambdaWithSuspendModifier
 // LATEST_LV_DIFFERENCE
 // ^Return type of suspend@{} changes in response to ResolveTopLevelLambdasAsSyntheticCallArgument being enabled

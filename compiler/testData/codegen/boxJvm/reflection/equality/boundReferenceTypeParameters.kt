@@ -23,6 +23,10 @@ class C {
 
 fun <Y> Any.g(y: Y): Y = y
 
+var <W> List<W>.p: W
+    get() = this[0]
+    set(value) {}
+
 private fun checkEqual(x: Any, y: Any) {
     assertEquals(x, y)
     assertEquals(y, x)
@@ -55,6 +59,10 @@ fun box(): String {
     val i1: (String) -> C.Inner<String> = C()::Inner
     val i2 = C.Inner::class.constructors.single()
     checkEqualTypeParameters(i1, i2)
+
+    val p1 = List<String>::p
+    val p2 = listOf("")::p
+    checkEqualTypeParameters(p1, p2)
 
     val j1: (String) -> String = J()::j
     val j2 = J::class.members.single { it.name == "j" }

@@ -216,7 +216,7 @@ class ConstraintIncorporator(
         ) {
             return
         }
-        val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
+        val [type, needApproximation] = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )
 
@@ -233,7 +233,8 @@ class ConstraintIncorporator(
                 otherVariable,
                 otherConstraint,
                 prepareType(true),
-                isSubtype = false
+                isSubtype = false,
+                isCausedByFixation = isCausedByFixation,
             )
         }
 
@@ -244,7 +245,8 @@ class ConstraintIncorporator(
                 otherVariable,
                 otherConstraint,
                 prepareType(false),
-                isSubtype = true
+                isSubtype = true,
+                isCausedByFixation = isCausedByFixation,
             )
         }
     }
@@ -268,7 +270,7 @@ class ConstraintIncorporator(
         val isBaseGenericType = otherConstraint.type.argumentsCount() != 0
         val isBaseOrOtherCapturedType = otherConstraint.type.isCapturedType() || causeOfIncorporationConstraint.type.isCapturedType()
 
-        val (alphaReplacement, needsApproximation) = when (causeOfIncorporationConstraint.kind) {
+        val [alphaReplacement, needsApproximation] = when (causeOfIncorporationConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 causeOfIncorporationConstraint.type to false
             }
@@ -334,8 +336,11 @@ class ConstraintIncorporator(
         // Inv<out Number>
         newConstraintType: KotlinTypeMarker,
         isSubtype: Boolean,
+        isCausedByFixation: Boolean,
     ) {
-        if (newConstraintType.containsNestedTypeVariable(targetVariable)) return
+        val preserveConstraintsWithNestedTypeVariables = isCausedByFixation
+                && languageVersionSettings.supportsFeature(LanguageFeature.DontIgnoreUpperBoundViolatedOnImplicitArguments)
+        if (!preserveConstraintsWithNestedTypeVariables && newConstraintType.containsNestedTypeVariable(targetVariable)) return
 
         val isUsefulForNullabilityConstraint =
             newConstraintType.isPotentialUsefulNullabilityConstraint(

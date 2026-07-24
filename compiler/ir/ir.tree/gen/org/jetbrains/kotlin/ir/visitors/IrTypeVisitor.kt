@@ -42,7 +42,7 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
         }
     }
 
-    open fun visitAnnotationUsage(annotationUsage: IrConstructorCall, data: D) {
+    open fun visitAnnotationUsage(annotationUsage: IrAnnotation, data: D) {
         visitElement(annotationUsage, data)
         visitTypeRecursively(annotationUsage, annotationUsage.type, data)
     }

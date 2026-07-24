@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
+import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf
+import org.jetbrains.kotlin.analysis.api.types.semanticallyEquals
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -22,7 +24,8 @@ import org.jetbrains.kotlin.test.services.assertions
  * - [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] for [KaType]
  */
 abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelationTest() {
-    protected abstract fun KaSession.checkTypes(
+    context(_: KaSession)
+    protected abstract fun checkTypes(
         expectedResult: Boolean,
         type1: KaType,
         type2: KaType,
@@ -39,7 +42,8 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
         }
     }
 
-    override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
         val type1 = getTypeAtMarker(mainFile, testServices, qualifier = "type1")
         val type2 = getTypeAtMarker(mainFile, testServices, qualifier = "type2")
 
@@ -70,7 +74,8 @@ private object EqualityAndSubtypingTestDirectives : SimpleDirectivesContainer() 
 abstract class AbstractTypeEqualityTest : AbstractEqualityAndSubtypingTypeRelationTest() {
     override val resultDirective = EqualityAndSubtypingTestDirectives.ARE_EQUAL
 
-    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.semanticallyEquals(type2),
@@ -83,7 +88,8 @@ abstract class AbstractTypeEqualityTest : AbstractEqualityAndSubtypingTypeRelati
 abstract class AbstractLenientTypeEqualityTest : AbstractEqualityAndSubtypingTypeRelationTest() {
     override val resultDirective = EqualityAndSubtypingTestDirectives.ARE_EQUAL_LENIENT
 
-    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.semanticallyEquals(type2, KaSubtypingErrorTypePolicy.LENIENT),
@@ -96,7 +102,8 @@ abstract class AbstractLenientTypeEqualityTest : AbstractEqualityAndSubtypingTyp
 abstract class AbstractSubtypingTest : AbstractEqualityAndSubtypingTypeRelationTest() {
     override val resultDirective = EqualityAndSubtypingTestDirectives.IS_SUBTYPE
 
-    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isSubtypeOf(type2),
@@ -109,7 +116,8 @@ abstract class AbstractSubtypingTest : AbstractEqualityAndSubtypingTypeRelationT
 abstract class AbstractLenientSubtypingTest : AbstractEqualityAndSubtypingTypeRelationTest() {
     override val resultDirective = EqualityAndSubtypingTestDirectives.IS_SUBTYPE_LENIENT
 
-    override fun KaSession.checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
+    context(_: KaSession)
+    override fun checkTypes(expectedResult: Boolean, type1: KaType, type2: KaType, testServices: TestServices) {
         testServices.assertions.assertEquals(
             expectedResult,
             type1.isSubtypeOf(type2, KaSubtypingErrorTypePolicy.LENIENT),

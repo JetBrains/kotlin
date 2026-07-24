@@ -1,0 +1,63 @@
+FILE: materializedSchemaInfoOnCast.kt
+    public final fun box(): R|kotlin/String| {
+        lval cities: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cities>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_83>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_83I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public constructor(): R|<local>/DataFrameOf_83I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_83I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_83I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_83I>|.coordinates: R|kotlin/Pair<kotlin/String, kotlin/String>|
+                    public get(): R|kotlin/Pair<kotlin/String, kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_83I>|.coordinates: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_83 : R|<local>/DataFrameOf_83I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_83|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(city).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(London), String(Seoul)))), String(coordinates).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Pair<kotlin/String, kotlin/String>>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(vararg(String(51.5074).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(-0.1278)), String(37.5665).R|kotlin/to|<R|kotlin/String|, R|kotlin/String|>(String(126.9780)))))))
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|Cities|>()
+        R|<local>/cities|.R|/city|
+        ^box String(OK)
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Cities : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(city: R|kotlin/String|): R|Cities| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val city: R|kotlin/String| = R|<local>/city|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(city: R|kotlin/String| = this@R|/Cities|.R|/Cities.city|): R|Cities|
+
+    }
+FILE: /__GENERATED__CALLABLES__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Cities>|.city: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Cities_city)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Cities>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Cities_city)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|

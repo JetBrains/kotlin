@@ -126,7 +126,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportDeclarationImplicitly(klass: IrClass): ExportedDeclaration {
         val name = klass.getExportedIdentifier()
-        val (members, nestedClasses) = exportClassDeclarations(klass)
+        val [members, nestedClasses] = exportClassDeclarations(klass)
         return ExportedRegularClass(
             name = name,
             isInterface = true,
@@ -146,7 +146,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             Exportability.Allowed -> {}
         }
 
-        val (members, nestedClasses) = exportClassDeclarations(klass)
+        val [members, nestedClasses] = exportClassDeclarations(klass)
 
         return exportClass(
             klass,
@@ -173,7 +173,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         enumEntries
             .keysToMap(enumEntries::indexOf)
 
-        val (members, nestedClasses) = exportClassDeclarations(klass) { candidate ->
+        val [members, nestedClasses] = exportClassDeclarations(klass) { candidate ->
             val enumExportedMember = exportAsEnumMember(candidate)
             enumExportedMember
         }

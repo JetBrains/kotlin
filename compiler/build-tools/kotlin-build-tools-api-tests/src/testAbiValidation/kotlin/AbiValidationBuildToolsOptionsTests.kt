@@ -92,7 +92,7 @@ class AbiValidationBuildToolsOptionsTests {
     }
 
     @Test
-    @DisplayName("Check passing option values in DumpJvmAbiToStringOperation")
+    @DisplayName("Check passing option values in DumpKlibAbiToStringOperation")
     fun testDumpKlib() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchain.abiValidation.dumpKlibAbiToStringOperation(StringBuilder(), mapOf()) {
@@ -173,5 +173,46 @@ class AbiValidationBuildToolsOptionsTests {
         assertEquals(emptySet<String>(), klibFilters[AbiFilters.EXCLUDE_NAMED])
         assertEquals(emptySet<String>(), klibFilters[AbiFilters.INCLUDE_ANNOTATED_WITH])
         assertEquals(emptySet<String>(), klibFilters[AbiFilters.EXCLUDE_ANNOTATED_WITH])
+    }
+
+    @Test
+    @DisplayName("Check that mutating the builder does not affect the already built AbiFilters")
+    fun testFiltersImmutability() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), emptyList())
+        val filtersBuilder = jvmBuilder.filtersBuilder()
+
+        filtersBuilder[AbiFilters.INCLUDE_NAMED] = setOf("FIRST")
+        val filters1 = filtersBuilder.build()
+
+        filtersBuilder[AbiFilters.INCLUDE_NAMED] = setOf("SECOND")
+        val filters2 = filtersBuilder.build()
+
+        assertEquals(setOf("FIRST"), filters1[AbiFilters.INCLUDE_NAMED])
+        assertEquals(setOf("SECOND"), filters2[AbiFilters.INCLUDE_NAMED])
+    }
+
+    @Test
+    @DisplayName("Check that empty inputFiles produces empty dump for DumpJvmAbiToStringOperation")
+    fun testDumpJvmEmptyInputFiles() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+
+        val dump = StringBuilder()
+        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(dump, emptyList())
+        toolchain.createBuildSession().use { it.executeOperation(operation) }
+
+        assertEquals("", dump.toString())
+    }
+
+    @Test
+    @DisplayName("Check that empty klibs map produces empty dump for DumpKlibAbiToStringOperation")
+    fun testDumpKlibEmptyKlibs() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+
+        val dump = StringBuilder()
+        val operation = toolchain.abiValidation.dumpKlibAbiToStringOperation(dump, emptyMap())
+        toolchain.createBuildSession().use { it.executeOperation(operation) }
+
+        assertEquals("", dump.toString())
     }
 }

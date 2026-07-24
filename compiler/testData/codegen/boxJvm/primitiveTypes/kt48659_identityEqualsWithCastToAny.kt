@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// IGNORE_VALHALLA
+// ^ Boxes of primitives always have no observable identity with Valhalla
 
 fun int(a: Int, b: Int): Boolean = (a as Any) === (b as Any)
 fun short(a: Short, b: Short): Boolean = (a as Any) === (b as Any)

@@ -20,7 +20,7 @@ class RegexJVMTest {
         val matches = regex.findAll(input).toList()
         assertTrue(matches.all { it.groups.size == 3 })
 
-        val (m1, m2, m3) = matches
+        val [m1, m2, m3] = matches
 
         assertEquals("1a", m1.groups[0]?.value)
         assertEquals(0..1, m1.groups[0]?.range)

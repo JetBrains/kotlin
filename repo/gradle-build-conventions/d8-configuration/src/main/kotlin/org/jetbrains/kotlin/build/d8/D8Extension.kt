@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.build.d8
 
+import kotlinBuildProperties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
@@ -19,7 +20,7 @@ abstract class D8Extension(
     private val d8envSpec: D8EnvSpec,
 ) {
     val v8Version: String
-        get() = project.property("versions.v8") as String
+        get() = project.kotlinBuildProperties.versionsProperty("v8").get()
 
     val v8ExecutablePath: Provider<String> = d8envSpec.executable.also {
         project.extra["javascript.engine.path.V8"] = it

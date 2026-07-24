@@ -1,0 +1,3 @@
+expression: 42
+expression PSI: KtConstantExpression
+type: kotlin.Int

@@ -21,6 +21,7 @@ abstract class SirEnumCase : SirBridged(), SirDeclaration {
     abstract override val attributes: List<SirAttribute>
     abstract override val bridges: List<SirBridge>
     abstract val name: String
+    abstract val associatedValueTypes: List<SirType>
     override fun toString(): String {
         return this.debugString
     }

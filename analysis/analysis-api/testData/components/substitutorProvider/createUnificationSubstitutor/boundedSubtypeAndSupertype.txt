@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <map substitutor: {T = A, X = A, R = A}>
-Substituted pairs:
-A <: A (Original: A <: T)
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {T = kotlin/Number, X = kotlin/Number, R = kotlin/Number, A = kotlin/Int, B = kotlin/Int, C = kotlin/Int}>
-Substituted pairs:
-kotlin/Int <: kotlin/Number (Original: A <: T)

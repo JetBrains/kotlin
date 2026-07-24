@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
 import com.intellij.util.containers.without
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.name
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.FqName
 
 object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
@@ -20,7 +21,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
 
     override fun check(
         module: IrModuleFragment,
-        context: JsKlibDiagnosticContext,
+        context: CommonKlibDiagnosticContext,
         reporter: IrDiagnosticReporter
     ) {
         val possibleFinalArtifactToIrFile = hashMapOf<FinalArtifactParameters, MutableList<FinalArtifactValuableParameters>>()
@@ -28,9 +29,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
         for (file in module.files) {
             val jsFileNameAnnotation = file.getAnnotation(jsFileNameFqn)
             val jsFileNameAnnotationValue = jsFileNameAnnotation
-                ?.arguments
-                ?.singleOrNull()
-                ?.let { (it as? IrConst)?.value as? String }
+                ?.getConstArgument<String>("name")
 
             val finalArtifactValuableParameters = FinalArtifactValuableParameters(
                 file.packageFqName.asString(),
@@ -44,7 +43,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
             clashedFiles.add(finalArtifactValuableParameters)
         }
 
-        for ((_, clashedFiles) in possibleFinalArtifactToIrFile) {
+        for ([_, clashedFiles] in possibleFinalArtifactToIrFile) {
             if (clashedFiles.size == 1) continue
 
             val clashedFilesByCaseSensitiveData = buildMap {
@@ -56,7 +55,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
 
             if (clashedFilesByCaseSensitiveData.size == 1) continue
 
-            clashedFilesByCaseSensitiveData.forEach { (key, clashedFiles) ->
+            clashedFilesByCaseSensitiveData.forEach { [key, clashedFiles] ->
                 val firstFileWithThisSensitivePath = clashedFiles.first().file
 
                 reporter.at(firstFileWithThisSensitivePath, firstFileWithThisSensitivePath).report(

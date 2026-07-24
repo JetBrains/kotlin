@@ -44,7 +44,7 @@ fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerforma
 
         addTimeMetricNs(gradleBuildTime, time.nanos)
 
-        moduleStats.dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (_, name, time) ->
+        moduleStats.dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (val name, val time) ->
             addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, gradleBuildTime), time.nanos)
         }
 

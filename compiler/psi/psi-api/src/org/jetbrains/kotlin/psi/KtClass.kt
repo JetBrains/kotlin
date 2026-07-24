@@ -60,18 +60,24 @@ open class KtClass : KtClassOrObject {
     fun getFunKeyword(): PsiElement? = modifierList?.getModifier(KtTokens.FUN_KEYWORD)
 }
 
-fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
-    val constructor = primaryConstructor
-    if (constructor != null) return constructor
-    var anchor: PsiElement? = typeParameterList
-    if (anchor == null) anchor = nameIdentifier
-    if (anchor == null) anchor = lastChild
-    return addAfter(KtPsiFactory(project).createPrimaryConstructor(), anchor) as KtPrimaryConstructor
-}
+@Deprecated(
+    "Use getOrCreatePrimaryConstructor() instead",
+    ReplaceWith(
+        "this.getOrCreatePrimaryConstructor()",
+        "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructor",
+    ),
+)
+@OptIn(KtNonPublicApi::class)
+fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
+    KtPsiMutationService.getInstance().getOrCreatePrimaryConstructor(this)
 
-fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList {
-    val constructor = createPrimaryConstructorIfAbsent()
-    val parameterList = constructor.valueParameterList
-    if (parameterList != null) return parameterList
-    return constructor.add(KtPsiFactory(project).createParameterList("()")) as KtParameterList
-}
+@Deprecated(
+    "Use getOrCreatePrimaryConstructorParameterList() instead",
+    ReplaceWith(
+        "this.getOrCreatePrimaryConstructorParameterList()",
+        "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructorParameterList",
+    ),
+)
+@OptIn(KtNonPublicApi::class)
+fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList =
+    KtPsiMutationService.getInstance().getOrCreatePrimaryConstructorParameterList(this)

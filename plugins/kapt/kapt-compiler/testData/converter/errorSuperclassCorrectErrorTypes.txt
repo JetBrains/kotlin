@@ -139,6 +139,10 @@ package test;
  * public abstract interface test/Intf : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -156,9 +160,11 @@ package test;
  *   public constructor()
  *
  *   // signature: get(I)Ljava/lang/Void;
+ *   // must-use return value
  *   public open operator fun get(index: kotlin/Int): kotlin/Nothing
  *
  *   // getter: getSize()I
+ *   // must-use return value
  *   public open val size: kotlin/Int
  *     public open (* non-default *) get
  *
@@ -192,6 +198,10 @@ package test;
  * public abstract interface test/Parent<T#0 (* A *) : kotlin/CharSequence?, T#1 (* B *)> : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

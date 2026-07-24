@@ -1,13 +1,15 @@
 KaReceiverParameterSymbol:
+  anchorPsi: KtTypeReference
   annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -17,6 +19,8 @@ KaReceiverParameterSymbol:
   name: <receiver>
   origin: SOURCE
   owningCallableSymbol: KaKotlinPropertySymbol(/prop)
+  psi: KtTypeReference
+  realPsi: KtTypeReference
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -25,9 +29,10 @@ KaReceiverParameterSymbol:
     ]
     typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
   getContainingJvmClassName: PropertyReceiverParameterKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

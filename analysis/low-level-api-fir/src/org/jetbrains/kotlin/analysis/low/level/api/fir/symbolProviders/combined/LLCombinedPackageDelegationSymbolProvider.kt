@@ -147,7 +147,7 @@ internal class LLCombinedPackageDelegationSymbolProvider private constructor(
 
             // Avoid linked hash maps to conserve memory.
             return newHashMapWithExpectedSize<String, Array<FirSymbolProvider>>(providerListsByPackage.size).apply {
-                providerListsByPackage.forEach { (packageName, providers) ->
+                providerListsByPackage.forEach { [packageName, providers] ->
                     this[packageName] = providers.toTypedArray()
                 }
             }

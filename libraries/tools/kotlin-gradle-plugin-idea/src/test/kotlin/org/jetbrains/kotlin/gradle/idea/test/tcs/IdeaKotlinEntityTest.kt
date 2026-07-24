@@ -10,17 +10,18 @@ import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.displayName
 import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.getAllKotlinClasses
 import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.ideaTcsPackage
 import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.ideaTcsReflections
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
-import kotlin.test.Test
 import kotlin.test.fail
+import java.util.stream.Stream
 
-@RunWith(Parameterized::class)
-class IdeaKotlinEntityTest(private val node: KClass<*>, private val clazzName: String) {
+class IdeaKotlinEntityTest {
 
-    @Test
-    fun `test - node is marked as IdeaKotlinEntity`() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("findClasses")
+    fun `test - node is marked as IdeaKotlinEntity`(node: KClass<*>, clazzName: String) {
         val entityAnnotations = node.findIdeaKotlinEntityAnnotations()
 
         if (entityAnnotations.isEmpty())
@@ -34,14 +35,13 @@ class IdeaKotlinEntityTest(private val node: KClass<*>, private val clazzName: S
     companion object {
 
         @JvmStatic
-        @Parameterized.Parameters(name = "{1}")
-        fun findClasses(): List<Array<Any>> {
+        fun findClasses(): Stream<Arguments> {
             return ideaTcsReflections.getAllKotlinClasses()
                 .filter { !it.java.isAnnotation }
                 .filter { !it.isCompanion }
                 .filter { it.qualifiedName.orEmpty().startsWith(ideaTcsPackage) }
-                .map { clazz -> arrayOf(clazz, checkNotNull(clazz.displayName())) }
-
+                .map { clazz -> Arguments.of(clazz, checkNotNull(clazz.displayName())) }
+                .stream()
         }
     }
 }

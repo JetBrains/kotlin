@@ -1,0 +1,29 @@
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
+
+interface MyInterface {
+    companion {
+        fun interfaceFun() = "InterfaceFun"
+        val interfaceVal: String get() = "InterfaceVal"
+    }
+}
+
+companion fun MyInterface.extFun() = "ExtFun"
+
+class Impl : MyInterface {
+    fun useInterfaceCompanion() = MyInterface.interfaceFun() + MyInterface.interfaceVal
+}
+
+fun box(): String {
+    // Access companion block members on interface
+    if (MyInterface.interfaceFun() != "InterfaceFun") return "FAIL: interfaceFun=${MyInterface.interfaceFun()}"
+    if (MyInterface.interfaceVal != "InterfaceVal") return "FAIL: interfaceVal=${MyInterface.interfaceVal}"
+
+    // Access companion extensions on interface
+    if (MyInterface.extFun() != "ExtFun") return "FAIL: extFun=${MyInterface.extFun()}"
+
+    // Access from implementing class instance
+    val impl = Impl()
+    if (impl.useInterfaceCompanion() != "InterfaceFunInterfaceVal") return "FAIL: useInterfaceCompanion=${impl.useInterfaceCompanion()}"
+
+    return "OK"
+}

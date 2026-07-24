@@ -1,27 +1,32 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
+    id("require-explicit-types")
 }
 
 dependencies {
-    compileOnly(project(":core:descriptors"))
-    compileOnly(project(":core:descriptors.jvm"))
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:providers"))
-    compileOnly(project(":compiler:fir:semantics"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.serialization.common"))
-    compileOnly(project(":compiler:fir:fir-serialization"))
-    compileOnly(project(":compiler:fir:fir-deserialization"))
-    compileOnly(project(":compiler:frontend.common.jvm"))
-    compileOnly(project(":compiler:config.jvm"))
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":core:compiler.common.web"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":compiler:fir:cones"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:providers"))
+    implementation(project(":compiler:fir:semantics"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:fir:fir-deserialization"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:config.jvm"))
+    implementation(project(":compiler:fir:fir-jvm"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":core:compiler.common.web"))
 
     compileOnly(intellijCore())
 
@@ -54,6 +59,15 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
 optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
@@ -62,6 +76,7 @@ sourceSets {
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
+    javaLauncher = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
     useJUnitPlatform {
         configureJUnit()
     }
@@ -73,22 +88,24 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/klib")
     testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/checkLocalVariablesTable")
+    testData(project(":compiler").isolated, "testData/writeSignature")
+    testData(project(":compiler").isolated, "testData/writeFlags")
     testData(project(":compiler:tests-spec").isolated, "testData/codegen")
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
     ) {
         configure()
     }
 
-    testTask("aggregateTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+    testTask("aggregateTests", skipInLocalBuild = true) {
         configure {
             excludeTags("FirPsiCodegenTest")
         }
 
     }
 
-    testTask("nightlyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+    testTask("nightlyTests", skipInLocalBuild = true) {
         configure {
             includeTags("FirPsiCodegenTest")
         }
@@ -106,6 +123,7 @@ projectTests {
     withAnnotations()
     withThirdPartyAnnotations()
     withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
 }
 
 testsJarToBeUsedAlongWithFixtures()

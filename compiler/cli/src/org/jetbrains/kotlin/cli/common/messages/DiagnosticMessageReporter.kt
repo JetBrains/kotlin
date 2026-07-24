@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.cli.common.messages
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
+@K1Deprecation
 interface DiagnosticMessageReporter {
     fun report(diagnostic: Diagnostic, file: PsiFile, render: String)
 }

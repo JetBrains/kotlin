@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -16,7 +19,8 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 abstract class AbstractJsES6Test(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix, TargetBackend.JS_IR_ES6) {
+    parser: FirParser = FirParser.Psi
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix, TargetBackend.JS_IR_ES6, parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -46,6 +50,10 @@ abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
         builder.useFailureSuppressors(
             ::FirMetaInfoDiffSuppressor
         )
+
+        builder.configureIrHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
     }
 }
 

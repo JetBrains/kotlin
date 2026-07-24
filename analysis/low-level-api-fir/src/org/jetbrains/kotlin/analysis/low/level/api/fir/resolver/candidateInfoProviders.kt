@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
  * Implementors of this interface form a candidate from provided resolution parameters to fit requested resolution mode.
  * This includes creating artificial CallInfo, combining receivers and generating CallKind with specific resolution sequence.
  */
-interface CandidateInfoProvider {
+internal interface CandidateInfoProvider {
     fun callInfo(): CallInfo
 
     fun callKind(): CallKind
@@ -35,7 +35,7 @@ interface CandidateInfoProvider {
     fun shouldFailBeforeResolve(): Boolean
 }
 
-abstract class AbstractBaseCandidateInfoProvider(
+internal abstract class AbstractBaseCandidateInfoProvider(
     protected val resolutionParameters: ResolutionParameters,
     protected val firFile: FirFile,
     protected val firSession: FirSession,
@@ -60,7 +60,7 @@ abstract class AbstractBaseCandidateInfoProvider(
     override fun shouldFailBeforeResolve(): Boolean = false
 }
 
-abstract class AbstractExtensionCandidateInfoProvider(
+internal abstract class AbstractExtensionCandidateInfoProvider(
     resolutionParameters: ResolutionParameters,
     firFile: FirFile,
     firSession: FirSession,
@@ -97,7 +97,7 @@ abstract class AbstractExtensionCandidateInfoProvider(
 /**
  * Provider for [SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION] mode.
  */
-class CheckExtensionForCompletionCandidateInfoProvider(
+internal class CheckExtensionForCompletionCandidateInfoProvider(
     resolutionParameters: ResolutionParameters,
     firFile: FirFile,
     firSession: FirSession,
@@ -106,7 +106,7 @@ class CheckExtensionForCompletionCandidateInfoProvider(
 /**
  * Provider for [SingleCandidateResolutionMode.CHECK_EXTENSION_CALLABlE_REFERENCE_FOR_COMPLETION] mode.
  */
-class CheckCallableReferenceForCompletionCandidateInfoProvider(
+internal class CheckCallableReferenceForCompletionCandidateInfoProvider(
     resolutionParameters: ResolutionParameters,
     firFile: FirFile,
     firSession: FirSession,

@@ -41,6 +41,7 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             putAnalysisFlag(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             putAnalysisFlag(AnalysisFlags.optIn, optIn?.toList().orEmpty())
+            putAnalysisFlag(AnalysisFlags.escapingFunctionsList, parseEscapingFunctions(arguments, reporter))
             putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             putAnalysisFlag(AnalysisFlags.explicitApiVersion, apiVersion != null)
             ExplicitApiMode.fromString(explicitApi)?.also { putAnalysisFlag(AnalysisFlags.explicitApiMode, it) }
@@ -58,7 +59,11 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
             putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
-            putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
+            HeaderMode.fromString(headerModeType)?.also { putAnalysisFlag(AnalysisFlags.headerModeType, it) }
+                ?: reporter.reportError(
+                    "Unknown value for parameter -Xheader-mode-type: '$headerModeType'. Value should be one of ${HeaderMode.availableValues()}"
+                )
+            putAnalysisFlag(AnalysisFlags.firAggressivePruning, firAggressivePruning ?: headerMode)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             fillWarningLevelMap(arguments, reporter)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
@@ -124,7 +129,7 @@ open class CommonCompilerArgumentsConfigurator {
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in arguments.internalArguments) {
+        for ((val feature = languageFeature, val state) in arguments.internalArguments) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)) {
                 featuresThatForcePreReleaseBinaries += feature
@@ -182,18 +187,34 @@ open class CommonCompilerArgumentsConfigurator {
         }
     }
 
+    // Expected entry form: '(+|-)<fq.name>'.
+    // Entries that don't start with '+' or '-', or have an empty name, are reported and skipped.
+    private fun parseEscapingFunctions(arguments: CommonCompilerArguments, reporter: Reporter): List<String> {
+        return arguments.escapingFunctions?.toList().orEmpty().filter { entry ->
+            when (entry.firstOrNull()) {
+                '+', '-' -> {
+                    if (entry.length == 1) {
+                        reporter.reportWarning("Empty callable name in -Xescaping-functions entry '$entry'.")
+                        return@filter false
+                    }
+                    true
+                }
+                else -> {
+                    reporter.reportWarning(
+                        "Incorrect -Xescaping-functions entry '$entry', each entry must start with '+' (to add) or '-' (to remove)."
+                    )
+                    false
+                }
+            }
+        }
+    }
+
     private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, reporter: Reporter) {
         val result = buildMap {
-            val suppressedDiagnostics = arguments.suppressedDiagnostics.orEmpty()
+            @Suppress("DEPRECATION")
+            val suppressedDiagnostics = arguments.suppressedDiagnostics
             suppressedDiagnostics.associateWithTo(this) { WarningLevel.Disabled }
-            if (suppressedDiagnostics.isNotEmpty()) {
-                val replacement = "-Xwarning-level=${suppressedDiagnostics.first()}:disabled"
-                val suffix = if (suppressedDiagnostics.size > 1) " (and the same for other warnings)" else ""
-                reporter.reportWarning(
-                    """Argument "-Xsuppress-warning" is deprecated. Use "$replacement" instead$suffix"""
-                )
-            }
-            for (rawArgument in arguments.warningLevels.orEmpty()) {
+            for (rawArgument in arguments.warningLevels) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
                     reporter.reportError(
@@ -201,7 +222,7 @@ open class CommonCompilerArgumentsConfigurator {
                     )
                     continue
                 }
-                val (name, rawLevel) = split
+                val [name, rawLevel] = split
                 val level = WarningLevel.fromString(rawLevel) ?: run {
                     reporter.reportError(
                         "Incorrect value for warning level: $rawLevel. Available values are: ${WarningLevel.entries.joinToString { it.cliOption }}"
@@ -261,20 +282,14 @@ fun CommonCompilerArguments.checkApiAndLanguageVersion(
     checkProgressiveMode(language, reporter)
 }
 
-private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersion(
+private fun checkApiVersionIsNotGreaterThenLanguageVersion(
     languageVersion: LanguageVersion,
     apiVersion: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
     if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-        if (!suppressApiVersionGreaterThanLanguageVersionError) {
-            reporter.reportError(
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
-            )
-        }
-    } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        reporter.reportWarning(
-            "-Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (${apiVersion.versionString}) is not greater than the language version (${languageVersion.versionString})."
+        reporter.reportError(
+            "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
         )
     }
 }
@@ -295,7 +310,7 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
     api: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
-    val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
+    val [version, supportedVersion, versionKind] = findOutdatedVersion(language, api) ?: return
     val firstNonDeprecated by lazy {
         when (versionKind) {
             VersionKind.LANGUAGE -> LanguageVersion.FIRST_NON_DEPRECATED
@@ -365,13 +380,6 @@ private enum class VersionKind(val text: String) {
 }
 
 private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter): LanguageVersion {
-    if (useK2) {
-        reporter.reportError(
-            "Compiler flag -Xuse-k2 is no more supported. " +
-                    "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier"
-        )
-    }
-
     // If only "-api-version" is specified, language version is assumed to be the latest stable
     return parseVersion(reporter, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
 }

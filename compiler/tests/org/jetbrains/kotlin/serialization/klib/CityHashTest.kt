@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128WithSeed
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class CityHashTest : KtUsefulTestCase() {
+class CityHashTest {
     private fun assert64BitHash(data: String, expectedHash: ULong) {
         assertEquals(cityHash64(data.toByteArray()), expectedHash)
     }
@@ -20,6 +21,7 @@ class CityHashTest : KtUsefulTestCase() {
         assertEquals(cityHash128(data.toByteArray()), Hash128Bits(expectedLowBytes, expectedHighBytes))
     }
 
+    @Test
     fun testSimple64() {
         assert64BitHash("a", 12917804110809363939UL)
         assert64BitHash("abc", 2640714258260161385UL)
@@ -28,6 +30,7 @@ class CityHashTest : KtUsefulTestCase() {
         assert64BitHash("Hello World!".repeat(40), 9211247178963271761UL)
     }
 
+    @Test
     fun testSimple128() {
         assert128BitHash("a", 7969074168056553668UL, 5955762262185338209UL)
         assert128BitHash("abc", 4143508125394299908UL, 11566915719555882565UL)
@@ -69,6 +72,7 @@ class CityHashTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testOriginal() {
         val testData = listOf(
             ExpectedData(0x9ae16a3b2f90404fUL, 0x3df09dfc64c09a2bUL, 0x3cb540c392e51e29UL, 0x6b56343feac0663UL, 0x5b7bc50fd8e8ad92UL),

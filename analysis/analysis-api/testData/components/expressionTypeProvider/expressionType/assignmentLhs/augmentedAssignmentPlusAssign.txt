@@ -1,0 +1,3 @@
+expression: container
+expression PSI: KtNameReferenceExpression
+type: Container

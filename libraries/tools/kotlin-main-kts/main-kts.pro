@@ -33,9 +33,6 @@
 -keep class com.google.common.** { *; }
 -keep class org.jetbrains.kotlin.com.google.common.** { *; }
 
--keep class org.apache.maven.wagon.providers.** { *; }
--keep class org.jetbrains.kotlin.org.apache.maven.wagon.providers.** { *; }
-
 -keep class org.slf4j.** { *; }
 -keep class org.jetbrains.kotlin.org.slf4j.** { *; }
 

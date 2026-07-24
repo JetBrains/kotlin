@@ -630,8 +630,9 @@ open class LocalDeclarationsLowering(
 
             val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
 
-            assert(constructorsCallingSuper.isNotEmpty() || constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] != null) {
-                "Expected at least one constructor calling super; class: $irClass"
+            if (constructorsCallingSuper.isEmpty() && constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] == null) {
+                assert(irClass.origin.isSynthetic) { "Expected at least one constructor calling super; class: ${irClass.render()}" }
+                return
             }
 
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
@@ -647,7 +648,7 @@ open class LocalDeclarationsLowering(
                 // since `AnonymousObjectTransformer` relies on this ordering.
                 blockBody.statements.addAll(
                     0,
-                    localClassContext.capturedValueToField.mapNotNull { (capturedValue, field) ->
+                    localClassContext.capturedValueToField.mapNotNull { [capturedValue, field] ->
                         val symbol = field.symbolIfUsed ?: return@mapNotNull null
                         IrSetFieldImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol,
@@ -728,7 +729,7 @@ open class LocalDeclarationsLowering(
 
         private fun IrMemberAccessExpression<*>.setLocalTypeArguments(callee: IrFunction) {
             val context = localFunctions[callee] ?: return
-            for ((outerTypeParameter, innerTypeParameter) in context.capturedTypeParameterToTypeParameter) {
+            for ([outerTypeParameter, innerTypeParameter] in context.capturedTypeParameterToTypeParameter) {
                 // TODO: remap default type!
                 this.typeArguments[innerTypeParameter.index] = outerTypeParameter.defaultType
             }
@@ -866,9 +867,6 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            val parametersMapping = (oldDeclaration.parameters zip transformedParameters).toMap()
-            context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
-
             val generatedNames = mutableSetOf<String>()
             val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
@@ -902,7 +900,6 @@ open class LocalDeclarationsLowering(
         }
 
         private fun IrFunction.recordTransformedValueParameters(localContext: LocalContextWithClosureAsParameters) {
-
             parameters.forEach {
                 val capturedValue = newParameterToCaptured[it]
                 if (capturedValue != null) {
@@ -916,7 +913,6 @@ open class LocalDeclarationsLowering(
                     oldParameterToNew.putAbsentOrSame(oldParameter, it)
                 }
             }
-
         }
 
         private fun createTransformedConstructorDeclaration(constructorContext: LocalClassConstructorContext) {
@@ -929,10 +925,10 @@ open class LocalDeclarationsLowering(
             oldDeclaration.capturedConstructor?.let { newDeclaration ->
                 transformedDeclarations[oldDeclaration] = newDeclaration
                 constructorContext.transformedDeclaration = newDeclaration
-                newDeclaration.parameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                newDeclaration.parameters.zip(capturedValues).forEach { [it, capturedValue] ->
                     newParameterToCaptured[it] = capturedValue
                 }
-                oldDeclaration.parameters.zip(newDeclaration.parameters).forEach { (v, it) ->
+                oldDeclaration.parameters.zip(newDeclaration.parameters).forEach { [v, it] ->
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
                 newDeclaration.recordTransformedValueParameters(constructorContext)
@@ -970,7 +966,7 @@ open class LocalDeclarationsLowering(
         private fun createFieldsForCapturedValues(localClassContext: LocalClassContext): List<IrField> {
             val classDeclaration = localClassContext.declaration
             val generatedNames = mutableSetOf<String>()
-            return localClassContext.capturedValueToField.mapNotNull { (capturedValue, field) ->
+            return localClassContext.capturedValueToField.mapNotNull { [capturedValue, field] ->
                 val symbol = field.symbolIfUsed ?: return@mapNotNull null
                 val origin = if (capturedValue is IrValueParameter && capturedValue.isCrossinline)
                     DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
@@ -1068,11 +1064,11 @@ open class LocalDeclarationsLowering(
             }
 
         private inline fun setClosures(block: (IrDeclaration) -> Closure) {
-            localFunctions.forEach { (declaration, context) ->
+            localFunctions.forEach { [declaration, context] ->
                 context.closure = block(declaration)
             }
 
-            localClasses.forEach { (declaration, context) ->
+            localClasses.forEach { [declaration, context] ->
                 context.closure = block(declaration)
             }
         }

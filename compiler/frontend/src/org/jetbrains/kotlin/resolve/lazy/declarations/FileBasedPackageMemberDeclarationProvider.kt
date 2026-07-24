@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class FileBasedPackageMemberDeclarationProvider(
     storageManager: StorageManager,
     private val fqName: FqName,

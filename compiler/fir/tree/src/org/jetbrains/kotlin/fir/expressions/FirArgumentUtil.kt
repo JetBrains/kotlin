@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 fun buildUnaryArgumentList(argument: FirExpression): FirArgumentList = buildArgumentList {
     arguments += argument
@@ -36,10 +38,22 @@ fun buildArgumentListForErrorCall(
     return FirResolvedArgumentListForErrorCall(original, mapping)
 }
 
-object FirEmptyArgumentList : FirAbstractArgumentList() {
+object FirEmptyArgumentList : FirArgumentList() {
     override val arguments: List<FirExpression>
         get() = emptyList()
 
     override val source: KtSourceElement?
         get() = null
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
+        return this
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        // DO NOTHING
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        return this
+    }
 }

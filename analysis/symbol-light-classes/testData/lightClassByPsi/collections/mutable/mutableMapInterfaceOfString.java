@@ -176,10 +176,16 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(@org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
 
   @java.lang.Override()
   public final int size();//  size()

@@ -83,7 +83,6 @@ internal class StaticDefaultFunctionLowering(val context: JvmBackendContext) : I
                 function.parent,
                 function.name,
                 function,
-                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
             )
         }
 }

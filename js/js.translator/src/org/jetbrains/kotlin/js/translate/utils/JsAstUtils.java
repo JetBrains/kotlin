@@ -106,8 +106,8 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
-        return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
+    public static JsAssignmentOperation.Simple assignment(@NotNull JsAssignableExpression left, @NotNull JsExpression right) {
+        return new JsAssignmentOperation.Simple(left, right);
     }
 
     public static JsStatement asSyntheticStatement(@NotNull JsExpression expression) {
@@ -117,18 +117,16 @@ public final class JsAstUtils {
     }
 
     @Nullable
-    public static Pair<JsExpression, JsExpression> decomposeAssignment(@NotNull JsExpression expr) {
-        if (!(expr instanceof JsBinaryOperation)) return null;
+    public static Pair<JsAssignableExpression, JsExpression> decomposeAssignment(@NotNull JsExpression expr) {
+        if (!(expr instanceof JsAssignmentOperation.Simple)) return null;
 
-        JsBinaryOperation binary = (JsBinaryOperation) expr;
-        if (binary.getOperator() != JsBinaryOperator.ASG) return null;
-
-        return new Pair<>(binary.getArg1(), binary.getArg2());
+        JsAssignmentOperation.Simple assignment = (JsAssignmentOperation.Simple) expr;
+        return new Pair<>(assignment.getTarget(), assignment.getValue());
     }
 
     @Nullable
     public static Pair<JsName, JsExpression> decomposeAssignmentToVariable(@NotNull JsExpression expr) {
-        Pair<JsExpression, JsExpression> assignment = decomposeAssignment(expr);
+        Pair<JsAssignableExpression, JsExpression> assignment = decomposeAssignment(expr);
         if (assignment == null || !(assignment.getFirst() instanceof JsNameRef)) return null;
 
         JsNameRef nameRef = (JsNameRef) assignment.getFirst();

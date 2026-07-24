@@ -33,7 +33,7 @@ class TestBuildMetricsCollector : BuildMetricsCollector {
     }
 
     fun all(): List<Entry> = counters.entries
-        .map { (key, adder) -> Entry(key.name, key.type, adder.sum()) }
+        .map { [key, adder] -> Entry(key.name, key.type, adder.sum()) }
         // Provide deterministic ordering for stable test assertions.
         .sortedWith(compareBy<Entry> { it.name }.thenBy { it.type.toString() })
 }

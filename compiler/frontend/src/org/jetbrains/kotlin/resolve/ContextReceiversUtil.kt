@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@K1Deprecation
 fun checkContextReceiversAreEnabled(
     trace: BindingTrace,
     languageVersionSettings: LanguageVersionSettings,
@@ -31,6 +33,7 @@ fun checkContextReceiversAreEnabled(
     }
 }
 
+@K1Deprecation
 fun checkSubtypingBetweenContextReceivers(
     trace: BindingTrace,
     contextReceiverList: KtContextReceiverList,

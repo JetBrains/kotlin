@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsReferenceShortener
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
@@ -49,7 +51,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.OverloadCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -72,7 +73,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirReferenceShortener(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaReferenceShortener, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsReferenceShortener, KaFirSessionComponent {
     private val context by lazy { FirShorteningContext(analysisSession) }
 
     override fun collectPossibleReferenceShorteningsInElement(
@@ -544,43 +545,15 @@ private class ElementsToShortenCollector(
 
         val classifierId = resolvedTypeRef.coneType.abbreviatedTypeOrSelf.lowerBoundIfFlexible().candidateClassId ?: return
 
+        val enclosingTypeOperatorCall = resolvedTypeRef.enclosingTypeOperatorCall(resolutionFacade)
+
         findClassifierQualifierToShorten(
             classifierId,
             typeElement,
-            // TODO: Pass correct information after CSR shortening for types is available (KT-84719, KTIJ-38225)
-            wholeQualifierIsResolvableByContextSensitiveResolution = false
+            wholeQualifierIsResolvableByContextSensitiveResolution =
+                enclosingTypeOperatorCall?.isResolvableByContextSensitiveResolution == true,
         )?.let(::addElementToShorten)
     }
-
-    /**
-     * Retrieves the corresponding [KtUserType] PSI the given [FirResolvedTypeRef].
-     *
-     * This code handles some quirks of FIR sources and PSI:
-     * - in `vararg args: String` declaration, `String` type reference has fake source, but `Array<String>` has real source
-     * (see [KtFakeSourceElementKind.ArrayTypeFromVarargParameter]).
-     * - if FIR reference points to the type with generic parameters (like `Foo<Bar>`), its source is not [KtTypeReference], but
-     * [KtNameReferenceExpression].
-     */
-    private val FirResolvedTypeRef.correspondingTypePsi: KtUserType?
-        get() {
-            val sourcePsi = when {
-                // array type for vararg parameters is not present in the code, so no need to handle it
-                delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> null
-
-                // but the array's underlying type is present with a fake source, and needs to be handled
-                source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> psi
-
-                else -> realPsi
-            }
-
-            val outerTypeElement = when (sourcePsi) {
-                is KtTypeReference -> sourcePsi.typeElement
-                is KtNameReferenceExpression -> sourcePsi.parent as? KtTypeElement
-                else -> null
-            }
-
-            return outerTypeElement?.unwrapNullability() as? KtUserType
-        }
 
     val ConeKotlinType.candidateClassId: ClassId?
         get() {
@@ -927,7 +900,7 @@ private class ElementsToShortenCollector(
         val allClassIds = wholeQualifierClassId.outerClassesWithSelf
         val allQualifiedElements = wholeQualifierElement.qualifiedElementsWithSelf
 
-        for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
+        for ([classId, element] in allClassIds.zip(allQualifiedElements)) {
             if (!element.inSelection) continue
 
             val isWholeQualifier = element === wholeQualifierElement
@@ -1302,7 +1275,7 @@ private class ElementsToShortenCollector(
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
-        val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
+        val [matchedCallables, otherCallables] = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
 
         val importKindFromOption = ImportKind.fromShortenOption(option)
         val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return null

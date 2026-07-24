@@ -11,10 +11,10 @@ import org.gradle.api.tasks.Optional
 data class KotlinWebpackOutput(
     @Input
     @Optional
-    var library: String?,
+    var library: String? = null,
     @Input
     @Optional
-    var libraryTarget: String?,
+    var libraryTarget: String? = null,
     @Input
     var globalObject: String = "globalThis",
     @Input

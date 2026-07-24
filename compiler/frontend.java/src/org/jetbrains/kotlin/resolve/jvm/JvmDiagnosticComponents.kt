@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents
 
+@K1Deprecation
 class JvmDiagnosticComponents(
     private val typeQualifierResolver: AnnotationTypeQualifierResolver
 ) : PlatformSpecificDiagnosticComponents {

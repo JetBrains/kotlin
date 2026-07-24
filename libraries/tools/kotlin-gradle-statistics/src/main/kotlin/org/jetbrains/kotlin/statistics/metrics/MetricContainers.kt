@@ -5,24 +5,18 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
-import org.jetbrains.kotlin.statistics.DEFAULT_SEPARATOR
 import java.io.Serializable
 import java.util.*
 
+// This container is a value in a key/value pair such as MPP_PLATFORMS=...
 interface IMetricContainer<T> : Serializable {
     fun addValue(t: T, weight: Long? = null)
 
-    fun addValueFromStringPresentation(str: String, separator: String)
+    fun addValueFromStringPresentation(str: String)
 
-    fun toStringRepresentation(separator: String? = DEFAULT_SEPARATOR): String
+    fun toStringRepresentation(): String
 
     fun getValue(): T?
-}
-
-interface IMetricContainerFactory<T> {
-    fun newMetricContainer(): IMetricContainer<T>
-
-    fun fromStringRepresentation(state: String, separator: String = DEFAULT_SEPARATOR): IMetricContainer<T>?
 }
 
 abstract class OverrideMetricContainer<T>() : IMetricContainer<T> {
@@ -32,7 +26,7 @@ abstract class OverrideMetricContainer<T>() : IMetricContainer<T> {
         myValue = t
     }
 
-    override fun toStringRepresentation(separator: String?): String {
+    override fun toStringRepresentation(): String {
         return myValue?.toString() ?: "null"
     }
 
@@ -40,19 +34,19 @@ abstract class OverrideMetricContainer<T>() : IMetricContainer<T> {
 }
 
 open class OverrideStringMetricContainer() : OverrideMetricContainer<String>() {
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         addValue(str, null)
     }
 }
 
 open class OverrideLongMetricContainer() : OverrideMetricContainer<Long>() {
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         str.toLongOrNull()?.also { addValue(it, null) }
     }
 }
 
 open class OverrideBooleanMetricContainer(): OverrideMetricContainer<Boolean>() {
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         str.toBooleanStrictOrNull()?.also { addValue(it, null) }
     }
 }
@@ -68,7 +62,7 @@ class OverrideVersionMetricContainer() : OverrideMetricContainer<String>() {
         }
     }
 
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         addValue(str, null)
     }
 }
@@ -82,7 +76,7 @@ class SumMetricContainer() : OverrideMetricContainer<Long>() {
         myValue = (myValue ?: 0) + t
     }
 
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         str.toLongOrNull()?.also { addValue(it, null) }
     }
 }
@@ -102,11 +96,11 @@ class AverageMetricContainer() : IMetricContainer<Long> {
         totalWeight += w
     }
 
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         str.toLongOrNull()?.also { addValue(it, null) }
     }
 
-    override fun toStringRepresentation(separator: String?): String {
+    override fun toStringRepresentation(): String {
         return getValue()?.toString() ?: "null"
     }
 
@@ -124,29 +118,25 @@ class OrMetricContainer() : OverrideMetricContainer<Boolean>() {
         myValue = (myValue ?: false) || t
     }
 
-    override fun addValueFromStringPresentation(str: String, separator: String) {
+    override fun addValueFromStringPresentation(str: String) {
         str.toBooleanStrictOrNull()?.also { addValue(it, null) }
     }
 }
 
-class ConcatMetricContainer() : IMetricContainer<String> {
+class ConcatMetricContainer(val separator: String) : IMetricContainer<List<String>> {
     private val myValues = TreeSet<String>()
 
-    constructor(values: Collection<String>) : this() {
-        myValues.addAll(values)
+    override fun addValue(t: List<String>, weight: Long?) {
+        myValues.addAll(t)
     }
 
-    override fun addValue(t: String, weight: Long?) {
-        myValues.add(t)
+    override fun addValueFromStringPresentation(str: String) {
+        addValue(str.split(separator), null)
     }
 
-    override fun addValueFromStringPresentation(str: String, separator: String) {
-        str.split(separator).forEach { addValue(it, null) }
+    override fun toStringRepresentation(): String {
+        return myValues.sorted().joinToString(separator)
     }
 
-    override fun toStringRepresentation(separator: String?): String {
-        return myValues.sorted().joinToString(separator.toString())
-    }
-
-    override fun getValue() = toStringRepresentation()
+    override fun getValue() = myValues.toList()
 }

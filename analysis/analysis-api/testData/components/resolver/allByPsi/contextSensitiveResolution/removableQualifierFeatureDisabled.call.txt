@@ -1,0 +1,223 @@
+KtFile: 'removableQualifierFeatureDisabled.kt'
+  null
+
+KtPackageDirective(157,169): 'package test'
+  null
+
+KtNameReferenceExpression(165,169): 'test'
+  null
+
+KtImportList(169,169): ''
+  null
+
+KtClass(171,193): 'enum class Foo { BAR }'
+  null
+
+KtDeclarationModifierList(171,175): 'enum'
+  null
+
+KtClassBody(186,193): '{ BAR }'
+  null
+
+KtEnumEntry(188,191): 'BAR'
+  null
+
+KtNamedFunction(195,222): 'fun expectsFoo(foo: Foo) {}'
+  null
+
+KtParameterList(209,219): '(foo: Foo)'
+  null
+
+KtParameter(210,218): 'foo: Foo'
+  null
+
+KtTypeReference(215,218): 'Foo'
+  null
+
+KtUserType(215,218): 'Foo'
+  null
+
+KtNameReferenceExpression(215,218): 'Foo'
+  null
+
+KtBlockExpression(220,222): '{}'
+  null
+
+KtNamedFunction(224,287): 'fun usage(): Foo {'
+  null
+
+KtParameterList(233,235): '()'
+  null
+
+KtTypeReference(237,240): 'Foo'
+  null
+
+KtUserType(237,240): 'Foo'
+  null
+
+KtNameReferenceExpression(237,240): 'Foo'
+  null
+
+KtBlockExpression(241,287): '{'
+  null
+
+KtCallExpression(247,266): 'expectsFoo(Foo.BAR)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(247,257): 'expectsFoo'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(257,266): '(Foo.BAR)'
+  null
+
+KtValueArgument(258,265): 'Foo.BAR'
+  null
+
+KtDotQualifiedExpression(258,265): 'Foo.BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(258,261): 'Foo'
+  null
+
+KtNameReferenceExpression(262,265): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtReturnExpression(271,285): 'return Foo.BAR'
+  null
+
+KtDotQualifiedExpression(278,285): 'Foo.BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(278,281): 'Foo'
+  null
+
+KtNameReferenceExpression(282,285): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}

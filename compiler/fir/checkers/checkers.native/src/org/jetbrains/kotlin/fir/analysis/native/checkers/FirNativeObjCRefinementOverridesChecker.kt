@@ -76,8 +76,8 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             var isRefinedInSwift = swiftAnnotations.isNotEmpty()
             val supersNotHiddenFromObjC = mutableListOf<FirCallableSymbol<*>>()
             val supersNotRefinedInSwift = mutableListOf<FirCallableSymbol<*>>()
-            for ((symbol, scope) in overriddenMemberSymbols) {
-                val (superIsHiddenFromObjC, superIsRefinedInSwift) = symbol.inheritsRefinedAnnotations(context.session, scope)
+            for ((val symbol = member, val scope = baseScope) in overriddenMemberSymbols) {
+                val [superIsHiddenFromObjC, superIsRefinedInSwift] = symbol.inheritsRefinedAnnotations(context.session, scope)
                 if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(symbol)
                 if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(symbol)
             }
@@ -90,12 +90,15 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
         }
 
         private fun FirCallableSymbol<*>.inheritsRefinedAnnotations(session: FirSession, baseScope: FirTypeScope): Pair<Boolean, Boolean> {
-            val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
+            val [hasObjC, hasSwift] = hasRefinedAnnotations(session)
             if (hasObjC && hasSwift) return true to true
             // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
-            val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScopeSafe(this).firstOrNull()
-                ?: return hasObjC to hasSwift
-            val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)
+            (
+                val overriddenMemberSymbol = member, val scope = baseScope
+            ) =
+                baseScope.getDirectOverriddenMembersWithBaseScopeSafe(this).firstOrNull()
+                    ?: return hasObjC to hasSwift
+            val [inheritsObjC, inheritsSwift] = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)
             return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)
         }
 

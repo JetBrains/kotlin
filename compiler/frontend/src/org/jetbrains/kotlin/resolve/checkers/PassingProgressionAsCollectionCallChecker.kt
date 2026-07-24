@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors.PROGRESSIONS_CHANGING_RESOLVE
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
  Please don't use similar logic for other checkers
  */
 @OptIn(ClassicTypeCheckerStateInternals::class)
+@K1Deprecation
 class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: KotlinCallResolver) : CallCheckerWithAdditionalResolve {
     private val typeCheckerState = ClassicTypeCheckerState(isErrorTypeEqualsToAnything = false)
 
@@ -92,7 +94,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
 
         val collectionOfAnyType = makeCollectionOfAnyType(builtIns)
 
-        for ((i, argument) in newCall.argumentsInParenthesis.withIndex()) {
+        for ([i, argument] in newCall.argumentsInParenthesis.withIndex()) {
             // Skip if the argument wasn't a Range/Progression
             if (progressionOrRangeArgumentTypes.getOrNull(i) == null) continue
 

@@ -42,7 +42,7 @@ class JvmPackagePartProvider(
 
     // TODO: redesign to avoid cache-unfriendly usages, see KT-76516
     fun addRoots(roots: List<JavaRoot>, configuration: CompilerConfiguration) {
-        for ((root, type) in roots) {
+        for ((val root = file, val type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
             if (root !in scope) continue
 

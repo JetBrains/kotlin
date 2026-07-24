@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
@@ -63,7 +64,7 @@ object TestFirWasmSessionFactory {
             mainModuleData,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
             icData = null,
             init = sessionConfigurator
         )
@@ -84,7 +85,7 @@ fun getAllWasmDependenciesPaths(
     testServices: TestServices,
     target: WasmTarget,
 ): List<String> {
-    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getWasmDependencies(module, testServices, target)
+    val [runtimeKlibsPaths, transitiveLibraries, friendLibraries] = getWasmDependencies(module, testServices, target)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
 

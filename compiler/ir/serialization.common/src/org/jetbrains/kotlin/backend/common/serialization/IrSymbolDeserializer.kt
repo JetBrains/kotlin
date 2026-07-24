@@ -107,7 +107,7 @@ class IrSymbolDeserializer(
     }
 }
 
-internal fun referenceDeserializedSymbol(
+fun referenceDeserializedSymbol(
     symbolTable: ReferenceSymbolTable,
     fileSymbol: IrFileSymbol?,
     symbolKind: BinarySymbolData.SymbolKind,

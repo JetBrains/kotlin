@@ -37,6 +37,28 @@ internal annotation class SymbolNameIsInternal
 public annotation class SymbolName(val name: String)
 
 /**
+ * Forces a thread state switch from Runnable to Native around a direct call to the
+ * annotated `@SymbolName external fun`.
+ *
+ * It also alters the exception handling: if a foreign exception is thrown from the annotated function,
+ * it terminates the program (unless overridden by [kotlin.native.internal.FilterExceptions]).
+ *
+ * Intended for blocking native functions called via `@SymbolName` where leaving the thread
+ * in the Runnable state would block GC progress.
+ *
+ * This is a dangerous internal annotation. Please avoid using it.
+ * It may be replaced with something else in the future.
+ *
+ * If you absolutely need to use the annotation, please comment at
+ * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@SymbolNameIsInternal
+@SinceKotlin("2.4")
+public annotation class ForceNativeThreadState
+
+/**
  * Preserve the function entry point during global optimizations.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
@@ -118,7 +140,7 @@ public actual annotation class CName(actual val externName: String = "", actual 
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
 
 /**
- * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
+ * Instructs the Kotlin compiler to generate a NS_CLOSED_ENUM typedef for the annotated enum class. The name of the generated type will
  * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
  * as an exact name. Additionally, a separate name for Swift can be specified using the swiftName parameter.
  * For Objective-C, the enum literals will always be prefixed with the type name, always capitalizing the first character of the entry
@@ -132,8 +154,8 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @SinceKotlin("2.3")
 public actual annotation class ObjCEnum(actual val name: String = "", actual val swiftName: String = "") {
     /**
-     * This annotation affects the names of the generated NS_ENUM enumerators. It overrides the implied enum entry name and an enum entry
-     * name set via @ObjCName. A separate name for Swift can be specified via the swiftName parameter. An EntryName annotation will
+     * This annotation affects the names of the generated NS_CLOSED_ENUM enumerators. It overrides the implied enum entry name and an enum
+     * entry name set via @ObjCName. A separate name for Swift can be specified via the swiftName parameter. An EntryName annotation will
      * always override the Swift name implied or set by other means, even if swiftName is not set explicitly. This annotation does
      * not override the prefix implied or set by ObjCEnum.
      */

@@ -10,101 +10,67 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.annotations.ColumnName
-import org.jetbrains.kotlinx.dataframe.annotations.DisableInterpretation
 import org.jetbrains.kotlinx.dataframe.annotations.Order
-import org.jetbrains.kotlinx.dataframe.annotations.ScopeProperty
-import kotlin.reflect.KClass
-import kotlin.time.Duration
 
 object Names {
-    val DF_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "DataFrame")))
-    val GROUP_BY_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "GroupBy")))
-    val GROUPED_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "Grouped")))
-    val REDUCED_GROUP_BY_CLASS_ID: ClassId
-        get() = ClassId.topLevel(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api", "ReducedGroupBy")))
+    private val DATAFRAME_PACKAGE = FqName("org.jetbrains.kotlinx.dataframe")
+    private val DATAFRAME_API_PACKAGE = DATAFRAME_PACKAGE.child(Name.identifier("api"))
+    private val DATAFRAME_COLUMNS_PACKAGE = DATAFRAME_PACKAGE.child(Name.identifier("columns"))
+    private val DATAFRAME_ANNOTATIONS_PACKAGE = DATAFRAME_PACKAGE.child(Name.identifier("annotations"))
+    private val DATAFRAME_IO_PACKAGE = DATAFRAME_PACKAGE.child(Name.identifier("io"))
+    private val KOTLINX_DATETIME_PACKAGE = FqName("kotlinx.datetime")
+    private val KOTLIN_TIME_PACKAGE = FqName("kotlin.time")
+    private val JAVA_TIME_TEMPORAL_PACKAGE = FqName("java.time.temporal")
 
-    val COLUM_GROUP_CLASS_ID: ClassId
-        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("ColumnGroup"))
-    val FRAME_COLUMN_CLASS_ID: ClassId
-        get() = ClassId(FqName("org.jetbrains.kotlinx.dataframe.columns"), Name.identifier("FrameColumn"))
-    val DATA_COLUMN_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-            Name.identifier("DataColumn")
-        )
-    val VALUE_COLUMN_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName("org.jetbrains.kotlinx.dataframe.columns"),
-            Name.identifier("ValueColumn")
-        )
-    val BASE_COLUMN_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName("org.jetbrains.kotlinx.dataframe.columns"),
-            Name.identifier("BaseColumn")
-        )
-    val COLUMNS_CONTAINER_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-            Name.identifier("ColumnsContainer")
-        )
+    val DF_CLASS_ID = ClassId(DATAFRAME_PACKAGE, Name.identifier("DataFrame"))
+    val GROUP_BY_CLASS_ID = ClassId(DATAFRAME_API_PACKAGE, Name.identifier("GroupBy"))
+    val GROUPED_CLASS_ID = ClassId(DATAFRAME_API_PACKAGE, Name.identifier("Grouped"))
+    val REDUCED_GROUP_BY_CLASS_ID = ClassId(DATAFRAME_API_PACKAGE, Name.identifier("ReducedGroupBy"))
 
-    val COLUMNS_SCOPE_CLASS_ID: ClassId
-        get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
-            Name.identifier("ColumnsScope")
-        )
+    val COLUM_GROUP_CLASS_ID = ClassId(DATAFRAME_COLUMNS_PACKAGE, Name.identifier("ColumnGroup"))
+    val FRAME_COLUMN_CLASS_ID = ClassId(DATAFRAME_COLUMNS_PACKAGE, Name.identifier("FrameColumn"))
+    val DATA_COLUMN_CLASS_ID = ClassId(DATAFRAME_PACKAGE, Name.identifier("DataColumn"))
+    val VALUE_COLUMN_CLASS_ID = ClassId(DATAFRAME_COLUMNS_PACKAGE, Name.identifier("ValueColumn"))
+    val BASE_COLUMN_CLASS_ID = ClassId(DATAFRAME_COLUMNS_PACKAGE, Name.identifier("BaseColumn"))
+    val COLUMNS_CONTAINER_CLASS_ID = ClassId(DATAFRAME_PACKAGE, Name.identifier("ColumnsContainer"))
 
-    val DATA_ROW_CLASS_ID: ClassId
-        get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
-    val DF_ANNOTATIONS_PACKAGE: Name
-        get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
-    val INTERPRETABLE_FQNAME: FqName
-        get() = FqName("org.jetbrains.kotlinx.dataframe.annotations.Interpretable")
-    private val annotationsPackage = FqName("org.jetbrains.kotlinx.dataframe.annotations")
-    val STRING_API_INTERPRETABLE_ANNOTATION = ClassId(annotationsPackage, Name.identifier("StringApiInterpretable"))
-    val ORDER_ANNOTATION = ClassId(annotationsPackage, Name.identifier(Order::class.simpleName!!))
-    val CONVERTER_ANNOTATION = ClassId(annotationsPackage, Name.identifier("Converter"))
+    val COLUMNS_SCOPE_CLASS_ID = ClassId(DATAFRAME_PACKAGE, Name.identifier("ColumnsScope"))
+
+    val DATA_ROW_CLASS_ID = ClassId(DATAFRAME_PACKAGE, Name.identifier("DataRow"))
+    val INTERPRETABLE_FQNAME = DATAFRAME_ANNOTATIONS_PACKAGE.child(Name.identifier("Interpretable"))
+    val STRING_API_INTERPRETABLE_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("StringApiInterpretable"))
+    val ORDER_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("Order"))
+    val CONVERTER_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("Converter"))
     val ORDER_ARGUMENT = Name.identifier(Order::order.name)
-    val SCOPE_PROPERTY_ANNOTATION = ClassId(annotationsPackage, Name.identifier(ScopeProperty::class.simpleName!!))
-    val COLUMN_NAME_ANNOTATION = ClassId(annotationsPackage, Name.identifier(ColumnName::class.simpleName!!))
-    val DISABLE_INTERPRETATION_ANNOTATION = ClassId(annotationsPackage, Name.identifier(DisableInterpretation ::class.simpleName!!))
+    val SCOPE_PROPERTY_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("ScopeProperty"))
+    val COLUMN_NAME_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("ColumnName"))
+    val DISABLE_INTERPRETATION_ANNOTATION = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("DisableInterpretation"))
     val COLUMN_NAME_ARGUMENT = Name.identifier(ColumnName::name.name)
+    val DATA_SCHEMA_CLASS_ID = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("DataSchema"))
 
-    val DATA_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchema"))
-    val COLUMNS_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("ColumnsSchema"))
-    val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))
-    val DURATION_CLASS_ID = Duration::class.classId()
-    val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))
-    val LOCAL_DATE_TIME_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDateTime"))
-    val INSTANT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("Instant"))
-    val STDLIB_INSTANT_CLASS_ID = ClassId(FqName("kotlin.time"), Name.identifier("Instant"))
-    val DATE_TIME_PERIOD_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimePeriod"))
-    val DATE_TIME_UNIT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimeUnit"))
-    val TIME_ZONE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("TimeZone"))
-    val TEMPORAL_ACCESSOR_CLASS_ID = ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAccessor"))
-    val TEMPORAL_AMOUNT_CLASS_ID = ClassId(FqName("java.time.temporal"), Name.identifier("TemporalAmount"))
+    val DURATION_CLASS_ID = ClassId(KOTLIN_TIME_PACKAGE, Name.identifier("Duration"))
+    val LOCAL_DATE_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("LocalDate"))
+    val LOCAL_DATE_TIME_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("LocalDateTime"))
+    val INSTANT_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("Instant"))
+    val STDLIB_INSTANT_CLASS_ID = ClassId(KOTLIN_TIME_PACKAGE, Name.identifier("Instant"))
+    val DATE_TIME_PERIOD_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("DateTimePeriod"))
+    val DATE_TIME_UNIT_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("DateTimeUnit"))
+    val TIME_ZONE_CLASS_ID = ClassId(KOTLINX_DATETIME_PACKAGE, Name.identifier("TimeZone"))
+    val TEMPORAL_ACCESSOR_CLASS_ID = ClassId(JAVA_TIME_TEMPORAL_PACKAGE, Name.identifier("TemporalAccessor"))
+    val TEMPORAL_AMOUNT_CLASS_ID = ClassId(JAVA_TIME_TEMPORAL_PACKAGE, Name.identifier("TemporalAmount"))
 
-
-    val PAIR = ClassId(FqName("kotlin"), Name.identifier("Pair"))
-    val PAIR_CONSTRUCTOR = CallableId(FqName("kotlin"), FqName("Pair"), Name.identifier("Pair"))
-    val TO = CallableId(FqName("kotlin"), Name.identifier("to"))
+    val LIST = StandardClassIds.List
+    val PAIR = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Pair"))
+    val PAIR_CONSTRUCTOR = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, FqName("Pair"), Name.identifier("Pair"))
+    val TO = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("to"))
     val TRIM_MARGIN = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimMargin"))
     val TRIM_INDENT = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimIndent"))
 
-    val DATAFRAME_PROVIDER = ClassId(FqName("org.jetbrains.kotlinx.dataframe.io"), Name.identifier("DataFrameProvider"))
-    val DATA_SCHEMA_SOURCE_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchemaSource"))
+    val DATAFRAME_PROVIDER = ClassId(DATAFRAME_IO_PACKAGE, Name.identifier("DataFrameProvider"))
+    val DATA_SCHEMA_SOURCE_CLASS_ID = ClassId(DATAFRAME_ANNOTATIONS_PACKAGE, Name.identifier("DataSchemaSource"))
     val READ = Name.identifier("read")
     val DEFAULT = Name.identifier("default")
     val SCHEMA_KTYPE = Name.identifier("schemaKType")
-}
-
-private fun KClass<*>.classId(): ClassId {
-    val fqName = this.qualifiedName ?: throw IllegalStateException("KClass does not have a qualified name")
-    val packageFqName = fqName.substringBeforeLast(".", missingDelimiterValue = "")
-    val className = fqName.substringAfterLast(".")
-    return ClassId(FqName(packageFqName), Name.identifier(className))
 }

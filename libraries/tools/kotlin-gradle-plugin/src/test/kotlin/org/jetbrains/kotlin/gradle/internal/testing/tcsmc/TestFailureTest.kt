@@ -10,6 +10,8 @@ import jetbrains.buildServer.messages.serviceMessages.TestStarted
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteFinished
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteStarted
 import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 class TestFailureTest : TCServiceMessagesClientTest() {
     @Test
@@ -110,6 +112,54 @@ COMPLETED FAILURE // root
             )
             serviceMessage(TestFinished("Test", 0))
             serviceMessage(TestSuiteFinished(""))
+        }
+    }
+
+    @Test
+    fun `closing failed test suite with a started test attaches failure to the test node`() {
+        assertEvents(
+            assertion = { actual ->
+                assertContains(
+                    actual,
+                    """
+                    STARTED SUITE root // root
+                      STARTED SUITE  // root/
+                        STARTED TEST displayName: Test, classDisplayName: , className: , name: Test // root//Test
+                          FAILURE java.lang.RuntimeException: Test timed out
+                    """.trimIndent()
+                )
+            }
+        ) {
+            serviceMessage(TestSuiteStarted(""))
+            serviceMessage(TestStarted("Test", false, null))
+
+            closeSuiteWithFailingTestCause(
+                suiteNode = SuiteNode(
+                    parent = RootNode(),
+                    name = "",
+                ),
+                ts = System.currentTimeMillis(),
+                failingTestCause = RuntimeException("Test timed out"),
+            )
+        }
+    }
+
+    @Test
+    fun `closing failed test suite with no started tests re-throws failure`() = runWithClient {
+        serviceMessage(TestSuiteStarted(""))
+
+        val failingTestCause = RuntimeException("Test timed out")
+        try {
+            closeSuiteWithFailingTestCause(
+                suiteNode = SuiteNode(
+                    parent = RootNode(),
+                    name = "",
+                ),
+                ts = System.currentTimeMillis(),
+                failingTestCause = failingTestCause,
+            )
+        } catch (t: Throwable) {
+            assertEquals(failingTestCause, t)
         }
     }
 }

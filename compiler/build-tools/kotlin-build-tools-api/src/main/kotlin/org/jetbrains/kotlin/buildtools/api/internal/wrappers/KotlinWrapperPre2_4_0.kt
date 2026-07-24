@@ -259,6 +259,7 @@ internal class KotlinWrapperPre2_4_0(
                 CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
                 CommonCompilerArguments.X_DISABLE_PHASES,
                 CommonCompilerArguments.X_VERBOSE_PHASES,
+                @OptIn(DeprecatedCompilerArgument::class)
                 CommonCompilerArguments.X_SUPPRESS_WARNING,
                 CommonCompilerArguments.OPT_IN,
                     -> {
@@ -337,6 +338,7 @@ internal class KotlinWrapperPre2_4_0(
                 CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
                 CommonCompilerArguments.X_DISABLE_PHASES,
                 CommonCompilerArguments.X_VERBOSE_PHASES,
+                @OptIn(DeprecatedCompilerArgument::class)
                 CommonCompilerArguments.X_SUPPRESS_WARNING,
                 CommonCompilerArguments.OPT_IN,
                     -> {
@@ -489,7 +491,7 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.CLASSPATH,
-                JvmCompilerArguments.X_KLIB,
+                @OptIn(RemovedCompilerArgument::class) JvmCompilerArguments.X_KLIB,
                 JvmCompilerArguments.X_MODULE_PATH,
                     -> {
                     if (delegate[key] == null) return null as V
@@ -543,11 +545,11 @@ internal class KotlinWrapperPre2_4_0(
                     if (delegate[key] == null) return emptyList<Jsr305>() as V
 
                     val arrayValue = delegate[key] as Array<String>
-                    fun jsr305mode(stringValue: String) = Jsr305.Mode.values().firstOrNull { entry -> entry.stringValue == stringValue }
-                        ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $stringValue")
+                    arrayValue.map { fullEntry ->
+                        fun jsr305mode(mode: String) = Jsr305.Mode.values().firstOrNull { entry -> entry.stringValue == mode }
+                            ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $fullEntry")
 
-                    arrayValue.map {
-                        val parts = it.split(":")
+                        val parts = fullEntry.split(":")
                         when (parts.size) {
                             1 -> Jsr305.Global(jsr305mode(parts[0]))
                             2 -> {
@@ -557,7 +559,7 @@ internal class KotlinWrapperPre2_4_0(
                                     Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1]))
                                 }
                             }
-                            else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $it")
+                            else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $fullEntry")
                         }
                     } as V
                 }
@@ -667,7 +669,7 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.CLASSPATH,
-                JvmCompilerArguments.X_KLIB,
+                @OptIn(RemovedCompilerArgument::class) JvmCompilerArguments.X_KLIB,
                 JvmCompilerArguments.X_MODULE_PATH,
                     -> {
                     @Suppress("UNCHECKED_CAST")

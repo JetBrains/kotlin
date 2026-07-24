@@ -6,7 +6,7 @@ group = "org.sample.two"
 
 kotlin {
     linuxX64("linux") {
-        val bar by compilations["main"].cinterops.creating
+        compilations["main"].cinterops.create("bar")
     }
     js {
         nodejs()

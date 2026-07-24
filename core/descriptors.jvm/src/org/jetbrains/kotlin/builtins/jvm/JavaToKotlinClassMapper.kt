@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
+@K1Deprecation
 object JavaToKotlinClassMapper : PlatformToKotlinClassMapper {
     override fun mapPlatformClass(classDescriptor: ClassDescriptor): Collection<ClassDescriptor> {
         val className = DescriptorUtils.getFqName(classDescriptor)

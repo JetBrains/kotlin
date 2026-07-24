@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.services
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
  * When elements are deserialized from stubs, this issue does not occur because the PSI is provided during deserialization. However, in
  * Standalone mode, deserialized symbols do not have sources and require more sophisticated choosing logic.
  */
+@KaImplementationDetail
 abstract class LLFirElementByPsiElementChooser {
     abstract fun isMatchingValueParameter(psi: KtParameter, fir: FirValueParameter): Boolean
 
@@ -35,6 +37,7 @@ abstract class LLFirElementByPsiElementChooser {
 
     abstract fun isMatchingCallableDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean
 
+    @KaImplementationDetail
     companion object {
         fun getInstance(project: Project): LLFirElementByPsiElementChooser =
             project.getService(LLFirElementByPsiElementChooser::class.java)

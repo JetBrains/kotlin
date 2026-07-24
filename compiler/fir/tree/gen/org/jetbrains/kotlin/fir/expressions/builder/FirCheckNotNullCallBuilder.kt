@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirCheckNotNullCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var argumentList: FirArgumentList
     var calleeReference: FirReference = FirStubReference
 

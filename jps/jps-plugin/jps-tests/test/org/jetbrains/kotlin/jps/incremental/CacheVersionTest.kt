@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class CacheVersionTest {
     @Test
     fun testConstruct() {
-        assertEquals(
-            3011001,
-            CacheVersion(
+        Assertions.assertEquals(
+            3011001, CacheVersion(
                 3,
                 JvmBytecodeBinaryVersion(1, 0, 3),
                 MetadataVersion(1, 1, 13)
@@ -25,10 +24,7 @@ class CacheVersionTest {
 
     @Test
     fun testDeconstruct() {
-        assertEquals(
-            "CacheVersion(caches: 3, bytecode: 1.0, metadata: 1.1)",
-            CacheVersion(3011001).toString()
-        )
+        Assertions.assertEquals("CacheVersion(caches: 3, bytecode: 1.0, metadata: 1.1)", CacheVersion(3011001).toString())
     }
 
     @Test
@@ -39,15 +35,14 @@ class CacheVersionTest {
             MetadataVersion(4, 5)
         )
 
-        assertEquals(1024305, version.intValue)
-        assertEquals("CacheVersion(caches: 1, bytecode: 2.3, metadata: 4.5)", version.toString())
+        Assertions.assertEquals(1024305, version.intValue)
+        Assertions.assertEquals("CacheVersion(caches: 1, bytecode: 2.3, metadata: 4.5)", version.toString())
     }
 
     @Test
     fun testMaxValues() {
-        assertEquals(
-            "CacheVersion(caches: 2146, bytecode: 9.9, metadata: 9.99)",
-            CacheVersion(
+        Assertions.assertEquals(
+            "CacheVersion(caches: 2146, bytecode: 9.9, metadata: 9.99)", CacheVersion(
                 2146,
                 JvmBytecodeBinaryVersion(9, 9),
                 MetadataVersion(9, 99)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.exportedValueClassBoxFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.exportedInlineClassBoxFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
@@ -99,11 +100,21 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(symbols.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
             add(symbols.jsYieldFunctionSymbol) { call, context ->
-                JsYield(translateCallArguments(call, context).single())
+                val argument = translateCallArguments(call, context).single()
+                if (backendContext.configuration.compileSuspendAsJsGenerator) {
+                    JsYield(argument)
+                } else {
+                    argument
+                }
             }
 
             add(symbols.jsYieldStarFunctionSymbol) { call, context ->
-                JsYieldStar(translateCallArguments(call, context).single())
+                val argument = translateCallArguments(call, context).single()
+                if (backendContext.configuration.compileSuspendAsJsGenerator) {
+                    JsYieldStar(argument)
+                } else {
+                    argument
+                }
             }
 
             add(symbols.jsGenerateInterfaceSymbol) { _, context ->
@@ -161,7 +172,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val array = args[0]
                 val index = args[1]
                 val value = args[2]
-                JsBinaryOperation(JsBinaryOperator.ASG, JsArrayAccess(array, index), value)
+                JsAssignmentOperation.Simple(JsArrayAccess(array, index), value)
             }
 
             add(symbols.arrayLiteral) { call, context ->
@@ -197,7 +208,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 }
             }
 
-            for ((type, prefix) in symbols.primitiveToTypedArrayMap) {
+            for ([type, prefix] in symbols.primitiveToTypedArrayMap) {
                 add(symbols.primitiveToSizeConstructor[type]!!) { call, context ->
                     JsNew(JsNameRef("${prefix}Array"), translateCallArguments(call, context))
                 }
@@ -211,7 +222,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val inlineClass = call.typeArguments[0]?.let { icUtils.getRuntimeClassFor(it) }
                     ?: compilationException("Unexpected type argument in box intrinsic", call)
 
-                inlineClass.exportedValueClassBoxFunction?.let {
+                inlineClass.exportedInlineClassBoxFunction?.let {
                     return@add JsInvocation(context.getNameForStaticFunction(it).makeRef(), arg)
                         .apply { isInlineClassBoxing = true }
                 }

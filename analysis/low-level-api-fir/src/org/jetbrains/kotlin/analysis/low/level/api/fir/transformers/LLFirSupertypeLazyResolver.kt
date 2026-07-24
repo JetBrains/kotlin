@@ -316,10 +316,10 @@ private open class LLFirSupertypeComputationSession(
     inline fun withDeclarationSession(declaration: FirClassLikeDeclaration, action: () -> Unit) {
         val newSession = declaration.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
         try {
-            newSession?.let { useSiteSessions = useSiteSessions.add(it) }
+            newSession?.let { useSiteSessions = useSiteSessions.adding(it) }
             action()
         } finally {
-            newSession?.let { useSiteSessions = useSiteSessions.removeAt(useSiteSessions.lastIndex) }
+            newSession?.let { useSiteSessions = useSiteSessions.removingAt(useSiteSessions.lastIndex) }
         }
     }
 
@@ -389,7 +389,7 @@ private open class LLFirSupertypeComputationSession(
     override fun reportLoopErrorRefs(classLikeDeclaration: FirClassLikeDeclaration, supertypeRefs: List<FirResolvedTypeRef>) {
         updatedTypesForDeclarationsWithLoop.merge(classLikeDeclaration, supertypeRefs) { oldRefs, newRefs ->
             buildList(oldRefs.size) {
-                for ((old, new) in oldRefs.zip(newRefs)) {
+                for ([old, new] in oldRefs.zip(newRefs)) {
                     if (old is FirErrorTypeRef) {
                         add(old)
                     } else {

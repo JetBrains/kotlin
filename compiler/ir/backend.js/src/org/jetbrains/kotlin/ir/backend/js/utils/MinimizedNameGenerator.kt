@@ -34,6 +34,8 @@ class MinimizedNameGenerator {
         reservedNames.add(signature)
     }
 
+    fun isReserved(name: String): Boolean = reservedNames.contains(name)
+
     fun clear() {
         index = 0
         functionSignatureToName.clear()

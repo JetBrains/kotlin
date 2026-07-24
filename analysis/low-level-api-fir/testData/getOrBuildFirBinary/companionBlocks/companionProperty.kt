@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtProperty
 // MAIN_FILE_NAME: CompanionPropertyKt
 

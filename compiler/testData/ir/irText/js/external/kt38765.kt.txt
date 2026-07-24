@@ -22,12 +22,12 @@ open external class internal {
 
     private external constructor() /* primary */
 
-    external /* static */ fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
+    external companion fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
 
-    external /* static */ fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
+    external companion fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
 
-    external /* static */ val entries: EnumEntries<NestedExternalEnum>
-      external get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
+    external companion val entries: EnumEntries<NestedExternalEnum>
+      external companion get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
 
   }
 

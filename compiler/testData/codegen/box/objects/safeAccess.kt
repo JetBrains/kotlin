@@ -4,4 +4,6 @@ object Test {
     val a = "OK"
 }
 
-fun box(): String? = Test?.a
+fun test(): String? = Test?.a
+
+fun box(): String = test()!!

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
  *  // here `if` is synthetic function call
  *   val x = if (b) fun named1() {} else fun named2() {}
  */
+@K1Deprecation
 object NamedFunAsExpressionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return

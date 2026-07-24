@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaFileSymbol : KaAnnotatedSymbol {
+    abstract override fun createPointer(): KaSymbolPointer<KaFileSymbol>
+
+    //region Implementation details
     final override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaFileSymbol>
+    //endregion
 }

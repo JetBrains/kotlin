@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -30,6 +31,7 @@ import java.util.*
 // this file is example for future use
 
 
+@K1Deprecation
 object CallDiagnosticToDiagnostic {
     private val diagnosticMap: MutableMap<Class<out KotlinCallDiagnostic>, KotlinCallDiagnostic.(PsiElement) -> ParametrizedDiagnostic<*>> =
         HashMap()
@@ -88,6 +90,7 @@ object CallDiagnosticToDiagnostic {
 
 }
 
+@K1Deprecation
 abstract class DiagnosticReporterImpl(private val bindingTrace: BindingTrace, private val call: Call) : DiagnosticReporter {
 
     override fun onCallArgument(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
@@ -99,6 +102,7 @@ abstract class DiagnosticReporterImpl(private val bindingTrace: BindingTrace, pr
 
 }
 
+@K1Deprecation
 class TypeMismatchDiagnostic(
     val callArgument: KotlinCallArgument,
     val expectedType: KotlinType,

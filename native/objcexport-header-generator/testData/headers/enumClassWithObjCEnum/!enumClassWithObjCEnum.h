@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
 @end
 
-typedef NS_ENUM(int32_t, FooNSEnum) {
+typedef NS_CLOSED_ENUM(int32_t, FooNSEnum) {
   FooNSEnumAlpha NS_SWIFT_NAME(alpha) = 0,
   FooNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 1,
   FooNSEnumBarFoo NS_SWIFT_NAME(barFoo) = 2,

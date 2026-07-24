@@ -26,7 +26,7 @@ internal class ArgumentsQueue(argumentsDescriptors: List<ArgDescriptor<*, *>>) {
         if (argumentsUsageNumber.isEmpty())
             return null
 
-        val (currentDescriptor, usageNumber) = argumentsUsageNumber.iterator().next()
+        val [currentDescriptor, usageNumber] = argumentsUsageNumber.iterator().next()
         currentDescriptor.number?.let {
             // Parse all arguments for current argument description.
             if (usageNumber + 1 >= currentDescriptor.number) {
@@ -261,7 +261,7 @@ open class ArgParser(
      */
     private fun inspectRequiredAndDefaultUsage() {
         var previousArgument: ParsingValue<*, *>? = null
-        arguments.forEach { (_, currentArgument) ->
+        arguments.forEach { [_, currentArgument] ->
             previousArgument?.let { previous ->
                 // Previous argument has default value.
                 if (previous.descriptor.defaultValueSet) {
@@ -583,7 +583,7 @@ open class ArgParser(
         inspectRequiredAndDefaultUsage()
 
         listOf(arguments, options).forEach {
-            it.forEach { (_, value) ->
+            it.forEach { [_, value] ->
                 value.valueOrigin = ValueOrigin.UNSET
             }
         }
@@ -660,7 +660,7 @@ open class ArgParser(
         result.append("Usage: ${fullCommandName.joinToString(" ")} options_list\n")
         if (subcommands.isNotEmpty()) {
             result.append("Subcommands: \n")
-            subcommands.forEach { (_, subcommand) ->
+            subcommands.forEach { [_, subcommand] ->
                 result.append(subcommand.helpMessage)
             }
             result.append("\n")

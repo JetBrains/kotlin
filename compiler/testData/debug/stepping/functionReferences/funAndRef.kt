@@ -58,18 +58,16 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:9 box
-// test.kt:9 strToStr$ref
 // test.kt:9 box
 // test.kt:3 foo
 // test.kt:5 strToStr
-
 // test.kt:11 box
-// test.kt:12 strToStr$ref
+
 // test.kt:11 box
 // test.kt:3 foo
 // test.kt:5 strToStr
-
 // test.kt:15 box
+
 
 // EXPECTATIONS NATIVE
 // test.kt:9 box

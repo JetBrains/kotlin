@@ -7,33 +7,36 @@ import org.jetbrains.kotlin.konan.target.HostManager
 description = "Atomicfu Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
-val antLauncherJar by configurations.creating
-val testJsRuntime by configurations.creating {
+val antLauncherJar = configurations.create("antLauncherJar")
+val testJsRuntime = configurations.create("testJsRuntime") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
     }
 }
 
-val atomicfuJsClasspath by configurations.creating {
+val atomicfuJsClasspath = configurations.create("atomicfuJsClasspath") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
-val atomicfuJvmClasspath by configurations.creating
+val atomicfuJvmClasspath = configurations.create("atomicfuJvmClasspath")
 
-val atomicfuNativeKlib by configurations.creating {
+val atomicfuNativeKlib = configurations.create("atomicfuNativeKlib") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -43,7 +46,7 @@ val atomicfuNativeKlib by configurations.creating {
     }
 }
 
-val atomicfuJsIrRuntimeForTests by configurations.creating {
+val atomicfuJsIrRuntimeForTests = configurations.create("atomicfuJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -51,11 +54,7 @@ val atomicfuJsIrRuntimeForTests by configurations.creating {
     }
 }
 
-val atomicfuCompilerPluginForTests by configurations.creating
-
-repositories {
-    mavenCentral()
-}
+val atomicfuCompilerPluginForTests = configurations.create("atomicfuCompilerPluginForTests")
 
 dependencies {
     compileOnly(intellijCore())
@@ -81,6 +80,9 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":native:native.config"))
 
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":core:language.targets.jvm"))
+
     compileOnly(kotlinStdlib())
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
@@ -94,7 +96,6 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
 
     testImplementation(testFixtures(project(":js:js.tests")))
-    testImplementation(libs.junit4)
     testImplementation(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
@@ -166,8 +167,6 @@ dependencies {
     }
 
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
-
-    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 optInToExperimentalCompilerApi()
@@ -182,20 +181,17 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         useJUnitPlatform {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")
         }
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-            }
-        }
 
         addClasspathProperty(atomicfuJsIrRuntimeForTests, "atomicfuJsIrRuntimeForTests.classpath")
         addClasspathProperty(atomicfuJsClasspath, "atomicfuJs.classpath")
@@ -215,16 +211,6 @@ projectTests {
         customTestDependencies = listOf(atomicfuNativeKlib),
         compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
     ) {
-        testInputsCheck {
-            with(extraPermissions) {
-                // When the tests are building the caches, the compiler will attempt to resolve this dependency of `atomicfuNativeKlib`.
-                // But the compiler doesn't know where to look for this dependency, and ends up looking in the working directory.
-                // In the end, this dependency is not needed for the final binary, and so can be skipped.
-                // KT-85908
-                val missingCInteropLibrary = workingDir.resolve("org.jetbrains.kotlinx:atomicfu-cinterop-interop")
-                add("permission java.io.FilePermission \"$missingCInteropLibrary\", \"read\";")
-            }
-        }
         addClasspathProperty(atomicfuNativeKlib, "atomicfuNative.classpath")
 
         // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
@@ -261,5 +247,3 @@ tasks.named("check") {
         dependsOn(tasks.named("nativeTest"))
     }
 }
-
-

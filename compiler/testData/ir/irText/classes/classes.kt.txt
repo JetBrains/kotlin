@@ -23,12 +23,12 @@ enum class TestEnumClass : Enum<TestEnumClass> {
 
   }
 
-  /* static */ fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<TestEnumClass>
-    get(): EnumEntries<TestEnumClass> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<TestEnumClass>
+    companion get(): EnumEntries<TestEnumClass> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

@@ -2,6 +2,9 @@ import kotlinx.benchmark.gradle.JmhBytecodeGeneratorTask
 import kotlinx.benchmark.gradle.benchmark
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     alias(libs.plugins.kotlinx.benchmark)
     id("project-tests-convention")
@@ -15,12 +18,10 @@ dependencies {
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 }
@@ -32,10 +33,10 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val warmupsParam = project.findProperty("warmups")?.toString()
-val iterationsParam = project.findProperty("iterations")?.toString()
-val includePattern = project.findProperty("include")?.toString()
-val sizeParam = project.findProperty("size")?.toString()
+val warmupsParam = providers.gradleProperty("warmups").orNull
+val iterationsParam = providers.gradleProperty("iterations").orNull
+val includePattern = providers.gradleProperty("include").orNull
+val sizeParam = providers.gradleProperty("size").orNull
 
 benchmark {
     configurations {
@@ -61,8 +62,13 @@ benchmark {
 }
 
 tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach {
-    dependsOn(":createIdeaHomeForTests")
-    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
+    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
+    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
+        property.set("idea.home.path")
+        classpath.from(ideaHomeForTests)
+        directory.value(ideaHomePathForTests())
+    })
+
     systemProperty("idea.use.native.fs.for.win", false)
 }
 
@@ -73,12 +79,8 @@ tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
 }
 
 projectTests {
-    testTask(
-        parallel = false, // Disable parallelization to get more robust performance measurements
-        jUnitMode = JUnitMode.JUnit4
-    ) {
+    testTask {
         workingDir = rootDir
-        useJUnitPlatform()
     }
 
     withJvmStdlibAndReflect()

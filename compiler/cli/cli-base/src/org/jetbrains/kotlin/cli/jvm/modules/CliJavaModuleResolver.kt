@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
+
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
@@ -65,7 +66,7 @@ class CliJavaModuleResolver(
     }
 
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-        moduleRoots.any { (root, isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
+        moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?

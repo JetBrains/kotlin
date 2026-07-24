@@ -1,0 +1,9 @@
+Before shortening: pkg.MyResult
+with default settings:
+[type] pkg.MyResult
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] pkg.MyResult
+with SHORTEN_AND_STAR_IMPORT:
+[type] pkg.MyResult

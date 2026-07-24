@@ -1,1 +1,3 @@
 ctx: kotlin.Boolean
+
+open val ctx: kotlin.Boolean

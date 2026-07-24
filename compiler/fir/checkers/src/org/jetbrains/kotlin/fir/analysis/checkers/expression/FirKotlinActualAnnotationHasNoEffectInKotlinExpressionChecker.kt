@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
@@ -28,7 +26,7 @@ sealed class FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<T : F
     object ResolvedQualifier : FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker<FirResolvedQualifier>() {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(expression: FirResolvedQualifier) {
-            if (expression.resolvedType.classId == StandardClassIds.Annotations.KotlinActual) {
+            if (expression.qualifierSymbol?.classId == StandardClassIds.Annotations.KotlinActual) {
                 reporter.reportOn(expression.source, FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN)
             }
         }

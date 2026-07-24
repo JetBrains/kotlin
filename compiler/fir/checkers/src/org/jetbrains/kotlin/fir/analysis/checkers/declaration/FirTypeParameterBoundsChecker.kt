@@ -120,7 +120,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         declaration: FirTypeParameter,
     ) {
         val bounds = declaration.symbol.resolvedBounds.distinctBy { it.coneType }
-        val (boundWithParam, otherBounds) = bounds.partition { it.coneType is ConeTypeParameterType }
+        val [boundWithParam, otherBounds] = bounds.partition { it.coneType is ConeTypeParameterType }
         if (boundWithParam.size > 1 || (boundWithParam.size == 1 && otherBounds.isNotEmpty())) {
             // If there's only one problematic bound (either 2 type parameter bounds, or 1 type parameter bound + 1 other bound),
             // report the diagnostic on that bound

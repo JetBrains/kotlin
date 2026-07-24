@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.github.benmanes.caffeine.cache.stats.StatsCounter
 import io.opentelemetry.api.metrics.LongCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLCaffeineStatsCounter
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.getMeter
 /**
  * Statistics for analysis sessions and `analyze` calls.
  */
+@KaImplementationDetail
 class LLAnalysisSessionStatistics(statisticsService: LLStatisticsService) : LLStatisticsDomain {
     private val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.AnalysisSessions)
 

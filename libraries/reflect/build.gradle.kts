@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 description = "Kotlin Full Reflection Library"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -29,19 +32,42 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 publish()
 
 val core = "$rootDir/core"
 val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 
-val proguardDeps by configurations.creating
-val proguardAdditionalInJars by configurations.creating
+val proguardDeps = configurations.create("proguardDeps")
+val proguardAdditionalInJars = configurations.create("proguardAdditionalInJars")
 
-val embedded by configurations
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
 
-configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
 
+val bundle = configurations.dependencyScope("bundle")
+configurations {
+    resolvable("bundleClasses") {
+        extendsFrom(bundle)
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.CLASSES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        isTransitive = false
+    }
+    resolvable("bundleResources") {
+        extendsFrom(bundle)
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        isTransitive = false
+    }
+}
 dependencies {
     api(kotlinStdlib())
 
@@ -61,6 +87,7 @@ dependencies {
     embedded(project(":core:descriptors.jvm")) { isTransitive = false }
     embedded(project(":core:deserialization")) { isTransitive = false }
     embedded(project(":core:descriptors.runtime")) { isTransitive = false }
+    embedded(project(":core:reflection.common.jvm")) { isTransitive = false }
     embedded(project(":core:util.runtime")) { isTransitive = false }
     embedded("javax.inject:javax.inject:1") { isTransitive = false }
     embedded(protobufLite()) { isTransitive = false }
@@ -73,11 +100,13 @@ dependencies {
     // protobuf-generated classes because then we would not be able to pass protobuf obtained from descriptors to kotlin-metadata.
     compileOnly(project(":kotlin-metadata-jvm", "unshaded"))
     compileOnly(project(":kotlin-metadata"))
+    bundle(project(":kotlin-metadata"))
+    bundle(project(":kotlin-metadata-jvm"))
 }
 
 if (kotlinBuildProperties.includeJava9) {
     val java9PatchModule = configurations.register("java9PatchModule") {
-        extendsFrom(configurations.getByName("compileOnly"))
+        extendsFrom(configurations.compileOnly.get())
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         isCanBeResolved = true
     }
@@ -152,7 +181,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : ResourceTransf
     }
 }
 
-val reflectShadowJar by task<ShadowJar> {
+val reflectShadowJar = tasks.register<ShadowJar>("reflectShadowJar") {
     archiveClassifier.set("shadow")
     configurations = listOf(embedded)
 
@@ -160,12 +189,11 @@ val reflectShadowJar by task<ShadowJar> {
     if (kotlinBuildProperties.includeJava9) {
         from(sourceSets["java9"].output)
     }
-    from(project(":kotlin-metadata").sourceSets["main"].output) {
+    from(project.configurations.named("bundleClasses")) {
         exclude("META-INF/metadata.kotlin_module")
-    }
-    from(project(":kotlin-metadata-jvm").sourceSets["main"].output) {
         exclude("META-INF/metadata.jvm.kotlin_module")
     }
+    from(project.configurations.named("bundleResources").get())
     exclude("**/*.proto")
     exclude("org/jetbrains/annotations/Nls*.class")
 
@@ -182,7 +210,7 @@ val reflectShadowJar by task<ShadowJar> {
     }
 }
 
-val stripMetadata by tasks.registering {
+val stripMetadata = tasks.register("stripMetadata") {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-stripped.jar")
@@ -203,7 +231,7 @@ val stripMetadata by tasks.registering {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(stripMetadata)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
@@ -227,7 +255,7 @@ val proguard by task<CacheableProguardTask> {
     configuration("$core/reflection.jvm/reflection.pro")
 }
 
-val relocateCoreSources by task<Copy> {
+val relocateCoreSources = tasks.register<Copy>("relocateCoreSources") {
     val relocatedCoreSrc = relocatedCoreSrc
     val fs = serviceOf<FileSystemOperations>()
     doFirst {
@@ -240,6 +268,7 @@ val relocateCoreSources by task<Copy> {
     from("$core/descriptors.common/src")
     from("$core/descriptors.jvm/src")
     from("$core/descriptors.runtime/src")
+    from("$core/reflection.common.jvm/src")
     from("$core/deserialization/src")
     from("$core/deserialization/deserialization.common/src")
     from("$core/util.runtime/src")
@@ -290,7 +319,7 @@ val intermediate = when {
     else -> reflectShadowJar
 }
 
-val result by task<Jar> {
+val result = tasks.register<Jar>("result") {
     dependsOn(intermediate)
     from {
         zipTree(intermediate.get().singleOutputFile(layout))
@@ -315,6 +344,9 @@ dexMethodCount {
 }
 
 tasks.named("assemble").configure { dependsOn(result) }
+
+val shadowConfig = configurations.consumable("shadowJar")
 artifacts {
     add("runtimeElements", result.map { it.outputs.files.singleFile })
+    add(shadowConfig.name, reflectShadowJar.map { it.outputs.files.singleFile })
 }

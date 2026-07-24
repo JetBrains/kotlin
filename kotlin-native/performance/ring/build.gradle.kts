@@ -6,13 +6,13 @@
 import org.jetbrains.kotlin.benchmarkingTargets
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
     benchmarkingTargets()
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "Ring"
 }

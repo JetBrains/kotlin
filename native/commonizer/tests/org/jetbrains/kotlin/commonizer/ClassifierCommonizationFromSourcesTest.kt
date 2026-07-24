@@ -5,24 +5,31 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import kotlin.contracts.ExperimentalContracts
+import org.junit.jupiter.api.Test
 
-@ExperimentalContracts
 class ClassifierCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
 
+    @Test
     fun testClassKindAndModifiers() = doTestSuccessfulCommonization()
 
+    @Test
     fun testModality() = doTestSuccessfulCommonization()
 
+    @Test
     fun testVisibility() = doTestSuccessfulCommonization()
 
+    @Test
     fun testConstructors() = doTestSuccessfulCommonization()
 
+    @Test
     fun testTypeParameters() = doTestSuccessfulCommonization()
 
+    @Test
     fun testSupertypes() = doTestSuccessfulCommonization()
 
+    @Test
     fun testTypeAliases() = doTestSuccessfulCommonization()
 
+    @Test
     fun testDifferentTypeAliasesInArguments() = doTestSuccessfulCommonization()
 }

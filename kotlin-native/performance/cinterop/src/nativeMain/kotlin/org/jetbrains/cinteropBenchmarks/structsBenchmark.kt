@@ -15,67 +15,113 @@
  */
 
 package org.jetbrains.structsBenchmarks
+
+import kotlinx.benchmark.*
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.math.sqrt
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+import org.jetbrains.structsProducedByMacrosBenchmarks.*
 
-const val benchmarkSize = 10000
+private const val BENCHMARK_SIZE = 1000
 
-actual fun structBenchmark() {
-    memScoped {
-        val containsFunction = staticCFunction<CPointer<ElementS>?, CPointer<ElementS>?, Int> { first, second ->
-            if (first == null || second == null) {
-                0
-            } else if (first.pointed.string.toKString().contains(second.pointed.string.toKString())) {
-                1
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class CinteropHideName : SkipWhenBaseOnly() {
+    @Benchmark
+    fun macros(bh: Blackhole) {
+        skipWhenBaseOnly()
+        memScoped {
+            val ints = new_list_int()
+            for (i in 1..BENCHMARK_SIZE / 10) {
+                list_push_front_int(ints, i)
             }
-            else {
-                0
+            val floats = new_list_float()
+            // Copy integer list to float one.
+            ints?.pointed?.apply {
+                var current = _first
+                while(current != null) {
+                    list_push_front_float(floats, current.pointed._data.toFloat())
+                    current = current.pointed._next
+                }
             }
+            // Reverse list.
+            var previous: CPointer<list_elem_float>? = null
+            var current = floats?.pointed?._first
+            while (current != null) {
+                val next = current.pointed._next
+                current.pointed._next = previous
+                previous = current
+                current = next
+            }
+            floats?.pointed?._first = previous
+            free_list_int(ints)
+            bh.consume(list_front_float(floats))
+            free_list_float(floats)
         }
-        val elementsList = mutableListOf<ElementS>()
-        // Fill list.
-        for (i in 1..benchmarkSize) {
-            val element = alloc<ElementS>()
-            element.floatValue = i + sqrt(i.toDouble()).toFloat()
-            element.integer = i.toLong()
-            sprintf(element.string, "%d", i)
-            element.contains = containsFunction
-
-            elementsList.add(element)
-        }
-        val summary = elementsList.map { multiplyElementS(it.readValue(), (0..10).random()) }
-                .reduce { acc, it -> sumElementSPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
-        val intValue = summary.useContents { integer }
-        elementsList.last().contains!!(elementsList.last().ptr, elementsList.first().ptr)
     }
-}
 
-actual fun unionBenchmark() {
-    memScoped {
-        val elementsList = mutableListOf<ElementU>()
-        // Fill list.
-        for (i in 1..benchmarkSize) {
-            val element = alloc<ElementU>()
-            element.integer = i.toLong()
-            elementsList.add(element)
-        }
-        elementsList.forEach {
-            it.floatValue = it.integer + sqrt(it.integer.toDouble()).toFloat()
-        }
-        val summary = elementsList.map { multiplyElementU(it.readValue(), (0..10).random()) }
-                .reduce { acc, it -> sumElementUPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
-        summary.useContents { integer }
-    }
-}
+    @Benchmark
+    fun struct(bh: Blackhole) {
+        skipWhenBaseOnly()
+        memScoped {
+            val containsFunction = staticCFunction<CPointer<ElementS>?, CPointer<ElementS>?, Int> { first, second ->
+                if (first == null || second == null) {
+                    0
+                } else if (first.pointed.string.toKString().contains(second.pointed.string.toKString())) {
+                    1
+                }
+                else {
+                    0
+                }
+            }
+            val elementsList = mutableListOf<ElementS>()
+            // Fill list.
+            for (i in 1..BENCHMARK_SIZE) {
+                val element = alloc<ElementS>()
+                element.floatValue = i + sqrt(i.toDouble()).toFloat()
+                element.integer = i.toLong()
+                sprintf(element.string, "%d", i)
+                element.contains = containsFunction
 
-actual fun enumBenchmark() {
-    val days = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-    val enumValues = mutableListOf<WeekDay>()
-    for (i in 1..benchmarkSize) {
-        enumValues.add(getWeekDay(days[(0..6).random()]))
+                elementsList.add(element)
+            }
+            val summary = elementsList.map { multiplyElementS(it.readValue(), (0..10).random()) }
+                    .reduce { acc, it -> sumElementSPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
+            val intValue = summary.useContents { integer }
+            bh.consume(elementsList.last().contains!!(elementsList.last().ptr, elementsList.first().ptr))
+        }
     }
-    enumValues.forEach {
-        isWeekEnd(it)
+
+    @Benchmark
+    fun union(bh: Blackhole) {
+        skipWhenBaseOnly()
+        memScoped {
+            val elementsList = mutableListOf<ElementU>()
+            // Fill list.
+            for (i in 1..BENCHMARK_SIZE) {
+                val element = alloc<ElementU>()
+                element.integer = i.toLong()
+                elementsList.add(element)
+            }
+            elementsList.forEach {
+                it.floatValue = it.integer + sqrt(it.integer.toDouble()).toFloat()
+            }
+            val summary = elementsList.map { multiplyElementU(it.readValue(), (0..10).random()) }
+                    .reduce { acc, it -> sumElementUPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
+            bh.consume(summary.useContents { integer })
+        }
+    }
+
+    @Benchmark
+    fun enum(bh: Blackhole) {
+        skipWhenBaseOnly()
+        val days = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+        val enumValues = mutableListOf<WeekDay>()
+        for (i in 1..BENCHMARK_SIZE) {
+            enumValues.add(getWeekDay(days[(0..6).random()]))
+        }
+        val weekEnds = enumValues.count { isWeekEnd(it) == 1 }
+        bh.consume(weekEnds)
     }
 }

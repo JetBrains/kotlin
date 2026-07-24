@@ -18,7 +18,13 @@ package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class JsThisRef extends JsLiteral.JsValueLiteral {
+public final class JsThisRef extends JsAssignableExpression {
+    // `this` is a leaf primary expression: it is side-effect-free and never needs parentheses.
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitThis(this);

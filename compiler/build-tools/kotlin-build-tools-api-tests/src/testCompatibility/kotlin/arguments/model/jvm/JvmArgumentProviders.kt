@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305.Mode
@@ -42,37 +43,38 @@ import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
 
 internal class AllJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
     }
 }
 
 internal class InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
         return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
     }
 }
@@ -94,7 +96,7 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<J
 }
 
 private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = jvmCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
@@ -103,7 +105,7 @@ private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescri
 
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                JvmArgumentConfiguration(namedKotlinToolchains.payload, namedArgumentDescriptor.payload)
+                JvmArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
             )
         }
     }
@@ -111,7 +113,7 @@ private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescri
 
 private val testBaseDir: Path = Paths.get("").toAbsolutePath()
 
-@OptIn(ExperimentalCompilerArgument::class)
+@OptIn(ExperimentalCompilerArgument::class, RemovedCompilerArgument::class)
 private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xabi-stability",
@@ -199,7 +201,6 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/friend2"),
                 testBaseDir.resolve("path/to/friend3"),
             ),
-            listOf(testBaseDir.resolve("path/with,comma"))
         ),
         argumentRawValues = listOf(
             listOf(
@@ -208,6 +209,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/friend3"),
             ).joinToString(","),
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
     ),
@@ -239,6 +241,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
         ),
         invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
+        runsNullableTest = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xmodule-path=$value") },
     ),
@@ -258,6 +261,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
         argumentValues = LambdasMode.entries.toList(),
         argumentRawValues = LambdasMode.entries.map { it.stringValue },
         invalidRawValues = listOf("non-existent-value"),
+        runsNullableTest = true,
         valueString = { value -> value?.stringValue },
         expectedArgumentStringsFor = { value -> listOf("-Xlambdas=$value") },
     ),
@@ -319,6 +323,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
         ),
         invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with${File.pathSeparator}separator"))),
+        runsNullableTest = true,
+        skipBtaV1 = true,
         valueString = { value -> value?.joinToString(File.pathSeparator) { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
     ),
@@ -331,7 +337,6 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/java/src2"),
                 testBaseDir.resolve("path/to/java/src3"),
             ),
-            listOf(testBaseDir.resolve("path/with,comma"))
         ),
         argumentRawValues = listOf(
             listOf(
@@ -340,6 +345,7 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 testBaseDir.resolve("path/to/java/src3"),
             ).joinToString(",") { it.toFile().absolutePath }
         ),
+        invalidArgumentValues = listOf(listOf(testBaseDir.resolve("path/with,comma"))),
         valueString = { value -> value?.joinToString(",") { it.toFile().absolutePath } },
         expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") },
     ),
@@ -355,8 +361,14 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xscript-resolver-environment",
         argument = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(listOf("key1=value1", "key2=value2")),
-        argumentRawValues = listOf(listOf("key1=value1", "key2=value2").joinToString(",")),
+        argumentValues = listOf(
+            listOf("key1=value1", "key2=value2"),
+            listOf("optional="),
+        ),
+        argumentRawValues = listOf(
+            listOf("key1=value1", "key2=value2").joinToString(","),
+            "optional=",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") },
     ),
@@ -384,8 +396,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
             }
         ),
         invalidRawValues = listOf(
-            "non-existent-mode",
-            "under-migration=warn",
+            "stict",
+            "@javax.annotation.Nullable:strct",
             "foo:bar:baz",
         ),
         valueString = { value ->
@@ -414,6 +426,11 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 NullabilityAnnotation("javax.annotation.Nonnull", NullabilityAnnotation.Mode.WARN),
             ).joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" }
         ),
+        invalidRawValues = listOf(
+            "@javax.annotation.Nullable:bogus",
+            "@javax.annotation.Nullable=ignore",
+            "@javax.annotation.Nullable"
+        ),
         valueString = { value -> value?.joinToString(",") { "${it.annotationFqName}:${it.mode.stringValue}" } },
         expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") },
     ),
@@ -434,6 +451,8 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 outputDir = testBaseDir.resolve("/path/to/snapshots")
             ).let { it.profilerPath.toFile().absolutePath + File.pathSeparator + it.command + File.pathSeparator + it.outputDir.toFile().absolutePath }
         ),
+        invalidRawValues = listOf("path/to/libasyncProfiler.so"),
+        runsNullableTest = true,
         valueString = { value ->
             value?.let { value.profilerPath.toFile().absolutePath + File.pathSeparator + value.command + File.pathSeparator + value.outputDir.toFile().absolutePath }
         },

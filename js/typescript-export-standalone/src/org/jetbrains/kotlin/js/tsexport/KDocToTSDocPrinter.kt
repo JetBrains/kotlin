@@ -3,15 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtNonPublicApi::class, KaNonPublicApi::class, KaContextParameterApi::class)
+@file:OptIn(KtNonPublicApi::class, KaNonPublicApi::class)
 
 package org.jetbrains.kotlin.js.tsexport
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.findKDoc
-import org.jetbrains.kotlin.analysis.api.components.memberScope
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
+import org.jetbrains.kotlin.analysis.api.kdoc.findKDoc
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -106,14 +105,14 @@ internal fun <T : ExportedDeclaration> T.addDocumentationAttributes(source: KaDe
                 ?.addDocumentationIfThereIsNoOne(this)
         }
 
-        for ((name, lines) in functionSections) {
+        for ([name, lines] in functionSections) {
             // TODO: Handle @JsSymbol
             members.findIsInstanceAnd<ExportedFunction> {
                 (it.name as? ExportedMemberName.Identifier)?.value == name
             }?.addDocumentationIfThereIsNoOne(lines)
         }
 
-        for ((name, lines) in parameterSections) {
+        for ([name, lines] in parameterSections) {
             for (member in members) {
                 if (member !is ExportedMember) continue
                 // TODO: Handle @JsSymbol

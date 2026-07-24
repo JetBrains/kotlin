@@ -9,12 +9,14 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
 import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmName
 
 internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
@@ -56,6 +58,10 @@ internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: empt
 
 internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()
 
+internal fun Array<String>.checkNoneContains(other: CharSequence) {
+    asList().checkNoneContains(other)
+}
+
 internal fun List<String>.checkNoneContains(other: CharSequence) {
     val invalidItem = firstOrNull { it.contains(other) }
     if (invalidItem != null) {
@@ -64,6 +70,19 @@ internal fun List<String>.checkNoneContains(other: CharSequence) {
                     "This character is currently not supported in this context. " +
                     "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
         )
+    }
+}
+
+internal fun checkCaseMatches(
+    restrictedArgViolations: MutableList<RestrictedArgViolation>,
+    argument: KProperty<*>,
+    stringValue: String,
+    passedValue: String
+) {
+    if (stringValue == passedValue) return
+    else {
+        val argumentName = argument.javaField?.getAnnotation(Argument::class.java)?.value!!
+        restrictedArgViolations.add(RestrictedArgViolation.Warning("Case mismatch for $argumentName: expected '$stringValue', got '$passedValue'. This will become an error in Kotlin compiler version 2.6.0"))
     }
 }
 

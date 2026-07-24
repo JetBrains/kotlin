@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -30,7 +31,9 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                 }
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toRegularClassSymbol(useSiteSession) ?: return null
-                val nullabilities = BooleanArray(type.typeArguments.size) { type.typeArguments[it].type?.isMarkedNullable == true }
+                val nullabilities = BooleanArray(firClass.typeParameterSymbols.size) { index ->
+                    type.typeArguments.getOrNull(index)?.type?.isMarkedNullable == true
+                }
                 ConeRawType.create(
                     type.withArguments(
                         firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession, nullabilities = nullabilities)

@@ -6,23 +6,17 @@
 package org.jetbrains.kotlin.incremental;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalK2JvmCompilerRunnerTestCustom extends AbstractIncrementalK2JvmCompilerRunnerTest {
+    @Nested
     @TestMetadata("jps/jps-plugin/testData/incremental/custom")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Custom extends AbstractIncrementalK2JvmCompilerRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-        }
-
+    public class Custom extends AbstractIncrementalK2JvmCompilerRunnerTest {
+        @Test
         @TestMetadata("companionWithSyntaxError")
         public void testCompanionWithSyntaxError() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/custom/companionWithSyntaxError/");

@@ -153,6 +153,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
                         "The target version of the generated JVM bytecode (1.8 and 9-24), with 1.8 as the default.",
                 KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_3_20 to
                         "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.",
+                KotlinReleaseVersion.v2_4_0..KotlinReleaseVersion.v2_4_20 to
+                        "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
             )
         )
 
@@ -224,6 +226,22 @@ to force diagnostics to be reported.""".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xvalhalla-support"
+        compilerName = "valhallaSupport"
+        description = ("Select which declarations are compiled to behave as experimental Project Valhalla value classes. " +
+                "Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a " +
+                "Valhalla-compatible JDK.").asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}".asReleaseDependent()
+        argumentType = ValhallaSupportModeType()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -529,9 +547,7 @@ The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{all|all-compatibility|disable}".asReleaseDependent()
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated. Use `-jvm-default` instead")
-        )
+        deprecatedMessage = "Use `-jvm-default` instead."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_50,
@@ -660,6 +676,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
                         """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
 The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+                KotlinReleaseVersion.v2_4_0..KotlinReleaseVersion.v2_4_20 to
+                        """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
             )
         )
         valueType = StringType.defaultNull
@@ -711,21 +731,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        name = "Xklib"
-        compilerName = "klibLibraries"
-        description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
-        argumentType = SearchPathType.defaultNull
-        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_0,
         )
     }
 
@@ -817,17 +822,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
     }
 
     compilerArgument {
-        name = "Xsuppress-deprecated-jvm-target-warning"
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xtype-enhancement-improvements-strict-mode"
         compilerName = "typeEnhancementImprovementsInStrictMode"
         description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
@@ -866,24 +860,6 @@ See KT-45671 for more details.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xlink-via-signatures"
-        description = """Link JVM IR symbols via signatures instead of descriptors.
-This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
-This option is deprecated and will be deleted in future versions.
-It has no effect when -language-version is 2.0 or higher.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_0_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xdebug"
         compilerName = "enableDebugMode"
         description = """Enable debug mode for compilation.
@@ -914,18 +890,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
-        )
-    }
-
-    compilerArgument {
-        name = "Xvalue-classes"
-        description = "Enable experimental value classes.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.JvmInlineMultiFieldValueClasses))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
     }
 
@@ -966,11 +930,21 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     compilerArgument {
         name = "Xwhen-expressions"
         compilerName = "whenExpressionsGeneration"
-        description = """Select the code generation scheme for type-checking 'when' expressions:
+        description = ReleaseDependent(
+            current = """Select the code generation scheme for type-checking 'when' expressions:
 -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-The default value is 'inline'.""".asReleaseDependent()
+The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.""",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_2_20..KotlinReleaseVersion.v2_4_0 to
+                        """Select the code generation scheme for type-checking 'when' expressions:
+-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+The default value is 'inline'.""",
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "{indy|inline}".asReleaseDependent()
         argumentType = WhenExpressionsModeType()
@@ -990,6 +964,29 @@ The default value is 'inline'.""".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-metadata-on-incremental-classpath"
+        description = """
+            Use fragment metadata found on the compilation classpath to perform incremental compilation.
+            This flag is intended for incremental compilation only and should not be used directly.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xjava-direct"
+        description = "Experimental direct java support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 }

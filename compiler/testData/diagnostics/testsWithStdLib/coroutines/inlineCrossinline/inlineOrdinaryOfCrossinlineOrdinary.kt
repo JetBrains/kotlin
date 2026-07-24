@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_COROUTINES
-// SKIP_TXT
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import helpers.*

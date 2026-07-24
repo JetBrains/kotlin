@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.staticScope
@@ -22,20 +22,27 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithErrorCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.prepareTypeForArgumentTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeFallbackIsImpossible
 import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.asCone
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.resolve.CollectionNames
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -66,9 +73,25 @@ fun runCollectionLiteralResolution(
                 atom,
             )
         }
-        else -> {
-            val preparedCall = prepareFunctionCallForFallback(originalExpression)
-            resolveCollectionLiteralToPreparedCall(preparedCall)
+        else -> with(outerCandidateContext.containingCandidate.csBuilder) {
+            val listOfNothingType = StandardClassIds.List.constructClassLikeType(arrayOf(StandardTypes.Nothing))
+            val substitutedType = atom.expectedType?.let {
+                buildCurrentSubstitutor().safeSubstitute(it).asCone()
+            }
+
+            if (substitutedType == null || isSubtypeConstraintCompatible(listOfNothingType, substitutedType)) {
+                val preparedCall = buildCollectionLiteralCallForFallback(originalExpression)
+                resolveCollectionLiteralToPreparedCall(preparedCall)
+            } else {
+                outerCandidateContext.checkerSink?.reportDiagnostic(
+                    UnsuccessfulCollectionLiteralArgument(CandidateApplicability.INAPPLICABLE)
+                )
+                val preparedExpectedType = prepareTypeForArgumentTypeMismatch(substitutedType)
+                resolveCollectionLiteralToErrorCall(
+                    ConeFallbackIsImpossible(preparedExpectedType, outerCandidateContext.containingCandidate),
+                    atom,
+                )
+            }
         }
     }
 
@@ -204,14 +227,6 @@ private fun postprocessCollectionLiteralCall(
     containingCandidate.system.replaceContentWith(candidateForCL.system.currentStorage())
 }
 
-context(context: ResolutionContext)
-private fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
-    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
-    val functionName = CollectionNames.Factories.LIST_OF
-
-    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
-}
-
 abstract class CollectionLiteralResolutionStrategy(protected val context: ResolutionContext) {
     protected val components: BodyResolveComponents get() = context.bodyResolveComponents
 
@@ -227,7 +242,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
     CollectionLiteralResolutionStrategy(context) {
 
     private fun FirCallableSymbol<*>.isVisible(receiver: FirResolvedQualifier): Boolean {
-        val staticQualifierClassForCallable = runIf(isStatic) { (receiver.symbol as? FirRegularClassSymbol)?.fir }
+        val staticQualifierClassForCallable = runIf(isStatic) { (receiver.qualifierSymbol as? FirRegularClassSymbol)?.fir }
         return context.session.visibilityChecker.isVisible(
             fir,
             context.session,
@@ -264,7 +279,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
             }
         }
 
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocksAndExtensions)) {
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocks)) {
             expectedClass.toImplicitResolvedQualifierReceiver(components, implicitReceiverSource).let {
                 if (expectedClass.staticScope(context.bodyResolveComponents)?.declaresVisibleOf(it) == true) {
                     return it
@@ -311,7 +326,7 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
         expectedClass: FirRegularClassSymbol?,
     ): FirFunctionCall? {
         if (expectedClass == null) return null
-        val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
+        val [packageName, functionName] = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
 
         return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
     }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 class KaBaseCompositeScope private constructor(
     private val subScopes: List<KaScope>,
     override val token: KaLifetimeToken,
-) : KaScope {
+) : KaBaseScope() {
 
     init {
         require(subScopes.size > 1) {
@@ -48,6 +48,19 @@ class KaBaseCompositeScope private constructor(
                 subScopes.forEach { yieldAll(it.declarations) }
             }
         }
+
+    override fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        sequence {
+            subScopes.forEach { yieldAll(it.declarations(nameFilter)) }
+        }
+    }
+
+    override fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        if (names.isEmpty()) return emptySequence()
+        sequence {
+            subScopes.forEach { yieldAll(it.declarations(names)) }
+        }
+    }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
@@ -92,6 +105,7 @@ class KaBaseCompositeScope private constructor(
         subScopes.any { it.mayContainName(name) }
     }
 
+    @KaImplementationDetail
     companion object {
         fun create(subScopes: List<KaScope>, token: KaLifetimeToken): KaScope =
             when (subScopes.size) {

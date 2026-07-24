@@ -31,6 +31,10 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
         println("@Test")
     }
 
+    private fun Printer.generateSmokeTestAnnotation() {
+        println("@SmokeTest")
+    }
+
     private fun Printer.generateNestedAnnotation(isNested: Boolean) {
         if (isNested) {
             println("@Nested")
@@ -82,7 +86,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
         suiteTestClassFqName: String,
         baseTestClassFqName: String,
         private val testClassModels: Collection<TestClassModel>,
-        private val mainClassName: String?
+        private val mainClassName: String?,
     ) {
         private val baseTestClassPackage: String = baseTestClassFqName.substringBeforeLast('.', "")
         private val baseTestClassName: String = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
@@ -185,6 +189,12 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
                     override val testKClass: Class<*>
                         get() = testClassModels.first().testKClass
+
+                    override val isSmokeTest: Boolean
+                        get() = testClassModels.any { it.isSmokeTest }
+
+                    override val smokeTestLimit: Int
+                        get() = testClassModels.maxOf { it.smokeTestLimit }
                 }
             }
 
@@ -245,6 +255,12 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
                     override val testKClass: Class<*>
                         get() = this@unfold.testKClass
+
+                    override val isSmokeTest: Boolean
+                        get() = this@unfold.isSmokeTest
+
+                    override val smokeTestLimit: Int
+                        get() = this@unfold.smokeTestLimit
                 }
             }
             return result
@@ -299,6 +315,9 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
         private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>) {
             if (methodModel.isTestMethod) {
+                if (methodModel.isSmokeTest) {
+                    p.generateSmokeTestAnnotation()
+                }
                 p.generateTestAnnotation()
                 p.generateTags(methodModel)
                 p.generateMetadata(methodModel)

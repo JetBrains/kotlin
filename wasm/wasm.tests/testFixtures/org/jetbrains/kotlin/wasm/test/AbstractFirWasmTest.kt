@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -40,7 +42,10 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmStackSwitchingRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmLocalVariableDebugRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
+import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
 fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
     configureFirHandlersStep {
@@ -49,6 +54,12 @@ fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
     useFailureSuppressors(
         ::FirMetaInfoDiffSuppressor
     )
+}
+
+fun TestConfigurationBuilder.configureCodegenIrHandlerSteps() {
+    configureIrHandlersStep {
+        commonIrHandlersForCodegenTest()
+    }
 }
 
 abstract class AbstractFirWasmTest(
@@ -85,6 +96,8 @@ abstract class AbstractFirWasmTest(
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
             }
+
+            configureIgnoredTestSuppressor()
         }
     }
 }
@@ -110,6 +123,23 @@ open class AbstractFirWasmJsCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
+    }
+}
+
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
+    testGroupOutputDirPrefix: String = "codegen/firBoxStackSwitching"
+) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmStackSwitchingRunner
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
+        }
     }
 }
 
@@ -164,6 +194,7 @@ open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 
@@ -174,6 +205,7 @@ open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 
@@ -183,9 +215,10 @@ open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
 )
 
 open class AbstractFirWasmJsSteppingTest(
+    pathToTestDir: String = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix: String = "debug/stepping/firBox"
 ) : AbstractFirWasmJsTest(
-    "compiler/testData/debug/stepping/",
+    pathToTestDir,
     testGroupOutputDirPrefix
 ) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
@@ -258,6 +291,14 @@ open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirW
     }
 }
 
+open class AbstractFirWasmJsLocalVariableTest : AbstractFirWasmJsSteppingTest(
+    pathToTestDir = "compiler/testData/debug/localVariables/",
+    testGroupOutputDirPrefix = "debug/localVariables/firBox"
+) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmLocalVariableDebugRunner
+}
+
 open class AbstractFirWasmWasiTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
@@ -288,6 +329,7 @@ open class AbstractFirWasmWasiCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 

@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Any|
-            private final? [ResolvedTo(TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+            private final? [ResolvedTo(TYPES)] [ContainingClassKey=A] backing field field: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }

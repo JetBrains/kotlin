@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: JavaClass.java
 public class JavaClass extends ContainerType<Container<JavaClass.Nested>> {
     public static class Nested extends Container<String> {}

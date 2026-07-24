@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.incremental.storage.InMemoryStorageInterface
-import org.jetbrains.kotlin.konan.file.use
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
@@ -220,7 +219,7 @@ class RecoverableCompilationTransaction(
     private fun revertChanges() {
         reporter.debug { "Reverting changes" }
         reporter.measure(RESTORE_OUTPUT_FROM_BACKUP) {
-            for ((originPath, relocatedPath) in fileRelocationRegistry) {
+            for ([originPath, relocatedPath] in fileRelocationRegistry) {
                 if (relocatedPath == null) {
                     if (Files.exists(originPath)) {
                         Files.delete(originPath)
@@ -286,5 +285,9 @@ class TransactionOutputsRegistrar(
     override fun addOutputFileGeneratedForPlugin(outputFile: File) {
         transaction.registerAddedOrChangedFile(outputFile.toPath())
         origin.addOutputFileGeneratedForPlugin(outputFile)
+    }
+
+    override fun addSourceFileGeneratedForPlugin(sourceFile: File) {
+        origin.addSourceFileGeneratedForPlugin(sourceFile)
     }
 }

@@ -61,12 +61,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val FRIEND_PATHS_DISABLED by key<Boolean>()
 
-    val METADATA_ONLY by key<Boolean>()
-
-    val DEVELOPER_MODE by key<Boolean>("Enable additional checkers.")
-
-    val GENERATE_COMMENTS_WITH_FILE_PATH by key<Boolean>("Generate comments with file path at the start of each file block.")
-
     val GENERATE_POLYFILLS by key<Boolean>("Generate polyfills for newest properties, methods and classes from ES6+.")
 
     val DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS by key<String>("Provide platform-specific args as a parameter of the main function.")
@@ -118,8 +112,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val MINIMIZED_MEMBER_NAMES by key<Boolean>()
     val CALL_MAIN by key<Boolean>("Specify whether the 'main' function should be called upon execution.", defaultValue = "true")
     val IC_CACHE_DIRECTORY by key<String>(throwOnNull = false)
-    val IC_CACHE_READ_ONLY by key<Boolean>()
-    val PRESERVE_IC_ORDER by key<Boolean>()
     val IC_FILES_TO_LOAD by key<Set<String>>(throwOnNull = false)
     val ADDITIONAL_EXPORTED_DECLARATION_NAMES by key<Set<FqName>>()
+
+    val EXPORT_UNTYPED_AS_UNKNOWN by key<Boolean>()
 }

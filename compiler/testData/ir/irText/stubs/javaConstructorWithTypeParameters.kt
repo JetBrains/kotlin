@@ -1,5 +1,9 @@
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: J1
+
+// K1 reflection bug: KT-86178
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: javaConstructorWithTypeParameters.kt
 
 fun test1() = J1<Int>()

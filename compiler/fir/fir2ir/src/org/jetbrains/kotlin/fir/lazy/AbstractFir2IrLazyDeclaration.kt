@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -51,8 +50,8 @@ interface AbstractFir2IrLazyDeclaration<F> :
             argumentMapping = buildAnnotationArgumentMapping {
                 source = annotation.argumentMapping.source
 
-                for ((name, expression) in annotation.argumentMapping.mapping) {
-                    val evaluatedExpression = evaluationResult[name]?.unwrapOr<FirExpression> {  }
+                for ([name, expression] in annotation.argumentMapping.mapping) {
+                    val evaluatedExpression = evaluationResult[name]?.resultOrNull<FirExpression>()
                     mapping[name] = evaluatedExpression ?: expression
                 }
             }

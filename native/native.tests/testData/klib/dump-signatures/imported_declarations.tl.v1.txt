@@ -1,0 +1,56 @@
+Module: foo
+// Declared signatures: 3
+foo/PublicClass|null[0]
+foo/publicFun|-6665644650067461598[0]
+foo/publicVal|7143563926198876043[0]
+
+// Imported signatures: 8
+kotlin.text/Appendable|null[0]
+kotlin.text/StringBuilder|null[0]
+kotlin/Any|null[0]
+kotlin/CharSequence|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+
+Module: bar
+// Declared signatures: 3
+bar/PublicClass|null[0]
+bar/publicFun|-6665644650067461598[0]
+bar/publicVal|7143563926198876043[0]
+
+// Imported signatures: 14
+kotlin.collections/Collection|null[0]
+kotlin.collections/HashSet|null[0]
+kotlin.collections/Iterator|null[0]
+kotlin.collections/List|null[0]
+kotlin.collections/MutableList|null[0]
+kotlin.collections/Set|null[0]
+kotlin.collections/hashSetOf|5315936298610247601[0]
+kotlin.collections/mutableListOf|3692098750581937977[0]
+kotlin/Any|null[0]
+kotlin/Array|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+
+Module: main
+// Declared signatures: 1
+imported/test|6620506149988718649[0]
+
+// Imported signatures: 13
+bar/publicVal|7143563926198876043[0]
+foo/PublicClass|null[0]
+foo/publicFun|-6665644650067461598[0]
+kotlin.collections/List|null[0]
+kotlin.collections/Map|null[0]
+kotlin.internal.ir/EQEQ|-3643276313225307517[0]
+kotlin/Any|null[0]
+kotlin/Boolean|null[0]
+kotlin/CharSequence|null[0]
+kotlin/Nothing|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+kotlin/toString|-1490169857175896877[0]

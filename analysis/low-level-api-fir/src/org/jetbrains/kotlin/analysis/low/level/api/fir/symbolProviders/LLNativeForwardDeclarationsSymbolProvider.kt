@@ -135,7 +135,7 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
  *
  * @return a new symbol provider or `null` if the module of the passed [session] cannot contain forward declarations
  */
-fun createNativeForwardDeclarationsSymbolProvider(session: LLFirSession): FirSymbolProvider? {
+internal fun createNativeForwardDeclarationsSymbolProvider(session: LLFirSession): FirSymbolProvider? {
     val ktModule = session.ktModule
     val project = ktModule.project
     val packageProvider = project.createForwardDeclarationsPackageProvider(ktModule)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 object BinaryArtifacts {
@@ -22,10 +21,6 @@ object BinaryArtifacts {
         abstract val outputFile: File
 
         open fun unwrap(): Js = this
-
-        open val dtsFile: File?
-            get() = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
-                ?: outputFile.withReplacedExtensionOrNull("_v5.mjs", ".d.ts")
     }
 
     class Native(val executable: File) : ResultingArtifact.Binary<Native>() {

@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:OptIn(KaImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
-import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
@@ -23,12 +21,17 @@ import org.jetbrains.kotlin.psi.KtElement
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.session.analyze' endpoint instead.",
+    replaceWith = ReplaceWith(
+        expression = "analyze(useSiteElement, action)",
+        imports = ["org.jetbrains.kotlin.analysis.api.session.analyze"],
+    ),
+)
 public inline fun <R> analyze(
     useSiteElement: KtElement,
     action: KaSession.() -> R
-): R =
-    KaSessionProvider.getInstance(useSiteElement.project)
-        .analyze(useSiteElement, action)
+): R = analyze(useSiteElement, action)
 
 /**
  * Executes the given [action] in an [analysis session][KaSession] context.
@@ -38,13 +41,17 @@ public inline fun <R> analyze(
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.session.analyze' endpoint instead.",
+    replaceWith = ReplaceWith(
+        expression = "analyze(useSiteModule, action)",
+        imports = ["org.jetbrains.kotlin.analysis.api.session.analyze"],
+    ),
+)
 public inline fun <R> analyze(
     useSiteModule: KaModule,
     crossinline action: KaSession.() -> R
-): R {
-    val sessionProvider = KaSessionProvider.getInstance(useSiteModule.project)
-    return sessionProvider.analyze(useSiteModule, action)
-}
+): R = analyze(useSiteModule, action)
 
 /**
  * Executes the given [action] in a [KaSession] context.
@@ -57,13 +64,15 @@ public inline fun <R> analyze(
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.session.analyzeCopy' endpoint instead.",
+    replaceWith = ReplaceWith(
+        expression = "analyzeCopy(useSiteElement, resolutionMode, action)",
+        imports = ["org.jetbrains.kotlin.analysis.api.session.analyzeCopy"],
+    ),
+)
 public inline fun <R> analyzeCopy(
     useSiteElement: KtElement,
     resolutionMode: KaDanglingFileResolutionMode,
     crossinline action: KaSession.() -> R,
-): R {
-    val containingFile = useSiteElement.containingKtFile
-    return withDanglingFileResolutionMode(containingFile, resolutionMode) {
-        analyze(containingFile, action)
-    }
-}
+): R = analyzeCopy(useSiteElement, resolutionMode, action)

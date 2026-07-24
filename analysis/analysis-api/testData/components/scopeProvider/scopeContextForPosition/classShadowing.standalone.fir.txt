@@ -1,0 +1,584 @@
+element: this@Foo
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: <local>/Foo
+    ownerSymbol = KaNamedClassSymbol:
+      Foo
+    label = Foo
+
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 6
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Foo
+    ownerSymbol = KaNamedClassSymbol:
+      /Foo
+    label = null
+
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 4
+      KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: FINAL
+        name: test
+        origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.equals
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Boolean
+        typeParameters: []
+        valueParameters: [
+          KaValueParameterSymbol:
+            anchorPsi: null
+            annotations: []
+            callableId: null
+            contextParameters: []
+            contextReceivers: []
+            hasDeclaredDefaultValue: false
+            hasDefaultValue: false
+            isActual: false
+            isCompanion: false
+            isCrossinline: false
+            isDelegated: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVal: true
+            isVararg: false
+            location: LOCAL
+            modality: FINAL
+            name: other
+            origin: LIBRARY
+            primaryConstructorProperty: null
+            psi: null
+            realPsi: null
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any?
+            typeParameters: []
+            visibility: PUBLIC
+        ]
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.hashCode
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.toString
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+    constructors: 1
+      KaConstructorSymbol:
+        anchorPsi: KtClass
+        annotations: []
+        callableId: null
+        containingClassId: null
+        contextParameters: []
+        contextReceivers: []
+        hasStableParameterNames: true
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isPrimary: true
+        location: CLASS
+        modality: FINAL
+        origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: <local>/Foo
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 1
+      KaNamedClassSymbol:
+        anchorPsi: KtClass
+        annotations: []
+        classId: null
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: LOCAL
+        modality: FINAL
+        name: Foo
+        origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: LOCAL
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 4
+      KaNamedFunctionSymbol:
+        anchorPsi: KtNamedFunction
+        annotations: []
+        callableId: /Foo.foo
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: FINAL
+        name: foo
+        origin: SOURCE
+        psi: KtNamedFunction
+        realPsi: KtNamedFunction
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.equals
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Boolean
+        typeParameters: []
+        valueParameters: [
+          KaValueParameterSymbol:
+            anchorPsi: null
+            annotations: []
+            callableId: null
+            contextParameters: []
+            contextReceivers: []
+            hasDeclaredDefaultValue: false
+            hasDefaultValue: false
+            isActual: false
+            isCompanion: false
+            isCrossinline: false
+            isDelegated: false
+            isExpect: false
+            isExtension: false
+            isExternal: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVal: true
+            isVararg: false
+            location: LOCAL
+            modality: FINAL
+            name: other
+            origin: LIBRARY
+            primaryConstructorProperty: null
+            psi: null
+            realPsi: null
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any?
+            typeParameters: []
+            visibility: PUBLIC
+        ]
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.hashCode
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        anchorPsi: null
+        annotations: []
+        callableId: kotlin/Any.toString
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+    constructors: 1
+      KaConstructorSymbol:
+        anchorPsi: KtClass
+        annotations: []
+        callableId: null
+        containingClassId: Foo
+        contextParameters: []
+        contextReceivers: []
+        hasStableParameterNames: true
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isPrimary: true
+        location: CLASS
+        modality: FINAL
+        origin: SOURCE_MEMBER_GENERATED
+        psi: KtClass
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Foo
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+
+  ExplicitSimpleImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 9
+    packages: 6
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(META-INF)
+        fqName: META-INF
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(META-INF)
+        realPsi: PsiPackage(META-INF)
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(java)
+        fqName: java
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(java)
+        realPsi: PsiPackage(java)
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(javax)
+        fqName: javax
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(javax)
+        realPsi: PsiPackage(javax)
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(kotlin)
+        fqName: kotlin
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(kotlin)
+        realPsi: PsiPackage(kotlin)
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(org)
+        fqName: org
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(org)
+        realPsi: PsiPackage(org)
+      KaPackageSymbol:
+        anchorPsi: PsiPackage(sun)
+        fqName: sun
+        location: TOP_LEVEL
+        origin: SOURCE
+        psi: PsiPackage(sun)
+        realPsi: PsiPackage(sun)
+    classifiers: 1
+      KaNamedClassSymbol:
+        anchorPsi: KtClass
+        annotations: []
+        classId: Foo
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: Foo
+        origin: SOURCE
+        psi: KtClass
+        realPsi: KtClass
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 10
+
+  DefaultSimpleImportingScope, index = 11
+
+  ExplicitStarImportingScope, index = 12
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 13

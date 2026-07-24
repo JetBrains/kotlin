@@ -9,8 +9,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
@@ -118,9 +120,10 @@ class CompileTimeFibonacciTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
-        val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+        val scriptDefinition = environment.configuration.getCompilerExtensions(ScriptDefinitionProvider).first().findDefinition(script)!!
 
         val scriptCompilationConfiguration = scriptDefinition.compilationConfiguration.with {
             jvm {
@@ -165,7 +168,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                     .collectedData
                     ?.get(ScriptCollectedData.collectedAnnotations)
                     ?.filterByAnnotationType<Fib>()
-                    ?.mapSuccess { (fib, location) ->
+                    ?.mapSuccess { (val fib = annotation, val location) ->
                         fib.number.takeIf { it > 0 }?.asSuccess()
                             ?: makeFailureResult(
                                 message = "Fibonacci of non-positive numbers like ${fib.number} are not supported",

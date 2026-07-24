@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 interface KtElementInstruction : Instruction {
     val element: KtElement
 }

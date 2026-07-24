@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.ownTypeArguments
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.isSyntheticSamConstructor
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -28,19 +29,24 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
         if (explicitReceiver is FirResolvedQualifier) {
             val qualifierWithTypeArguments = explicitReceiver.lastQualifierPartWithTypeArguments() ?: return
 
-            if (explicitReceiver.symbol == null
+            if (explicitReceiver.qualifierSymbol == null
                 // if it is enabled, we could not create a package qualifier receiver with type arguments in the first place
                 && LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier.isDisabled()
             ) {
                 reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages")
             }
 
-            val symbol = expression.toResolvedCallableSymbol()
+            val symbol = expression.toResolvedCallableSymbol() ?: return
 
-            if (explicitReceiver.symbol != null && symbol?.isStatic == true && expression !is FirCallableReferenceAccess) {
+            if (
+                explicitReceiver.qualifierSymbol != null &&
+                // normal constructors are reported in FirGenericQualifierOnConstructorCallChecker
+                (symbol.isStatic || symbol.isSyntheticSamConstructor()) &&
+                expression !is FirCallableReferenceAccess
+            ) {
                 val diagnostic =
                     // Skip deprecation phase for companion block members/extensions but not static enum members
-                    if (symbol.requiresCompanionBlockOrExtensionLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
+                    if (symbol.requiresCompanionBlockLf() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
                     } else {
                         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING

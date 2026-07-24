@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import java.nio.`file`.Path
+import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.DeprecationLevel
@@ -12,6 +13,7 @@ import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
@@ -41,7 +43,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean
 
@@ -84,9 +86,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+
+    /**
+     * Constructs a new immutable [CommonCompilerArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    override fun build(): CommonCompilerArguments
   }
 
   public companion object {
@@ -175,6 +184,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ANNOTATION_TARGET_ALL", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Enable callable references to contextual declarations.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_CALLABLE_REFERENCES_TO_CONTEXTUAL: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CALLABLE_REFERENCES_TO_CONTEXTUAL", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Check pre- and postconditions of IR lowering phases.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -193,6 +212,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_COLLECTION_LITERALS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_COLLECTION_LITERALS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
+     * Enables companion blocks.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_COMPANION_BLOCKS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_COMPANION_BLOCKS", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Enables companion blocks and extensions.
@@ -228,9 +257,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental context receivers.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_CONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CONTEXT_RECEIVERS", KotlinReleaseVersion(1, 6, 20))
 
@@ -258,6 +290,8 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable more detailed performance statistics (Experimental).
      * For Native, the performance report includes execution time and lines processed per second for every individual lowering.
      * For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+     * Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+     *   machines, so use this mode with caution.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
@@ -275,6 +309,17 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_DISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN", KotlinReleaseVersion(1, 3, 70))
+
+    /**
+     * A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+     * Only has effect if '-Xverify-ir' is not 'none'.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DISABLE_IR_CHECKERS: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_DISABLE_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Disable backend phases.
@@ -339,6 +384,37 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DUMP_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
+     * Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EAGER_LAMBDA_ANALYSIS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EAGER_LAMBDA_ANALYSIS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
+     * A list of IR checkers to enable, specified by a simple name of the checker class.
+     * It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ENABLE_ADDITIONAL_IR_CHECKERS: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
+     * Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ESCAPING_FUNCTIONS: CommonCompilerArgument<List<String>> =
+        CommonCompilerArgument("X_ESCAPING_FUNCTIONS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
      * Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
      *
@@ -379,6 +455,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
+     * Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FIR_AGGRESSIVE_PRUNING: CommonCompilerArgument<Boolean?> =
+        CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Enable header compilation mode.
@@ -692,12 +778,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Suppress error about API version greater than language version.
-     * Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.0.0.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
         CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR", KotlinReleaseVersion(2, 0, 0))
@@ -713,12 +803,15 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS", KotlinReleaseVersion(1, 5, 0))
 
     /**
-     * Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+     * Suppress specified warning module-wide.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 
@@ -747,12 +840,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Compile using frontend IR internal incremental compilation.
-     * Warning: This feature is not yet production-ready.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_IC", KotlinReleaseVersion(1, 7, 0))
 
@@ -760,9 +855,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Compile using the LightTree parser with the frontend IR.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_LT", KotlinReleaseVersion(1, 7, 0))
 
@@ -790,9 +888,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_VERIFY_IR_NESTED_OFFSETS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_VERIFY_IR_NESTED_OFFSETS", KotlinReleaseVersion(2, 3, 20))
 
@@ -800,9 +901,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_VERIFY_IR_VISIBILITY", KotlinReleaseVersion(2, 0, 20))
 

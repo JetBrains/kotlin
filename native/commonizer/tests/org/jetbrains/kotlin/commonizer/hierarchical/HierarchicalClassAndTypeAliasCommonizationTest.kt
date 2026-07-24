@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test commonization of typeAlias and class`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -20,6 +22,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized("(a, b)", "expect class X")
     }
 
+    @Test
     fun `test commonization of class and typeAlias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -30,6 +33,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized("(a, b)", "expect class X")
     }
 
+    @Test
     fun `test commonization of typeAlias and class hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -53,6 +57,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized("((a, b), (c, d))", "expect class X")
     }
 
+    @Test
     fun `test following typeAliases`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -87,6 +92,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test following nested typeAliases`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -122,6 +128,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test follow typeAlias on both platforms`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -153,6 +160,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test follow exact same typeAlias on both platforms`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -185,6 +193,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test aliased class with companion`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -209,6 +218,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized("(a, b)", """expect class X()""")
     }
 
+    @Test
     fun `test typeAlias with nullability`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -230,6 +240,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         result.assertCommonized("(a, b)", """expect class X""")
     }
 
+    @Test
     fun `test typeAlias chain with nullability`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -259,6 +270,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test typeAlias chain with nullability 2`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -288,6 +300,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test return types`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -316,6 +329,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test function parameters`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -344,6 +358,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test parameterized return type`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -402,6 +417,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test boxed parameter in function`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -433,6 +449,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test boxed parameter in function - TA expansion not commonized`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -465,6 +482,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test supertype from dependency`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -493,6 +511,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test supertype from sources`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -521,6 +540,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test typealias to numbers`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -592,6 +612,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test supertypes being retained`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -618,6 +639,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test supertypes being retained from dependencies`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -646,6 +668,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test 'crossed' type aliases - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -688,6 +711,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
         )
     }
 
+    @Test
     fun `test 'crossed' type aliases - 1`() {
         val result = commonize {
             outputTarget("(a, b)")

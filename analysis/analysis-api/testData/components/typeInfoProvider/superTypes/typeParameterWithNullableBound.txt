@@ -1,0 +1,18 @@
+[type]
+T
+
+[direct super types]
+kotlin.Number?
+
+[approximated direct super types]
+kotlin.Number?
+
+[all super types]
+kotlin.Number?
+kotlin.Any?
+java.io.Serializable?
+
+[approximated all super types]
+kotlin.Number?
+kotlin.Any?
+java.io.Serializable?

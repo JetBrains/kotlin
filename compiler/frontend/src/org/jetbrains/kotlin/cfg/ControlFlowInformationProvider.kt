@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.psi.KtElement
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 interface ControlFlowInformationProvider {
     fun checkForLocalClassOrObjectMode()
 

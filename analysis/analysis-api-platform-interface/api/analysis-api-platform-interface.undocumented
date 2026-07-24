@@ -52,9 +52,12 @@ org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventK
 org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
 org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION
 org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.MODULE_STATE_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerByEventFactoryBase.eventLibraryModificationTracker
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerByEventFactoryBase.eventSourceModificationTracker
 org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.modification.isGlobalLevel
 org.jetbrains.kotlin.analysis.api.platform.modification.isModuleLevel
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCachingPackageProviderFactory.createNewPackageProvider(GlobalSearchScope)
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider.Companion.create(List<KotlinPackageProvider>)
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider.Companion.factory
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinEmptyPackageProvider
@@ -89,12 +92,15 @@ org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchSc
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy.Companion.getMergeStrategies(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase.computeTransitiveDependents(KaModule)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleInformationProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getModule(Project, PsiElement, KaModule?)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.getImplementingModules(KaModule)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase.computeSpecialModule(PsiFile)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase.getNotUnderContentRootModule(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported()
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString(Int)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule

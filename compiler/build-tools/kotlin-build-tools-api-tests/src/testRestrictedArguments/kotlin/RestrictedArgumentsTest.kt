@@ -6,21 +6,23 @@
 package org.jetbrains.kotlin.buildtools.tests.restricted
 
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.absolutePathString
@@ -47,7 +49,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     private fun testBuildFile(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String, additionalArg: String? = null) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             val moduleFile = workingDirectory.resolve("some/path.xml")
             module.checkRestrictedArgument(
                 "-Xbuild-file", "-module",
@@ -67,7 +69,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-d emits a warning")
     fun testDestinationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-d",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -85,10 +87,44 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("-d reports during execution on metadata")
+    fun testDestinationReportsDuringExecutionOnMetadata(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        metadataProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArgument(
+                "-d",
+                errorSince = KotlinReleaseVersion.v2_5_0,
+                configuredArgs = listOf("-d", "output/dir")
+            ) {
+                assertLogContainsLines(
+                    LogLevel.WARN,
+                    "Argument '-d' is not supported in the Build Tools API. " +
+                            "The destination is configured via the ${KotlinMetadataPlatformToolchain::metadataKlibCompilationOperationBuilder::parameters.get()[2].name} " +
+                            "parameter of ${KotlinMetadataPlatformToolchain::metadataKlibCompilationOperationBuilder.name}. " +
+                            "This warning will become an error starting from Kotlin 2.5.0."
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("-Xlegacy-metadata-jar-k2 reports restricted usage")
+    fun testLegacyMetadataJar(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        metadataProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArgument(
+                "-Xlegacy-metadata-jar-k2",
+                errorSince = KotlinReleaseVersion.v2_6_0,
+                configuredArgs = listOf("-Xlegacy-metadata-jar-k2")
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-include-runtime emits a warning")
     fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-include-runtime",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -111,7 +147,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-expression", "-e",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -127,7 +163,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-Xrepl emits a warning")
     fun testXReplWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-Xrepl",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -143,7 +179,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-Xenable-incremental-compilation emits a warning")
     fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-Xenable-incremental-compilation",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -163,7 +199,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Multiple restricted arguments emit warnings for each")
     fun testMultipleRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 listOf("-include-runtime") to KotlinReleaseVersion.v2_5_0,
                 listOf("-Xenable-incremental-compilation") to KotlinReleaseVersion.v2_5_0,
@@ -176,7 +212,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Non-restricted arguments do not produce warnings about unsupported arguments")
     fun testNonRestrictedArgumentsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
             }) {
@@ -190,12 +226,31 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Dropped argument does not produce a warning about unsupported arguments")
     fun testDroppedArgumentNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xallow-kotlin-package"))
             }) {
                 assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*is not supported in the Build Tools API.*"))
                 assertLogContainsPatterns(LogLevel.DEBUG, "Kotlin compiler args: .* -Xallow-kotlin-package .*".toRegex())
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Wrong case for enum argument value emits a warning")
+    fun testWrongCaseForEnumValue(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+
+            module.compile(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(listOf("-Xassertions=jVm"))
+                @OptIn(ExperimentalCompilerArgument::class)
+                assertEquals(it.compilerArguments[X_ASSERTIONS], AssertionsMode.JVM)
+            }) {
+                assertLogContainsLines(
+                    LogLevel.WARN,
+                    "Case mismatch for -Xassertions: expected 'jvm', got 'jVm'. This will become an error in Kotlin compiler version 2.6.0"
+                )
             }
         }
     }
@@ -211,20 +266,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         )
     }
 
-    private fun assertRestrictedArgError(
-        argumentAliases: List<String>,
-        exception: CompilerArgumentsParseException,
-    ) {
-        val aliasesAsString = argumentAliases.joinToString(separator = "/") { "'$it'" }
-        assert(
-            exception.message?.contains("$aliasesAsString is not supported in the Build Tools API.") == true &&
-                    exception.message?.contains("will become an error") == false
-        ) {
-            "CompilerArgumentsParseException should be thrown for $aliasesAsString with expected message, but it was not: ${exception.message}"
-        }
-    }
-
-    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArgument(
+    private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArgument(
         vararg argumentAliases: String,
         errorSince: KotlinReleaseVersion,
         configuredArgs: List<String>,
@@ -237,14 +279,14 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions = additionalCompilationAssertions,
     )
 
-    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArguments(
+    private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArguments(
         vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
         configuredArgs: List<String>,
         expectedCompilationError: Boolean = false,
         additionalCompilationAssertions: CompilationOutcome.() -> Unit = {},
     ) {
         val currentVersion = KotlinToolingVersion(project.kotlinToolchain.getCompilerVersion())
-        val firstErrorSince = restrictedArgs.first().second
+        val firstErrorSince = restrictedArgs.minOf { it.second }
         val isWarning = currentVersion < KotlinToolingVersion(firstErrorSince.major, firstErrorSince.minor, firstErrorSince.patch, "dev-1")
 
         if (isWarning) {
@@ -254,26 +296,31 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
                 if (expectedCompilationError) {
                     expectFail()
                 }
-                for ((aliases, errorSince) in restrictedArgs) {
+                for ([aliases, errorSince] in restrictedArgs) {
                     assertRestrictedArgWarning(aliases, errorSince)
                 }
                 additionalCompilationAssertions()
             }
         } else {
             // Error args require separate compilations because the first error throws an exception
-            for ((aliases, _) in restrictedArgs) {
-                val compilationBody = {
-                    compile(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(configuredArgs)
-                    }) {
-                        if (expectedCompilationError) {
-                            expectFail()
-                        }
-                        additionalCompilationAssertions()
+
+            val compilationBody = {
+                compile(compilationConfigAction = {
+                    it.compilerArguments.applyArgumentStrings(configuredArgs)
+                }) {
+                    if (expectedCompilationError) {
+                        expectFail()
                     }
+                    additionalCompilationAssertions()
                 }
-                val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
-                assertRestrictedArgError(aliases, exception)
+            }
+            val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
+            assertTrue(
+                restrictedArgs.flatMap { it.first }.any { alias ->
+                    exception.message?.contains("'$alias' is not supported in the Build Tools API.") == true
+                }
+            ) {
+                "Exception was: \"${exception.message}\" and did not contain any of ${restrictedArgs.flatMap { it.first }.joinToString() }"
             }
         }
     }

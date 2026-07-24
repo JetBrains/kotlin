@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.psi.utils.OperatorTokens
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 /**
  * Represents an operator symbol in an expression.
@@ -25,6 +26,12 @@ import org.jetbrains.kotlin.psi.utils.OperatorTokens
  * ```
  *
  * ### Analysis API Resolver Notes:
+ *
+ * #### Note 1:
+ *
+ * The result of the call resolution is exactly the same as if it was called on the parent element.
+ *
+ * #### Note 2:
  *
  * **The resolver targets symbols contributed by the operation reference itself.**
  *
@@ -63,7 +70,8 @@ import org.jetbrains.kotlin.psi.utils.OperatorTokens
  * @see KtBinaryExpression
  * @see KtUnaryExpression
  */
-class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
+@OptIn(KtExperimentalApi::class)
+class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node), KtResolvableCall {
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
             addAll(KtTokenSets.POSTFIX_OPERATIONS.types)

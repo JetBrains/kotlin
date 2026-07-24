@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
-import org.jetbrains.kotlin.test.util.KtTestUtil.getTestDataFileLocatedInCompilerTestData
-import org.junit.Assert
+import org.junit.jupiter.api.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -77,15 +77,16 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                                 messageCollector: MessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
         val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
                                                                   DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
-        assertNotNull("failed to connect daemon", daemon)
+        assertNotNull(daemon) { "failed to connect daemon" }
 
-        daemon?.registerClient(clientAliveFile.absolutePath)
+        daemon.registerClient(clientAliveFile.absolutePath)
 
         val outputs = arrayListOf<OutputMessageUtil.Output>()
 
-        val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, messageCollector,
-                                                { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
-                                                reportSeverity = ReportSeverity.DEBUG)
+        val code = KotlinCompilerClient.compile(
+            daemon, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, messageCollector,
+            { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
+            reportSeverity = ReportSeverity.DEBUG)
         return code to outputs
     }
 
@@ -110,24 +111,26 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         }
     }
 
+    @Test
     fun testHelloAppLocal() {
         val messageCollector = MessageCollectorImpl()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-        val (code, outputs) = compileLocally(
+        val [code, outputs] = compileLocally(
             messageCollector, K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath,
             K2JVMCompilerArguments::destination.cliArgument, jar, K2JVMCompilerArguments::reportOutputFiles.cliArgument
         )
         if (code != 0) {
-            Assert.fail("Result code: $code\n${messageCollector.messages.joinToString("\n")}")
+            fail("Result code: $code\n${messageCollector.messages.joinToString("\n")}")
         }
-        Assert.assertTrue(outputs.isNotEmpty())
-        Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
+        Assertions.assertTrue(outputs.isNotEmpty())
+        Assertions.assertEquals(jar, outputs.first().outputFile?.absolutePath)
         run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
     }
 
-    fun testHelloApp() {
-        withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+    @Test
+    fun testHelloApp(testInfo: TestInfo) {
+        withFlagFile(getTestName(testInfo), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(testInfo)).absolutePath,
                                               verbose = true,
                                               reportPerf = true)
 
@@ -138,7 +141,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
 
             try {
-                val (code, outputs) = compileOnDaemon(
+                val [code, outputs] = compileOnDaemon(
                     flagFile,
                     compilerId,
                     daemonJVMOptions,
@@ -147,9 +150,9 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     K2JVMCompilerArguments::includeRuntime.cliArgument,
                     File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar, K2JVMCompilerArguments::reportOutputFiles.cliArgument
                 )
-                Assert.assertEquals(0, code)
-                Assert.assertTrue(outputs.isNotEmpty())
-                Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
+                Assertions.assertEquals(0, code)
+                Assertions.assertTrue(outputs.isNotEmpty())
+                Assertions.assertEquals(jar, outputs.first().outputFile?.absolutePath)
                 run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
             }
             finally {
@@ -160,26 +163,29 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         }
     }
 
+    @Test
     fun testSimpleScriptLocal() {
         val messageCollector = MessageCollectorImpl()
-        val (code, outputs) = compileLocally(
+        val [code, outputs] = compileLocally(
             messageCollector,
             File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
             K2JVMCompilerArguments::destination.cliArgument,
             tmpdir.absolutePath,
             K2JVMCompilerArguments::reportOutputFiles.cliArgument,
+            @Suppress("DEPRECATION")
             K2JVMCompilerArguments::useFirLT.cliArgument("false"),
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
         )
-        Assert.assertEquals(0, code)
-        Assert.assertTrue(outputs.isNotEmpty())
-        Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
+        Assertions.assertEquals(0, code)
+        Assertions.assertTrue(outputs.isNotEmpty())
+        Assertions.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
         runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", listOf(tmpdir), "hi", "there")
     }
 
-    fun testSimpleScript() {
-        withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+    @Test
+    fun testSimpleScript(testInfo: TestInfo) {
+        withFlagFile(getTestName(testInfo), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(testInfo)).absolutePath,
                                               verbose = true,
                                               reportPerf = true)
 
@@ -188,7 +194,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val daemonJVMOptions = configureDaemonJVMOptions("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             try {
-                val (code, outputs) = compileOnDaemon(
+                val [code, outputs] = compileOnDaemon(
                     flagFile,
                     compilerId,
                     daemonJVMOptions,
@@ -196,14 +202,15 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     MessageCollectorImpl(),
                     File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
                     K2JVMCompilerArguments::reportOutputFiles.cliArgument,
+                    @Suppress("DEPRECATION")
                     K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                     K2JVMCompilerArguments::destination.cliArgument,
                     tmpdir.absolutePath
                 )
-                Assert.assertEquals(0, code)
-                Assert.assertTrue(outputs.isNotEmpty())
-                Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
+                Assertions.assertEquals(0, code)
+                Assertions.assertTrue(outputs.isNotEmpty())
+                Assertions.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
                 runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", listOf(tmpdir), "hi", "there")
             }
             finally {

@@ -38,7 +38,7 @@ object ArgumentsConverterGenerator {
         printGeneratedMessage()
 
         generateDispatchingConverter(convertersMap)
-        for ((type, converter) in convertersMap) {
+        for ([type, converter] in convertersMap) {
             generateSingleConverter(type, converter)
         }
     }

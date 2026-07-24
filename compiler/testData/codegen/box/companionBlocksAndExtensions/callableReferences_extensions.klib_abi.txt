@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+final companion var /mutableExt // /mutableExt|#companion@C{}mutableExt[0]
+    final companion fun (/C).<get-mutableExt>(): kotlin/String // /mutableExt.<get-mutableExt>|<get-mutableExt>#companion@C(){}[0]
+    final companion fun (/C).<set-mutableExt>(kotlin/String) // /mutableExt.<set-mutableExt>|<set-mutableExt>#companion@C(kotlin.String){}[0]
+final companion val /readonlyExt // /readonlyExt|#companion@C{}readonlyExt[0]
+    final companion fun (/C).<get-readonlyExt>(): kotlin/String // /readonlyExt.<get-readonlyExt>|<get-readonlyExt>#companion@C(){}[0]
+final companion fun (/C)./barExt(kotlin/String): kotlin/String // /barExt|barExt#companion@C(kotlin.String){}[0]
+final companion fun (/C)./bazExt(kotlin/String): kotlin/String // /bazExt|bazExt#companion@C(kotlin.String){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final companion fun (/C)./fooExt(): kotlin/String // /fooExt|fooExt#companion@C(){}[0]
+final inline fun /inline(kotlin/Function0<kotlin/String>): kotlin/String // /inline|inline(kotlin.Function0<kotlin.String>){}[0]
+final inline fun /inline(kotlin/Function1<kotlin/String, kotlin/String>): kotlin/String // /inline|inline(kotlin.Function1<kotlin.String,kotlin.String>){}[0]

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi.synthetics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
  * This list may grow in the future, adding more constructor parameters.
  * This class has its own synthetic declaration inside.
  */
+@K1Deprecation
 class SyntheticClassOrObjectDescriptor(
         c: LazyClassContext,
         parentClassOrObject: KtPureClassOrObject,
@@ -182,6 +184,7 @@ class SyntheticClassOrObjectDescriptor(
     }
 }
 
+@K1Deprecation
 fun KtPureElement.findClassDescriptor(bindingContext: BindingContext): ClassDescriptor = when (this) {
     is PsiElement -> BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, this)
     is SyntheticClassOrObjectDescriptor.SyntheticDeclaration -> descriptor()

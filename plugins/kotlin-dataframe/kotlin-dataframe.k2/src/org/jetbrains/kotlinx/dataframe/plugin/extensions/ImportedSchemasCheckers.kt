@@ -6,8 +6,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
-import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics.INVALID_SUPERTYPE
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -46,7 +43,7 @@ private object ImportedSchemaCompanionObjectChecker : FirRegularClassChecker(mpp
                 reporter.reportOn(
                     declaration.source,
                     ImportedSchemasDiagnostics.CONFLICTING_COMPANION_OBJECT_DECLARATION,
-                    "Declaration conflicts with plugin-generated companion object. Add `: ${Names.DATAFRAME_PROVIDER.shortClassName}<${className}>` supertype to resolve the conflict, or remove companion object."
+                    className.toString()
                 )
             } else {
                 declaration.symbol.resolvedSuperTypes.forEach {
@@ -55,25 +52,12 @@ private object ImportedSchemaCompanionObjectChecker : FirRegularClassChecker(mpp
                         reporter.reportOn(
                             declaration.source,
                             INVALID_SUPERTYPE,
-                            "Expected type argument of ${Names.DATAFRAME_PROVIDER.shortClassName}: ${className}. Actual: $argument"
+                            className.toString(),
+                            argument.toString()
                         )
                     }
                 }
             }
-        }
-    }
-}
-
-object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
-    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
-    val INVALID_SUPERTYPE by error1<KtElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
-
-    override fun getRendererFactory(): BaseDiagnosticRendererFactory = ImportedSchemaDiagnosticRenderers
-
-    private object ImportedSchemaDiagnosticRenderers : BaseDiagnosticRendererFactory() {
-        override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Imported Schemas") {
-            it.put(CONFLICTING_COMPANION_OBJECT_DECLARATION, "{0}", TO_STRING)
-            it.put(INVALID_SUPERTYPE, "{0}", TO_STRING)
         }
     }
 }

@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
+@K1Deprecation
 class TypeApproximator(
     builtIns: KotlinBuiltIns,
     languageVersionSettings: LanguageVersionSettings,

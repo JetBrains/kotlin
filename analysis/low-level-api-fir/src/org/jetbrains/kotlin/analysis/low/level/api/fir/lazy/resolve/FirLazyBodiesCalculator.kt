@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -115,7 +115,7 @@ private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
     val copyParameters = copy.valueParameters
     require(targetParameters.size == copyParameters.size)
 
-    for ((valueParameter, newValueParameter) in targetParameters.zip(copyParameters)) {
+    for ([valueParameter, newValueParameter] in targetParameters.zip(copyParameters)) {
         if (valueParameter.defaultValue is FirLazyExpression) {
             valueParameter.replaceDefaultValue(newValueParameter.defaultValue)
         }
@@ -160,7 +160,7 @@ private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirCon
             require(targetCall.delegatedConstructorCalls.size == copyCall.delegatedConstructorCalls.size)
 
             val newCalls = targetCall.delegatedConstructorCalls.zip(copyCall.delegatedConstructorCalls)
-                .map { (target, copy) -> target.takeUnless { it is FirLazyDelegatedConstructorCall } ?: copy }
+                .map { [target, copy] -> target.takeUnless { it is FirLazyDelegatedConstructorCall } ?: copy }
 
             targetCall.replaceDelegatedConstructorCalls(newCalls)
         }
@@ -266,7 +266,7 @@ private fun replacePropertyCopies(
         withFirEntry("newFunction", newFunction)
     }
 
-    copies.zip(newProperties).forEach { (copy, newProperty) ->
+    copies.zip(newProperties).forEach { [copy, newProperty] ->
         copy.setValue(newProperty)
     }
 }
@@ -619,7 +619,7 @@ private fun rebindPropertyRef(
             source = expression.source
             variance = Variance.INVARIANT
             typeRef = buildResolvedTypeRef {
-                coneType = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                coneType = ConeTypeParameterType(it.symbol.toLookupTag(), false)
             }
         }
     })
@@ -863,7 +863,7 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
     data: PersistentList<FirDeclaration>,
 ): E {
     if (element is FirFile || element is FirScript || element is FirRegularClass || element is FirReplSnippet) {
-        val newList = data.add(element as FirDeclaration)
+        val newList = data.adding(element as FirDeclaration)
         element.transformChildren(this, newList)
     }
 

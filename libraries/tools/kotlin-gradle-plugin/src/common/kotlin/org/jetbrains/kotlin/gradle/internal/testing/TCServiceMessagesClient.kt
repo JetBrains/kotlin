@@ -37,13 +37,23 @@ internal open class TCServiceMessagesClient(
 ) : ServiceMessageParserCallback {
     var afterMessage = false
 
-    inline fun <T> root(actions: () -> T): T {
+    inline fun <T> root(actions: RootNode.() -> T): T {
         val tsStart = System.currentTimeMillis()
         val root = RootNode()
         open(tsStart, root)
-        val result = actions()
+        val result = root.actions()
         ensureNodesClosed(root)
         return result
+    }
+
+    fun <T> GroupNode.suite(id: String, actions: SuiteNode.() -> T): T {
+        val tsStart = System.currentTimeMillis()
+        val group = SuiteNode(this,id)
+        open(tsStart, group)
+        return group.actions().also {
+            val tsEnd = System.currentTimeMillis()
+            close(tsEnd, id)
+        }
     }
 
     override fun parseException(e: ParseException, text: String) {
@@ -506,6 +516,21 @@ internal open class TCServiceMessagesClient(
     private fun pop() = leaf!!.also { leaf = it.parent }
 
     fun ensureNodesClosed(root: RootNode? = null, cause: Throwable? = null, throwError: Boolean = true): Error? {
+        fun createTestProcessCrashedError(currentTest: TestNode?, output: String): Error {
+            return Error(
+                buildString {
+                    append("Test running process exited unexpectedly.\n")
+                    if (currentTest != null) {
+                        append("Current test: ${currentTest.cleanName}\n")
+                    }
+                    if (output.isNotBlank()) {
+                        append("Process output:\n $output")
+                    }
+                },
+                cause
+            )
+        }
+
         val ts = System.currentTimeMillis()
 
         when (leaf) {
@@ -513,43 +538,57 @@ internal open class TCServiceMessagesClient(
             root -> close(ts, leaf!!.localId)
             else -> {
                 val output = StringBuilder()
-                var currentTest: TestNode? = null
+                var currentError: Error? = null
 
                 while (leaf != null) {
                     val currentLeaf = leaf!!
 
                     if (currentLeaf is TestNode) {
-                        currentTest = currentLeaf
                         output.append(currentLeaf.allOutput)
-                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?), false)
+                        currentError = createTestProcessCrashedError(currentLeaf, output.toString())
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, currentError), false)
                     }
 
                     close(ts, currentLeaf.localId)
                 }
 
-                @Suppress("ThrowableNotThrown")
-                val error = Error(
-                    buildString {
-                        append("Test running process exited unexpectedly.\n")
-                        if (currentTest != null) {
-                            append("Current test: ${currentTest.cleanName}\n")
-                        }
-                        if (output.toString().isNotBlank()) {
-                            append("Process output:\n $output")
-                        }
-                    },
-                    cause
-                )
+                if (currentError == null) {
+                    currentError = createTestProcessCrashedError(currentTest = null, output.toString())
+                }
 
                 if (throwError) {
-                    throw error
+                    throw currentError
                 } else {
-                    return error
+                    return currentError
                 }
             }
         }
 
         return null
+    }
+
+    /**
+     * Should be called in cases when a failing test brings down the entire suite (e.g. when a single JS times out which leads to the
+     * whole web page being torn down).
+     *
+     * @param failingTestCause The exception representing the original test failure. Will be attached to every [TestNode] that sits on top
+     * of the [SuiteNode] in the stack.
+     */
+    fun closeSuiteWithFailingTestCause(suiteNode: SuiteNode, ts: Long, failingTestCause: Throwable) {
+        var attachedFailureToTestNode = false
+        do {
+            val currentLeaf = leaf ?: return
+            if (currentLeaf is TestNode) {
+                currentLeaf.failure(TestFailed(currentLeaf.cleanName, failingTestCause), false)
+                attachedFailureToTestNode = true
+            }
+            close(ts, currentLeaf.localId)
+        } while (currentLeaf.localId != suiteNode.localId)
+        // If there are no TestNodes on the stack, we have to re-throw the throwable, as otherwise we'd be swallowing it and incorrectly
+        // reporting the test suite as passing.
+        if (!attachedFailureToTestNode) {
+            throw failingTestCause
+        }
     }
 
     private fun requireLeaf() = leaf ?: error("test out of group")

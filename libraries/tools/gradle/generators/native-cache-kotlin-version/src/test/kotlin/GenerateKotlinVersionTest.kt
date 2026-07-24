@@ -84,7 +84,7 @@ class GenerateKotlinVersionTest {
             Triple(2, 1, 0),
             Triple(2, 1, 255)
         )
-        val (_, actualContent) = NativeCacheKotlinVersionsGenerator.generate(versions, true)
+        val [_, actualContent] = NativeCacheKotlinVersionsGenerator.generate(versions, true)
 
         // Use a multiline string to assert the exact file content is generated correctly.
         val expectedContent = """
@@ -190,7 +190,7 @@ class GenerateKotlinVersionTest {
             Triple(2, 1, 0),
             Triple(2, 1, 255)
         )
-        val (_, actualContent) = NativeCacheKotlinVersionsGenerator.generate(versions)
+        val [_, actualContent] = NativeCacheKotlinVersionsGenerator.generate(versions)
 
 
         // Use a multiline string to assert the exact file content is generated correctly.

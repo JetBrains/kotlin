@@ -49,7 +49,7 @@ open class FirPrinter(builder: StringBuilder) {
     }
 
     internal fun renderSeparated(elements: List<FirElement>, visitor: FirRenderer.Visitor) {
-        for ((index, element) in elements.withIndex()) {
+        for ([index, element] in elements.withIndex()) {
             if (index > 0) {
                 print(", ")
             }
@@ -58,7 +58,7 @@ open class FirPrinter(builder: StringBuilder) {
     }
 
     internal fun renderSeparatedWithNewlines(elements: List<FirElement>, visitor: FirRenderer.Visitor) {
-        for ((index, element) in elements.withIndex()) {
+        for ([index, element] in elements.withIndex()) {
             if (index > 0) {
                 print(",")
                 newLine()

@@ -908,12 +908,14 @@ KtCallExpression(625,630): 'foo()'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -923,11 +925,14 @@ KtCallExpression(625,630): 'foo()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/MyClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass
       extensionReceiver = null
@@ -948,12 +953,14 @@ KtNameReferenceExpression(625,628): 'foo'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -963,11 +970,14 @@ KtNameReferenceExpression(625,628): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/MyClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass
       extensionReceiver = null
@@ -1466,12 +1476,14 @@ KtCallExpression(891,896): 'foo()'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1481,11 +1493,14 @@ KtCallExpression(891,896): 'foo()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/MyClass.InnerOuter.InnerNested
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
@@ -1506,12 +1521,14 @@ KtNameReferenceExpression(891,894): 'foo'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1521,11 +1538,14 @@ KtNameReferenceExpression(891,894): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/MyClass.InnerOuter.InnerNested
+          typeParameters: []
           visibility: PUBLIC
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
@@ -2165,12 +2185,14 @@ KtCallExpression(1272,1282): 'body(this)'
         type = T.(T) -> kotlin.Unit
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -2180,10 +2202,13 @@ KtCallExpression(1272,1282): 'body(this)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaTypeParameterType:
             annotations: []
             type: T
+          typeParameters: []
           visibility: PUBLIC
         type = T
       signature = KaFunctionSignature:

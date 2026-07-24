@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : state.0.kt -> state.kt
+        U : first.0.kt -> first.kt
+    added file: state.kt, first.kt
+STEP 1:
+    modifications:
+        D : first.kt
+        U : second.1.kt -> second.kt
+    removed inverse depends: state.kt
+    removed file: first.kt
+    added file: second.kt

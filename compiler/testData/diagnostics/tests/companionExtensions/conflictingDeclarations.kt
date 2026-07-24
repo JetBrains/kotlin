@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 // WITH_STDLIB
 

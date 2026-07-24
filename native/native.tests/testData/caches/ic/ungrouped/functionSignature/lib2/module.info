@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : lib2.file1.kt -> lib2.file1.kt
+        U : lib2.file2.kt -> lib2.file2.kt
+        U : lib2.file3.kt -> lib2.file3.kt
+        U : lib2.file4.kt -> lib2.file4.kt
+        U : lib2.file5.kt -> lib2.file5.kt
+        U : lib2.file6.kt -> lib2.file6.kt
+    added cache: lib2.file1.kt, lib2.file2.kt, lib2.file3.kt, lib2.file4.kt, lib2.file5.kt, lib2.file6.kt
+
+// lib1: Update function signatures
+STEP 1:
+    dependencies: lib1
+    modified cache: lib2.file1.kt, lib2.file2.kt, lib2.file3.kt, lib2.file4.kt, lib2.file5.kt, lib2.file6.kt
+
+// lib1: Reverse function signatures change
+STEP 2:
+    dependencies: lib1
+    modified cache: lib2.file1.kt, lib2.file2.kt, lib2.file3.kt, lib2.file4.kt, lib2.file5.kt, lib2.file6.kt

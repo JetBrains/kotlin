@@ -77,6 +77,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
   }
 
   @Test
+  @TestMetadata("companionBlockDanglingModifier.kt")
+  public void testCompanionBlockDanglingModifier() {
+    run("companionBlockDanglingModifier.kt");
+  }
+
+  @Test
   @TestMetadata("constructorParameter.kt")
   public void testConstructorParameter() {
     run("constructorParameter.kt");

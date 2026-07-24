@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
@@ -20,7 +19,7 @@ val test5 = NA<Int>()
 val test6 = NA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Any<!>>()
 val test7 = NL<Int>()
 val test8 = MMMM<Int>()
-val test9dwd = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING!>NL<Any>()<!>
+val test9dwd = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>NL<Any>()<!>
 
 fun test9(x: TC<Number, Collection<Number>>) {}
 fun test10(x: TC<Number, Collection<Int>>) {}

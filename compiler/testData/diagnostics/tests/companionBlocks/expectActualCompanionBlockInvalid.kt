@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions +MultiPlatformProjects
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo {

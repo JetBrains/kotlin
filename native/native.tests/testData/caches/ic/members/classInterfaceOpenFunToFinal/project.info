@@ -1,0 +1,10 @@
+// KT-87777: linking fails when an inherited open method becomes final
+// DISABLE_NATIVE
+
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 interface DeclaredMemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
     fun getMethodNames(): Set<Name>
@@ -41,6 +43,7 @@ interface DeclaredMemberIndex {
     }
 }
 
+@K1Deprecation
 open class ClassDeclaredMemberIndex(
     val jClass: JavaClass,
     private val memberFilter: (JavaMember) -> Boolean

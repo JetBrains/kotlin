@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /testRef1 // /testRef1|{}testRef1[0]
+    final fun <get-testRef1>(): kotlin/Float // /testRef1.<get-testRef1>|<get-testRef1>(){}[0]
+final val /testRef2 // /testRef2|{}testRef2[0]
+    final fun <get-testRef2>(): kotlin.reflect/KFunction1<kotlin/Float, kotlin/Float> // /testRef2.<get-testRef2>|<get-testRef2>(){}[0]
+final fun /bar(kotlin/Function1<kotlin/Float, kotlin/Float>): kotlin/Float // /bar|bar(kotlin.Function1<kotlin.Float,kotlin.Float>){}[0]
+final fun /foo(kotlin/Float): kotlin/Float // /foo|foo(kotlin.Float){}[0]

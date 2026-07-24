@@ -17,13 +17,15 @@ import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacad
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationJsSymbolValidationHandler
-import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondStageSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
+import org.jetbrains.kotlin.testFederation.SmokeTest
 
+@SmokeTest
 @Suppress("JUnitTestCaseWithNoTests")
 class JsSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.JS_IR,
@@ -44,7 +46,7 @@ class JsSymbolsTest : AbstractSymbolsValidationTest(
     }
 }
 
-private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondStageSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         return listOf(
             BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true),

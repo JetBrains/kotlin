@@ -5,7 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.SirAttribute
@@ -292,6 +292,8 @@ private class SirEnumCaseFromKtSymbol(
             error("Changing SirEnumCase.parent is prohibited")
         }
     override val attributes: List<SirAttribute>
+        get() = emptyList()
+    override val associatedValueTypes: List<SirType>
         get() = emptyList()
 
     fun nativeCaseRepresentation(): String =

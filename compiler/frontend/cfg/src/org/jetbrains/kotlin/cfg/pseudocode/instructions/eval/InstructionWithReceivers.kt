@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
+@K1Deprecation
 interface InstructionWithReceivers : Instruction {
     val receiverValues: Map<PseudoValue, ReceiverValue>
 }

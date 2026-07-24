@@ -73,7 +73,7 @@ val cacheMap: Map<String, String> = mapOf(
     "https://jetbrains.bintray.com/kotlin-native-dependencies" to "https://cache-redirector.jetbrains.com/jetbrains.bintray.com/kotlin-native-dependencies",
     "https://github.com/git-for-windows/git/releases/download" to "https://cache-redirector.jetbrains.com/github.com/git-for-windows/git/releases/download",
     "https://github.com/webassembly/wabt/releases/download" to "https://cache-redirector.jetbrains.com/github.com/webassembly/wabt/releases/download",
-    "https://github.com/webassembly/testsuite/zipball" to "https://cache-redirector.jetbrains.com/github.com/webassembly/testsuite/zipball",
+    "https://github.com/webassembly/testsuite/archive" to "https://cache-redirector.jetbrains.com/github.com/webassembly/testsuite/archive",
     "https://archive.mozilla.org/pub/firefox/nightly" to "https://cache-redirector.jetbrains.com/archive.mozilla.org/pub/firefox/nightly",
     "https://archive.mozilla.org/pub/firefox/releases" to "https://cache-redirector.jetbrains.com/archive.mozilla.org/pub/firefox/releases",
     "https://github.com/WasmEdge/WasmEdge/releases/download" to "https://cache-redirector.jetbrains.com/github.com/WasmEdge/WasmEdge/releases/download",
@@ -177,6 +177,8 @@ val cacheMap: Map<String, String> = mapOf(
     "https://redirector.kotlinlang.org/maven/bootstrap" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/bootstrap",
     "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies",
     "https://packages.jetbrains.team/maven/p/plan/litmuskt" to "https://cache-redirector.jetbrains.com/packages.jetbrains.team/maven/p/plan/litmuskt",
+    "https://github.com/google/breakpad/archive/refs/tags" to "https://cache-redirector.jetbrains.com/github.com/google/breakpad/archive/refs/tags",
+    "https://github.com/google/googletest/archive" to "https://cache-redirector.jetbrains.com/github.com/google/googletest/archive",
 )
 
 val aliases = mapOf(

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 
+@K1Deprecation
 class FakeCallableDescriptorForTypeAliasObject(override val typeAliasDescriptor: TypeAliasDescriptor) :
     FakeCallableDescriptorForObject(typeAliasDescriptor.classDescriptor!!),
     DescriptorDerivedFromTypeAlias {

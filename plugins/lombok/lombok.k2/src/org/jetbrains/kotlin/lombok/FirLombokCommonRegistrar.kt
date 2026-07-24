@@ -1,0 +1,26 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.lombok
+
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.lombok.generators.LoggerGenerator
+import org.jetbrains.kotlin.lombok.generators.LombokConstructorsGenerator
+import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
+import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGenerator
+import org.jetbrains.kotlin.lombok.config.LombokService
+import java.io.File
+
+class FirLombokCommonRegistrar(private val lombokConfigFile: File?) : FirExtensionRegistrar() {
+    override fun ExtensionRegistrarContext.configurePlugin() {
+        +LombokService.getFactory(lombokConfigFile)
+        +::LoggerGenerator
+        +::ToStringGenerator
+        +::LombokConstructorsGenerator
+        +::EqualsAndHashCodeGenerator
+
+        registerDiagnosticContainers(LombokCliDiagnostics)
+    }
+}

@@ -25,11 +25,23 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
 import javax.inject.Inject
+
+internal interface SwiftImportExecutionHooks {
+    fun beforeSwiftResolveClaim() {}
+    fun beforeSwiftResolveOwnerWorkerSubmission() {}
+    fun beforeXcodebuildClaim() {}
+    fun beforeXcodebuildOwnerWorkerSubmission() {}
+
+    companion object {
+        val NONE: SwiftImportExecutionHooks = object : SwiftImportExecutionHooks {}
+    }
+}
 
 internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImportExtension {
     val existingExtension = kotlinExtension.extensions.findByName(SwiftPMImportExtension.EXTENSION_NAME)
@@ -89,6 +101,17 @@ abstract class SwiftPMImportExtension @Inject constructor(
 
     /** Minimum tvOS deployment target written to generated SwiftPM manifests. */
     val tvosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+
+    /**
+     * Test-only hooks that can block specific scheduling points in SwiftPM import tasks.
+     *
+     * The default value is a no-op implementation. Integration tests may replace this with a controlled hook object.
+     */
+    internal val testExecutionHooks: Property<SwiftImportExecutionHooks> =
+        objects.property(SwiftImportExecutionHooks::class.java).convention(SwiftImportExecutionHooks.NONE)
+
+    internal val testExecutionService: Property<SwiftImportTestExecutionService> =
+        objects.property(SwiftImportTestExecutionService::class.java)
 
     /**
      * Enables implicit discovery of Clang modules from imported SwiftPM packages.
@@ -513,14 +536,44 @@ sealed class SwiftPMDependency : Serializable {
     }
 }
 
+/**
+ * Converts [SwiftPMImportMetadata.konanTargets] names to [SwiftPMDependency.Platform] values.
+ * Non-Apple targets are ignored. An empty result means no implicit platform constraint.
+ */
+internal fun Set<String>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
+    mapNotNull { name ->
+        KonanTarget.predefinedTargets[name]?.takeIf { it.family.isAppleFamily }?.swiftPMPlatform()
+    }.toSet()
+
+/** Converts [KonanTarget]s to [SwiftPMDependency.Platform] values. Non-Apple targets are ignored. */
+@JvmName("konanTargetsToSwiftPMPlatforms")
+internal fun Set<KonanTarget>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
+    filter { it.family.isAppleFamily }.map { it.swiftPMPlatform() }.toSet()
+
 
 /** Controls persisted `Package.resolved` synchronization for SwiftPM import. */
-sealed class PackageResolvedSynchronization {
+sealed class PackageResolvedSynchronization : Serializable {
     /** Shares one persisted lock file bucket between all projects with the same identifier. */
     data class Identifier(val identifier: String) : PackageResolvedSynchronization()
 
     /** Disables persisted lock-file synchronization. */
-    object None : PackageResolvedSynchronization()
+    object None : PackageResolvedSynchronization() {
+        private fun readResolve(): Any = None
+    }
+}
+
+internal fun PackageResolvedSynchronization.toKotlinxSerializable(): SerializablePackageResolvedSynchronization = when (this) {
+    is PackageResolvedSynchronization.Identifier -> SerializablePackageResolvedSynchronization.Identifier(identifier)
+    PackageResolvedSynchronization.None -> SerializablePackageResolvedSynchronization.None
+}
+
+@kotlinx.serialization.Serializable
+internal sealed class SerializablePackageResolvedSynchronization {
+    @kotlinx.serialization.Serializable
+    data class Identifier(val identifier: String) : SerializablePackageResolvedSynchronization()
+
+    @kotlinx.serialization.Serializable
+    object None : SerializablePackageResolvedSynchronization()
 }
 
 // This is the structure that we serialize into

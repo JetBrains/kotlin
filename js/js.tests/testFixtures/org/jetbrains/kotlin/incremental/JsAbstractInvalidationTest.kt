@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,9 +33,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.junit.ComparisonFailure
+import org.junit.jupiter.api.Assertions
+import org.opentest4j.AssertionFailedError
 import java.io.File
 
 abstract class JsAbstractInvalidationTest(
@@ -53,13 +56,13 @@ abstract class JsAbstractInvalidationTest(
 
     override val modelTarget: ModelTarget = ModelTarget.JS
 
-    override val outputDirPath = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    override val outputDirPath = System.getProperty("kotlin.js.test.root.out.dir") ?: testInfraError("'kotlin.js.test.root.out.dir' is not set")
 
     override val stdlibKLib: String =
-        File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
+        File(System.getProperty("kotlin.js.stdlib.klib.path") ?: testInfraError("Please set stdlib path")).canonicalPath
 
     override val kotlinTestKLib: String =
-        File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: error("Please set kotlin.test path")).canonicalPath
+        File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: testInfraError("Please set kotlin.test path")).canonicalPath
 
     open val libraryNamesToExcludeFromStats
         get() = setOf(STDLIB_MODULE_NAME, KOTLIN_TEST_MODULE_NAME)
@@ -68,6 +71,7 @@ abstract class JsAbstractInvalidationTest(
         TestDisposable("${JsAbstractInvalidationTest::class.simpleName}.rootDisposable")
 
     override val environment: KotlinCoreEnvironment =
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration.create(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
@@ -128,7 +132,7 @@ abstract class JsAbstractInvalidationTest(
 
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
-                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                    testInfraError("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
                 val moduleName = projStep.order.last()
@@ -184,7 +188,7 @@ abstract class JsAbstractInvalidationTest(
                     caches = icCaches,
                 )
 
-                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)
+                (val jsOutput = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)
                 val writtenFiles = writeJsCode(projStep.id, jsOutput)
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)
@@ -198,7 +202,7 @@ abstract class JsAbstractInvalidationTest(
 
         private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
             val got = gotRebuilt.filter { moduleName -> libraryNamesToExcludeFromStats.none { moduleName.startsWith(it) } }
-            JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
+            JUnit5Assertions.assertSameElements(expectedRebuilt, got) {
                 "Mismatched rebuilt modules at step $stepId"
             }
         }
@@ -215,8 +219,8 @@ abstract class JsAbstractInvalidationTest(
                     withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD),
                     entryModulePath = jsFiles.last()
                 )
-            } catch (e: ComparisonFailure) {
-                throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
+            } catch (e: AssertionFailedError) {
+                throw AssertionFailedError("Mismatched box out at step $stepId", e.expected, e.actual)
             } catch (e: IllegalStateException) {
                 throw IllegalStateException("Something goes wrong (bad JS code?) at step $stepId\n${e.message}")
             } catch (e: ScriptExecutionException) {
@@ -236,12 +240,12 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val dtsFile = jsDir.resolve(dtsFilePath)
-                JUnit4Assertions.assertTrue(dtsFile.exists()) {
+                Assertions.assertTrue(dtsFile.exists()) {
                     "Cannot find $dtsFileExtension (${dtsFile.absolutePath}) file for module ${info.moduleName} at step $stepId"
                 }
 
                 val gotDTS = dtsFile.readText()
-                JUnit4Assertions.assertEquals(expectedDTS.content, gotDTS) {
+                JUnit5Assertions.assertEqualsToFile(expectedDTS.file, gotDTS, { it }) {
                     "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }
@@ -255,7 +259,7 @@ abstract class JsAbstractInvalidationTest(
                 val sourceMappingUrlLine = jsCodeFile.readLines().singleOrNull { it.startsWith(SOURCE_MAPPING_URL_PREFIX) }
 
                 if (sourceMappingUrlLine != null) {
-                    JUnit4Assertions.assertEquals("${SOURCE_MAPPING_URL_PREFIX}${jsCodeFile.name}.map", sourceMappingUrlLine) {
+                    Assertions.assertEquals("${SOURCE_MAPPING_URL_PREFIX}${jsCodeFile.name}.map", sourceMappingUrlLine) {
                         "Mismatched source map url at step $stepId"
                     }
                 }

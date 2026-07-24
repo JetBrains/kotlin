@@ -80,13 +80,13 @@ private class InstanceBasedSnapshotter(
         fun getIncompleteClasses() =
             classesWithTransitiveDependencies.zip(classesWithTransitiveDependencies.map { jvmClassName ->
                 jvmClassName.toDescriptor()
-            }).filter { (_, descriptor) ->
+            }).filter { [_, descriptor] ->
                 descriptor != null && descriptor.inlinedSnapshot == null
             }
 
         var incompleteClasses = getIncompleteClasses()
         while (incompleteClasses.isNotEmpty()) {
-            for ((jvmClassName, descriptor) in incompleteClasses) {
+            for ([jvmClassName, descriptor] in incompleteClasses) {
                 val classFileWithContentsProvider =
                     classNameToClassFileMap[jvmClassName]!! // not null by virtue of `descriptor != null` above
                 val classFileWithContents = metrics.measure(LOAD_CONTENTS_OF_CLASSES) {

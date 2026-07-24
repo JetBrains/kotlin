@@ -1,2 +1,0 @@
-expression: arr[0]
-type: ERROR_TYPE(Unresolved name: set)

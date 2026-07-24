@@ -98,17 +98,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xbundle-id",
-        valueDescription = "<id>",
-        description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.",
-    )
-    var bundleId: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xcache-directory",
         valueDescription = "<path>",
         description = "Path to the directory containing caches.",
@@ -186,11 +175,12 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xdestroy-runtime-mode",
-        valueDescription = "<mode>",
-        description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.",
+        value = "-Xdump-built-caches-to",
+        valueDescription = "<path>",
+        description = "Path to a file where the list of all cache archives produced by this build should be written.",
+        delimiter = Argument.Delimiters.none,
     )
-    var destroyRuntimeMode: String? = null
+    var dumpBuiltCachesTo: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
@@ -294,17 +284,6 @@ This library must be one of the ones passed with '-library'.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Deprecated("This flag is deprecated")
-    @Argument(
-        value = "-Xg0",
-        description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.",
-    )
-    var lightDebugDeprecated: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(
@@ -640,17 +619,6 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
-        value = "-Xworker-exception-handling",
-        valueDescription = "<mode>",
-        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
-    )
-    var workerExceptionHandling: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
         valueDescription = "<path>",
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path",
@@ -776,20 +744,6 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
-    @Deprecated("This flag is deprecated")
-    @Argument(
-        value = "-library-version",
-        shortName = "-lv",
-        valueDescription = "<version>",
-        description = """The library version.
-Note: This option is deprecated and will be removed in one of the future releases.""",
-    )
-    var libraryVersion: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-linker-option",
         valueDescription = "<arg>",
@@ -880,17 +834,6 @@ Note: This option is deprecated and will be removed in one of the future release
         description = "Don't link the libraries from dist/klib automatically.",
     )
     var nodefaultlibs: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Deprecated("This flag is deprecated")
-    @Argument(
-        value = "-no-endorsed-libs",
-        description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.",
-    )
-    var noendorsedlibs: Boolean = false
         set(value) {
             checkFrozen()
             field = value

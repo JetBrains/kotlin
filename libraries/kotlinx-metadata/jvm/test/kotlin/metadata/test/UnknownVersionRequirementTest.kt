@@ -28,13 +28,13 @@ class UnknownVersionRequirementTest {
         val writer = ClassWriter(JvmStringTable())
         writer.writeClass(original)
         writer.t.addVersionRequirement(239) // invalid
-        val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+        val [d1, d2] = writeProtoBufData(writer.t.build(), writer.c)
         return d1 to d2
     }
 
     @Test
     fun incorrectVersionRequirementFailsIfMetadataIsNew() {
-        val (d1, d2) = corrupt(Sample::class.java.readMetadataAsKmClass())
+        val [d1, d2] = corrupt(Sample::class.java.readMetadataAsKmClass())
         val incorrect =
             Metadata(KotlinClassMetadata.CLASS_KIND, JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toIntArray(), d1, d2, extraInt = 0)
         assertFailsWith<IllegalArgumentException> {
@@ -51,7 +51,7 @@ class UnknownVersionRequirementTest {
             original.versionRequirements.single().toString()
         )
 
-        val (d1, d2) = corrupt(original)
+        val [d1, d2] = corrupt(original)
         val incorrect =
             Metadata(KotlinClassMetadata.CLASS_KIND, intArrayOf(1, 1, 3), d1, d2, extraInt = 0)
 

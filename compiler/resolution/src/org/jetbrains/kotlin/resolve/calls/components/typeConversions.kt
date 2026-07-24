@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.types.UnwrappedType
 
+@K1Deprecation
 interface ParameterTypeConversion {
     fun conversionDefinitelyNotNeeded(
         candidate: ResolutionCandidate,
@@ -29,6 +31,7 @@ interface ParameterTypeConversion {
     ): UnwrappedType?
 }
 
+@K1Deprecation
 object TypeConversions {
     fun performCompositeConversionBeforeSubtyping(
         candidate: ResolutionCandidate,

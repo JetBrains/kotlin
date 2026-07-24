@@ -183,7 +183,7 @@ def dump_imported_platform_signatures(konan_home: Path, library: str, verbose: b
     process = subprocess.run(
         args=[
             str(konan_home / "bin/klib"),
-            "dump-ir-signatures",
+            "dump-signatures",
             library,
         ],
         stdout=PIPE,

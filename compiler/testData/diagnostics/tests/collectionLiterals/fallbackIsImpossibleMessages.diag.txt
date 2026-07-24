@@ -1,0 +1,29 @@
+/fallbackIsImpossibleMessages.kt:12:21: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:13:24: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:14:16: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:15:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+
+/fallbackIsImpossibleMessages.kt:15:19: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:16:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+
+/fallbackIsImpossibleMessages.kt:16:19: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/fallbackIsImpossibleMessages.kt:16:22: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:17:5: error: Cannot infer type for type parameter 'D'. Specify it explicitly.
+
+/fallbackIsImpossibleMessages.kt:17:19: error: Cannot infer type for type parameter 'R'. Specify it explicitly.
+
+/fallbackIsImpossibleMessages.kt:18:9: error: Expected type 'Generic<uninferred D (of fun <D> expectGeneric)>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:20:33: error: Expected type 'Generic<String>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:22:9: error: Expected type 'Generic<String>' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:24:29: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+
+/fallbackIsImpossibleMessages.kt:25:37: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.

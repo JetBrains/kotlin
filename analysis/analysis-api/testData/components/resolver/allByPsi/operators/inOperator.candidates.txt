@@ -138,7 +138,7 @@ KtConstantExpression(118,119): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(120,122): 'in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -233,7 +233,7 @@ KtConstantExpression(129,130): '2'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(131,134): '!in'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

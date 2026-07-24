@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility.Co
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@K1Deprecation
 object ExpectedActualResolver {
     fun findActualForExpected(
         expected: MemberDescriptor,
@@ -215,6 +217,7 @@ object ExpectedActualResolver {
 
 // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects. KT-61105
 @JvmOverloads
+@K1Deprecation
 fun MemberDescriptor.findCompatibleActualsForExpected(
     platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module, platformModule)
 ): List<MemberDescriptor> =
@@ -222,6 +225,7 @@ fun MemberDescriptor.findCompatibleActualsForExpected(
     ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)?.get(Compatible).orEmpty()
 
 @JvmOverloads
+@K1Deprecation
 fun MemberDescriptor.findAnyActualsForExpected(
     platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module, platformModule)
 ): List<MemberDescriptor> {
@@ -231,22 +235,26 @@ fun MemberDescriptor.findAnyActualsForExpected(
         ?: emptyList()
 }
 
+@K1Deprecation
 fun MemberDescriptor.findCompatibleExpectsForActual(
     moduleFilter: ModuleFilter = allModulesProvidingExpectsFor(module)
 ): List<MemberDescriptor> =
     ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
+@K1Deprecation
 fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
     if (this !is MemberDescriptor) return emptyList()
     return this.findCompatibleExpectsForActual()
 }
 
+@K1Deprecation
 fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDescriptor> {
     if (this !is MemberDescriptor) return emptyList()
     return this.findCompatibleActualsForExpected(inModule)
 }
 
 // TODO: Klibs still need to better handle source in deserialized descriptors.
+@K1Deprecation
 val DeclarationDescriptorWithSource.couldHaveASource: Boolean
     get() = this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
             this is DeserializedDescriptor

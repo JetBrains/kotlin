@@ -30,6 +30,9 @@
 // others have been modified more aggresively to make it feel
 // more like a JavaScript program.
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
 /**
  * A JavaScript implementation of the DeltaBlue constraint-solving
  * algorithm, as described in:
@@ -715,10 +718,13 @@ class Plan {
  * M a i n
  * --- */
 
-class DeltaBlueBenchmark {
-  fun deltaBlue() {
-    chainTest(100)
-    projectionTest(100)
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class DeltaBlueHideName {
+  @Benchmark
+  fun DeltaBlue(bh: Blackhole) {
+    chainTest(bh, 100)
+    projectionTest(bh, 100)
   }
   /**
    * This is the standard DeltaBlue benchmark. A long chain of equality
@@ -733,7 +739,7 @@ class DeltaBlueBenchmark {
    * of course, very low. Typical situations lie somewhere between these
    * two extremes.
    */
-  fun chainTest(n: Int) {
+  fun chainTest(bh: Blackhole, n: Int) {
     val planner = Planner()
     val variables = (0..n).map{ Variable("v$it") }.toList()
     var first = variables.first()
@@ -755,6 +761,7 @@ class DeltaBlueBenchmark {
       if (last.value != i)
       alert("Chain test failed.")
     }
+    bh.consume(last.value)
   }
 
   /**
@@ -763,7 +770,7 @@ class DeltaBlueBenchmark {
    * time is measured to change a variable on either side of the
    * mapping and to change the scale and offset factors.
    */
-  fun projectionTest(n: Int) {
+  fun projectionTest(bh: Blackhole, n: Int) {
     val planner = Planner()
     var scale = Variable("scale", 10)
     var offset = Variable("offset", 1000)
@@ -793,5 +800,6 @@ class DeltaBlueBenchmark {
       if (dests.at(i).value != i * 5 + 2000)
       alert("Projection 4 failed")
     }
+    bh.consume(dests)
   }
 }

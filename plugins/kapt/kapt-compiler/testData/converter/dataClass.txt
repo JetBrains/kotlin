@@ -17,15 +17,18 @@
  *   public final (* synthesized *) fun copy(firstName: kotlin/String (* = ... *), secondName: kotlin/String (* = ... *), age: kotlin/Int (* = ... *)): User
  *
  *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: hashCode()I
+ *   // must-use return value
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
  *   // signature: procedure()V
  *   public final fun procedure(): kotlin/Unit
  *
  *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: age:I
@@ -53,6 +56,29 @@ public final class User {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
     private final int age = 0;
+
+    public User(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getFirstName() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSecondName() {
+        return null;
+    }
+
+    public final int getAge() {
+        return 0;
+    }
+
+    public final void procedure() {
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String component1() {
@@ -90,28 +116,5 @@ public final class User {
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
         return null;
-    }
-
-    public User(@org.jetbrains.annotations.NotNull()
-    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
-    java.lang.String secondName, int age) {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getFirstName() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getSecondName() {
-        return null;
-    }
-
-    public final int getAge() {
-        return 0;
-    }
-
-    public final void procedure() {
     }
 }

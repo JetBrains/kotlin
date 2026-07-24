@@ -1,15 +1,14 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
-        const fifth: any/* foo.Fifth<boolean> */;
+        const fifth: (foo.Third<boolean> & foo.IA & foo.IG<boolean>)/* foo.Fifth<boolean> */;
         function getI3(): foo.I3;
         function getA(): foo.I3;
         function getB(): foo.I3;
         function getC(): foo.I3;
-        function acceptForthLike<T extends unknown/* foo.Forth<string> */>(forth: T): void;
-        function acceptMoreGenericForthLike<T extends unknown/* foo.IB */ & unknown/* foo.IC */ & unknown/* foo.Second */>(forth: T): void;
+        function acceptForthLike<T extends (foo.Third<string> & foo.IA)/* foo.Forth<string> */>(forth: T): void;
+        function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.First/* foo.Second */>(forth: T): void;
         interface I<T, out S, in U> {
             z(u: U): void;
             x?: T;
@@ -113,6 +112,11 @@ declare namespace JS_TESTS {
         }
         abstract class A2 implements foo.I3 {
             constructor();
+            abstract bay(): string;
+            abstract get foo(): string;
+            abstract get bar(): string;
+            abstract set bar(value: string);
+            abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
         namespace A2 {
@@ -172,6 +176,7 @@ declare namespace JS_TESTS {
             get foo(): string;
             get bar(): string;
             set bar(value: string);
+            abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
         namespace EC {
@@ -192,7 +197,7 @@ declare namespace JS_TESTS {
                 readonly "foo.IG": unique symbol;
             };
         }
-        class Third<T> /* extends foo.Second */ {
+        class Third<T> extends /* foo.Second */ foo.First.$metadata$.constructor {
             constructor();
         }
         namespace Third {
@@ -201,13 +206,28 @@ declare namespace JS_TESTS {
                 const constructor: abstract new <T>() => Third<T>;
             }
         }
-        class Sixth /* extends foo.Fifth<number> */ /* implements foo.IC */ {
+        class Sixth extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
             constructor();
+            process(value: number): void;
+            get foo(): number;
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => Sixth;
+            }
+        }
+        abstract class Seventh extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
+            constructor();
+            process(value: number): void;
+            get foo(): number;
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
+        }
+        namespace Seventh {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Seventh;
             }
         }
         class First {
@@ -219,7 +239,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => First;
             }
         }
-        class MyRootException /* extends kotlin.RuntimeException */ {
+        class MyRootException extends /* kotlin.RuntimeException */ Error {
             constructor();
         }
         namespace MyRootException {
@@ -237,5 +257,21 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => MySpecificException;
             }
         }
+        class Delegated implements foo.IG<number>, foo.IA/*, foo.IB */ {
+            constructor(ig: foo.IG<number>, ib: foo.IA/* foo.IB */);
+            process(value: number): void;
+            get ig(): foo.IG<number>;
+            get ib(): foo.IA/* foo.IB */;
+            get foo(): any;
+            readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"] & foo.IG<any>["__doNotUseOrImplementIt"];
+        }
+        namespace Delegated {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Delegated;
+            }
+        }
     }
 }
+
+

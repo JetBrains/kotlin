@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: nullCheckOnLambdaReturn.kt
 fun checkAny(fn: () -> Any) = fn()

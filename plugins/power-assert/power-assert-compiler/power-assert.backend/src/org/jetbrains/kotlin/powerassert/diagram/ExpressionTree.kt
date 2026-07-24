@@ -19,9 +19,9 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
-import org.jetbrains.kotlin.fir.pipeline.wasInlined
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.evaluation.wasInlined
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump

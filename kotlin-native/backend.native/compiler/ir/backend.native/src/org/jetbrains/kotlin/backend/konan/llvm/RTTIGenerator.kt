@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
@@ -148,7 +147,7 @@ internal class RTTIGenerator(
     private fun exportTypeInfoIfRequired(irClass: IrClass, typeInfoGlobal: LLVMValueRef?) {
         val annotation = irClass.annotations.findAnnotation(RuntimeNames.exportTypeInfoAnnotation)
         if (annotation != null) {
-            val name = annotation.getAnnotationStringValue()!!
+            val name = annotation.getConstArgument<String>("name")!!
             // TODO: use LLVMAddAlias.
             val global = addGlobal(name, llvm.pointerType, isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
@@ -232,7 +231,7 @@ internal class RTTIGenerator(
         }
 
         val needInterfaceTable = !irClass.isInterface && !irClass.isAbstract() && !irClass.isObjCClass()
-        val (interfaceTable, interfaceTableSize) = if (needInterfaceTable) {
+        val [interfaceTable, interfaceTableSize] = if (needInterfaceTable) {
             interfaceTableRecords(irClass)
         } else {
             Pair(emptyList(), -1)
@@ -297,7 +296,7 @@ internal class RTTIGenerator(
     fun interfaceTableRecords(irClass: IrClass): Pair<List<InterfaceTableRecord>, Int> {
         // The details are in ClassLayoutBuilder.
         val interfaces = irClass.implementedInterfaces
-        val (interfaceTableSkeleton, interfaceTableSize) = interfaceTableSkeleton(interfaces)
+        val [interfaceTableSkeleton, interfaceTableSize] = interfaceTableSkeleton(interfaces)
 
         val interfaceTableEntries = interfaceTableRecords(irClass, interfaceTableSkeleton)
         return Pair(interfaceTableEntries, interfaceTableSize)
@@ -381,11 +380,11 @@ internal class RTTIGenerator(
 
     private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
         if (isObjectType) {
-            require(type == llvm.pointerType) { "Expected object type, got ${llvmtype2string(type)}" }
+            require(type == llvm.pointerType) { "Expected object type, got ${type.toTypeString()}" }
             return RT_OBJECT
         }
 
-        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${type.toTypeString()}")
     }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {
@@ -468,7 +467,7 @@ internal class RTTIGenerator(
             return null
         }
 
-        val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
+        val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
@@ -530,7 +529,7 @@ internal class RTTIGenerator(
             ClassGlobalHierarchyInfo(-1, -1, 0)
 
         // TODO: interfaces (e.g. FunctionN and Function) should have different colors.
-        val (interfaceTableSkeleton, interfaceTableSize) = interfaceTableSkeleton(interfaces)
+        val [interfaceTableSkeleton, interfaceTableSize] = interfaceTableSkeleton(interfaces)
 
         val interfaceTable = interfaceTableSkeleton.map { layoutBuilder ->
             if (layoutBuilder == null) {
@@ -584,7 +583,7 @@ internal class RTTIGenerator(
         val packageFragment = irClass.getPackageFragment()
         val reflectionPackageName = if (packageFragment is IrFile) {
             // This annotation is used by test infrastructure.
-            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getAnnotationStringValue()
+            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getConstArgument<String>("name")
         } else {
             null
         }

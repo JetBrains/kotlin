@@ -1,0 +1,11 @@
+Field()
+  psi: KtAnnotationEntry
+
+PropertyAndField()
+  psi: KtAnnotationEntry
+
+ParameterPropertyAndField()
+  psi: KtAnnotationEntry
+
+Everything()
+  psi: KtAnnotationEntry

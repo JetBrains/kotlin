@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 abstract class SerializerExtension {
     abstract val stringTable: DescriptorAwareStringTable
 

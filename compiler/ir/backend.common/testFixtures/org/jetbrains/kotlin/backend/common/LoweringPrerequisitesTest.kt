@@ -34,7 +34,7 @@ abstract class LoweringPrerequisitesTest {
         assertTrue(
             unsatisfiedPrerequisites.isEmpty(),
             "The following phases have unsatisfied prerequisites:\n\n" +
-                    unsatisfiedPrerequisites.joinToString("\n", postfix = "\n") { (phase, prerequisite) ->
+                    unsatisfiedPrerequisites.joinToString("\n", postfix = "\n") { [phase, prerequisite] ->
                         "${phase.simpleName} -> ${prerequisite.simpleName}"
                     },
         )

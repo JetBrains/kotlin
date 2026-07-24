@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
+import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments;
 
 import java.util.Arrays;
 
@@ -65,17 +67,34 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
     @Override
     @NotNull
     public KtOperationReferenceExpression getOperationReference() {
-        PsiElement operationReference = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        KtOperationReferenceExpression operationReference = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
         if (operationReference == null) {
-            throw new NullPointerException("No operation reference for binary expression: " + Arrays.toString(getChildren()));
+            KotlinExceptionWithAttachments exception = new KotlinExceptionWithAttachments(
+                    "No operation reference for binary expression: " + Arrays.toString(getChildren()));
+            exception.withPsiAttachment("expression.kt", this);
+            throw exception;
         }
 
-        return (KtOperationReferenceExpression) operationReference;
+        return operationReference;
+    }
+
+    @KtPsiInconsistencyHandling
+    @Nullable
+    public IElementType getOperationTokenOrNull() {
+        KtOperationReferenceExpression type = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        return type != null ? type.getReferencedNameElementType() : null;
     }
 
     @NotNull
     public IElementType getOperationToken() {
-        return getOperationReference().getReferencedNameElementType();
+        IElementType tokenOrNull = getOperationTokenOrNull();
+        if (tokenOrNull == null) {
+            KotlinExceptionWithAttachments exception = new KotlinExceptionWithAttachments(
+                    "No operation token for binary expression: " + Arrays.toString(getChildren()));
+            exception.withPsiAttachment("expression.kt", this);
+            throw exception;
+        }
+        return tokenOrNull;
     }
 }
 

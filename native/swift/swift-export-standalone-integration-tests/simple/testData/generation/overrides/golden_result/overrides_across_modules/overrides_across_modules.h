@@ -3,11 +3,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int32_t Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
+
+int32_t Cousin_primitiveTypeVar_get__reverse_swift(void * self);
+
 _Bool Cousin_finalOverrideFunc(void * self);
 
 int32_t Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(void * self, int32_t arg);
 
+int32_t Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * self, int32_t arg);
+
 int32_t Cousin_primitiveTypeVar_get(void * self);
+
+int32_t Cousin_primitiveTypeVar_get_direct(void * self);
 
 _Bool FinalDerived3_abstractFun1(void * self);
 

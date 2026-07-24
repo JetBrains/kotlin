@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
@@ -30,7 +30,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import org.jetbrains.kotlin.konan.file.File as KFile
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.absolute
+import kotlin.io.path.createFile
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.name
 
 class NonExistingNativeDirectoriesInKlibTest {
     @TempDir
@@ -43,8 +49,8 @@ class NonExistingNativeDirectoriesInKlibTest {
         val klibDir = writeLibrary(includedBinaryFileNames = nativeIncludedBinaryFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == nativeIncludedBinaryFileNames)
-        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { KFile(it).name } == nativeIncludedBinaryFileNames)
+        assertTrue(klibDir.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { it.name } == nativeIncludedBinaryFileNames)
+        assertTrue(klibFile.readLibrary().nativeIncludedBinaries(TEST_TARGET)?.nativeIncludedBinaryFilePaths?.mapToSet { it.name } == nativeIncludedBinaryFileNames)
 
         klibDir.deleteNativeTargetSubdirectory(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
         klibDir.compressKlib()
@@ -60,8 +66,8 @@ class NonExistingNativeDirectoriesInKlibTest {
         val klibDir = writeLibrary(bitcodeFileNames = bitcodeFileNames)
         val klibFile = klibDir.compressKlib()
 
-        assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
-        assertTrue(klibFile.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { KFile(it).name } == bitcodeFileNames)
+        assertTrue(klibDir.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { it.name } == bitcodeFileNames)
+        assertTrue(klibFile.readLibrary().bitcode(TEST_TARGET)?.bitcodeFilePaths?.mapToSet { it.name } == bitcodeFileNames)
 
         klibDir.deleteNativeTargetSubdirectory(KLIB_BITCODE_FOLDER_NAME)
         klibDir.compressKlib()
@@ -78,14 +84,10 @@ class NonExistingNativeDirectoriesInKlibTest {
     private fun writeLibrary(
         bitcodeFileNames: Collection<String> = emptyList(),
         includedBinaryFileNames: Collection<String> = emptyList(),
-    ): KFile {
-        fun createEmptyFile(name: String): String {
-            val file = KFile(tmpDir.resolve(name))
-            file.createNew()
-            return file.absolutePath
-        }
+    ): Path {
+        fun createEmptyFile(name: String): Path = tmpDir.resolve(name).apply(Path::createFile)
 
-        val klibDir = KFile(tmpDir.resolve("uncompressed")).absoluteFile
+        val klibDir = tmpDir.resolve("uncompressed").absolute()
 
         KlibWriter {
             manifest {
@@ -102,27 +104,29 @@ class NonExistingNativeDirectoriesInKlibTest {
             includeMetadata(SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()))
             includeBitcode(TEST_TARGET, bitcodeFileNames.map(::createEmptyFile))
             includeNativeIncludedBinaries(TEST_TARGET, includedBinaryFileNames.map(::createEmptyFile))
-        }.writeTo(klibDir.path)
+        }.writeTo(klibDir)
 
         return klibDir
     }
 
-    private fun KFile.readLibrary(): KotlinLibrary =
-        KlibLoader { libraryPaths(this@readLibrary.path) }.load().librariesStdlibFirst.single()
+    private fun Path.readLibrary(): KotlinLibrary =
+        KlibLoader { libraryPaths(this@readLibrary) }.load().librariesStdlibFirst.single()
 
-    private fun KFile.compressKlib(): KFile {
-        val klibFile = this.parentFile.child("compressed.klib")
-        if (klibFile.exists) klibFile.deleteRecursively()
+    @OptIn(ExperimentalPathApi::class)
+    private fun Path.compressKlib(): Path {
+        val klibFile = this.parent.resolve("compressed.klib")
+        if (klibFile.exists()) klibFile.deleteRecursively()
         this.zipDirAs(klibFile)
         return klibFile
     }
 
-    private fun KFile.deleteNativeTargetSubdirectory(subdirectoryName: String) {
-        val subdirectory = child(KLIB_DEFAULT_COMPONENT_NAME)
-            .child(KLIB_TARGETS_FOLDER_NAME)
-            .child(TEST_TARGET.visibleName)
-            .child(subdirectoryName)
-        assertTrue(subdirectory.isDirectory) { "Directory does not exist: $subdirectory" }
+    @OptIn(ExperimentalPathApi::class)
+    private fun Path.deleteNativeTargetSubdirectory(subdirectoryName: String) {
+        val subdirectory = resolve(KLIB_DEFAULT_COMPONENT_NAME)
+            .resolve(KLIB_TARGETS_FOLDER_NAME)
+            .resolve(TEST_TARGET.visibleName)
+            .resolve(subdirectoryName)
+        assertTrue(subdirectory.isDirectory()) { "Directory does not exist: $subdirectory" }
         subdirectory.deleteRecursively()
     }
 }

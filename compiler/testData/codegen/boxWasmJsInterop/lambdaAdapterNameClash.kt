@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// RUN_THIRD_PARTY_OPTIMIZER
 
 // Type of functions `(T) -> T` are rendered the same way in IrType::render
 fun <T : JsAny?> foo(f: (T) -> T, x: Int): Int = js("f(x)")

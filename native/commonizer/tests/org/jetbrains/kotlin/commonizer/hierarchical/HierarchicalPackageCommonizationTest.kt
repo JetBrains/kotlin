@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalPackageCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test package with dummy`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")

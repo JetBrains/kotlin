@@ -435,13 +435,14 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLhsForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLhsForCallableReference")
             defaultNull("resolvedSymbolOrigin")
+            withCopy()
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLhsForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLhsForCallableReference")
             defaultNull("resolvedSymbolOrigin")
         }
 

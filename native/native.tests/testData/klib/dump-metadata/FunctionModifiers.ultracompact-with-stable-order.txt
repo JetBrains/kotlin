@@ -1,0 +1,8 @@
+public final class Foo : kotlin/Any
+public constructor Foo.<init>()
+public final fun Foo.f1(): kotlin/Unit
+public final infix fun Foo.f2(x: kotlin/Int): kotlin/Unit
+public final suspend fun Foo.f3(): kotlin/Unit
+public final tailrec fun Foo.f4(): kotlin/Unit
+public final fun Foo.f5(vararg x: kotlin/Int): kotlin/Unit
+public final operator fun Foo.plus(x: kotlin/Int): kotlin/Unit

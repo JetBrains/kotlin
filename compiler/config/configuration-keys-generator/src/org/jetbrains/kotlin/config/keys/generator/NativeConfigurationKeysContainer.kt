@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 @Suppress("unused")
 object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.konan.config", "NativeConfigurationKeys") {
-    val BUNDLE_ID by key<String>("Bundle ID to be set in Info.plist of a produced framework.")
     val CHECK_DEPENDENCIES by key<Boolean>("Check dependencies and download the missing ones.")
     val DEBUG by key<Boolean>()
     val FAKE_OVERRIDE_VALIDATOR by key<Boolean>()
@@ -28,9 +27,11 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val AUTO_CACHEABLE_FROM by key<List<String>>("Paths to the root directories from which dependencies are to be cached automatically.")
     val AUTO_CACHE_DIR by key<String>("Path to the directory where to put caches for auto-cacheable dependencies.")
     val INCREMENTAL_CACHE_DIR by key<String>("Path to the directory where to put incremental build caches.")
+    val DUMP_BUILT_CACHES_TO by key<String>("Path to a file where the list of all cache archives produced by this build should be written.")
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
     val MAKE_PER_FILE_CACHE by key<Boolean>()
+    val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT by key<String>("Combined fingerprint of external cached dependencies of the library being cached.")
     val FRAMEWORK_IMPORT_HEADERS by key<List<String>>()
     val KONAN_FRIEND_LIBRARIES by key<List<String>>()
     val KONAN_REFINES_MODULES by key<List<String>>()
@@ -46,7 +47,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_GENERATED_HEADER_KLIB_PATH by key<String>("Path to file where header klib should be produced.")
     val KONAN_NATIVE_LIBRARIES by key<List<String>>()
     val KONAN_NO_DEFAULT_LIBS by key<Boolean>("Don't link with the default libraries.")
-    val KONAN_NO_ENDORSED_LIBS by key<Boolean>("Don't link with the endorsed libraries.")
     val NOMAIN by key<Boolean>("Assume 'main' entry point to be provided by external libraries.")
     val KONAN_NO_STDLIB by key<Boolean>("Don't link with stdlib.")
     val KONAN_DONT_COMPRESS_KLIB by key<Boolean>("Don't pack the library into a klib file.")

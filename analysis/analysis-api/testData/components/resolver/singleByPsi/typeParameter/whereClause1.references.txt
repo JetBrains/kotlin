@@ -1,7 +1,0 @@
-KtNameReferenceExpression(65,69): 'From'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in <local>: copyNotNull) From

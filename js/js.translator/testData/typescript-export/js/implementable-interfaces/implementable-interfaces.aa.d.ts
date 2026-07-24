@@ -1,8 +1,17 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
+    namespace kotlin.collections {
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
+        }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
+    }
     namespace foo {
         function makeFunInterfaceWithSam(): foo.FunIFace;
         function makeNoRuntimeFunInterfaceWithSam(): foo.NoRuntimeFunIface;
@@ -13,6 +22,8 @@ declare namespace JS_TESTS {
         function justCallAsyncFoo(foo: foo.IFoo<any>): Promise<string>;
         function justCallParentAsyncMethod(foo: foo.IFoo<any>): Promise<string>;
         function justCallSuspendWithDefaultImplementation(foo: foo.IFoo<any>): Promise<string>;
+        function callTypeScriptDefaultSuspend(value: foo.TypeScriptDefaultSuspend): Promise<string>;
+        function callTsAbstractSuspend(value: foo.TsSuspendDispatch): Promise<string>;
         function callingWithDefaultsWithoutParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithoutParameter(foo: foo.IFoo<any>): string;
@@ -24,6 +35,7 @@ declare namespace JS_TESTS {
         function callingAnotherWithDefaultImplementation(foo: foo.IFoo<any>): string;
         function callGenericWithDefaultImplementation(foo: foo.IFoo<any>, x: Nullable<any>): string;
         function callingDelegatingToSuperDefaultImplementation(foo: foo.IFoo<any>): string;
+        function beginWork(listener: foo.Listener): string;
         interface FunIFace {
             apply(x: string): string;
             readonly [foo.FunIFace.Symbol]: true;
@@ -32,7 +44,7 @@ declare namespace JS_TESTS {
             const Symbol: unique symbol;
         }
         interface ExportedParent {
-            anotherParentMethod(): any/* kotlin.collections.List<string> */;
+            anotherParentMethod(): kotlin.collections.KtList<string>;
             parentAsyncMethod(): Promise<string>;
             withDefaultImplementation(): string;
             anotherDefaultImplementation(): string;
@@ -89,10 +101,28 @@ declare namespace JS_TESTS {
                 function getTWithDefaultImpl<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): T;
             }
         }
+        interface TypeScriptDefaultSuspend {
+            marker(): string;
+            suspendDefault(): Promise<string>;
+            readonly [foo.TypeScriptDefaultSuspend.Symbol]: true;
+        }
+        namespace TypeScriptDefaultSuspend {
+            const Symbol: unique symbol;
+            namespace DefaultImpls {
+                function suspendDefault($this: foo.TypeScriptDefaultSuspend): Promise<string>;
+            }
+        }
+        interface TsSuspendDispatch {
+            abstractSuspend(): Promise<string>;
+            readonly [foo.TsSuspendDispatch.Symbol]: true;
+        }
+        namespace TsSuspendDispatch {
+            const Symbol: unique symbol;
+        }
         class KotlinFooImpl implements foo.IFoo<string> {
             constructor();
             foo(): string;
-            anotherParentMethod(): any/* kotlin.collections.List<string> */;
+            anotherParentMethod(): kotlin.collections.KtList<string>;
             withBridge(x: string): string;
             withDefaults(value?: string): string;
             asyncFoo(): Promise<string>;
@@ -133,6 +163,10 @@ declare namespace JS_TESTS {
         }
         interface ChildOfNoRuntime extends foo.NoRuntimeIface {
             child(): string;
+        }
+        interface Listener {
+            onStart(): string;
+            readonly id: string;
         }
         class KotlinNoRuntimeImpl implements foo.NoRuntimeIface {
             constructor(a: string);
@@ -193,11 +227,25 @@ declare namespace JS_TESTS {
         interface NoRuntimeLeaf extends foo.MidNormal {
             leaf(): string;
         }
-        interface ShouldBeNotImplementable {
+        interface ShouldBeNotImplementableWithIgnoredProperty {
             leaf(): string;
             readonly __doNotUseOrImplementIt: {
-                readonly "foo.ShouldBeNotImplementable": unique symbol;
+                readonly "foo.ShouldBeNotImplementableWithIgnoredProperty": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredFun {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredFun": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredSuspend {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredSuspend": unique symbol;
             };
         }
     }
 }
+
+

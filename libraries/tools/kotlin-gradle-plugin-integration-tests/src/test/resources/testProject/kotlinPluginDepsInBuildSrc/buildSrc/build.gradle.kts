@@ -7,7 +7,7 @@ repositories {
     mavenLocal()
 }
 
-val kotlin_version: String by extra
+val kotlin_version = extra["kotlin_version"]
 allprojects {
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version")

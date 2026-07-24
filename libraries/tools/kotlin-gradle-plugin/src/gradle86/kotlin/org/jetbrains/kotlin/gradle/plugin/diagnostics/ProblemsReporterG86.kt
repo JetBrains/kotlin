@@ -31,7 +31,7 @@ internal abstract class ProblemsReporterG86 @Inject constructor(
     private fun fillSpec(
         spec: ProblemSpec,
         diagnostic: ToolingDiagnostic,
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         throwable: KotlinDiagnosticsException?
     ) {
         spec

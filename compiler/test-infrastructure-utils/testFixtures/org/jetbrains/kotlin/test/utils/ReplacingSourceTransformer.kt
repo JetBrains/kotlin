@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.test.utils
 
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import java.util.function.Function
 
 class ReplacingSourceTransformer(val from: String, val to: String) : Function<String, String>, (String) -> String {
     init {
-        require(from.isNotEmpty()) { "Cannot replace empty string" }
+        checkTestInfrastructure(from.isNotEmpty()) { "Cannot replace empty string" }
     }
 
     private val randomComment: String = CharArray(6) { (('0'..'9') + ('a'..'z') + ('A'..'Z')).random() }

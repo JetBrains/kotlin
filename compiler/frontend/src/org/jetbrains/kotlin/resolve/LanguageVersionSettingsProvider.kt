@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
+@K1Deprecation
 interface LanguageVersionSettingsProvider {
 
     fun getModuleLanguageVersionSettings(module: ModuleDescriptor): LanguageVersionSettings?

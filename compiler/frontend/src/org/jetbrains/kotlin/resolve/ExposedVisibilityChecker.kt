@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
+@K1Deprecation
 class ExposedVisibilityChecker(
     private val languageVersionSettings: LanguageVersionSettings,
     private val trace: BindingTrace? = null

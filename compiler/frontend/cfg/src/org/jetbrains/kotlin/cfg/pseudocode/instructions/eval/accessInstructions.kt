@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
+@K1Deprecation
 sealed class AccessTarget {
     class Declaration(val descriptor: VariableDescriptor) : AccessTarget() {
         override fun equals(other: Any?) = other is Declaration && descriptor == other.descriptor
@@ -42,6 +44,7 @@ sealed class AccessTarget {
     object BlackBox : AccessTarget()
 }
 
+@K1Deprecation
 val AccessTarget.accessedDescriptor: CallableDescriptor?
     get() = when (this) {
         is AccessTarget.Declaration -> descriptor
@@ -49,6 +52,7 @@ val AccessTarget.accessedDescriptor: CallableDescriptor?
         is AccessTarget.BlackBox -> null
     }
 
+@K1Deprecation
 abstract class AccessValueInstruction protected constructor(
     element: KtElement,
     blockScope: BlockScope,
@@ -56,6 +60,7 @@ abstract class AccessValueInstruction protected constructor(
     override val receiverValues: Map<PseudoValue, ReceiverValue>
 ) : InstructionWithNext(element, blockScope), InstructionWithReceivers
 
+@K1Deprecation
 class ReadValueInstruction private constructor(
     element: KtElement,
     blockScope: BlockScope,
@@ -102,6 +107,7 @@ class ReadValueInstruction private constructor(
         ReadValueInstruction(element, blockScope, target, receiverValues, outputValue)
 }
 
+@K1Deprecation
 class WriteValueInstruction(
     assignment: KtElement,
     blockScope: BlockScope,

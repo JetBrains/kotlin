@@ -149,12 +149,14 @@ KtNameReferenceExpression(255,256): 'x'
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -164,10 +166,13 @@ KtNameReferenceExpression(255,256): 'x'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaTypeParameterType:
               annotations: []
               type: T
+            typeParameters: []
             visibility: PUBLIC
           type = T
         type = it(MySealed.Left & T)
@@ -205,12 +210,14 @@ KtNameReferenceExpression(273,274): 'y'
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -220,10 +227,13 @@ KtNameReferenceExpression(273,274): 'y'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaTypeParameterType:
               annotations: []
               type: T
+            typeParameters: []
             visibility: PUBLIC
           type = T
         type = it(MySealed.Right & T)

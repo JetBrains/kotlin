@@ -661,8 +661,6 @@ object AbstractTypeChecker {
 
         val superTypeConstructor = superType.typeConstructor()
         if (superTypeConstructor.isIntersection()) {
-            assert(!superType.isMarkedNullable()) { "Intersection type should not be marked nullable!: $superType" }
-
             return superTypeConstructor.supertypes().all { isSubtypeOf(state, subType, it) }
         }
 

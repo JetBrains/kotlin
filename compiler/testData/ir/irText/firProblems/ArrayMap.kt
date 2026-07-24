@@ -1,8 +1,9 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: `set()` throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM throws actualized java.lang.IllegalStateException instead of kotlin.IllegalStateException
+//   K/JVM throws actualized java.lang.NoSuchElementException instead of kotlin.NoSuchElementException
+// DUMP_IR_DIFFERENCE: JS_IR
+//   extra `out` variance in `<this>: kotlin.Array<out T of kotlin.collections.copyOf>`
 
 sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int

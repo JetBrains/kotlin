@@ -8,19 +8,15 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.getValue
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
-import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
-import org.jetbrains.kotlin.gradle.uklibs.include
-import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
+import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -28,7 +24,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.collections.map
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
@@ -38,13 +33,50 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 @DisplayName("Separate KMP compilation a.k.a. the new KMP compilation scheme: KT-77546")
 class SeparateKmpCompilationIT : KGPBaseTest() {
+    @DisplayName("fragment dependencies are configured for shared source sets in a single-target project")
+    @GradleTest
+    fun fragmentDependenciesInSingleTargetProject(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(
+            gradleVersion,
+            targetsToInclude = listOf("jvm"),
+            targetsToRun = listOf("jvm"),
+            additionalProjectConfiguration = {
+                val commonDependency = project.file("common-dependency.jar")
+                val jvmDependency = project.file("jvm-dependency.jar")
+
+                applyMultiplatform {
+                    sourceSets.commonMain {
+                        dependencies {
+                            implementation(project.files(commonDependency))
+                        }
+                    }
+                    sourceSets.jvmMain {
+                        dependencies {
+                            implementation(project.files(jvmDependency))
+                        }
+                    }
+                }
+            },
+            assertions = { fragmentDependencies ->
+                assertTrue(
+                    fragmentDependencies.getValue("commonMain").any { it.endsWith("common-dependency.jar") },
+                    "Expected commonMain dependencies in fragment dependencies: $fragmentDependencies",
+                )
+                assertTrue(
+                    fragmentDependencies.values.flatten().none { it.endsWith("jvm-dependency.jar") },
+                    "jvmMain dependencies should remain on the compilation classpath: $fragmentDependencies",
+                )
+            }
+        )
+    }
+
     @DisplayName("fragment dependencies are not duplicated if they are defined higher in the hierarchy")
     @GradleTest
     fun fragmentDependenciesAreDeduplicated(gradleVersion: GradleVersion) {
         doTestFragmentDependenciesArg(gradleVersion, additionalProjectConfiguration = {
             applyMultiplatform {
                 sourceSets {
-                    val jvmAndJs by it.creating {
+                    val jvmAndJs = it.create("jvmAndJs").apply {
                         dependsOn(it.commonMain.get())
                     }
                     it.jvmMain {
@@ -57,7 +89,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }
         }) { fragmentDependencies ->
             val visitedDependencies = mutableSetOf<String>()
-            for ((_, dependencies) in fragmentDependencies) {
+            for ([_, dependencies] in fragmentDependencies) {
                 for (dependency in dependencies) {
                     assert(visitedDependencies.add(dependency)) {
                         "Duplicate dependency '$dependency' found in fragment dependencies: $fragmentDependencies"
@@ -70,7 +102,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("native stdlib and platform dependencies are added to fragment dependencies")
     @GradleTest
     fun nativeStdlibIsAdded(gradleVersion: GradleVersion) {
-        doTestFragmentDependenciesArg(gradleVersion, listOf("linuxX64")) { fragmentDependenciesPerFragment ->
+        doTestFragmentDependenciesArg(gradleVersion, targetsToRun = listOf("linuxX64")) { fragmentDependenciesPerFragment ->
             val nativeDependencies = fragmentDependenciesPerFragment.getValue("nativeMain")
             assert(nativeDependencies.count { "stdlib" in it } == 1 && nativeDependencies.any { "/klib/common/stdlib" in it }) {
                 "Exactly one K/N stdlib dependency is expected in nativeMain: $nativeDependencies"
@@ -97,11 +129,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     private fun doTestFragmentDependenciesArg(
         gradleVersion: GradleVersion,
+        targetsToInclude: List<String> = ALL_TARGETS,
         targetsToRun: List<String> = listOf("linuxX64", "jvm", "js"),
         additionalProjectConfiguration: Project.() -> Unit = {},
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
-        defaultProject(gradleVersion, additionalProjectConfiguration) {
+        defaultProject(gradleVersion, targetsToInclude, additionalProjectConfiguration) {
             @Suppress("DEPRECATION")
             val compileArgs: List<Pair<String, CommonCompilerArguments>> = providerBuildScriptReturn {
                 val targets = targetsToRun.map { kotlinMultiplatform.targets.getByName(it) }
@@ -118,7 +151,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 *targetsToRun.map { ":compileKotlin${it.capitalize()}" }.toTypedArray(),
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
             )
-            for ((_, particularCompileArgs) in compileArgs) {
+            for ([_, particularCompileArgs] in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
                 val dependenciesPerFragment = fragmentDependencies
                     .map { it.replace('\\', '/') }
@@ -263,8 +296,11 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:metadataNativeMainProcessResources",
                     ":library:processJvmMainResources",
                     ":library:transformCommonMainDependenciesMetadata",
+                    ":library:transformWebMainDependenciesMetadata",
                     ":library:transformLinuxMainDependenciesMetadata",
+                    ":library:transformLinuxMainCInteropDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
+                    ":library:transformNativeMainCInteropDependenciesMetadata",
                     ":library:downloadKotlinNativeDistribution",
                 )
                 val thisProjectTasks = setOf(
@@ -288,11 +324,16 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":processJvmMainResources",
                     ":transformCommonMainDependenciesMetadata",
                     ":transformCommonTestDependenciesMetadata",
+                    ":transformWebMainDependenciesMetadata",
                     ":transformLinuxMainDependenciesMetadata",
+                    ":transformLinuxMainCInteropDependenciesMetadata",
                     ":transformLinuxTestDependenciesMetadata",
+                    ":transformLinuxTestCInteropDependenciesMetadata",
                     ":transformNativeMainDependenciesMetadata",
+                    ":transformNativeMainCInteropDependenciesMetadata",
                     ":transformNativeTestDependenciesMetadata",
-                    ":downloadKotlinNativeDistribution"
+                    ":transformNativeTestCInteropDependenciesMetadata",
+                    ":downloadKotlinNativeDistribution",
                 )
                 assertExactTasksInGraph(
                     if (localRepository != null) {
@@ -309,7 +350,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 )
                 val specificSourceSets = sourceSetNames - "commonMain"
                 val outputPerTask = compileTasks.associateWith { getOutputForTask(it, logLevel = LogLevel.INFO) }
-                for ((task, taskOutput) in outputPerTask) {
+                for ([task, taskOutput] in outputPerTask) {
                     assertFalse(
                         taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+ Unresolved reference 'commonMain'".toRegex()),
                         "$task should be able to resolve `commonMain()`\n$taskOutput"
@@ -328,13 +369,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("single-target project does not produce actual metadata artifact with the separate kmp compilation scheme")
     @GradleTest
     fun singleTargetMetadataSeparate(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
-        doTestSingleTargetMetadata(gradleVersion, localRepoDir, true)
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, enableSeparateCompilation = true)
     }
 
     @DisplayName("single-target project does not produce actual metadata artifact with the current kmp compilation scheme")
     @GradleTest
     fun singleTargetMetadataCurrent(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
-        doTestSingleTargetMetadata(gradleVersion, localRepoDir, false)
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, enableSeparateCompilation = false)
     }
 
     @DisplayName("KT-79073 - test compilation compiles with use of internals from main code")
@@ -386,28 +427,21 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             if (enableSeparateCompilation) {
                 enableSeparateCompilation()
-                buildAndFail(":publish") {
-                    // Currently, it's not clear what shared source sets of single-target projects or bamboo structures should be.
-                    // This test just fixates it's currently disallowed to have code in such shared source sets
-                    // until we decide what exactly should be allowed there
-                    assertTasksFailed(":compileKotlinJvm")
-                }
-            } else {
-                build(":publish") {
-                    val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
-                    assertFileExists(metadataJar)
-                    ZipFile(metadataJar.toFile()).use { zip ->
-                        val topLevelEntries = zip.entries().asSequence()
-                            .filter { entry ->
-                                val path = entry.name
-                                // top-level directories contain a slash at the end of the name
-                                '/' !in path || path.substring(path.indexOf('/') + 1).isEmpty()
-                            }
-                            .toList()
-
-                        assert(topLevelEntries.size == 1 && topLevelEntries.none { it.name != "META-INF/" }) {
-                            "Metadata JAR $metadataJar is expected to be an empty jar with META-INF only single-target KMP project. Top-level entries of the metadata jar: $topLevelEntries"
+            }
+            build(":publish") {
+                val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
+                assertFileExists(metadataJar)
+                ZipFile(metadataJar.toFile()).use { zip ->
+                    val topLevelEntries = zip.entries().asSequence()
+                        .filter { entry ->
+                            val path = entry.name
+                            // top-level directories contain a slash at the end of the name
+                            '/' !in path || path.substring(path.indexOf('/') + 1).isEmpty()
                         }
+                        .toList()
+
+                    assert(topLevelEntries.size == 1 && topLevelEntries.none { it.name != "META-INF/" }) {
+                        "Metadata JAR $metadataJar is expected to be an empty jar with META-INF only single-target KMP project. Top-level entries of the metadata jar: $topLevelEntries"
                     }
                 }
             }
@@ -460,6 +494,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     private fun defaultProject(
         gradleVersion: GradleVersion,
+        targetsToInclude: List<String> = ALL_TARGETS,
         additionalProjectConfiguration: Project.() -> Unit = {},
         autoEnableSeparateKmpCompilation: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions,
@@ -475,11 +510,21 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         buildScriptInjection {
             with(project) {
                 applyMultiplatform {
-                    jvm()
-                    js()
-                    linuxX64()
-                    linuxArm64()
-                    macosArm64()
+                    if ("jvm" in targetsToInclude) {
+                        jvm()
+                    }
+                    if ("js" in targetsToInclude) {
+                        js()
+                    }
+                    if ("linuxX64" in targetsToInclude) {
+                        linuxX64()
+                    }
+                    if ("linuxArm64" in targetsToInclude) {
+                        linuxArm64()
+                    }
+                    if ("macosArm64" in targetsToInclude) {
+                        macosArm64()
+                    }
                     if (sourceStubs) {
                         with(sourceSets) {
                             commonMain.get().compileStubSourceWithSourceSetName()
@@ -495,5 +540,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     companion object {
         private const val PUBLISHED_DEP_GROUP = "org.example"
         private const val PUBLISHED_DEP_VERSION = "1.0"
+        private val ALL_TARGETS: List<String> = listOf("jvm", "js", "linuxX64", "linuxArm64", "macosArm64")
     }
 }

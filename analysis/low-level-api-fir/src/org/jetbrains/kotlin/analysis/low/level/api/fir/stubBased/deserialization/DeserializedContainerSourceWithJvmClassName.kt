@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
+@KaImplementationDetail
 interface DeserializedContainerSourceWithJvmClassName : DeserializedContainerSource {
     val className: JvmClassName
 }

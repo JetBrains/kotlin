@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
-import org.jetbrains.kotlin.backend.common.lower.LAMBDA_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -28,14 +27,10 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -239,7 +234,7 @@ class ExpressionCodegen(
                 // and an explicit return instruction at the end is still required to pass validation.
                 setExtraLineNumberForVoidReturningFunction(irFunction)
                 if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
-                    val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
+                    val [returnType, returnIrType] = irFunction.returnAsmAndIrTypes()
                     result.materializeAt(returnType, returnIrType)
                     mv.areturn(returnType)
                 }
@@ -304,7 +299,6 @@ class ExpressionCodegen(
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
             // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
             // Although these are accessible from Java, the functions they bridge to already have the assertions.
             irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
             irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
@@ -374,7 +368,7 @@ class ExpressionCodegen(
             fun writeToLVT(isReceiver: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, isReceiver)
             when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> {}
-                IrParameterKind.Context -> writeToLVT(isReceiver = parameter.origin == IrDeclarationOrigin.UNDERSCORE_PARAMETER)
+                IrParameterKind.Context -> writeToLVT(isReceiver = false)
                 IrParameterKind.ExtensionReceiver -> writeToLVT(isReceiver = true)
                 IrParameterKind.Regular -> when (parameter.origin) {
                     IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> {}
@@ -389,8 +383,8 @@ class ExpressionCodegen(
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == LAMBDA_EXTENSION_RECEIVER || isReceiver) {
-            getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
+        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER || isReceiver) {
+            getNameForReceiverParameter(irFunction, context.config.languageVersionSettings)
         } else {
             param.name.asString()
         }
@@ -402,15 +396,12 @@ class ExpressionCodegen(
         )
     }
 
-    private fun getNameForReceiverParameter(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): String {
+    private fun getNameForReceiverParameter(function: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
             return RECEIVER_PARAMETER_NAME
         }
 
-        val callableName =
-            if (descriptor is VariableAccessorDescriptor) descriptor.correspondingVariable.getName()
-            else descriptor.name
-
+        val callableName = function.propertyIfAccessor.name
         if (callableName.isSpecial) {
             return RECEIVER_PARAMETER_NAME
         }
@@ -442,15 +433,13 @@ class ExpressionCodegen(
         return value
     }
 
-    // Temporary variables, unnamed (underscore) parameters, and the object for destruction
+    // Temporary variables, unnamed (underscore) non-context parameters, and the object for destruction
     // in a destructuring assignment for lambda parameters do not go in the local variable table.
     private val IrValueDeclaration.isVisibleInLVT: Boolean
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
-                origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
-                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
-                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
-                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
+                (origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER || (this as? IrValueParameter)?.kind == IrParameterKind.Context) &&
+                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
 
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {
@@ -540,7 +529,7 @@ class ExpressionCodegen(
         val parameterAsmTypes = callable.signature.parameters
         val hasDispatchReceiver = callee.dispatchReceiverParameter != null
 
-        for ((parameter, argument) in callee.parameters zip expression.arguments) {
+        for ([parameter, argument] in callee.parameters zip expression.arguments) {
             if (argument == null) error("No argument for parameter ${parameter.render()}:\n${expression.dump()}")
             val type = if (parameter.kind == IrParameterKind.DispatchReceiver) {
                 if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(argument.type) else callable.owner
@@ -596,10 +585,14 @@ class ExpressionCodegen(
         fun IrFunction.returnTypeMayBeInferred(): Boolean =
             this is IrSimpleFunction && (returnType.isTypeParameter() || allOverridden().any { it.returnType.isTypeParameter() })
 
+        fun IrFunction.isSuspendFunctionOrDefaultStubReturningUnit(): Boolean =
+            this is IrSimpleFunction && isSuspend &&
+                    ((attributeOwnerId as? IrFunction)?.returnType ?: returnType).isUnit()
+
         return when {
             expression.type.isUnit() &&
                     irFunction.shouldContainSuspendMarkers() &&
-                    callee.suspendFunctionOriginal().returnTypeMayBeInferred() -> {
+                    (callee.suspendFunctionOriginal().returnTypeMayBeInferred() || callee.isSuspendFunctionOrDefaultStubReturningUnit()) -> {
                 // In some cases of Unit functions with tail-call of another function, we shall overwrite the return value
                 //  with Unit because:
                 // 1. NewInference allows casting `() -> T` to `() -> Unit`, so we cannot trust return lambda types;
@@ -609,6 +602,8 @@ class ExpressionCodegen(
                 //  b) suspend fun foo(f: suspend () -> Unit) { return f() }
                 // Note that in (2a) it would be incorrect to return non-Unit from `foo` or fail
                 // with CHECKCAST even if `f()` actually returned non-Unit value.
+                // 3. Any suspend method can be resumed with an incorrectly typed value by using unsafe cast of a continuation
+                //    to another generic type, e.g. to Continuation<Any>
                 //
                 // This is especially important for calls of suspend functions, but is also used for other cases when Unit
                 // functions are generated to non-void bytecode methods. Note that `shouldContainSuspendMarkers()` and
@@ -717,7 +712,7 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
-        val index = frameMap.enter(declaration.symbol, varType)
+        val index = frameMap.enter(declaration, varType)
 
         val initializer = declaration.initializer
         if (initializer != null) {
@@ -997,7 +992,7 @@ class ExpressionCodegen(
         // TODO: should be owner != irFunction
         val isNonLocalReturn = methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
 
-        val (returnType, returnIrType) = owner.returnAsmAndIrTypes()
+        val [returnType, returnIrType] = owner.returnAsmAndIrTypes()
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
@@ -1072,7 +1067,6 @@ class ExpressionCodegen(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
         val typeOperand = expression.typeOperand
-        val kotlinType = typeOperand.toIrBasedKotlinType()
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.accept(this, data)
@@ -1089,7 +1083,7 @@ class ExpressionCodegen(
                     mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
-                    TypeIntrinsics.checkcast(mv, kotlinType, boxedRightType, false)
+                    TypeIntrinsics.checkcast(mv, typeOperand, boxedRightType, false)
                 }
                 MaterialValue(this, boxedRightType, expression.type)
             }
@@ -1107,7 +1101,7 @@ class ExpressionCodegen(
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
-                    TypeIntrinsics.instanceOf(mv, kotlinType, type)
+                    TypeIntrinsics.instanceOf(mv, typeOperand, type)
                 }
                 expression.onStack
             }
@@ -1117,7 +1111,7 @@ class ExpressionCodegen(
     }
 
     fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
-        val (typeParameter, second) = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
+        val [typeParameter, second] = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
         consumeReifiedOperationMarker(typeParameter)
         putReifiedOperationMarker(operationKind, second, visitor)
         return true
@@ -1391,7 +1385,7 @@ class ExpressionCodegen(
         if (this is IrContainerExpression) statements.firstOrNull() ?: this else this
 
     private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {
-        val lastRegionStart = tryGaps.fold(tryStart) { regionStart, (gapStart, gapEnd) ->
+        val lastRegionStart = tryGaps.fold(tryStart) { regionStart, [gapStart, gapEnd] ->
             mv.visitTryCatchBlock(regionStart, gapStart, catchStart, type)
             gapEnd
         }
@@ -1573,8 +1567,7 @@ class ExpressionCodegen(
             mappings,
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
             context.typeSystem,
-            config.languageVersionSettings,
-            config.unifiedNullChecks,
+            context.irBuiltIns,
         )
         // TODO remove it after bootstrap compiler included adding INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL
         // additional "hack" to support TCO with Unit-returning `suspendCoroutine` calls - we know that the type of built-in
@@ -1613,7 +1606,7 @@ class ExpressionCodegen(
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {
             val asmType = typeMapper.mapType(classType)
-            if (wrapPrimitives || classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
+            if (wrapPrimitives || classType.getClass()?.isInlineClass == true || !isPrimitive(asmType)) {
                 v.aconst(typeMapper.boxType(classType))
             } else {
                 v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")

@@ -30,8 +30,9 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
+        boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, overriddenStorage)
+    ) : super(container, descriptor, boundReceiver, overriddenStorage)
 
     override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
@@ -47,7 +48,17 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
     ): DescriptorKProperty2<D, E, V> =
-        DescriptorKProperty2<D, E, V>(container, descriptor, overriddenStorage)
+        DescriptorKProperty2(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        DescriptorKProperty2<D, E, V>(container, descriptor, boundReceiver, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKProperty<V> =
+        throw KotlinReflectionInternalError("Cannot unbind KProperty2: $this")
+
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+        // We don't have bound member extensions in the language yet (KT-8835).
+        throw KotlinReflectionInternalError("Cannot bind KProperty2: $this")
 
     class Getter<D, E, out V>(override val property: DescriptorKProperty2<D, E, V>) : DescriptorKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
@@ -60,8 +71,9 @@ internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E,
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
+        boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
-    ) : super(container, descriptor, overriddenStorage)
+    ) : super(container, descriptor, boundReceiver, overriddenStorage)
 
     override val setter: Setter<D, E, V> by lazy(PUBLICATION) { Setter(this) }
 
@@ -71,7 +83,10 @@ internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E,
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
     ): DescriptorKMutableProperty2<D, E, V> =
-        DescriptorKMutableProperty2<D, E, V>(container, descriptor, overriddenStorage)
+        DescriptorKMutableProperty2(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
+
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        DescriptorKMutableProperty2<D, E, V>(container, descriptor, boundReceiver, overriddenStorage)
 
     class Setter<D, E, V>(override val property: DescriptorKMutableProperty2<D, E, V>) : DescriptorKProperty.Setter<V>(),
         KMutableProperty2.Setter<D, E, V> {

@@ -165,7 +165,7 @@ internal open class InternalStringMap<K, V> : InternalMap<K, V> {
     }
 
     override fun putAll(from: Map<out K, V>) {
-        for ((key, value) in from) {
+        for ([key, value] in from) {
             put(key, value)
         }
     }

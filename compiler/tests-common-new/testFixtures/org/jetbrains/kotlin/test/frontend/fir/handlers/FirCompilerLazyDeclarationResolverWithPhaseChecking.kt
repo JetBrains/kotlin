@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.isItAllowedToCallLazyResolveTo
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 
 
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
@@ -35,12 +37,12 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
     }
 
     override fun startResolvingPhase(phase: FirResolvePhase) {
-        check(currentTransformerPhase == null)
+        checkTestInfrastructure(currentTransformerPhase == null) { "currentTransformerPhase must be null"}
         currentTransformerPhase = phase
     }
 
     override fun finishResolvingPhase(phase: FirResolvePhase) {
-        check(currentTransformerPhase == phase)
+        checkTestInfrastructure(currentTransformerPhase == phase)  { "currentTransformerPhase must be $phase"}
         currentTransformerPhase = null
     }
 
@@ -48,7 +50,7 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         if (!lazyResolveContractChecksEnabled || elementPhase >= requestedPhase) return
 
         val currentPhase = currentTransformerPhase
-            ?: error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")
+            ?: testInfraError("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")
 
         // This case is not a violation of any contract
         // However, now we keep more strict invariant here,

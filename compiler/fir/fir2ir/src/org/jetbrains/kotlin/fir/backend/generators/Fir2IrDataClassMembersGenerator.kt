@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_DATA_CLASS_MEMBER
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_INLINE_CLASS_MEMBER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_FULL_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -62,12 +62,12 @@ class Fir2IrDataClassMembersGenerator(
     private val c: Fir2IrComponents,
     private val generatedDataValueClassSyntheticFunctionsStorage: MutableMap<IrClass, DataValueClassGeneratedMembersInfo>,
 ) : Fir2IrComponents by c {
-    fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
+    fun generateInlineClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
+        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_INLINE_CLASS_MEMBER).generateHeaders()
     }
 
-    fun generateMultiFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
+    fun generateFullValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
+        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_FULL_VALUE_CLASS_MEMBER).generateHeaders()
     }
 
     fun generateDataClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
@@ -225,8 +225,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         members: Map<IrClass, DataValueClassGeneratedMembersInfo>,
         symbolTable: SymbolTable,
     ) {
-        for ((irClass, info) in members) {
-            val (c, firClass, origin, functions) = info
+        for ([irClass, info] in members) {
+            (val c = components, val firClass, val origin, val functions = generatedFunctions) = info
             MyDataClassMethodsGenerator(c, irClass, firClass, origin, symbolTable).generateBodies(functions)
         }
     }
@@ -333,7 +333,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     // Otherwise, choose either the first IrClass supertype or recurse.
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
-                    val firstBoundType = bounds.first().coneType.fullyExpandedType().coerceToAny()
+                    val firstBoundType = bounds.first().coneType.fullyExpandedType().unwrapLowerBound().coerceToAny()
                     return when (val firstSuper = firstBoundType.toSymbol()?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
@@ -351,7 +351,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
                 val type = firProperty.resolvedReturnType.fullyExpandedType()
-                val (symbol, hasDispatchReceiver) = when {
+                val [symbol, hasDispatchReceiver] = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
                         val preparedType = type.unwrapToSimpleTypeUsingLowerBound().coerceToAny()

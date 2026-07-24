@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analyzer
 
 import com.intellij.util.messages.Topic
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
+@K1Deprecation
 interface ModuleDescriptorListener {
     fun moduleDescriptorInvalidated(moduleDescriptor: ModuleDescriptor)
 

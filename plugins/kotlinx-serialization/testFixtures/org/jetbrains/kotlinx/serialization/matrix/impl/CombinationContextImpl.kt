@@ -41,11 +41,11 @@ internal class CombinationContextImpl : CombinationContext {
     }
 
     override fun generate(appendable: Appendable, generator: String) {
-        val namedTypes = types.map { (type, name) -> NamedTypeVariant(name, type) }
+        val namedTypes = types.map { [type, name] -> NamedTypeVariant(name, type) }
         appendable.writeHeader(namedTypes, generator)
         appendable.writeTypes(namedTypes)
 
-        functions.forEach { (signature, builder) ->
+        functions.forEach { [signature, builder] ->
             appendable.writeFunction(signature, builder)
         }
 

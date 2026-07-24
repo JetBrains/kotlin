@@ -6,13 +6,15 @@
 
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesScope
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.io.File
@@ -60,6 +64,8 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         ).all
 
         val perfManager = configuration.perfManager
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration,
@@ -71,81 +77,52 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             it.notifyPhaseStarted(PhaseType.Analysis)
         }
 
-        val sourceFiles: List<KtSourceFile>
-
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-        val outputs = if (isLightTree) {
-            val projectEnvironment = environment.toVfsBasedProjectEnvironment()
-            var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val groupedSources = collectSources(configuration, projectEnvironment)
 
-            val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList().also {
-                sourceFiles = it
-            }
-            val incrementalCompilationScope = createIncrementalCompilationScope(
-                configuration,
-                projectEnvironment,
-                incrementalExcludesScope = null
-            )?.also { librariesScope -= it }
-            val sessionsWithSources = prepareMetadataSessions(
-                ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars, librariesScope,
-                libraryList, klibs, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
-                createProviderAndScopeForIncrementalCompilation = { files ->
-                    createContextForIncrementalCompilation(
-                        configuration,
-                        projectEnvironment,
-                        projectEnvironment.getSearchScopeBySourceFiles(files),
-                        previousStepsSymbolProviders = emptyList(),
-                        incrementalCompilationScope
-                    )
+        val projectEnvironment = environment.toVfsBasedProjectEnvironment()
+        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
+            configuration,
+            projectEnvironment,
+            incrementalExcludesScope = null
+        )
+
+        val groupedSources = collectSources(configuration, projectEnvironment)
+
+        val sourceFiles = when {
+            isLightTree -> groupedSources.let { it.commonSources + it.platformSources }.toList()
+            else -> environment.getSourceFiles().also { ktFiles ->
+                perfManager?.addSourcesStats(ktFiles.size, environment.countLinesOfCode(ktFiles))
+                for (ktFile in ktFiles) {
+                    SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
                 }
-            )
-            sessionsWithSources.map { (session, files) ->
-                val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter) { files, lines ->
+            }.map { KtPsiSourceFile(it) }
+        }
+
+        val sessionsWithSources = prepareMetadataSessions(
+            sourceFiles,
+            configuration,
+            projectEnvironment,
+            rootModuleName,
+            extensionRegistrars,
+            librariesScope,
+            libraryList,
+            resolvedLibraries = klibs,
+            isCommonSource = groupedSources.isCommonSourceForLt,
+            fileBelongsToModule = groupedSources.fileBelongsToModuleForLt,
+            incrementalCompilationContext,
+        )
+
+        val outputs = sessionsWithSources.map { (session, files) ->
+            val firFiles = when {
+                isLightTree -> session.buildFirViaLightTree(files, diagnosticsReporter) { files, lines ->
                     perfManager?.addSourcesStats(files, lines)
                 }
-                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+                else -> session.buildFirFromKtFiles(files.map { (it as KtPsiSourceFile).psiFile as KtFile })
             }
-        } else {
-            val projectEnvironment = environment.toVfsBasedProjectEnvironment()
-            var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val ktFiles = environment.getSourceFiles().also { ktFiles ->
-                perfManager?.addSourcesStats(ktFiles.size, environment.countLinesOfCode(ktFiles))
-                sourceFiles = ktFiles.map { KtPsiSourceFile(it) }
-            }
-
-            for (ktFile in ktFiles) {
-                AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
-            }
-
-            val sourceScope =
-                projectEnvironment.getSearchScopeByPsiFiles(ktFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
-            val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
-                projectEnvironment,
-                configuration,
-                sourceScope
-            )
-            providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
-                librariesScope -= it
-            }
-            val sessionsWithSources = prepareMetadataSessions(
-                ktFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
-                librariesScope, libraryList, klibs, isCommonSourceForPsi, fileBelongsToModuleForPsi,
-                createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
-            )
-
-            sessionsWithSources.map { (session, files) ->
-                val firFiles = session.buildFirFromKtFiles(files)
-                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
-            }
+            resolveAndCheckFir(session, firFiles, diagnosticsReporter)
         }
 
         outputs.runPlatformCheckers(diagnosticsReporter)
-
-        when (configuration.useLightTree) {
-            true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            false -> checkKotlinPackageUsageForPsi(configuration, sourceFiles.asKtFilesList())
-        }
 
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
         return MetadataFrontendPipelineArtifact(

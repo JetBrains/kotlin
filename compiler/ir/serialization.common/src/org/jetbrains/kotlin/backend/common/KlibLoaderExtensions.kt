@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
@@ -20,6 +21,7 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 /**
  * Checks for existence of duplicated [uniqueName]s among [KlibLoaderResult.librariesStdlibFirst].
@@ -40,21 +42,24 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
 
     val duplicatedUniqueNameStrategy = configuration.duplicatedUniqueNameStrategy ?: DuplicatedUniqueNameStrategy.DENY
 
-    for ((uniqueName, libraries) in librariesWithDuplicatedUniqueNames) {
+    for ([uniqueName, libraries] in librariesWithDuplicatedUniqueNames) {
         val message =
-            "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.libraryFile.path }}"
+            "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.path.pathString }}"
 
-        if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.DENY) {
-            configuration.report(
-                SerializationErrors.KLIB_LOADING_ERROR,
-                message +
-                        "\nPlease file an issue to https://kotl.in/issue and meanwhile use CLI parameter -Xklib-duplicated-unique-name-strategy with one of the following values:\n" +
-                        "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same 'unique_name' property.\n" +
-                        "${DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING}: Use the first KLIB dependency with clashing 'unique_name' property. No order guarantees are given though.\n" +
-                        "${DuplicatedUniqueNameStrategy.DENY}: Fail a compilation with the error."
-            )
-        } else {
-            configuration.report(SerializationErrors.KLIB_LOADING_WARNING, message)
+        when (duplicatedUniqueNameStrategy) {
+            DuplicatedUniqueNameStrategy.ALLOW_ALL -> {}
+            DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING, DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING ->
+                configuration.report(SerializationErrors.KLIB_LOADING_WARNING, message)
+            DuplicatedUniqueNameStrategy.DENY ->
+                configuration.report(
+                    SerializationErrors.KLIB_LOADING_ERROR,
+                    message +
+                            "\nPlease file an issue to https://kotl.in/issue and meanwhile use CLI parameter -Xklib-duplicated-unique-name-strategy with one of the following values:\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_ALL}: Use all KLIB dependencies, even when they have same 'unique_name' property.\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING}: Use all KLIB dependencies, even when they have same 'unique_name' property, but emit a warning.\n" +
+                            "${DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING}: Use the first KLIB dependency with clashing 'unique_name' property. No order guarantees are given though.\n" +
+                            "${DuplicatedUniqueNameStrategy.DENY}: Fail a compilation with the error."
+                )
         }
     }
 
@@ -73,7 +78,7 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
  */
 fun KlibLoaderResult.reportLoadingProblemsIfAny(
     configuration: CompilerConfiguration,
-    allAsErrors: Boolean = false
+    allAsErrors: Boolean = false,
 ) {
     reportLoadingProblemsIfAny { defaultSeverity, message ->
         val factory = if (allAsErrors) SerializationErrors.KLIB_LOADING_ERROR else when (defaultSeverity) {
@@ -114,7 +119,7 @@ fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List
 
     if (canonicalFriendLibraryPaths.isEmpty()) return emptyList()
 
-    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.libraryFile.canonicalPath }
+    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.path.canonicalPathString() }
 
     return canonicalFriendLibraryPaths.mapNotNull { canonicalLibraryPathsToLibraries[it] }
 }

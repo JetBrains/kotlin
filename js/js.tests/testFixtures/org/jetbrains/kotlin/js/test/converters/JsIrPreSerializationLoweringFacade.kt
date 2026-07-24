@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
@@ -24,13 +25,13 @@ class JsIrPreSerializationLoweringFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
-        require(module.languageVersionSettings.languageVersion.usesK2)
-        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
+        checkTestInfrastructure(module.languageVersionSettings.languageVersion.usesK2) { "Use K2" }
+        checkTestInfrastructure(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
             "${this::class} expects Fir2IrCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
         }
 
         val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is WebFir2IrPipelineArtifact) {
+        checkTestInfrastructure(cliArtifact is WebFir2IrPipelineArtifact) {
             "Fir2IrCliBasedOutputArtifact should have WebFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
         }
         // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.

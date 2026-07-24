@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration>
 typealias FirCallableDeclarationChecker = FirDeclarationChecker<FirCallableDeclaration>
 typealias FirFunctionChecker = FirDeclarationChecker<FirFunction>
-typealias FirSimpleFunctionChecker = FirDeclarationChecker<FirNamedFunction>
+typealias FirNamedFunctionChecker = FirDeclarationChecker<FirNamedFunction>
 typealias FirPropertyChecker = FirDeclarationChecker<FirProperty>
 typealias FirClassLikeChecker = FirDeclarationChecker<FirClassLikeDeclaration>
 typealias FirClassChecker = FirDeclarationChecker<FirClass>

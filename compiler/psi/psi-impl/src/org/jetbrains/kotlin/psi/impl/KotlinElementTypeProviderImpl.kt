@@ -83,6 +83,9 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val backingFieldType: KtStubElementType<out KotlinBackingFieldStub, KtBackingField>
         get() = KtStubElementTypes.BACKING_FIELD
 
+    override val destructuringDeclarationType: KtStubElementType<out KotlinDestructuringDeclarationStub, KtDestructuringDeclaration>
+        get() = KtStubElementTypes.DESTRUCTURING_DECLARATION
+
     override val initializerListType: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList>
         get() = KtStubElementTypes.INITIALIZER_LIST
 

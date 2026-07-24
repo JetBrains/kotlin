@@ -38,7 +38,7 @@ WHEN working with PSI elements:
 
 ## Working with Test Data
 
-When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` instead of standard test commands. **Never use `manageTestDataGlobally --mode=update`** — it re-runs Gradle configuration (1–2 min) every time a CLI flag value changes, which makes iteration painful. `updateTestData` accepts the same options as `-P` properties and keeps the configuration cache stable across runs (sub-second reconfiguration), so it is strictly better for any update workflow.
+When modifying test data files or running generated tests (`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only) instead of standard test commands. Both take their options as `-P` properties, so changing filters between runs stays fast.
 
 ### `updateTestData` — the only recommended way to update test data
 
@@ -61,15 +61,15 @@ When modifying test data files or running generated tests (`*Generated`) that co
 
 `updateTestData` is fixed to update mode. There is no `updateTestDataGlobally` — Gradle's task-name matching runs the task in every applicable subproject when invoked from the repo root.
 
-### `manageTestDataGlobally --mode=check` — verification only
+### `checkTestData` — verification only
 
-If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use check mode:
+If you specifically need to verify that existing test data is consistent without modifying anything (e.g., sanity-checking generated files after an `updateTestData` run), use `checkTestData`. It is the exact `-P`-driven counterpart of `updateTestData` but fixed to check mode: it fails on any mismatch and writes nothing.
 
 ```bash
-./gradlew manageTestDataGlobally --mode=check --test-data-path=analysis/analysis-api/testData/components/resolver/singleByPsi/
+./gradlew checkTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/singleByPsi/
 ```
 
-Use this only for verification. For any workflow that writes test data, always prefer `updateTestData`.
+Use this only for verification. For any workflow that writes test data, use `updateTestData`.
 
 **Why use these tasks instead of plain `:test`?**
 - Run only relevant tests (filtered by path or class pattern)
@@ -85,7 +85,6 @@ For full options, see [test-data-manager-convention](../repo/gradle-build-conven
 - [`analysis-api-platform-interface/`](analysis-api-platform-interface) - Platform abstraction (declaration providers, project structure, lifetime)
 - [`analysis-api-standalone/`](analysis-api-standalone) - CLI-based implementation of the Analysis API
 - [`analysis-api-fir/`](analysis-api-fir) - K2 implementation based on FIR
-- [`analysis-api-fe10/`](analysis-api-fe10) - K1 implementation based on classic frontend
 - [`analysis-api-impl-base/`](analysis-api-impl-base) - Shared implementation utilities
 - [`low-level-api-fir/`](low-level-api-fir) - K2-specific infrastructure for lazy/incremental analysis
 - [`symbol-light-classes/`](symbol-light-classes) - Java PSI view of Kotlin declarations for interop
@@ -114,3 +113,6 @@ WHEN writing or managing test data files:
 
 WHEN seeking historical context on design decisions:
 → READ [`docs/design-documents/README.md`](docs/design-documents/README.md) (these are historical snapshots, not necessarily up to date)
+
+WHEN working with stubs:
+→ READ [`stubs/README.md`](stubs/README.md)

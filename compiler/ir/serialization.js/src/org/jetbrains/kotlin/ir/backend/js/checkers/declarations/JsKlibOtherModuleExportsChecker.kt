@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
+import org.jetbrains.kotlin.backend.common.checkers.at
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
 
@@ -32,7 +34,7 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
         val clashesByFqNames = collectClashesByFqNames(declarations)
         return buildMap {
             for (clashingExports in clashesByFqNames.values) {
-                for ((index, export) in clashingExports.withIndex()) {
+                for ([index, export] in clashingExports.withIndex()) {
                     if (export is JsKlibExportingDeclaration) {
                         val clashedWith = clashingExports.filterIndexed { i, _ -> i != index }
                         if (clashedWith.isNotEmpty()) {
@@ -46,11 +48,11 @@ object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
 
     override fun check(
         declarations: List<JsKlibExportingDeclaration>,
-        context: JsKlibDiagnosticContext,
+        context: CommonKlibDiagnosticContext,
         reporter: IrDiagnosticReporter,
     ) {
         val clashes = collectClashes(declarations)
-        for ((declaration, clashedWith) in clashes) {
+        for ([declaration, clashedWith] in clashes) {
             if (declaration.declaration != null) {
                 reporter.at(declaration.declaration, context).report(
                     JsKlibErrors.EXPORTING_JS_NAME_CLASH,

@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionReg
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -69,14 +66,11 @@ class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : Envi
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(AssignmentDirectives)
 
-    @OptIn(InternalNonStableExtensionPoints::class)
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
         if (ENABLE_ASSIGNMENT !in module.directives) return
-        AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(TEST_ANNOTATIONS))
-        StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(TEST_ANNOTATIONS))
         FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(TEST_ANNOTATIONS))
     }
 }

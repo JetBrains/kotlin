@@ -27,11 +27,11 @@ object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
         val companionBlocks = declaration.companionBlocks ?: return
         val firstCompanionBlock = companionBlocks.validCompanionBlocks.first()
 
-        if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
+        if (LanguageFeature.CompanionBlocks.isDisabled()) {
             reporter.reportOn(
                 firstCompanionBlock.companionModifierSource(),
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.CompanionBlocksAndExtensions to context.languageVersionSettings
+                LanguageFeature.CompanionBlocks to context.languageVersionSettings
             )
         }
 

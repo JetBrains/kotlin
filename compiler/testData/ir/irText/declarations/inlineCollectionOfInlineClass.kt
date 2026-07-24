@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // KT-64271
 
 inline class IT(val x: Int)

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.KotlinType
 
+@OptIn(K1Deprecation::class)
 object NullFlexibleTypeDeserializer : FlexibleTypeDeserializer {
 
     override fun create(
@@ -16,5 +19,5 @@ object NullFlexibleTypeDeserializer : FlexibleTypeDeserializer {
         flexibleId: String,
         lowerBound: SimpleType,
         upperBound: SimpleType
-    ) = error("Illegal use of flexible type deserializer.")
+    ): KotlinType = error("Illegal use of flexible type deserializer.")
 }

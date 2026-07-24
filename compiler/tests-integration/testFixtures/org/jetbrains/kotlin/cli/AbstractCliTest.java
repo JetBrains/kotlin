@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.util.PerformanceManager;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.KotlinNativePaths;
 import org.jetbrains.kotlin.utils.StringsKt;
-import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
+import static org.jetbrains.kotlin.konan.library.NativeLibraryConstantsKt.KONAN_STDLIB_NAME;
+import static org.jetbrains.kotlin.konan.library.NativeLibraryConstantsKt.konanCommonLibraryPath;
 import static org.jetbrains.kotlin.test.TestDataAssertions.assertValueAgnosticEqualsToFile;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
@@ -99,7 +102,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
         System.setProperty("java.awt.headless", "true");
-
+        fileName = ForTestCompileRuntime.transformTestDataPath(fileName).getAbsolutePath();
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));
         if (environmentTestConfig.exists()) {
             compiler.setReadingSettingsFromEnvironmentAllowed(true);
@@ -190,7 +193,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         if (!diagnostics.isEmpty()) {
             diagnostics.add(0, diagnostics.size() + " problem(s) found:");
-            Assert.fail(StringsKt.join(diagnostics, "\n"));
+            fail(StringsKt.join(diagnostics, "\n"));
         }
     }
 
@@ -229,7 +232,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
+    protected List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
         File testArgsFile = new File(testArgsFilePath);
         List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
         return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile(), tempDir));
@@ -315,6 +318,13 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         str = replaceIfNeeded(str, "$JDK_17$", () -> KtTestUtil.getJdk17Home().getPath());
         str = replaceIfNeeded(str, "$STDLIB_JS$", () -> ForTestCompileRuntime.stdlibJsForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$DIST_STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsFromDist().getAbsolutePath());
+        str = replaceIfNeeded(str, "$DIST_STDLIB_WASM_WASI$", () -> ForTestCompileRuntime.stdlibWasmWasiFromDist().getAbsolutePath());
+        str = replaceIfNeeded(str, "$STDLIB_NATIVE$", () -> FilesKt.resolve(KotlinNativePaths.INSTANCE.getHomePath(), konanCommonLibraryPath(KONAN_STDLIB_NAME)).getAbsolutePath());
+        str = replaceIfNeeded(str, "$LOMBOK-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.lombokCompilerPluginForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$ALLOPEN-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.allOpenCompilerPluginForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$NOARG-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.noArgCompilerPluginForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$KOTLIN-REFLECT-JAR$", () -> ForTestCompileRuntime.reflectJarForTests().getAbsolutePath());
 
         return str;
     }

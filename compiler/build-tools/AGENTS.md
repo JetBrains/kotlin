@@ -17,7 +17,7 @@ accessing compiler internals directly.
 | [`kotlin-build-statistics`](kotlin-build-statistics)                                                       | Shared library for build metric collection (times, performance, GC, attributes); used by impl and KGP               |
 | [`util-kotlinpoet`](util-kotlinpoet)                                                                       | KotlinPoet utility helpers shared by code generators in the BTA area                                                |
 | [`kotlin-build-tools-api-tests`](kotlin-build-tools-api-tests)                                             | Main integration test suite (JUnit 5, multiple named test suites)                                                   |
-| [`kotlin-build-tools-api-forward-compatibility-tests`](kotlin-build-tools-api-forward-compatibility-tests) | Tests the forward compatibility guarantee (X+1)                                                                     |
+| [`kotlin-build-tools-api-forward-tests`](kotlin-build-tools-api-forward-tests) | Tests the forward compatibility guarantee (X+1)                                                                     |
 
 ## Architecture: ClassLoader Isolation
 
@@ -69,7 +69,7 @@ BTA version X is guaranteed to work with implementation versions [X-3, X+1]
 ```
 
 - **Backward compat (X-3):** tested in `kotlin-build-tools-api-tests` compatibility suites (one suite per listed version)
-- **Forward compat (X+1):** tested in `kotlin-build-tools-api-forward-compatibility-tests`
+- **Forward compat (X+1):** tested in `kotlin-build-tools-api-forward-tests`
 - When adding an API change that may break compatibility, add tests to both modules and run locally to verify
 
 ## Running Tests
@@ -94,7 +94,7 @@ BTA version X is guaranteed to work with implementation versions [X-3, X+1]
 # The full list is in `businessLogicTestSuits` in kotlin-build-tools-api-tests/build.gradle.kts
 
 # Forward compatibility tests
-./gradlew :compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:check
+./gradlew :compiler:build-tools:kotlin-build-tools-api-forward-tests:check
 ```
 
 ## Writing Tests

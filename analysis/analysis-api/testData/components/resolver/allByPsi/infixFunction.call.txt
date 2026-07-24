@@ -89,7 +89,7 @@ KtNameReferenceExpression(37,41): 'this'
   null
 
 KtOperationReferenceExpression(42,43): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -219,7 +219,7 @@ KtNameReferenceExpression(98,107): 'parameter'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(108,115): 'myMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -350,7 +350,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(158,159): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -389,7 +389,7 @@ KtConstantExpression(160,161): '1'
   null
 
 KtOperationReferenceExpression(162,169): 'myMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

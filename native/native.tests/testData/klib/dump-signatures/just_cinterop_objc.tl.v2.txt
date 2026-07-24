@@ -1,0 +1,7 @@
+// Declared signatures: 4
+just_cinterop_c/BarMeta|null[100]
+just_cinterop_c/Bar|null[100]
+just_cinterop_c/FooProtocolMeta|null[100]
+just_cinterop_c/FooProtocol|null[100]
+
+// Imported signatures: 0

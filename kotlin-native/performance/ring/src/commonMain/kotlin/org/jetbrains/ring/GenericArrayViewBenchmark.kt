@@ -3,8 +3,9 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 // Benchmark is inspired by multik library.
 
@@ -29,22 +30,29 @@ class Array2D<T>(val data: MemoryView<T>, val width: Int) where T : Number{
         return data.get(width * ind1 + ind2).toInt()
     }
 
+    @Suppress("NOTHING_TO_INLINE")
     inline fun getGenericInlined(ind1: Int, ind2: Int): Int {
         return data.get(width * ind1 + ind2).toInt()
     }
 
+    @Suppress("NOTHING_TO_INLINE")
     inline fun getSpecializedInlined(ind1: Int, ind2: Int): Int {
         return (data as MemoryViewIntArray).get(width * ind1 + ind2)
     }
 }
 
-open class GenericArrayViewBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class GenericArrayView : SkipWhenBaseOnly() {
+    // Use the same seed for reproducibility
+    private val rnd = Random(29)
+
     private val N = 2000
 
-    private val intArr = Array2D(MemoryViewIntArray(IntArray(N * N) { Random.nextInt() }), N)
+    private val intArr = Array2D(MemoryViewIntArray(IntArray(N * N) { rnd.nextInt(100) }), N)
     // To confuse devirtualizer:
-    private val longArr = Array2D(MemoryViewLongArray(LongArray(N * N) { Random.nextInt().toLong() }), N)
-    private val doubleArr = Array2D(MemoryViewDoubleArray(DoubleArray(N * N) { Random.nextDouble() }), N)
+    private val longArr = Array2D(MemoryViewLongArray(LongArray(N * N) { rnd.nextInt(100).toLong() }), N)
+    private val doubleArr = Array2D(MemoryViewDoubleArray(DoubleArray(N * N) { rnd.nextDouble() }), N)
 
     init {
         bench(longArr) { a, i, j -> a.getGeneric(i, j) }
@@ -52,7 +60,7 @@ open class GenericArrayViewBenchmark {
         try { bench(longArr) { a, i, j -> a.getSpecializedInlined(i, j) } } catch (t: ClassCastException) {}
     }
 
-    private inline fun <T> bench(arr: Array2D<T>, getter: (Array2D<T>, Int, Int) -> Int) where T : Number {
+    private inline fun <T> bench(arr: Array2D<T>, getter: (Array2D<T>, Int, Int) -> Int): Int where T : Number {
         var sum = 0
 
         for (i in 0 until N) {
@@ -61,13 +69,32 @@ open class GenericArrayViewBenchmark {
             }
         }
 
-        Blackhole.consume(sum)
+        return sum
     }
 
     // Bench cases:
 
-    fun origin() { bench(intArr) { a, i, j -> a.getGeneric(i, j) } }
-    fun inlined() { bench(intArr) { a, i, j -> a.getGenericInlined(i, j) } }
-    fun specialized() { bench(intArr) { a, i, j -> a.getSpecializedInlined(i, j) } }
-    fun manual() { bench(intArr) { a, i, j -> a.width * i + j } }
+    @Benchmark
+    fun origin(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getGeneric(i, j) })
+    }
+
+    @Benchmark
+    fun inlined(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getGenericInlined(i, j) })
+    }
+
+    @Benchmark
+    fun specialized(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getSpecializedInlined(i, j) })
+    }
+
+    @Benchmark
+    fun manual(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.width * i + j })
+    }
 }

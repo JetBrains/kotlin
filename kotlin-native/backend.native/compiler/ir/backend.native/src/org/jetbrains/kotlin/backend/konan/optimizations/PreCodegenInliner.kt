@@ -9,26 +9,14 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
+import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.PreCodegenFunctionInlining
-import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
-import org.jetbrains.kotlin.backend.konan.lower.isLazyStaticInitializer
-import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
-import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
-import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
@@ -144,7 +132,7 @@ internal class PreCodegenInliner(
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
                                 && !calleeIrFunction.overrides(invokeSuspendFunction.owner)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.let {
-                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+                            it.parentClassOrNull?.isInlineClass == true && it.backingField != null
                         } != true
                                 && calleeIrFunction.originalConstructor?.constructedClass?.let { it.isArray || it.symbol == string } != true
                                 && calleeIrFunction.originalConstructor?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
@@ -157,7 +145,7 @@ internal class PreCodegenInliner(
 
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
-                                .forEach { (irElement, liveVariables) ->
+                                .forEach { [irElement, liveVariables] ->
                                     (irElement as IrSuspensionPoint).liveVariablesAtSuspensionPoint = liveVariables
                                 }
 

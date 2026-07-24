@@ -109,7 +109,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     @Test
     fun testStdlib() {
         val testName = "stdlib"
-        val testCase = generateObjCFramework(testName)
+        val testCase = generateObjCFramework(testName, testCompilerArgs = listOf("-Xdisable-ir-checkers=IrVisibilityChecker"))
         compileAndRunSwift(testName, testCase)
     }
 
@@ -517,6 +517,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
                     "-module-name", frameworkName,
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile)),

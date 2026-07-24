@@ -1,0 +1,6 @@
+Resulting Content Scopes:
+Module LIBRARY:
+    + Foo.class
+    - notes.txt
+Module MAIN:
+    + main.kt

@@ -254,6 +254,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
         private val COMPILER_ARGS = TestCompilerArgs(
             listOf(
                 "-nostdlib", // stdlib is passed explicitly.
+                "-Xdisable-ir-checkers=IrVisibilityChecker",
             )
         )
     }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 
 // old JSpecify annotations
 
@@ -163,3 +164,6 @@ val javaToKotlinNameMap: Map<FqName, FqName> = mapOf(
 // other
 
 val UNDER_MIGRATION_ANNOTATION_FQ_NAME = FqName("kotlin.annotations.jvm.UnderMigration")
+
+val FqName.isCompilerInternalSyntheticAnnotation: Boolean
+    get() = this == JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION || parent() == StandardClassIds.BASE_INTERNAL_IR_PACKAGE

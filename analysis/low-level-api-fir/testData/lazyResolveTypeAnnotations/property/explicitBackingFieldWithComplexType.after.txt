@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithComplexType.kt
         }
 
         field:@R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
-            @R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>| = LAZY_EXPRESSION
+            @R|Anno|[Types](position = <strcat>(String(backing field: ), R|/constant|) [evaluated = String(backing field: 0)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] backing field field: R|@R|Anno|(position = <strcat>(String(type: ), R|/constant|) [evaluated = String(type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested type: ), R|/constant|) [evaluated = String(nested type: 0)])  MyList<@R|Anno|(position = <strcat>(String(nested nested type: ), R|/constant|) [evaluated = String(nested nested type: 0)])  kotlin/Int>>| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }

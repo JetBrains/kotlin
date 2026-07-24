@@ -75,7 +75,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
             callable.parameters.any { it.kind == KParameter.Kind.INSTANCE } -> {
                 // If we have an unbound reference to the value class member,
                 // its receiver (which is passed as argument 0) should also be unboxed.
-                if ((callable.container as? KClassImpl<*>)?.isValue == true)
+                if ((callable.container as? KClassImpl<*>)?.isJvmInlineValue == true)
                     0
                 else
                     1

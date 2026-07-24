@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // FILE: a/JClass.java
 package a;
 public class JClass {

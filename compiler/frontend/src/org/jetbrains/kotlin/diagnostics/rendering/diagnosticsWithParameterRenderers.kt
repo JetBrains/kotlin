@@ -18,10 +18,12 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.*
 import java.text.MessageFormat
 
 
+@K1Deprecation
 abstract class AbstractDiagnosticWithParametersRenderer<in D : UnboundDiagnostic> protected constructor(message: String) : DiagnosticRenderer<D> {
     private val messageFormat = MessageFormat(message)
 
@@ -34,6 +36,7 @@ abstract class AbstractDiagnosticWithParametersRenderer<in D : UnboundDiagnostic
     }
 }
 
+@K1Deprecation
 class DiagnosticWithParameters1Renderer<A>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?
@@ -45,6 +48,7 @@ class DiagnosticWithParameters1Renderer<A>(
     }
 }
 
+@K1Deprecation
 class DiagnosticWithParameters2Renderer<A, B>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
@@ -60,6 +64,7 @@ class DiagnosticWithParameters2Renderer<A, B>(
     }
 }
 
+@K1Deprecation
 class DiagnosticWithParameters3Renderer<A, B, C>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
@@ -77,6 +82,7 @@ class DiagnosticWithParameters3Renderer<A, B, C>(
     }
 }
 
+@K1Deprecation
 class DiagnosticWithParameters4Renderer<A : Any, B : Any, C : Any, D : Any>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
@@ -96,6 +102,7 @@ class DiagnosticWithParameters4Renderer<A : Any, B : Any, C : Any, D : Any>(
     }
 }
 
+@K1Deprecation
 class DiagnosticWithParametersMultiRenderer<A>(
     message: String,
     private val renderer: MultiRenderer<A>
@@ -106,6 +113,7 @@ class DiagnosticWithParametersMultiRenderer<A>(
     }
 }
 
+@K1Deprecation
 interface MultiRenderer<in A> {
     fun render(a: A): Array<String>
 }

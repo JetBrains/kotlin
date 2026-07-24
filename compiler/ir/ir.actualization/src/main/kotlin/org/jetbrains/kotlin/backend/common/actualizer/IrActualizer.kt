@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualChecker
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.classId
 
@@ -39,7 +39,6 @@ class IrActualizer(
     extraActualClassExtractors: List<IrExtraActualDeclarationExtractor> = emptyList(),
     private val missingActualProvider: IrMissingActualDeclarationProvider?,
     actualizerMapContributor: IrActualizerMapContributor?,
-    private val hmppSchemeEnabled: Boolean,
 ) {
     private val collector = ExpectActualCollector(
         mainFragment,
@@ -56,9 +55,10 @@ class IrActualizer(
     val classActualizationInfo: ClassActualizationInfo = collector.collectClassActualizationInfo()
 
     fun actualizeClassifiers() {
+        val hmppProvidersEnabled = languageVersionSettings.hmppProvidersEnabled
         val classSymbolRemapper = object : SymbolRemapper.Empty() {
             override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol {
-                if (!hmppSchemeEnabled && !symbol.owner.isExpect) return symbol
+                if (!hmppProvidersEnabled && !symbol.owner.isExpect) return symbol
                 if (symbol.owner.containsOptionalExpectation()) return symbol
                 val classId = symbol.owner.classId ?: return symbol
                 classActualizationInfo.actualClasses[classId]?.let { return it }
@@ -157,4 +157,3 @@ class IrActualizer(
         mainFragment.files.addAll(newFiles)
     }
 }
-

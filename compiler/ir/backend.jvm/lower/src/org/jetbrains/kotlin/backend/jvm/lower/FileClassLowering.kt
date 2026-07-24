@@ -32,11 +32,8 @@ import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -45,8 +42,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME_SHORT
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
@@ -81,12 +78,11 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
         val fileEntry = irFile.fileEntry
         val fileClassInfo = irFile.getFileClassInfo()
         val isMultifilePart = fileClassInfo.withJvmMultifileClass
-
         val onlyPrivateDeclarationsAndFeatureIsEnabled =
             context.config.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
                 .all {
                     val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
-                    val isInlineOnly = it.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+                    val isInlineOnly = it.hasAnnotation(StandardClassIds.Annotations.InlineOnly)
                     isPrivate || isInlineOnly
                 }
 
@@ -123,7 +119,7 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
 
             annotations =
                 if (isMultifilePart) irFile.annotations.filterNot {
-                    it.symbol.owner.parentAsClass.hasEqualFqName(JvmFileClassUtil.JVM_NAME)
+                    it.isAnnotationWithEqualFqName(JvmFileClassUtil.JVM_NAME)
                 }
                 else irFile.annotations
 
@@ -179,10 +175,10 @@ fun getFileClassInfoFromIrFile(file: IrFile, fileName: String): JvmFileClassInfo
 
 private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotations? {
     val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
-    val jvmName = jvmNameAnnotation?.let(::getLiteralStringFromAnnotation)?.takeIf(Name::isValidIdentifier)
+    val jvmName = jvmNameAnnotation?.getConstArgument<String>(JvmName::name.name)?.takeIf(Name::isValidIdentifier)
 
     val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
-    val jvmPackageName = jvmPackageNameAnnotation?.let(::getLiteralStringFromAnnotation)?.let(::FqName)
+    val jvmPackageName = jvmPackageNameAnnotation?.getConstArgument<String>("name")?.let(::FqName)
 
     if (jvmName == null && jvmPackageName == null) return null
 
@@ -191,18 +187,9 @@ private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotat
     return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
 }
 
-private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrConstructorCall? =
+private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrAnnotation? =
     file.annotations.firstOrNull {
-        it.type.classFqName?.shortName()?.asString() == shortName
+        it.classId.shortClassName.asString() == shortName
     }
-
-private fun getLiteralStringFromAnnotation(annotationCall: IrConstructorCall): String? {
-    return annotationCall.arguments.getOrNull(0)?.let {
-        when {
-            it is IrConst && it.kind == IrConstKind.String -> it.value as String
-            else -> null // TODO: getArgumentExpression().safeAs<KtStringTemplateExpression>()
-        }
-    }
-}
 
 internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)

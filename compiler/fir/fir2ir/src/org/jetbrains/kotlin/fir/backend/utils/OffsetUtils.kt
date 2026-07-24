@@ -69,7 +69,7 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
     if (source?.kind is KtFakeSourceElementKind.DefaultAccessor) {
         val property = this.propertySymbol.fir
         if (property.symbol is FirRegularPropertySymbol) {
-            property.computeOffsetsWithoutInitializer()?.let { (startOffset, endOffset) ->
+            property.computeOffsetsWithoutInitializer()?.let { [startOffset, endOffset] ->
                 return f(startOffset, endOffset)
             }
         }
@@ -137,7 +137,7 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
 ): T {
     val startOffset: Int
     val endOffset: Int
-    if (isCompiledElement(psi)) {
+    if (isCompiledElement(psi) || calleeReference.source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {

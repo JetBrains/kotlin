@@ -359,6 +359,12 @@ private class LibraryDeserializer(
                 else -> TypeParameterResolver(functionName, parentTypeParameterResolver)
             }
 
+            val companionExtension = if (proto.hasCompanionExtensionClass()) {
+                val signature = deserializeIdSignature(proto.companionExtensionClass) as CommonSignature
+                ClassReferenceImpl(signature.extractQualifiedName())
+            } else
+                null
+
             val extensionReceiver = if (proto.hasExtensionReceiver())
                 deserializeValueParameter(
                     proto = proto.extensionReceiver,
@@ -409,7 +415,8 @@ private class LibraryDeserializer(
                     isSuspend = flags.isSuspend,
                     typeParameters = deserializeTypeParameters(proto.typeParameterList, thisFunctionTypeParameterResolver),
                     valueParameters = allValueParameters.compact(),
-                    returnType = nonTrivialReturnType
+                    returnType = nonTrivialReturnType,
+                    companionExtensionsClass = companionExtension,
                 )
             }
         }

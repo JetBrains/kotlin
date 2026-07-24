@@ -20,29 +20,26 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.KOTLIN_PACKAGE_USAGE
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentField
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 
 fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean {
@@ -85,33 +82,6 @@ fun checkKotlinPackageUsageForPsi(
         getPackage = { it.packageFqName },
         getMessageLocation = { MessageUtil.psiElementToMessageLocation(it.packageDirective!!) },
     )
-}
-
-fun checkKotlinPackageUsageForLightTree(
-    configuration: CompilerConfiguration,
-    files: Collection<FirFile>,
-): Boolean {
-    return checkKotlinPackageUsage(
-        configuration, files,
-        getPackage = { it.packageFqName },
-        getMessageLocation = { it.packageDirective.source?.getLocationWithin(it) },
-    )
-}
-
-private fun KtSourceElement.getLocationWithin(file: FirFile): CompilerMessageLocationWithRange? {
-    val sourceFile = file.sourceFile ?: return null
-    val (startLine, startColumn) = file.getLineAndColumnStartingWithOnesAt(startOffset) ?: return null
-    val (endLine, endColumn) = file.getLineAndColumnStartingWithOnesAt(endOffset) ?: return null
-    return CompilerMessageLocationWithRange.create(sourceFile.path, startLine, startColumn, endLine, endColumn, text?.toString())
-}
-
-private fun FirFile.getLineAndColumnStartingWithOnesAt(offset: Int?): Pair<Int, Int>? {
-    return offset?.let { sourceFileLinesMapping?.getLineAndColumnByOffsetStartingWithOnes(it) }
-}
-
-private fun KtSourceFileLinesMapping.getLineAndColumnByOffsetStartingWithOnes(startOffset: Int): Pair<Int, Int> {
-    val (line, column) = getLineAndColumnByOffset(startOffset)
-    return line + 1 to column + 1
 }
 
 fun <PathProvider : Any> getLibraryFromHome(
@@ -161,4 +131,66 @@ fun CompilerConfiguration.reportCompilationException(e: CompilationException) {
             lineContent = e.content
         )
     )
+}
+
+/**
+ * Returns a warning message and status if the argument is deprecated or removed, null otherwise.
+ */
+internal fun ArgumentField.generateLifecycleWarning(forExtraHelp: Boolean): Pair<String, ArgumentLifecycleStatus>? {
+    val status = status
+    if (status == ArgumentLifecycleStatus.REGULAR ||
+        // Don't report a diagnostic about future deprecation/removing
+        !forExtraHelp && (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED || status == ArgumentLifecycleStatus.WILL_BE_REMOVED) ||
+        // It doesn't make sense to show a warning for removed arguments in extra help
+        forExtraHelp && status >= ArgumentLifecycleStatus.REMOVED
+    ) {
+        return null
+    }
+
+    val argument = argument
+    val message = buildString {
+        if (forExtraHelp) {
+            append("The option ")
+        } else {
+            append("The argument '")
+            append(argument.value)
+            append("' ")
+        }
+
+        when (status) {
+            ArgumentLifecycleStatus.REGULAR -> shouldNotBeCalled()
+            ArgumentLifecycleStatus.WILL_BE_DEPRECATED,
+            ArgumentLifecycleStatus.WILL_BE_REMOVED -> {
+                append("will be ")
+                append(if (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED) "deprecated" else "removed")
+                append(" in ")
+                append(if (status == ArgumentLifecycleStatus.WILL_BE_DEPRECATED) argument.deprecatedVersion else argument.removedVersion)
+                append('.')
+            }
+            ArgumentLifecycleStatus.DEPRECATED,
+            ArgumentLifecycleStatus.DEPRECATED_AND_WILL_BE_REMOVED,
+                -> {
+                append("is deprecated since Kotlin ")
+                append(argument.deprecatedVersion)
+                append(". It will be removed in ")
+                if (status == ArgumentLifecycleStatus.DEPRECATED) {
+                    append("one of the future releases")
+                } else {
+                    append(argument.removedVersion)
+                }
+                append('.')
+                deprecatedAnnotation?.message?.takeIf { it.isNotEmpty() }?.let {
+                    append(' ')
+                    append(it)
+                }
+            }
+            ArgumentLifecycleStatus.REMOVED -> {
+                append("was removed in Kotlin ")
+                append(argument.removedVersion)
+                append(". It has no effect.")
+            }
+        }
+    }
+
+    return message to status
 }

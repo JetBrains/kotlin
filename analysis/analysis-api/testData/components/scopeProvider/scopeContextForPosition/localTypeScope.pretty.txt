@@ -5,6 +5,8 @@ implicit values:
     type = Y
     ownerSymbol = KaNamedClassSymbol:
       Y
+    label = Y
+
 
 scopes:
   LocalScope, index = 0

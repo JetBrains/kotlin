@@ -87,7 +87,7 @@ private class ComposeLikeDefaultMethodCallRewriter(private val context: IrPlugin
                 expression.superQualifierSymbol
             ).also {
                 var bitmap = 0
-                function.parameters.zip(expression.arguments).forEachIndexed { i, (parameter, argument) ->
+                function.parameters.zip(expression.arguments).forEachIndexed { i, [parameter, argument] ->
                     if (argument != null) {
                         it.arguments[i] = argument.transform(this@ComposeLikeDefaultMethodCallRewriter, null)
                     } else {
@@ -247,11 +247,10 @@ private class ComposeLikeDefaultArgumentRewriter(
         )
     }
 
-    private fun irConst(value: Int): IrConst = IrConstImpl(
+    private fun irConst(value: Int): IrConst = IrConstImpl.int(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,
-        IrConstKind.Int,
         value
     )
 

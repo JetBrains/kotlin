@@ -1,4 +1,5 @@
 KaPropertySetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: [
     SetAnnotation()
       psi: KtAnnotationEntry
@@ -6,7 +7,7 @@ KaPropertySetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -21,6 +22,7 @@ KaPropertySetterSymbol:
   modality: FINAL
   origin: SOURCE
   parameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
     annotations: [
       ExplicitSetparamAnnotation()
         psi: KtAnnotationEntry
@@ -28,14 +30,14 @@ KaPropertySetterSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
-    generatedPrimaryConstructorProperty: null
     hasDeclaredDefaultValue: false
     hasDefaultValue: false
     isActual: false
     isCompanion: false
     isCrossinline: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -47,24 +49,32 @@ KaPropertySetterSymbol:
     modality: FINAL
     name: value
     origin: SOURCE
+    primaryConstructorProperty: null
+    psi: KtParameter
+    realPsi: KtParameter
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: [
         ExplicitSetparamAnnotation()
           psi: KtAnnotationEntry
@@ -72,14 +82,14 @@ KaPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -91,21 +101,25 @@ KaPropertySetterSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
   getContainingJvmClassName: SetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

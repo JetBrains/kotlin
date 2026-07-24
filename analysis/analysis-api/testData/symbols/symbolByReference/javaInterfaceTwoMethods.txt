@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: PsiClassImpl
   annotations: []
   classId: JavaInterface
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: JavaInterface
   origin: JAVA_SOURCE
+  psi: PsiClassImpl
+  realPsi: PsiClassImpl
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -26,6 +28,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: JavaInterface

@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.gradle.statistics
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.FUS_KOTLIN_FILE_NAME_SUFFIX
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusV2KotlinProfileFile
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringOverridePolicy
 import java.io.File
@@ -117,7 +118,7 @@ class BuildSessionLoggerTest {
         //FUS metrics file should contain "BUILD FINISHED", otherwise it will be skipped as invalid
         reportFile.appendText(
             """
-            ${StringMetrics.USE_FIR.name}=true
+            ${StringListMetrics.USE_FIR.name}=true
             BUILD FINISHED
            
             """.trimIndent()
@@ -151,7 +152,7 @@ class BuildSessionLoggerTest {
         assertEquals(3, metrics.size, "only invalidReportFile file should be filtered")
         assertEquals(
             1,
-            metrics.filter { it.getMetric(StringMetrics.USE_FIR)?.getValue() == "true" }.size,
+            metrics.filter { it.getMetric(StringListMetrics.USE_FIR)?.getValue() == listOf("true") }.size,
             "USE_FIR metric should be red from reportFile"
         )
 
@@ -163,7 +164,7 @@ class BuildSessionLoggerTest {
 
         assertEquals(
             0,
-            metrics.filter { it.getMetric(StringMetrics.USE_OLD_BACKEND)?.getValue() != null }.size,
+            metrics.filter { it.getMetric(StringListMetrics.USE_OLD_BACKEND)?.getValue() != null }.size,
             "USE_OLD_BACKEND metric should be red"
         )
     }
@@ -197,21 +198,68 @@ class BuildSessionLoggerTest {
             logger.report(metric, System.currentTimeMillis())
         }
 
+        for (metric in StringListMetrics.entries) {
+            when (val anonymization = metric.anonymization) {
+                is StringAnonymizationPolicy.ComponentVersionAnonymizer -> {
+                    logger.report(metric, "1.2.3")
+                    logger.report(metric, "1.2.3-SNAPSHOT")
+                }
+                is StringAnonymizationPolicy.AllowedListAnonymizer -> {
+                    anonymization.allowedValues.sorted().forEach {
+                        logger.report(metric, it)
+                    }
+                }
+                is StringAnonymizationPolicy.RegexControlled -> logger.report(metric, metric.name)
+                else -> {
+                    logger.report(metric, "value")
+                    logger.report(metric, metric.name)
+                }
+            }
+        }
+
         logger.finishBuildSession() // create kotlin-profile fus file with comma-separated values
 
         // read metrics from kotlin-profile file in old format with semicolon-separated values
-        val metricContainer = MetricsContainer.createMetricsContainerForProfileFile()
+        val metricContainer = MetricsContainer.createMetricsContainerForV1ProfileFile()
 
-        metricContainer.addMetricFromFusKotlinProfileFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file"))
+        metricContainer.addMetricFromFusV2KotlinProfileFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file"))
 
         for (metric in StringMetrics.entries) {
             val metricValue = metricContainer.getMetric(metric)?.getValue() ?: fail("Could not find metric ${metric.name}")
 
             when (val anonymization = metric.anonymization) {
-                is StringAnonymizationPolicy.ComponentVersionAnonymizer -> validateMetricValueBasedOnOverrideRule(metric, listOf("1.2.3", "1.2.3-snapshot"), metricValue)
-                is StringAnonymizationPolicy.AllowedListAnonymizer -> validateMetricValueBasedOnOverrideRule(metric, anonymization.allowedValues.sorted(), metricValue)
-                is StringAnonymizationPolicy.RegexControlled -> assertMetricValueEquals(metric, metric.name, metricValue)
+                is StringAnonymizationPolicy.ComponentVersionAnonymizer -> validateMetricValueBasedOnOverrideRule(
+                    metric,
+                    listOf(
+                        "1.2.3",
+                        "1.2.3-snapshot"
+                    ),
+                    metricValue
+                )
+                is StringAnonymizationPolicy.AllowedListAnonymizer -> validateMetricValueBasedOnOverrideRule(
+                    metric,
+                    anonymization.allowedValues.sorted(),
+                    metricValue
+                )
+                is StringAnonymizationPolicy.RegexControlled -> assertMetricValueEquals(metric.name, metric.name, metricValue)
                 else -> validateMetricValueBasedOnOverrideRule(metric, listOf("value", metric.name), metricValue)
+            }
+        }
+
+        for (metric in StringListMetrics.entries) {
+            val metricValue = metricContainer.getMetric(metric)?.getValue() ?: fail("Could not find metric ${metric.name}")
+
+            when (val anonymization = metric.anonymization) {
+                is StringAnonymizationPolicy.AllowedListAnonymizer -> {
+                    val expectedValue = anonymization.allowedValues.sorted()
+
+                    assertEquals(
+                        expectedValue,
+                        metricValue,
+                        "Metric ${metric.name} contains unexpected value: expected $expectedValue, but found $metricValue"
+                    )
+                }
+                else -> fail("A $anonymization type should be supported here")
             }
         }
 
@@ -226,17 +274,20 @@ class BuildSessionLoggerTest {
 
     private fun validateMetricValueBasedOnOverrideRule(metric: StringMetrics, possibleExpectedValues: List<String>, actualValue: String) {
         when (metric.type) {
-            StringOverridePolicy.OVERRIDE -> assertMetricValueEquals(metric, possibleExpectedValues.last(), actualValue)
-            StringOverridePolicy.OVERRIDE_VERSION_IF_NOT_SET -> assertMetricValueEquals(metric, possibleExpectedValues.first(), actualValue)
-            StringOverridePolicy.CONCAT -> assertMetricValueEquals(metric, possibleExpectedValues.joinToString(";"), actualValue)
+            StringOverridePolicy.OVERRIDE -> assertMetricValueEquals(metric.name, possibleExpectedValues.last(), actualValue)
+            StringOverridePolicy.OVERRIDE_VERSION_IF_NOT_SET -> assertMetricValueEquals(
+                metric.name,
+                possibleExpectedValues.first(),
+                actualValue
+            )
         }
     }
 
-    private fun assertMetricValueEquals(metric: StringMetrics, expectedValue: String, actualValue: String) {
+    private fun assertMetricValueEquals(metricName: String, expectedValue: String, actualValue: String) {
         assertEquals(
             expectedValue,
             actualValue,
-            "Metric ${metric.name} contains unexpected value: expected $expectedValue, but found $actualValue"
+            "Metric $metricName contains unexpected value: expected $expectedValue, but found $actualValue"
         )
     }
 

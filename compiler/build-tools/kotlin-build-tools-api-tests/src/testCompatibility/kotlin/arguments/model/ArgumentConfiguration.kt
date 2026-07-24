@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model
 
-import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.description.*
+import org.jetbrains.kotlin.arguments.description.removed.*
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -20,6 +20,10 @@ internal abstract class ArgumentConfiguration<T>(
     private val argumentTestDescriptor: ArgumentTestDescriptor<T>,
 ) {
     private val argumentName: String = argumentTestDescriptor.argumentName
+    private val kotlinCompilerArgument: KotlinCompilerArgument = getKotlinCompilerArgument()
+
+    val introducedVersion: String = kotlinCompilerArgument.releaseVersionsMetadata.introducedVersion.releaseName
+    val removedVersion: String? = kotlinCompilerArgument.releaseVersionsMetadata.removedVersion?.releaseName
 
     fun getValueString(argument: T?): String? = argumentTestDescriptor.getValueString(argument)
 
@@ -32,13 +36,27 @@ internal abstract class ArgumentConfiguration<T>(
     }
 
     fun getDefaultValueString(): String? {
-        val argument = actualJvmCompilerArguments.arguments.firstOrNull { it.name == argumentName }
-            ?: actualCommonCompilerArguments.arguments.firstOrNull { it.name == argumentName }
-            ?: error("Argument '$argumentName' not found.")
-
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
-        return argument.defaultValueString(kotlinToolingVersion.toKotlinReleaseVersion())
+        return kotlinCompilerArgument.defaultValueString(kotlinToolingVersion.toKotlinReleaseVersion())
     }
+
+    private fun getKotlinCompilerArgument() =
+        listOf(
+            actualJvmCompilerArguments,
+            actualCommonCompilerArguments,
+            actualJsArguments,
+            actualWasmArguments,
+            actualCommonJsAndWasmArguments,
+            actualCommonKlibBasedArguments,
+            actualMetadataArguments,
+            removedJvmCompilerArguments,
+            removedCommonCompilerArguments,
+            removedJsArguments,
+            removedWasmArguments,
+            removedMetadataArguments,
+        ).firstNotNullOfOrNull { argumentLevel ->
+            argumentLevel.arguments.firstOrNull { it.name == argumentName }
+        } ?: error("Argument '$argumentName' not found.")
 
     private fun KotlinToolingVersion.toKotlinReleaseVersion(): KotlinReleaseVersion {
         val kotlinVersionString = toKotlinVersion().toString()
@@ -71,7 +89,7 @@ internal abstract class ArgumentConfiguration<T>(
         @Suppress("UNCHECKED_CAST") val argumentType = argumentType as KotlinArgumentValueType<Any>
 
         var defaultValue = argumentType.defaultValue.current
-        for ((range, value) in argumentType.defaultValue.valueInVersions) {
+        for ([range, value] in argumentType.defaultValue.valueInVersions) {
             if (kotlinReleaseVersion in range) {
                 defaultValue = value
             }

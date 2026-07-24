@@ -775,11 +775,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation is InlineClassRepresentation
     }
 
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
-        require(this is TypeConstructor, this::errorMessage)
-        return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation is MultiFieldValueClassRepresentation
-    }
-
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? {
         require(this is TypeConstructor, this::errorMessage)
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation?.underlyingPropertyNamesToTypes
@@ -795,13 +790,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return representativeUpperBound
     }
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? {
         require(this is KotlinType, this::errorMessage)
         return unsubstitutedUnderlyingType()
     }
 
     override fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
-        map.map { (parameter, argument) ->
+        map.map { [parameter, argument] ->
             (parameter as TypeConstructor) to (argument as KotlinType).asTypeProjection()
         }.toMap().let { TypeSubstitutor.create(it) }
 
@@ -934,14 +929,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun supportsImprovedVarianceInCst(): Boolean {
         return false
-    }
-}
-
-fun TypeVariance.convertVariance(): Variance {
-    return when (this) {
-        TypeVariance.INV -> Variance.INVARIANT
-        TypeVariance.IN -> Variance.IN_VARIANCE
-        TypeVariance.OUT -> Variance.OUT_VARIANCE
     }
 }
 

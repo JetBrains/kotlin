@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object ModuleStructureDirectives : SimpleDirectivesContainer() {
@@ -30,4 +31,13 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
     )
 
     val ESCAPE_MODULE_NAME by directive("Add a unique prefix to the module name based on the test coordinates")
+
+    val SKIP_FILE_NAME_VALIDATION by directive(
+        """
+            Usage: // SKIP_FILE_NAME_VALIDATION (on a file)
+            Skips the file name extension validation for the current file. Useful for files with extensions that are not generally supported
+            in test data, but should be supported as an exception for a specific test.
+        """.trimIndent(),
+        applicability = DirectiveApplicability.File,
+    )
 }

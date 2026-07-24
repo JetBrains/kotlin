@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
 
+@K1Deprecation
 class JvmPackageScope(
     private val c: LazyJavaResolverContext,
     jPackage: JavaPackage,

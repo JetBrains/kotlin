@@ -1,0 +1,15 @@
+// KT-75928: ld.lld "duplicate symbol" at link when two sibling libraries each
+// declare the SAME internal extension on a type from a shared module, with
+// per-file static caches. Both mangled symbols reach the final link and clash.
+// STEP 1 touches lib1 (recompile + incremental relink) so the clash is also
+// exercised on the IC relink path.
+
+// DISABLE_NATIVE: targetFamily=MINGW
+// DISABLE_NATIVE: targetFamily=LINUX
+MODULES: core, lib1, lib2, main
+
+STEP 0:
+    libs: core, lib1, lib2, main
+
+STEP 1:
+    libs: core, lib1, lib2, main

@@ -187,7 +187,7 @@ class MaxStackFrameSizeAndLocalsCalculator(api: Int, access: Int, descriptor: St
             val current = stack.pop()
             val start = current.inputStackSize
             max = max(max, start + current.maxStackDelta)
-            for ((successor, deltaAtJump) in current.successors) {
+            for ([successor, deltaAtJump] in current.successors) {
                 // Fix-stack pseudoinstructions can sometimes cause this to go into the negative.
                 // In this case we can just treat that as 0, as the fix-stack transformer
                 // will reserve the extra stack space unconditionally.

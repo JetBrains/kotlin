@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.json.JsonPrimitive
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
@@ -12,12 +13,54 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleXcodeTasks
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCBuildConfiguration
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.security.MessageDigest
 import java.util.UUID
 import javax.inject.Inject
+
+internal const val XCODEPROJ_PATH_ENV = "XCODEPROJ_PATH"
+
+private fun requireXcodeprojPath(xcodeprojPath: Property<String>, taskPath: String): String {
+    val raw = xcodeprojPath.orNull
+    check(!raw.isNullOrBlank()) {
+        """
+        Please specify the path to the Xcode project in the $XCODEPROJ_PATH_ENV environment variable.
+        For example:
+            $XCODEPROJ_PATH_ENV=iosApp/iosApp.xcodeproj ./gradlew $taskPath
+        Both relative (from the Gradle invocation directory) and absolute paths are supported.
+        """.trimIndent()
+    }
+    return raw
+}
+
+private fun resolveAndValidateXcodeproj(
+    xcodeprojPath: Property<String>,
+    currentDir: File,
+    taskPath: String,
+): File {
+    val raw = requireXcodeprojPath(xcodeprojPath, taskPath)
+    val resolved = File(raw).let { if (it.isAbsolute) it else currentDir.resolve(it) }
+
+    check(resolved.isDirectory) {
+        """
+        The path set in the $XCODEPROJ_PATH_ENV environment variable does not point to an Xcode project directory.
+        Resolved path: $resolved
+        For example:
+            $XCODEPROJ_PATH_ENV=iosApp/iosApp.xcodeproj ./gradlew $taskPath
+        Both relative (from the Gradle invocation directory) and absolute paths are supported.
+        """.trimIndent()
+    }
+    check(resolved.resolve("project.pbxproj").isFile) {
+        """
+        '$resolved' is not a valid Xcode project: it does not contain a project.pbxproj file.
+        Please verify the path set in the $XCODEPROJ_PATH_ENV environment variable points to a valid .xcodeproj bundle.
+        """.trimIndent()
+    }
+    return resolved
+}
 
 /**
  * This is a CLI command you would run once to integrated embedAndSign script in the Xcode project. It shouldn't ever be UTD or cached.
@@ -38,10 +81,7 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
 
     @TaskAction
     fun integrate() {
-        var projectPath = File(xcodeprojPath.get())
-        if (!projectPath.isAbsolute) {
-            projectPath = currentDir.get().resolve(projectPath)
-        }
+        val projectPath = resolveAndValidateXcodeproj(xcodeprojPath, currentDir.get(), path)
 
         val gradlewPath = System.getenv(GRADLEW_PATH_ENV)?.let { File(it) }
             ?: searchForGradlew(projectPath)
@@ -83,6 +123,15 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
             it.buildPhases?.add(0, scriptPhaseReference)
             project.objects[scriptPhaseReference] = scriptPhase
         }
+
+        project.objects.values
+            .filterIsInstance<XCBuildConfiguration>()
+            .forEach { config ->
+                if (config.buildSettings == null) {
+                    config.buildSettings = mutableMapOf()
+                }
+                config.buildSettings?.put("ENABLE_USER_SCRIPT_SANDBOXING", JsonPrimitive("NO"))
+            }
 
         saveJsonBackIntoPbxproj(
             execOps,
@@ -142,10 +191,7 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
 
     @TaskAction
     fun integrate() {
-        var projectPath = File(xcodeprojPath.get())
-        if (!projectPath.isAbsolute) {
-            projectPath = currentDir.get().resolve(projectPath)
-        }
+        val projectPath = resolveAndValidateXcodeproj(xcodeprojPath, currentDir.get(), path)
 
         val pbxprojPath = projectPath.resolve("project.pbxproj")
         val project = deserializeXcodeProject(pbxprojPath, execOps)

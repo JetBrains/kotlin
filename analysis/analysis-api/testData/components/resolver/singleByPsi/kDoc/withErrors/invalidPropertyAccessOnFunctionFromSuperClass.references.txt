@@ -1,7 +1,0 @@
-KDocName(89,97): 'A.toName'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in SuperClass) fun toName(): kotlin.String

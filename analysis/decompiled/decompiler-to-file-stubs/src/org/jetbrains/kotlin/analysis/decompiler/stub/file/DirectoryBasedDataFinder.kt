@@ -33,7 +33,7 @@ class DirectoryBasedDataFinder(
             return null
         }
 
-        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+        val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
         return ClassData(nameResolver, classProto, classHeader.metadataVersion, KotlinJvmBinarySourceElement(binaryClass))
     }
 }

@@ -64,6 +64,7 @@ class LLResolutionFacadeService(project: Project) {
         }
     }
 
+    @LLFirInternals
     companion object {
         fun getInstance(project: Project): LLResolutionFacadeService =
             project.getService(LLResolutionFacadeService::class.java)

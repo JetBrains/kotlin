@@ -82,7 +82,7 @@ class DurationTest {
             Long.MAX_VALUE to Duration.INFINITE
         )
 
-        for ((value, expectedInfinite) in testCases) {
+        for ([value, expectedInfinite] in testCases) {
             assertEquals(expectedInfinite, value.days)
             assertEquals(expectedInfinite, value.hours)
             assertEquals(expectedInfinite, value.minutes)
@@ -112,7 +112,7 @@ class DurationTest {
             Pair(1.0, DurationUnit.NANOSECONDS)
         )
 
-        for ((value, unit) in data) {
+        for ([value, unit] in data) {
             repeat(10) {
                 val d1 = value.toDuration(unit)
                 val unit2 = units.random()
@@ -687,7 +687,7 @@ class DurationTest {
         fun test(unit: DurationUnit, vararg representations: String) {
             assertFails { d.toString(unit, -1) }
             assertEquals(representations.toList(), representations.indices.map { d.toString(unit, it) })
-            for ((decimals, string) in representations.withIndex()) {
+            for ([decimals, string] in representations.withIndex()) {
                 val d1 = Duration.parse(string)
                 assertEquals(d1, Duration.parseOrNull(string))
                 if (!(d1 == d || (d1 - d).absoluteValue <= (0.5 * 10.0.pow(-decimals)).toDuration(unit))) {

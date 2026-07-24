@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
  * Check that the given class does not inherit from class or implements interface that is
  * marked as HiddenFromObjC (aka "marked with annotation that is marked as HidesFromObjC").
  */
+@K1Deprecation
 object NativeHiddenFromObjCInheritanceChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return

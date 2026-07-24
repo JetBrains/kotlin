@@ -1,4 +1,4 @@
-// WITH_STDLIB
+// STDLIB_JDK8
 // FULL_JDK
 // LIBRARY_PLATFORMS: JVM
 package test
@@ -23,6 +23,10 @@ open class CMutableMap3 : IMutableMap {
     }
 
     override fun remove(key: String): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun remove(key: String, value: String): Boolean {
         TODO("Not yet implemented")
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
-import org.jetbrains.kotlin.backend.common.lower.PropertiesLowering
-import org.jetbrains.kotlin.backend.common.lower.StripTypeAliasDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
@@ -32,9 +28,11 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
+import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -90,9 +88,6 @@ private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): Sy
 private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
     return UpgradeCallableReferences(
         context,
-        upgradeFunctionReferencesAndLambdas = true,
-        upgradePropertyReferences = true,
-        upgradeLocalDelegatedPropertyReferences = true,
         upgradeSamConversions = false,
     )
 }
@@ -110,11 +105,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = JsPlatforms.defaultJsPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
+    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
 }
 
 fun jsLoweringsOfTheFirstPhase(
@@ -156,8 +147,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::createConstEvaluationPhase,
     ::CopyInlineFunctionBodyLowering,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
-    ::PrepareValueClassesToBeExportedLowering,
-    ::PrepareCollectionsToExportLowering,
+    ::PrepareInlineClassesToBeExportedLowering,
     ::PrepareExportedDefaultImplementationsLowering,
     ::ReplaceSuspendIntrinsicLowering,
     ::PrepareSuspendFunctionsForExportLowering,
@@ -191,16 +181,18 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::PrimaryConstructorLowering,
     ::DelegateToSyntheticPrimaryConstructor,
     ::AnnotationConstructorLowering,
+    ::EnumEntryInstancesLowering,
+    ::EnumEntryInstancesBodyLowering,
+    ::EnumEntryCreateGetInstancesFunsLowering,
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
+    ::ObjectDeclarationLowering,
+    ::JsStaticInitializersDeclarationLowering,
+    ::JsStaticInitializersUsageLowering,
     ::JsInitializersLowering,
     ::JsInitializersCleanupLowering,
     ::createKotlinNothingValueExceptionPhase,
     ::CollectClassDefaultConstructorsLowering,
     ::EnumWhenLowering,
-    ::EnumEntryInstancesLowering,
-    ::EnumEntryInstancesBodyLowering,
-    ::EnumClassCreateInitializerLowering,
-    ::EnumEntryCreateGetInstancesFunsLowering,
-    ::EnumSyntheticFunctionsAndPropertiesLowering,
     ::EnumUsageLowering,
     ::ExternalEnumUsagesLowering,
     ::EnumClassRemoveEntriesLowering,
@@ -241,8 +233,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsInlineClassUsageLowering,
     ::ExpressionBodyTransformer,
     ::createAutoboxingTransformerPhase,
-    ::AutoboxingForExportedValueClassesForExternalsLowering,
-    ::ObjectDeclarationLowering,
+    ::AutoboxingForExportedInlineClassesForExternalsLowering,
     ::JsBlockDecomposerLowering,
     ::InvokeStaticInitializersLowering,
     ::ObjectUsageLowering,
@@ -252,7 +243,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::ES6ConstructorCallLowering,
     ::CallsLowering,
     ::EscapedIdentifiersLowering,
-    ::RemoveImplicitExportsFromCollections,
     ::MainFunctionCallWrapperLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringPhase,

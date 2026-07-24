@@ -147,6 +147,11 @@ object StandardNames {
 
         @JvmField val intRange: FqNameUnsafe = rangesFqName("IntRange")
         @JvmField val longRange: FqNameUnsafe = rangesFqName("LongRange")
+        @JvmField val charRange: FqNameUnsafe = rangesFqName("CharRange")
+
+        @JvmField val intProgression: FqNameUnsafe = rangesFqName("IntProgression")
+        @JvmField val longProgression: FqNameUnsafe = rangesFqName("LongProgression")
+        @JvmField val charProgression: FqNameUnsafe = rangesFqName("CharProgression")
 
         @JvmField val deprecated: FqName = fqName("Deprecated")
         @JvmField val deprecatedSinceKotlin: FqName = fqName("DeprecatedSinceKotlin")

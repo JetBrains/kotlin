@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.types.isError
 
+@K1Deprecation
 object ConstModifierChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is VariableDescriptor || !declaration.hasModifier(KtTokens.CONST_KEYWORD)) return
@@ -84,6 +86,7 @@ object ConstModifierChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 sealed class ConstApplicability(val canBeConst: Boolean, val diagnostic: Diagnostic?) {
     object Applicable : ConstApplicability(true, null)
     class NonApplicable(diagnostic: Diagnostic? = null) : ConstApplicability(false, diagnostic)

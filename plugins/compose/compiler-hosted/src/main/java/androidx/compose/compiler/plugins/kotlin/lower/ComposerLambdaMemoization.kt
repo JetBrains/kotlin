@@ -19,7 +19,6 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -268,10 +267,11 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
 
 class ComposerLambdaMemoization(
     context: IrPluginContext,
+    irModule: IrModuleFragment,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
-) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
+) : AbstractComposeLowering(context, irModule, metrics, stabilityInferencer, featureFlags),
 
     ModuleLoweringPass {
 
@@ -981,9 +981,8 @@ class ComposerLambdaMemoization(
                     (
                             // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
                             // on Android.
-                            context.platform.isJvm() &&
-                                    context.languageVersionSettings.languageVersion.usesK2
-                            )
+                            context.platform.isJvm()
+                    )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
@@ -1178,11 +1177,7 @@ class ComposerLambdaMemoization(
         if (mark) {
             // Mark it so the ComposableCallTransformer will insert the correct code around this
             // call
-            context.irTrace.record(
-                ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION,
-                this,
-                true
-            )
+            this.isStaticFunctionExpression = true
         }
         return this
     }
@@ -1190,41 +1185,25 @@ class ComposerLambdaMemoization(
     private fun <T : IrElement> T.markAsComposableSingleton(): T {
         // Mark it so the ComposableCallTransformer can insert the correct source information
         // around this call
-        context.irTrace.record(
-            ComposeWritableSlices.IS_COMPOSABLE_SINGLETON,
-            this,
-            true
-        )
+        this.isComposableSingleton = true
         return this
     }
 
     private fun <T : IrElement> T.markAsComposableSingletonClass(): T {
         // Mark it so the ComposableCallTransformer can insert the correct source information
         // around this call
-        context.irTrace.record(
-            ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS,
-            this,
-            true
-        )
+        isComposableSingletonClass = true
         return this
     }
 
     private fun <T : IrElement> T.markHasTransformedLambda(): T {
         // Mark so that the target annotation transformer can find the original lambda
-        context.irTrace.record(
-            ComposeWritableSlices.HAS_TRANSFORMED_LAMBDA,
-            this,
-            true
-        )
+        this.hasTransformedLambda = true
         return this
     }
 
     private fun <T : IrElement> T.markIsTransformedLambda(): T {
-        context.irTrace.record(
-            ComposeWritableSlices.IS_TRANSFORMED_LAMBDA,
-            this,
-            true
-        )
+        this.isTransformedLambda = true
         return this
     }
 

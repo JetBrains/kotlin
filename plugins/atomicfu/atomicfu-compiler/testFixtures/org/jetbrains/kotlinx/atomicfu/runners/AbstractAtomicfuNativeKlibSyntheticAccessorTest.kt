@@ -48,7 +48,7 @@ abstract class AbstractAtomicfuNativeKlibSyntheticAccessorTest : AbstractNativeK
     }
 }
 
-private class AtomicfuNativeRuntimeClasspathProvider(
+internal class AtomicfuNativeRuntimeClasspathProvider(
     testServices: TestServices,
     private val customKlibs: CustomKlibs,
 ) : RuntimeClasspathProvider(testServices) {

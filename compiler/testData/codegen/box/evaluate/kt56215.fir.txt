@@ -1,6 +1,6 @@
 FILE: kt56215.kt
     public final object ObjectWithExtension : R|kotlin/Any| {
-        private [ContainingClassKey=ObjectWithExtension] constructor(): R|ObjectWithExtension| {
+        private constructor(): R|ObjectWithExtension| {
             super<R|kotlin/Any|>()
         }
 

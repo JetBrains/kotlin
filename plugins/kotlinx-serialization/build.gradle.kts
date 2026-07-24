@@ -10,21 +10,24 @@ import plugins.configureKotlinPomAttributes
 description = "Kotlin Serialization Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
+val jsonJsIrRuntimeForTests = configurations.create("jsonJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
-val coreJsIrRuntimeForTests: Configuration by configurations.creating {
+val coreJsIrRuntimeForTests = configurations.create("coreJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -34,7 +37,7 @@ val coreJsIrRuntimeForTests: Configuration by configurations.creating {
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
-val coreNativeRuntimeForTests by configurations.creating {
+val coreNativeRuntimeForTests = configurations.create("coreNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -44,7 +47,7 @@ val coreNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val jsonNativeRuntimeForTests by configurations.creating {
+val jsonNativeRuntimeForTests = configurations.create("jsonNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -54,9 +57,9 @@ val jsonNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val serializationPluginForTests by configurations.creating
+val serializationPluginForTests = configurations.create("serializationPluginForTests")
 
-fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
+fun DependencyHandlerScope.implicitKotlinApiDependency(notation: String) {
     implicitDependencies(notation) {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
@@ -66,7 +69,6 @@ fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
 
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlinx-serialization-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
@@ -84,18 +86,17 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.common"))
-    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k1"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k2"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.backend"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
-    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
-    coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") { isTransitive = false }
-    jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3") { isTransitive = false }
-    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") { isTransitive = false }
-    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3") { isTransitive = false }
+    coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") { isTransitive = false }
+    jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") { isTransitive = false }
+    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") { isTransitive = false }
+    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") { isTransitive = false }
     serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
@@ -112,8 +113,8 @@ dependencies {
         "iossimulatorarm64",
         "mingwx64"
     ).forEach {
-        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.7.3")
-        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.7.3")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.9.0")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.9.0")
     }
 }
 
@@ -147,7 +148,7 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-val distCompat by configurations.creating {
+val distCompat = configurations.create("distCompat") {
     isCanBeResolved = false
     isCanBeConsumed = true
 }
@@ -167,16 +168,16 @@ artifacts {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
         useJUnitPlatform {
             // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
             excludeTags("serialization-native")
         }
 
         setUpJsIrBoxTests()
-        testInputsCheck {
-            allowFlightRecorder.set(true)
-        }
     }
 
     nativeTestTask(

@@ -19,23 +19,15 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
-import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
-import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
-import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.io.FileNotFoundException
 
@@ -430,7 +422,7 @@ enum class FeatureFlag(val featureName: String, val default: Boolean) {
 
     companion object {
         fun fromString(featureName: String): Pair<FeatureFlag?, Boolean> {
-            val (featureToSearch, enabled) = when {
+            val [featureToSearch, enabled] = when {
                 featureName.startsWith("+") -> featureName.substring(1) to true
                 featureName.startsWith("-") -> featureName.substring(1) to false
                 else -> featureName to true
@@ -480,7 +472,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
 
     private fun processConfigurationList(featuresNames: List<String>) {
         for (featureName in featuresNames) {
-            val (feature, enabled) = FeatureFlag.fromString(featureName)
+            val [feature, enabled] = FeatureFlag.fromString(featureName)
             if (feature != null) {
                 if (enabled) enableFeature(feature) else disableFeature(feature)
             }
@@ -567,7 +559,7 @@ fun validateFeatureFlag(
     configuration: CompilerConfiguration,
     value: String,
 ) {
-    val (feature, _) = FeatureFlag.fromString(value)
+    val [feature, _] = FeatureFlag.fromString(value)
     if (feature == null) {
         configuration.report(
             ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
@@ -585,25 +577,13 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (checkCompilerConfiguration(configuration)) {
-            val usesK2 = configuration.languageVersionSettings.languageVersion.usesK2
-            val descriptorSerializerContext =
-                if (usesK2) null
-                else ComposeDescriptorSerializerContext()
-
             setupJvmConfiguration(configuration)
 
-            registerCommonExtensions(descriptorSerializerContext)
+            registerCommonExtensions()
 
             IrGenerationExtension.registerExtension(
-                createComposeIrExtension(
-                    configuration,
-                    descriptorSerializerContext
-                )
+                createComposeIrExtension(configuration,)
             )
-
-            if (!usesK2) {
-                registerNativeExtensions(descriptorSerializerContext!!)
-            }
         }
     }
 
@@ -640,47 +620,12 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             )
         }
 
-        fun ExtensionStorage.registerCommonExtensions(
-            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
-        ) {
-            StorageComponentContainerContributor.registerExtension(
-                ComposableCallChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                ComposableDeclarationChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                ComposableTargetChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                ComposableAnnotationChecker()
-            )
-            DiagnosticSuppressor.registerExtension(ComposeDiagnosticSuppressor())
-            @Suppress("OPT_IN_USAGE_ERROR")
-            TypeResolutionInterceptor.registerExtension(
-                ComposeTypeResolutionInterceptorExtension()
-            )
-            DescriptorSerializerPlugin.registerExtension(
-                ClassStabilityFieldSerializationPlugin(
-                    composeDescriptorSerializerContext?.classStabilityInferredCollection
-                )
-            )
+        fun ExtensionStorage.registerCommonExtensions() {
             FirExtensionRegistrar.registerExtension(ComposeFirExtensionRegistrar())
-        }
-
-        fun ExtensionStorage.registerNativeExtensions(
-            composeDescriptorSerializerContext: ComposeDescriptorSerializerContext,
-        ) {
-            DescriptorSerializerPlugin.registerExtension(
-                AddHiddenFromObjCSerializationPlugin(
-                    composeDescriptorSerializerContext.hideFromObjCDeclarationsSet
-                )
-            )
         }
 
         fun createComposeIrExtension(
             configuration: CompilerConfiguration,
-            descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
             moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
         ): ComposeIrGenerationExtension {
             val liveLiteralsEnabled = configuration.getBoolean(
@@ -711,8 +656,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ComposeConfiguration.REPORTS_DESTINATION_KEY,
                 ""
             ).ifBlank { null }
-
-            val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
 
             val strongSkippingEnabled = configuration.get(
                 ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
@@ -785,10 +728,8 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 traceMarkersEnabled = traceMarkersEnabled,
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
-                useK2 = useK2,
                 stableTypeMatchers = stableTypeMatchers,
                 moduleMetricsFactory = moduleMetricsFactory,
-                descriptorSerializerContext = descriptorSerializerContext,
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
                 targetRuntimeVersion = targetRuntimeVersion,

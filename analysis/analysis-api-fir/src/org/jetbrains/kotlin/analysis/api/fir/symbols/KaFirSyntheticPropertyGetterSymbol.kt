@@ -1,29 +1,25 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePropertyGetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.utils.hasBody
-import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
 import org.jetbrains.kotlin.name.CallableId
 
@@ -35,9 +31,6 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         require(firSymbol.isGetter)
     }
 
-    override val psi: PsiElement?
-        get() = withValidityAssertion { findPsi() }
-
     override val isNotDefault: Boolean
         get() = withValidityAssertion { true }
 
@@ -46,6 +39,9 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         get() = withValidityAssertion { false }
 
     override val isInline: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean
         get() = withValidityAssertion { false }
 
     override val isOverride: Boolean
@@ -63,6 +59,10 @@ internal class KaFirSyntheticPropertyGetterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { firSymbol.kaSymbolModality }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { firSymbol.visibility }
 
@@ -84,7 +84,7 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this), originalSymbol = this)
+        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = createOwnerPointer(), originalSymbol = this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

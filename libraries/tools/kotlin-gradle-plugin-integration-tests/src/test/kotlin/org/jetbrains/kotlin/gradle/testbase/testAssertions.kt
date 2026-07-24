@@ -12,32 +12,58 @@ import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
+/**
+ * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
+ * which can make test results difficult to compare. Example:
+ *
+ * ```xml
+ * <testcase name="test[wasmJs, browser, ChromeHeadless150.0.0.0, MacOS10.15.7]" classname="PrintTest" time="..." />
+ * ```
+ *
+ * If [stripBrowserVersionInfoFromTestCaseNames] is true, this function will strip the browser version info from test case names as
+ * follows:
+ *
+ * ```xml
+ * <testcase name="test[wasmJs, browser]" classname="PrintTest" time="..." />
+ * ```
+ *
+ * In cases where browser info is more predictable, leave this parameter as false.
+ */
 fun GradleProject.assertTestResults(
     expectedTestReport: Path,
     vararg testReportNames: String,
     subprojectName: String? = null,
-    cleanupStdOut: (String) -> String = { it }
+    stripBrowserVersionInfoFromTestCaseNames: Boolean = false,
+    attributeValidators: Map<String, (String) -> Unit> = emptyMap(),
+    cleanupStdOut: (String) -> String = { it },
 ) {
     val buildDirLocation = if (subprojectName != null) { projectPath.resolve(subprojectName) } else projectPath
     val testReportDirs = testReportNames.map { buildDirLocation.resolve("build/test-results/$it") }
 
     assertDirectoriesExist(*testReportDirs.toTypedArray())
 
-    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, cleanupStdOut)
+    val actualTestResults = readValidateAndCleanupTestResults(
+        testReportDirs,
+        projectPath,
+        stripBrowserVersionInfoFromTestCaseNames,
+        attributeValidators,
+        cleanupStdOut
+    )
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
 }
 
-internal fun readAndCleanupTestResults(
+internal fun readValidateAndCleanupTestResults(
     testReportDirs: List<Path>,
     projectPath: Path,
-    cleanupStdOut: (String) -> String = { it }
+    stripBrowserVersionInfoFromTestCaseNames: Boolean,
+    attributeValidators: Map<String, (String) -> Unit> = emptyMap(),
+    cleanupStdOut: (String) -> String = { it },
 ): String {
     val files = testReportDirs
         .flatMap {
@@ -72,9 +98,13 @@ internal fun readAndCleanupTestResults(
 
         val browserTestRegex = "\\[(.*(, )?)browser,.*]".toRegex();
         e.attributes.forEach {
+            attributeValidators[it.name]?.let { validator ->
+                validator(it.value)
+            }
             if (it.name in skipAttrs) {
                 it.value = "..."
-            } else if (it.name == "name" &&
+            } else if (stripBrowserVersionInfoFromTestCaseNames &&
+                it.name == "name" &&
                 e.name == "testcase" &&
                 it.value.contains(browserTestRegex)
             ) {

@@ -4,6 +4,7 @@
  */
 
 @file:OptIn(ExperimentalAbiValidation::class)
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.abi
 
@@ -12,6 +13,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.abi.utils.*
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.SIMPLE_CLASS
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assumptions
@@ -47,6 +50,30 @@ class AbiValidationKmpIT : KGPBaseTest() {
     private fun TestProject.defaultKmpProject() {
         defaultNativeTargets()
         abiValidation()
+    }
+
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    @DisplayName("Test abiValidation compatibility with compilerVersion prior 2.4.0")
+    fun testCompilerVersionCompatibility(gradleVersion: GradleVersion) {
+        kmpProject(gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.compilerVersion.set("2.2.0")
+            }
+
+            abiValidation()
+
+            build("updateKotlinAbi")
+
+            build("check") {
+                assertTasksExecuted(":checkKotlinAbi")
+            }
+
+            build("dependencies", "--configuration", "kotlinAbiValidationCompatClasspath") {
+                assertOutputContains("\\--- org.jetbrains.kotlin:kotlin-build-tools-impl:{strictly 2.4.0} -> 2.4.0")
+            }
+        }
     }
 
     @GradleTest
@@ -191,7 +218,6 @@ class AbiValidationKmpIT : KGPBaseTest() {
                     iosSimulatorArm64()
                     tvosArm64()
                     tvosSimulatorArm64()
-                    watchosArm32()
                     watchosArm64()
                     watchosSimulatorArm64()
                     watchosDeviceArm64()
@@ -721,7 +747,7 @@ val EMPTY_DUMP_KLIB = """
 
 private val APPLE_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
+    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true

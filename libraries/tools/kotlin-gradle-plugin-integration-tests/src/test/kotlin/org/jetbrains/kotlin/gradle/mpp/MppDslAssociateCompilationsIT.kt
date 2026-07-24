@@ -140,7 +140,9 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     "build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html"
                 } else {
                     val prefix = if (targetName == "jvm") "" else "${targetName}Test."
-                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4)) {
+                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
+                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
+                    ) {
                         "${prefix}com.example.HelloTest"
                     } else {
                         "${prefix}com.example.HelloTest".hashTestPathSegment()
@@ -154,7 +156,9 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     "build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html"
                 } else {
                     val prefix = if (targetName == "jvm") "" else "${targetName}IntegrationTest."
-                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4)) {
+                    val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
+                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
+                    ) {
                         "${prefix}com.example.HelloIntegrationTest"
                     } else {
                         "${prefix}com.example.HelloIntegrationTest".hashTestPathSegment()

@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /takeInt(kotlin/Int) // /takeInt|takeInt(kotlin.Int){}[0]
+final fun /test(kotlin/Boolean) // /test|test(kotlin.Boolean){}[0]

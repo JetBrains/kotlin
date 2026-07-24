@@ -17,6 +17,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.ArrayList
 
+@K1Deprecation
 object AnalyzingUtils {
     private const val WRITE_DEBUG_TRACE_NAMES = false
 

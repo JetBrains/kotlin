@@ -22,15 +22,18 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
-import org.jetbrains.kotlin.test.groupingPhaseInputs
+import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
 
@@ -38,15 +41,20 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            if (artifact != null)
-                error("Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
-                            "Only one module may have no incoming dependencies")
+            checkTestInfrastructure(artifact == null) {
+                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
+                        "Only one module may have no incoming dependencies"
+            }
             artifact = info
         }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val executable = artifact?.executable ?: error("One main module is expected to be in the test.")
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        val executable = artifact?.executable ?: testInfraError("One main module is expected to be in the test.")
         val testRun = createTestRun(
             executable,
             testServices,
@@ -59,7 +67,7 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     }
 }
 
-class NativeBoxRunnerGroupingPhase(testServices: TestServices) : GroupingPhaseHandler<BinaryArtifacts.Native>(
+class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
     testServices,
     failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = false
@@ -180,7 +188,9 @@ private fun getTestRunParameters(
                 }
             }
         }
-        else -> error("Not yet supported test kind: $testKind")
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        else -> testInfraError("Not yet supported test kind: $testKind")
     }
 }
 
@@ -211,9 +221,50 @@ class PrettyResultsHandler(
     val exceptionWrapper: (Throwable) -> WrappedException.FromGroupingHandler,
 ) : ResultHandler(runResult, checks, testRun, loggedParameters) {
     companion object {
+        // failedResults reasons for failed test contain test name in the format:
+        //   in isolated mode: `__launcher__Kt.runTest`
+        //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
         @Suppress("RegExpRepeatedSpace")
-        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)\.__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)\.__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
+    }
+
+    override fun handle() {
+        super.handle()
+        // Sanity check: make sure that every expected testcase was actually executed by the test executable.
+        // Without this check a missing testcase (e.g. silently dropped from the batch) would go unnoticed
+        // as long as the executable reports no failures.
+        verifyAllTestCasesWereExecuted()
+    }
+
+    private fun verifyAllTestCasesWereExecuted() {
+        // The test report is only available when the output is parsed by the TC test output filter.
+        // For other filters there is no reliable way to enumerate the executed testcases, so skip the check.
+        val testReport = runResult.processOutput.stdOut.testReport ?: return
+        val executedTests = testReport.passedTests + testReport.failedTests + testReport.ignoredTests
+        val phaseInputs = testServices.groupingStageInputs
+
+        if (phaseInputs.size == 1) {
+            // A single (isolated) testcase is not moved into a dedicated package, so it can't be matched by package name.
+            // Just verify that exactly one testcase was executed.
+            check(executedTests.size == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+                "Expected exactly one executed testcase in the batch mode, but ${executedTests.size} were executed: $executedTests"
+            }
+            return
+        }
+
+        // Each grouped testcase is moved into a dedicated package computed by `BatchingPackageInserter.computePackage`,
+        // and its launcher `runTest` function ends up in that very package. Therefore an expected testcase is considered
+        // executed if there is an executed test whose package name matches the computed package.
+        val executedPackages = executedTests.mapTo(mutableSetOf()) { it.packageName.toString() }
+        val notExecutedTestCases = phaseInputs.filter { input ->
+            BatchingPackageInserter.computePackage(input.testInfo) !in executedPackages
+        }
+        check(notExecutedTestCases.isEmpty()) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+            "Not all expected testcases were executed. " +
+                    "Expected ${phaseInputs.size} testcase(s), but only ${phaseInputs.size - notExecutedTestCases.size} of them were actually executed. " +
+                    "The following testcase(s) were not executed: ${notExecutedTestCases.map { it.testInfo }}"
+        }
     }
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
@@ -223,10 +274,16 @@ class PrettyResultsHandler(
         } else {
             findFailedTestsWithoutTCLogger(output)
         }
-        val phaseInputs = testServices.groupingPhaseInputs
+        val phaseInputs = testServices.groupingStageInputs
 
+        checkTestInfrastructure(failedResults.isEmpty() || failedTests.isNotEmpty()) {
+            "There should be at least one failed test, but none detected:\n" +
+                    failedResults.joinToString("\n") + "\n\n" + output
+        }
         if (phaseInputs.size == 1) {
-            check(failedTests.size <= 1) {
+            // This is a test-infrastructure invariant violation, not a failure of the code under test. Throw a
+            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            checkTestInfrastructure(failedTests.size <= 1) {
                 "There should be at most one failed test in the batch mode, but there were $failedTests"
             }
             if (failedTests.isNotEmpty()) {
@@ -242,26 +299,22 @@ class PrettyResultsHandler(
                 val testInfo = it.testInfo
                 val correspondingTestName = BatchingPackageInserter.computePackage(testInfo)
                 correspondingTestName == failedTest
-            } ?: error("Can't find corresponding input for $failedTest")
+            } ?: testInfraError("Can't find corresponding input for $failedTest")
             correspondingInput.catchingExecutor.executeWithCatching(exceptionWrapper) {
                 super.processNonExpectedFailure(failedResults)
             }
-        }
-
-        if (failedResults.isNotEmpty() && failedTests.isEmpty()) {
-            error("There should be at least one failed test in the batch mode, but there were none")
         }
     }
 
     private fun findFailedTestsWithoutTCLogger(output: String): List<String> {
         return failedRegexWithoutTCLogger.findAll(output)
             .map { it.groupValues }.distinct()
-            .map { it[1] }.toList()
+            .map { it[1].removeSuffix(".") }.toList()
     }
 
     private fun findFailedTestsWithTCLogger(output: String): List<String> {
         return failedRegexWithTCLogger.findAll(output)
             .map { it.groupValues }.distinct()
-            .map { it[1] }.toList()
+            .map { it[1].removeSuffix(".") }.toList()
     }
 }

@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
       overridden:
         public abstract fun bar (): kotlin.Int declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Any? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Any? [fake_override,companion]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Int
       overridden:
         public abstract fun foo (t: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Any? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Any? [fake_override,companion]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java1

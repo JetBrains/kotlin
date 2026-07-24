@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -23,13 +24,13 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class JvmReflectSymbols(val context: JvmBackendContext) {
+class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragment) {
     private val irBuiltIns: IrBuiltIns = context.irBuiltIns
 
     private val javaLangReflect: FqName = FqName("java.lang.reflect")
 
     private val javaLangReflectPackage: IrPackageFragment =
-        createEmptyExternalPackageFragment(context.state.module, javaLangReflect)
+        createEmptyExternalPackageFragment(irModule, javaLangReflect)
 
     val javaLangReflectField: IrClassSymbol =
         createJavaLangReflectClass(FqName("java.lang.reflect.Field")) { klass ->

@@ -25,6 +25,13 @@ fun testArrayAndDefaults() {
 
     ::zap
   })
+  useStringArray(fn = { // BLOCK
+    local fun zapGeneric(p0: Array<out String>) {
+      zapGeneric<String>(b = [*p0])
+    }
+
+    ::zapGeneric
+  })
 }
 
 fun testArrayAsVararg() {
@@ -58,5 +65,8 @@ fun useStringArray(fn: Function1<Array<String>, Unit>) {
 }
 
 fun zap(vararg b: String, k: Int = 42) {
+}
+
+fun <T : Any?> zapGeneric(vararg b: T, k: Int = 42) {
 }
 

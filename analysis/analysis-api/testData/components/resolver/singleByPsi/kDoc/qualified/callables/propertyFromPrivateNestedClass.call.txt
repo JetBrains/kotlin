@@ -1,2 +1,2 @@
-KtNamedFunction(73,115): '/**'
+KDocName(81,95): 'Foo.Nested.foo'
   null

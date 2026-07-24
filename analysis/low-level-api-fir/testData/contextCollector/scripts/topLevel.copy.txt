@@ -38,6 +38,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 12
         Scope: FirLocalScope
+Expression Stability: ALIEN_PUBLIC_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] topLevel.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevel.kts>

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 
 fun JavaModule.getJavaModuleRoots(): List<JavaRoot> =
-    moduleRoots.map { (root, isBinary, isBinarySignature) ->
+    moduleRoots.map { (val root = file, val isBinary, val isBinarySignature) ->
         val type = when {
             isBinarySignature -> JavaRoot.RootType.BINARY_SIG
             isBinary -> JavaRoot.RootType.BINARY
@@ -37,14 +37,14 @@ fun CliJavaModuleFinder.computeDefaultRootModules(): List<String> {
     if (!javaSeExists) {
         // If it does not exist then every java.* module on the upgrade module path or among the system modules
         // that exports at least one package, without qualification, is a root.
-        for ((name, module) in systemModules) {
+        for ([name, module] in systemModules) {
             if (name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
                 result.add(name)
             }
         }
     }
 
-    for ((name, module) in systemModules) {
+    for ([name, module] in systemModules) {
         // Every non-java.* module on the upgrade module path or among the system modules that exports at least one package,
         // without qualification, is also a root.
         if (!name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {

@@ -83,7 +83,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
                 return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
             }
 
-            getOperandsIfCallToEQEQOrEquals(expression)?.let { (left, right) ->
+            getOperandsIfCallToEQEQOrEquals(expression)?.let { [left, right] ->
                 if (left.isNullConst() && right.isNullConst())
                     return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
@@ -243,7 +243,7 @@ internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLow
             val inductionVariable = loopInitialization.statements[inductionVariableIndex] as? IrVariable ?: return
 
             val loopVariablePosition = findLoopVariablePosition(irForLoopBlock.statements[1]) ?: return
-            val (loopVariableContainer, loopVariableIndex) = loopVariablePosition
+            val [loopVariableContainer, loopVariableIndex] = loopVariablePosition
             val loopVariable = loopVariableContainer.statements[loopVariableIndex] as? IrVariable ?: return
             val loopVariableInitializer = loopVariable.initializer ?: return
             if (loopVariableInitializer !is IrGetValue) return
@@ -444,13 +444,10 @@ fun optimizeGetValue(expression: IrGetValue, isEliminationForbidden: (IrVariable
     // initializer with the constant initializer.
     val variable = expression.symbol.owner
     return when (val replacement = getInlineableValueForTemporaryVal(variable, isEliminationForbidden)) {
-        is IrConst -> IrConstImpl(
-            expression.startOffset,
-            expression.endOffset,
-            replacement.type,
-            replacement.kind,
-            replacement.value
-        )
+        is IrConst -> replacement.shallowCopy().apply {
+            startOffset = expression.startOffset
+            endOffset = expression.endOffset
+        }
         is IrGetValue -> IrGetValueImpl(
             expression.startOffset,
             expression.endOffset,

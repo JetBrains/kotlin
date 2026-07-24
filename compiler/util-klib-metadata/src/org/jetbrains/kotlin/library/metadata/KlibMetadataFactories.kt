@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataDeserializedPackageFragmentsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.KlibModuleDescriptorFactoryImpl
@@ -19,13 +21,16 @@ import org.jetbrains.kotlin.storage.StorageManager
  */
 class KlibMetadataFactories(
     createBuiltIns: (StorageManager) -> KotlinBuiltIns,
+    @OptIn(K1Deprecation::class)
     val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider,
+    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory>,
 ) {
+    @OptIn(K1Deprecation::class)
     constructor(
         createBuiltIns: (StorageManager) -> KotlinBuiltIns,
         flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    ) : this(createBuiltIns, flexibleTypeDeserializer, AdditionalClassPartsProvider.None)
+    ) : this(createBuiltIns, flexibleTypeDeserializer, AdditionalClassPartsProvider.None, emptyList())
 
     /**
      * The default [KlibModuleDescriptorFactory] factory instance.
@@ -56,11 +61,13 @@ class KlibMetadataFactories(
         descriptorFactory: KlibModuleDescriptorFactory,
         packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
     ): KlibMetadataModuleDescriptorFactory =
+        @OptIn(K1Deprecation::class)
         KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory,
             packageFragmentsFactory,
             flexibleTypeDeserializer,
             additionalClassPartsProvider,
+            fictitiousClassDescriptorFactories,
         )
 
     fun createDefaultKonanResolvedModuleDescriptorsFactory(

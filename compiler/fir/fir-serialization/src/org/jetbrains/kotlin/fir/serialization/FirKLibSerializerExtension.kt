@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 
+@OptIn(K1Deprecation::class)
 class FirKLibSerializerExtension(
     override val session: FirSession,
     override val scopeSession: ScopeSession,
@@ -57,6 +59,11 @@ class FirKLibSerializerExtension(
     ) {
         constructor.setKDoc(proto, KlibMetadataProtoBuf.constructorKdoc)
         super.serializeConstructor(constructor, proto, childSerializer)
+    }
+
+    override fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
+        typeAlias.setFileId(proto, KlibMetadataProtoBuf.typeAliasFile)
+        super.serializeTypeAlias(typeAlias, proto)
     }
 
     override fun serializeProperty(

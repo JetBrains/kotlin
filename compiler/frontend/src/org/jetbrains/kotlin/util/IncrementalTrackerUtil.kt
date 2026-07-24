@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.containingPackage
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
+@K1Deprecation
 fun LookupTracker.record(expression: KtExpression, type: KotlinType) {
     if (type.isError || type.isUnit()) return
 
@@ -56,6 +58,7 @@ fun LookupTracker.record(expression: KtExpression, type: KotlinType) {
     }
 }
 
+@K1Deprecation
 fun EnumWhenTracker.record(subjectType: KotlinType?, subjectExpression: KtExpression, elseEntry: KtWhenEntry?) {
     if (elseEntry != null) return
     if (subjectExpression !is KtNameReferenceExpression) return

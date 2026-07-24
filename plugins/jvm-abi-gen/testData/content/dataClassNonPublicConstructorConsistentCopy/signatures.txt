@@ -1,4 +1,5 @@
 @kotlin.Metadata
+@kotlin.ConsistentCopyVisibility
 public final class test/InternalConstructor {
     // source: 'dataClassNonPublicConstructor.kt'
     public method <init>(p0: int): void
@@ -11,6 +12,7 @@ public final class test/InternalConstructor {
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 @kotlin.Metadata
+@kotlin.ConsistentCopyVisibility
 public final class test/PrivateConstructor {
     // source: 'dataClassNonPublicConstructor.kt'
     public final method component1(): int

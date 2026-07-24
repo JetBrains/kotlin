@@ -36,7 +36,6 @@ const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 
-internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
 const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
@@ -283,9 +282,6 @@ internal fun firstLabelInChain(node: LabelNode): LabelNode {
     return curNode
 }
 
-internal fun areLabelsBeforeSameInsn(first: LabelNode, second: LabelNode): Boolean =
-    firstLabelInChain(first) == firstLabelInChain(second)
-
 val MethodNode?.nodeText: String
     get() {
         if (this == null) {
@@ -326,15 +322,16 @@ fun AbstractInsnNode?.insnText(insnList: InsnList): String {
             "$insnOpcodeText ${label.labelText()}"
         is LookupSwitchInsnNode ->
             "$insnOpcodeText " +
-                    this.keys.zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+                    this.keys.zip(this.labels).joinToString(prefix = "[", postfix = "]") { [key, label] -> "$key:${label.labelText()}" }
         is TableSwitchInsnNode ->
             "$insnOpcodeText " +
-                    (min..max).zip(this.labels).joinToString(prefix = "[", postfix = "]") { (key, label) -> "$key:${label.labelText()}" }
+                    (min..max).zip(this.labels).joinToString(prefix = "[", postfix = "]") { [key, label] -> "$key:${label.labelText()}" }
         else ->
             insnText
     }
 }
 
+@Suppress("unused")
 fun MethodNode.dumpBody(): String {
     val sw = StringWriter()
     val pw = PrintWriter(sw)
@@ -348,7 +345,7 @@ fun MethodNode.dumpBody(): String {
         pw.println("  TRYCATCHBLOCK start:${tcb.start.labelRef()} end:${tcb.end.labelRef()} handler:${tcb.handler.labelRef()}")
     }
 
-    for ((i, insn) in this.instructions.toArray().withIndex()) {
+    for ([i, insn] in this.instructions.toArray().withIndex()) {
         when (insn.nodeType) {
             AbstractInsnNode.INSN ->
                 pw.println("$i\t${Printer.OPCODES[insn.opcode]}")

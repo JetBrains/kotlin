@@ -1,13 +1,16 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val beforePluginClasspath: Configuration by configurations.creating
-val middlePluginClasspath: Configuration by configurations.creating
-val afterPluginClasspath: Configuration by configurations.creating
+val beforePluginClasspath: Configuration = configurations.create("beforePluginClasspath")
+val middlePluginClasspath: Configuration = configurations.create("middlePluginClasspath")
+val afterPluginClasspath: Configuration = configurations.create("afterPluginClasspath")
 
 dependencies {
     testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
@@ -24,7 +27,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
@@ -39,7 +41,10 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
     "testFixtures" { projectDefault() }
 }
 
@@ -49,7 +54,6 @@ testsJar()
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,

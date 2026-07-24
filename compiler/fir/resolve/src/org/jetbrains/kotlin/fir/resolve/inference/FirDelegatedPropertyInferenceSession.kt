@@ -127,7 +127,7 @@ class FirDelegatedPropertyInferenceSession(
             integrateChildSession(
                 buildList {
                     addIfNotNull(ConeResolutionAtom.createRawAtom(delegateExpression))
-                    partiallyResolvedCalls.mapTo(this) { (expression, candidate) ->
+                    partiallyResolvedCalls.mapTo(this) { [expression, candidate] ->
                         ConeAtomWithCandidate(expression as FirExpression, candidate)
                     }
                 },
@@ -164,7 +164,7 @@ class FirDelegatedPropertyInferenceSession(
                     add(ConeAtomWithCandidate(delegateExpression, delegateCandidate))
                 }
             }
-            partiallyResolvedCalls.mapNotNullTo(this) { (partiallyResolvedCall, _) ->
+            partiallyResolvedCalls.mapNotNullTo(this) { [partiallyResolvedCall, _] ->
                 val candidate = partiallyResolvedCall.candidate() ?: return@mapNotNullTo null
                 ConeAtomWithCandidate(partiallyResolvedCall as FirExpression, candidate)
             }
@@ -203,6 +203,7 @@ class FirDelegatedPropertyInferenceSession(
                 notCompletedCalls,
                 unitType, resolutionContext,
                 postponedAtomAnalyzer,
+                isUntilFirstLambda = false,
             )
         }
 

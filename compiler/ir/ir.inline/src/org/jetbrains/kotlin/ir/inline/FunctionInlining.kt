@@ -144,7 +144,7 @@ private class CallInlining(
                 notAccessibleTypeParameters.filter { !it.isReified }.forEach { put(it.symbol, null) }
 
                 // Substitute reified type parameters with concrete type arguments
-                for ((index, typeArgument) in callSite.typeArguments.withIndex()) {
+                for ([index, typeArgument] in callSite.typeArguments.withIndex()) {
                     if (!callee.typeParameters[index].isReified || typeArgument == null) continue
                     put(callee.typeParameters[index].symbol, typeArgument)
                 }
@@ -302,7 +302,7 @@ private class CallInlining(
     // Contracts can appear only in K1 mode. In K2, they are dropped on the FIR2IR phase.
     private fun IrCall.isContractCall(): Boolean {
         return symbol.isBound && symbol.owner.annotations.any {
-            it.symbol.isBound && it.symbol.owner.parentAsClass.hasEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
+            it.isAnnotationWithEqualFqName(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN)
         }
     }
 
@@ -376,7 +376,7 @@ private class CallInlining(
         parameterToTempVariable: MutableMap<IrValueParameterSymbol, IrValueSymbol>,
         parameterToLambda: MutableMap<IrValueParameterSymbol, IrRichCallableReference<*>>,
     ) {
-        for ((parameter, argument) in callee.parameters.zip(callSite.arguments)) {
+        for ([parameter, argument] in callee.parameters.zip(callSite.arguments)) {
             val isDefaultArg = argument == null && parameter.defaultValue != null
             val argumentValue = when {
                 argument != null -> argument

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.normalizedArguments
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -65,7 +65,6 @@ internal class SymbolLightLazyAnnotation(
             other.fqName == fqName &&
             other.annotationApplication.relativeIndex == annotationApplication.relativeIndex &&
             other.annotationApplication.annotation.classId == annotationApplication.annotation.classId &&
-            other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
             other.annotationsProvider == annotationsProvider &&
             other.parent == parent
 

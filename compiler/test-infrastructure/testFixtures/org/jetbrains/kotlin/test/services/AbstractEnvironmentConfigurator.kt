@@ -99,17 +99,17 @@ class DirectiveToConfigurationKeyExtractor {
     }
 
     fun configure(configuration: CompilerConfiguration, registeredDirectives: RegisteredDirectives) {
-        for ((directive, key) in booleanDirectivesMap) {
+        for ([directive, key] in booleanDirectivesMap) {
             if (directive in registeredDirectives) {
                 val value = directive !in invertedBooleanDirectives
                 configuration.put(key, value)
             }
         }
-        for ((directive, key) in stringDirectivesMap) {
+        for ([directive, key] in stringDirectivesMap) {
             val value = registeredDirectives.singleOrZeroValue(directive) ?: continue
             configuration.put(key, value)
         }
-        for ((directive, key) in valueDirectivesMap) {
+        for ([directive, key] in valueDirectivesMap) {
             val value = registeredDirectives.singleOrZeroValue(directive) ?: continue
             configuration.put(key, value)
         }

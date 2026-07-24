@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
-import org.jetbrains.kotlin.js.config.fakeOverrideValidator
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import java.io.File
 
 /**
  * Configuration phase for native klib compilation pipeline.
@@ -102,14 +101,13 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
         configuration.konanPurgeUserLibs = arguments.purgeUserLibs
 
-        @Suppress("DEPRECATION")
-        configuration.konanNoEndorsedLibs = arguments.noendorsedlibs
         configuration.konanDontCompressKlib = arguments.nopack
 
         arguments.outputName?.let { configuration.konanOutputPath = it }
         configuration.konanRefinesModules = arguments.refinesPaths.filterNot(String::isEmpty)
 
         configuration.konanIncludedBinaries = arguments.includeBinaries.toList()
+        configuration.konanNativeLibraries = arguments.nativeLibraries.toList()
 
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
@@ -132,7 +130,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(
@@ -140,7 +138,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration: CompilerConfiguration,
     ): List<KonanTarget> {
         val trimmedTargetStrings = targetStrings.map { it.trim() }
-        val (recognizedTargetNames, unrecognizedTargetNames) = trimmedTargetStrings.partition {
+        val [recognizedTargetNames, unrecognizedTargetNames] = trimmedTargetStrings.partition {
             it in KonanTarget.predefinedTargets.keys
         }
 

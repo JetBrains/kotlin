@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 class Out<out T : CharSequence?>(val t: T)
 

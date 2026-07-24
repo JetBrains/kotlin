@@ -1,2 +1,5 @@
-KtNamedFunction(36,92): '/**'
-  null
+KDocName(44,76): 'LazyThreadSafetyMode.PUBLICATION'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/LazyThreadSafetyMode.PUBLICATION
+    ]

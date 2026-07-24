@@ -67,10 +67,10 @@ private fun ProgramSymbolSet.toChangeInfoList(): List<ChangeInfo> {
         // It's important to set `areSubclassesAffected = true` when we don't know
         changes.add(ChangeInfo.SignatureChanged(classId.asSingleFqName(), areSubclassesAffected = true))
     }
-    classMembers.forEach { (classId, members) ->
+    classMembers.forEach { [classId, members] ->
         changes.add(ChangeInfo.MembersChanged(classId.asSingleFqName(), members))
     }
-    packageMembers.forEach { (packageFqName, members) ->
+    packageMembers.forEach { [packageFqName, members] ->
         changes.add(ChangeInfo.MembersChanged(packageFqName, members))
     }
     return changes

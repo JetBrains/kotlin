@@ -794,7 +794,7 @@ def __lldb_init_module(debugger, _):
             "type summary add "
             "--no-value "
             "--python-function konan_lldb.kotlin_object_type_summary "
-            "ObjHeader *"
+            '"ObjHeader *" '
             "--category Kotlin"
         )
     )
@@ -802,7 +802,7 @@ def __lldb_init_module(debugger, _):
         (
             "type synthetic add "
             "--python-class konan_lldb.KonanProxyTypeProvider "
-            "ObjHeader *"
+            '"ObjHeader *" '
             "--category Kotlin"
         )
     )

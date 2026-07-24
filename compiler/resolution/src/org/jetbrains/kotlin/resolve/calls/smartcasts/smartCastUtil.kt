@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 fun getReceiverValueWithSmartCast(
     receiverArgument: ReceiverValue?,
     smartCastType: KotlinType?

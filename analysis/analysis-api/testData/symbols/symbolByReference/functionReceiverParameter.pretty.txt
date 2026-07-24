@@ -1,13 +1,15 @@
 KaReceiverParameterSymbol:
+  anchorPsi: KtTypeReference
   annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -17,6 +19,8 @@ KaReceiverParameterSymbol:
   name: <receiver>
   origin: SOURCE
   owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+  psi: KtTypeReference
+  realPsi: KtTypeReference
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -25,4 +29,5 @@ KaReceiverParameterSymbol:
     ]
     typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Int
+  typeParameters: []
   visibility: PUBLIC

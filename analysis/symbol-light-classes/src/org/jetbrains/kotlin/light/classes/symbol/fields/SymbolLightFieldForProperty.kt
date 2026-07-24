@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,16 @@ import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
+import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.isStringType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -56,13 +63,13 @@ internal class SymbolLightFieldForProperty private constructor(
         backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
     )
 
-    private inline fun <T> withPropertySymbol(crossinline action: KaSession.(KaPropertySymbol) -> T): T {
+    private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
         return propertySymbolPointer.withSymbol(ktModule, action)
     }
 
     private val _returnedType: PsiType by lazyPub {
         withPropertySymbol { propertySymbol ->
-            val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegatedProperty == true
+            val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegated == true
             val ktType = if (isDelegated)
                 (kotlinOrigin as? KtProperty)?.delegateExpression?.expressionType
             else
@@ -105,7 +112,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 return@withPropertySymbol propertyName.asString()
             }
 
-            val baseFieldName = propertyName.asString() + if (symbol.isDelegatedProperty) {
+            val baseFieldName = propertyName.asString() + if (symbol.isDelegated) {
                 JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX
             } else {
                 ""
@@ -166,7 +173,7 @@ internal class SymbolLightFieldForProperty private constructor(
         }
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
-                if (propertySymbol.isVal || propertySymbol.isDelegatedProperty) {
+                if (propertySymbol.isVal || propertySymbol.isDelegated) {
                     PsiModifier.FINAL
                 } else {
                     propertySymbol.computeSimpleModality()?.takeIf { it != PsiModifier.FINAL }
@@ -209,7 +216,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
-                            propertySymbol.isDelegatedProperty -> NullabilityAnnotation.NON_NULLABLE
+                            propertySymbol.isDelegated -> NullabilityAnnotation.NON_NULLABLE
                             !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
                             else -> NullabilityAnnotation.NOT_REQUIRED
                         }

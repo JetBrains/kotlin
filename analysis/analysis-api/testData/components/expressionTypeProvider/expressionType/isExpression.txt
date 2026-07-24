@@ -1,0 +1,3 @@
+expression: x is Boolean
+expression PSI: KtIsExpression
+type: kotlin.Boolean

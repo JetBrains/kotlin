@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.structure.ESConstants
 import org.jetbrains.kotlin.contracts.model.structure.ESReturns
 import org.jetbrains.kotlin.contracts.model.structure.isFalse
 import org.jetbrains.kotlin.contracts.model.structure.isTrue
 
+@K1Deprecation
 class NotFunctor : AbstractUnaryFunctor() {
     override fun invokeWithReturningEffects(list: List<ConditionalEffect>): List<ConditionalEffect> = list.mapNotNull {
         val outcome = it.simpleEffect

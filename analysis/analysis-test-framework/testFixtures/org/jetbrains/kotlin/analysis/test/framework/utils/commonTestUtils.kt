@@ -9,14 +9,15 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
-import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 
@@ -90,13 +91,18 @@ fun KtElement.renderLocationDescription(): String {
     }
 }
 
-fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
-    mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
-
-fun PsiReference.unwrapMultiReferences(): List<PsiReference> = when (this) {
-    is KtReference -> listOf(this)
-    is PsiMultiReference -> references.flatMap { it.unwrapMultiReferences() }
-    else -> error("Unexpected reference $this")
+/**
+ * Preferes to call [resolveCall], but falls back to [resolveSymbol] if [resolveCall] fails.
+ *
+ * Handles error calls as well.
+ *
+ * In case of ambiguity, returns `null`.
+ */
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+fun KtResolvable.resolveSymbolPreferringCall(): KaSymbol? {
+    return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSingleOrMultiCall::symbols)?.singleOrNull()
+        ?: tryResolveSymbols()?.symbols?.singleOrNull()
 }
 
 /**
@@ -139,11 +145,13 @@ fun <T, R> Collection<T>.singleOrZeroValue(
 }
 
 /**
- * Removes the given Kotlin [version] suffix from the file name.
+ * Removes the given Kotlin [version] or the next minor version suffix from the file name.
  * The function only strips out the version once.
  *
  * The file extension is preserved.
  * If the file extension isn't included ([fileName] is the base file name), no extension is added.
+ *
+ * The patch version is ignored.
  *
  * kotlin-stdlib-2.3.0.jar -> kotlin-stdlib.jar
  * kotlin-stdlib-2.3.255-SNAPSHOT.jar -> kotlin-stdlib.jar
@@ -151,8 +159,14 @@ fun <T, R> Collection<T>.singleOrZeroValue(
  * kotlin-stdlib-2.3.0-RC3.jar -> kotlin-stdlib.jar
  */
 fun stripOutKotlinVersionFromFileName(fileName: String, version: KotlinVersion = KotlinVersion.CURRENT): String {
-    // E.g., kotlin-stdlib[[-2.3-SNAPSHOT]].jar
-    val kotlinVersionSuffixBase = "-$version"
+    return stripOutKotlinVersionFromFileNameStrictly(fileName, version).takeIf { it.length != fileName.length }
+    // Strip out the next version as well since it is a valid case between major versions switch
+        ?: stripOutKotlinVersionFromFileNameStrictly(fileName, KotlinVersion(major = version.major, minor = version.minor + 1))
+}
+
+private fun stripOutKotlinVersionFromFileNameStrictly(fileName: String, version: KotlinVersion): String {
+    // E.g., kotlin-stdlib[[-2.3.0-SNAPSHOT]].jar
+    val kotlinVersionSuffixBase = "-${version.major}.${version.minor}."
 
     val startIndex = fileName.indexOf(kotlinVersionSuffixBase)
     if (startIndex < 0) {

@@ -1,0 +1,7 @@
+Type:
+KaFlexibleType:
+  annotations: []
+  type: kotlin/String!
+
+mapToJvmTypeDescriptor:
+Ljava/lang/String;

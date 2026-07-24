@@ -1,14 +1,15 @@
 KaValueParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -20,14 +21,18 @@ KaValueParameterSymbol:
   modality: FINAL
   name: arg
   origin: SOURCE
+  primaryConstructorProperty: null
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(lambdaParameterWithName.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -158,6 +158,18 @@ internal fun getGroovyRepositoryBlock(
     |                includeModule("google.d8", "v8") 
     |            }
     |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
+    |            }
+    |        }
     |        maven {
     |            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     |        }
@@ -177,8 +189,8 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             gradlePluginPortal()
         }
 
-        val kotlin_version: String by settings
-        val test_fixes_version: String by settings
+        val kotlin_version: String = providers.gradleProperty("kotlin_version").get()
+        val test_fixes_version: String = providers.gradleProperty("test_fixes_version").get()
         plugins {
             id("org.jetbrains.kotlin.jvm") version kotlin_version
             id("org.jetbrains.kotlin.kapt") version kotlin_version
@@ -327,6 +339,18 @@ internal fun getKotlinRepositoryBlock(
     |            }
     |            content { 
     |                includeModule("google.d8", "v8") 
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
     |            }
     |        }
     |        maven {

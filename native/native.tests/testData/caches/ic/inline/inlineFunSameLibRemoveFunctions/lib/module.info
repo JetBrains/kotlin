@@ -1,0 +1,17 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+        U : file3.kt -> file3.kt
+    added cache: file1.kt, file2.kt, file3.kt
+
+// file1 loses most inline functions, file2 unchanged, file3 updated accordingly.
+// After file1 has been changed, it's inline function bodies index (stored in a separate file in the cache directory)
+// becomes invalid as a lot of signatures have been removed.
+
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
+        U : file3.1.kt -> file3.kt
+    modified cache: file1.kt, file3.kt
+    unchanged cache: file2.kt

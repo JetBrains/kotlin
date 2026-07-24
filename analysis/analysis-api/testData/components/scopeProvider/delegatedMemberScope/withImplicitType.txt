@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /A.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -39,14 +41,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: A
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /A.bar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -68,6 +70,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: bar
   origin: DELEGATED
+  psi: KtNamedFunction
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -84,6 +88,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: A
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

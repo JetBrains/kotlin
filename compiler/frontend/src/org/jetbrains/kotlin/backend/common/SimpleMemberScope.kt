@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.utils.atMostOne
  * This class is used by K1 IJ debugger
  */
 @Suppress("UNUSED")
+@K1Deprecation
 class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeImpl() {
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =

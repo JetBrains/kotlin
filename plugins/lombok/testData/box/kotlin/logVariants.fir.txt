@@ -1,0 +1,281 @@
+FILE: logVariants.kt
+    public abstract class AbstractExample : R|kotlin/Any| {
+        public constructor(): R|AbstractExample| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getTestMessage(): R|kotlin/String| {
+            ^getTestMessage <strcat>(String(Test ), <getClass>(this@R|/AbstractExample|).R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|)
+        }
+
+        public abstract fun test(): R|kotlin/Unit|
+
+    }
+    @R|lombok/extern/slf4j/Slf4j|() public final class Slf4jExample : R|AbstractExample| {
+        public constructor(): R|Slf4jExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Slf4jExample.Companion|.R|/Slf4jExample.Companion.log|.R|org/slf4j/Logger.info|(this@R|/Slf4jExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(<getClass>(Q|Slf4jExample|).R|kotlin/jvm/java|)
+                private get(): R|org/slf4j/Logger|
+
+            private constructor(): R|Slf4jExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/slf4j/Slf4j|(topic = String(topic) [evaluated = String(topic)]) public final class Slf4jExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|Slf4jExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Slf4jExampleWithTopic.Companion|.R|/Slf4jExampleWithTopic.Companion.log|.R|org/slf4j/Logger.info|(this@R|/Slf4jExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/Logger| = Q|org/slf4j/LoggerFactory|.R|org/slf4j/LoggerFactory.getLogger*s|(String(topic))
+                private get(): R|org/slf4j/Logger|
+
+            private constructor(): R|Slf4jExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/log4j/Log4j|() public final class Log4jExample : R|AbstractExample| {
+        public constructor(): R|Log4jExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Log4jExample.Companion|.R|/Log4jExample.Companion.log|.R|org/apache/log4j/Category.info|(this@R|/Log4jExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/log4j/Logger| = Q|org/apache/log4j/Logger|.R|org/apache/log4j/Logger.getLogger*s|(<getClass>(Q|Log4jExample|).R|kotlin/jvm/java|)
+                private get(): R|org/apache/log4j/Logger|
+
+            private constructor(): R|Log4jExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/log4j/Log4j|(topic = String(topic) [evaluated = String(topic)]) public final class Log4jExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|Log4jExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Log4jExampleWithTopic.Companion|.R|/Log4jExampleWithTopic.Companion.log|.R|org/apache/log4j/Category.info|(this@R|/Log4jExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/log4j/Logger| = Q|org/apache/log4j/Logger|.R|org/apache/log4j/Logger.getLogger*s|(String(topic))
+                private get(): R|org/apache/log4j/Logger|
+
+            private constructor(): R|Log4jExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/apachecommons/CommonsLog|() public final class CommonsLogExample : R|AbstractExample| {
+        public constructor(): R|CommonsLogExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/CommonsLogExample.Companion|.R|/CommonsLogExample.Companion.log|.R|org/apache/commons/logging/Log.info|(this@R|/CommonsLogExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/commons/logging/Log| = Q|org/apache/commons/logging/LogFactory|.R|org/apache/commons/logging/LogFactory.getLog*s|(<getClass>(Q|CommonsLogExample|).R|kotlin/jvm/java|)
+                private get(): R|org/apache/commons/logging/Log|
+
+            private constructor(): R|CommonsLogExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/apachecommons/CommonsLog|(topic = String(topic) [evaluated = String(topic)]) public final class CommonsLogExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|CommonsLogExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/CommonsLogExampleWithTopic.Companion|.R|/CommonsLogExampleWithTopic.Companion.log|.R|org/apache/commons/logging/Log.info|(this@R|/CommonsLogExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/commons/logging/Log| = Q|org/apache/commons/logging/LogFactory|.R|org/apache/commons/logging/LogFactory.getLog*s|(String(topic))
+                private get(): R|org/apache/commons/logging/Log|
+
+            private constructor(): R|CommonsLogExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/flogger/Flogger|() public final class FloggerExample : R|AbstractExample| {
+        public constructor(): R|FloggerExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/FloggerExample.Companion|.R|/FloggerExample.Companion.log|.R|SubstitutionOverride<com/google/common/flogger/FluentLogger.atInfo: R|com/google/common/flogger/FluentLogger.Api!|>|().R|SubstitutionOverride<com/google/common/flogger/FluentLogger.Api.log: R|kotlin/Unit|>|(this@R|/FloggerExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|com/google/common/flogger/FluentLogger| = Q|com/google/common/flogger/FluentLogger|.R|com/google/common/flogger/FluentLogger.forEnclosingClass*s|()
+                private get(): R|com/google/common/flogger/FluentLogger|
+
+            private constructor(): R|FloggerExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/jbosslog/JBossLog|() public final class JBossLogExample : R|AbstractExample| {
+        public constructor(): R|JBossLogExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/JBossLogExample.Companion|.R|/JBossLogExample.Companion.log|.R|org/jboss/logging/Logger.info|(this@R|/JBossLogExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/jboss/logging/Logger| = Q|org/jboss/logging/Logger|.R|org/jboss/logging/Logger.getLogger*s|(<getClass>(Q|JBossLogExample|).R|kotlin/jvm/java|)
+                private get(): R|org/jboss/logging/Logger|
+
+            private constructor(): R|JBossLogExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/jbosslog/JBossLog|(topic = String(topic) [evaluated = String(topic)]) public final class JBossLogExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|JBossLogExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/JBossLogExampleWithTopic.Companion|.R|/JBossLogExampleWithTopic.Companion.log|.R|org/jboss/logging/Logger.info|(this@R|/JBossLogExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/jboss/logging/Logger| = Q|org/jboss/logging/Logger|.R|org/jboss/logging/Logger.getLogger*s|(String(topic))
+                private get(): R|org/jboss/logging/Logger|
+
+            private constructor(): R|JBossLogExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/log4j/Log4j2|() public final class Log4j2Example : R|AbstractExample| {
+        public constructor(): R|Log4j2Example| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Log4j2Example.Companion|.R|/Log4j2Example.Companion.log|.R|org/apache/logging/log4j/Logger.info|(this@R|/Log4j2Example|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/logging/log4j/Logger| = Q|org/apache/logging/log4j/LogManager|.R|org/apache/logging/log4j/LogManager.getLogger*s|(<getClass>(Q|Log4j2Example|).R|kotlin/jvm/java|)
+                private get(): R|org/apache/logging/log4j/Logger|
+
+            private constructor(): R|Log4j2Example.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/log4j/Log4j2|(topic = String(topic) [evaluated = String(topic)]) public final class Log4j2ExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|Log4j2ExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/Log4j2ExampleWithTopic.Companion|.R|/Log4j2ExampleWithTopic.Companion.log|.R|org/apache/logging/log4j/Logger.info|(this@R|/Log4j2ExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/apache/logging/log4j/Logger| = Q|org/apache/logging/log4j/LogManager|.R|org/apache/logging/log4j/LogManager.getLogger*s|(String(topic))
+                private get(): R|org/apache/logging/log4j/Logger|
+
+            private constructor(): R|Log4j2ExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/slf4j/XSlf4j|() public final class XSlf4jExample : R|AbstractExample| {
+        public constructor(): R|XSlf4jExample| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/XSlf4jExample.Companion|.R|/XSlf4jExample.Companion.log|.R|org/slf4j/ext/LoggerWrapper.info|(this@R|/XSlf4jExample|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(<getClass>(Q|XSlf4jExample|).R|kotlin/jvm/java|)
+                private get(): R|org/slf4j/ext/XLogger|
+
+            private constructor(): R|XSlf4jExample.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/extern/slf4j/XSlf4j|(topic = String(topic) [evaluated = String(topic)]) public final class XSlf4jExampleWithTopic : R|AbstractExample| {
+        public constructor(): R|XSlf4jExampleWithTopic| {
+            super<R|AbstractExample|>()
+        }
+
+        public open override fun test(): R|kotlin/Unit| {
+            this@R|/XSlf4jExampleWithTopic.Companion|.R|/XSlf4jExampleWithTopic.Companion.log|.R|org/slf4j/ext/LoggerWrapper.info|(this@R|/XSlf4jExampleWithTopic|.R|/AbstractExample.getTestMessage|())
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|org/slf4j/ext/XLogger| = Q|org/slf4j/ext/XLoggerFactory|.R|org/slf4j/ext/XLoggerFactory.getXLogger*s|(String(topic))
+                private get(): R|org/slf4j/ext/XLogger|
+
+            private constructor(): R|XSlf4jExampleWithTopic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval variants: R|kotlin/collections/List<AbstractExample>| = R|kotlin/collections/listOf|<R|AbstractExample|>(vararg(R|/Slf4jExample.Slf4jExample|(), R|/Slf4jExampleWithTopic.Slf4jExampleWithTopic|(), R|/Log4jExample.Log4jExample|(), R|/Log4jExampleWithTopic.Log4jExampleWithTopic|(), R|/CommonsLogExample.CommonsLogExample|(), R|/CommonsLogExampleWithTopic.CommonsLogExampleWithTopic|(), R|/FloggerExample.FloggerExample|(), R|/JBossLogExample.JBossLogExample|(), R|/JBossLogExampleWithTopic.JBossLogExampleWithTopic|(), R|/Log4j2Example.Log4j2Example|(), R|/Log4j2ExampleWithTopic.Log4j2ExampleWithTopic|(), R|/XSlf4jExample.XSlf4jExample|(), R|/XSlf4jExampleWithTopic.XSlf4jExampleWithTopic|()))
+        R|<local>/variants|.R|kotlin/collections/forEach|<R|AbstractExample|>(<L> = forEach@fun <anonymous>(it: R|AbstractExample|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/it|.R|/AbstractExample.test|()
+        }
+        )
+        ^box String(OK)
+    }

@@ -5,14 +5,17 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 description = "JavaScript Plain Objects Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val jsoIrRuntimeForTests by configurations.creating {
+val jsoIrRuntimeForTests = configurations.create("jsoIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -52,6 +55,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -65,7 +69,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
     }

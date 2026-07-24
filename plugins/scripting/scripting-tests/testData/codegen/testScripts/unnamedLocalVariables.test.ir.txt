@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/unnamedLocalVariables.test.kts
           ARG <set-?>: CONST String type=kotlin.String value="OK"
         RETURN type=kotlin.Nothing from='public final fun call (): kotlin.Int declared in <root>.UnnamedLocalVariables_test'
           CONST Int type=kotlin.Int value=0
-    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit [companion]
       VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'public final fun runCompiledScript (scriptClass: java.lang.Class, vararg args: kotlin.Any?): kotlin.Unit declared in kotlin.script.experimental.jvm.RunnerKt' type=kotlin.Unit origin=null

@@ -8,7 +8,7 @@ expect class Foo {
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/tests-integration/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:3:14: error: 'actual class Foo : Any' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:3:14: error: 'actual class Foo : Any' has no corresponding members for 'expect' class members:
 
     expect val bar: String
 
@@ -17,7 +17,7 @@ compiler/tests-integration/testData/multiplatform/classScopes/functionAndPropert
 
 actual class Foo {
              ^^^
-compiler/tests-integration/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:4:16: error: 'public final actual fun bar(): String' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/classScopes/functionAndPropertyWithSameName/jvm.kt:4:16: error: 'public final actual fun bar(): String' has no corresponding 'expect' declaration
 The following declaration is incompatible because callable kinds are different (function vs property):
     expect val bar: String
 

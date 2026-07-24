@@ -1,0 +1,3 @@
+expression: x[0]
+expression PSI: KtArrayAccessExpression
+type: kotlin.Int

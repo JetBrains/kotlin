@@ -1,15 +1,17 @@
 description = "Kotlin NoArg Compiler Plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     embedded(project(":kotlin-noarg-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlin-noarg-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-noarg-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-noarg-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlin-noarg-compiler-plugin.cli")) { isTransitive = false }
@@ -24,7 +26,6 @@ dependencies {
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
-    testFixturesApi(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(toolsJar())
@@ -35,6 +36,7 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 optInToExperimentalCompilerApi()
@@ -47,7 +49,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

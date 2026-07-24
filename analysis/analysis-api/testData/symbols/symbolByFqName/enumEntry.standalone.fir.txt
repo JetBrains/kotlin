@@ -1,0 +1,32 @@
+KaEnumEntrySymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
+  contextParameters: []
+  contextReceivers: []
+  initializer: null
+  isActual: false
+  isCompanion: true
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: SYNCHRONIZED
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/LazyThreadSafetyMode
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.LazyThreadSafetyMode
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecation: null
+  importableFqName: kotlin.LazyThreadSafetyMode.SYNCHRONIZED

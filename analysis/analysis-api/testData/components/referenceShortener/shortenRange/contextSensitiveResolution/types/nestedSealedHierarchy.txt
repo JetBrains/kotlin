@@ -1,0 +1,9 @@
+Before shortening: Outer.Mid1.Leaf1
+with default settings:
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] Outer.Mid1.Leaf1
+with SHORTEN_AND_IMPORT:
+[type] Outer.Mid1.Leaf1
+with SHORTEN_AND_STAR_IMPORT:
+[type] Outer.Mid1.Leaf1

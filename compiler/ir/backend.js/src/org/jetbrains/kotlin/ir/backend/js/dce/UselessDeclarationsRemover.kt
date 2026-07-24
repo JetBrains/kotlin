@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -43,7 +43,7 @@ class UselessDeclarationsRemover(
         process(declaration)
     }
 
-    private fun IrConstructorCall.shouldKeepAnnotation(): Boolean {
+    private fun IrAnnotation.shouldKeepAnnotation(): Boolean {
         associatedObject()?.let { obj ->
             if (obj !in usefulDeclarations) return false
         }

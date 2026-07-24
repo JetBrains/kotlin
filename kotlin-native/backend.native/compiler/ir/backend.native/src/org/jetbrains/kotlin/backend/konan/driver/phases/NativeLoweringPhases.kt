@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
@@ -119,7 +118,7 @@ internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGene
         op = { context, module -> IrValidationAfterLoweringPhase(context.context).lower(module) }
 )
 
-internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context, Unit>(
+internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<NativeBackendContext, Unit>(
         name = "FunctionsWithoutBoundCheckGenerator",
         op = { context, _ -> FunctionsWithoutBoundCheckGenerator(context).generate() }
 )
@@ -169,12 +168,12 @@ private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
 )
 
 private val postInlinePhase = createFileLoweringPhase(
-        { context: Context -> PostInlineLowering(context) },
+        { context: NativeBackendContext -> PostInlineLowering(context) },
         name = "PostInline",
 )
 
 private val contractsDslRemovePhase = createFileLoweringPhase(
-        { context: Context -> ContractsDslRemover(context) },
+        { context: NativeBackendContext -> ContractsDslRemover(context) },
         name = "RemoveContractsDsl",
 )
 
@@ -277,7 +276,7 @@ private val finallyBlocksPhase = createFileLoweringPhase(
 )
 
 private val testProcessorPhase = createFileLoweringPhase(
-        lowering = { context: Context -> TestProcessor(context, context.sourcesModules) },
+        lowering = { context: NativeBackendContext -> TestProcessor(context, context.sourcesModules) },
         name = "TestProcessor",
 )
 
@@ -316,8 +315,8 @@ private val staticCallableReferenceOptimizationPhase = createFileLoweringPhase(
 )
 
 private val enumWhenPhase = createFileLoweringPhase(
-        ::NativeEnumWhenLowering,
         name = "EnumWhen",
+        lowering = ::NativeEnumWhenLowering,
         prerequisite = setOf(enumConstructorsPhase, functionReferencePhase)
 )
 
@@ -390,7 +389,7 @@ private val typeOfProcessingLowering = createFileLoweringPhase(
 )
 
 private val specializeSharedVariableBoxes = createFileLoweringPhase(
-        lowering = { context: Context -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
+        lowering = { context: NativeBackendContext -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
         name = "SpecializeSharedVariableBoxes",
         prerequisite = setOf(sharedVariablesPhase),
 )
@@ -447,7 +446,7 @@ private val coroutinesLivenessAnalysisPhase = createFileLoweringPhase(
             object : BodyLoweringPass {
                 override fun lower(irBody: IrBody, container: IrDeclaration) {
                     LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
-                            .forEach { (irElement, liveVariables) ->
+                            .forEach { [irElement, liveVariables] ->
                                 (irElement as IrSuspensionPoint).liveVariablesAtSuspensionPoint = liveVariables
                             }
                     context.coroutinesLivenessAnalysisPhasePerformed = true
@@ -468,6 +467,12 @@ private val typeOperatorPhase = createFileLoweringPhase(
         ::TypeOperatorLowering,
         name = "TypeOperators",
         prerequisite = setOf(coroutinesPhase)
+)
+
+private val exportedBridgeNonVirtualPhase = createFileLoweringPhase(
+        ::ExportedBridgeNonVirtualLowering,
+        name = "ExportedBridgeNonVirtual",
+        prerequisite = setOf(postInlinePhase)
 )
 
 private val bridgesPhase = createFileLoweringPhase(
@@ -502,13 +507,13 @@ private val lowerCastsPhase = createFileLoweringPhase(
 
 private val computeTypesPhase = createFileLoweringPhase(
         name = "ComputeTypes",
-        lowering = { context: Context -> ComputeTypesPass(context) },
+        lowering = { context: NativeBackendContext -> ComputeTypesPass(context) },
         prerequisite = setOf(finallyBlocksPhase)
 )
 
 private val optimizeCastsPhase = createFileLoweringPhase(
         name = "OptimizeCasts",
-        lowering = { context: Context -> CastsOptimization(context) },
+        lowering = { context: NativeBackendContext -> CastsOptimization(context) },
 )
 
 private val expressionBodyTransformPhase = createFileLoweringPhase(
@@ -564,7 +569,7 @@ private val inventNamesForLocalClasses = createFileLoweringPhase(
 )
 
 private val inventNamesForLocalFunctions = createFileLoweringPhase(
-        lowering = { _: Context -> KlibInventNamesForLocalFunctions() },
+        lowering = { _: NativeBackendContext -> KlibInventNamesForLocalFunctions() },
         name = "InventNamesForLocalFunctions",
 )
 
@@ -600,10 +605,7 @@ internal val redundantCastsRemoverPhase = createFileLoweringPhase(
 )
 
 internal val constEvaluationPhase = createFileLoweringPhase(
-        lowering = { context: Context ->
-            val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
-            ConstEvaluationLowering(context, configuration = configuration)
-        },
+        lowering = ::ConstEvaluationLowering,
         name = "ConstEvaluationLowering",
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
@@ -622,6 +624,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        constEvaluationPhase,
         reifiedFunctionLowering,
         typeOfProcessingLowering,
         specializeSharedVariableBoxes,
@@ -638,6 +641,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         functionReferencePhase,
         singleAbstractMethodPhase,
         postInlinePhase,
+        exportedBridgeNonVirtualPhase,
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,
@@ -699,7 +703,7 @@ private fun createFileLoweringPhase(
 }
 
 private fun createFileLoweringPhase(
-        lowering: (Context) -> FileLoweringPass,
+        lowering: (NativeBackendContext) -> FileLoweringPass,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
 ) = createFileLoweringPhaseImpl(
@@ -710,7 +714,7 @@ private fun createFileLoweringPhase(
 }
 
 private fun createFileLoweringPhase(
-        op: (context: Context, irFile: IrFile) -> Unit,
+        op: (context: NativeBackendContext, irFile: IrFile) -> Unit,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
 ) = createFileLoweringPhaseImpl(

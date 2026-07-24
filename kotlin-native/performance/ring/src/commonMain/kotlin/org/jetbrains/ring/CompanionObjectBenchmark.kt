@@ -16,10 +16,16 @@
 
 package org.jetbrains.ring
 
-open class CompanionObjectBenchmark {
-    //Benchmark
-    fun invokeRegularFunction() {
-        regularCompanionObjectFunction("")
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class CompanionObject : SkipWhenBaseOnly() {
+    @Benchmark
+    fun invokeRegularFunction(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(regularCompanionObjectFunction(""))
     }
 
     companion object {

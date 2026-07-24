@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
 
+@K1Deprecation
 class InlineCheckerWrapper : CallChecker {
     private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
 

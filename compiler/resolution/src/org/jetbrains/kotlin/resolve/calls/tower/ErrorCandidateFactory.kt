@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     TYPE_PARAMETER_AS_VALUE({ "Type parameter $it cannot be used as value" }),
     TYPE_PARAMETER_AS_FUNCTION({ "Type parameter $it cannot be called as function" }),
@@ -36,6 +38,7 @@ enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     OBJECT_AS_FUNCTION({ "Function 'invoke()' is not found in object $it" })
 }
 
+@K1Deprecation
 sealed class ErrorCandidate<out D : DeclarationDescriptor>(val descriptor: D) {
     class Classifier(
         classifierDescriptor: ClassifierDescriptor,
@@ -45,6 +48,7 @@ sealed class ErrorCandidate<out D : DeclarationDescriptor>(val descriptor: D) {
     }
 }
 
+@K1Deprecation
 fun collectErrorCandidatesForFunction(
     scopeTower: ImplicitScopeTower,
     name: Name,
@@ -55,6 +59,7 @@ fun collectErrorCandidatesForFunction(
     return context.result
 }
 
+@K1Deprecation
 fun collectErrorCandidatesForVariable(
     scopeTower: ImplicitScopeTower,
     name: Name,

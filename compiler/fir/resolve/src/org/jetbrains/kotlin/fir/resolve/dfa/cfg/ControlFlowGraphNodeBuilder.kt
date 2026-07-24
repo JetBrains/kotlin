@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 
 fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(currentGraph, levelCounter)
 
-fun ControlFlowGraphBuilder.createFakeExpressionEnterNode(): FakeExpressionEnterNode =
-    FakeExpressionEnterNode(currentGraph, levelCounter)
+fun ControlFlowGraphBuilder.createFakeExpressionTerminalNode(): FakeExpressionTerminalNode =
+    FakeExpressionTerminalNode(currentGraph, levelCounter)
 
 fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = LoopExitNode(currentGraph, fir, levelCounter)
 

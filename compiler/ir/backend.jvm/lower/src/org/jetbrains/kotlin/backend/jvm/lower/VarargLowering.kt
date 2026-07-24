@@ -34,11 +34,8 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     // Ignore annotations
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val constructor = expression.symbol.owner
-        if (constructor.constructedClass.isAnnotationClass)
-            return expression
-        return super.visitConstructorCall(expression)
+    override fun visitAnnotation(expression: IrAnnotation): IrExpression {
+        return expression
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
@@ -47,7 +44,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 
         // Replace empty varargs with empty arrays
         val irFunction = function.owner
-        for ((parameter, argument) in irFunction.parameters zip expression.arguments) {
+        for ([parameter, argument] in irFunction.parameters zip expression.arguments) {
             if (argument != null) continue
 
             if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {

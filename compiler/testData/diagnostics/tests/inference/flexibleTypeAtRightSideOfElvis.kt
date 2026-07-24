@@ -2,10 +2,14 @@
 // ISSUE: KT-62467
 
 // FILE: JavaClass.java
+import java.util.List;
 
 public class JavaClass {
     public static String X = null;
     public static String f() { return null; }
+
+    @org.jetbrains.annotations.NotNull
+    public static List<String> LIST = null;
 }
 
 // FILE: main.kt
@@ -33,6 +37,12 @@ fun testWithStatic4(x1: String?, w: Int): String {
         42 -> JavaClass.X
         else -> JavaClass.f()
     }
+    return x
+}
+
+fun testWithFlexibleMutable(x1: List<String>?): List<String> {
+    val x: List<String>?
+    x = x1 ?: JavaClass.LIST
     return x
 }
 

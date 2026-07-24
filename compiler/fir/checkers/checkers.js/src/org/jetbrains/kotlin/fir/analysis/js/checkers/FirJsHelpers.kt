@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -95,34 +93,6 @@ fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
     return false
 }
 
-fun FirBasedSymbol<*>.isExportedObject(session: FirSession): Boolean {
-    val declaration = fir
-
-    if (declaration is FirMemberDeclaration) {
-        val visibility = declaration.visibility
-        if (visibility != Visibilities.Public && visibility != Visibilities.Protected) {
-            return false
-        }
-    }
-
-    return when {
-        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportIgnore, session) -> false
-        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) ||
-                getAnnotationBooleanParameter(JsStandardClassIds.Annotations.JsImplicitExport, session) == true ||
-                hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportDefault, session)
-            -> true
-        else -> getContainingFile()?.symbol?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) ?: false
-    }
-}
-
-internal fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
-    return when (this) {
-        is FirCallableSymbol<*> -> moduleData.session.firProvider.getFirCallableContainerFile(this)
-        is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
-        else -> null
-    }
-}
-
 context(context: CheckerContext)
 fun FirBasedSymbol<*>.isNativeObject(): Boolean = isNativeObject(context.session)
 
@@ -131,9 +101,6 @@ fun FirBasedSymbol<*>.isNativeInterface(): Boolean = isNativeInterface(context.s
 
 context(context: CheckerContext)
 fun FirBasedSymbol<*>.isPredefinedObject(): Boolean = isPredefinedObject(context.session)
-
-context(context: CheckerContext)
-fun FirBasedSymbol<*>.isExportedObject(): Boolean = isExportedObject(context.session)
 
 context(context: CheckerContext)
 fun FirBasedSymbol<*>.isLibraryObject(): Boolean = isLibraryObject(context.session)

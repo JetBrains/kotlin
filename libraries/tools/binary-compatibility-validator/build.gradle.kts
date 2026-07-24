@@ -1,8 +1,14 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig.Companion.RunAllTests
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
-val testArtifacts by configurations.creating
+val testArtifacts = configurations.create("testArtifacts")
 
 dependencies {
     api(libs.kotlinx.bcv)
@@ -14,7 +20,12 @@ dependencies {
         runtimeOnly(kotlin("compiler-embeddable", bootstrapKotlinVersion))
     }
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinStdlib())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testArtifacts(project(":kotlin-stdlib"))
     testArtifacts(project(":kotlin-stdlib-jdk7"))
@@ -30,7 +41,8 @@ sourceSets {
     }
 }
 
-val test by tasks.existing(Test::class) {
+val test = tasks.named("test", Test::class) {
+    useJUnitPlatform()
     dependsOn(testArtifacts)
     dependsOn(":kotlin-stdlib:assemble")
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
@@ -42,4 +54,6 @@ val test by tasks.existing(Test::class) {
     systemProperty("kotlinVersion", project.version)
     systemProperty("testCasesClassesDirs", sourceSets["test"].output.classesDirs.asPath)
     jvmArgs("-ea")
+
+    smokeTestConfig = RunAllTests
 }

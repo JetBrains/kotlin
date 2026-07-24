@@ -113,6 +113,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 listOf(
                     "-Xauto-cache-from=${autoCacheFrom.absolutePath}",
                     "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
+                    "-Xbinary=enableReleaseBinaryCache=true"
                 ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
             ),
             *dependencies
@@ -125,6 +126,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
+            testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT,
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED
         )
 

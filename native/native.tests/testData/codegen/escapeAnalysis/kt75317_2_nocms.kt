@@ -1,10 +1,14 @@
-// IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
+// DISABLE_NATIVE: optimizationMode=DEBUG
+// DISABLE_NATIVE: optimizationMode=NO
+// DISABLE_NATIVE: cacheMode=STATIC_ONLY_DIST
+// DISABLE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// DISABLE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
 
 // // https://youtrack.jetbrains.com/issue/KT-69731
-// IGNORE_NATIVE: gcType=CMS
+// DISABLE_NATIVE: gcType=CMS
+// FREE_COMPILER_ARGS: -Xbinary=escapeAnalysisPropagateExiledToHeapObjects=false
 
 // Enable runtime assertions:
 // ASSERTIONS_MODE: always-enable

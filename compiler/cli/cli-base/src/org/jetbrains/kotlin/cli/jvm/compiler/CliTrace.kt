@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.jvm.JvmCodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
+@K1Deprecation
 class CliTraceHolder(val project: Project) : JvmCodeAnalyzerInitializer() {
     lateinit var bindingContext: BindingContext
         private set

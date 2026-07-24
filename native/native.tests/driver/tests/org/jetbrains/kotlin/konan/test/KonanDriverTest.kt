@@ -39,7 +39,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     private val konanc get() = konanHome.resolve("bin").resolve(if (HostManager.hostIsMingw) "konanc.bat" else "konanc")
     private val konancTimeout = 15.minutes
 
-    private val testSuiteDir = File("native/native.tests/driver/testData")
+    private val testSuiteDir = File("testData")
     private val source = testSuiteDir.resolve("driver0.kt")
     private val fileRC = testSuiteDir.resolve("File.rc")
 

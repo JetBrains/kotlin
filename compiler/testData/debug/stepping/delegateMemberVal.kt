@@ -72,9 +72,6 @@ fun box() {
 // test.kt:10 <init>
 // test.kt:2 <init>
 // test.kt:19 box
-// test.kt:5 <get-z>
-// test.kt:5 <get-z>
-// test.kt:5 <get-z>
 // test.kt:14 getValue
 // test.kt:6 A$z$delegate$lambda
 // test.kt:20 box

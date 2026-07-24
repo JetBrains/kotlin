@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
@@ -20,12 +20,12 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
             setOf(
                 LeafCommonizerTarget(KonanTarget.IOS_X64),
                 LeafCommonizerTarget(KonanTarget.IOS_ARM64),
-                LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32)
+                LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64)
             )
         ).toMock(),
         LeafCommonizerTarget(KonanTarget.IOS_X64).toMock(),
         LeafCommonizerTarget(KonanTarget.IOS_ARM64).toMock(),
-        LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32).toMock()
+        LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64).toMock()
     )
 
     @Test

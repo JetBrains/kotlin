@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.CommonVersionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUMS_FILE
@@ -45,8 +45,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -155,15 +153,15 @@ class SerializationJvmIrIntrinsicSupport(
 
 
     private val emptyGenerator: BaseIrGenerator? = null
-    private val module = jvmBackendContext.state.module
     private val typeSystemContext = jvmBackendContext.typeSystem
     private val typeMapper = jvmBackendContext.defaultTypeMapper
 
     override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.finderForBuiltins().findClass(classId)
 
     private val currentVersion by lazy {
-        VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
-            ?.implementationVersion
+        CommonVersionReader.computeRuntimeVersions(
+            irPluginContext.finderForBuiltins().findClass(SerialEntityNames.KSERIALIZER_CLASS_ID)?.owner?.source
+        )?.implementationVersion
     }
 
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
@@ -350,7 +348,7 @@ class SerializationJvmIrIntrinsicSupport(
         val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
         // Generic args (if present)
         if (argSerializers.isNotEmpty()) {
-            fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+            fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                 generateSerializerForType(type, this, intrinsicType)
             }
             descriptor.append(kSerializerArrayType.descriptor)
@@ -375,7 +373,7 @@ class SerializationJvmIrIntrinsicSupport(
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
             // Generic args (if present)
             if (argSerializers.isNotEmpty()) {
-                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                     generateSerializerForType(type, this, intrinsicType)
                 }
                 descriptor.append(kSerializerArrayType.descriptor)
@@ -434,7 +432,7 @@ class SerializationJvmIrIntrinsicSupport(
         }
 
         fun instantiate(typeArgument: Pair<IrType, IrClassSymbol?>, signature: StringBuilder?) {
-            val (argType, argSerializer) = typeArgument
+            val [argType, argSerializer] = typeArgument
             stackValueSerializerInstance(
                 argType,
                 argSerializer,
@@ -541,7 +539,7 @@ class SerializationJvmIrIntrinsicSupport(
                             aconst(null)
                         }
                         signature.append(kSerializerType.descriptor)
-                        fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                        fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                             generateSerializerForType(type, this, intrinsicType)
                         }
                         signature.append(kSerializerArrayType.descriptor)
@@ -564,7 +562,7 @@ class SerializationJvmIrIntrinsicSupport(
                     aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-                    val (subClasses, subSerializers) = emptyGenerator.allSealedSerializableSubclassesFor(
+                    val [subClasses, subSerializers] = emptyGenerator.allSealedSerializableSubclassesFor(
                         kType.classOrUpperBound()?.owner!!,
                         this@SerializationJvmIrIntrinsicSupport
                     )
@@ -576,7 +574,7 @@ class SerializationJvmIrIntrinsicSupport(
                     signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
                     // Serializers vararg
                     fillArray(kSerializerType, subSerializers) { i, serializer ->
-                        val (argType, argSerializer) = subClasses[i] to serializer
+                        val [argType, argSerializer] = subClasses[i] to serializer
                         assert(
                             stackValueSerializerInstance(
                                 argType,
@@ -589,7 +587,7 @@ class SerializationJvmIrIntrinsicSupport(
                                 assert(
                                     stackValueSerializerInstance(
                                         (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound,
-                                        jvmBackendContext.referenceClass(module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)),
+                                        irPluginContext.finderForBuiltins().findClass(polymorphicSerializerId)!!,
                                         this, intrinsicType
                                     )
                                 )
@@ -607,7 +605,7 @@ class SerializationJvmIrIntrinsicSupport(
                     signature.append("Ljava/lang/Object;")
                 }
                 // all serializers get arguments with serializers of their generic types
-                else -> argSerializers.forEach { (type, _) ->
+                else -> argSerializers.forEach { [type, _] ->
                     generateSerializerForType(type, this, intrinsicType)
                     signature.append(kSerializerType.descriptor)
                 }

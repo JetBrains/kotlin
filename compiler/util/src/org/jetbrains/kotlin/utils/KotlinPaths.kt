@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.utils
 
+import com.intellij.util.currentJavaVersion
 import java.io.File
 import java.lang.IllegalStateException
 import com.intellij.util.lang.JavaVersion
@@ -51,7 +52,10 @@ interface KotlinPaths {
         get() = klib(Jar.JsStdLib)
 
     val wasmJsStdLibKlibPath: File
-        get() = klib(Jar.WasmStdLib)
+        get() = klib(Jar.WasmJsStdLib)
+
+    val wasmWasiStdLibKlibPath: File
+        get() = klib(Jar.WasmWasiStdLib)
 
     //    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
     val jsStdLibSrcJarPath: File
@@ -92,7 +96,8 @@ interface KotlinPaths {
         ScriptRuntime(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_NAME),
         KotlinTest(PathUtil.KOTLIN_TEST_NAME),
         JsStdLib(PathUtil.JS_LIB_NAME),
-        WasmStdLib(PathUtil.WASM_JS_LIB_NAME),
+        WasmJsStdLib(PathUtil.WASM_JS_LIB_NAME),
+        WasmWasiStdLib(PathUtil.WASM_WASI_LIB_NAME),
         JsKotlinTest(PathUtil.KOTLIN_TEST_JS_NAME),
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),
@@ -111,17 +116,10 @@ interface KotlinPaths {
 
     // TODO: Maybe we need separate classpaths for compilers with and without the daemon
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
-        Empty(),
-        StdLib(Jar.StdLib, gen = {
-            when {
-                JavaVersion.current() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
-                JavaVersion.current() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
-                else -> emptyList()
-            }
-        }),
+        Empty,
+        StdLib(Jar.StdLib),
         Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
-        MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())

@@ -74,7 +74,7 @@ class ManagedTestAssertionsTest {
 
     private fun setupFiles(vararg files: Pair<String, String>) {
         tempDir.resolve("test.kt").writeText("// test")
-        for ((name, content) in files) {
+        for ([name, content] in files) {
             tempDir.resolve(name).writeText("$content\n")
         }
     }
@@ -466,7 +466,7 @@ class ManagedTestAssertionsTest {
             "line1\nline2\n" to "line1\nline2\n",
         )
 
-        for ((input, expected) in inputs) {
+        for ([input, expected] in inputs) {
             assertEquals(
                 expected,
                 ManagedTestAssertions.normalizeContent(input) { it },

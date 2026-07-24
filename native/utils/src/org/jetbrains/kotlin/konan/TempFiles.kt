@@ -15,14 +15,21 @@
  */
 package org.jetbrains.kotlin.konan
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.*
+import kotlin.io.path.Path
+import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 /**
  * Creates and stores temporary compiler outputs
  * If pathToTemporaryDir is given and is not empty then temporary outputs will be preserved
  */
 class TempFiles(pathToTemporaryDir: String? = null) {
+    @OptIn(ExperimentalPathApi::class)
     fun dispose() {
         if (deleteOnExit) {
             // Note: this can throw an exception if a file deletion is failed for some reason (e.g. OS is Windows and the file is in use).
@@ -30,29 +37,30 @@ class TempFiles(pathToTemporaryDir: String? = null) {
         }
     }
 
-    val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
+    val deleteOnExit = pathToTemporaryDir.isNullOrEmpty()
 
     private val dir by lazy {
         if (deleteOnExit) {
-            createTempDir("konan_temp")
+            createTempDirectory("konan_temp")
         } else {
             createDirForTemporaryFiles(pathToTemporaryDir!!)
         }
     }
 
-    private fun createDirForTemporaryFiles(path: String): File {
-        if (File(path).isFile) {
-            throw IllegalArgumentException("Given file is not a directory: $path")
+    private fun createDirForTemporaryFiles(rawPath: String): Path {
+        val path = Path(rawPath)
+        if (path.exists() && !path.isDirectory()) {
+            throw IllegalArgumentException("Given file is not a directory: $rawPath")
         }
-        return File(path).apply {
-            if (!exists) { mkdirs() }
-        }
+
+        path.createDirectories()
+
+        return path
     }
 
     /**
      * Create file named {name}{suffix} inside temporary dir
      */
-    fun create(prefix: String, suffix: String = ""): File =
-            File(dir, "$prefix$suffix")
+    fun create(prefix: String, suffix: String = ""): Path = dir.resolve("$prefix$suffix")
 }
 

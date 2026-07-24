@@ -7,15 +7,15 @@ buildscript {
 }
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
 val isNativeBuildToolsProject = rootProject.name == "native-build-tools"
 val isPerformanceProject = rootProject.name == "performance"
 
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation(kotlinStdlib())

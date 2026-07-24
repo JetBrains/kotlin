@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 // TODO fill up all descriptions
 object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
@@ -67,6 +70,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val JS_DROP_REGION_COMMENTS by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
     val PROPERTY_LAZY_INITIALIZATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -84,6 +92,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val GENERATE_STRICT_IMPLICIT_EXPORT by directive(
         description = "enable strict implicitly exported entities types inside d.ts files",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val EXPORT_UNTYPED_AS_UNKNOWN by directive(
+        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type",
         applicability = DirectiveApplicability.Global
     )
 
@@ -135,8 +148,13 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val GENERATE_DTS by directive(
+    val TS_COMPILATION_STRATEGY by enumDirective<TsCompilationStrategy>(
         description = "Will generate corresponding dts files",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val GENERATE_DTS_FROM_IR by directive(
+        description = "Use IR-based TypeScript export",
         applicability = DirectiveApplicability.Global
     )
 
@@ -232,4 +250,27 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Forces EXPECT_GENERATED_JS directive handler to check optimized JS output files instead of dev ones",
         applicability = DirectiveApplicability.Any,
     )
+
+    @OptIn(SensitiveDirectiveAPI::class)
+    val JS_DCE_EXPECTED_OUTPUT_SIZE by valueDirective(
+        description = "Expected total size (in bytes) of JS output files after DCE compilation. The file extension is inferred from the module system.",
+        applicability = DirectiveApplicability.Global,
+        splitValuesOnSpaces = false,
+        parser = { directiveValue ->
+            val spaceSeparatedValues = directiveValue.split("\\s+".toRegex())
+
+            if (spaceSeparatedValues.size !in 1..2) {
+                throw IllegalArgumentException("JS_DCE_EXPECTED_OUTPUT_SIZE expects either integer number of bytes for generated JS file, or target backend and the expected number of bytes (separated by spaces). The provided value '${directiveValue}' doesn't satisfy this format")
+            }
+
+            val size = spaceSeparatedValues.last().filter(Char::isDigit).toInt()
+            val expectedBackend = runIf(size > 1) {
+                TargetBackend.valueOf(spaceSeparatedValues.first())
+            }
+
+            JsExpectedOutputSize(size, expectedBackend)
+        }
+    )
+
+    data class JsExpectedOutputSize(val expectedOutputSize: Int, val forTargetBackend: TargetBackend?)
 }

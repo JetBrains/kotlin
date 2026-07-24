@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
-    public final const [ResolvedTo(CONSTANT_EVALUATION)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+    public final const [ResolvedTo(CONSTANT_EVALUATION)] [EvaluatedValue=RecursionInInitializer] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
-    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+    public final const [ResolvedTo(ANNOTATION_ARGUMENTS)] [EvaluatedValue=RecursionInInitializer] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
-    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
@@ -117,9 +117,9 @@ FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] constCyclePropertyWithExplicitType.kt
-    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val withCycle2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|/withCycle3|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final const [ResolvedTo(BODY_RESOLVE)] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val withCycle3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(R|/withCycle1|)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

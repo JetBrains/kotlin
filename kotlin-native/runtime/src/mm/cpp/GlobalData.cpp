@@ -43,35 +43,13 @@ ManuallyScoped<mm::GlobalData> globalDataInstance{};
 // has already successfully tried locking this mutex), `waitGlobalDataInitialized`
 // may crash trying to lock it too.
 SpinLock globalDataInitMutex;
-std::condition_variable_any globalDataInitCV;
+// `no_destroy` is required because winpthreads' `pthread_cond_destroy` deadlocks during `DLL_PROCESS_DETACH`
+// when worker threads are terminated by the Windows loader while still holding winpthreads internal locks. See KT-85897.
+[[clang::no_destroy]] std::condition_variable_any globalDataInitCV;
 #else
-std::mutex globalDataInitMutex;
-std::condition_variable globalDataInitCV;
+[[clang::no_destroy]] std::mutex globalDataInitMutex;
+[[clang::no_destroy]] std::condition_variable globalDataInitCV;
 #endif
-
-void constructGlobalDataInstance() noexcept {
-    std::unique_lock guard{globalDataInitMutex};
-    auto initialState = InitState::kUninitialized;
-    globalDataInitState.compare_exchange_strong(initialState, InitState::kInitializing, std::memory_order_acq_rel);
-    RuntimeAssert(initialState == InitState::kUninitialized, "Expected state %s, but was %s", initStateToString(InitState::kUninitialized), initStateToString(initialState));
-    globalDataInitializingThread.store(std::this_thread::get_id(), std::memory_order_relaxed);
-
-    globalDataInstance.construct();
-
-    auto initializingState = InitState::kInitializing;
-    globalDataInitState.compare_exchange_strong(initializingState, InitState::kInitialized, std::memory_order_acq_rel);
-    RuntimeAssert(initializingState == InitState::kInitializing, "Expected state %s, but was %s", initStateToString(InitState::kInitializing), initStateToString(initializingState));
-    guard.unlock();
-    globalDataInitCV.notify_all();
-}
-
-[[maybe_unused]] struct GlobalDataEagerInit {
-    GlobalDataEagerInit() noexcept {
-        if (!compiler::globalDataLazyInit()) {
-            constructGlobalDataInstance();
-        }
-    }
-} globalDataEagerInit;
 
 }
 
@@ -87,9 +65,19 @@ mm::GlobalData& mm::GlobalData::Instance() noexcept {
 
 // static
 void mm::GlobalData::init() noexcept {
-    if (compiler::globalDataLazyInit()) {
-        constructGlobalDataInstance();
-    }
+    std::unique_lock guard{globalDataInitMutex};
+    auto initialState = InitState::kUninitialized;
+    globalDataInitState.compare_exchange_strong(initialState, InitState::kInitializing, std::memory_order_acq_rel);
+    RuntimeAssert(initialState == InitState::kUninitialized, "Expected state %s, but was %s", initStateToString(InitState::kUninitialized), initStateToString(initialState));
+    globalDataInitializingThread.store(std::this_thread::get_id(), std::memory_order_relaxed);
+
+    globalDataInstance.construct();
+
+    auto initializingState = InitState::kInitializing;
+    globalDataInitState.compare_exchange_strong(initializingState, InitState::kInitialized, std::memory_order_acq_rel);
+    RuntimeAssert(initializingState == InitState::kInitializing, "Expected state %s, but was %s", initStateToString(InitState::kInitializing), initStateToString(initializingState));
+    guard.unlock();
+    globalDataInitCV.notify_all();
 }
 
 void mm::waitGlobalDataInitialized() noexcept {

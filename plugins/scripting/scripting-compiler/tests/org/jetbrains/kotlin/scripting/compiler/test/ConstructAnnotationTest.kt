@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -134,6 +135,8 @@ class ConstructAnnotationTest {
         }
 
         val messageCollector = ScriptDiagnosticsMessageCollector(null)
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(
             testRootDisposable, compilationConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )

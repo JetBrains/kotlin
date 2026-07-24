@@ -62,15 +62,18 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
                     val refinedText = clearTextFromDiagnosticMarkup(file.readText())
                         .replace("\r\n", "\n") // Test infrastructure normalizes line endings
 
-                    val (comparisonFailure, oldNanos, newNanos, oldSyntaxElement, _, linesCount) = getComparisonResult(
-                        refinedText,
-                        file.toPath()
-                    )
+                    (
+                        val comparisonFailure = failure, val oldNanos, val newNanos, val oldSyntaxElement, val _ = newSyntaxElement, val linesCount
+                    ) =
+                        getComparisonResult(
+                            refinedText,
+                            file.toPath()
+                        )
                     oldTotalElapsedNanos += oldNanos
                     newTotalElapsedNanos += newNanos
                     filesCounter++
                     totalCharsNumber += refinedText.length
-                    val (syntaxElementNumber, hasSyntaxError) = oldSyntaxElement.countSyntaxElements()
+                    (val syntaxElementNumber = number, val hasSyntaxError = hasErrorElement) = oldSyntaxElement.countSyntaxElements()
                     totalSyntaxElementNumber += syntaxElementNumber
 
                     if (hasSyntaxError) {

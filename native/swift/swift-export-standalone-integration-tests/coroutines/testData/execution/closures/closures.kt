@@ -7,6 +7,7 @@
 // FILE: closures.kt
 
 import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
 
 object Foo
 
@@ -20,6 +21,12 @@ fun simple(arg: Int, block: suspend (Int) -> Int): Int {
 
 suspend fun simpleSuspend(arg: Int, block: suspend (Int) -> Int): Int {
     return block(arg)
+}
+
+suspend fun simpleSuspendWithDelay(arg: Int, block: suspend (Int) -> Int): Int {
+    val result = block(arg)
+    delay(10_000)
+    return result
 }
 
 fun withLong(arg: Long, block: suspend (Long) -> Long): Long {
@@ -223,7 +230,7 @@ fun callClosureInNewScope(block: suspend () -> Int): Int {
 
 fun cancelClosureFromKotlin(block: suspend () -> Int): String {
     return runBlocking {
-        val result = withTimeoutOrNull(100) {
+        val result = withTimeoutOrNull(3.seconds) {
             block()
         }
         if (result == null) "timed_out" else "completed: $result"
@@ -286,4 +293,3 @@ fun withMapParam(map: Map<String, Int>, block: suspend (Map<String, Int>) -> Map
         block(map)
     }
 }
-

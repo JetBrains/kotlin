@@ -1,2 +1,0 @@
-warning: -Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (2.2) is not greater than the language version (2.2).
-OK

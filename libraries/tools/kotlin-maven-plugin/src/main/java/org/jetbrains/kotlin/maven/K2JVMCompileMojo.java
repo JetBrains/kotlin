@@ -409,12 +409,20 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             Path destination = getEffectiveDestinationDirectory(arguments);
             JvmCompilationOperation.Builder compilationOperation = jvmToolchain.jvmCompilationOperationBuilder(allSources, destination);
 
+            boolean incrementalEnabled = isIncremental();
+            if (generateCompilerRefIndex && !incrementalEnabled) {
+                getLog().warn("Compiler reference index generation requires incremental compilation ('kotlin.compiler.incremental=true') in Maven");
+            }
+
             Set<Consumer<CompilationResult>> resultHandlers = new HashSet<>();
-            if (isIncremental()) {
+            if (incrementalEnabled) {
                 resultHandlers.add(configureIncrementalCompilation(compilationOperation, arguments));
             }
 
-            compilationOperation.set(JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX, generateCompilerRefIndex);
+            compilationOperation.set(
+                    JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX,
+                    generateCompilerRefIndex && incrementalEnabled
+            );
 
             LegacyKotlinMavenLogger kotlinMavenLogger = new LegacyKotlinMavenLogger(messageCollector, getLog());
             try (KotlinToolchains.BuildSession buildSession = kotlinToolchains.createBuildSession()) {

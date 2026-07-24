@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.runtime.currentComposer
+
+open class Foo {
+    inline val current: Int
+        @Composable
+        @ReadOnlyComposable get() = currentComposer.hashCode()
+
+    @ReadOnlyComposable
+    @Composable
+    fun getHashCode(): Int = currentComposer.hashCode()
+}
+
+@ReadOnlyComposable
+@Composable
+fun getHashCode(): Int = currentComposer.hashCode()
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+open class Foo {
+  val current: Int
+    @Composable @ReadOnlyComposable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 205912272, startOffset = 255, endOffset = 329)
+    get() {
+      val tmp0 = %composer as Any.hashCode()
+      return tmp0
+    }
+  @ReadOnlyComposable
+  @Composable
+  @FunctionKeyMeta(key = 425837728, startOffset = 375, endOffset = 426)
+  fun getHashCode(%composer: Composer?, %changed: Int): Int {
+    val tmp0 = %composer as Any.hashCode()
+    return tmp0
+  }
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@ReadOnlyComposable
+@Composable
+@FunctionKeyMeta(key = 1497411806, startOffset = 462, endOffset = 513)
+fun getHashCode(%composer: Composer?, %changed: Int): Int {
+  val tmp0 = %composer as Any.hashCode()
+  return tmp0
+}

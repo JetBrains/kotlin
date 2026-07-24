@@ -283,7 +283,9 @@ private class ClassClsStubBuilder(
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
         ProgressManager.checkCanceled()
 
-        val (nameResolver, classProto, _, sourceElement) =
+        (
+            val nameResolver, val classProto, val _ = metadataVersion, val sourceElement
+        ) =
             c.components.classDataFinder.findClassData(nestedClassId)
                 ?: c.components.virtualFileForDebug.let { rootFile ->
                     if (LOG.isDebugEnabled) {

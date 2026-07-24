@@ -78,4 +78,5 @@ private fun Project.registerVariantImplementations() {
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
     factories[BuildIdentifierAccessor.Factory::class] = BuildIdentifierAccessorG81.Factory()
     factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
+    factories[BuildNeededDependentTasksWiringProvider.Factory::class] = BuildNeededDependentTaskWiringProviderG95.Factory()
 }

@@ -58,6 +58,17 @@ fun ProtoBuf.Function.receiverType(typeTable: TypeTable): ProtoBuf.Type? = when 
     else -> null
 }
 
+fun ProtoBuf.Function.hasCompanionExtensionReceiver(): Boolean = hasCompanionExtensionReceiverType() || hasCompanionExtensionReceiverTypeId()
+
+fun ProtoBuf.Function.companionExtensionReceiverType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasCompanionExtensionReceiverType() -> companionExtensionReceiverType
+    hasCompanionExtensionReceiverTypeId() -> typeTable[companionExtensionReceiverTypeId]
+    else -> null
+}
+
+fun ProtoBuf.Function.receiverOrCompanionExtensionReceiverType(typeTable: TypeTable): ProtoBuf.Type? =
+    receiverType(typeTable) ?: companionExtensionReceiverType(typeTable)
+
 fun ProtoBuf.Property.returnType(typeTable: TypeTable): ProtoBuf.Type = when {
     hasReturnType() -> returnType
     hasReturnTypeId() -> typeTable[returnTypeId]
@@ -65,6 +76,18 @@ fun ProtoBuf.Property.returnType(typeTable: TypeTable): ProtoBuf.Type = when {
 }
 
 fun ProtoBuf.Property.hasReceiver(): Boolean = hasReceiverType() || hasReceiverTypeId()
+
+fun ProtoBuf.Property.hasCompanionExtensionReceiver(): Boolean = hasCompanionExtensionReceiverType() || hasCompanionExtensionReceiverTypeId()
+
+fun ProtoBuf.Property.companionExtensionReceiverType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasCompanionExtensionReceiverType() -> companionExtensionReceiverType
+    hasCompanionExtensionReceiverTypeId() -> typeTable[companionExtensionReceiverTypeId]
+    else -> null
+}
+
+fun ProtoBuf.Property.receiverOrCompanionExtensionReceiverType(typeTable: TypeTable): ProtoBuf.Type? =
+    receiverType(typeTable) ?: companionExtensionReceiverType(typeTable)
+
 
 fun ProtoBuf.Property.receiverType(typeTable: TypeTable): ProtoBuf.Type? = when {
     hasReceiverType() -> receiverType
@@ -81,6 +104,12 @@ fun ProtoBuf.ValueParameter.type(typeTable: TypeTable): ProtoBuf.Type = when {
 fun ProtoBuf.ValueParameter.varargElementType(typeTable: TypeTable): ProtoBuf.Type? = when {
     hasVarargElementType() -> varargElementType
     hasVarargElementTypeId() -> typeTable[varargElementTypeId]
+    else -> null
+}
+
+fun ProtoBuf.ValueParameter.equalityBoundType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasEqualityBoundType() -> equalityBoundType
+    hasEqualityBoundTypeId() -> typeTable[equalityBoundTypeId]
     else -> null
 }
 

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.generators.arguments.getPrinterForTests
-import kotlin.test.Test
+import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Test
 
+@SmokeTest
 class MppNativeBinaryDslCodegenTest {
     @Test
     fun testBinaryContainerCodegenIsUpToDate() {

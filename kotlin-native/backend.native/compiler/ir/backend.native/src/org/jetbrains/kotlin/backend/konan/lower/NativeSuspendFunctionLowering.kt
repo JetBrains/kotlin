@@ -4,11 +4,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailSuspendCalls
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
-) : AbstractSuspendFunctionsLowering<Context>(generationState.context), FileLoweringPass {
+) : AbstractSuspendFunctionsLowering<NativeBackendContext>(generationState.context), FileLoweringPass {
     private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
@@ -56,7 +57,7 @@ internal class NativeSuspendFunctionsLowering(
         val function = (element as? IrSimpleFunction) ?: return null
         if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
 
-        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
+        (val tailSuspendCalls = callSites, val hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
             listOf<IrDeclaration>(buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function)
         } else {
@@ -91,7 +92,7 @@ internal class NativeSuspendFunctionsLowering(
         })
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
             if (function.descriptor.isRestrictedSuspendFunction() || function.isRestrictedSuspensionInvokeMethod) {
                 symbols.restrictedContinuationImpl
@@ -118,7 +119,7 @@ internal class NativeSuspendFunctionsLowering(
     ) {
         val originalBody = transformingFunction.body!!
 
-        val (thisReceiver, resultArgument) = stateMachineFunction.parameters.also { check(it.size == 2) }
+        val [thisReceiver, resultArgument] = stateMachineFunction.parameters.also { check(it.size == 2) }
 
         val coroutineClass = stateMachineFunction.parentAsClass
 
@@ -224,7 +225,7 @@ internal class NativeSuspendFunctionsLowering(
                 // No constructor argument is first since the call will be lowered to (val inst = alloc(); call(inst, *args); inst)
                 // and therefore an actual first argument will be the just allocated instance.
                 var first = expression !is IrConstructorCall
-                for ((index, child) in children.withIndex()) {
+                for ([index, child] in children.withIndex()) {
                     if (child == null) continue
                     val transformedChild =
                             if (!child.isSpecialBlock())

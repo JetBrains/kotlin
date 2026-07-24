@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
 enum class FixStackValue(
@@ -25,14 +24,3 @@ enum class FixStackValue(
 
     override fun getSize(): Int = _size
 }
-
-fun Type.toFixStackValue(): FixStackValue? =
-    when (this.sort) {
-        Type.VOID -> null
-        Type.BOOLEAN, Type.BYTE, Type.CHAR, Type.SHORT, Type.INT -> FixStackValue.INT
-        Type.LONG -> FixStackValue.LONG
-        Type.FLOAT -> FixStackValue.FLOAT
-        Type.DOUBLE -> FixStackValue.DOUBLE
-        Type.OBJECT, Type.ARRAY, Type.METHOD -> FixStackValue.OBJECT
-        else -> throw AssertionError("Unexpected type: $this")
-    }

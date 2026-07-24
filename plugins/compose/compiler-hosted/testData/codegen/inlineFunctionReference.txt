@@ -25,9 +25,7 @@ public final class Module_main_inlineFunctionReferenceKt {
     inner (anonymous) class Module_main_inlineFunctionReferenceKt$test$1
     inner (anonymous) class Module_main_inlineFunctionReferenceKt$test1$1$1
     static method <clinit>(): void
-    public synthetic final static method access$test1$lambda$0$invoke(p0: kotlin.jvm.functions.Function2, p1: androidx.compose.runtime.Composer, p2: int): java.lang.Object
     public final static method getTest(): kotlin.jvm.functions.Function1
     public final static method getTest1(): kotlin.jvm.functions.Function1
-    private final static method test1$lambda$0$invoke(p0: kotlin.jvm.functions.Function2, p1: androidx.compose.runtime.Composer, p2: int): java.lang.Object
     private final static method test1$lambda$0(p0: kotlin.jvm.functions.Function2): kotlin.Unit
 }

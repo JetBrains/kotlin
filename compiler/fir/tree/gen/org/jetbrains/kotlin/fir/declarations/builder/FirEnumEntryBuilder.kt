@@ -37,7 +37,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var name: Name
     var initializer: FirExpression? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var symbol: FirEnumEntrySymbol
 
     override fun build(): FirEnumEntry {

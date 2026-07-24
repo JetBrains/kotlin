@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.builder;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,18 +17,19 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class RawFirBuilderSourceElementMappingTestCaseGenerated extends AbstractRawFirBuilderSourceElementMappingTestCase {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInSourceElementMapping() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
+  @Test
   @TestMetadata("qualifiedExpression.kt")
   public void testQualifiedExpression() {
-    runTest("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping/qualifiedExpression.kt");
+    run("qualifiedExpression.kt");
   }
 }

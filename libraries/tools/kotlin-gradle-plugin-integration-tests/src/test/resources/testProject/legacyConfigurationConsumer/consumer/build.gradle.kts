@@ -2,7 +2,7 @@ plugins {
     id("base")
 }
 
-val aggregation by configurations.creating {
+val aggregation = configurations.create("aggregation") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -16,7 +16,7 @@ dependencies {
     val projectPath = path
     rootProject.subprojects {
         if (path != projectPath) {
-            aggregation(project)
+            aggregation(this@dependencies.dependencies.project(path))
         }
     }
 }

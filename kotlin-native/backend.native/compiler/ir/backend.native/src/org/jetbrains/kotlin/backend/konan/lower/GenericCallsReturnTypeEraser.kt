@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irImplicitCoercionToUnit
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * The idea here is that by the end of the pipeline all the types are considered erased and a function call is just
  * a pure and simple function call with no conversions/coercions of the return type and the parameter types.
  */
-internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLoweringPass {
+internal class GenericCallsReturnTypeEraser(val context: NativeBackendContext) : BodyLoweringPass {
     private val reinterpret = context.symbols.reinterpret.owner
     private val createUninitializedInstance = context.symbols.createUninitializedInstance.owner
     private val anyType = context.irBuiltIns.anyType

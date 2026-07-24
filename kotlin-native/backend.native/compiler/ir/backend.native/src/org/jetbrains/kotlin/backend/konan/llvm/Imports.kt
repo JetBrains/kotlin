@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -24,7 +24,7 @@ private val ModuleDescriptor.llvmSymbolOrigin: CompiledKlibModuleOrigin
         }
     }
 
-internal val Context.standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin get() = this.stdlibModule.llvmSymbolOrigin
+internal val NativeBackendContext.standardLlvmSymbolsOrigin: CompiledKlibModuleOrigin get() = this.stdlibModule.llvmSymbolOrigin
 
 internal val IrPackageFragment.llvmSymbolOrigin
     get() = moduleDescriptor.llvmSymbolOrigin

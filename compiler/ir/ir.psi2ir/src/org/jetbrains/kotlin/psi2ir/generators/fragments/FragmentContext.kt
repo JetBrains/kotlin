@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 
+@K1Deprecation
 class FragmentContext(
     val capturedDescriptorToFragmentParameterMap: MutableMap<DeclarationDescriptor, IrValueParameterSymbol> = mutableMapOf()
 )

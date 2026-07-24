@@ -1,0 +1,24 @@
+FILE: vsNonCollectionOverload.kt
+    public final fun foo(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun foo(x: R|kotlin/collections/List<kotlin/Char>|): R|kotlin/Unit| {
+    }
+    public final fun <T> bar(x: R|kotlin/collections/List<T>|): R|kotlin/Unit| {
+    }
+    public final fun bar(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun <T> baz(x: R|kotlin/collections/Set<T>|): R|kotlin/Unit| {
+    }
+    public final fun baz(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(String(abc))
+        R|/foo|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Char|>())
+        R|/foo|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Char|>(vararg(Char(a), Char(b), Char(c))))
+        R|/bar|(String(abc))
+        R|/bar<CS errors: /bar>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        R|/bar|<R|kotlin/Char|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Char|>(vararg(Char(a), Char(b), Char(c))))
+        R|/baz|(String(abc))
+        R|/baz<CS errors: /baz>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/collections|.R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        R|/baz|<R|kotlin/Char|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Char|>(vararg(Char(a), Char(b), Char(c))))
+    }

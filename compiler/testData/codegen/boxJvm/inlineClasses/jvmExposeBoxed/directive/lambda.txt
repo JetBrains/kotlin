@@ -12,7 +12,6 @@ final class ICKt$lambda$1 {
     inner (anonymous) class ICKt$lambda$1
     static method <clinit>(): void
     method <init>(): void
-    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") method invoke(): TopLevelValueClass
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke-Z4NrPMg(): java.lang.String
 }

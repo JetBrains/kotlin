@@ -1,0 +1,9 @@
+/companionObjectUnderRequiresOptIn.kt:35:31: error: This declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'
+
+/companionObjectUnderRequiresOptIn.kt:36:27: error: This declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'
+
+/companionObjectUnderRequiresOptIn.kt:37:38: warning: This declaration needs opt-in. Its usage should be marked with '@ExperimentalForTestWithWarning' or '@OptIn(ExperimentalForTestWithWarning::class)'
+
+/companionObjectUnderRequiresOptIn.kt:38:37: error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+
+/companionObjectUnderRequiresOptIn.kt:39:43: error: This declaration needs opt-in. Its usage must be marked with '@ExperimentalForTest' or '@OptIn(ExperimentalForTest::class)'

@@ -1,0 +1,7 @@
+[versions]
+dokka = "2.2.0-Beta"
+
+[libraries]
+kotlin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
+dokka-playground = { module = "org.jetbrains.dokka:kotlin-playground-samples-plugin", version.ref = "dokka" }

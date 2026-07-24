@@ -1,0 +1,57 @@
+KClass: class C : Any
+  constructors:
+    public final <X> fun `<init>`(J<X!, X!>!): C<X> where X : kotlin.Any!
+  members:
+    public open operator fun C<X>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C<X>.hashCode(): kotlin.Int
+    public open fun C<X>.toString(): kotlin.String
+  declaredMembers:
+KClass: class C.D : Any
+  constructors:
+    public final <Y> fun C<X>.`<init>`(J<X!, Y!>!): C<X>.D<Y> where Y : kotlin.Any!
+  members:
+    public open operator fun C<X>.D<Y>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C<X>.D<Y>.hashCode(): kotlin.Int
+    public open fun C<X>.D<Y>.toString(): kotlin.String
+  declaredMembers:
+KClass: class G : Any
+  constructors:
+    public final <TClass, TCtor> fun `<init>`(J<TCtor!, TClass!>!): G<TClass> where TClass : kotlin.Any!, TCtor : kotlin.Any!
+  members:
+    public open operator fun G<TClass>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun G<TClass>.hashCode(): kotlin.Int
+    public open fun G<TClass>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface J : Any
+  members:
+    public open operator fun J<T1, T2>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun J<T1, T2>.foo(T2!): T1!
+    public open fun J<T1, T2>.hashCode(): kotlin.Int
+    public open fun J<T1, T2>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun J<T1, T2>.foo(T2!): T1!
+KClass: class Outer : Any
+  constructors:
+    public final <T1> fun `<init>`(J<T1, T1>): Outer<T1>
+  members:
+    public open operator fun Outer<T1>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Outer<T1>.hashCode(): kotlin.Int
+    public open fun Outer<T1>.toString(): kotlin.String
+    public final val Outer<T1>.j11: J<T1, T1>
+  declaredMembers:
+    public final val Outer<T1>.j11: J<T1, T1>
+KClass: class Outer.Inner : Any
+  constructors:
+    public final <T2> fun Outer<T1>.`<init>`(J<T1, T2>): Outer<T1>.Inner<T2>
+  members:
+    public open operator fun Outer<T1>.Inner<T2>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Outer<T1>.Inner<T2>.hashCode(): kotlin.Int
+    public open fun Outer<T1>.Inner<T2>.toString(): kotlin.String
+    public final val Outer<T1>.Inner<T2>.j12: J<T1, T2>
+  declaredMembers:
+    public final val Outer<T1>.Inner<T2>.j12: J<T1, T2>
+KPackage: SamConversionInGenericConstructorCallKt
+  public final fun test3((kotlin.String) -> kotlin.String, (kotlin.Int) -> kotlin.String): C<kotlin.String!>.D<kotlin.Int!>
+  public final fun test4((kotlin.String) -> kotlin.String, (kotlin.Any) -> kotlin.String): Outer<kotlin.String!>.Inner<kotlin.Any!>
+  public final fun testGenericJavaCtor1((kotlin.String) -> kotlin.Int): G<kotlin.String!>
+  public final fun testGenericJavaCtor2(kotlin.Any): kotlin.Unit

@@ -1,2 +1,3 @@
 expression: functionWithGeneric
+expression PSI: KtNameReferenceExpression
 type: ERROR(Cannot infer argument for type parameter T)

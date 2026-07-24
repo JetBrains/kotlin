@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
+import kotlin.test.assertTrue
 
 @DisplayName("Plugins DSL is working correctly")
 @OtherGradlePluginTests
@@ -56,9 +56,7 @@ class PluginsDslIT : KGPBaseTest() {
             build("build") {
                 val appliedPlugins = "applied plugin class:(.*)".toRegex().findAll(output).map { it.groupValues[1] }.toSet()
                 kotlinPluginClasses.forEach {
-                    assertTrue(it in appliedPlugins) {
-                        "Plugin class $it should be in applied plugins"
-                    }
+                    assertTrue(it in appliedPlugins, "Plugin class $it should be in applied plugins")
                 }
             }
         }

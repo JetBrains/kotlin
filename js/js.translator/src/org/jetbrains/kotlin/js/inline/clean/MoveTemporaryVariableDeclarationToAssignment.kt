@@ -110,7 +110,7 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
-                    val (name, _) = assignment
+                    val [name, _] = assignment
                     if (name in varWithoutInitDeclarations) {
                         varAssignedInBlocks.getOrPut(name) { hashSetOf() } += currentBlock
                     }
@@ -195,7 +195,7 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
             override fun endVisit(x: JsExpressionStatement, ctx: JsContext<JsNode>) {
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
-                    val (name, initExpr) = assignment
+                    val [name, initExpr] = assignment
                     val removedVar = removedVarDeclarations.remove(name)
                     if (removedVar != null) {
                         val varDeclarationWithInit = JsVars.JsVar(name, initExpr).apply {

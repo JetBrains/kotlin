@@ -1,0 +1,15 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+private val k: String
+    /* TARGET declaration */ private fun <get-k>(): String
+/* TARGET declaration */ private fun o(): String
+internal val ok: String
+    internal inline companion fun A.<get-ok>(): String
+        /* ACCESSOR use-site */ access$o$tAKt()
+        /* ACCESSOR use-site */ access$<get-k>$tAKt()
+/* ACCESSOR declaration */ internal fun access$o$tAKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tAKt(): String
+    /* TARGET use-site */ <get-k>()

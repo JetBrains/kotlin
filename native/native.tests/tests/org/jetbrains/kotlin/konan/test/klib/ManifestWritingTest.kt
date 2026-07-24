@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -204,6 +204,48 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             enabledLanguageFeature.name
         )
         checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, poisoningFeature.name, null)
+
+        JUnit5Assertions.assertEquals(
+            "2",
+            manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+        ) { "Enabling a poisoning feature must set the PRE_RELEASE bit (0x2) in `$KLIB_PROPERTY_METADATA_FLAGS`" }
+    }
+
+    @Test
+    fun testMetadataFlags() {
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            stubSourceFile,
+            packed = false,
+            freeCompilerArgs = emptyList()
+        )
+
+        val klib = compilationResult.assertSuccess().resultingArtifact.klibFile
+        val manifestFile = File(klib, "default/manifest")
+        val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
+
+        JUnit5Assertions.assertEquals(
+            "0",
+            manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+        ) { "Default compilation must write `$KLIB_PROPERTY_METADATA_FLAGS` with no flags set" }
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_with_companion_blocks")
+    fun testWithEnabledCompanionBlockFeature(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xcompanion-blocks-and-extensions",
+        )
+    }
+
+    @Test
+    @TestMetadata("metadata_compilation_without_companion_blocks")
+    fun testWithDisabledCompanionBlockFeature(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-XXLanguage:-CompanionBlocks",
+        )
     }
 
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
@@ -258,7 +300,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             expectedNegativeValue: String?,
         ) {
             val propertyValues = properties.propertyList(propertyName)
-            val (positiveValues, negativeValues) = propertyValues.partition { it.startsWith("+") }
+            val [positiveValues, negativeValues] = propertyValues.partition { it.startsWith("+") }
             JUnit5Assertions.assertEquals(
                 setOfNotNull(expectedPositiveValue),
                 positiveValues.map { it.trimStart('+') }.toSet()

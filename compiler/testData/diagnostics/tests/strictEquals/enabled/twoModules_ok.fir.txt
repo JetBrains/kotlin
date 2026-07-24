@@ -1,0 +1,209 @@
+Module: lib
+FILE: Regular.kt
+    public open class Regular : R|kotlin/Any| {
+        public constructor(): R|Regular| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val r: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+        public open override operator fun equals([EqualityBoundType=Regular] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Regular|) [evaluated = <getClass>(Q|Regular|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public open class Inherited : R|Regular| {
+        public constructor(): R|Inherited| {
+            super<R|Regular|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Regular] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/Inherited|.R|/Regular.r|, R|<local>/other|.R|/Regular.r|)
+        }
+
+    }
+    public abstract interface H : R|kotlin/Any| {
+    }
+    public abstract interface I : R|H| {
+        public abstract fun i(): R|kotlin/Unit|
+
+        public abstract override operator fun equals([EqualityBoundType=I] @R|kotlin/EqualityBound|(bound = <getClass>(Q|I|) [evaluated = <getClass>(Q|I|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun a(): R|kotlin/Unit|
+
+        public abstract override operator fun equals([EqualityBoundType=A] @R|kotlin/EqualityBound|(bound = <getClass>(Q|A|) [evaluated = <getClass>(Q|A|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final class Generic<X : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<X : R|kotlin/CharSequence|>(): R|Generic<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|X|
+            public get(): R|X| {
+                ^ Null(null)!!
+            }
+
+        public open override operator fun equals([EqualityBoundType=Generic<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Generic|) [evaluated = <getClass>(Q|Generic|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public abstract interface J : R|H| {
+        public abstract override operator fun equals([EqualityBoundType=H] @R|kotlin/EqualityBound|(bound = <getClass>(Q|H|) [evaluated = <getClass>(Q|H|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public abstract interface IJ : R|I|, R|J| {
+    }
+    public abstract interface JI : R|J|, R|I| {
+    }
+Module: main
+FILE: Main.kt
+    public final class Child : R|Regular| {
+        public constructor(): R|Child| {
+            super<R|Regular|>()
+        }
+
+    }
+    public final class ChildOverriding : R|Regular| {
+        public constructor(): R|ChildOverriding| {
+            super<R|Regular|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Regular] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class InheritedChild : R|Inherited| {
+        public constructor(): R|InheritedChild| {
+            super<R|Inherited|>()
+        }
+
+    }
+    public final class InheritedChildOverriding : R|Inherited| {
+        public constructor(): R|InheritedChildOverriding| {
+            super<R|Inherited|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Regular] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/InheritedChildOverriding|.R|/Regular.r|, R|<local>/other|.R|/Regular.r|)
+        }
+
+    }
+    public final fun useSite_1(x: R|Regular?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|?.{ $subj$.R|/Regular.r| }
+            }
+        }
+
+        when () {
+            !=(R|<local>/x|, Null(null)) && ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final fun useSite_2(x: R|Child?|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final fun useSite_3(x: R|ChildOverriding?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|?.{ $subj$.R|/Regular.r| }
+            }
+        }
+
+        when () {
+            !=(R|<local>/x|, Null(null)) && ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final fun useSite_4(x: R|Inherited?|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final fun useSite_5(x: R|InheritedChild|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final fun useSite_6(x: R|kotlin/Any?|, y: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|InheritedChildOverriding|) && ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/Regular.r|
+            }
+        }
+
+    }
+    public final inline fun <reified T : R|I|, R|A|> useSite_7(x: R|kotlin/Any?|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|I?|) && (R|<local>/x| is R|A?|) && ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/I.i|()
+                R|<local>/y|.R|/A.a|()
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|A?|) && (R|<local>/x| is R|I?|) && ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/y|.R|/A.a|()
+                R|<local>/y|.R|/I.i|()
+            }
+        }
+
+        (R|<local>/x| as R|T?|)
+        when () {
+            !=(R|<local>/x|, R|<local>/y|) ->  {
+                ^useSite_7 Unit
+            }
+        }
+
+        R|<local>/y|.R|/A.a|()
+        R|<local>/y|.R|/I.i|()
+    }
+    public final fun useSite_8(x: R|Generic<*>|, y: R|Generic<kotlin/String>|, z: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/z|) || ==(R|<local>/y|, R|<local>/z|) ->  {
+                R|<local>/z|.R|SubstitutionOverride</Generic.x: R|CapturedType(*)|>|.R|kotlin/CharSequence.length|
+            }
+        }
+
+    }
+    public final fun useSite_9(ij: R|IJ|, ji: R|JI|, z: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/ij|, R|<local>/z|) ->  {
+                R|<local>/z|.R|/I.i|()
+            }
+        }
+
+        when () {
+            ==(R|<local>/ji|, R|<local>/z|) ->  {
+                R|<local>/z|.R|/I.i|()
+            }
+        }
+
+    }

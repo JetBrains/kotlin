@@ -5,19 +5,16 @@
 
 package kotlin.script.experimental.test
 
-import junit.framework.TestCase
-import kotlin.script.experimental.api.RefineConfigurationOnAnnotationsData
-import kotlin.script.experimental.api.RefineScriptCompilationConfigurationHandler
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptConfigurationRefinementContext
-import kotlin.script.experimental.api.asSuccess
-import kotlin.script.experimental.api.refineConfigurationOnAnnotations
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ConfiguratorWithDependencyResolver
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.FileSystemDependenciesResolver
 import kotlin.script.experimental.dependencies.withTransformedResolvers
 
-class DependenciesResolverTransformationTest : TestCase() {
+class DependenciesResolverTransformationTest {
+    @Test
     fun testWithTransformedResolvers() {
         val resolverA = FileSystemDependenciesResolver()
         val resolverB = FileSystemDependenciesResolver()

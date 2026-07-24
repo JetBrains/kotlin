@@ -1,0 +1,219 @@
+KtFile: 'companionExtensionInapplicableOperator.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  null
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,72): 'class C'
+  null
+
+KtNamedFunction(74,120): 'companion operator fun C.plus(i: Int): C = C()'
+  null
+
+KtDeclarationModifierList(74,92): 'companion operator'
+  null
+
+KtTypeReference(97,98): 'C'
+  null
+
+KtUserType(97,98): 'C'
+  null
+
+KtNameReferenceExpression(97,98): 'C'
+  null
+
+KtParameterList(103,111): '(i: Int)'
+  null
+
+KtParameter(104,110): 'i: Int'
+  null
+
+KtTypeReference(107,110): 'Int'
+  null
+
+KtUserType(107,110): 'Int'
+  null
+
+KtNameReferenceExpression(107,110): 'Int'
+  null
+
+KtTypeReference(113,114): 'C'
+  null
+
+KtUserType(113,114): 'C'
+  null
+
+KtNameReferenceExpression(113,114): 'C'
+  null
+
+KtCallExpression(117,120): 'C()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(117,118): 'C'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(118,120): '()'
+  null
+
+KtNamedFunction(122,151): 'fun usage() {'
+  null
+
+KtParameterList(131,133): '()'
+  null
+
+KtBlockExpression(134,151): '{'
+  null
+
+KtDotQualifiedExpression(140,149): 'C.plus(1)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(140,141): 'C'
+  null
+
+KtCallExpression(142,149): 'plus(1)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(142,146): 'plus'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = test.C
+        symbol = test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(146,149): '(1)'
+  null
+
+KtValueArgument(147,148): '1'
+  null
+
+KtConstantExpression(147,148): '1'
+  null

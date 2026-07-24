@@ -1,0 +1,10 @@
+// Declared signatures: 7
+just_cinterop_c/do_int|1434322103267605694[100]
+just_cinterop_c/do_my_struct_t_ptr|-1042971359980028537[100]
+just_cinterop_c/do_my_struct_t|-3313067324655591103[100]
+just_cinterop_c/do_short|3714564778502624739[100]
+just_cinterop_c/do_signed_char|-3061129409597428672[100]
+just_cinterop_c/do_void_ptr|6411325604211317372[100]
+just_cinterop_c/my_struct|null[100]
+
+// Imported signatures: 0

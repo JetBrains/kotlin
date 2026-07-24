@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.js.parser.ErrorReporter
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCallChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibDiagnosticContext
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
-import org.jetbrains.kotlin.ir.backend.js.checkers.at
+import org.jetbrains.kotlin.backend.common.checkers.at
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -36,7 +36,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
         }
     }
 
-    override fun check(expression: IrCall, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
+    override fun check(expression: IrCall, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter) {
         // Do not check IR from K1, because there are corresponding K1 FE checks in JsCallChecker
         if (!context.compilerConfiguration.languageVersionSettings.languageVersion.usesK2) {
             return
@@ -74,7 +74,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
 
     private class JsErrorReporter(
         val codeExpression: IrExpression,
-        val context: JsKlibDiagnosticContext,
+        val context: CommonKlibDiagnosticContext,
         val reporter: IrDiagnosticReporter,
     ) : ErrorReporter {
         override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {

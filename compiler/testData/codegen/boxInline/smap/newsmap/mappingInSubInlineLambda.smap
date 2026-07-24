@@ -13,31 +13,13 @@ test/_1Kt
 *L
 1#1,36:1
 6#2,4:37
+12#2,3:41
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
 26#1:37,4
-*E
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt$box$1$1
-+ 2 1.kt
-test/_1Kt
-*L
-1#1,36:1
-12#2,3:37
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt$box$1$1
-*L
-28#1:37,3
+28#1:41,3
 *E
 

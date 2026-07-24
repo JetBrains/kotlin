@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
@@ -72,7 +71,7 @@ fun createIsolatedCompilationContext(
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
-    val (initialScriptCompilationConfiguration, kotlinCompilerConfiguration) =
+    val [initialScriptCompilationConfiguration, kotlinCompilerConfiguration] =
         createInitialConfigurations(
             baseScriptCompilationConfiguration,
             hostConfiguration,
@@ -81,7 +80,7 @@ fun createIsolatedCompilationContext(
             parentDisposable,
         )
     kotlinCompilerConfiguration.configureCompiler()
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     val environment =
         KotlinCoreEnvironment.createForProduction(
             parentDisposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -89,7 +88,7 @@ fun createIsolatedCompilationContext(
 
     return SharedScriptCompilationContext(
         parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
-        ScriptConfigurationsProvider.getInstance(environment.project)
+        kotlinCompilerConfiguration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     ).applyConfigure()
 }
 
@@ -110,7 +109,7 @@ internal fun createCompilationContextFromEnvironment(
 
     return SharedScriptCompilationContext(
         null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
-        ScriptConfigurationsProvider.getInstance(environment.project)
+        environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     ).applyConfigure()
 }
 
@@ -217,8 +216,6 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     setupJvmSpecificArguments(compilerArguments)
 
     configureAdvancedJvmOptions(compilerArguments)
-
-    configureKlibPaths(compilerArguments)
 }
 
 fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArguments {
@@ -233,7 +230,9 @@ fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArg
 }
 
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =
-    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots + kotlinCompilerConfiguration.jvmModularRoots)
+    // the `prepend = true` ensures that the standard libs are added before other dependencies: otherwise runtime classloaders structure
+    // may fail to load some classes. See comments to KT-87041 for possible failures.
+    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots + kotlinCompilerConfiguration.jvmModularRoots, prepend = true)
 
 private fun createInitialCompilerConfiguration(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
@@ -289,10 +288,6 @@ private fun createInitialCompilerConfiguration(
             )
         }
 
-        add(
-            ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
-            ScriptingCompilerConfigurationComponentRegistrar()
-        )
         add(
             CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
             ScriptingK2CompilerPluginRegistrar()
@@ -351,7 +346,9 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
 ): Pair<List<SourceCode>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainSource)
-    val (classpath, newSources, sourceDependencies) =
+    (
+        val classpath, val newSources = sources, val sourceDependencies
+    ) =
         @Suppress("DEPRECATION")
         collectScriptsCompilationDependencies(sourceFiles, getScriptCompilationConfiguration)
 

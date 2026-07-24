@@ -1,4 +1,3 @@
-// SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 import org.jetbrains.annotations.*;

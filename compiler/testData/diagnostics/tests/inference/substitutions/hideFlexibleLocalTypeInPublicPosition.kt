@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-30054
-// LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE_FEATURE_TOGGLED: KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // FILE: J.java
 public class J {
     public static <T> T flexibleId(T x) { return x; }

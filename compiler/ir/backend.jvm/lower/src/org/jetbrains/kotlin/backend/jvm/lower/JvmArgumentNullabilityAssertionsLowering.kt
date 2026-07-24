@@ -74,7 +74,7 @@ internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendConte
 
         val contextAssertionScope = AssertionScope.Enabled
 
-        expression.arguments.assignFrom(expression.getAllArgumentsWithIr()) { (parameter, argument) ->
+        expression.arguments.assignFrom(expression.getAllArgumentsWithIr()) { [parameter, argument] ->
             val assertionScope = when (parameter.kind) {
                 IrParameterKind.DispatchReceiver -> dispatchReceiverAssertionScope
                 IrParameterKind.ExtensionReceiver -> extensionReceiverAssertionScope

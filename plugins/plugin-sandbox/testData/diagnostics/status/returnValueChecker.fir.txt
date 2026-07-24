@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun usage(o: R|Outer|): R|kotlin/Unit| {
+        R|/Outer.Outer|().R|/Outer.annotated|()
+    }

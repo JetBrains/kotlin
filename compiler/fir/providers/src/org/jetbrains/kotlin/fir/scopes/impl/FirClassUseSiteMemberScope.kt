@@ -46,7 +46,7 @@ class FirClassUseSiteMemberScope(
             }
 
 
-            val (properties, fields) = getPropertiesAndFieldsFromSupertypesByName(name)
+            val [properties, fields] = getPropertiesAndFieldsFromSupertypesByName(name)
             for (resultOfIntersection in properties) {
                 resultOfIntersection.collectNonOverriddenDeclarations(explicitlyDeclaredProperties, this@buildList)
             }

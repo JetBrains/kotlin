@@ -1,0 +1,66 @@
+FILE: file1.kt
+    package f1
+
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|f1/B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|f1/B.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg xs: R|kotlin/Array<out kotlin/String>|): R|f1/B| {
+                ^of R|f1/B.B|()
+            }
+
+            public final operator fun R|f1/B|.unaryPlus(): R|f1/B| {
+                ^unaryPlus this@R|f1/B.Companion.unaryPlus|
+            }
+
+        }
+
+    }
+    public final operator fun R|f1/B|.plusAssign(other: R|f1/B|): R|kotlin/Unit| {
+        ^plusAssign Q|kotlin/Unit|
+    }
+    public final operator fun R|f1/B.Companion|.get(vararg xs: R|kotlin/IntArray|): R|f1/B| {
+        ^get R|f1/B.B|()
+    }
+    public final operator fun R|f1/B?|.div(other: R|f1/B|): R|f1/B| {
+        ^div R|f1/B.B|()
+    }
+    public final operator fun R|f1/B|.set(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Unit| {
+        ^set Q|kotlin/Unit|
+    }
+    public final operator fun R|f1/B.Companion|.times(other: R|f1/B|): R|f1/B| {
+        ^times R|f1/B.B|()
+    }
+FILE: file2.kt
+    package f2
+
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|f1/B| = Q|f1|.R|f1/B.B|()
+        R|<local>/x|.R|f1/plusAssign<Inapplicable(CONVENTION_ERROR): f1/plusAssign>#|(Q|f1|.R|f1/B.B|())
+        R|<local>/x|.R|f1/plusAssign|(Q|f1|.R|f1/B.B|())
+        lvar y: R|f1/B| = Q|f1/B.Companion|.R|f1/B.Companion.of<Inapplicable(INAPPLICABLE): f1/B.Companion.of>#|(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/y| = Q|f1/B|.R|f1/get|(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/y| = Q|f1/B.Companion|.R|f1/B.Companion.of|(vararg(String(1), String(2), String(3)))
+        R|<local>/y| = Q|f1/B|.R|f1/B.Companion.of|(vararg(String(1), String(2), String(3)))
+        lval z: R|f1/B?| = Null(null)
+        ==(R|<local>/z|, Q|f1|.R|f1/B.B|())
+        R|<local>/z|.R|f1/div|(Q|f1|.R|f1/B.B|())
+        lval t: R|kotlin/Unit|by Q|f1|.R|f1/B.B|()
+            local get(): R|kotlin/Unit| {
+                ^ D|<local>/t|.R|f1/set<Inapplicable(CONVENTION_ERROR): f1/set>#|(Null(null), ::R|<local>/t|)
+            }
+
+        Q|f1/B|.R|f1/times<Inapplicable(CONVENTION_ERROR): f1/times>#|(Q|f1|.R|f1/B.B|())
+        (Q|f1/B.Companion|, Q|f1|.R|f1/B.B|()).R|f1/B.Companion.unaryPlus<Inapplicable(CONVENTION_ERROR): f1/B.Companion.unaryPlus>#|()
+        R|kotlin/with|<R|f1/B.Companion|, R|f1/B|>(Q|f1/B|, <L> = with@fun R|f1/B.Companion|.<anonymous>(): R|f1/B| <inline=Inline, kind=EXACTLY_ONCE>  {
+            (this@R|special/anonymous|, Q|f1|.R|f1/B.B|()).R|f1/B.Companion.unaryPlus|()
+            ^ (Q|f1/B.Companion|, Q|f1|.R|f1/B.B|()).R|f1/B.Companion.unaryPlus<Inapplicable(CONVENTION_ERROR): f1/B.Companion.unaryPlus>#|()
+        }
+        )
+    }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -40,7 +39,7 @@ enum class AtomicFunctionType {
 private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 internal var IrSimpleFunction.volatileField: IrField? by irAttribute(copyByDefault = false)
 
-internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
+internal class VolatileFieldsLowering(val context: NativeBackendContext) : FileLoweringPass {
     private val symbols = context.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
@@ -209,20 +208,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
 
-            private val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
-
-            private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrRichPropertyReference? {
-                return when {
-                    expression == null -> null
-                    expectedReturn == null && expression is IrRichPropertyReference -> expression
-                    expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
-                    expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
-                    expression is IrBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expectedReturn)
-                    expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST -> getConstPropertyReference(expression.argument, expectedReturn)
-                    else -> null
-                }
-            }
-
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val intrinsicType = tryGetIntrinsicType(expression).takeIf {
@@ -230,7 +215,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 } ?: return expression
                 builder.at(expression)
                 val extensionReceiver = expression.arguments[expression.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }]
-                val reference = getConstPropertyReference(extensionReceiver, null)
+                val reference = getSinglePropertyReference(extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = (reference.reflectionTargetSymbol as? IrPropertySymbol)?.owner
                 val backingField = property?.backingField
@@ -246,7 +231,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     dispatchReceiver = reference.boundValues.singleOrNull()
                     val replacementParams = function.parameters.filter { it.kind == IrParameterKind.Regular }
                     val originalParams = expression.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular }
-                    for ((from, to) in originalParams.zip(replacementParams)) {
+                    for ([from, to] in originalParams.zip(replacementParams)) {
                         arguments[to] = expression.arguments[from]
                     }
                 }.let {

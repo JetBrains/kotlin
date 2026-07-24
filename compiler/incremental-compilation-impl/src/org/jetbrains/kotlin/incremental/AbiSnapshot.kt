@@ -52,14 +52,14 @@ class AbiSnapshotImpl(override val protos: MutableMap<FqName, ProtoData>) : AbiS
                     val fqName = FqName(fqNameString)
                     val bytes = readStringArray()
                     val strings = readStringArray()
-                    val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+                    val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
                     mutableMap[fqName] = ClassProtoData(classProto, nameResolver)
                 } else {
                     val fqName = FqName(fqNameString)
                     val packageFqName = FqName(readUTF())
                     val bytes = readStringArray()
                     val strings = readStringArray()
-                    val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+                    val [nameResolver, proto] = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
                     mutableMap[fqName] = PackagePartProtoData(proto, nameResolver, packageFqName)
                 }
             }

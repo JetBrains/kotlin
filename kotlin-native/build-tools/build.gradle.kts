@@ -5,21 +5,15 @@
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
+    @Suppress("DEPRECATION")
     val rootBuildDirectory by extra(project.file("../.."))
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {
         classpath(libs.gson)
     }
-}
-
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    mavenCentral()
-    gradlePluginPortal()
 }
 
 plugins {
@@ -33,7 +27,7 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     api("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${coreDepsVersion}") { isTransitive = false }
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
+    implementation(kotlinBuildHelpers())
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     // To build Konan Gradle plugin
@@ -44,9 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-val compileKotlin: KotlinCompile by tasks
-
-compileKotlin.apply {
+tasks.compileKotlin {
     compilerOptions {
         optIn.add("kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.addAll(

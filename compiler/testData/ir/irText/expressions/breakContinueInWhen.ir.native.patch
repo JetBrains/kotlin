@@ -1,0 +1,11 @@
+--- a/breakContinueInWhen.ir.txt
++++ b/breakContinueInWhen.ir.native.txt
+@@ -98,7 +98,7 @@
+               ARG arg0: GET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
+               ARG arg1: CONST String type=kotlin.String value="1;2;"
+           then: THROW type=kotlin.Nothing
+-            CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String?) declared in kotlin.AssertionError' type=kotlin.AssertionError origin=null
++            CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.Any?) declared in kotlin.AssertionError' type=kotlin.AssertionError origin=null
+               ARG message: GET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
+   FUN name:testContinueFor visibility:public modality:FINAL returnType:kotlin.Unit
+     BLOCK_BODY

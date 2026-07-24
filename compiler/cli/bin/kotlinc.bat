@@ -2,7 +2,7 @@
 
 rem Based on scalac.bat from the Scala distribution
 rem Copyright 2002-2011, LAMP/EPFL
-rem Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+rem Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
 rem Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 
 rem We adopt the following conventions:
@@ -81,9 +81,8 @@ rem ##########################################################################
 rem # subroutines
 
 :set_home
-  set _BIN_DIR=
-  for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
-  set _KOTLIN_HOME=%_BIN_DIR%..
+  for %%i in ("%~f0") do set "_BIN_DIR=%%~dpi"
+  set "_KOTLIN_HOME=%_BIN_DIR%.."
 goto :eof
 
 rem Parses "java -version" output and stores the major version to _java_major_version.

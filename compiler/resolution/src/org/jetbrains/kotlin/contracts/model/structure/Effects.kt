@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESValue
 import org.jetbrains.kotlin.contracts.model.SimpleEffect
 
+@K1Deprecation
 data class ESCalls(val callable: ESValue, val kind: EventOccurrencesRange) : SimpleEffect() {
     override fun isImplies(other: ESEffect): Boolean? {
         if (other !is ESCalls) return null
@@ -32,6 +34,7 @@ data class ESCalls(val callable: ESValue, val kind: EventOccurrencesRange) : Sim
 
 }
 
+@K1Deprecation
 data class ESReturns(val value: ESValue) : SimpleEffect() {
     override fun isImplies(other: ESEffect): Boolean? {
         if (other !is ESReturns) return null
@@ -45,5 +48,6 @@ data class ESReturns(val value: ESValue) : SimpleEffect() {
     }
 }
 
+@K1Deprecation
 inline fun ESEffect.isReturns(block: ESReturns.() -> Boolean): Boolean =
     this is ESReturns && block()

@@ -1,0 +1,50 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirDefaultStarImportingScope
+    Element 9
+        Scope: FirExplicitStarImportingScope
+    Element 10
+        Scope: FirDefaultSimpleImportingScope
+    Element 11
+        Scope: FirDefaultSimpleImportingScope
+    Element 12
+        Scope: FirPackageMemberScope
+    Element 13
+        Scope: FirExplicitSimpleImportingScope
+    Element 14
+        Scope: FirExplicitStarImportingScope
+    Element 15
+        Scope: FirExplicitSimpleImportingScope
+    Element 16
+        Scope: FirLocalScope
+    Element 17
+        Scope: FirLocalScope
+    Element 18
+        Scope: FirLocalScope
+    Element 19
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol value: R|example/Foo|
+
+FILE: [ResolvedTo(IMPORTS)] fragment.kt
+    CODE FRAGMENT: {
+        [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] value: R|example/Foo|): R|kotlin/Unit| <inline=NoInline>  {
+        }
+
+    }

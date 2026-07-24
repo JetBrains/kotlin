@@ -1,0 +1,210 @@
+KtFile: 'companionExtensionWinsOverCompanionObjectMember.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(51,63): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,63): 'test'
+  NO_CANDIDATES
+
+KtImportList(63,63): ''
+  NO_CANDIDATES
+
+KtClass(65,128): 'class C {'
+  NO_CANDIDATES
+
+KtClassBody(73,128): '{'
+  NO_CANDIDATES
+
+KtObjectDeclaration(79,126): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(79,88): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(96,126): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(106,120): 'fun same() = 1'
+  NO_CANDIDATES
+
+KtParameterList(114,116): '()'
+  NO_CANDIDATES
+
+KtConstantExpression(119,120): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(130,157): 'companion fun C.same() = ""'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(130,139): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(144,145): 'C'
+  NO_CANDIDATES
+
+KtUserType(144,145): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,145): 'C'
+  NO_CANDIDATES
+
+KtParameterList(150,152): '()'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(155,157): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(159,187): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(168,170): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(171,187): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(177,185): 'C.same()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = test/C.Companion.same(<dispatch receiver>: test.C.Companion): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.Companion.same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(177,178): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(179,185): 'same()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = test/C.Companion.same(<dispatch receiver>: test.C.Companion): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.Companion.same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(179,183): 'same'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = test/C.Companion.same(<dispatch receiver>: test.C.Companion): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.Companion.same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = test.C.Companion
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.String
+        symbol = test/same(<extension receiver>: test.C): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = test/same
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(183,185): '()'
+  NO_CANDIDATES

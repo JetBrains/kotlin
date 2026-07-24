@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val compBlockVal // /A.compBlockVal|#static{}compBlockVal[0]
+        final fun <get-compBlockVal>(): kotlin/String // /A.compBlockVal.<get-compBlockVal>|<get-compBlockVal>#static(){}[0]
+    final var compBlockVar // /A.compBlockVar|#static{}compBlockVar[0]
+        final fun <get-compBlockVar>(): kotlin/String // /A.compBlockVar.<get-compBlockVar>|<get-compBlockVar>#static(){}[0]
+        final fun <set-compBlockVar>(kotlin/String) // /A.compBlockVar.<set-compBlockVar>|<set-compBlockVar>#static(kotlin.String){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun compBlockFun(kotlin/String = ...): kotlin/String // /A.compBlockFun|compBlockFun#static(kotlin.String){}[0]
+}
+final class /MyClass { // /MyClass|null[0]
+    constructor <init>() // /MyClass.<init>|<init>(){}[0]
+}
+final companion var /mutable // /mutable|#companion@MyClass{}mutable[0]
+    final companion fun (/MyClass).<get-mutable>(): kotlin/String // /mutable.<get-mutable>|<get-mutable>#companion@MyClass(){}[0]
+    final companion fun (/MyClass).<set-mutable>(kotlin/String) // /mutable.<set-mutable>|<set-mutable>#companion@MyClass(kotlin.String){}[0]
+final companion val /readonly // /readonly|#companion@MyClass{}readonly[0]
+    final companion fun (/MyClass).<get-readonly>(): kotlin/String // /readonly.<get-readonly>|<get-readonly>#companion@MyClass(){}[0]
+final companion fun (/MyClass)./func(kotlin/String): kotlin/String // /func|func#companion@MyClass(kotlin.String){}[0]
+final companion fun (/MyClass)./getOk(): kotlin/String // /getOk|getOk#companion@MyClass(){}[0]

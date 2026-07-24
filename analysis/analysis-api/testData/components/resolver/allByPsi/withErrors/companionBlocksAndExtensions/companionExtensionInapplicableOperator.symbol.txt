@@ -1,0 +1,154 @@
+KtFile: 'companionExtensionInapplicableOperator.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,72): 'class C'
+  null
+
+KtNamedFunction(74,120): 'companion operator fun C.plus(i: Int): C = C()'
+  null
+
+KtDeclarationModifierList(74,92): 'companion operator'
+  null
+
+KtTypeReference(97,98): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(97,98): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(97,98): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtParameterList(103,111): '(i: Int)'
+  null
+
+KtParameter(104,110): 'i: Int'
+  null
+
+KtTypeReference(107,110): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(107,110): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(107,110): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtTypeReference(113,114): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(113,114): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(113,114): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(117,120): 'C()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.C
+    ]
+
+KtNameReferenceExpression(117,118): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtValueArgumentList(118,120): '()'
+  null
+
+KtNamedFunction(122,151): 'fun usage() {'
+  null
+
+KtParameterList(131,133): '()'
+  null
+
+KtBlockExpression(134,151): '{'
+  null
+
+KtDotQualifiedExpression(140,149): 'C.plus(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+    ]
+
+KtNameReferenceExpression(140,141): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(142,149): 'plus(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+    ]
+
+KtNameReferenceExpression(142,146): 'plus'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/plus(<extension receiver>: test.C, i: kotlin.Int): test.C
+    ]
+
+KtValueArgumentList(146,149): '(1)'
+  null
+
+KtValueArgument(147,148): '1'
+  null
+
+KtConstantExpression(147,148): '1'
+  null

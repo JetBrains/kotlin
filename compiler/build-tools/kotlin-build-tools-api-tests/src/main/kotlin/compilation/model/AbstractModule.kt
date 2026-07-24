@@ -20,14 +20,14 @@ private class CompilationOutcomeImpl(
     override val actualResult: CompilationResult?,
 ) : CompilationOutcome {
     private val _logLines by lazy {
-        rawLogLines.mapValues { (_, lines) -> lines.toList() }
+        rawLogLines.mapValues { [_, lines] -> lines.toList() }
     }
 
     override val logLines: Map<LogLevel, List<String>>
         get() = _logLines
 
     private val _uniqueLogLines by lazy {
-        rawLogLines.mapValues { (_, lines) -> lines.toSet() }
+        rawLogLines.mapValues { [_, lines] -> lines.toSet() }
     }
 
     override val uniqueLogLines: Map<LogLevel, Set<String>>

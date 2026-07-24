@@ -8,23 +8,23 @@ package org.jetbrains.kotlin.wasm.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
-import org.jetbrains.kotlin.js.test.preprocessors.JsExportBoxPreprocessor
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
+import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFa
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
+import org.jetbrains.kotlin.wasm.test.preprocessors.WasmJsExportBoxPreprocessor
+import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
+import org.jetbrains.kotlin.wasm.test.setupStepsForWasmFirstStageUpToSerialization
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -61,17 +64,12 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
     }
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        useSourcePreprocessor(::JsExportBoxPreprocessor)
+        useSourcePreprocessor(::WasmJsExportBoxPreprocessor)
         useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         useDirectives(WasmEnvironmentConfigurationDirectives)
         defaultDirectives {
-            if (customWasmJsCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
-                // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
-                // the language features that are not supported in the given custom LV.
-                setupCustomLanguageVersionForKlibCompatibilityTest(customWasmJsCompilerSettings.defaultLanguageVersion)
+            setupCustomLVForKlibForwardCompatibilityTest(customWasmJsCompilerSettings.defaultLanguageVersion)
 
-                LANGUAGE with "+ExportKlibToOlderAbiVersion"
-            }
 //            +WITH_STDLIB
         }
 
@@ -89,10 +87,16 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             customIgnoreDirective = null,
             additionalIgnoreDirectives = null,
         )
+        setupStepsForWasmFirstStageUpToSerialization(includeDumpFirHandlers = false)
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
         }
+
+        configureIrHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
+
         commonConfigurationForWasmSecondStageTest(
             testDataRoot,
             testGroupOutputDirPrefix = this@AbstractCustomWasmJsCompilerSecondStageTest::class.java.simpleName +
@@ -102,12 +106,13 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
         )
 
-        facadeStep(::CustomWasmJsCompilerSecondStageFacade)
+        facadeStep(CustomWasmJsCompilerSecondStageFacade::NonGrouping.bind(customWasmJsCompilerSettings))
 
         wasmArtifactsHandlersStep {
             useHandlers(::WasmFolderBoxRunner)
         }
 
+        configureIgnoredTestSuppressor()
         useFailureSuppressors(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,

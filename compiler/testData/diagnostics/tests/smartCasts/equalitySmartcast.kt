@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // ISSUE: KT-57513, KT-58169
+// LANGUAGE: -StrictEquals
 
 fun string(foo: Any) {
     val string = ""
@@ -35,6 +35,11 @@ class B { fun b() = Unit; override fun equals(other: Any?): Boolean = this === o
 data class C(val x: Int) { fun c() = Unit }
 open class D { fun d() = Unit }
 enum class E { ONE; fun e() = Unit }
+interface I { override fun equals(other: Any?): Boolean }
+enum class J : I {
+    JJ;
+    fun j() = this
+}
 
 fun testA(foo: A, bar: Any) {
     if (foo == bar) bar.a()
@@ -79,6 +84,12 @@ fun testE(foo: E, bar: Any) {
 
 fun testNullableE(foo: E?, bar: E?) {
     if (foo != null && foo == bar) bar.e()
+}
+
+fun testJ(foo: J, bar: Any, baz: J?) {
+    if (foo == bar) bar.j()
+    if (baz != null && baz == bar) bar.j()
+    if (bar == foo) bar.<!UNRESOLVED_REFERENCE!>j<!>()
 }
 
 fun testSmartcast(foo: Any, bar: Any) {

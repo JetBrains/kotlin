@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.hasShape
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -82,7 +82,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     val extensionToString: IrSimpleFunctionSymbol by CallableIds.extensionToString.functionSymbol {
         it.hasShape(extensionReceiver = true, parameterTypes = listOf(irBuiltIns.anyNType))
     }
-    val memberToString: IrSimpleFunctionSymbol = CallableIds.memberToString.functionSymbol()
+    val memberToString: IrSimpleFunctionSymbol by CallableIds.memberToString.functionSymbol()
     val extensionStringPlus: IrSimpleFunctionSymbol by CallableIds.extensionStringPlus.functionSymbol {
         it.hasShape(
             extensionReceiver = true,
@@ -90,7 +90,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
             parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), irBuiltIns.anyNType)
         )
     }
-    val memberStringPlus: IrSimpleFunctionSymbol = CallableIds.memberPlus.functionSymbol()
+    val memberStringPlus: IrSimpleFunctionSymbol by CallableIds.memberPlus.functionSymbol()
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
@@ -120,6 +120,18 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     open val setWithoutBoundCheckName: Name?
         get() = null
 
+    open fun arraySizePropertyGetter(arrayType: IrType): IrSimpleFunction =
+        arrayType.getClass()!!.getPropertyGetter("size")!!.owner
+
+    open fun arrayElementGetter(arrayType: IrType, intType: IrType): IrSimpleFunction {
+        val isArray = arrayType.isArray() || arrayType.isPrimitiveArray()
+        val getFunctionName = if (isArray && getWithoutBoundCheckName != null) getWithoutBoundCheckName else OperatorNameConventions.GET
+        return arrayType.getClass()!!.functions.single {
+            it.name == getFunctionName &&
+                    it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, intType))
+        }
+    }
+
     /**
      * Determines whether the provided function call is free of side effects.
      * If it is, then we consider this function to be pure and that unblocks some backend optimizations.
@@ -129,7 +141,6 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     }
 }
 
-@OptIn(InternalSymbolFinderAPI::class)
 abstract class BackendKlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, BackendSymbols(irBuiltIns) {
     final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
         it.returnType.classifierOrFail
@@ -144,9 +155,14 @@ abstract class BackendKlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlib
         getKey = { it.parameters[0].type.makeNotNull() }
     )
 
+    val staticInitializationFailure by staticInitializationFailureCallableId.functionSymbol()
+
     companion object {
         private val String.collectionsCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
         private val contentEquals = "contentEquals".collectionsCallableId
+
+        private val String.baseInternalCallableId get() = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier(this))
+        private val staticInitializationFailureCallableId = "staticInitializationFailure".baseInternalCallableId
     }
 }
 

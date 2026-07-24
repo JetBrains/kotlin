@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 
+@K1Deprecation
 object ModifierCheckerCore {
     fun check(
         listOwner: KtModifierListOwner,

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analyzer
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 
+@K1Deprecation
 interface AbstractAnalyzerWithCompilerReport {
     val targetEnvironment: TargetEnvironment
 

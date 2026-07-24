@@ -1,8 +1,4 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
-
-// Exception in new-reflect implementation
-// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 
 // FILE: A.java
 import org.jetbrains.annotations.*;

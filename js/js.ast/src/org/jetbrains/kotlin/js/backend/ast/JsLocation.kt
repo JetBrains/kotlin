@@ -30,6 +30,10 @@ data class JsLocation @JvmOverloads constructor(
         get() = { null }
 
     override fun asSimpleLocation(): JsLocation = this
+
+    companion object {
+        val IGNORED = JsLocation("NATIVE_IMPLEMENTATIONS.kt", 0, 0, name = null)
+    }
 }
 
 interface JsLocationWithSource {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
+@K1Deprecation
 interface InferenceSession {
     val parentSession: InferenceSession?
 
@@ -66,14 +68,17 @@ interface InferenceSession {
     fun resolveReceiverIndependently(): Boolean
 }
 
+@K1Deprecation
 interface PartialCallInfo {
     val callResolutionResult: PartialCallResolutionResult
 }
 
+@K1Deprecation
 interface CompletedCallInfo {
     val callResolutionResult: CompletedCallResolutionResult
 }
 
+@K1Deprecation
 interface ErrorCallInfo {
     val callResolutionResult: CallResolutionResult
 }

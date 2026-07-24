@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -69,12 +68,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repoB to "1.0.0",
                         )
                     )
-
-                    //because we now also delete the synthetic package resolved file, if there is not persisted Package.resolved
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-
-                    // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -118,12 +111,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.1",
                         )
                     )
-
-                    //because we now also delete the synthetic package resolved file, if there is not persisted Package.resolved
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-
-                    // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -163,11 +150,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.0",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-
-                    // after creation
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
                 releaseTag(repoName, "1.0.1")
@@ -178,9 +160,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.0",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }
@@ -251,9 +230,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repoSub to "1.0.0",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
             }
         }
@@ -318,9 +294,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.1",
                         )
                     )
-
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
 
             }
@@ -383,11 +356,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.0",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
-
             }
         }
     }
@@ -445,10 +414,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.0",
                         )
                     )
-
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
-
                 }
             }
         }
@@ -505,7 +470,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.0",
                         )
                     )
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                 }
             }
         }

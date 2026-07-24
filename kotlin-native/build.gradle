@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.nativeDistribution.InvalidateStaleCaches
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
@@ -35,14 +36,10 @@ import org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
 
-import static BuildPropertiesKt.getKotlinBuildProperties
-
-buildscript {
-
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
 }
 
 defaultTasks 'clean', 'dist'
@@ -57,15 +54,7 @@ apply plugin: "kotlin.native.build-tools-conventions"
 apply plugin: "platform-manager"
 apply plugin: "java"
 
-allprojects {
-    repositories {
-        mavenCentral()
-        maven {
-            url = project.bootstrapKotlinRepo
-        }
-    }
-}
-
+def kotlinBuildProperties = BuildPropertiesKt.getKotlinBuildProperties(project)
 def platformManager = project.extensions.platformManager
 def hostName = PlatformInfo.hostName
 def targetList = EnabledTargetsKt.enabledTargets(platformManager).collect { it.visibleName } as List
@@ -73,7 +62,7 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    commonSources
+    register("commonSources")
 
     runtimeBitcode {
         canBeConsumed = false
@@ -168,15 +157,15 @@ tasks.register("distNativeSources", Zip) {
                 .inject { t1, t2 -> t1 + t2 }
     }
     into('nativeWasmMain') {
-        from(project(":kotlin-stdlib").file('native-wasm/src/'))
+        from(project.project(":kotlin-stdlib").isolated.projectDirectory.dir('native-wasm/src/'))
     }
     into('nativeWasmWasiMain') {
-        from(project(":kotlin-stdlib").file('native-wasm/wasi/'))
+        from(project.project(":kotlin-stdlib").isolated.projectDirectory.dir('native-wasm/wasi/'))
     }
     into('nativeMain') {
-        from(project(':kotlin-native:runtime').file('src/main/kotlin'))
-        from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
-        from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
+        from(project.project(':kotlin-native:runtime').isolated.projectDirectory.dir('src/main/kotlin'))
+        from(project.project(':kotlin-native:Interop:Runtime').isolated.projectDirectory.dir('src/main/kotlin'))
+        from(project.project(':kotlin-native:Interop:Runtime').isolated.projectDirectory.dir('src/native/kotlin'))
     }
 }
 
@@ -210,7 +199,7 @@ tasks.register("distDef", Sync) {
     dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
     platformManager.targetValues.each { target ->
-        from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
+        from(it.project.project(":kotlin-native:platformLibs").isolated.projectDirectory.dir("src/platform/${target.family.name().toLowerCase()}")) {
             into target.visibleName
             include '**/*.def'
         }
@@ -228,17 +217,15 @@ tasks.register("distRuntime") {
 tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
+        dependsOn("${hostName}StdlibCacheOpt")
     }
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
 }
 
 tasks.register("distStdlib", Sync) {
-    from(project(":kotlin-native:runtime")
-            .tasks
-            .named("nativeStdlib")
-            .map { it.outputs.files }
-    )
+    FileCollection nativeStdlibConf = configurations.detachedConfiguration(dependencies.project(path: ":kotlin-native:runtime", configuration: "nativeStdlib"))
+    from(nativeStdlibConf)
     into(nativeDistribution.map { it.stdlib })
 }
 
@@ -271,8 +258,8 @@ tasks.register("distCompilerFingerprint", PrepareDistributionFingerprint) {
 }
 
 tasks.register("distTools", Sync) {
-    from(project(':kotlin-native:llvmDebugInfoC').file('src/scripts/konan_lldb.py'))
-    from(project(':kotlin-native:utilities').file('env_blacklist'))
+    from(it.project.project(':kotlin-native:llvmDebugInfoC').isolated.projectDirectory.file('src/scripts/konan_lldb.py'))
+    from(it.project.project(':kotlin-native:utilities').isolated.projectDirectory.file('env_blacklist'))
 
     into(nativeDistribution.map { it.tools })
 }
@@ -308,7 +295,7 @@ tasks.register("distKonanPlatforms", Sync) {
 tasks.register("distKonanProperties", PrepareKonanProperties) {
     input = NativeProtoDistributionKt.getNativeProtoDistribution(project).konanProperties
     output = nativeDistribution.map { it.konanProperties }
-    compilerVersion = kotlinVersion
+    compilerVersion = kotlinBuildProperties.kotlinVersion.get()
     llvmVariants.put(HostManager.host, LLVMDistributionKind.ESSENTIALS)
     llvmProperties.set(LLVMDistributionSourceKt.getAsProperties(LLVMDistributionSourceKt.getLlvmDistributionSource(project)))
 }
@@ -323,6 +310,7 @@ tasks.register("crossDistPlatformLibs") {
 
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
+    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCacheOpt" })
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
 }
@@ -365,16 +353,23 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        tasks.register("${target}StdlibCache", Sync) {
-            dependsOn "distStdlib"
-            dependsOn ":kotlin-native:runtime:${target}StdlibCache"
-            // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
-            mustRunAfter("distInvalidateStaleCaches")
+        [false, true].each { optimizationsEnabled ->
+            def optSuffix = optimizationsEnabled ? "Opt" : ""
+            tasks.register("${target}StdlibCache${optSuffix}", Sync) {
+                dependsOn "distStdlib"
+                dependsOn ":kotlin-native:runtime:${target}StdlibCache${optSuffix}"
+                // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+                mustRunAfter("distInvalidateStaleCaches")
 
-            into(nativeDistribution.map { it.cache("stdlib", target) })
+                into(nativeDistribution.map { it.stdlibCache(target, optimizationsEnabled) })
 
-            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$target-gSTATIC-system/stdlib-cache")) {
-                include('**')
+                def cacheFlavor = UtilsKt.cacheFlavor(target, optimizationsEnabled)
+                def cacheName = NativeDistribution.cacheDirectoryName("stdlib", !optimizationsEnabled)
+                from(it.project.project(":kotlin-native:runtime").isolated
+                        .projectDirectory
+                        .dir("build/cache/$target/$cacheFlavor/$cacheName")) {
+                    include('**')
+                }
             }
         }
     }
@@ -383,6 +378,7 @@ targetList.each { target ->
         dependsOn "${target}CrossDistRuntime", "distCompiler"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
+            dependsOn "${target}StdlibCacheOpt"
         }
         // Make sure any tasks depending on this one see cleaned-up distribution.
         mustRunAfter("distInvalidateStaleCaches")
@@ -431,7 +427,7 @@ def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", 
     dependsOn(sbomBundleRegular)
     destinationDir = file("$buildDir/spdx/regular")
     from(sbomBundleRegular) {
-        rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
+        rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json")
     }
 }
 
@@ -439,7 +435,7 @@ tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundleRegularForPublish)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
-    archiveVersion.set(kotlinVersion)
+    archiveVersion.set(kotlinBuildProperties.kotlinVersion)
     from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
@@ -459,7 +455,7 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
     dependsOn(sbomBundlePrebuilt)
     destinationDir = file("$buildDir/spdx/prebuilt")
     from(sbomBundlePrebuilt) {
-        rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinVersion}.spdx.json")
+        rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json")
     }
 }
 
@@ -474,7 +470,7 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
 
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
-    archiveVersion.set(kotlinVersion)
+    archiveVersion.set(kotlinBuildProperties.kotlinVersion)
     from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
@@ -496,7 +492,7 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
 
-    task.from(project.rootProject.file("license")) {
+    task.from(new File(project.rootDir, "license")) {
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}/licenses"
     }
 }
@@ -590,7 +586,7 @@ tasks.register("tc-dist", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn('distSources')
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName")
-    archiveVersion.set(kotlinVersion)
+    archiveVersion.set(kotlinBuildProperties.kotlinVersion)
     from(nativeDistribution) {
         include '**'
         exclude 'dependencies'
@@ -618,7 +614,7 @@ tasks.register("samplesTar", Tar) {
 }
 
 configure([samplesZip, samplesTar]) {
-    archiveBaseName = "kotlin-native-samples-$kotlinVersion"
+    archiveBaseName = "kotlin-native-samples-${kotlinBuildProperties.kotlinVersion.get()}"
     destinationDirectory = projectDir
     into(archiveBaseName)
 
@@ -650,7 +646,7 @@ tasks.register("copy_samples") {
     dependsOn 'copySamples'
 }
 tasks.register("copySamples", CopySamples) {
-    destinationDir file('build/samples-under-test')
+    destinationDir = file('build/samples-under-test')
 }
 
 compilationDatabase {
@@ -708,7 +704,7 @@ Map<KonanTarget, File> createConfigurations(List<File> bundles) {
         throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
     }
     result.each { target, file ->
-        if (!file.name.contains(kotlinVersion)) {
+        if (!file.name.contains(BuildPropertiesKt.getKotlinBuildProperties(project).kotlinVersion.get())) {
             throw new IllegalArgumentException("Incorrect version specified for the publish: ${file.name}")
         }
     }
@@ -725,12 +721,11 @@ KotlinBuildPublishingPluginKt.configureDefaultPublishing(
 )
 
 tasks.named("clean", Delete) {
-    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     it.delete(nativeDistribution.map { it.root })
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
     it.delete("${projectDir}/compile_commands.json")
-    it.delete(rootProject.file("test.output").absolutePath) // Clean up after legacy test infrastructure
+    it.delete("${rootDir}/test.output") // Clean up after legacy test infrastructure
 }
 
 publishing {
@@ -739,7 +734,7 @@ publishing {
         register("Bundle", MavenPublication) { mvn ->
             mvn.groupId = project.group.toString()
             mvn.artifactId = project.name
-            mvn.version = kotlinVersion
+            mvn.version = kotlinBuildProperties.kotlinVersion.get()
 
             if (publishBundlesFromLocation) {
                 def bundleArchives = bundlesLocationFiles
@@ -755,7 +750,7 @@ publishing {
                         classifier = platformName(target)
                         extension = archiveExtension
                     }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinVersion}.spdx.json") {
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
                     }
@@ -782,7 +777,7 @@ publishing {
         register("BundlePrebuilt", MavenPublication) { mvn ->
             mvn.groupId = project.group.toString()
             mvn.artifactId = project.name + "-prebuilt"
-            mvn.version = kotlinVersion
+            mvn.version = kotlinBuildProperties.kotlinVersion.get()
 
             if (publishBundlesFromLocation) {
                 def prebuiltBundleArchives = bundlesLocationFiles
@@ -797,7 +792,7 @@ publishing {
                         classifier = platformName(target)
                         extension = archiveExtension
                     }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinVersion}.spdx.json") {
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
                     }

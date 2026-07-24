@@ -4,16 +4,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
-val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
+val sandboxAnnotationsNativeRuntimeForTests = configurations.create("sandboxAnnotationsNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -23,19 +26,24 @@ val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val sandboxPluginForTests by configurations.creating
+val sandboxPluginForTests = configurations.create("sandboxPluginForTests")
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:plugin-api"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:descriptors"))
+
+    implementation(project(":compiler:fir:cones"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:checkers"))
+    implementation(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:plugin-api"))
+    implementation(project(":compiler:fir:plugin-utils"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
@@ -68,7 +76,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         useJUnitPlatform {
             excludeTags("sandbox-native")

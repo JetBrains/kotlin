@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.codegen.optimization;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory;
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.ir.declarations.IrClass;
 
 public class OptimizationClassBuilderFactory extends DelegatingClassBuilderFactory {
     private final GenerationState generationState;
@@ -32,7 +33,7 @@ public class OptimizationClassBuilderFactory extends DelegatingClassBuilderFacto
 
     @NotNull
     @Override
-    public OptimizationClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
+    public OptimizationClassBuilder newClassBuilder(@Nullable IrClass origin) {
         return new OptimizationClassBuilder(getDelegate().newClassBuilder(origin), generationState);
     }
 }

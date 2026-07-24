@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.getArity
 import org.jetbrains.kotlin.ir.backend.js.lower.getFlags
+import org.jetbrains.kotlin.ir.backend.js.utils.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.ir.backend.js.utils.isInlineClass
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -206,7 +208,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             } else null
 
     private fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> =
-        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjections() as IrSimpleType).arguments))
+        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjectionsToMakeValidSuperType() as IrSimpleType).arguments))
 
     private val stringType = context.irBuiltIns.stringType
 
@@ -307,7 +309,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             return (typeParam.superTypes.firstOrNull() ?: backendContext.irBuiltIns.anyNType).eraseIfReferenceType()
         }
         val clazz = this.getClass() ?: return backendContext.irBuiltIns.anyNType
-        if (clazz.isSingleFieldValueClass) {
+        if (clazz.isInlineClass) {
             val underlyingErased = getInlineClassUnderlyingType(clazz).eraseIfReferenceType()
             return if (underlyingErased.isPrimitiveType() || underlyingErased.isUnsignedType()) {
                 this
@@ -401,7 +403,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         this.isULong() -> "UJ"
         this.isUByte() -> "UB"
         this.isUShort() -> "US"
-        this.getClass()?.isSingleFieldValueClass == true -> {
+        this.getClass()?.isInlineClass == true -> {
             // Only reached for value classes that ultimately wrap a primitive (reference-wrapping
             // value classes are erased to anyNType by eraseIfReferenceType, so they land in "A").
             // Use the FQN to avoid clashes between same-named classes in different packages.
@@ -444,7 +446,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val isKReference = functionReference.isKReference
         val boundValueTypes = functionReference.boundValues.map { it.type.eraseIfReferenceType() }
 
-        val superInterfaceType = functionReference.type.removeProjections()
+        val superInterfaceType = functionReference.type.removeProjectionsToMakeValidSuperType()
         val additionalInterfaces = getAdditionalInterfaces(functionReference)
         val key = callableReferenceKey(superClass, arity, isSuspend, isKReference, boundValueTypes)
 

@@ -1,0 +1,35 @@
+// MODULE: lib
+// FILE: first.kt
+package lib
+
+private sealed interface GrandParent {
+  sealed interface Parent : GrandParent {
+    class Leaf : Parent {
+      constructor() /* primary */
+
+    }
+
+  }
+
+}
+
+fun myFunc() {
+}
+
+// MODULE: main
+// FILE: main.kt
+package main
+
+class App {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun run() {
+    myFunc()
+  }
+
+}
+

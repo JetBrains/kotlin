@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@K1Deprecation
 val KotlinCall.psiKotlinCall: PSIKotlinCall
     get() {
         assert(this is PSIKotlinCall) {
@@ -40,9 +42,11 @@ val KotlinCall.psiKotlinCall: PSIKotlinCall
     }
 
 @Suppress("UNCHECKED_CAST")
+@K1Deprecation
 fun <D : CallableDescriptor> KotlinCall.getResolvedPsiKotlinCall(trace: BindingTrace): NewResolvedCallImpl<D>? =
     psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext) as? NewResolvedCallImpl<D>
 
+@K1Deprecation
 abstract class PSIKotlinCall : KotlinCall {
     abstract val psiCall: Call
     abstract val startingDataFlowInfo: DataFlowInfo
@@ -53,6 +57,7 @@ abstract class PSIKotlinCall : KotlinCall {
     override fun toString() = "$psiCall"
 }
 
+@K1Deprecation
 class PSIKotlinCallImpl(
     override val callKind: KotlinCallKind,
     override val psiCall: Call,
@@ -69,6 +74,7 @@ class PSIKotlinCallImpl(
     override val isForImplicitInvoke: Boolean
 ) : PSIKotlinCall()
 
+@K1Deprecation
 class PSIKotlinCallForVariable(
     val baseCall: PSIKotlinCallImpl,
     override val explicitReceiver: ReceiverKotlinCallArgument?,
@@ -91,6 +97,7 @@ class PSIKotlinCallForVariable(
     override val isForImplicitInvoke: Boolean get() = false
 }
 
+@K1Deprecation
 class PSIKotlinCallForInvoke(
     val baseCall: PSIKotlinCallImpl,
     val variableCall: ResolutionCandidate,
@@ -124,6 +131,7 @@ class PSIKotlinCallForInvoke(
     }
 }
 
+@K1Deprecation
 val ReceiverKotlinCallArgument.receiverValue: ReceiverValue?
     get() = when (this) {
         is SimpleKotlinCallArgument -> this.receiver.receiverValue

@@ -2,8 +2,6 @@
 // WITH_STDLIB
 // ISSUE: KT-33545
 
-import kotlin.experimental.ExperimentalTypeInference
-
 interface Flow<out T> {
     suspend fun collect(collector: FlowCollector<T>)
 }
@@ -20,8 +18,7 @@ interface LiveDataScope<T> {
     suspend fun emit(value: T)
 }
 
-@OptIn(ExperimentalTypeInference::class)
-fun <T> liveData(@BuilderInference block: suspend LiveDataScope<T>.() -> Unit): LiveData<T> = null!!
+fun <T> liveData(block: suspend LiveDataScope<T>.() -> Unit): LiveData<T> = null!!
 
 fun <Value> Flow<Value>.asLiveData() = liveData {
     collect(this::emit)

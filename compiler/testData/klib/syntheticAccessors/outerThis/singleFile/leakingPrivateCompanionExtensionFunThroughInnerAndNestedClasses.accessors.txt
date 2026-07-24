@@ -1,0 +1,20 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunThroughInnerAndNestedClasses.kt */
+
+public class Outer
+    public inner class Inner
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt()
+    public class Nested
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$k$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt()
+/* TARGET declaration */ private companion fun Outer.o(): String
+/* TARGET declaration */ private companion fun Outer.k(): String
+public fun box(): String
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt()
+    /* ACCESSOR use-site */ access$k$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt()
+/* ACCESSOR declaration */ internal fun access$o$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$k$tLeakingPrivateCompanionExtensionFunThroughInnerAndNestedClassesKt(): String
+    /* TARGET use-site */ k()

@@ -16,31 +16,28 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrClass
 
-abstract class ClassNameCollectionClassBuilderFactory(
-        delegate: ClassBuilderFactory
-) : DelegatingClassBuilderFactory(delegate) {
+abstract class ClassNameCollectionClassBuilderFactory(delegate: ClassBuilderFactory) : DelegatingClassBuilderFactory(delegate) {
+    protected abstract fun handleClashingNames(internalName: String, origin: IrClass?)
 
-    protected abstract fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin)
-
-    override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
+    override fun newClassBuilder(origin: IrClass?): DelegatingClassBuilder {
         return ClassNameCollectionClassBuilder(origin, delegate.newClassBuilder(origin))
     }
 
     private inner class ClassNameCollectionClassBuilder(
-            private val classCreatedFor: JvmDeclarationOrigin,
-            internal val _delegate: ClassBuilder
+        private val classCreatedFor: IrClass?,
+        private val delegate: ClassBuilder,
     ) : DelegatingClassBuilder() {
-
-        override fun getDelegate() = _delegate
+        override fun getDelegate() = delegate
 
         private lateinit var classInternalName: String
 
-        override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
+        override fun defineClass(
+            version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>,
+        ) {
             classInternalName = name
-            super.defineClass(origin, version, access, name, signature, superName, interfaces)
+            delegate.defineClass(version, access, name, signature, superName, interfaces)
         }
 
         override fun done(generateSmapCopyToAnnotation: Boolean) {

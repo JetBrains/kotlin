@@ -30,6 +30,18 @@ internal class SynchronizedMetricsContainer : NonSynchronizedMetricsContainer(),
         }
     }
 
+    override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?): Boolean {
+        synchronized(metricsLock) {
+            return super.report(metric, value, subprojectName, weight)
+        }
+    }
+
+    override fun report(metric: StringListMetrics, value: String, subprojectName: String?, weight: Long?): Boolean {
+        synchronized(metricsLock) {
+            return super.report(metric, value, subprojectName, weight)
+        }
+    }
+
     override fun readFromMetricConsumer(metricConsumer: NonSynchronizedMetricsContainer) {
         synchronized(metricsLock) {
             super.readFromMetricConsumer(metricConsumer)

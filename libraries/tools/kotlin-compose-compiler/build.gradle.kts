@@ -1,13 +1,12 @@
 import gradle.GradlePluginVariant
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     `jvm-test-suite`
     id("gradle-plugin-api-reference")
-}
-
-repositories {
-    google()
 }
 
 dependencies {
@@ -50,7 +49,7 @@ pluginApiReference {
 testing {
     suites {
         val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-        val test by getting(JvmTestSuite::class) {
+        val test = getByName<JvmTestSuite>("test") {
             useJUnitJupiter(libs.versions.junit5)
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")

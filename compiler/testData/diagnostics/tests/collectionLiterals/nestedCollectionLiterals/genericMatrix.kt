@@ -43,7 +43,7 @@ fun testMatrixInt() {
         [7, 8, 9],
     ])
     takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrixInt([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
+    takeMatrixInt([[<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>]])
 
     takeMatrix<Int>([
         [1, 2, 3],
@@ -69,13 +69,13 @@ fun testMatrixInt() {
         [7, 8, 9],
     ])
     takeMatrix<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrix<Int>([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
+    takeMatrix<Int>([[<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>]])
 
     var matrix: Matrix<Int> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     matrix = []
     matrix = [[]]
-    matrix = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
-    matrix = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
+    matrix = [[<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]]
+    matrix = [[<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
     matrix = [[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]]
     matrix = [[1, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, 3]]

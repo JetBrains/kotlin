@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
+import org.jetbrains.kotlin.io.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -38,13 +39,14 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
-import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
@@ -111,11 +113,15 @@ abstract class AbstractInvalidationTest(
     }
 
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
-        return ModuleInfoParser(infoFile, modelTarget).parse(moduleName)
+        return ModuleInfoParser(
+            infoFile,
+            modelTarget,
+            DirtyFileState.entries.map { it.str },
+        ).parse(moduleName)
     }
 
     private val File.filesInDir
-        get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
+        get() = listFiles() ?: testInfraError("cannot retrieve the file list for $absolutePath directory")
 
     protected abstract fun createProjectStepsExecutor(
         projectInfo: ProjectInfo,
@@ -198,9 +204,9 @@ abstract class AbstractInvalidationTest(
                 val switchLanguageFeature = when {
                     it.startsWith("+") -> this::enable
                     it.startsWith("-") -> this::disable
-                    else -> error("Language feature should start with + or -")
+                    else -> testInfraError("Language feature should start with + or -")
                 }
-                val feature = LanguageFeature.fromString(it.substring(1)) ?: error("Unknown language feature $it")
+                val feature = LanguageFeature.fromString(it.substring(1)) ?: testInfraError("Unknown language feature $it")
                 switchLanguageFeature(feature)
             }
             build()
@@ -245,13 +251,13 @@ abstract class AbstractInvalidationTest(
             val expectedDTS: ExpectedFile?,
         )
 
-        protected inner class ExpectedFile(val name: String, val content: String)
+        protected inner class ExpectedFile(val name: String, val file: File)
 
         protected fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
             val projStepId = projStep.id
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
-            val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
+            val moduleInfo = moduleInfos[module] ?: testInfraError("No module info found for $module")
             val moduleStep = moduleInfo.steps.getValue(projStepId)
             for (modification in moduleStep.modifications) {
                 modification.execute(moduleTestDir, moduleSourceDir) {}
@@ -283,14 +289,14 @@ abstract class AbstractInvalidationTest(
             }
 
             val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
-                moduleTestDir.resolve(singleOrNull() ?: error("$module module may generate only one d.ts at step $projStepId"))
+                moduleTestDir.resolve(singleOrNull() ?: testInfraError("$module module may generate only one d.ts at step $projStepId"))
             }
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
                 moduleStep.expectedFileStats,
-                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it.readText()) }
+                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it) }
             )
         }
 
@@ -309,7 +315,7 @@ abstract class AbstractInvalidationTest(
                 checkedLibs += libFile
 
                 val got = mutableMapOf<String, MutableSet<String>>()
-                for ((srcFile, dirtyStats) in updateStatus) {
+                for ([srcFile, dirtyStats] in updateStatus) {
                     for (dirtyStat in dirtyStats) {
                         if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
                             got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(srcFile.toString())
@@ -317,13 +323,13 @@ abstract class AbstractInvalidationTest(
                     }
                 }
 
-                JUnit4Assertions.assertSameElements(got.entries, info.expectedFileStats.entries) {
+                JUnit5Assertions.assertSameElements(got.entries, info.expectedFileStats.entries) {
                     "Mismatched file stats for module [${info.moduleName}] at step $stepId"
                 }
             }
 
             for (libFile in gotStats.keys) {
-                JUnit4Assertions.assertTrue(libFile in checkedLibs) {
+                JUnit5Assertions.assertTrue(libFile in checkedLibs) {
                     "Got unexpected stats for module [${libFile.path}] at step $stepId"
                 }
             }
@@ -363,6 +369,7 @@ abstract class AbstractInvalidationTest(
             val isCommon = sourceFile.parentFile.name == "common"
             addKotlinSourceRoot(sourceFile.absolutePath, isCommon)
             val ktFile = environment.createPsiFile(sourceFile)
+            @OptIn(KtImplementationDetail::class)
             ktFile.isCommonSource = isCommon
             ktSources.add(ktFile)
         }
@@ -400,7 +407,7 @@ abstract class AbstractInvalidationTest(
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem
 
-        val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
+        val vFile = fileSystem.findFileByIoFile(file) ?: testInfraError("File not found: $file")
 
         return SingleRootFileViewProvider(psiManager, vFile).allFiles.find {
             it is KtFile && it.virtualFile.canonicalPath == vFile.canonicalPath
@@ -420,7 +427,7 @@ abstract class AbstractInvalidationTest(
     ) {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-        val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
+        val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: testInfraError("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
         @OptIn(MessageCollectorAccess::class) // write access

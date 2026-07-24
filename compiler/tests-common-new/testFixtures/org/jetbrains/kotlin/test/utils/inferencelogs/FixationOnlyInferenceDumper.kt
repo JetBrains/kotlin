@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
 
 class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String =
-        sessionsToLoggers.entries.joinToString("\n") { (_, logger) ->
+        sessionsToLoggers.entries.joinToString("\n") { [_, logger] ->
             logger.topLevelElements.renderList().orEmpty().joinToString("\n")
         }
 
@@ -53,7 +53,7 @@ class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
             }
         }
 
-        for ((variable, info) in map) {
+        for ([variable, info] in map) {
             if (variable === chosen) continue
             lines += "$variable --- " + info.render()
         }

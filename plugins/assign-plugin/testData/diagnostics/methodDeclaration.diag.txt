@@ -1,12 +1,12 @@
-/methodDeclaration.kt:5:28: error: Function 'assign' used for '=' overload should return 'Unit'
+/methodDeclaration.kt:5:28: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:9:36: error: Function 'assign' used for '=' overload should return 'Unit'
+/methodDeclaration.kt:9:36: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:16:36: error: Function 'assign' used for '=' overload should return 'Unit'
+/methodDeclaration.kt:16:36: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:25:16: error: Function 'assign' used for '=' overload should return 'Unit'
+/methodDeclaration.kt:25:16: error: Function 'assign' used for '=' overload must return 'Unit'.
 
-/methodDeclaration.kt:26:16: error: Function 'assign' used for '=' overload should return 'Unit'
+/methodDeclaration.kt:26:16: error: Function 'assign' used for '=' overload must return 'Unit'.
 
 /methodDeclaration.kt:35:10: error: 'val' cannot be reassigned.
 

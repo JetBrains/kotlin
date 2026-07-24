@@ -30,10 +30,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("First build forces non-incremental rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testFirstBuildForcesNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -48,10 +48,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Subsequent build with unchanged config stays incremental")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testSubsequentBuildWithUnchangedConfigStaysIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -71,10 +71,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a tracked compiler arg triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgsAdditionTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -94,10 +94,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing a tracked compiler arg value triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -118,10 +118,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a tracked compiler arg triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgsRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -141,10 +141,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a non-tracked compiler arg does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgAdditionDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -165,10 +165,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing a non-tracked compiler arg does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgChangeDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -190,10 +190,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a non-tracked compiler arg does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgRemovalDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -215,10 +215,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a tracked IC config option triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigAdditionTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -241,10 +241,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing a tracked IC config value triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -270,10 +270,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a tracked IC config option triggers rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -295,10 +295,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a non-tracked IC config option does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigAdditionDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -321,10 +321,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing a non-tracked IC config option does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigChangeDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -350,10 +350,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a non-tracked IC config option does not trigger rebuild")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigRemovalDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -377,10 +377,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing both IC config and compiler args reports the 1st found rebuild reason")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testBothIcConfigAndCompilerArgChangeReportsOneReason(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -408,10 +408,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("IC config change is ignored when tracking is disabled")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigChangeDoesNotTriggerRebuildWhenTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {
@@ -437,10 +437,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Compiler arg change is ignored when tracking is disabled")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgChangeDoesNotTriggerRebuildWhenTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = false },
@@ -462,10 +462,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Compiler arg change is ignored when tracking is disabled in subsequent build")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgChangeDoesNotTriggerRebuildAfterTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
@@ -488,10 +488,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Enabling tracking in subsequent build triggers rebuild due to missing snapshot")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testEnablingTrackingInSubsequentBuildTriggersRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = {

@@ -41,14 +41,14 @@ open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerB
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
+    override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
     open var contractDescription: FirContractDescription? = null
     open lateinit var name: Name
     open lateinit var symbol: FirNamedFunctionSymbol
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
+    override val typeParameters: MutableList<FirTypeParameter> = []
 
     override fun build(): FirNamedFunction {
         return FirNamedFunctionImpl(

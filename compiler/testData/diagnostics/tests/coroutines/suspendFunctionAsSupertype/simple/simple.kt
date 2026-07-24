@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 class C: suspend () -> Unit {
     override suspend fun invoke() {

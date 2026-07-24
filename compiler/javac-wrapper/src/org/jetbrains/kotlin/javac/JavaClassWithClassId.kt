@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.javac
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.ClassId
 
+@K1Deprecation
 interface JavaClassWithClassId : VirtualFileBoundJavaClass {
     val classId: ClassId?
 }

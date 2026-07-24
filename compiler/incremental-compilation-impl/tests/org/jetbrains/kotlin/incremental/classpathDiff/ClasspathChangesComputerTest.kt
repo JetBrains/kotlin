@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.incremental.ChangesEither
-import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.incremental.ChangesEither
+import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
 
@@ -611,7 +610,7 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
 }
 
 private fun testMixedClassSnapshotGranularities_snapshotClasspath(
-    language: String, classpathSourceDirName: String, tmpDir: TemporaryFolder
+    language: String, classpathSourceDirName: String, tmpDir: File
 ): ClasspathSnapshot {
     val classes = compileAll(File("$testDataDir/$language/testMixedClassSnapshotGranularities/src/$classpathSourceDirName"), tmpDir)
 
@@ -642,7 +641,7 @@ private fun List<ClassSnapshot>.toClasspathSnapshot(): ClasspathSnapshot {
 
 private fun computeClasspathChanges(
     classpathSourceDir: File,
-    tmpDir: TemporaryFolder,
+    tmpDir: File,
     granularity: ClassSnapshotGranularity? = null
 ): Changes {
     val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity)

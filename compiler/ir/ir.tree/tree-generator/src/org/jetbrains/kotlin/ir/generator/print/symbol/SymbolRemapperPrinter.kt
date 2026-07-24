@@ -105,7 +105,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
                         if (symbolRemapperSuperTypes.isEmpty()) {
                             val kDoc = buildString {
                                 append("Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):")
-                                for ((_, fieldName, _, element) in fields) {
+                                for ((val _ = symbolType, val fieldName, val _ = role, val element = fieldContainer) in fields) {
                                     appendLine()
                                     append("- [${element.render()}.$fieldName]")
                                 }

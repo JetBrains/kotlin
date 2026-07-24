@@ -70,7 +70,7 @@ open class JvmClassFileBasedSymbolProvider(
     private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
         val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
-        val (kotlinClass, byteContent) =
+        val [kotlinClass, byteContent] =
             kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion) as? KotlinClassFinder.Result.KotlinClass ?: return null
 
         val header = kotlinClass.classHeader
@@ -95,7 +95,7 @@ open class JvmClassFileBasedSymbolProvider(
 
         val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()) ?: return null
 
-        val (nameResolver, packageProto) = parseProto(kotlinClass) {
+        val [nameResolver, packageProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
 
@@ -187,7 +187,7 @@ open class JvmClassFileBasedSymbolProvider(
         if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
         val data = kotlinClass.classHeader.data ?: kotlinClass.classHeader.incompatibleData ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = parseProto(kotlinClass) {
+        val [nameResolver, classProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
 

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class JvmSamConversionOracle(
     private val languageVersionSettings: LanguageVersionSettings
 ) : SamConversionOracle {

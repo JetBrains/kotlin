@@ -6,16 +6,18 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.konan.*
 
+@K1Deprecation
 class NativeReifiedForwardDeclarationChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val typeArgumentList = resolvedCall.call.typeArgumentList?.arguments
-        for ((typeParam, typeArg) in resolvedCall.typeArguments) {
+        for ([typeParam, typeArg] in resolvedCall.typeArguments) {
             if (!typeParam.isReified) continue
 
             val typeArgDescriptor = typeArg.constructor.declarationDescriptor

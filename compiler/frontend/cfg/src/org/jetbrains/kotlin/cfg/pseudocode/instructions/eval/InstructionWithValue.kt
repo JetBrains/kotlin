@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
+@K1Deprecation
 interface InstructionWithValue : KtElementInstruction {
     val outputValue: PseudoValue?
 }

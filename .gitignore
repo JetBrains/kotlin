@@ -40,7 +40,8 @@ build/
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml
-.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/*
+!.idea/inspectionProfiles/idea_default.xml
 .idea/.name
 .idea/jarRepositories.xml
 .idea/csv-plugin.xml

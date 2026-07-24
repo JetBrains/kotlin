@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
 interface IrInlineCallGenerator : IrCallGenerator {
@@ -24,8 +23,8 @@ interface IrInlineCallGenerator : IrCallGenerator {
         isInsideIfCondition: Boolean,
     ) {
         val element = IrInlineFunctionSource(expression)
-        val descriptor = expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor()
-        if (!codegen.state.globalInlineContext.enterIntoInlining(descriptor, element) { reportOn, callee ->
+        val function = expression.symbol.owner.suspendFunctionOriginal()
+        if (!codegen.state.globalInlineContext.enterIntoInlining(function, element) { reportOn, callee ->
                 codegen.context.diagnosticReporter.at((reportOn as IrInlineFunctionSource).ir, codegen.irFunction.fileParent)
                     .report(JvmBackendErrors.INLINE_CALL_CYCLE, callee.name)
             }) {

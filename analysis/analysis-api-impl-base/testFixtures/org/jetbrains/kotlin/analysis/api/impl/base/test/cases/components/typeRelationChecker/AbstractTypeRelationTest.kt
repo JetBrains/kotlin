@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -26,7 +28,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractTypeRelationTest : AbstractAnalysisApiBasedTest() {
     protected abstract val resultDirective: StringDirective
 
-    protected abstract fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices)
+    context(_: KaSession)
+    protected abstract fun checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices)
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expectedResult = testServices.moduleStructure.allDirectives
@@ -38,7 +41,8 @@ abstract class AbstractTypeRelationTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    protected fun KaSession.getTypeAtMarker(mainFile: KtFile, testServices: TestServices, qualifier: String = ""): KaType {
+    context(_: KaSession)
+    protected fun getTypeAtMarker(mainFile: KtFile, testServices: TestServices, qualifier: String = ""): KaType {
         val element = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(mainFile, qualifier)
             ?: testServices.expressionMarkerProvider.getTopmostSelectedElement(mainFile)
 

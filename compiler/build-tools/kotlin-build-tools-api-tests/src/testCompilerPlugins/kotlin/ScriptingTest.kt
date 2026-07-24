@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -27,6 +28,7 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.reflect.KClass
 
+@AffectedByCompilerPlugins
 class ScriptingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application (non-incremental)")

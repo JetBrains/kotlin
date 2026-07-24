@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
@@ -37,7 +36,7 @@ import org.jetbrains.kotlin.cli.common.Usage
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.ModuleNameUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.KotlinFacetSettings
@@ -54,6 +53,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameElements
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -61,7 +63,8 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -72,12 +75,13 @@ import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.zip.ZipOutputStream
 
+@Suppress("UnstableApiUsage")
 open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     companion object {
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
         private const val KOTLIN_JS_LIBRARY = "jslib-example"
-        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private const val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
 
         private fun getMethodsOfClass(classFile: File): Set<String> {
@@ -99,7 +103,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         @JvmStatic
         protected fun module(moduleName: String): String {
-            return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
+            return "out/production/$moduleName/${ModuleNameUtil.getMappingFileName(moduleName)}"
         }
     }
 
@@ -113,25 +117,29 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testKotlinProject() {
         doTest()
 
         checkWhen(createTouchAction("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
+    @Test
     fun testSourcePackagePrefix() {
         doTest()
     }
 
+    @Test
     fun testSourcePackageLongPrefix() {
         initProject(JVM_MOCK_RUNTIME)
         val buildResult = buildAllModules()
         buildResult.assertSuccessful()
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals("Warning about invalid package prefix in module 2 is expected: $warnings", 1, warnings.size)
+        assertEquals(1, warnings.size, "Warning about invalid package prefix in module 2 is expected: $warnings")
         assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
     }
 
+    @Test
     fun testSourcePackagePrefixWithInnerClasses() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
@@ -157,6 +165,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinJavaScriptProjectWithTwoModules")
+    @Test
     fun testKotlinJavaScriptProjectWithTwoModulesAndWithLibrary() {
         initProject()
         createKotlinJavaScriptLibraryArchive()
@@ -166,6 +175,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testExcludeFolderInSourceRoot() {
         doTest()
 
@@ -179,6 +189,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         )
     }
 
+    @Test
     fun testExcludeModuleFolderInSourceRootOfAnotherModule() {
         doTest()
 
@@ -196,6 +207,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         )
     }
 
+    @Test
     fun testExcludeFileUsingCompilerSettings() {
         doTest()
 
@@ -215,6 +227,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         checkWhen(createTouchAction("src/dir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
+    @Test
     fun testExcludeFolderNonRecursivelyUsingCompilerSettings() {
         doTest()
 
@@ -236,6 +249,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         checkWhen(createTouchAction("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
+    @Test
     fun testExcludeFolderRecursivelyUsingCompilerSettings() {
         doTest()
 
@@ -257,6 +271,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         checkWhen(createTouchAction("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
+    @Test
     fun testKotlinProjectTwoFilesInOnePackage() {
         doTest()
 
@@ -278,6 +293,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesNotExistInOutput(myProject.modules[0], "_DefaultPackage.class")
     }
 
+    @Test
     fun testDefaultLanguageVersionCustomApiVersion() {
         initProject(JVM_FULL_RUNTIME)
         buildAllModules().assertFailed()
@@ -291,6 +307,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testPureJavaProject() {
         initProject(JVM_FULL_RUNTIME)
 
@@ -305,7 +322,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 }))
             }
 
-            assertFalse("Kotlin builder should return early if there are no Kotlin files", someFilesCompiled)
+            assertFalse(someFilesCompiled, "Kotlin builder should return early if there are no Kotlin files")
         }
 
         build()
@@ -314,34 +331,42 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         build()
     }
 
+    @Test
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testJKJProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testKJKProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testKJCircularProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testJKJInheritanceProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testKJKInheritanceProject() {
         doTestWithRuntime()
     }
 
+    @Test
     fun testCircularDependenciesNoKotlinFiles() {
         doTest()
     }
 
+    @Test
     fun testCircularDependenciesDifferentPackages() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -363,6 +388,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    @Test
     fun testCircularDependenciesSamePackage() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -371,8 +397,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         // Check that outputs are located properly
         val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
         val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
+        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
+        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
 
         if (IncrementalCompilation.isEnabledForJvm()) {
@@ -386,6 +412,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    @Test
     fun testCircularDependenciesSamePackageWithTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -394,8 +421,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         // Check that outputs are located properly
         val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
         val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
+        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
+        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
 
         if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
@@ -408,6 +435,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    @Test
     fun testInternalFromAnotherModule() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -415,6 +443,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.checkErrors()
     }
 
+    @Test
     fun testInternalFromSpecialRelatedModule() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
@@ -424,6 +453,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         clazz.getMethod("box").invoke(null)
     }
 
+    @Test
     fun testCircularDependenciesInternalFromAnotherModule() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -431,6 +461,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.checkErrors()
     }
 
+    @Test
     fun testCircularDependenciesWrongInternalFromTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -441,23 +472,25 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         //result.checkErrors()
     }
 
+    @Test
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
         val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
         val result = buildAllModules()
         result.assertSuccessful()
     }
 
+    @Test
     fun testDependencyToOldKotlinLib() {
         initProject()
 
         val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module")), false, "module-lib", libraryJar)
 
         addKotlinStdlibDependency()
 
@@ -465,6 +498,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
     }
 
+    @Test
     fun testDevKitProject() {
         initProject(JVM_MOCK_RUNTIME)
         val module = myProject.modules.single()
@@ -473,6 +507,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFilesExistInOutput(module, "TestKt.class")
     }
 
+    @Test
     fun testAccessToInternalInProductionFromTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -505,7 +540,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val p = Printer(sb, "  ")
         outputDir.printFilesRecursively(p)
 
-        UsefulTestCase.assertSameLinesWithFile(expectedOutputFile.canonicalPath, sb.toString(), true)
+        assertSameLinesWithFile(expectedOutputFile.canonicalPath, sb.toString(), true)
     }
 
     private fun File.printFilesRecursively(p: Printer) {
@@ -531,12 +566,14 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
     private fun getOutputDir(moduleName: String): File = File(productionOutputDir, moduleName)
 
+    @Test
     fun testReexportedDependency() {
         initProject()
         addKotlinStdlibDependency(myProject.modules.filter { module -> module.name == "module2" }, true)
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testCheckIsCancelledIsCalledOftenEnough() {
         val classCount = 30
         val methodCount = 30
@@ -579,6 +616,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    @Test
     fun testCancelKotlinCompilation() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
@@ -608,6 +646,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertCanceled(buildResult)
     }
 
+    @Test
     fun testFileDoesNotExistWarning() {
         fun absoluteFiles(vararg paths: String): Array<File> =
             paths.map { File(it).absoluteFile }.toTypedArray()
@@ -634,9 +673,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val expectedText = expectedWarnings.sorted().joinToString("\n")
         val actualText = actualWarnings.sorted().joinToString("\n")
 
-        Assert.assertEquals(expectedText, actualText)
+        assertEquals(expectedText, actualText)
     }
 
+    @Test
     fun testHelp() {
         initProject()
 
@@ -645,9 +685,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
 
         val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
-        Assert.assertEquals(expectedText, warning.messageText)
+        assertEquals(expectedText, warning.messageText)
     }
 
+    @Test
     fun testWrongArgument() {
         initProject()
 
@@ -655,9 +696,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertFailed()
         val errors = result.getMessages(BuildMessage.Kind.ERROR).joinToString("\n\n") { it.messageText }
 
-        Assert.assertEquals("Invalid argument: -abcdefghij-invalid-argument", errors)
+        assertEquals("Invalid argument: -abcdefghij-invalid-argument", errors)
     }
 
+    @Test
     fun testCodeInKotlinPackage() {
         initProject(JVM_MOCK_RUNTIME)
 
@@ -665,9 +707,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertFailed()
         val errors = result.getMessages(BuildMessage.Kind.ERROR)
 
-        Assert.assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package", errors.single().messageText)
+        assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package.", errors.single().messageText)
     }
 
+    @Test
     fun testDoNotCreateUselessKotlinIncrementalCaches() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
@@ -678,6 +721,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
+    @Test
     fun testDoNotCreateUselessKotlinIncrementalCachesForDependentTargets() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
@@ -696,6 +740,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
     }
 
+    @Test
     fun testKotlinProjectWithEmptyProductionOutputDir() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -703,18 +748,22 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.checkErrors()
     }
 
+    @Test
     fun testKotlinProjectWithEmptyTestOutputDir() {
         doTest()
     }
 
+    @Test
     fun testKotlinProjectWithEmptyProductionOutputDirWithoutSrcDir() {
         doTest()
     }
 
+    @Test
     fun testKotlinProjectWithEmptyOutputDirInSomeModules() {
         doTest()
     }
 
+    @Test
     fun testGetDependentTargets() {
         fun addModuleWithSourceAndTestRoot(name: String): JpsModule {
             return addModule(name, "src/").apply {
@@ -767,6 +816,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         TestDataAssertions.assertEqualsToFile(expectedFile, actual.toString())
     }
 
+    @Test
     fun testJre11() {
         val jdk11Path = KtTestUtil.getJdk11Home().absolutePath
 
@@ -779,6 +829,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testCustomDestination() {
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
         addKotlinStdlibDependency()
@@ -793,11 +844,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    @Test
     fun testKotlinLombokProjectBuild() {
         initProject(LOMBOK)
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testKotlinLombokProjectWithConfigFile() {
         initProject(LOMBOK)
         myProject.modules.forEach {
@@ -812,6 +865,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleRebuildOnPluginClasspathsChange() {
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {
@@ -844,6 +898,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleRebuildOnJvmTargetChange() {
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {
@@ -873,6 +928,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleRebuildOnAllowNoSourceFilesRestriction() {
         // here we restrict the rule, so recompilation is needed
         initProject(JVM_MOCK_RUNTIME)
@@ -903,6 +959,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleNotRebuildOnAllowNoSourceFilesAllowance() {
         // here we weaken the rule, so recompilation is NOT needed
         initProject(JVM_MOCK_RUNTIME)
@@ -933,6 +990,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleRebuildOnJvmDefaultChange() {
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {
@@ -962,6 +1020,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
+    @Test
     fun testModuleRebuildOnAddJavaMoudlesChange() {
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {
@@ -990,11 +1049,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProjectWithSingleKotlinFileAsSourceRoot")
+    @Test
     fun testBuildProjectWithSingleKotlinFileAsSource() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
     }
 
+    @Test
     fun testBuildAfterGdwBuild() {
         initProject(JVM_FULL_RUNTIME)
         findModule("module2").let {
@@ -1028,7 +1089,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         TestDataAssertions.assertEqualsToFile(expectedFile, actualErrors)
     }
 
-    private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+    private fun getCurrentTestDataRoot() = File(TEST_DATA_PATH + "general/" + KtUsefulTestCase.getTestName(testInfo.testMethod.get().name, false))
 
     private fun buildCustom(
             canceledStatus: CanceledStatus,

@@ -1,7 +1,7 @@
 -d
 $TEMP_DIR$
--Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
--Xplugin=dist/kotlinc/lib/allopen-compiler-plugin.jar
+-Xcompiler-plugin=$NOARG-COMPILER-PLUGIN-JAR$=annotation=foo.NoArg
+-Xplugin=$ALLOPEN-COMPILER-PLUGIN-JAR$
 -P
 plugin\:org.jetbrains.kotlin.allopen\:annotation=foo.AllOpen
 

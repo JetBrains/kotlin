@@ -1,4 +1,3 @@
 $TESTDATA_DIR$/firErrorOnLastLineNoEol.kt
--Xuse-fir-lt=true
 -d
 $TEMP_DIR$

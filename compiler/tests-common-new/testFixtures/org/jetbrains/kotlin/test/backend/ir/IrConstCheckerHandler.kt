@@ -53,7 +53,7 @@ private class IrConstChecker : IrTypeVisitorVoid() {
 
     private fun checkAnnotations(container: IrAnnotationContainer) {
         fun IrElement.isConst(): Boolean {
-            return this is IrConst || this is IrGetEnumValue || this is IrClassReference || (this is IrConstructorCall && type.isAnnotation())
+            return this is IrConst || this is IrGetEnumValue || this is IrClassReference || this is IrAnnotation
         }
 
         container.annotations.forEach { annotation ->
@@ -63,7 +63,7 @@ private class IrConstChecker : IrTypeVisitorVoid() {
                 error("IR annotation has non constant argument.\n Annotation: ${annotation.dump()}.\n Argument: ${this.dump()}")
             }
 
-            annotation.getAllArgumentsWithIr().forEach { (param, arg) ->
+            annotation.getAllArgumentsWithIr().forEach { [param, arg] ->
                 val actualArg = arg ?: param.defaultValue?.expression
                 when (actualArg) {
                     null -> error("IR annotation has null argument.\n Annotation: ${annotation.dump()}.")

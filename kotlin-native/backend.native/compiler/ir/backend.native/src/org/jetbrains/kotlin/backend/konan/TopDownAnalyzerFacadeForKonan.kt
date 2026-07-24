@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
+@OptIn(K1Deprecation::class)
 internal object TopDownAnalyzerFacadeForKonan {
 
     private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
@@ -40,10 +42,10 @@ internal object TopDownAnalyzerFacadeForKonan {
                 moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
-        val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
+        val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
                 config.friendModuleFiles, config.refinesModuleFiles,
-                config.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
+                config.includedLibraries.map { it.path }.toSet(), listOf(module),
                 isForMetadataCompilation = config.metadataKlib)
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()

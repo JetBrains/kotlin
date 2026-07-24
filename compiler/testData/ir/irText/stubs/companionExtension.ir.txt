@@ -1,0 +1,8 @@
+Module: lib
+Module: test
+FILE fqName:<root> fileName:/companionExtension.kt
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun exampleFun (): kotlin.Unit declared in org.example.lib' type=kotlin.Unit origin=null
+      VAR name:value type:kotlin.Int [val]
+        CALL 'public final fun <get-exampleVal> (): kotlin.Int declared in org.example.lib' type=kotlin.Int origin=GET_PROPERTY

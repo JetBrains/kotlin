@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
@@ -101,6 +102,9 @@ abstract class KotlinAsJavaSupport {
      * This scope is then passed to [KotlinAsJavaSupport] from [JavaElementFinder] when resolving declarations in the [file].
      */
     abstract fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope
+
+    abstract fun sourceModificationTracker(): ModificationTracker
+    abstract fun librariesModificationTracker(): ModificationTracker
 
     companion object {
         @JvmStatic

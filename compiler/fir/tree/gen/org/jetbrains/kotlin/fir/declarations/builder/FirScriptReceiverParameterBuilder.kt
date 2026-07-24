@@ -35,7 +35,7 @@ class FirScriptReceiverParameterBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var symbol: FirReceiverParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var typeRef: FirTypeRef
     var isBaseClassReceiver: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 

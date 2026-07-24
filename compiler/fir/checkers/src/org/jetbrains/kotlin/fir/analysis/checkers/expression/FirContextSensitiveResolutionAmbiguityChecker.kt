@@ -41,7 +41,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
 
         val resolvedSymbol = when (rhs) {
             is FirErrorResolvedQualifier -> null
-            is FirResolvedQualifier if rhs.resolvedSymbolOrigin.shouldWarn && rhs.explicitParent == null -> rhs.symbol
+            is FirResolvedQualifier if rhs.resolvedSymbolOrigin.shouldWarn && rhs.explicitParent == null -> rhs.qualifierSymbol
             is FirPropertyAccessExpression if rhs.explicitReceiver == null -> when (val callee = rhs.calleeReference) {
                 is FirErrorNamedReference -> null
                 is FirResolvedNamedReference if callee.resolvedSymbolOrigin.shouldWarn -> callee.resolvedSymbol

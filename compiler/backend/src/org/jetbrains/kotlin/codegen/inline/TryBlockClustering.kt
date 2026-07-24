@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 
@@ -86,9 +85,6 @@ class TryCatchBlockNodeInfo(
     override fun copyWithNewBounds(newBounds: Interval): TryCatchBlockNodeInfo =
         TryCatchBlockNodeInfo(TryCatchBlockNode(newBounds.startLabel, newBounds.endLabel, handler, type), onlyCopyNotProcess)
 }
-
-val TryCatchBlockNodeInfo.bodyInstuctions
-    get() = InsnSequence(startLabel, endLabel)
 
 class TryCatchBlockNodePosition(
     val nodeInfo: TryCatchBlockNodeInfo,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,7 +52,7 @@ public annotation class ExperimentalJsFileName
 @Target(FILE)
 @OptionalExpectation
 @ExperimentalJsFileName
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.9")
 public expect annotation class JsFileName(val name: String)
 
@@ -95,21 +95,18 @@ public annotation class ExperimentalJsStatic
  *
  * It is currently prohibited to export the following kinds of declarations:
  *
- *   * `expect` declarations
  *   * inline functions with reified type parameters
- *   * suspend functions
  *   * secondary constructors without `@JsName`
  *   * extension properties
- *   * enum classes
- *   * annotation classes
  *
  * Signatures of exported declarations must only contain "exportable" types:
  *
- *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`
- *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`
- *   * `Array<exportable-type>`
+ *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`, `Long`
+ *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`, `LongArray`
+ *   * `Array<exportable-type>`,
+ *   * `(Mutable)List<exportable-type>`, `(Mutable)Map<exportable-type, exportable-type>`, `(Mutable)Set<exportable-type>`
  *   * Function types with exportable parameters and return types
- *   * `external` or `@JsExport` classes and interfaces
+ *   * `external` or `@JsExport` classes, objects, enums, interfaces
  *   * Nullable counterparts of types above
  *   * Unit return type. Must not be nullable
  *
@@ -117,7 +114,7 @@ public annotation class ExperimentalJsStatic
  */
 @ExperimentalJsExport
 @Retention(AnnotationRetention.BINARY)
-@Target(CLASS, PROPERTY, FUNCTION, FILE)
+@Target(CLASS, PROPERTY, FUNCTION, FILE, TYPEALIAS)
 @SinceKotlin("1.4")
 @OptionalExpectation
 public expect annotation class JsExport() {
@@ -127,7 +124,7 @@ public expect annotation class JsExport() {
      */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
-    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR, TYPEALIAS)
     @SinceKotlin("1.8")
     @OptionalExpectation
     public annotation class Ignore()
@@ -207,6 +204,13 @@ public annotation class ExperimentalJsCollectionsApi
 @Target(AnnotationTarget.CLASS)
 @UsedFromCompilerGeneratedCode
 internal annotation class JsImplicitExport(val couldBeConvertedToExplicitExport: Boolean)
+
+/**
+ * Exclude the annotated interface member with a default implementation from `DefaultImpls` in the generated `.d.ts` file.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(PROPERTY, FUNCTION)
+internal annotation class JsDontExportDefaultImplementation
 
 /**
  * Specifies that an additional static method is generated from the annotated companion object member if it's a function.

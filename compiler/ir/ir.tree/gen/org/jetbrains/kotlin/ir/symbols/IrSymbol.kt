@@ -104,6 +104,7 @@ sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
  * @see IrReplSnippet.stateObject
  * @see IrReplSnippet.targetClass
  * @see IrSimpleFunction.companionExtensionClass
+ * @see IrAnnotation.classSymbol
  * @see IrGetObjectValue.symbol
  * @see IrCall.superQualifierSymbol
  * @see IrInstanceInitializerCall.classSymbol

@@ -93,7 +93,7 @@ internal object MapArguments : ResolutionPart() {
 internal object ArgumentsToCandidateParameterDescriptor : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         val map = hashMapOf<KotlinCallArgument, ValueParameterDescriptor>()
-        for ((originalValueParameter, resolvedCallArgument) in resolvedCall.argumentMappingByOriginal) {
+        for ([originalValueParameter, resolvedCallArgument] in resolvedCall.argumentMappingByOriginal) {
             val valueParameter = candidateDescriptor.valueParameters.getOrNull(originalValueParameter.index) ?: continue
             for (argument in resolvedCallArgument.arguments) {
                 map[argument] = valueParameter
@@ -278,7 +278,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         val csBuilder = getSystem().getBuilder()
-        for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
+        for ([argument, parameter] in resolvedCall.argumentToCandidateParameter) {
             if (!callComponents.statelessCallbacks.isBuilderInferenceCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
             val dontUseBuilderInferenceIfPossible =
@@ -361,7 +361,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
         if (declaredTypeParameters.size < baseType.arguments.size) return false
 
-        for ((argumentsIndex, argument) in baseType.arguments.withIndex()) {
+        for ([argumentsIndex, argument] in baseType.arguments.withIndex()) {
             if (argument.isStarProjection || argument.type.isMarkedNullable) continue
 
             val currentEffectiveVariance =
@@ -391,13 +391,13 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
         val context = asConstraintSystemCompleterContext()
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
-            .flatMap { (typeConstructor, constraints) ->
+            .flatMap { [typeConstructor, constraints] ->
                 val upperBounds = constraints.constraints.filter {
                     it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER
                 }
 
                 upperBounds.mapNotNull { constraint ->
-                    if (constraint.type.typeConstructor(context) != variable) {
+                    if (constraint.type.typeConstructor(c = context) != variable) {
                         val suitableUpperBound = upperBounds.find { upperBound ->
                             with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
                         }?.type
@@ -407,7 +407,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
                 }
             }.filter { it !in dependentTypeParametersSeen && it.first != variable }.toList()
 
-        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { (typeConstructor, _) ->
+        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { [typeConstructor, _] ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
             } else emptyList()
@@ -420,7 +420,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     ): Boolean {
         var currentTypeParameterConstructor = checkingType
 
-        return dependentTypeParameters.any { (typeConstructor, upperBound) ->
+        return dependentTypeParameters.any { [typeConstructor, upperBound] ->
             val isContainedOrNoUpperBound =
                 upperBound == null || isContainedInInvariantOrContravariantPositions(currentTypeParameterConstructor, upperBound)
             currentTypeParameterConstructor = typeConstructor
@@ -434,7 +434,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
     private fun NewConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
         getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
             if (it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER) {
-                it.type.typeConstructor(asConstraintSystemCompleterContext())
+                it.type.typeConstructor(c = asConstraintSystemCompleterContext())
             } else null
         } ?: emptyList()
 
@@ -454,9 +454,9 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
         val isContainedInUpperBounds =
             isContainedInInvariantOrContravariantPositionsAmongUpperBound(typeVariableConstructor, dependentTypeParameters)
-        val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { (typeParameter, _) ->
+        val isContainedAnyDependentTypeInReturnType = dependentTypeParameters.any { [typeParameter, _] ->
             returnType.contains {
-                it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
+                it.typeConstructor(c = asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable
             }
         }
 

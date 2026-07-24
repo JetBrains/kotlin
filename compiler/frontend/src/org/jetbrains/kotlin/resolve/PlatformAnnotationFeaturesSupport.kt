@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
 @DefaultImplementation(PlatformAnnotationFeaturesSupport.Default::class)
+@K1Deprecation
 interface PlatformAnnotationFeaturesSupport {
     fun isRepeatableAnnotationClass(descriptor: ClassDescriptor): Boolean
 

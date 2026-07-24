@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.core.renderTypeForUnsafeNumberAnnotation
 import org.jetbrains.kotlin.types.Variance
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class UnsafeNumberAnnotationTypeRenderingTest {

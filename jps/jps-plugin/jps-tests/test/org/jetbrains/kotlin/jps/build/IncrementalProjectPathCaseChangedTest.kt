@@ -19,22 +19,25 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.util.SystemInfoRt
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
+import org.junit.jupiter.api.Test
 
 class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDumpsCaseInsensitively = true) {
+    @Test
     fun testProjectPathCaseChanged() {
-        doTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
+        runTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
     }
 
+    @Test
     fun testProjectPathCaseChangedMultiFile() {
-        doTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChangedMultiFile/")
+        runTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChangedMultiFile/")
     }
 
-    override fun doTest(testDataPath: String) {
+    override fun runTest(testDataPath: String) {
         if (SystemInfoRt.isFileSystemCaseSensitive) {
             return
         }
 
-        super.doTest(testDataPath)
+        super.runTest(testDataPath)
     }
 
     override fun performAdditionalModifications(modifications: List<Modification>) {

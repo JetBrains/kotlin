@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -39,6 +40,7 @@ internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMe
     return ObjCExportMetaAnnotations(objCAnnotation, swiftAnnotation)
 }
 
+@K1Deprecation
 object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
@@ -46,7 +48,8 @@ object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return
-        val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations() ?: return
+        (val objCAnnotation = hidesFromObjCAnnotation, val swiftAnnotation = refinesInSwiftAnnotation) = descriptor.findObjCExportMetaAnnotations()
+            ?: return
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(swiftAnnotation) ?: declaration

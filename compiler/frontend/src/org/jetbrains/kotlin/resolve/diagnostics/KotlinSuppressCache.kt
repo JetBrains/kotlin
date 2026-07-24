@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 
+@K1Deprecation
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
     fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
@@ -48,6 +50,7 @@ interface DiagnosticSuppressor {
     }
 }
 
+@K1Deprecation
 abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
 
     private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: emptyList()
@@ -122,6 +125,7 @@ abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCa
     }
 }
 
+@K1Deprecation
 class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache(context.project) {
     override fun getSuppressionAnnotations(annotated: PsiElement): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)

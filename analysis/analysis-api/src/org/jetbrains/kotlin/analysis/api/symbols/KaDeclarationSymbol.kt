@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.Visibility
 
@@ -52,10 +51,9 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
      * see [KaUseSiteVisibilityChecker.isVisible][org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker.isVisible].
      */
     public val visibility: KaSymbolVisibility
-        @OptIn(KaExperimentalApi::class)
-        get() = compilerVisibility.asKaSymbolVisibility
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     public val compilerVisibility: Visibility
 
     /**
@@ -118,8 +116,3 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
 
     override fun createPointer(): KaSymbolPointer<KaDeclarationSymbol>
 }
-
-@KaExperimentalApi
-public val KaDeclarationSymbol.typeParameters: List<KaTypeParameterSymbol>
-    @OptIn(KaImplementationDetail::class)
-    get() = if (this is KaTypeParameterOwnerSymbol) typeParameters else emptyList()

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     var calleeReference: FirReference = FirStubReference
     var subjectVariable: FirVariable? = null
-    val branches: MutableList<FirWhenBranch> = mutableListOf()
+    val branches: MutableList<FirWhenBranch> = []
     var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 

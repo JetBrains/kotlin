@@ -2,6 +2,7 @@
 public final class Test {
     // source: 'noArgConstructorForInlineClassParameter.kt'
     private final field z: int
+    public method <init>(): void
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void

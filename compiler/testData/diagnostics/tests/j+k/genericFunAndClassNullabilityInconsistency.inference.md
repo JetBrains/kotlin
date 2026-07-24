@@ -27,6 +27,7 @@ JavaBox#(Null(null))
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -40,7 +41,7 @@ JavaBox#(Null(null))
 R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /K.foo` --- `fun foo(a: JavaBox<out String>): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /K.foo` --- `fun foo(a: JavaBox<out String>): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `JavaBox<TypeVariable(T)> <: JavaBox<out kotlin/String>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
@@ -57,6 +58,7 @@ R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -92,6 +94,7 @@ JavaBox#(Null(null))
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -111,16 +114,6 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
 1. New `TypeVariable(S)` for `FirNamedFunctionSymbol /foo2`s parameter 0
 2. `TypeVariable(S) == kotlin/String` _from TypeParameter R|kotlin/String|_
 
-##### Resolution Stages > CheckArguments:
-
-1. `JavaBox<TypeVariable(T)> <: JavaBox<out TypeVariable(S)>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
-    1. `TypeVariable(T) <: TypeVariable(S)`
-2. Combine `TypeVariable(T) <: TypeVariable(S)` with `TypeVariable(S) == kotlin/String`
-    1. `TypeVariable(T) <: kotlin/String`
-3. Combine `kotlin/Nothing? <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(S)`
-    1. `kotlin/Nothing? <: TypeVariable(S)`
-4. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
-
 ##### Call Completion:
 
 1. Choose `TypeVariable(S)` with `Readiness(
@@ -132,6 +125,7 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -147,6 +141,7 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -163,6 +158,7 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -198,6 +194,7 @@ JavaBox#(Null(null))
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -228,6 +225,7 @@ foo3#(R?C|/JavaBox.JavaBox|(Null(null)))
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT

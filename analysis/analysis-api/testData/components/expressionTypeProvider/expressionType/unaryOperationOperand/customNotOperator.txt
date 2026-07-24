@@ -1,0 +1,3 @@
+expression: Main()
+expression PSI: KtCallExpression
+type: Main

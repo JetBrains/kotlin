@@ -23,15 +23,6 @@ val NamedDomainObjectContainer<Configuration>.embedded: NamedDomainObjectProvide
 fun DependencyHandler.embedded(dependencyNotation: Any): Dependency? =
     add("embedded", dependencyNotation)
 
-val NamedDomainObjectContainer<Configuration>.implicitDependencies: NamedDomainObjectProvider<Configuration>
-    get() = named("implicitDependencies")
-
-fun DependencyHandler.implicitDependencies(dependencyNotation: Any, configure: Action<ExternalModuleDependency>? = null): Dependency? =
-    add("implicitDependencies", dependencyNotation)?.also {
-        if (it is ExternalModuleDependency) {
-            configure?.execute(it)
-        }
-    }
 
 fun Project.getOrCreateConfiguration(taskName: String, body: Configuration.() -> Unit): Configuration {
     return configurations.findByName(taskName)?.apply { body() } ?: configurations.create(taskName) { body() }

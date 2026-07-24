@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // ISSUE: KT-56138
 
 fun takeLambda1(f: String.() -> String) {}

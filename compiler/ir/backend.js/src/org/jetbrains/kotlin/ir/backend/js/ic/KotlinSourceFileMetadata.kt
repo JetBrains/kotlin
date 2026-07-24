@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFile.Companion.fromSources
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -14,7 +15,7 @@ import java.io.File
 
 @JvmInline
 value class KotlinLibraryFile(val path: String) {
-    constructor(lib: KotlinLibrary) : this(lib.libraryFile.canonicalPath)
+    constructor(lib: KotlinLibrary) : this(lib.path.canonicalPathString())
 
     fun toProtoStream(out: CodedOutputStream) = out.writeStringNoTag(path)
 
@@ -76,10 +77,10 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
     Map<KotlinLibraryFile, Map<KotlinSourceFile, T>> by files {
 
     inline fun forEachFile(f: (KotlinLibraryFile, KotlinSourceFile, T) -> Unit) =
-        forEach { (lib, files) -> files.forEach { (file, data) -> f(lib, file, data) } }
+        forEach { [lib, files] -> files.forEach { [file, data] -> f(lib, file, data) } }
 
     inline fun allFiles(p: (KotlinLibraryFile, KotlinSourceFile, T) -> Boolean) =
-        entries.all { (lib, files) -> files.entries.all { (file, data) -> p(lib, file, data) } }
+        entries.all { [lib, files] -> files.entries.all { [file, data] -> p(lib, file, data) } }
 
     operator fun get(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile): T? = get(libFile)?.get(sourceFile)
 }
@@ -94,7 +95,7 @@ class KotlinSourceFileMutableMap<T>(
     fun getOrPutFiles(libFile: KotlinLibraryFile) = files.getOrPut(libFile) { hashMapOf() }
 
     fun copyFilesFrom(other: KotlinSourceFileMap<T>) {
-        for ((libFile, srcFiles) in other) {
+        for ([libFile, srcFiles] in other) {
             files.getOrPut(libFile) { hashMapOf() } += srcFiles
         }
     }

@@ -6,8 +6,8 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
-import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.model.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
@@ -62,15 +62,15 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(false)
     }
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(true)
     }
 
     override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(true)
     }
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
@@ -97,7 +97,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).withNullability(nullable)
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean {
@@ -233,7 +233,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
-        shouldNotBeCalled()
+        return this as? KTypeParameterImpl
     }
 
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
@@ -248,15 +248,15 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeParameterMarker.upperBoundCount(): Int {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds.size
     }
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds[index] as KotlinTypeMarker
     }
 
     override fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker> {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds.map { it as KotlinTypeMarker }
     }
 
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
@@ -289,7 +289,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): RigidTypeMarker? {
-        return captureKTypeFromArguments(type as KType) as AbstractKType?
+        return captureKTypeFromArguments(type as AbstractKType)
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
@@ -336,7 +336,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
         val substitutor = KTypeSubstitutor.create(type as KType)
         return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
             override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): RigidTypeMarker {
-                return substitutor.substitute(type.lowerBoundIfFlexible() as KType).type as AbstractKType
+                return substitutor.substituteTopLevelType(type.lowerBoundIfFlexible() as KType) as AbstractKType
             }
         }
     }

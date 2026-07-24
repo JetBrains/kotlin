@@ -1,0 +1,5 @@
+expression: "hello".uppercase()
+constant: "HELLO"
+constantValueKind: StringValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: "hello".uppercase()

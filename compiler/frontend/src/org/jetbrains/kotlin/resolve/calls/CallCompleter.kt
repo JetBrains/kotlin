@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
 
+@K1Deprecation
 class CallCompleter(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val candidateResolver: CandidateResolver,
@@ -229,7 +231,7 @@ class CallCompleter(
         if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType) {
             updateSystemIfNeeded { builder ->
                 candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType())
-                    .forEach { (parameter, argument) ->
+                    .forEach { [parameter, argument] ->
                         val valueParameterInSystem = builder.typeInSystem(parameter.type)
                         builder.addSubtypeConstraint(
                             valueParameterInSystem,
@@ -406,7 +408,7 @@ class CallCompleter(
         context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
         val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
-        val (cachedResolutionResults, cachedContext, tracing) = cachedData
+        (val cachedResolutionResults = resolutionResults, val cachedContext = deferredComputation, val tracing) = cachedData
 
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
             .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false).replaceCallPosition(context.callPosition)

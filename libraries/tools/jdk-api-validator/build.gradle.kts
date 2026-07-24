@@ -1,13 +1,12 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("kotlin")
+    id("test-inputs-check-v2")
 }
 
-repositories {
-    mavenCentral()
-}
-
-val testArtifacts by configurations.creating
-val signature by configurations.creating
+val signature = configurations.create("signature")
 
 sourceSets {
     "main" { none() }
@@ -19,23 +18,23 @@ dependencies {
     implementation(kotlinStdlib())
 
     testImplementation(kotlinTest("junit"))
-
-    testArtifacts(project(":kotlin-reflect"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
 }
 
 val signaturesDirectory = layout.buildDirectory.get().asFile.resolve("signatures")
 
-val collectSignatures by tasks.registering(Sync::class) {
+val collectSignatures = tasks.register("collectSignatures", Sync::class) {
     from(signature)
     into(signaturesDirectory)
 }
 
-tasks.named<Test>("test") {
-    dependsOn(collectSignatures)
-    dependsOn(testArtifacts)
-
+tasks.test {
     systemProperty("kotlinVersion", project.version)
-    systemProperty("signaturesDirectory", signaturesDirectory)
+    addDirectoryProperty("signaturesDirectory") {
+        fileProvider(collectSignatures.map { it.destinationDir })
+    }
+    withJvmStdlibAndReflect()
+    withReflectShadowJar()
 }

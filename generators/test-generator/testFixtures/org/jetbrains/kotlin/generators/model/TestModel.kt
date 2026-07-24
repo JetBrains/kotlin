@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Tag
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.testFederation.SmokeTest
 
 /**
  * Base class for test entities of the test generator, which are either test classes or test methods.
@@ -35,6 +36,12 @@ sealed class TestEntityModel {
  * @property annotations is a list of annotations, which will be added to the generated test
  *   class in addition to the default set of annotations.
  *
+ * @property isSmokeTest is a flag indicating whether the test class is used as 'SmokeTest'
+ *   See 'repo/TEST_FEDERATION.md' for additional details.
+ *
+ * @property smokeTestLimit limits the number of 'SmokeTets' within a given test class.
+ *   Typically running just a subset (even just any single representative) test is enough when running smoke tests.
+ *
  * Note that all kinds are generated in the same way regardless of the specific implementation.
  * @see org.jetbrains.kotlin.generators.dsl.junit4.TestGeneratorForJUnit4Instance.generateTestClass
  * @see org.jetbrains.kotlin.generators.dsl.junit5.TestGeneratorForJUnit5.TestGeneratorInstance.generateTestClass
@@ -46,6 +53,8 @@ abstract class TestClassModel : TestEntityModel() {
     abstract val dataPathRoot: String?
     abstract val annotations: Collection<AnnotationModel>
     abstract val testKClass: Class<*>
+    abstract val isSmokeTest: Boolean
+    abstract val smokeTestLimit: Int
 
     val imports: Set<Class<*>>
         get() {
@@ -53,6 +62,9 @@ abstract class TestClassModel : TestEntityModel() {
                 annotations.flatMapTo(allImports) { it.imports() }
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
+                if (isSmokeTest) {
+                    allImports.add(SmokeTest::class.java)
+                }
             }
         }
 }
@@ -70,6 +82,8 @@ abstract class MethodModel<M : MethodModel<M>> : TestEntityModel() {
      */
     open val isTestMethod: Boolean get() = true
     open val shouldBeGeneratedForInnerTestClass: Boolean get() = true
+    open val isSmokeTest: Boolean get() = false
+
 
     open fun imports(): Collection<Class<*>> = emptyList()
 

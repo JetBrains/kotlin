@@ -1,0 +1,9 @@
+--- a/kt52677.ir.txt
++++ b/kt52677.ir.jvm_ir.txt
+@@ -182,6 +182,6 @@
+   FUN name:foo visibility:public modality:FINAL returnType:@[MySerializable(c = UuidSerializer::class)] <root>.Uuid1
+     BLOCK_BODY
+       THROW type=kotlin.Nothing
+-        CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.RuntimeException' type=kotlin.RuntimeException origin=null
++        CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
+   TYPEALIAS name:Uuid visibility:public expandedType:@[MySerializable(c = UuidSerializer::class)] <root>.Uuid1

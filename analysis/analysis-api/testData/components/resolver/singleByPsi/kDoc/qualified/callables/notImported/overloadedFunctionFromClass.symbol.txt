@@ -1,2 +1,6 @@
-KtNamedFunction(40,79): '/**'
-  null
+KDocName(48,59): 'foo.Foo.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Foo.foo(<dispatch receiver>: foo.Foo, string: kotlin.String): kotlin.Unit,
+      foo/Foo.foo(<dispatch receiver>: foo.Foo, number: kotlin.Int): kotlin.Unit
+    ]

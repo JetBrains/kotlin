@@ -1,0 +1,17 @@
+ORIGINAL KDOC:
+@param p  `int` param
+CONTENT:
+`int` param
+
+ORIGINAL KDOC:
+@return something [Int]
+CONTENT:
+something [Int]
+
+ORIGINAL KDOC:
+* `` foo bar [Foo]
+ *
+ * @param p  `int` param
+ * @return something [Int]
+CONTENT:
+`` foo bar [Foo]

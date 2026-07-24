@@ -19,6 +19,15 @@ internal open class KotlinKPropertyN<out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKPropertyN(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
 
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        KotlinKPropertyN(container, signature, boundReceiver, kmProperty, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKProperty<V> =
+        throw KotlinReflectionInternalError("Cannot unbind KPropertyN: $this")
+
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+        throw KotlinReflectionInternalError("Cannot bind KPropertyN: $this")
+
     class Getter<out V>(override val property: KotlinKPropertyN<V>) : KotlinKProperty.Getter<V>()
 }
 
@@ -30,6 +39,9 @@ internal class KotlinKMutablePropertyN<V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKMutablePropertyN(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        KotlinKMutablePropertyN(container, signature, boundReceiver, kmProperty, overriddenStorage)
 
     class Setter<V>(override val property: KotlinKMutablePropertyN<V>) : KotlinKProperty.Setter<V>()
 }

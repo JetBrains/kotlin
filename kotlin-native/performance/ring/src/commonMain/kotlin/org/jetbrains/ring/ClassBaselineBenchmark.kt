@@ -16,64 +16,75 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-open class ClassBaselineBenchmark {
+private const val BENCHMARK_SIZE = 10000
 
-    //Benchmark 
-    fun consume() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ClassBaseline : SkipWhenBaseOnly() {
+
+    @Benchmark
+    fun consume(bh: Blackhole) {
         for (item in 1..BENCHMARK_SIZE) {
-            Blackhole.consume(Value(item))
+            // TODO: what does this benchmark measure? `consume` may be too expensive
+            bh.consume(Value(item))
         }
     }
 
-    //Benchmark 
-    fun consumeField() {
+    @Benchmark
+    fun consumeField(bh: Blackhole) {
         val value = Value(0)
         for (item in 1..BENCHMARK_SIZE) {
             value.value = item
-            Blackhole.consume(value)
+            // TODO: what does this benchmark measure? `consume` may be too expensive
+            bh.consume(value)
         }
     }
 
-    //Benchmark 
-    fun allocateList(): List<Value> {
+    @Benchmark
+    fun allocateList(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>(BENCHMARK_SIZE)
-        return list
+        bh.consume(list)
     }
 
-    //Benchmark 
-    fun allocateArray(): Array<Value?> {
+    @Benchmark
+    fun allocateArray(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = arrayOfNulls<Value>(BENCHMARK_SIZE)
-        return list
+        bh.consume(list)
     }
 
-    //Benchmark 
-    fun allocateListAndFill(): List<Value> {
+    @Benchmark
+    fun allocateListAndFill(bh: Blackhole) {
         val list = ArrayList<Value>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
             list.add(Value(item))
         }
-        return list
+        bh.consume(list)
     }
 
-    //Benchmark 
-    fun allocateListAndWrite(): List<Value> {
+    @Benchmark
+    fun allocateListAndWrite(bh: Blackhole) {
+        skipWhenBaseOnly()
         val value = Value(0)
         val list = ArrayList<Value>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
             list.add(value)
         }
-        return list
+        bh.consume(list)
     }
 
-    //Benchmark 
-    fun allocateArrayAndFill(): Array<Value?> {
+    @Benchmark
+    fun allocateArrayAndFill(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = arrayOfNulls<Value>(BENCHMARK_SIZE)
         var index = 0
         for (item in 1..BENCHMARK_SIZE) {
             list[index++] = Value(item)
         }
-        return list
+        bh.consume(list)
     }
 }

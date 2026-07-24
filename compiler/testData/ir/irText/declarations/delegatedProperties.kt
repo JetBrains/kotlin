@@ -1,7 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-// KT-61141: kotlin.collections.HashMap instead of java.util.HashMap
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+//   K/JVM uses actualized java.util.HashMap instead of kotlin.collections.HashMap
 
 val test1 by lazy { 42 }
 

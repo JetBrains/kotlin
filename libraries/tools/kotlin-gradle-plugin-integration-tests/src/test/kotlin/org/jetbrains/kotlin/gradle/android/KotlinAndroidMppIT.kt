@@ -58,6 +58,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testAndroidMppSourceSets(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -152,6 +153,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("MPP allTests task depending on Android unit tests")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testMppAllTests(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -175,6 +177,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     // https://youtrack.jetbrains.com/issue/KT-48436
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testUnusedSourceSetsReportAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,

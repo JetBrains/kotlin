@@ -21,16 +21,20 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.Properties
+import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.name
 
 class NativeSecondStageCompilationConfig(
         val project: Project,
@@ -70,7 +74,7 @@ class NativeSecondStageCompilationConfig(
                 }
             }
             configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let(this::putAll)
-            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
+            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { [key, value] ->
                 put(key, value)
             }
         }
@@ -292,7 +296,7 @@ class NativeSecondStageCompilationConfig(
     val objcEntryPoints: ObjCEntryPoints by lazy {
         configuration
                 .get(BinaryOptions.objcExportEntryPointsPath)
-                ?.let { File(it).readObjCEntryPoints() }
+                ?.let { Path(it).readObjCEntryPoints() }
                 ?: ObjCEntryPoints.ALL
     }
 
@@ -317,13 +321,6 @@ class NativeSecondStageCompilationConfig(
     val forceNativeThreadStateForFunctions: Set<String> =
             configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()
                     ?: defaultForceNativeThreadStateForFunctions
-
-    val globalDataLazyInit: Boolean
-        get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
-            if (!it) {
-                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager Global Data initialization is deprecated")
-            }
-        } ?: true
 
     private val defaultGenericSafeCasts = !optimizationsEnabled // For now disabled in -opt due to performance penalty.
     val genericSafeCasts: Boolean by lazy {
@@ -360,6 +357,10 @@ class NativeSecondStageCompilationConfig(
     val latin1Strings: Boolean
         get() = configuration.get(BinaryOptions.latin1Strings) ?: defaultLatin1Strings
 
+    private val defaultPerFileCacheForStdlib = true
+    val perFileCacheForStdlib: Boolean
+        get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
@@ -387,7 +388,7 @@ class NativeSecondStageCompilationConfig(
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
-                configuration.konanIncludedLibraries.map { File(it) },
+                configuration.konanIncludedLibraries.map { Path(it) },
                 configuration,
                 resolve.resolvedLibraries
         )
@@ -413,7 +414,7 @@ class NativeSecondStageCompilationConfig(
         }.getFullList()
     }
 
-    internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
+    internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
     val fullExportedNamePrefix: String
         get() = configuration.fullExportedNamePrefix ?: implicitModuleName
@@ -454,14 +455,35 @@ class NativeSecondStageCompilationConfig(
         } ?: false
     }
 
+    // Escape analysis can mark certain objects as non-escaping even if they can't e allocated on stack.
+    // When this flag is set to `true`, such objects lifetime will be forced into "global", making them proper escaping heap objects.
+    // When set to `false`, the objects will still be allocated on heap, but considered "local" othervise,
+    // possibly creating heap->stack references.
+    // Currently, disabling this safeguard is not compatible with CMS GC.
+    // Moreover, it may lead to crashes in memory dumper due to similar reasons.
+    // See:
+    // KT-75317 Kotlin/Native: segfault in kotlin::gc::Mark
+    // KT-85811 K/N: FirNativeGCTestGenerated.testMemoryDump fails
+    // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
+    val escapeAnalysisPropagateExiledToHeapObjects by lazy {
+        configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
+            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
+            }
+        } ?: true
+    }
+
+    val enableReleaseBinaryCache: Boolean
+        get() = configuration.get(BinaryOptions.enableReleaseBinaryCache) ?: false
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    override val manifestProperties = configuration.konanManifestAddend?.let {
-        File(it).loadProperties()
+    override val manifestProperties: Properties? = configuration.konanManifestAddend?.let {
+        Path(it).readProperties()
     }
 
     private val defaultPropertyLazyInitialization = true
@@ -484,7 +506,7 @@ class NativeSecondStageCompilationConfig(
         "Konan_main"
     }
 
-    internal val testDumpFile: File? = configuration.testDumpOutputPath?.let(::File)
+    internal val testDumpFile: Path? = configuration.testDumpOutputPath?.let(::Path)
 
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
@@ -501,11 +523,17 @@ class NativeSecondStageCompilationConfig(
         } else it
     } ?: StackProtectorMode.NO
 
+    // By default use the new C++ passes.
+    val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
+        if (optimizationsEnabled) append("-opt")
         append("STATIC")
 
+        if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
+            append("-stdlib_cache${if (perFileCacheForStdlib) "PERFILE" else "MONOLITHIC"}")
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
         if (sanitizer != null)
@@ -527,6 +555,9 @@ class NativeSecondStageCompilationConfig(
     }
 
     private val systemCacheFlavorString = buildString {
+        // Note: when appending a new flavor into the cache, be sure to update
+        // [CompilerConfiguration.setupCommonOptionsForCaches] if needed.
+
         appendCommonCacheFlavor()
         append("-system")
 
@@ -550,31 +581,36 @@ class NativeSecondStageCompilationConfig(
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
         if (minidumpLocation != null)
             append("-with_crash_dumps")
+        if (runtimeLogsEnabled)
+            append("-runtime_logs_enabled")
     }
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
         append("-user")
         append("-pl")
+        if (swiftExport)
+            append("-swift_export")
     }
 
-    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }
+    internal val systemCacheDirectory = Path(distribution.systemCacheRootDirectory.absolutePath).resolve(systemCacheFlavorString)
+
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
-        File(it).apply {
-            if (!isDirectory) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
+        Path(it).apply {
+            if (!isDirectory()) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
         }
-    } ?: File(distribution.systemCacheRootDirectory.absolutePath)
-    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString).also { it.mkdirs() }
+    } ?: Path(distribution.systemCacheRootDirectory.absolutePath)
+    internal val autoCacheDirectory = autoCacheRootDirectory.resolve(userCacheFlavorString)
     private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
-        File(it).apply {
-            if (!isDirectory) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
+        Path(it).apply {
+            if (!isDirectory()) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
         }
     }
-    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)?.also { it.mkdirs() }
+    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.resolve(userCacheFlavorString)
+    internal val dumpBuiltCachesTo = configuration.dumpBuiltCachesTo
 
     internal val ignoreCacheReason = when {
-        optimizationsEnabled -> "for optimized compilation"
-        runtimeLogsEnabled -> "with runtime logs"
+        optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
@@ -606,7 +642,7 @@ class NativeSecondStageCompilationConfig(
             else
                 CachedLibraries.getCachedLibraryName(it.klib)
         }
-                ?: File(outputPath).name
+                ?: Path(outputPath).name
 
     /**
      * Do not compile binary when compiling framework.
@@ -687,7 +723,7 @@ class NativeSecondStageCompilationConfig(
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.
     val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
-    val (_, _, _, metaString, build) = versionPattern.matchEntire(this)?.destructured
+    val [_, _, _, metaString, build] = versionPattern.matchEntire(this)?.destructured
             ?: throw IllegalStateException("Cannot parse Kotlin/Native version: $this")
 
     return metaString.isEmpty() && build.isEmpty()

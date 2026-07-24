@@ -1,0 +1,7 @@
+KtNameReferenceExpression(27,32): 'field'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var field: kotlin.Int
+    ]

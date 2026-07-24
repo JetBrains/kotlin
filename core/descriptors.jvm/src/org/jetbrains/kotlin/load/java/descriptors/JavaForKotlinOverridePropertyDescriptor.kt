@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
+@K1Deprecation
 class JavaForKotlinOverridePropertyDescriptor(
     ownerDescriptor: ClassDescriptor,
     val getterMethod: SimpleFunctionDescriptor,

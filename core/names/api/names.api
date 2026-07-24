@@ -307,6 +307,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getDslMarker ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getDynamicExtension ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getEnhancedNullability ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExpectRefinement ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExperimentalAssociatedObjects ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExposedCopyVisibility ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -324,12 +325,14 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJsExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportDefault ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportIgnore ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsImplicitExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmBuiltin ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmStatic ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getKotlinActual ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLowPriorityInOverloadResolution ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMustBeDocumented ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMustUseReturnValues ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNoInfer ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -359,6 +362,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$Parame
 	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinHiddenSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinWarningSince ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getParameterNameName ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getRetentionValue ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSinceKotlinVersion ()Lorg/jetbrains/kotlin/name/Name;

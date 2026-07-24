@@ -77,7 +77,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
     val notTransientData: Map<Key<*>, Any?>
-        get() = properties.filter { (key, value) -> key !is TransientKey<*> && value is Serializable }
+        get() = properties.filter { [key, value] -> key !is TransientKey<*> && value is Serializable }
 
     fun isEmpty(): Boolean = properties.isEmpty()
 
@@ -231,17 +231,17 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
 
         @JvmName("invoke_kotlintype_map_from_kclass")
         operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg classes: Pair<K, KClass<*>>) {
-            append(classes.map { (k, v) -> k to KotlinType(v) })
+            append(classes.map { [k, v] -> k to KotlinType(v) })
         }
 
         @JvmName("invoke_kotlintype_map_from_ktype")
         operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg types: Pair<K, KType>) {
-            append(types.map { (k, v) -> k to KotlinType(v) })
+            append(types.map { [k, v] -> k to KotlinType(v) })
         }
 
         @JvmName("invoke_kotlintype_map_from_fqname")
         operator fun <K> Key<Map<K, KotlinType>>.invoke(vararg fqnames: Pair<K, String>) {
-            append(fqnames.map { (k, v) -> k to KotlinType(v) })
+            append(fqnames.map { [k, v] -> k to KotlinType(v) })
         }
 
         // direct manipulation - public - for usage in inline dsl methods and for extending dsl
@@ -280,6 +280,17 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
         @JvmName("appendToMap")
         fun <K, V> Key<in Map<K, V>>.append(values: Iterable<Pair<K, V>>) {
             val newValues = get(this)?.let { it + values } ?: values.toMap()
+            data[this] = newValues
+        }
+
+        @JvmName("prependToList")
+        fun <V> Key<in List<V>>.prepend(values: Iterable<V>) {
+            val newValues = get(this)?.let { values + it } ?: values.toList()
+            data[this] = newValues
+        }
+
+        fun <V> Key<in List<V>>.prepend(vararg values: V) {
+            val newValues = get(this)?.let { values.toList() + it } ?: values.toList()
             data[this] = newValues
         }
 

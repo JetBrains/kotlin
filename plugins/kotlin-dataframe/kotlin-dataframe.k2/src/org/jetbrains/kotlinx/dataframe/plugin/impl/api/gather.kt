@@ -194,7 +194,7 @@ fun FirSession.intersect(schema: List<SimpleCol>, otherSchema: List<SimpleCol>):
             (u ?: emptyList()) + it
         }
     }
-    return intersection.mapNotNull { (name, cols) ->
+    return intersection.mapNotNull { [name, cols] ->
         if (cols.size != 2) return@mapNotNull null
         val col1 = cols[0]
         val col2 = cols[1]

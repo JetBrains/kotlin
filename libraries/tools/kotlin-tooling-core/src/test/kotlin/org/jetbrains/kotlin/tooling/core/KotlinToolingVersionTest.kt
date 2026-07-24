@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.tooling.core
 
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion.Maturity.*
-import org.junit.Test
 import kotlin.test.*
 
 class KotlinToolingVersionTest {

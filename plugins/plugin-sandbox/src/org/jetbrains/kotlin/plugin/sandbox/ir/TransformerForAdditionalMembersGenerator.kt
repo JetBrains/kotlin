@@ -30,10 +30,9 @@ class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : Abstr
             AdditionalMembersGenerator.ID_WITH_DEFAULT_NAME -> {
                 // default value for parameter
                 val parameter = function.parameters.first { it.kind == IrParameterKind.Regular }.also { irParameter ->
-                    val defaultValue = IrConstImpl(
+                    val defaultValue = IrConstImpl.string(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         irBuiltIns.stringType,
-                        IrConstKind.String,
                         value = "OK"
                     )
                     irParameter.defaultValue = context.irFactory.createExpressionBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultValue)

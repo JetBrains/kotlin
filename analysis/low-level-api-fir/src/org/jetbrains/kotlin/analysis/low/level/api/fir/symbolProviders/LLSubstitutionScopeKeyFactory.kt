@@ -89,7 +89,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
 
         val result = ArrayList<TypeArgumentAnnotation>()
         val stack = Stack()
-        for ((index, type) in types.withIndex()) {
+        for ([index, type] in types.withIndex()) {
             if (type == null) {
                 continue
             }
@@ -138,7 +138,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
             consumer += stack.createAnnotation(lookupTag)
         }
 
-        for ((index, typeArgument) in type.typeArguments.withIndex()) {
+        for ([index, typeArgument] in type.typeArguments.withIndex()) {
             val type = typeArgument.type ?: continue
 
             stack.push(index)
@@ -191,6 +191,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
      * The position is the path of type-argument indices from the top-level substituted type argument down to the annotated type
      * (e.g., path `[1, 0]` means the first nested type argument of the second top-level type argument).
      */
+    @LLFirInternals
     interface TypeArgumentAnnotation {
         val lookupTag: ConeClassLikeLookupTag?
     }

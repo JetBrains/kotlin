@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
@@ -31,7 +32,7 @@ class WasmDependencyResolutionSmokeTest {
         rootProject.subprojects { project ->
             project.enableDependencyVerification(false)
             project.applyMultiplatformPlugin()
-            project.repositories.mavenLocal()
+            project.repositories.kotlinBuildDeps()
             project.repositories.mavenCentralCacheRedirector()
         }
 

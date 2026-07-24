@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
-import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.*
@@ -51,7 +50,7 @@ abstract class AbstractNativeCodegenBoxCoreHeaderModeTest : AbstractNativeCoreTe
             ::NativeFirstStageEnvironmentConfigurator,
         )
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
-        useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
+        useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
 
         // 1st stage (sources -> klibs)
         useAdditionalSourceProviders(

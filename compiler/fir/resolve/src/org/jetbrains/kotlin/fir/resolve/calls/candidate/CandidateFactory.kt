@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 class CandidateFactory private constructor(
     val context: ResolutionContext,
@@ -40,7 +40,7 @@ class CandidateFactory private constructor(
     @OptIn(FirExtensionApiInternals::class)
     private val callRefinementExtensions = context.session.extensionService.callRefinementExtensions.takeIf { it.isNotEmpty() }
 
-    private val companionBlocksAndExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+    private val companionBlocksEnabled: Boolean = LanguageFeature.CompanionBlocks.isEnabled()
 
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
@@ -151,8 +151,14 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && shouldAddNoCompanionDiagnostic(callInfo, symbol)) {
-            result.addDiagnostic(NoCompanionObject)
+        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(context.session)) {
+            if (!callInfo.isImplicitInvokeReceiver) result.addDiagnostic(NoCompanionObject)
+            else result.addDiagnostic(InvokeReceiverNoCompanionObject)
+        }
+        if (callInfo.candidateForCommonInvokeReceiver?.diagnostics?.contains(InvokeReceiverNoCompanionObject) == true) {
+            if (symbol !is FirCallableSymbol<*> || !symbol.isStatic || !companionBlocksEnabled) {
+                result.addDiagnostic(InvokeOnHiddenCompanionObject)
+            }
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator) {
             val normalizedSymbol = when (symbol) {
@@ -165,6 +171,7 @@ class CandidateFactory private constructor(
         if (symbol is FirPropertySymbol && LanguageFeature.PrioritizedEnumEntries.isDisabled()) {
             val containingClass = symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.fir
             if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
+                @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // PrioritizedEnumEntries
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
         }
@@ -177,19 +184,11 @@ class CandidateFactory private constructor(
             result.addDiagnostic(givenExtensionReceiver.toInaccessibleReceiverDiagnostic())
         }
 
-        if (!companionBlocksAndExtensionsEnabled && result.symbol.requiresCompanionBlockOrExtensionLf()) {
-            result.addDiagnostic(UnsupportedCompanionBlockOrExtensionCall)
+        if (!companionBlocksEnabled && result.symbol.requiresCompanionBlockLf()) {
+            result.addDiagnostic(UnsupportedCompanionBlockMemberCall)
         }
 
         return result
-    }
-
-    private fun shouldAddNoCompanionDiagnostic(
-        callInfo: CallInfo,
-        symbol: FirBasedSymbol<FirDeclaration>,
-    ): Boolean {
-        if (callInfo.isImplicitInvokeReceiver && companionBlocksAndExtensionsEnabled) return false
-        return symbol.isRegularClassWithoutCompanion(callInfo.session)
     }
 
     @OptIn(FirExtensionApiInternals::class)
@@ -222,7 +221,7 @@ class CandidateFactory private constructor(
                 unwrapIntegerOperatorSymbolIfNeeded(callInfo)
             }
             1 -> {
-                val (result, extension) = variants[0]
+                val [result, extension] = variants[0]
                 process(result, extension)
             }
             else -> {
@@ -257,7 +256,7 @@ class CandidateFactory private constructor(
     private fun FirExpression?.isCandidateFromCompanionObjectTypeScope(useSiteSession: FirSession): Boolean {
         val resolvedQualifier = this?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return false
         val originClassOfCandidate = this.resolvedType.classId ?: return false
-        val companion = resolvedQualifier.symbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
+        val companion = resolvedQualifier.qualifierSymbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
         return companion?.classId == originClassOfCandidate
     }
 

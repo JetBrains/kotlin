@@ -113,7 +113,7 @@ abstract class DataClassMembersGenerator(
                     irClass.defaultType,
                     constructedClass = irClass
                 ).apply {
-                    for ((i, typeParameterType) in constructorSymbol.typesOfTypeParameters().withIndex()) {
+                    for ([i, typeParameterType] in constructorSymbol.typesOfTypeParameters().withIndex()) {
                         typeArguments[i] = typeParameterType
                     }
                     for (param in irFunction.nonDispatchParameters) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
+@K1Deprecation
 class JavaActualAnnotationArgumentExtractor : ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor {
     override fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>? {
         val element = (parameter.source as? JavaSourceElement)?.javaElement

@@ -1,18 +1,29 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:language.targets.jvm"))
+    implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:ir.psi2ir"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
@@ -21,8 +32,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-platform-interface"))
-    implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))
     implementation(libs.caffeine)
@@ -41,6 +50,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -62,17 +72,12 @@ optInToUnsafeDuringIrConstructionAPI()
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)
     ) {
         useJUnitPlatform()
 
         @OptIn(TemporaryTestFederationApi::class)
-        isSmokeTest = true
-
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
@@ -94,25 +99,30 @@ projectTests {
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
+
+    testCodebaseTask(dumpDirs = emptyList()) {
+        // Forward the source-code-update flag (used by the `analysis-api-mark-internal-apis` skill) from a Gradle property to the test
+        // JVM. Combine with `-Pkotlin.test.instrumentation.disable.inputs.check=true` so the test can write to source files.
+        val updateSourceCode = "kotlin.analysis.codebaseTest.internalApi.updateSourceCode"
+        systemProperty(updateSourceCode, project.providers.gradleProperty(updateSourceCode).orElse("false").get())
+    }
 }
 
-allprojects {
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions.optIn.addAll(
-            listOf(
-                "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
-                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
-                "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
-                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-                "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
-                "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
-            )
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+            "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )
-    }
+    )
 }
 
 generatedSourcesTask(

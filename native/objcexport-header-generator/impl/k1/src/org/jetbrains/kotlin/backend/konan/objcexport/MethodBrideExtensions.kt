@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.konan.allParameters
 fun MethodBridge.valueParametersAssociated(
     descriptor: FunctionDescriptor,
 ): List<Pair<MethodBridgeValueParameter, ParameterDescriptor?>> {
+    @OptIn(K1Deprecation::class)
     val kotlinParameters = descriptor.allParameters.iterator()
     val skipFirstKotlinParameter = when (this.receiver) {
         MethodBridgeReceiver.Static -> false

@@ -316,7 +316,7 @@ KtConstantExpression(165,166): '0'
   null
 
 KtOperationReferenceExpression(167,168): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -546,7 +546,7 @@ KtConstantExpression(190,191): '1'
   null
 
 KtOperationReferenceExpression(192,193): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -776,7 +776,7 @@ KtConstantExpression(215,216): '2'
   null
 
 KtOperationReferenceExpression(217,218): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -1,10 +1,10 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
   callableId: /logicalNotContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -19,16 +19,17 @@ KaNamedFunctionSymbol:
                 KaContractExplicitParameterValue:
                   symbol:
                     KaValueParameterSymbol:
+                      anchorPsi: KtParameter
                       annotations: []
                       callableId: null
-                      compilerVisibility: Public
+                      contextParameters: []
                       contextReceivers: []
-                      generatedPrimaryConstructorProperty: null
                       hasDeclaredDefaultValue: false
                       hasDefaultValue: false
                       isActual: false
                       isCompanion: false
                       isCrossinline: false
+                      isDelegated: false
                       isExpect: false
                       isExtension: false
                       isExternal: false
@@ -40,16 +41,20 @@ KaNamedFunctionSymbol:
                       modality: FINAL
                       name: value
                       origin: SOURCE
+                      primaryConstructorProperty: null
+                      psi: KtParameter
+                      realPsi: KtParameter
                       receiverParameter: null
                       returnType: KaUsualClassType:
                         annotations: []
                         typeArguments: []
                         type: kotlin/Boolean
+                      typeParameters: []
                       visibility: PUBLIC
                       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                       getContainingJvmClassName: LogicalNotContractKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
   ]
   hasStableParameterNames: true
@@ -70,6 +75,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: logicalNotContract
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -78,16 +85,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -99,16 +107,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -116,6 +128,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: LogicalNotContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: logicalNotContract

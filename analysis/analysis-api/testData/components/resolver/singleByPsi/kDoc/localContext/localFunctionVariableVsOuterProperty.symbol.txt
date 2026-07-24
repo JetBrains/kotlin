@@ -1,2 +1,5 @@
-KtProperty(75,104): '/** [pp] */'
-  null
+KDocName(80,82): 'pp'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val pp: kotlin.Int
+    ]

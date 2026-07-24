@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.NativeFunctionReferenceLowering.Companion.isLoweredFunctionReference
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * In some cases the object instantiated doesn't capture any context and in fact can be replaced with a constant object.
  * That's what this optimization pass does.
  */
-internal class StaticCallableReferenceOptimization(val context: Context) : FileLoweringPass {
+internal class StaticCallableReferenceOptimization(val context: NativeBackendContext) : FileLoweringPass {
     private val allPropertyReferenceSymbols = buildList {
         val immutableSymbols = context.symbols.immutablePropertiesConstructors
         addAll(immutableSymbols.byRecieversCount)

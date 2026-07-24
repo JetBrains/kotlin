@@ -1,0 +1,27 @@
+KaType
+KaTypeParameterType:
+  abbreviation: null
+  annotations: []
+  name: T
+  symbol: KaTypeParameterSymbol:
+    anchorPsi: KtTypeParameter
+    annotations: []
+    isActual: false
+    isExpect: false
+    isExternal: false
+    isReified: true
+    location: LOCAL
+    modality: FINAL
+    name: T
+    origin: SOURCE
+    psi: KtTypeParameter
+    realPsi: KtTypeParameter
+    upperBounds: []
+    variance: INVARIANT
+    visibility: LOCAL
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+T?

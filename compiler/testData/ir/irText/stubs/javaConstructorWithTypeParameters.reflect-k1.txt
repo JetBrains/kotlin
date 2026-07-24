@@ -1,0 +1,23 @@
+KClass: class J1 : Any
+  constructors:
+    public final <T1> fun `<init>`(): J1<T1> where T1 : kotlin.Any!
+    public final <T1, X1> fun `<init>`(X1!): J1<T1> where T1 : kotlin.Any!, X1 : kotlin.Any!
+  members:
+    public open operator fun J1<T1>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J1<T1>.hashCode(): kotlin.Int
+    public open fun J1<T1>.toString(): kotlin.String
+  declaredMembers:
+KClass: class J1.J2 : Any
+  constructors:
+    public final <T2, X2> fun J1<T1>.`<init>`(): J1<T1>.J2<T2> where T2 : kotlin.Any!, X2 : kotlin.Any!
+    public final <T2> fun J1<T1>.`<init>`(): J1<T1>.J2<T2> where T2 : kotlin.Any!
+  members:
+    public open operator fun J1<T1>.J2<T2>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J1<T1>.J2<T2>.hashCode(): kotlin.Int
+    public open fun J1<T1>.J2<T2>.toString(): kotlin.String
+  declaredMembers:
+KPackage: JavaConstructorWithTypeParametersKt
+  public final fun test1(): J1<kotlin.Int>
+  public final fun test2(): J1<kotlin.Int>
+  public final fun test3(J1<kotlin.Any>): J1<kotlin.Any>.J2<kotlin.Int>
+  public final fun test4(J1<kotlin.Any>): J1<kotlin.Any>.J2<kotlin.Int>

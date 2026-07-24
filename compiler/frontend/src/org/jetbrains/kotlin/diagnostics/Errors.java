@@ -445,7 +445,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_NOT_FINAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> VALUE_CLASS_EMPTY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtProperty> PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR,
                                                                                                               DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK);
@@ -454,7 +453,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_EXTEND_CLASSES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_BE_RECURSIVE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtExpression> MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> RESERVED_MEMBER_INSIDE_VALUE_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtTypeReference> TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INNER_CLASS_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
@@ -463,9 +461,6 @@ public interface Errors {
     DiagnosticFactory0<KtContextReceiverList> VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtNamedFunction, KotlinType> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME_WITH_VALIDITY_CHECK);
-    
-    DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
-            DiagnosticFactory1.create(ERROR);
 
     // Result class
 

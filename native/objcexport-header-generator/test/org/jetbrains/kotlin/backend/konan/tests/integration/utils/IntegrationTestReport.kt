@@ -220,7 +220,7 @@ private fun compareProtocolsOrClasses(
 
     val result = mutableListOf<IntegrationTestReport.Issue>()
 
-    k1.forEach { (name, k1Container) ->
+    k1.forEach { [name, k1Container] ->
 
         if (!k2.keys.contains(name)) {
             result.add(DefinedInK1ButNotInK2(name, k1Container))
@@ -269,7 +269,7 @@ private fun compareProtocolsOrClasses(
         }
     }
 
-    k2.forEach { (name, k2Container) ->
+    k2.forEach { [name, k2Container] ->
         if (!k1.keys.contains(name)) {
             result.add(DefinedInK2ButNotInK1(name, k2Container))
         }

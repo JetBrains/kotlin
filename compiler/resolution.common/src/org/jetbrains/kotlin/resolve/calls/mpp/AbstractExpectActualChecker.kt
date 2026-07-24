@@ -595,7 +595,7 @@ object AbstractExpectActualChecker {
         }
 
         // Removing "reified" from an expected function's type parameter is fine
-        if ((expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)?.any { (e, a) -> !e.isReified && a.isReified } == true) {
+        if ((expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)?.any { [e, a] -> !e.isReified && a.isReified } == true) {
             return ExpectActualIncompatibility.TypeParameterReified
         }
 

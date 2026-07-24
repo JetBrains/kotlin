@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.Test
 
-class GenerateUnsupportedGradleLanguageVersionsMetadataTest : TestCase() {
+class GenerateUnsupportedGradleLanguageVersionsMetadataTest {
+    @Test
     fun testUnsupportedGradleLanguageVersionsMetadataIsUpToDate() {
         generateUnsupportedGradleLanguageVersionsMetadata(::getPrinterForTests)
     }

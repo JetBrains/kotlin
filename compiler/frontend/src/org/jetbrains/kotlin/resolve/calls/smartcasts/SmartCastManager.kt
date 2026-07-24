@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
 
     fun getSmartCastVariants(

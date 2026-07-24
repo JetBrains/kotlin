@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
+import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -31,9 +31,6 @@ public interface KaReferenceShortener : KaSessionComponent {
      * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
      * for the default shortening logic.
      *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
-     *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
     @KaIdeApi
@@ -50,9 +47,6 @@ public interface KaReferenceShortener : KaSessionComponent {
      *
      * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
      * for the default shortening logic.
-     *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
      *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
@@ -239,14 +233,9 @@ public interface ShortenCommand {
  * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
  * for the default shortening logic.
  *
- * N.B. This API is not implemented for the FE10 implementation!
- * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
- *
  * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun collectPossibleReferenceShortenings(
     file: KtFile,
@@ -255,15 +244,10 @@ public fun collectPossibleReferenceShortenings(
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
-    return with(session) {
-        collectPossibleReferenceShortenings(
-            file = file,
-            selection = selection,
-            shortenOptions = shortenOptions,
-            classShortenStrategy = classShortenStrategy,
-            callableShortenStrategy = callableShortenStrategy,
-        )
-    }
+    @OptIn(KaImplementationDetail::class)
+    return internals.referenceShortener.collectPossibleReferenceShortenings(
+        file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy,
+    )
 }
 
 /**
@@ -272,14 +256,9 @@ public fun collectPossibleReferenceShortenings(
  * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
  * for the default shortening logic.
  *
- * N.B. This API is not implemented for the FE10 implementation!
- * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
- *
  * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun collectPossibleReferenceShorteningsInElement(
     element: KtElement,
@@ -287,12 +266,8 @@ public fun collectPossibleReferenceShorteningsInElement(
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
-    return with(session) {
-        collectPossibleReferenceShorteningsInElement(
-            element = element,
-            shortenOptions = shortenOptions,
-            classShortenStrategy = classShortenStrategy,
-            callableShortenStrategy = callableShortenStrategy,
-        )
-    }
+    @OptIn(KaImplementationDetail::class)
+    return internals.referenceShortener.collectPossibleReferenceShorteningsInElement(
+        element, shortenOptions, classShortenStrategy, callableShortenStrategy,
+    )
 }

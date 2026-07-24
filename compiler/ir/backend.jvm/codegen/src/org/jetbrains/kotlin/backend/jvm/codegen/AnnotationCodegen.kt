@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.isCompilerInternalSyntheticAnnotation
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -55,7 +56,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
 
-    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
+    fun genAnnotations(annotated: IrDeclaration, annotations: List<IrAnnotation> = annotated.annotations) {
         for (annotation in annotations) {
             val applicableTargets = annotation.annotationClass.getAnnotationTargets().orEmpty()
             if (annotated is IrSimpleFunction &&
@@ -151,7 +152,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     }
 
     private fun isMovedReceiverParameterOfStaticValueClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
-        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
+        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) &&
                 parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
 
     fun generateAnnotationDefaultValue(value: IrExpression) {
@@ -160,7 +161,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         visitor.visitEnd()
     }
 
-    private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
+    private fun genAnnotation(annotation: IrAnnotation, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
         val retentionPolicy = annotationClass.getJvmAnnotationRetention()
         if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
@@ -168,9 +169,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         // Annotations in the internal IR package do not have real class files.
         // `EnhancedNullability` is in a real package `kotlin.jvm.internal`, but the annotation itself is fake.
         val fqName = annotationClass.fqNameWhenAvailable
-        if (fqName?.parent() == StandardClassIds.BASE_INTERNAL_IR_PACKAGE ||
-            fqName == JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-        ) return null
+        if (fqName?.isCompilerInternalSyntheticAnnotation == true) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
@@ -190,16 +189,13 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         return asmTypeDescriptor
     }
 
-    private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
+    private fun genAnnotationArguments(annotation: IrAnnotation, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.symbol.owner.parameters) {
-            val value = annotation.arguments[param]
-            if (value != null)
-                genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
-            else if (param.defaultValue != null)
+        for ([name, value] in annotation.argumentMapping) {
+            if (value == null) {
                 continue // Default value will be supplied by JVM at runtime.
-            else if (context.state.classBuilderMode.generateBodies) //skip error for KAPT
-                error("No value for annotation parameter ${param.render()}")
+            }
+            genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, name), value, annotationVisitor)
         }
     }
 
@@ -224,19 +220,13 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     ) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
-            is IrConstructorCall -> {
-                val callee = value.symbol.owner
-                when {
-                    callee.parentAsClass.isAnnotationClass -> {
-                        val annotationClassType = callee.returnType
-                        val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
-                        val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
-                        annotationClassType.classOrNull?.owner?.let(classCodegen::addInnerClassInfo)
-                        genAnnotationArguments(value, visitor)
-                        visitor.visitEnd()
-                    }
-                    else -> error("Not supported as annotation! ${ir2string(value)}")
-                }
+            is IrAnnotation -> {
+                val annotationClassType = value.classSymbol.owner.defaultType
+                val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
+                val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
+                value.classSymbol.owner.let(classCodegen::addInnerClassInfo)
+                genAnnotationArguments(value, visitor)
+                visitor.visitEnd()
             }
             is IrGetEnumValue -> {
                 val enumEntry = value.symbol.owner
@@ -273,7 +263,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             boundType: Int,
             visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor,
         ) {
-            for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
+            for ([index, typeParameter] in typeParameterContainer.typeParameters.withIndex()) {
                 object : AnnotationCodegen(classCodegen) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         val typeReference = TypeReference.newTypeParameterReference(referenceType, index)
@@ -311,14 +301,13 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 declaration.origin.isSynthetic ->
                     true
                 declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         declaration.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
                     true
                 else ->
                     false
             }
 
-        val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
+        val IrAnnotation.annotationClass: IrClass get() = classSymbol.owner
     }
 
     internal fun generateTypeAnnotations(type: IrType, position: TypeAnnotationPosition) {
@@ -363,7 +352,7 @@ private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
 
 internal fun IrClass.applicableJavaTargetSet(): Set<String>? {
     val valueArgument = getAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)
-        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.value) as? IrVararg
+        ?.argumentMapping[StandardClassIds.Annotations.ParameterNames.value] as? IrVararg
         ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().map { it.symbol.owner.name.asString() }.toSet()
 }

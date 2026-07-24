@@ -7,18 +7,20 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapOr
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -240,21 +242,10 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
 @OptIn(PrivateForInline::class, PrivateConstantEvaluatorAPI::class)
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
-    return FirExpressionEvaluator.evaluateExpression(this, session)?.unwrapOr<T> {}
+    return FirExpressionEvaluator.evaluateExpression(this, session)?.resultOrNull<T>()
 }
 
 // --------------------------- other utilities ---------------------------
-
-fun FirExpression.unwrapVarargValue(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
-            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
-            else -> arguments
-        }
-        is FirCollectionLiteral -> arguments
-        else -> listOf(this)
-    }
-}
 
 val FirAnnotation.resolved: Boolean
     get() {
@@ -263,10 +254,32 @@ val FirAnnotation.resolved: Boolean
         return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
     }
 
-private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
-    ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
-
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
     val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return@any false
-    lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+    lookupTag.classId == StandardClassIds.Annotations.LowPriorityInOverloadResolution
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
+    return when (this) {
+        is ConeClassLikeType -> {
+            val regularClassSymbol = fullyExpandedType().lookupTag.toRegularClassSymbol() ?: return false
+            if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, sessionHolder.session)) {
+                return true
+            }
+            regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver() }
+        }
+        is ConeTypeParameterType -> {
+            lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
+        }
+        is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
+        is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
+        is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true
+        is ConeIntersectionType -> intersectedTypes.any { it.isRestrictSuspensionReceiver() }
+        is ConeIntegerConstantOperatorType,
+        is ConeIntegerLiteralConstantType,
+        is ConeStubTypeForTypeVariableInSubtyping,
+        is ConeTypeVariableType,
+            -> false
+    }
 }

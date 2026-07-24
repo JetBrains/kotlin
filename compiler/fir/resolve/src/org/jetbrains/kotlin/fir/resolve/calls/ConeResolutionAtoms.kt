@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.ArrayLiteralResolution
 import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -74,6 +75,12 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
         @UnsafeExpressionUtility
         fun createRawAtomForPotentiallyUnresolvedExpression(expression: FirExpression): ConeResolutionAtom {
             return createRawAtom(expression, allowUnresolvedExpression = true)!!
+        }
+
+        @ArrayLiteralResolution
+        fun createRawAtomForArrayLiteralResolution(expression: FirExpression): ConeResolutionAtom {
+            @OptIn(UnsafeExpressionUtility::class)
+            return createRawAtomForPotentiallyUnresolvedExpression(expression)
         }
 
         private fun createRawAtom(expression: FirExpression?, allowUnresolvedExpression: Boolean): ConeResolutionAtom? {
@@ -171,6 +178,7 @@ class ConeResolutionAtomWithPostponedChild(
         subAtom = fallbackSubAtom
     }
 
+    @ArrayLiteralResolution
     fun useFallbackForDisabledCollectionLiterals() {
         require(expression is FirCollectionLiteral) {
             "expected atom with ${FirCollectionLiteral::class.simpleName}, got ${expression::class.simpleName}"
@@ -211,6 +219,7 @@ sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolved
 // We separate this kind of atom because for them, we might fix earlier type variables contained inside the parameter
 // type of the relevant function expected type.
 sealed class ConeFunctionTypeRelatedPostponedResolvedAtom : ConePostponedResolvedAtom()
+sealed interface ConeLambdaAtom
 
 class ConeResolvedLambdaAtom(
     override val expression: FirAnonymousFunctionExpression,
@@ -226,7 +235,7 @@ class ConeResolvedLambdaAtom(
     // NB: It's not null right now only for lambdas inside the calls
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
-) : ConeFunctionTypeRelatedPostponedResolvedAtom() {
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), ConeLambdaAtom {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
@@ -274,7 +283,8 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     private val initialExpectedTypeType: ConeKotlinType,
     override val containingCallCandidate: Candidate,
     anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
-) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), LambdaWithTypeVariableAsExpectedTypeMarker {
+) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression),
+    LambdaWithTypeVariableAsExpectedTypeMarker, ConeLambdaAtom {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null

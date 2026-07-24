@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.script.examples.jvm.simple.test
 
 import org.jetbrains.kotlin.script.examples.jvm.simple.host.evalFile
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
-import org.junit.Test
 import kotlin.script.experimental.api.ResultWithDiagnostics
 
 class SimpleTest {
@@ -17,9 +17,9 @@ class SimpleTest {
     fun testSimple() {
         val res = evalFile(File("testData/hello.simplescript.kts"))
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
         )
     }
 
@@ -27,10 +27,11 @@ class SimpleTest {
     fun testError() {
         val res = evalFile(File("testData/error.simplescript.kts"))
 
-        Assert.assertTrue(
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'abracadabra'.") },
             "test failed - expecting a failure with the message \"Unresolved reference 'abracadabra'.\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'abracadabra'.") })
+                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+        )
     }
 }

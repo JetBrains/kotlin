@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.templates.standard.ScriptTemplateWithArgs]' type=kotlin.Unit
-    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit [companion]
       VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       EXPRESSION_BODY
         CALL 'public final fun runCompiledScript (scriptClass: java.lang.Class, vararg args: kotlin.Any?): kotlin.Unit declared in kotlin.script.experimental.jvm.RunnerKt' type=kotlin.Unit origin=null

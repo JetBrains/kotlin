@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.checkers.utils
 
 import java.io.File
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 fun clearFileFromDiagnosticMarkup(file: File) {
     val text = file.readText()
     val cleanText = clearTextFromDiagnosticMarkup(text)
     file.writeText(cleanText)
 }
 
+@K1Deprecation
 fun clearTextFromDiagnosticMarkup(text: String): String = CheckerTestUtil.rangeStartOrEndPattern.matcher(text).replaceAll("")

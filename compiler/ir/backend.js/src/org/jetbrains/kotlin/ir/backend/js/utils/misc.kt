@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.hasDefaultArgumentBridge
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
@@ -31,9 +32,9 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
     }
 
     if (
-        origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
         origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
-        origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
+        origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR ||
+        hasDefaultArgumentBridge
     ) {
         return false
     }

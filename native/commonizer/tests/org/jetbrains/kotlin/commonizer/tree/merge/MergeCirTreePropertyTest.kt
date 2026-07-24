@@ -10,9 +10,11 @@ package org.jetbrains.kotlin.commonizer.tree.merge
 import org.jetbrains.kotlin.commonizer.cir.CirName.Companion.create
 import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
 import kotlin.test.assertNotNull
+import org.junit.jupiter.api.Test
 
 class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
 
+    @Test
     fun `test simple property`() {
         val aTree = createCirTreeFromSourceCode("""val a: Int = 42""")
         val bTree = createCirTreeFromSourceCode("""val a: Int = 42""")
@@ -26,6 +28,7 @@ class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
         }
     }
 
+    @Test
     fun `test multiple properties`() {
         val aTree = createCirTreeFromSourceCode(
             """
@@ -56,6 +59,7 @@ class MergeCirTreePropertyTest : AbstractMergeCirTreeTest() {
         c.assertNoMissingTargetDeclaration()
     }
 
+    @Test
     fun `test missing target declarations`() {
         val aTree = createCirTreeFromSourceCode("val a: Int = 42")
         val bTree = createCirTreeFromSourceCode("val b: Int = 42")

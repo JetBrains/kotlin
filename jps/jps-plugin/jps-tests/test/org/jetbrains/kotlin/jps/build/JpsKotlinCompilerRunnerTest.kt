@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class JpsKotlinCompilerRunnerTest {
@@ -44,7 +44,7 @@ class JpsKotlinCompilerRunnerTest {
             ) to listOf("-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"),
         )
         JpsKotlinCompilerRunner().apply {
-            actualToExpectedArgsMap.forEach { (input, expected) ->
+            actualToExpectedArgsMap.forEach { [input, expected] ->
                 assertEquals(expected, input.filterDuplicatedCompilerPluginOptionsForTest())
             }
         }
@@ -87,7 +87,7 @@ class JpsKotlinCompilerRunnerTest {
             ),
         )
         JpsKotlinCompilerRunner().apply {
-            actualToExpectedArgsMap.forEach { (input, expected) ->
+            actualToExpectedArgsMap.forEach { [input, expected] ->
                 assertEquals(expected, input.filterDuplicatedWarningLevelForTest())
             }
         }

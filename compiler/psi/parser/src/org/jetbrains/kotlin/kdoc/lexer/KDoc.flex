@@ -63,6 +63,40 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
       }
       return current - zzStartRead;
   }
+
+  private enum LinePos {
+      AFTER_NEWLINE,
+      AFTER_LEADING_ASTERISK,
+      IN_CONTENT,
+  }
+
+  private boolean hasMatchingCloseFence(char c, int length) {
+      int pos = zzMarkedPos;
+      LinePos linePos = LinePos.IN_CONTENT;
+      while (pos < zzEndRead) {
+          char ch = zzBuffer.charAt(pos);
+          if (ch == '\n') {
+              if (linePos != LinePos.IN_CONTENT) return false;
+              linePos = LinePos.AFTER_NEWLINE;
+              pos++;
+          } else if (Character.isWhitespace(ch)) {
+              pos++;
+          } else if (linePos == LinePos.AFTER_NEWLINE && ch == '*') {
+              do { pos++; } while (pos < zzEndRead && zzBuffer.charAt(pos) == '*');
+              if (pos < zzEndRead && zzBuffer.charAt(pos) == '/') return false;
+              linePos = LinePos.AFTER_LEADING_ASTERISK;
+          } else if (ch == c) {
+              int fenceStart = pos;
+              do { pos++; } while (pos < zzEndRead && zzBuffer.charAt(pos) == ch);
+              if (pos - fenceStart == length) return true;
+              linePos = LinePos.IN_CONTENT;
+          } else {
+              linePos = LinePos.IN_CONTENT;
+              pos++;
+          }
+      }
+      return false;
+  }
 %}
 
 %function advance
@@ -184,6 +218,15 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
               return KDocTokens.MARKDOWN_LINK;
     }
 
+    {BACKTICK_STRING} {
+              codeFenceChar = zzBuffer.charAt(zzStartRead);
+              codeFenceLength = countRepeating(codeFenceChar);
+              if (hasMatchingCloseFence(codeFenceChar, codeFenceLength)) {
+                  yybeginAndUpdate(CODE_SPAN_CONTENTS);
+              }
+              return KDocTokens.TEXT;
+    }
+
     [^] {
               yybeginAndUpdate(CONTENTS);
               return KDocTokens.TEXT;
@@ -204,7 +247,9 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
     {BACKTICK_STRING} {
               codeFenceChar = zzBuffer.charAt(zzStartRead);
               codeFenceLength = countRepeating(codeFenceChar);
-              yybeginAndUpdate(CODE_SPAN_CONTENTS);
+              if (hasMatchingCloseFence(codeFenceChar, codeFenceLength)) {
+                  yybeginAndUpdate(CODE_SPAN_CONTENTS);
+              }
               return KDocTokens.TEXT;
       }
 }

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76548
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 sealed class MySealed {
     data object X : MySealed() {}

@@ -93,7 +93,7 @@ abstract class AbstractAtomicSymbols(
 
     protected fun createPackage(packageName: String): IrPackageFragment =
         createEmptyExternalPackageFragment(
-            moduleFragment.descriptor,
+            moduleFragment,
             FqName(packageName)
         )
 

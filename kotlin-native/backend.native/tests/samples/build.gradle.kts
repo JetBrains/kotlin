@@ -35,11 +35,11 @@ val isWindows = hostOs.startsWith("Windows")
 
 val localRepo = rootProject.file("build/.m2-local")
 
-val clean by tasks.creating(Delete::class) {
+val clean = tasks.create("clean", Delete::class) {
     delete(localRepo)
 }
 
-val buildSamplesWithPlatformLibs by tasks.creating {
+val buildSamplesWithPlatformLibs = tasks.create("buildSamplesWithPlatformLibs") {
     dependsOn(":csvparser:assemble")
     if (!isWindows) {
         dependsOn(":curl:assemble")

@@ -246,7 +246,7 @@ class BuildCacheIT : KGPBaseTest() {
     @GradleTest
     fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
         project(
-            "kapt2/kaptAvoidance",
+            "kapt/kaptAvoidance",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
         ) {
@@ -297,7 +297,7 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("A compilation error doesn't break kapt incremental compilation in test sources after restoring from build cache")
     @GradleTest
     fun testKaptIncrementalCompilationInTestSourcesAfterCacheHit(gradleVersion: GradleVersion) {
-        project("kapt2/kaptAvoidance", gradleVersion) {
+        project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
             build("build")
             build("clean", "build") {

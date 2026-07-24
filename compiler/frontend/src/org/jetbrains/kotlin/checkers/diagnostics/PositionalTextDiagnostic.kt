@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.checkers.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 data class PositionalTextDiagnostic(val diagnostic: TextDiagnostic, val start: Int, val end: Int)

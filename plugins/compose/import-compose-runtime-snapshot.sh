@@ -26,4 +26,4 @@ currentDir=$(dirname "$0")
 versionFile="$currentDir/compose-runtime-snapshot-versions.toml"
 echo "Writing $artifactVersion and $snapshotId to $versionFile"
 sed -i '' -E "s/snapshot-id = \"[^\"]+\"/snapshot-id = \"$snapshotId\"/" "$versionFile"
-sed -i '' -E "s/snapshot-version = \"[^\"]+\"/snapshot-version = \"$artifactVersion\"/" "$versionFile"
+sed -i '' -E "s/runtime-version = \"[^\"]+\"/runtime-version = \"$artifactVersion\"/" "$versionFile"

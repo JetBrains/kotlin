@@ -50,7 +50,7 @@ fun TestProject.makeSnapshotTo(
     projectPath.copyRecursively(dest)
 
     val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion)
-    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { (k, v) -> "${k}=${v}" }
+    val gradlePropertiesContent = gradlePropertiesFromBuildOptions.entries.joinToString("\n") { [k, v] -> "${k}=${v}" }
 
     dest.walk()
         .filter { it.isRegularFile() }
@@ -63,7 +63,7 @@ fun TestProject.makeSnapshotTo(
                     .map { it.trim() }
                     .map { line ->
                         val match = propertiesRegex.matchEntire(line) ?: return@map line
-                        val (key, value) = match.destructured
+                        val [key, value] = match.destructured
                         val overriddenValue = gradlePropertiesFromBuildOptions[key]
                         if (overriddenValue != null && value != overriddenValue) {
                             "# $line // overridden by buildOptions with\n$key=$overriddenValue\n"
@@ -136,7 +136,7 @@ private fun BuildOptions.asGradleProperties(gradleVersion: GradleVersion): Map<S
 }
 
 private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
-    return environmentVariables.environmentalVariables.asSequence().joinToString(separator = "\n|") { (key, value) ->
+    return environmentVariables.environmentalVariables.asSequence().joinToString(separator = "\n|") { [key, value] ->
         "$envCommand $key=\"$value\""
     }
 }
@@ -158,7 +158,7 @@ fun GradleProject.addPropertyToGradleProperties(
     if (!gradleProperties.exists()) gradleProperties.createFile()
 
     val propertiesContent = gradleProperties.readText()
-    val (existingPropertyLine, otherLines) = propertiesContent
+    val [existingPropertyLine, otherLines] = propertiesContent
         .lines()
         .partition {
             it.trim().startsWith(propertyName)

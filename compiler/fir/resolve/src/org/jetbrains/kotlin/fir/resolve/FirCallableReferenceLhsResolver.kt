@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -72,7 +73,7 @@ class FirCallableReferenceLhsResolver(
     }
 
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
-        var fir = symbol?.fir ?: return null
+        var fir = qualifierSymbol?.fir ?: return null
         while (fir is FirTypeAlias) {
             fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
@@ -92,7 +93,13 @@ class FirCallableReferenceLhsResolver(
     )
 
     private fun resolveExpressionOnLhs(expression: FirExpression): ExpressionCallableReferenceLhs? {
-        val type = expression.resolvedType
+        val type =
+            // Preserve strange behavior until KT-84336 is fixed
+            if (expression is FirResolvedQualifier && expression.qualifierSymbol is FirTypeAliasSymbol && expression.typeArguments.isNotEmpty()) {
+                session.builtinTypes.unitType.coneType
+            } else {
+                expression.resolvedType
+            }
 
         val expressionWithoutSmartCast = expression.unwrapSmartcastExpression()
         if (expressionWithoutSmartCast is FirResolvedQualifier) {

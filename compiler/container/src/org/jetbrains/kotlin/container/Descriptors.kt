@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.container
 
 import java.lang.reflect.*
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 interface ValueDescriptor {
     fun getValue(): Any
 }
@@ -29,6 +31,7 @@ internal interface ComponentDescriptor : ValueDescriptor {
         get() = false
 }
 
+@K1Deprecation
 class IterableDescriptor(val descriptors: Iterable<ValueDescriptor>) : ValueDescriptor {
     override fun getValue(): Any {
         return descriptors.map { it.getValue() }

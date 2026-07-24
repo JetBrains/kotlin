@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.hmppModuleName
+import org.jetbrains.kotlin.psi.isCommonSource
 import java.io.File
 
 class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
 
+@OptIn(K1Deprecation::class)
 fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
@@ -90,7 +92,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
 ) : Sequence<SourceFileWithModule<Source>> = sequence {
     val processedFiles = hashSetOf<VirtualFile>()
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
+    for ((val sourceRootPath = path, val isCommon, val hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
         val vFile = findVirtualFile(sourceRoot)
         if (vFile == null) {
@@ -130,6 +132,7 @@ fun createSourceFilesFromSourceRoots(
     val result = mutableListOf<KtFile>()
     sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon, moduleName ->
         psiManager.findFile(virtualFile)?.let {
+            @OptIn(KtImplementationDetail::class)
             if (it is KtFile) {
                 it.isCommonSource = isCommon
                 if (moduleName != null) {

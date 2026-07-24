@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -64,14 +66,22 @@ class FirKotlinScopeProvider(
                 memberRequiredPhase
             ).let {
                 val delegateFields = klass.delegateFields
-                if (delegateFields.isEmpty())
+                if (delegateFields.isEmpty() || klass.superConeTypes.any { superType ->
+                        val diagnosticKind = ((superType as? ConeErrorType)?.diagnostic as? ConeSimpleDiagnostic)?.kind
+                        diagnosticKind == DiagnosticKind.LoopInSupertype
+                    }
+                )
                     it
                 else
                     FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
             }
             val declaredMemberScopeWithPossiblySynthesizedMembers =
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
-                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue) && klass.origin != FirDeclarationOrigin.Library) {
+                if (
+                    klass is FirRegularClass && !klass.isExpect &&
+                    (klass.isData || klass.isInlineClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
+                    klass.origin != FirDeclarationOrigin.Library
+                ) {
                     // See also KT-58926 (we apply delegation first, and data/value classes after it)
                     FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
                 } else {

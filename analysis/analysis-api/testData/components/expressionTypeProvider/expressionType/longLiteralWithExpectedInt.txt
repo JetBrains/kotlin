@@ -1,0 +1,3 @@
+expression: 50000000000000000
+expression PSI: KtConstantExpression
+type: kotlin.Long

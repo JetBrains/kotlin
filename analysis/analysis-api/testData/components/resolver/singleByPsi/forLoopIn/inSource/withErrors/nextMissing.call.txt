@@ -38,4 +38,4 @@ KtForExpression(23,37): 'for(i in f) {}'
         valueArgumentMapping = {}
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Iterator'.>

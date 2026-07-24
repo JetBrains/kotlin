@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class SynchronizedByValueChecker : CallChecker {
     private fun KotlinType.isValueOrPrimitive(): Boolean = KotlinBuiltIns.isPrimitiveType(this)
             || constructor.declarationDescriptor.let { it is ClassDescriptor && it.isValue }

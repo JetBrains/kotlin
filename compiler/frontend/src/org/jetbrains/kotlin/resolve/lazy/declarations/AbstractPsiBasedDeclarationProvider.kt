@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.safeNameForLazyResolve
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
+@K1Deprecation
 abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManager) : DeclarationProvider {
 
     protected class Index {

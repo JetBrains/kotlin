@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // FIR_DUMP
 // RENDER_DIAGNOSTICS_FULL_TEXT
 

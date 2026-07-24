@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.konan.file.File
+import kotlin.io.path.Path
+import kotlin.io.path.exists
 
 internal fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
     val result = mutableListOf<String>()
     staticLibraries.forEach { library ->
         
-        val resolution = libraryPaths.map { "$it/$library" } 
-                .find { File(it).exists }
+        val resolution = libraryPaths.map { "$it/$library" }.find { Path(it).exists() }
 
         if (resolution != null) {
             result.add(resolution)

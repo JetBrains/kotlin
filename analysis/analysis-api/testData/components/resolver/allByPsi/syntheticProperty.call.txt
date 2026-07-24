@@ -247,7 +247,7 @@ KtNameReferenceExpression(119,128): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(129,130): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -385,7 +385,7 @@ KtNameReferenceExpression(147,156): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(157,159): '+='
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -543,7 +543,7 @@ KtNameReferenceExpression(176,185): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(185,187): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -625,7 +625,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(192,194): '--'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -750,12 +750,14 @@ KtPostfixExpression(219,230): 'something++'
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -765,11 +767,14 @@ KtPostfixExpression(219,230): 'something++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: JavaClass
+            typeParameters: []
             visibility: PUBLIC
           type = JavaClass
         extensionReceiver = null
@@ -790,12 +795,14 @@ KtNameReferenceExpression(219,228): 'something'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -805,11 +812,14 @@ KtNameReferenceExpression(219,228): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null
@@ -825,7 +835,7 @@ KtNameReferenceExpression(219,228): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(228,230): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -851,12 +861,14 @@ KtOperationReferenceExpression(228,230): '++'
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -866,11 +878,14 @@ KtOperationReferenceExpression(228,230): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: JavaClass
+            typeParameters: []
             visibility: PUBLIC
           type = JavaClass
         extensionReceiver = null
@@ -912,12 +927,14 @@ KtPostfixExpression(235,248): '(something)++'
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -927,11 +944,14 @@ KtPostfixExpression(235,248): '(something)++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: JavaClass
+            typeParameters: []
             visibility: PUBLIC
           type = JavaClass
         extensionReceiver = null
@@ -955,12 +975,14 @@ KtNameReferenceExpression(236,245): 'something'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -970,11 +992,14 @@ KtNameReferenceExpression(236,245): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null
@@ -990,7 +1015,7 @@ KtNameReferenceExpression(236,245): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(246,248): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1016,12 +1041,14 @@ KtOperationReferenceExpression(246,248): '++'
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1031,11 +1058,14 @@ KtOperationReferenceExpression(246,248): '++'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: JavaClass
+            typeParameters: []
             visibility: PUBLIC
           type = JavaClass
         extensionReceiver = null
@@ -1056,12 +1086,14 @@ KtBinaryExpression(253,268): '(something) = 1'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1071,11 +1103,14 @@ KtBinaryExpression(253,268): '(something) = 1'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null
@@ -1100,12 +1135,14 @@ KtNameReferenceExpression(254,263): 'something'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1115,11 +1152,14 @@ KtNameReferenceExpression(254,263): 'something'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null
@@ -1136,17 +1176,19 @@ KtNameReferenceExpression(254,263): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(265,266): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1156,11 +1198,14 @@ KtOperationReferenceExpression(265,266): '='
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: JavaClass
+          typeParameters: []
           visibility: PUBLIC
         type = JavaClass
       extensionReceiver = null
@@ -1263,7 +1308,7 @@ KtNameReferenceExpression(284,293): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(295,296): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

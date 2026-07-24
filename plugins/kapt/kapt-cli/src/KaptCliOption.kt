@@ -138,13 +138,6 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-tools-jar-location", VALUE)
     ),
 
-    USE_LIGHT_ANALYSIS_OPTION(
-        "useLightAnalysis",
-        "true | false",
-        "Skip body analysis if possible",
-        cliToolOption = CliToolOption("-Kapt-use-light-analysis", FLAG)
-    ),
-
     CORRECT_ERROR_TYPES_OPTION(
         "correctErrorTypes",
         "true | false",
@@ -208,11 +201,12 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
-    USE_K2(
-        "useK2",
-        "true | false",
-        "Use K2",
-        cliToolOption = CliToolOption("-Kapt-use-k2", FLAG)
+    STUB_GENERATION_SCHEME_OPTION(
+        "stubGenerationScheme",
+        "<direct|jtree>",
+        "Stub generation scheme: 'jtree' (default) is the historical scheme that uses javac AST; " +
+                "'direct' is a new experimental scheme that generates Java text directly.",
+        cliToolOption = CliToolOption("-Kapt-stub-generation-scheme", VALUE)
     ),
 
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
@@ -224,10 +218,26 @@ enum class KaptCliOption(
 
     INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
 
-    @Deprecated("Do not use in CLI")
+    @Deprecated("No-op in K2")
+    USE_LIGHT_ANALYSIS_OPTION(
+        "useLightAnalysis",
+        "true | false",
+        "Skip body analysis if possible",
+        cliToolOption = CliToolOption("-Kapt-use-light-analysis", FLAG)
+    ),
+
+    @Deprecated("No-op in K2")
+    USE_K2(
+        "useK2",
+        "true | false",
+        "Use K2",
+        cliToolOption = CliToolOption("-Kapt-use-k2", FLAG)
+    ),
+
+    @Deprecated("Do not use in CLI, use 'apOption' instead")
     APT_OPTIONS_OPTION("apoptions", "options map", "Encoded annotation processor options", false),
 
-    @Deprecated("Do not use in CLI")
+    @Deprecated("Do not use in CLI, use 'javacOption' instead")
     JAVAC_CLI_OPTIONS_OPTION("javacArguments", "javac CLI options map", "Encoded javac CLI options", false);
 
     override val required: Boolean = false

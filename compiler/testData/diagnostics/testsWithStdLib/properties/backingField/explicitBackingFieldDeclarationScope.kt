@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 
 class A(val city: List<String><!SYNTAX!><!> field: MutableList<String> = mutableListOf())
 

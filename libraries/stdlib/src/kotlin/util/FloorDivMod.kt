@@ -12,7 +12,10 @@ package kotlin
 
 import kotlin.math.sign
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -23,6 +26,7 @@ public inline fun Byte.floorDiv(other: Byte): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -30,7 +34,10 @@ public inline fun Byte.floorDiv(other: Byte): Int =
 public inline fun Byte.mod(other: Byte): Byte = 
     this.toInt().mod(other.toInt()).toByte()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -41,6 +48,7 @@ public inline fun Byte.floorDiv(other: Short): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -48,7 +56,10 @@ public inline fun Byte.floorDiv(other: Short): Int =
 public inline fun Byte.mod(other: Short): Short = 
     this.toInt().mod(other.toInt()).toShort()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -59,6 +70,7 @@ public inline fun Byte.floorDiv(other: Int): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -66,7 +78,10 @@ public inline fun Byte.floorDiv(other: Int): Int =
 public inline fun Byte.mod(other: Int): Int = 
     this.toInt().mod(other)
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -77,6 +92,7 @@ public inline fun Byte.floorDiv(other: Long): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -84,7 +100,10 @@ public inline fun Byte.floorDiv(other: Long): Long =
 public inline fun Byte.mod(other: Long): Long = 
     this.toLong().mod(other)
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -95,6 +114,7 @@ public inline fun Short.floorDiv(other: Byte): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -102,7 +122,10 @@ public inline fun Short.floorDiv(other: Byte): Int =
 public inline fun Short.mod(other: Byte): Byte = 
     this.toInt().mod(other.toInt()).toByte()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -113,6 +136,7 @@ public inline fun Short.floorDiv(other: Short): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -120,7 +144,10 @@ public inline fun Short.floorDiv(other: Short): Int =
 public inline fun Short.mod(other: Short): Short = 
     this.toInt().mod(other.toInt()).toShort()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -131,6 +158,7 @@ public inline fun Short.floorDiv(other: Int): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -138,7 +166,10 @@ public inline fun Short.floorDiv(other: Int): Int =
 public inline fun Short.mod(other: Int): Int = 
     this.toInt().mod(other)
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -149,6 +180,7 @@ public inline fun Short.floorDiv(other: Long): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -156,7 +188,10 @@ public inline fun Short.floorDiv(other: Long): Long =
 public inline fun Short.mod(other: Long): Long = 
     this.toLong().mod(other)
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -167,6 +202,7 @@ public inline fun Int.floorDiv(other: Byte): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -174,7 +210,10 @@ public inline fun Int.floorDiv(other: Byte): Int =
 public inline fun Int.mod(other: Byte): Byte = 
     this.mod(other.toInt()).toByte()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -185,6 +224,7 @@ public inline fun Int.floorDiv(other: Short): Int =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -192,7 +232,10 @@ public inline fun Int.floorDiv(other: Short): Int =
 public inline fun Int.mod(other: Short): Short = 
     this.mod(other.toInt()).toShort()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -206,6 +249,7 @@ public inline fun Int.floorDiv(other: Int): Int {
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -215,7 +259,10 @@ public inline fun Int.mod(other: Int): Int {
     return r + (other and (((r xor other) and (r or -r)) shr 31))
 }
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -226,6 +273,7 @@ public inline fun Int.floorDiv(other: Long): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -233,7 +281,10 @@ public inline fun Int.floorDiv(other: Long): Long =
 public inline fun Int.mod(other: Long): Long = 
     this.toLong().mod(other)
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -244,6 +295,7 @@ public inline fun Long.floorDiv(other: Byte): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -251,7 +303,10 @@ public inline fun Long.floorDiv(other: Byte): Long =
 public inline fun Long.mod(other: Byte): Byte = 
     this.mod(other.toLong()).toByte()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -262,6 +317,7 @@ public inline fun Long.floorDiv(other: Short): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -269,7 +325,10 @@ public inline fun Long.floorDiv(other: Short): Long =
 public inline fun Long.mod(other: Short): Short = 
     this.mod(other.toLong()).toShort()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -280,6 +339,7 @@ public inline fun Long.floorDiv(other: Int): Long =
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -287,7 +347,10 @@ public inline fun Long.floorDiv(other: Int): Long =
 public inline fun Long.mod(other: Int): Int = 
     this.mod(other.toLong()).toInt()
 
-/** Divides this value by the other value, flooring the result to an integer that is closer to negative infinity. */
+/**
+ * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+ * @sample samples.misc.Builtins.floorDiv
+ */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
 @kotlin.internal.IntrinsicConstEvaluation
@@ -301,6 +364,7 @@ public inline fun Long.floorDiv(other: Long): Long {
  * Calculates the remainder of flooring division of this value (dividend) by the other value (divisor).
  *
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+ * @sample samples.misc.Builtins.mod
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -316,6 +380,7 @@ public inline fun Long.mod(other: Long): Long {
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
+ * @sample samples.misc.Builtins.modFloat
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -331,6 +396,7 @@ public inline fun Float.mod(other: Float): Float {
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
+ * @sample samples.misc.Builtins.modFloat
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -344,6 +410,7 @@ public inline fun Float.mod(other: Double): Double =
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
+ * @sample samples.misc.Builtins.modFloat
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -357,6 +424,7 @@ public inline fun Double.mod(other: Float): Double =
  * The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
  *
  * If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor.
+ * @sample samples.misc.Builtins.modFloat
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly

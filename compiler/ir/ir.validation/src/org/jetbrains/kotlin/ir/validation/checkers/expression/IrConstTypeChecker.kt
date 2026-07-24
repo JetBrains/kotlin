@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
+@IrTypeCheckers
 object IrConstTypeChecker : IrElementChecker<IrConst>(IrConst::class) {
     override fun check(element: IrConst, context: CheckerContext) {
         val irBuiltIns = context.irBuiltIns

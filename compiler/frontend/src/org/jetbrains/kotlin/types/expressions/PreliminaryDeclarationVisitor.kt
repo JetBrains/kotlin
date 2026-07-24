@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
+@K1Deprecation
 class PreliminaryDeclarationVisitor(
     val declaration: KtDeclaration,
     val languageVersionSettings: LanguageVersionSettings

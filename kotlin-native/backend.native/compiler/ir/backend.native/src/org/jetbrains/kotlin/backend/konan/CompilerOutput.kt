@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
-import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.linkerOpts
@@ -27,6 +25,8 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -83,7 +83,7 @@ internal fun produceCStubs(generationState: NativeGenerationState) {
             generationState.diagnosticReporter,
             generationState.inVerbosePhase
     ).forEach {
-        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
+        parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePathString())
     }
 }
 
@@ -101,7 +101,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val config = generationState.config
     val runtimeModulesConfig = generationState.runtimeModulesConfig
 
-    val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
+    val [bitcodePartOfStdlib, bitcodeLibraries] = generationState.dependenciesTracker.bitcodeToLink
             .filterNot { it.isCInteropLibrary() && config.cCallMode == CCallMode.Direct }
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
@@ -118,7 +118,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         }
         addAll(generatedBitcodeFiles)
         addAll(generationState.llvm.additionalProducedBitcodeFiles)
-        addAll(bitcodeLibraries)
+        addAll(bitcodeLibraries.map { it.pathString })
         if (config.produce == CompilerOutputKind.DYNAMIC_CACHE) {
             add(RuntimeModule.EXCEPTIONS_SUPPORT)
         }
@@ -182,7 +182,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
         }
         // Bitcode parts of stdlib are considered part of the runtime
-        addAll(bitcodePartOfStdlib)
+        addAll(bitcodePartOfStdlib.map { it.pathString })
     }
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
@@ -225,12 +225,7 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     }
 }
 
-internal fun insertAliasToEntryPoint(context: NativeBackendPhaseContext, module: LLVMModuleRef) {
-    val config = context.config
-    val nomain = config.configuration.nomain
-    if (config.produce != CompilerOutputKind.PROGRAM || nomain)
-        return
-    val entryPointName = config.entryPointName
+internal fun insertAliasToEntryPoint(module: LLVMModuleRef, entryPointName: String) {
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
     val programAddressSpace = LLVMKotlinGetProgramAddressSpace(module)

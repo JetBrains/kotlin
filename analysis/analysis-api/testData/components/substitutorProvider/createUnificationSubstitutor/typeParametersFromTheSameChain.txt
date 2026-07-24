@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-C <: A (Original: C <: A)
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {A = kotlin/Any?, C = kotlin/Any?, B = kotlin/Any?}>
-Substituted pairs:
-kotlin/Any? <: kotlin/Any? (Original: C <: A)

@@ -47,7 +47,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                         val instance =
                             scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults)
 
-                        compiledScript.resultField?.let { (resultFieldName, resultType) ->
+                        compiledScript.resultField?.let { [resultFieldName, resultType] ->
                             val resultField = scriptClass.java.getDeclaredField(resultFieldName).apply { isAccessible = true }
                             ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, scriptClass, instance)
                         } ?: ResultValue.Unit(scriptClass, instance)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cfg.variable
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
+@K1Deprecation
 class PseudocodeVariableDataCollector(
     private val bindingContext: BindingContext,
     private val pseudocode: Pseudocode
@@ -75,11 +77,13 @@ class PseudocodeVariableDataCollector(
     }
 }
 
+@K1Deprecation
 interface BlockScopeVariableInfo {
     val declaredIn: Map<VariableDescriptor, BlockScope>
     val scopeVariables: Map<BlockScope, Collection<VariableDescriptor>>
 }
 
+@K1Deprecation
 class BlockScopeVariableInfoImpl : BlockScopeVariableInfo {
     override val declaredIn = HashMap<VariableDescriptor, BlockScope>()
     override val scopeVariables = HashMap<BlockScope, MutableCollection<VariableDescriptor>>()

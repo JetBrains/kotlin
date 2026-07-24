@@ -45,7 +45,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
     override fun check(declaration: FirCallableDeclaration) {
         if (
             declaration.hasAnnotation(StandardClassIds.Annotations.HidesMembers, context.session) ||
-            declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull(context.session) } ||
+            declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull() } ||
             declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
             // A common pattern, KT-70012
             declaration.isActual ||
@@ -111,7 +111,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             processMembers = { scope.processPropertiesByName(declaration.name, it) },
         )
 
-        val (shadowingInvoke, shadowingProperty) = shadowingSymbols ?: return
+        val [shadowingInvoke, shadowingProperty] = shadowingSymbols ?: return
 
         reporter.reportOn(
             declaration.source,

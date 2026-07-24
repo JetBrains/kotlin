@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
+import org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.ShorteningResultsRenderer.renderShorteningResults
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -47,7 +48,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
 
         val actual = buildString {
             appendLine("Before shortening: ${element.text}")
-            shortenings.forEach { (name, shortening) ->
+            shortenings.forEach { [name, shortening] ->
                 appendLine("with ${name}:")
                 if (shortening.isEmpty) return@forEach
                 renderShorteningResults(shortening)

@@ -212,7 +212,7 @@ val MessageCollector.reporter: MessageReporter
     }
 
 fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
-    val (diagnosticCode, scriptSeverity) = when (severity) {
+    val [diagnosticCode, scriptSeverity] = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
         Severity.WARNING, Severity.FIXED_WARNING, Severity.STRONG_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING

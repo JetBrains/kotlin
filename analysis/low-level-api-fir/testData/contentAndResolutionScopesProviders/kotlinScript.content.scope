@@ -1,0 +1,6 @@
+Resulting Content Scopes:
+Module LIBRARY:
+    + Foo.class
+    - Script.kts
+Module MAIN:
+    + main.kt

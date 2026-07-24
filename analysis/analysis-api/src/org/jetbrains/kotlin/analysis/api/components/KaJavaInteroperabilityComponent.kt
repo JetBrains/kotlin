@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -77,11 +79,21 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
     /**
+     * Convert the given [KaType] to a JVM type descriptor with the [KaTypeMappingMode.DEFAULT].
+     * To learn more about JVM descriptors, check out the
+     * [JVM specification](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.3).
+     */
+    @KaExperimentalApi
+    public fun KaType.mapToJvmTypeDescriptor(): String
+
+    /**
      * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
      *
      * @see TypeMappingMode
      */
+    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
     @KaExperimentalApi
+    @KaNoContextParameterBridgeRequired
     public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
 
     /**
@@ -129,6 +141,22 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
 }
 
 /**
+ * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
+ *
+ * @see TypeMappingMode
+ */
+@Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
+@KaExperimentalApi
+@KaContextParameterApi
+@KaCustomContextParameterBridge
+context(session: KaSession)
+public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
+    @OptIn(KaSessionComponentImplementationDetail::class)
+    return KaJavaInteroperabilityComponent::class.java.getDeclaredMethod("mapToJvmType", KaType::class.java, TypeMappingMode::class.java)
+        .invoke(session, this, mode) as Type
+}
+
+/**
  * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].
  *
  * [PsiType] is JVM conception, so this method will return `null` for non-JVM platforms, unless [allowNonJvmPlatforms] is set.
@@ -156,9 +184,7 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
  * @param allowNonJvmPlatforms Whether the [PsiType] should be computed even for non-JVM modules. The flag provides no validity
  * guarantees – the returned type may be unresolvable from Java, or `null`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun KaType.asPsiType(
     useSitePosition: PsiElement,
@@ -192,8 +218,11 @@ public fun KaType.asPsiType(
  *
  * @return The converted [KaType], or `null` if conversion is not possible. For example, [PsiType] might not be resolvable.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.asKaType(useSitePosition)", "org.jetbrains.kotlin.analysis.api.javaInterop.asKaType"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
@@ -205,27 +234,31 @@ public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
 }
 
 /**
- * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
- *
- * @see TypeMappingMode
+ * Convert the given [KaType] to a JVM type descriptor with the [KaTypeMappingMode.DEFAULT].
+ * To learn more about JVM descriptors, check out the
+ * [JVM specification](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.3).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.mapToJvmTypeDescriptor()", "org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor"),
+)
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
+public fun KaType.mapToJvmTypeDescriptor(): String {
     return with(session) {
-        mapToJvmType(
-            mode = mode,
-        )
+        mapToJvmTypeDescriptor()
     }
 }
 
 /**
  * Whether the given [KaType] is backed by a single JVM primitive type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.isPrimitiveBacked", "org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaType.isPrimitiveBacked: Boolean
@@ -235,7 +268,10 @@ public val KaType.isPrimitiveBacked: Boolean
  * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
  * [PsiClass]es), and Kotlin light classes.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.namedClassSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
@@ -244,7 +280,10 @@ public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 /**
  * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations and Kotlin light classes.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.callableSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val PsiMember.callableSymbol: KaCallableSymbol?
@@ -259,8 +298,11 @@ public val PsiMember.callableSymbol: KaCallableSymbol?
  * Applicable only to JVM modules, and common modules with JVM targets.
  * [containingJvmClassName] is always `null` all other kinds of modules.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.containingJvmClassName", "org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.containingJvmClassName: String?
@@ -270,9 +312,7 @@ public val KaCallableSymbol.containingJvmClassName: String?
  * The JVM getter method name for the given [KaPropertySymbol].
  * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.javaGetterName: Name
     get() = with(session) { javaGetterName }
@@ -281,9 +321,7 @@ public val KaPropertySymbol.javaGetterName: Name
  * The JVM setter method name for the given [KaPropertySymbol].
  * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.javaSetterName: Name?
     get() = with(session) { javaSetterName }

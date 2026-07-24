@@ -11,3 +11,5 @@ enum class E {
     @Deprecated("b")
     Entry3
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: E.class[getEntries;valueOf;values]

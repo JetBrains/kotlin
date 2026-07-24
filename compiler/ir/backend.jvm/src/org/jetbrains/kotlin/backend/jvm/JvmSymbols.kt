@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.classSymbolOrNull
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -40,10 +41,12 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.invoke.MethodType
 
 class JvmSymbols(
     private val context: JvmBackendContext,
+    private val irModule: IrModuleFragment,
 ) : BackendSymbols(context.irBuiltIns) {
     private val irBuiltIns = context.irBuiltIns
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
@@ -80,14 +83,14 @@ class JvmSymbols(
     val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
-        createEmptyExternalPackageFragment(context.state.module, fqName)
+        createEmptyExternalPackageFragment(irModule, fqName)
 
     private fun createClass(
         fqName: FqName,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.FINAL,
         classIsValue: Boolean = false,
-        block: (IrClass) -> Unit = {}
+        block: (IrClass) -> Unit = {},
     ): IrClassSymbol =
         irFactory.buildClass {
             name = fqName.shortName()
@@ -280,7 +283,7 @@ class JvmSymbols(
             klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
         }
 
-    private val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
+    val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
         createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
             klass.addConstructor { isPrimary = true }
         }
@@ -485,7 +488,7 @@ class JvmSymbols(
         }
     }
 
-    val boxingConstructorMarkerClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.BoxingConstructorMarker"))
+    val boxingConstructorMarkerClass: IrClassSymbol = createClass(JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME)
 
     private data class PropertyReferenceKey(
         val mutable: Boolean,
@@ -564,7 +567,7 @@ class JvmSymbols(
     }
 
     val javaLangReflectSymbols: JvmReflectSymbols by lazy {
-        JvmReflectSymbols(context)
+        JvmReflectSymbols(context, irModule)
     }
 
     override val functionAdapter: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionAdapter"), ClassKind.INTERFACE) { klass ->
@@ -591,7 +594,7 @@ class JvmSymbols(
         listOf(
             "kotlin.internal.ProgressionUtilKt" to listOf(irBuiltIns.intClass, irBuiltIns.longClass),
             "kotlin.internal.UProgressionUtilKt" to listOfNotNull(irBuiltIns.uintClass, irBuiltIns.ulongClass)
-        ).map { (fqn, types) ->
+        ).map { [fqn, types] ->
             createClass(FqName(fqn)) { klass ->
                 for (type in types) {
                     klass.addFunction("getProgressionLastElement", type.owner.defaultType, isStatic = true).apply {
@@ -918,6 +921,42 @@ class JvmSymbols(
     val remainderUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("remainderUnsigned")
     val toUnsignedStringLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("toUnsignedString")
 
+    private val unsignedArrayClasses: List<IrClassSymbol> =
+        StandardClassIds.elementTypeByUnsignedArrayType.keys.mapNotNull { it.classSymbolOrNull() }
+
+    private val unsignedArraySizeGetters: Map<IrClassSymbol, IrSimpleFunctionSymbol> =
+        unsignedArrayClasses.mapNotNull { arrayClass ->
+            arrayClass.owner.getPropertyGetter("size")?.let { arrayClass to it }
+        }.toMap()
+
+    private val unsignedArrayElementGetters: Map<IrClassSymbol, IrSimpleFunctionSymbol> =
+        unsignedArrayClasses.mapNotNull { arrayClass ->
+            arrayClass.owner.functions.singleOrNull {
+                it.name == OperatorNameConventions.GET &&
+                        it.hasShape(
+                            dispatchReceiver = true,
+                            regularParameters = 1,
+                            parameterTypes = listOf(null, irBuiltIns.intType)
+                        )
+            }?.let { arrayClass to it.symbol }
+        }.toMap()
+
+    override fun arraySizePropertyGetter(arrayType: IrType): IrSimpleFunction {
+        if (arrayType.isUnsignedArray()) {
+            return unsignedArraySizeGetters[arrayType.getClass()!!.symbol]?.owner
+                ?: error("size getter symbol not found for ${arrayType.getClass()}")
+        }
+        return super.arraySizePropertyGetter(arrayType)
+    }
+
+    override fun arrayElementGetter(arrayType: IrType, intType: IrType): IrSimpleFunction {
+        if (arrayType.isUnsignedArray()) {
+            return unsignedArrayElementGetters[arrayType.getClass()!!.symbol]?.owner
+                ?: error("element getter symbol not found for ${arrayType.getClass()}")
+        }
+        return super.arrayElementGetter(arrayType, intType)
+    }
+
     val intPostfixIncrDecr = createIncrDecrFun("<int-postfix-incr-decr>")
     val intPrefixIncrDecr = createIncrDecrFun("<int-prefix-incr-decr>")
 
@@ -1036,7 +1075,7 @@ class JvmSymbols(
         private val javaLangAnnotation: FqName = FqName("java.lang.annotation")
 
         private val javaLangAnnotationPackage: IrPackageFragment =
-            createEmptyExternalPackageFragment(context.state.module, javaLangAnnotation)
+            createEmptyExternalPackageFragment(irModule, javaLangAnnotation)
 
         private fun buildClass(
             fqName: FqName,

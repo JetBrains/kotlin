@@ -6,7 +6,7 @@ FILE: A.kt
 
     }
     private final fun test(): R|kotlin/Unit| {
-        lval a: R|A| = Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42))
+        lval a: R|A| = <Not a superclass of 'List' expected>#(Int(42))
     }
 FILE: B.kt
     public final class B : R|SuperB| {
@@ -16,7 +16,7 @@ FILE: B.kt
 
     }
     private final fun test(): R|kotlin/Unit| {
-        lval b: R|B| = Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42))
+        lval b: R|B| = <Not a superclass of 'List' expected>#(Int(42))
     }
 FILE: C.kt
     public final class C : R|SuperC| {

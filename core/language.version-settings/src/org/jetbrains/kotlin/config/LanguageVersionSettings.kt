@@ -17,7 +17,9 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
 }
 
 /**
- * @property sinceVersion determines in which Language Version the feature becomes enabled by default
+ * @property sinceVersion
+ * Determines in which Language Version the feature becomes enabled by default. If `null`, then it means LV is
+ * not decided yet. When comparing `sinceVersion` fields, `null` should be considered greater than any version.
  * @property sinceApiVersion determines minimal API Version required for using the feature
  * @property enabledInProgressiveMode
  * If 'true', then this feature will be automatically enabled under '-progressive' mode if `sinceKotlin` is set.
@@ -38,6 +40,11 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
  * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
  * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
  *
+ * @property enabledInLatestLVTests
+ * This property is used internally by test infrastructure to enable the feature for the latest language version
+ * test runners. Handy when the feature changes user-visible behavior of already existing language constructs
+ * or is some internal refactoring, but for some reason can't have [sinceVersion] set.
+ *
  * @property testOnly
  * If 'true', then it's impossible to enable this feature using `-XXLanguage:+FeatureName` CLI flag.
  * Should be used for features which are already added to the compiler, but are not ready to be shown to users.
@@ -49,13 +56,13 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
  */
 enum class LanguageFeature(
     val sinceVersion: LanguageVersion?,
-    val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val issue: String,
+    val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     private val enabledInProgressiveMode: Boolean = false,
+    val enabledInLatestLVTests: Boolean,
     val forcesPreReleaseBinaries: Boolean = false,
     val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
-    val hintUrl: String? = null,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
@@ -63,8 +70,8 @@ enum class LanguageFeature(
     // 1.1
 
     TypeAliases(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
-    BoundCallableReferences(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, NO_ISSUE_SPECIFIED),
-    LocalDelegatedProperties(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, NO_ISSUE_SPECIFIED),
+    BoundCallableReferences(KOTLIN_1_1, sinceApiVersion = ApiVersion.KOTLIN_1_1, issue = NO_ISSUE_SPECIFIED),
+    LocalDelegatedProperties(KOTLIN_1_1, sinceApiVersion = ApiVersion.KOTLIN_1_1, issue = NO_ISSUE_SPECIFIED),
     TopLevelSealedInheritance(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
     AdditionalBuiltInsMembers(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
     DataClassInheritance(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
@@ -81,7 +88,7 @@ enum class LanguageFeature(
     SafeCallBoundSmartCasts(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1, NO_ISSUE_SPECIFIED),
-    Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, NO_ISSUE_SPECIFIED),
+    Coroutines(KOTLIN_1_1, sinceApiVersion = ApiVersion.KOTLIN_1_1, issue = NO_ISSUE_SPECIFIED),
 
     // 1.2
 
@@ -120,7 +127,7 @@ enum class LanguageFeature(
     ProhibitLocalAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitAssigningSingleElementsToVarargsInNamedForm(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
-    FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3, NO_ISSUE_SPECIFIED),
+    FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3, issue = NO_ISSUE_SPECIFIED),
     RestrictRetentionForExpressionAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     StrictJavaNullabilityAssertions(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     SoundSmartcastForEnumEntries(KOTLIN_1_3, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
@@ -232,7 +239,7 @@ enum class LanguageFeature(
      *  - preference of a type use annotation to annotation of another type: KT-24392
      *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
      */
-    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7, behaviorAfterSinceVersion = CanStillBeDisabledForNow("KT-76100"), issue = NO_ISSUE_SPECIFIED),
+    TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7, behaviorAfterSinceVersion = CanStillBeDisabledForNow("KT-76100"), issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     OptInRelease(KOTLIN_1_7, NO_ISSUE_SPECIFIED),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7, NO_ISSUE_SPECIFIED),
@@ -286,7 +293,6 @@ enum class LanguageFeature(
     ReportTypeVarianceConflictOnQualifierArguments(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-50947"),
     ReportErrorsOnRecursiveTypeInsidePlusAssignment(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-48546"),
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-52502"),
-    SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, "KT-52525"),
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-49264"),
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, forcesPreReleaseBinaries = true, issue = "KT-48872"),
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-49017"),
@@ -297,7 +303,7 @@ enum class LanguageFeature(
     NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-27002"),
     TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck(KOTLIN_1_9, "KT-58587"),
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = KOTLIN_1_9, "KT-36770"),
-    NoSourceCodeInNotNullAssertionExceptions(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_4, "KT-57570"),
+    NoSourceCodeInNotNullAssertionExceptions(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_4, issue = "KT-57570"),
 
     // 1.9.20 KMP stabilization. Unfortunately, we don't have 1.9.20 LV. So LV=1.9 is the best we can do.
     // At least there won't be false positives for 1.8 users
@@ -331,7 +337,7 @@ enum class LanguageFeature(
     DisableCompatibilityModeForNewInference(KOTLIN_2_0, "KT-63558"), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
     DfaBooleanVariables(KOTLIN_2_0, "KT-25747"),
     LightweightLambdas(KOTLIN_2_0, "KT-45375"),
-    ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, "KT-61323"),
+    ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, issue = "KT-61323"),
     JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_0, NO_ISSUE_SPECIFIED),
 
     // 2.1
@@ -407,7 +413,7 @@ enum class LanguageFeature(
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-71138"),
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
     DoNotRunSuspendConversionForLambdaReturnStatements(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-74932"),
-    JvmNullOutSpilledCoroutineLocals(KOTLIN_2_2, ApiVersion.KOTLIN_2_2, "KT-63720"),
+    JvmNullOutSpilledCoroutineLocals(KOTLIN_2_2, sinceApiVersion = ApiVersion.KOTLIN_2_2, issue = "KT-63720"),
 
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
     // We enable it for already released 2.2 because it's a bug fix, and we'd like to make it work in the IDE as fast as possible.
@@ -512,177 +518,210 @@ enum class LanguageFeature(
 
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
+    ReportDeprecationsOfClassifiersInImplicitInvokes(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-82456"),
     ForbidArrayOfNothingInLhsOfClassLiteral(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-84589"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
     ReportTypeVarianceConflictsInDnnAndFlexible(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-392"),
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_5, "KTLC-287"),
+    AllowAnnotationsOnArgumentsOfAnnotations(KOTLIN_2_5, "KT-87016"),
+    ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions(KOTLIN_2_5, "KT-29890"),
+    ReportDeprecatedCompanionInDelegation(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-408"),
     ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_5, issue = "KT-81684"),
+    FixesForIntersectionTypesIn25(sinceVersion = KOTLIN_2_5, issue = "KT-86629"),
+    ProhibitScriptTopLevelInnerClasses(sinceVersion = KOTLIN_2_5, issue = "KT-87291"),
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
-    WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
+    WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-74051"),
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
-    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
-    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
-    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
+    FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
+    UnnamedLocalVariables(sinceVersion = KOTLIN_2_5, issue = "KT-74809"),
+    ReturnValueCheckerIsStable(sinceVersion = KOTLIN_2_5, issue = "KT-87312"),
+    ForbidAliasedRepeatedAnnotationsOnExpressionsInMultiplatform(sinceVersion = KOTLIN_2_5, "KTLC-409"),
+    ProhibitIllegalNotNullSmartCastsInEqualities(KOTLIN_2_5, "KTLC-410"),
+    ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities(KOTLIN_2_5, "KTLC-410") {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(ProhibitIllegalNotNullSmartCastsInEqualities)
+        }
+    },
+
+    CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
+
+    ForbidValueClassRecursionViaTypeParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-85848"),
+    IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
+    JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
+    JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
 
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
+    ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
+    ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
 
     // End of 2.* language features --------------------------------------------------
 
-    ExpectActualClasses(sinceVersion = null, "KT-62885"),
+    ExpectActualClasses(sinceVersion = null, "KT-62885", enabledInLatestLVTests = false),
 
-    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, "KT-11914"), // KT-11914 Deprecation phase 3
+    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, issue = "KT-11914", enabledInLatestLVTests = true), // KT-11914 Deprecation phase 3
 
     // Disabled for an indefinite time as we've moved it forward a version twice already, and
     // it's probably better to go the other way around, and only enable it once we're ready.
-    ForbidParenthesizedLhsInAssignments(null, enabledInProgressiveMode = true, "KT-70507"),
-
-    DirectJavaActualization(sinceVersion = null, "KT-67202"),
+    ForbidParenthesizedLhsInAssignments(null, enabledInProgressiveMode = true, issue = "KT-70507", enabledInLatestLVTests = false),
+    DirectJavaActualization(sinceVersion = null, "KT-67202", enabledInLatestLVTests = false),
 
     // Disabled for indefinite time. See KT-53751
-    IgnoreNullabilityForErasedValueParameters(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
+    IgnoreNullabilityForErasedValueParameters(sinceVersion = null, enabledInProgressiveMode = true, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     // Disabled for indefinite time. Disables restrictions of builder inference without annotation
     // Note: In 1.7.0, builder inference without annotation was introduced.
     // However, later we encountered various situations when it works incorrectly, and decided to forbid them.
     // When this feature is disabled, various errors are reported which are related to these incorrect situations.
     // When this feature is enabled, no such errors are reported.
-    NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     // Disabled for indefinite time. Forces K2 report errors (instead of warnings) for incompatible
     // equality & identity operators in cases where K1 would report warnings or would not report anything.
-    ReportErrorsForComparisonOperators(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
+    ReportErrorsForComparisonOperators(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-57779", enabledInLatestLVTests = false),
 
     // Disabled for indefinite time.
     // Disables reporting of new errors (see KT-55055, KT-55056, KT-55079) in DiagnosticReporterByTrackingStrategy.
     // All these errors are "lost" errors which existed always, but wasn't reported before 1.9.0.
     // When this feature is disabled, all these "lost" errors are reported properly.
     // When this feature is enabled, no such errors are reported.
-    NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, NO_ISSUE_SPECIFIED),
-
-    // top-level script inner classes never made any sense, but used for some time to overcome the capturing logic limitations
-    // Now capturing logic works properly, therefore the warning is reported in K2
-    // this feature will eventually switch this warning to an error
-    ProhibitScriptTopLevelInnerClasses(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     // Only used for compiling the commonizer's support library with numeric expect classes.
-    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69909"),
+    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69909", enabledInLatestLVTests = false),
 
     // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
     // If no problems are reported about it, can be removed after a couple of releases.
     // NB: Currently, leads to regression KT-82132
-    DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
+    DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283", enabledInLatestLVTests = false),
 
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"), // TODO: consider dropping in 2.5 timeframe (KT-84664)
-    DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
+    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621", enabledInLatestLVTests = false), // TODO: consider dropping in 2.5 timeframe (KT-84664)
+    DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610", enabledInLatestLVTests = false), // Postponed because of KT-82869
 
     // Experimental features
 
-    ExpectRefinement(sinceVersion = null, "KT-73557"),
-    JsEnableExtensionFunctionInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    PackagePrivateFileClassesWithAllPrivateMembers(sinceVersion = null, NO_ISSUE_SPECIFIED), // Disabled until the breaking change is approved by the committee, see KT-10884.
-    MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
-    ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, NO_ISSUE_SPECIFIED),
-    FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
-    JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
-    AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
+    ExpectRefinement(sinceVersion = null, "KT-73557", enabledInLatestLVTests = false),
+    JsEnableExtensionFunctionInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    PackagePrivateFileClassesWithAllPrivateMembers(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false), // Disabled until the breaking change is approved by the committee, see KT-10884.
+    MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, "KT-73894", enabledInLatestLVTests = false),
+    ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    StrictEquals(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-83683", enabledInLatestLVTests = true),
+    CallableReferencesToContextual(sinceVersion = null, issue = "KT-54594", enabledInLatestLVTests = true),
+    JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
+    AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308", enabledInLatestLVTests = false),
 
-    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5),
-    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
-        fun companionBlocksVersionCheck() {
-            val companionBlocks = CompanionBlocksAndExtensions
-            if (companionBlocks.sinceVersion != null) {
-                require(sinceVersion != null && sinceVersion > companionBlocks.sinceVersion) {
-                    "Set $this.sinceVersion to ${companionBlocks.sinceVersion} + 1."
-                }
-            }
-            if (sinceVersion != null) {
-                require(companionBlocks.sinceVersion != null) {
-                    "Do not enable $this without $companionBlocks."
-                }
-            }
+    CompanionBlocks(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
+    CompanionExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_6, enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(CompanionBlocks)
         }
-
-        init {
-            companionBlocksVersionCheck()
+    },
+    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledLaterThan(CompanionBlocks, sinceVersionMustBeSet = true)
         }
     },
 
-    DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
-    EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
-    LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404"),
+    DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
+    EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
+    LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404", enabledInLatestLVTests = false),
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
-    JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
-    JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
+    JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),
+    JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802", enabledInLatestLVTests = false),
 
-    JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),
-    ContractSyntaxV2(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-56127"),
-    ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575"),
-    ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583"),
-    ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, "KT-51221"),
-    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303"),
+    JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    CustomEqualsInValueClasses(sinceVersion = null, "KT-24874", enabledInLatestLVTests = false),
+    ContractSyntaxV2(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-56127", enabledInLatestLVTests = false),
+    ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575", enabledInLatestLVTests = false),
+    ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583", enabledInLatestLVTests = false),
+    ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-51221", enabledInLatestLVTests = false),
+    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303", enabledInLatestLVTests = true),
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
-    DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
+    DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276", enabledInLatestLVTests = false),
 
-    CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
-    ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
-    UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
-    ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
-    DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
-    DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
-    ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
-    ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(sinceVersion = null, enabledInProgressiveMode = true, issue = "KTLC-14"),
-    ForbidExposingPackagePrivateInInternal(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-271"),
-    JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
-    TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
-    ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
+    CollectionLiteralsBasedAnnotationResolution(sinceVersion = null, issue = "KT-85535", enabledInLatestLVTests = true),
+    CollectionLiterals(sinceVersion = null, issue = "KT-80489", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(CollectionLiteralsBasedAnnotationResolution)
+        }
+    },
+    ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386", enabledInLatestLVTests = false),
+    ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, issue = "KT-16768", enabledInLatestLVTests = true),
+    DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
+    DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
+    ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131", enabledInLatestLVTests = false),
+    JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463", enabledInLatestLVTests = false),
+    ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921", enabledInLatestLVTests = false),
+    FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(NameBasedDestructuring)
+        }
+    },
+    JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false),
+
+    InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),
+    EagerLambdaAnalysis(sinceVersion = null, issue = "KT-51107", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(
+                CallCompletionRefinementsFor25,
+                InferThrowableTypeParameterToUpperBound,
+            )
+        }
+    },
+
+    ReportEscapingCapturedVariable(sinceVersion = null, testOnly = true, issue = "KT-15514", enabledInLatestLVTests = true),
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = false),
     ;
 
     constructor(
-        sinceVersion: LanguageVersion?,
-        issue: String
-    ) : this(sinceVersion, sinceApiVersion = ApiVersion.KOTLIN_1_0, issue)
+        sinceVersion: LanguageVersion,
+        issue: String,
+        sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
+        enabledInProgressiveMode: Boolean = false,
+        forcesPreReleaseBinaries: Boolean = false,
+        forcesPreReleaseBinariesBefore: LanguageVersion? = null,
+    ) : this(
+        sinceVersion,
+        issue,
+        sinceApiVersion = sinceApiVersion,
+        enabledInProgressiveMode = enabledInProgressiveMode,
+        enabledInLatestLVTests = false,
+        forcesPreReleaseBinaries = forcesPreReleaseBinaries,
+        forcesPreReleaseBinariesBefore = forcesPreReleaseBinariesBefore,
+    )
 
     constructor(
-        sinceVersion: LanguageVersion?,
+        sinceVersion: LanguageVersion,
         enabledInProgressiveMode: Boolean,
-        issue: String
-    ) : this(sinceVersion, sinceApiVersion = ApiVersion.KOTLIN_1_0, issue, enabledInProgressiveMode = enabledInProgressiveMode)
-
-    init {
-        if (testOnly && sinceVersion != null) {
-            error("$this: should be enabled by default since version $sinceVersion but is test only")
-        }
-
-        if (!forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore != null) {
-            error("$this: forcesPreReleaseBinariesBefore is not null but forcesPreReleaseBinaries is false")
-        }
-    }
+        issue: String,
+    ) : this(sinceVersion, issue, enabledInProgressiveMode = enabledInProgressiveMode, enabledInLatestLVTests = false)
 
     val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::lowercase)
-
-    val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
 
     enum class State(override val description: String) : DescriptionAware {
         ENABLED("Enabled"),
@@ -695,6 +734,10 @@ enum class LanguageFeature(
      * Please, see [enabledInProgressiveMode] in [LanguageFeature] for more details.
      */
     val actuallyEnabledInProgressiveMode: Boolean get() = enabledInProgressiveMode && sinceVersion != null
+
+    context(context: CrossFeatureChecksResultsCollector)
+    internal open fun crossFeatureChecks() {
+    }
 
     companion object {
         @JvmStatic
@@ -727,6 +770,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_2_4(2, 4),
     KOTLIN_2_5(2, 5),
     KOTLIN_2_6(2, 6),
+    KOTLIN_2_7(2, 7),
     ;
 
     override val isStable: Boolean
@@ -754,7 +798,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //              1.0..1.9       2.0..2.1      2.2..2.4       2.5..2.6
+        //              1.0..1.9       2.0..2.1      2.2..2.5       2.6..2.7
         // Language:  UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
 
@@ -768,7 +812,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
         val FIRST_NON_DEPRECATED = KOTLIN_2_2
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_2_4
+        val LATEST_STABLE = KOTLIN_2_5
     }
 }
 
@@ -841,20 +885,20 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun toString() = buildString {
         append("Language = $languageVersion, API = $apiVersion")
-        specificFeatures.entries.sortedBy { (feature, _) -> feature.ordinal }.forEach { (feature, state) ->
+        specificFeatures.entries.sortedBy { [feature, _] -> feature.ordinal }.forEach { [feature, state] ->
             val char = when (state) {
                 LanguageFeature.State.ENABLED -> '+'
                 LanguageFeature.State.DISABLED -> '-'
             }
             append(" $char$feature")
         }
-        analysisFlags.entries.sortedBy { (flag, _) -> flag.toString() }.forEach { (flag, value) ->
+        analysisFlags.entries.sortedBy { [flag, _] -> flag.toString() }.forEach { [flag, value] ->
             append(" $flag:$value")
         }
     }
 
     override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
-            specificFeatures.any { (feature, state) ->
+            specificFeatures.any { [feature, state] ->
                 state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)
             }
 
@@ -872,17 +916,17 @@ fun LanguageVersion.isPreRelease(): Boolean {
 
 fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(languageVersion: LanguageVersion): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
-    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion <= it }
+    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion < it }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {
-    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { [feature, state] ->
         feature.takeIf { !isEnabledByDefault(feature) && state == LanguageFeature.State.ENABLED }
     }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures(): Set<LanguageFeature> {
-    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { [feature, state] ->
         feature.takeIf { isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED }
     }
 }

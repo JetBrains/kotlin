@@ -84,6 +84,7 @@ class CustomKotlinLikeDumpStrategyTest {
             name = Name.identifier("Example")
         }.apply {
             parent = pkg
+            createThisReceiverParameter()
         }
 
         val useFun = IrFactoryImpl.buildFun {
@@ -91,6 +92,7 @@ class CustomKotlinLikeDumpStrategyTest {
             returnType = TestIrBuiltins.unitType
         }.apply {
             parent = example
+            parameters += createDispatchReceiverParameterWithClassParent()
         }
 
         val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, createFun.symbol)
@@ -105,13 +107,13 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `default nameOf renders simple function name in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val dump = example.dumpKotlinLike()
         // Default: just the simple name "create()"
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     create()
                   }
 
@@ -125,7 +127,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `fully qualified nameOf renders full parent chain in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val options = KotlinLikeDumpOptions(
             customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
                 override fun nameOf(container: IrDeclaration?, declaration: IrDeclarationWithName): String {
@@ -137,7 +139,7 @@ class CustomKotlinLikeDumpStrategyTest {
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     InstanceFactory.Companion.create()
                   }
 
@@ -151,7 +153,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     @Test
     fun `custom nameOf skips companion segment in call`() {
-        val (_, example, _) = buildIr()
+        (val _ = instanceFactory, val example, val _ = createFun) = buildIr()
         val options = KotlinLikeDumpOptions(
             customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
                 override fun nameOf(container: IrDeclaration?, declaration: IrDeclarationWithName): String {
@@ -164,7 +166,7 @@ class CustomKotlinLikeDumpStrategyTest {
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     InstanceFactory.create()
                   }
 

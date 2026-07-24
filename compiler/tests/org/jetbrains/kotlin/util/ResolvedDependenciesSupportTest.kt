@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.utils.ResolvedDependencies
 import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport
-import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class ResolvedDependenciesSupportTest {
     @Test
@@ -30,12 +30,15 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                Assertions.fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
-        assertEquals(originalText, restoredText)
+        Assertions.assertEquals(originalText, restoredText)
     }
 
     @Test
@@ -49,12 +52,15 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                Assertions.fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
-        assertEquals(originalText, restoredText)
+        Assertions.assertEquals(originalText, restoredText)
     }
 
     @Test
@@ -84,12 +90,15 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                Assertions.fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
-        assertEquals(originalText, restoredText)
+        Assertions.assertEquals(originalText, restoredText)
     }
 
     @Test
@@ -103,18 +112,22 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                Assertions.fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
-        assertEquals(originalText, restoredText)
+        Assertions.assertEquals(originalText, restoredText)
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test
     fun failure1() {
-        // There is no record with number 42!
-        val originalText = """
+        assertThrows<NoSuchElementException> {
+            // There is no record with number 42!
+            val originalText = """
         |0 \
         |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0] #42[42.42]
         |${'\t'}/some/path/liba.klib
@@ -123,91 +136,93 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
-            assertEquals(1, lineNo)
-            throw MyException()
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
+                Assertions.assertEquals(1, lineNo)
+                throw MyException()
+            }
         }
-
-        fail()
     }
 
-    @Test(expected = MyException::class)
+    @Test
     fun failure2() {
-        // Name not specified.
-        val originalText = """
-        |0 \
-        |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
-        |${'\t'}/some/path/liba.klib
-        |2 [1.0] #0[1.0]
-        |${'\t'}/some/path/libb.klib
-        |
-        """.trimMargin()
+        assertThrows<MyException> {
+            // Name not specified.
+            val originalText = """
+            |0 \
+            |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
+            |${'\t'}/some/path/liba.klib
+            |2 [1.0] #0[1.0]
+            |${'\t'}/some/path/libb.klib
+            |
+            """.trimMargin()
 
-        ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
-            assertEquals(3, lineNo)
-            throw MyException()
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
+                Assertions.assertEquals(3, lineNo)
+                throw MyException()
+            }
+
+            Assertions.fail()
         }
-
-        fail()
     }
 
-    @Test(expected = MyException::class)
+    @Test
     fun failure3() {
-        // Version not specified.
-        val originalText = """
-        |0 \
-        |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
-        |${'\t'}/some/path/liba.klib
-        |2 org.sample:libb,org.sample:libb-native #0[1.0]
-        |${'\t'}/some/path/libb.klib
-        |
-        """.trimMargin()
+        assertThrows<MyException> {
+            // Version not specified.
+            val originalText = """
+            |0 \
+            |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
+            |${'\t'}/some/path/liba.klib
+            |2 org.sample:libb,org.sample:libb-native #0[1.0]
+            |${'\t'}/some/path/libb.klib
+            |
+            """.trimMargin()
 
-        ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
-            assertEquals(3, lineNo)
-            throw MyException()
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
+                Assertions.assertEquals(3, lineNo)
+                throw MyException()
+            }
         }
-
-        fail()
     }
 
-    @Test(expected = MyException::class)
+    @Test
     fun failure4() {
-        // Source code module ID not specified.
-        val originalText = """
-        |0
-        |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
-        |${'\t'}/some/path/liba.klib
-        |2 org.sample:libb,org.sample:libb-native #0[1.0]
-        |${'\t'}/some/path/libb.klib
-        |
-        """.trimMargin()
+        assertThrows<MyException> {
+            // Source code module ID not specified.
+            val originalText = """
+            |0
+            |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
+            |${'\t'}/some/path/liba.klib
+            |2 org.sample:libb,org.sample:libb-native #0[1.0]
+            |${'\t'}/some/path/libb.klib
+            |
+            """.trimMargin()
 
-        ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
-            assertEquals(0, lineNo)
-            throw MyException()
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
+                Assertions.assertEquals(0, lineNo)
+                throw MyException()
+            }
         }
-
-        fail()
     }
 
-    @Test(expected = MyException::class)
+    @Test
     fun failure5() {
-        // Source code module ID not specified.
-        val originalText = """
-        |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
-        |${'\t'}/some/path/liba.klib
-        |2 org.sample:libb,org.sample:libb-native #0[1.0]
-        |${'\t'}/some/path/libb.klib
-        |
-        """.trimMargin()
+        assertThrows<MyException> {
+            // Source code module ID not specified.
+            val originalText = """
+            |1 org.sample:liba,org.sample:liba-native[2.0] #0[2.0] #2[1.0]
+            |${'\t'}/some/path/liba.klib
+            |2 org.sample:libb,org.sample:libb-native #0[1.0]
+            |${'\t'}/some/path/libb.klib
+            |
+            """.trimMargin()
 
-        ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
-            assertEquals(0, lineNo)
-            throw MyException()
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, _ ->
+                Assertions.assertEquals(0, lineNo)
+                throw MyException()
+            }
+
         }
-
-        fail()
     }
 
     private class MyException : Exception()

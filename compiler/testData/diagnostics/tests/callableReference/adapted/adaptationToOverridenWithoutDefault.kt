@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 interface Some {
     fun foo(b: Boolean? = null): Int = 10

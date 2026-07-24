@@ -12,11 +12,19 @@ import kotlin.internal.InlineOnly
 // Copyright 2011 The Guava Authors
 
 
-@PublishedApi
-internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt = (v1.toLong() % v2.toLong()).toUInt()
+@InlineOnly
+private inline fun jsToInt32(x: Double): Int = js("x | 0")
+
+@InlineOnly
+private inline fun jsToString(x: Double, base: Int): String = js("x.toString(base)")
 
 @PublishedApi
-internal actual fun uintDivide(v1: UInt, v2: UInt): UInt = (v1.toLong() / v2.toLong()).toUInt()
+internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt =
+  jsToInt32(uintToDouble(v1.toInt()) % uintToDouble(v2.toInt())).toUInt()
+
+@PublishedApi
+internal actual fun uintDivide(v1: UInt, v2: UInt): UInt =
+  jsToInt32(uintToDouble(v1.toInt()) / uintToDouble(v2.toInt())).toUInt()
 
 @PublishedApi
 internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong {
@@ -62,7 +70,11 @@ internal actual fun ulongRemainder(v1: ULong, v2: ULong): ULong {
 }
 
 @PublishedApi
-internal actual fun uintCompare(v1: Int, v2: Int): Int = (v1 xor Int.MIN_VALUE).compareTo(v2 xor Int.MIN_VALUE)
+internal actual fun uintCompare(v1: Int, v2: Int): Int = when {
+    v1 == v2 -> 0
+    uintToDouble(v1) < uintToDouble(v2) -> -1
+    else -> 1
+}
 
 @PublishedApi
 internal actual fun ulongCompare(v1: Long, v2: Long): Int = (v1 xor Long.MIN_VALUE).compareTo(v2 xor Long.MIN_VALUE)
@@ -83,16 +95,18 @@ internal actual inline fun uintToFloat(value: Int): Float = uintToDouble(value).
 @InlineOnly
 internal actual inline fun floatToUInt(value: Float): UInt = doubleToUInt(value.toDouble())
 
+// For JS engines, the operation `value >>> 0` is a no-op at run-time.
+// It only changes the internal type information of the JIT to an unsigned 32-bit integer.
+// That makes this operation, and subsequent operations on its result, very efficient.
+@InlineOnly
 @PublishedApi
-internal actual fun uintToDouble(value: Int): Double = (value and Int.MAX_VALUE).toDouble() + (value ushr 31 shl 30).toDouble() * 2
+internal actual inline fun uintToDouble(value: Int): Double = js("value >>> 0")
 
 @PublishedApi
 internal actual fun doubleToUInt(value: Double): UInt = when {
-    value.isNaN() -> 0u
     value <= UInt.MIN_VALUE.toDouble() -> UInt.MIN_VALUE
     value >= UInt.MAX_VALUE.toDouble() -> UInt.MAX_VALUE
-    value <= Int.MAX_VALUE -> value.toInt().toUInt()
-    else -> (value - Int.MAX_VALUE).toInt().toUInt() + Int.MAX_VALUE.toUInt()      // Int.MAX_VALUE < v < UInt.MAX_VALUE
+    else -> jsToInt32(value).toUInt()
 }
 
 @PublishedApi
@@ -118,10 +132,11 @@ internal actual fun doubleToULong(value: Double): ULong = when {
 }
 
 @InlineOnly
-internal actual inline fun uintToString(value: Int): String = uintToLong(value).toString()
+internal actual inline fun uintToString(value: Int): String = uintToDouble(value).toString()
 
 @InlineOnly
-internal actual inline fun uintToString(value: Int, base: Int): String = ulongToString(uintToLong(value), base)
+internal actual inline fun uintToString(value: Int, base: Int): String =
+  jsToString(uintToDouble(value), base)
 
 @InlineOnly
 internal actual inline fun ulongToString(value: Long): String = ulongToString(value, 10)

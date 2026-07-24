@@ -235,7 +235,7 @@ internal class PlatformLibrariesGenerator(
 
     private fun generatePlatformLibs(generationMessage: String) {
         val lock = commonizerLockForDirectory.getOrPut(platformLibsDirectory) {
-            NativeDistributionCommonizerLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
+            KotlinInterprocessDirectoryLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
         }
 
         lock.withLock {
@@ -292,6 +292,6 @@ internal class PlatformLibrariesGenerator(
             return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
         }
 
-        private val commonizerLockForDirectory = ConcurrentHashMap<File, NativeDistributionCommonizerLock>()
+        private val commonizerLockForDirectory = ConcurrentHashMap<File, KotlinInterprocessDirectoryLock>()
     }
 }

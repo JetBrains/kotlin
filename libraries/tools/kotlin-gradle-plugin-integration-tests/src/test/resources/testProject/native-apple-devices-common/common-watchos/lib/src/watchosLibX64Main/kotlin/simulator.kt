@@ -1,3 +1,3 @@
 package common.watchos.lib
 
-actual fun platform(): String = "Simulator"
+actual fun platform(): String = "Simulator X64"

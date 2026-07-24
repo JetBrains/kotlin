@@ -72,7 +72,7 @@ object KtResolveExtensionTestSupport {
         }
 
         private fun TestModule.transformAndRegisterResolveExtension(): TestModule {
-            val (resolveExtensionTestFiles, regularFiles) = files.partition { Directives.RESOLVE_EXTENSION_FILE in it.directives }
+            val [resolveExtensionTestFiles, regularFiles] = files.partition { Directives.RESOLVE_EXTENSION_FILE in it.directives }
             if (Directives.WITH_RESOLVE_EXTENSION !in directives) {
                 check(resolveExtensionTestFiles.isEmpty()) {
                     "Module $name has resolve extension files, but does not specify WITH_RESOLVE_EXTENSION"

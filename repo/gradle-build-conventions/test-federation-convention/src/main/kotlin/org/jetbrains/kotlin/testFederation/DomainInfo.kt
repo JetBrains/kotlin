@@ -11,11 +11,7 @@ import java.nio.file.FileSystem
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
-internal sealed interface DomainInfo {
-    /**
-     * @see DeclaredDomain.home
-     */
-    val home: String
+sealed interface DomainInfo {
 
     /**
      * The corresponsing [Domain] this info belongs to
@@ -67,12 +63,11 @@ internal fun Project.repositoryPath(path: Path): RepositoryPath {
 /**
  * Resolves the domain by the 'most specific' rule.
  */
-internal fun DomainInfo.Companion.resolveDomainInfoOf(path: RepositoryPath): DomainInfo {
+fun DomainInfo.Companion.resolveDomainInfosOf(path: RepositoryPath): List<DomainInfo> {
     val fileSystem = path.fileSystem
     val value = if (path.resolve().isDirectory()) path.value.resolve(".") else path.value
 
-    var domain: DomainInfo = UnknownDomainInfo
-    var matchingInclude = ""
+    val domains = mutableListOf<DomainInfo>()
 
     allDomainInfos.forEach { currentDomain ->
         var isInclude = false
@@ -96,15 +91,18 @@ internal fun DomainInfo.Companion.resolveDomainInfoOf(path: RepositoryPath): Dom
             }
         }
 
-        if (isInclude && matchingRule.length > matchingInclude.length) {
-            domain = currentDomain
-            matchingInclude = matchingRule
+        if (isInclude) {
+            domains += currentDomain
         }
     }
 
-    return domain
+    if (domains.isEmpty()) {
+        domains.add(UnknownDomainInfo)
+    }
+
+    return domains.sortedBy { it.domain.name }
 }
 
 
-val RepositoryPath.domain: Domain
-    get() = DomainInfo.resolveDomainInfoOf(this).domain
+val RepositoryPath.domains: List<Domain>
+    get() = DomainInfo.resolveDomainInfosOf(this).map { it.domain }

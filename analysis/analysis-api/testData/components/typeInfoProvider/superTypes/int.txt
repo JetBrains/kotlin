@@ -1,3 +1,6 @@
+[type]
+kotlin.Int
+
 [direct super types]
 kotlin.Number
 kotlin.Comparable<kotlin.Int>

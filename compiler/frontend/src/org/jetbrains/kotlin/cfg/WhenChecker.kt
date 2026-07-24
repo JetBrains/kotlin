@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
+@K1Deprecation
 val List<WhenMissingCase>.hasUnknown: Boolean
     get() = firstOrNull() == WhenMissingCase.Unknown
 
@@ -272,6 +274,7 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
 }
 
 
+@K1Deprecation
 object WhenChecker {
 
     private val exhaustivenessCheckers = listOf(

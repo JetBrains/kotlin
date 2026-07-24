@@ -1,10 +1,14 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -13,16 +17,13 @@ dependencies {
     testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
     testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 
-    testImplementation(libs.junit4)
+    testImplementation(libs.junit.platform.suite)
     testImplementation(kotlinStdlib())
     testImplementation(project(":libraries:tools:abi-comparator"))
 
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.platform.suite)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(intellijCore())
 }
 
 sourceSets {
@@ -55,23 +56,22 @@ projectTests {
     ) {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-            jUnitMode = JUnitMode.JUnit5,
+            javaLauncher = jdk,
             maxMetaspaceSizeMb = 1024,
             skipInLocalBuild = false,
             defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
         ) {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
-            javaLauncher.set(project.getToolchainLauncherFor(jdk))
 
             /* No smoke tests are defined here, yet, and the 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed */
             @OptIn(TemporaryTestFederationApi::class)
-            isSmokeTest = false
+            smokeTestConfig = SmokeTestConfig.Disabled
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
             if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {
-                // Reduce parallelism on JDK 17+ to allow test tasks to have more memory to avoid OOM (KTI-2491), likely caused by KT-69758.
-                systemProperty("junit.jupiter.execution.parallel.config.fixed.threshold", 4)
+                // Reduce parallelism on JDK 17+ to allow test tasks to have more memory to avoid OOM (KTI-2491, KTI-3258).
+                systemProperty("junit.jupiter.execution.parallel.config.fixed.threshold", 2)
             }
             body()
             doFirst {

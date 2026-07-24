@@ -76,7 +76,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          *
          * @since 2.3.20
          */
-        public val compilerArguments: JvmCompilerArguments.Builder
+        public override val compilerArguments: JvmCompilerArguments.Builder
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -100,7 +100,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          *
          * @since 2.3.20
          */
-        public fun build(): JvmCompilationOperation
+        public override fun build(): JvmCompilationOperation
 
         /**
          * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
@@ -243,6 +243,14 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
     }
 
+    // KT-86102 [BTA] Move CompilerArgumentsLogLevel to BaseCompilationOperation
+    /**
+     * Log levels for compiler arguments.
+     *
+     * For historical and backward compatibility reasons this enum is placed in the [JvmCompilationOperation] class, however
+     * it can be used with any operation that is a [BaseCompilationOperation] with the
+     * [BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] option.
+     */
     public enum class CompilerArgumentsLogLevel {
         ERROR,
         WARNING,

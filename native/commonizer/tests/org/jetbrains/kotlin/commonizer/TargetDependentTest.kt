@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TargetDependentTest {
@@ -33,7 +33,7 @@ class TargetDependentTest {
 
         @Suppress("useless_cast")
         assertEquals(
-            map.mapKeys { (k, _) -> k as CommonizerTarget }, targetDependent.toMap(),
+            map.mapKeys { [k, _] -> k as CommonizerTarget }, targetDependent.toMap(),
         )
     }
 }

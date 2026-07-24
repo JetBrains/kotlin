@@ -1,0 +1,1 @@
+class Leaf : Middle()

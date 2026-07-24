@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.testFramework
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import com.intellij.openapi.application.Application
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.utils.rethrow
 
 fun resetApplicationToNull(old: Application?) {
@@ -16,6 +17,7 @@ fun resetApplicationToNull(old: Application?) {
 
 fun resetApplicationToNull() {
     try {
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.resetApplicationManager()
     } catch (e: Exception) {
         throw rethrow(e)

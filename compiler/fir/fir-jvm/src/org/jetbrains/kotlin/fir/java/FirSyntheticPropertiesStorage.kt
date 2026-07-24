@@ -31,7 +31,7 @@ class FirSyntheticPropertiesStorage(session: FirSession) : FirSessionComponent {
 
     val cacheByOwner: FirCache<FirRegularClass, SyntheticPropertiesCache, Nothing?> =
         cachesFactory.createCache { _ ->
-            cachesFactory.createCache { _, (scope, intersection) ->
+            cachesFactory.createCache { _, [scope, intersection] ->
                 scope.syntheticPropertyFromOverride(intersection)
             }
         }

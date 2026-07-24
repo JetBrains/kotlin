@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfigurations
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
 
 object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>(
@@ -31,11 +34,11 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): JsBackendPipelineArtifact {
+    ): JsBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
         val outputs = configuration
             .artifactConfigurations
             .map { compileIncrementally(icCaches, configuration, it) }
-        return JsBackendPipelineArtifact(CompilerResult(outputs), configuration)
+        JsBackendPipelineArtifact(CompilerResult(outputs), configuration)
     }
 
     private fun compileIncrementally(
@@ -51,11 +54,11 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = jsArtifacts,
         )
-        val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(outJsProgram = false)
+        (val outputs = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = false)
         outputs.writeAll()
 
         configuration.reportLog("Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
-        for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
+        for ([event, duration] in jsExecutableProducer.getStopwatchLaps()) {
             configuration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
         }
 

@@ -1,0 +1,70 @@
+FILE: companionBlocksDisabled.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface Hidden : R|kotlin/Any| {
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Hidden.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final class Hidden2 : R|kotlin/Any| {
+            public constructor(p: R|kotlin/Int|): R|Outer.Hidden2| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val p: R|kotlin/Int| = R|<local>/p|
+                public get(): R|kotlin/Int|
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Hidden2.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final class Hidden3 : R|kotlin/Any| {
+            public constructor(p: R|kotlin/Int|): R|Outer.Hidden3| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val p: R|kotlin/Int| = R|<local>/p|
+                public get(): R|kotlin/Int|
+
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.Hidden3.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            R|/Hidden|()
+            R|/Hidden2|()
+            R|/Outer.Hidden3.Hidden3<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Outer.Hidden3.Hidden3>#|()
+        }
+
+    }
+    public final fun Hidden(): R|kotlin/Unit| {
+    }
+    public final fun Hidden2(): R|kotlin/Unit| {
+    }

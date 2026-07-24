@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -71,8 +73,8 @@ class WasmBackendContext(
 
     class CrossFileContext {
         var mainFunctionWrapper: IrSimpleFunction? = null
-        val closureCallExports = mutableMapOf<String, IrSimpleFunction>()
-        val kotlinClosureToJsConverters = mutableMapOf<String, IrSimpleFunction>()
+        val closureCallTrampolines = mutableMapOf<String, IrSimpleFunction>()
+        val kotlinClosureToJsConverters = mutableMapOf<Int, IrSimpleFunction>()
         val jsClosureCallers = mutableMapOf<String, IrSimpleFunction>()
         val jsToKotlinClosures = mutableMapOf<String, IrSimpleFunction>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
@@ -93,6 +95,10 @@ class WasmBackendContext(
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()
     fun getFileContext(irFile: IrFile): CrossFileContext = fileContexts.getOrPut(irFile, ::CrossFileContext)
     inline fun applyIfDefined(irFile: IrFile, body: (CrossFileContext) -> Unit) = fileContexts[irFile]?.apply(body)
+
+    // Functions that are reachable from JavaScript (e.g., closure call trampolines passed as funcref).
+    // They receive a WasmFunctionAnnotation.JsCalled annotation so Binaryen does not treat them as unreachable.
+    val jsCalledFunctions = mutableSetOf<IrFunctionSymbol>()
 
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
@@ -128,7 +134,6 @@ class WasmBackendContext(
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
-        irBuiltIns,
         diagnosticReporter
     )
 
@@ -177,4 +182,6 @@ class WasmBackendContext(
             }
         }
     }
+
+    val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal
 }

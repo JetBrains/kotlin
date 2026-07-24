@@ -22,7 +22,7 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
     abstract val directSwiftPMDependencies: SetProperty<SwiftPMDependency>
 
     @get:Input
-    abstract val transitiveSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
+    abstract val transitiveSwiftPMMetadata: Property<TransitiveSwiftPMMetadata>
 
     @get:Optional
     @get:Input
@@ -44,7 +44,7 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
     @TaskAction
     fun action() {
         val directSwiftPMDependencies = directSwiftPMDependencies.get()
-        val transitiveSwiftPMDependencies = transitiveSwiftPMDependencies.get().metadataByDependencyIdentifier
+        val transitiveSwiftPMDependencies = transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier
         if (directSwiftPMDependencies.isNotEmpty() || transitiveSwiftPMDependencies.isNotEmpty()) {
             val xcodeProjectPath = workspacePath.orNull?.let {
                 File(it).listFiles().firstOrNull {

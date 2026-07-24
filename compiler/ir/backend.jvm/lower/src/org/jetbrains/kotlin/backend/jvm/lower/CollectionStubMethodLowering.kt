@@ -66,7 +66,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
-        val (abstractMethods, nonAbstractMethods) = irClass.functions.partition { it.modality == Modality.ABSTRACT && it.isFakeOverride }
+        val [abstractMethods, nonAbstractMethods] = irClass.functions.partition { it.modality == Modality.ABSTRACT && it.isFakeOverride }
         val nonAbstractMethodsByNameAndArity = nonAbstractMethods.groupBy { it.nameAndArity }
         val abstractMethodsByNameAndArity = abstractMethods.groupBy { it.nameAndArity }
 
@@ -248,9 +248,9 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         typeChecker: TypeCheckerState
     ): Boolean =
         overrideFun.typeParameters.zip(parentFun.typeParameters)
-            .all { (typeParameter1, typeParameter2) ->
+            .all { [typeParameter1, typeParameter2] ->
                 typeParameter1.superTypes.zip(typeParameter2.superTypes)
-                    .all { (supertype1, supertype2) ->
+                    .all { [supertype1, supertype2] ->
                         AbstractTypeChecker.equalTypes(typeChecker, supertype1, supertype2)
                     }
             }
@@ -261,7 +261,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         typeChecker: TypeCheckerState
     ): Boolean =
         overrideFun.nonDispatchParameters.zip(parentFun.nonDispatchParameters)
-            .all { (valueParameter1, valueParameter2) ->
+            .all { [valueParameter1, valueParameter2] ->
                 AbstractTypeChecker.equalTypes(typeChecker, valueParameter1.type, valueParameter2.type)
             }
 

@@ -160,7 +160,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
     override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
         if (kotlinContext.isInstrumentationEnabled) {
-            val (classFiles, nonClassFiles) = outputItems.partition { it is GeneratedJvmClass }
+            val [classFiles, nonClassFiles] = outputItems.partition { it is GeneratedJvmClass }
             super.registerOutputItems(outputConsumer, nonClassFiles)
 
             for (output in classFiles) {
@@ -351,7 +351,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     ) {
         super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
-        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null)
+        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null, null)
     }
 
     override val globalLookupCacheId: String
@@ -399,7 +399,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 environment.messageCollector
             )
         }
-        for ((target, outputs) in outputItems) {
+        for ([target, outputs] in outputItems) {
             for (output in outputs) {
                 if (output !is GeneratedJvmClass) continue
 

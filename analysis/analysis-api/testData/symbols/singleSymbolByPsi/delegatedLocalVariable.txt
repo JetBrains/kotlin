@@ -1,0 +1,32 @@
+KaLocalVariableSymbol:
+  anchorPsi: KtProperty
+  annotations: []
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: false
+  isDelegated: true
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: prop
+  origin: SOURCE
+  psi: KtProperty
+  realPsi: KtProperty
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(delegatedLocalVariable.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

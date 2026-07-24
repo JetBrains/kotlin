@@ -17,9 +17,6 @@
     "system": {
       "type": "object",
       "properties": {
-        "home": {
-          "type": "string"
-        },
         "include": {
           "type": "array",
           "items": {
@@ -45,7 +42,7 @@
           }
         }
       },
-      "required": ["home", "include"]
+      "required": ["include"]
     }
   }
 }

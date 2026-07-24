@@ -21,6 +21,7 @@ Tower Data Context:
                 Type: kotlin.Boolean
     Element 8
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] contextParameterProperty.kt
     context([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Boolean|)

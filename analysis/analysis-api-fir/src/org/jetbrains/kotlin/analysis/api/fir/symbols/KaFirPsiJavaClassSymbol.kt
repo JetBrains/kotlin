@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -35,19 +35,33 @@ import org.jetbrains.kotlin.name.Name
  * Implements [KaNamedClassSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
  * properties are computed from the given [PsiClass] instead of [firSymbol]. This improves performance when "slow" properties don't need to
  * be accessed.
+ *
+ * **Note**: the class is designed only for [org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin.Java]
+ * and not for [org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin.Enhancement]
  */
-internal class KaFirPsiJavaClassSymbol(
+internal class KaFirPsiJavaClassSymbol private constructor(
     override val backingPsi: PsiClass,
     override val analysisSession: KaFirSession,
+    override val lazyFirSymbol: Lazy<FirRegularClassSymbol>,
 ) : KaFirNamedClassSymbolBase<PsiClass>() {
+    constructor(
+        backingPsi: PsiClass,
+        analysisSession: KaFirSession,
+        firSymbol: FirRegularClassSymbol? = null,
+    ) : this(
+        backingPsi = backingPsi,
+        analysisSession = analysisSession,
+        lazyFirSymbol = firSymbol?.let(::lazyOf) ?: lazyPub {
+            backingPsi.resolveToFirSymbol(analysisSession.resolutionFacade)
+        }
+    )
+
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
     private val javaClass: JavaClass = JavaClassImpl(
         JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(backingPsi)
     )
-
-    override val psi: PsiElement get() = withValidityAssertion { backingPsi }
 
     override val name: Name get() = withValidityAssertion { javaClass.name }
 
@@ -75,6 +89,10 @@ internal class KaFirPsiJavaClassSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { javaClass.modality.asKaSymbolModality }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { javaClass.visibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { javaClass.visibility }
 
@@ -101,10 +119,23 @@ internal class KaFirPsiJavaClassSymbol(
         }
 
     val annotationSimpleNames: List<String?>
-        get() = withValidityAssertion { backingPsi.annotations.map { it.nameReferenceElement?.referenceName } }
+        get() = withValidityAssertion {
+            val simpleNames = backingPsi.annotations.map { it.nameReferenceElement?.referenceName }
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            if (javaClass.isDeprecatedInJavaDoc && "Deprecated" !in simpleNames) {
+                simpleNames + "Deprecated"
+            } else {
+                simpleNames
+            }
+        }
 
     val hasAnnotations: Boolean
-        get() = withValidityAssertion { backingPsi.annotations.isNotEmpty() }
+        get() = withValidityAssertion {
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            backingPsi.annotations.isNotEmpty() || javaClass.isDeprecatedInJavaDoc
+        }
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
@@ -119,10 +150,6 @@ internal class KaFirPsiJavaClassSymbol(
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override val lazyFirSymbol: Lazy<FirRegularClassSymbol> = lazyPub {
-        backingPsi.resolveToFirSymbol(analysisSession.resolutionFacade)
-    }
-
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)

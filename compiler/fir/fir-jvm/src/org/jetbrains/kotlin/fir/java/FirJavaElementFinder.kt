@@ -229,7 +229,7 @@ class FirJavaElementFinder(
                     }
                 }
 
-                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression> {}?.asString()
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.resultOrNull<FirLiteralExpression>()?.asString()
             }
 
             override fun getName(): String = firProperty.name.identifier
@@ -366,7 +366,7 @@ private fun newTypeParameterList(parent: StubElement<*>, parameters: List<Pair<S
 }
 
 private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): PsiJavaFileStub {
-    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
+    val javaFileStub = PsiJavaFileStubImpl(/* file = */ null, /* languageLevel = */ null, /*compiled = */true)
     javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
 
     val fakeFile = object : ClsFileImpl(DummyHolderViewProvider(psiManager)) {
@@ -395,11 +395,12 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
             errorWithAttachment("Unexpected type: ${this::class.java}") {
                 withConeTypeEntry("type", this@mapToCanonicalString)
             }
-        is ConeLookupTagBasedType -> lookupTag.name.asString()
+        is ConeTypeParameterType -> lookupTag.name.asString()
     }
 }
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeErrorType -> ERROR_TYPE_STUB
         else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)

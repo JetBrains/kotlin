@@ -1,0 +1,43 @@
+/**
+ * public abstract interface ReaderWriter<out T#0 (* T *), in T#1 (* W *)> : kotlin/Any {
+ *
+ *   // signature: read()Ljava/lang/Object;
+ *   public abstract fun read(): T#0
+ *
+ *   // signature: write(Ljava/lang/Object;)V
+ *   public abstract fun write(value: T#1): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface ReaderWriter<T extends java.lang.Object, W extends java.lang.Object> {
+
+    public abstract T read();
+
+    public abstract void write(W value);
+}
+
+////////////////////
+
+
+/**
+ * public final class Repository<T#0 (* T *) : kotlin/CharSequence & kotlin/Comparable<T#0>, out T#1 (* R *) : ReaderWriter<T#0, T#0>, in T#2 (* W *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Repository<T extends java.lang.CharSequence & java.lang.Comparable<? super T>, R extends ReaderWriter<? extends T, ? super T>, W extends java.lang.Object> {
+
+    public Repository() {
+        super();
+    }
+}

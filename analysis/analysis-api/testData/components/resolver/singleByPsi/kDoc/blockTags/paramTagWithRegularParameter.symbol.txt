@@ -1,2 +1,5 @@
-KtClass(0,70): '/**'
-  null
+KDocName(15,18): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo: kotlin.Int
+    ]

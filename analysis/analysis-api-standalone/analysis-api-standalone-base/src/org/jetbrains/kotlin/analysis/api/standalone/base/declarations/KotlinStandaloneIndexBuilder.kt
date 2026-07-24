@@ -69,7 +69,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
 
         decompiledFilesFromBuiltins.forEach { rawIndex.indexStubRecursively(it) }
 
-        val (decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles) = decompiledFilesFromBinaryRoots.partition { entry ->
+        val [decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles] = decompiledFilesFromBinaryRoots.partition { entry ->
             entry.virtualFile.fileType == KotlinBuiltInFileType
         }
 
@@ -146,7 +146,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         VfsUtilCore.visitChildrenRecursively(root, object : VirtualFileVisitor<Void>() {
             override fun visitFile(file: VirtualFile): Boolean {
                 if (!file.isDirectory) {
-                    val (sharedFile, ktFile) = findSharedDecompiledFile(file) ?: return true
+                    val [sharedFile, ktFile] = findSharedDecompiledFile(file) ?: return true
                     processor(sharedFile, ktFile)
                 }
 
@@ -226,7 +226,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
 
                 sharedFiles.mapTo(decompiledFilesFromBuiltins, this::materializeSharedDecompiledFile)
             } else {
-                val (_, ktFile) = findSharedDecompiledFile(virtualFile) ?: continue
+                val [_, ktFile] = findSharedDecompiledFile(virtualFile) ?: continue
                 decompiledFilesFromBuiltins += IndexableFile(virtualFile, ktFile, isShared = true)
             }
         }

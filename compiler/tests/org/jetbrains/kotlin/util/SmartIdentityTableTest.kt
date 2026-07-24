@@ -6,31 +6,27 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.utils.SmartIdentityTable
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class SmartIdentityTableTest {
     class Key(val number: Int) {
         override fun equals(other: Any?): Boolean {
-            Assert.fail("equals Should not be called")
-            return false
+            return Assertions.fail("equals Should not be called")
         }
 
         override fun hashCode(): Int {
-            Assert.fail("equals Should not be called")
-            return 0
+            return Assertions.fail("equals Should not be called")
         }
     }
 
     class Value(val number: Int) {
         override fun equals(other: Any?): Boolean {
-            Assert.fail("equals Should not be called")
-            return false
+            return Assertions.fail("equals Should not be called")
         }
 
         override fun hashCode(): Int {
-            Assert.fail("equals Should not be called")
-            return 0
+            return Assertions.fail("equals Should not be called")
         }
     }
 
@@ -49,32 +45,32 @@ class SmartIdentityTableTest {
         table[key1] = val1
         table[key2] = val2
 
-        Assert.assertEquals(2, table.size)
-        Assert.assertTrue(table[key1] === val1)
-        Assert.assertTrue(table[key2] === val2)
+        Assertions.assertEquals(2, table.size)
+        Assertions.assertTrue(table[key1] === val1)
+        Assertions.assertTrue(table[key2] === val2)
 
         // replace existing key's value
         table[key1] = val3
 
         // expect size to stay the same
-        Assert.assertEquals(2, table.size)
+        Assertions.assertEquals(2, table.size)
 
         // values should be updated for key1 and same for other key
-        Assert.assertTrue(table[key1] === val3)
-        Assert.assertTrue(table[key2] === val2)
+        Assertions.assertTrue(table[key1] === val3)
+        Assertions.assertTrue(table[key2] === val2)
 
         // add a new key with existing value
         table[key3] = val2
 
         // new key should be added and existing keys should maintain their values
-        Assert.assertEquals(3, table.size)
-        Assert.assertTrue(table[key1] === val3)
-        Assert.assertTrue(table[key2] === val2)
-        Assert.assertTrue(table[key3] === val2)
+        Assertions.assertEquals(3, table.size)
+        Assertions.assertTrue(table[key1] === val3)
+        Assertions.assertTrue(table[key2] === val2)
+        Assertions.assertTrue(table[key3] === val2)
 
         // create a key that has the same contents but a different reference identity, it should not be found in the table.
         val secondKey1 = Key(1)
-        Assert.assertTrue(table[secondKey1] === null)
+        Assertions.assertTrue(table[secondKey1] === null)
     }
 
     @Test
@@ -90,11 +86,11 @@ class SmartIdentityTableTest {
             table[key] = value
         }
 
-        Assert.assertEquals(15, table.size)
+        Assertions.assertEquals(15, table.size)
         for (key in keys) {
             val value = table[key]
-            Assert.assertNotNull(value)
-            Assert.assertEquals(key.number, table[key]!!.number)
+            Assertions.assertNotNull(value)
+            Assertions.assertEquals(key.number, table[key]!!.number)
         }
     }
 

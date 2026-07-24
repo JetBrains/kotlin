@@ -699,7 +699,7 @@ class StringNumberConversionTest {
             35 to listOf("15v22um", "-15v22un", "15v22uo", "2pijmikexrxp7", "-2pijmikexrxp8"),
             36 to listOf("zik0zj", "-zik0zk", "zik0zl", "1y2p0ij32e8e7", "-1y2p0ij32e8e8"),
         )
-        for ((base, expectedValues) in expected) {
+        for ([base, expectedValues] in expected) {
             for ((index, value) in values.withIndex()) {
                 assertEquals(expectedValues[index], value.toString(base), "$value in base $base")
             }

@@ -46,7 +46,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             suppressWarnings = { actualTypeForComparison -> shouldSuppressWarningForExtensionReceiver(symbol, actualTypeForComparison) }
         )
 
-        for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
+        for ([contextArgument, contextParameter] in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
             contextArgument.checkExpressionForEnhancedTypeMismatch(
                 expectedType = substitutor.substituteOrSelf(contextParameter.resolvedReturnType),
                 FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
@@ -54,7 +54,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         }
 
         if (expression is FirFunctionCall) {
-            expression.resolvedArgumentMapping?.forEach { (argument, parameter) ->
+            expression.resolvedArgumentMapping?.forEach { [argument, parameter] ->
                 argument.checkExpressionForEnhancedTypeMismatch(
                     expectedType = substitutor.substituteOrSelf(parameter.returnTypeRef.coneType),
                     FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
@@ -74,7 +74,7 @@ private fun checkDispatchReceiver(
     if (actualDispatchReceiverType == null || expectedDispatchReceiverType == null) return
 
     val substitutor = enhancedForWarningSubstitutor()
-    val enhancedDispatchReceiverType = substitutor.substituteOrNull(actualDispatchReceiverType) ?: return
+    val enhancedDispatchReceiverType = substitutor.substituteOrSelf(actualDispatchReceiverType)
 
     if (!actualDispatchReceiverType.canLowerBoundBeNull() && enhancedDispatchReceiverType.canLowerBoundBeNull()) {
 
@@ -149,7 +149,7 @@ private fun checkDispatchReceiver(
 
 context(context: CheckerContext)
 private fun ConeKotlinType.canLowerBoundBeNull(): Boolean {
-    return lowerBoundIfFlexible().canBeNull(context.session)
+    return lowerBoundIfFlexible().canBeNull()
 }
 
 /**
@@ -266,7 +266,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
     if (expectedType == null) return
     val actualType = resolvedType
 
-    val (actualTypeForComparison, expectedTypeForComparison) = getEnhancedTypesForComparison(actualType, expectedType)
+    val [actualTypeForComparison, expectedTypeForComparison] = getEnhancedTypesForComparison(actualType, expectedType)
         ?: return
 
     if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison) &&

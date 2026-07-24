@@ -9,7 +9,8 @@ public fun __root___consume_block_with_dictRef_id__TypesOfArguments__U28Swift_Di
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.collections.Map<kotlin.String, Foo> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.collections.Map<kotlin.String, Foo>>(_result)
         }
     }
@@ -22,7 +23,8 @@ public fun __root___consume_block_with_dict_id__TypesOfArguments__U28Swift_Dicti
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.collections.Map<Int, Int> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.collections.Map<Int, Int>>(_result)
         }
     }
@@ -35,7 +37,8 @@ public fun __root___consume_block_with_listRef_id__TypesOfArguments__U28Swift_Ar
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.collections.List<Foo> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.collections.List<Foo>>(_result)
         }
     }
@@ -48,7 +51,8 @@ public fun __root___consume_block_with_list_id__TypesOfArguments__U28Swift_Array
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.collections.List<Int> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.collections.List<Int>>(_result)
         }
     }
@@ -61,7 +65,8 @@ public fun __root___consume_block_with_set_id__TypesOfArguments__U28Swift_Set_Sw
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.collections.Set<Int> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.collections.Set<Int>>(_result)
         }
     }

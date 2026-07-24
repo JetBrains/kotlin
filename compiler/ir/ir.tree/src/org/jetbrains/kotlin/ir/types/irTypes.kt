@@ -63,7 +63,7 @@ fun IrType.addAnnotations(newAnnotations: List<IrAnnotation>): IrType =
             this
     }
 
-fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType =
+fun IrType.removeAnnotations(predicate: (IrAnnotation) -> Boolean): IrType =
     when (this) {
         is IrSimpleType ->
             toBuilder().apply {

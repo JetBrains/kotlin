@@ -184,7 +184,7 @@ fun IrConstructor.delegationKind(context: LoweringContext): ConstructorDelegatio
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
-        .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ANNOTATION_CLASS || kind == ClassKind.ENUM_CLASS } }
+        .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS } }
         ?: irBuiltIns.anyType
     var callsSuper = false
     var numberOfDelegatingCalls = 0

@@ -1,0 +1,12 @@
+STEP 0:
+    dependencies: second
+    modifications:
+        U : m.0.kt -> m.kt
+        U : c.0.kt -> c.kt
+    added file: m.kt, c.kt
+STEP 1:
+    dependencies: second
+    modifications:
+        U : aFilePkgZ.1.kt -> aFilePkgZ.kt
+        U : zFilePkgA.1.kt -> zFilePkgA.kt
+    added file: aFilePkgZ.kt, zFilePkgA.kt

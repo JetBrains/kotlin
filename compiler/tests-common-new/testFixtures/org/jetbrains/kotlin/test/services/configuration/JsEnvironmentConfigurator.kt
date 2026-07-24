@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -149,6 +150,20 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
                 .filter { it.production == it.minimizedMemberNames }
                 .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
                 .toSet()
+        }
+
+        fun getTypeScriptExportTranslationModes(testServices: TestServices, module: TestModule): List<TranslationMode> {
+            val globalDirectives = testServices.moduleStructure.allDirectives
+            return when (globalDirectives[JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY].lastOrNull()) {
+                TsCompilationStrategy.MERGED -> listOf(
+                    when {
+                        JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in globalDirectives -> TranslationMode.PER_MODULE_DEV
+                        else -> TranslationMode.FULL_DEV
+                    }
+                )
+                TsCompilationStrategy.EACH_FILE -> getTranslationModesForTest(testServices, module).filter { !it.production }
+                TsCompilationStrategy.NONE, null -> emptyList()
+            }
         }
     }
 

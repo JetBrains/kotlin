@@ -1,15 +1,17 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: lib/myContext
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -18,15 +20,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: <unused var>
       origin: SOURCE
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         annotations: []
         type: T1
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -55,14 +60,16 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: myContext
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
     type: R
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -71,16 +78,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T1
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -89,16 +98,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T2
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -107,26 +118,29 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: R
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -138,6 +152,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p1
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -164,23 +181,25 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -192,6 +211,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p2
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: [
@@ -221,23 +243,25 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -249,6 +273,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p3
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -275,23 +302,25 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: (context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int)?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -303,6 +332,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p4
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -329,23 +361,25 @@ KaNamedFunctionSymbol:
             type: kotlin/Int
         ]
         type: suspend context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -357,6 +391,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: block
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -369,11 +406,12 @@ KaNamedFunctionSymbol:
             type: R
         ]
         type: context(T2) () -> R
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextParametersInTypes.kt)
       getContainingJvmClassName: lib.ContextParametersInTypesKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -381,6 +419,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: lib.ContextParametersInTypesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: lib.myContext

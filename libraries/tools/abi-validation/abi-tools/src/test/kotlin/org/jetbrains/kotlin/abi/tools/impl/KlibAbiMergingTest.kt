@@ -8,25 +8,22 @@ package org.jetbrains.kotlin.abi.tools.impl
 import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.abi.tools.impl.klib.DeclarationType
 import org.jetbrains.kotlin.abi.tools.impl.klib.KlibAbiDumpMerger
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
-import java.util.UUID
+import java.util.*
 import kotlin.random.Random
 import kotlin.test.*
-import kotlin.test.Test
 
 class KlibAbiMergingTest {
-    @JvmField
-    @Rule
-    val tempDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tempDir: File
 
     private fun file(name: String): File {
         val res = KlibAbiMergingTest::class.java.getResourceAsStream(name)
             ?: throw IllegalStateException("Resource not found: $name")
-        val tempFile = File(tempDir.root, UUID.randomUUID().toString())
+        val tempFile = File(tempDir, UUID.randomUUID().toString())
         Files.copy(res, tempFile.toPath())
         return tempFile
     }
@@ -38,7 +35,7 @@ class KlibAbiMergingTest {
     }
 
     private fun dumpToFile(klib: KlibAbiDumpMerger): File {
-        val file = tempDir.newFile()
+        val file = Files.createTempFile(tempDir.toPath(), "tmp", null).toFile()
         FileWriter(file).use {
             klib.dump(it)
         }
@@ -345,7 +342,7 @@ class KlibAbiMergingTest {
             "androidNativeArm32", "androidNativeArm64", "androidNativeX64", "androidNativeX86",
             "iosArm64", "iosSimulatorArm64", "iosX64", "linuxArm32Hfp", "linuxArm64", "linuxX64",
             "macosArm64", "macosX64", "mingwX64", "tvosArm64", "tvosSimulatorArm64", "tvosX64",
-            "watchosArm32", "watchosArm64", "watchosDeviceArm64", "watchosSimulatorArm64", "watchosX64"
+            "watchosArm64", "watchosDeviceArm64", "watchosSimulatorArm64", "watchosX64"
         )
         val expectedTargets = expectedTargetNames.asSequence().map(KlibTarget.Companion::parse).toSet()
         assertEquals(expectedTargets, lib.targets)
@@ -414,7 +411,7 @@ class KlibAbiMergingTest {
             "\t" to DeclarationType.Unknown
         )
 
-        declarations.forEach { (line, expectedType) ->
+        declarations.forEach { [line, expectedType] ->
             assertEquals(expectedType, DeclarationType.parseFromDeclaration(line), "Mismatch for line: '$line'")
         }
     }

@@ -66,6 +66,7 @@ extern const int32_t Kotlin_disableMmap = 1;
 #else
 extern const int32_t Kotlin_disableMmap = 0;
 #endif
+extern const int32_t Kotlin_runtimeLogsEnabled = 0;
 extern const int32_t Kotlin_runtimeLogs[static_cast<size_t>(kotlin::logging::Tag::kEnumSize)] = {0};
 extern const int32_t Kotlin_concurrentWeakSweep = 1;
 #if KONAN_WINDOWS
@@ -366,4 +367,3 @@ void Kotlin_internal_executeAndRelease(kotlin::mm::RawExternalRCRef* cleanerActi
 }
 
 } // extern "C"
-

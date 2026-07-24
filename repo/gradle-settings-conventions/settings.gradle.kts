@@ -1,25 +1,37 @@
 pluginManagement {
+    includeBuild("../../repo/kotlin-build-helpers")
     apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {
-        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-        mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+        // duplicated from repositories.kt because pluginManagement block annot access to it.
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "kotlin-dependencies"
+                    setUrl("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+                }
+            }
+            filter {
+                includeModule("org.jetbrains.dukat", "dukat")
+                includeModule("org.jetbrains.kotlin", "android-dx")
+                includeModule("org.jetbrains.kotlin", "jcabi-aether")
+                includeModule("org.jetbrains.kotlin", "protobuf-lite")
+                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+                includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
+            }
+        }
+
+        mavenCentral()
         gradlePluginPortal()
     }
 }
 
-buildscript {
-    val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
-    }
-}
-
 plugins {
+    id("kotlin-build-helpers")
     // Versions here should be also synced with the versions in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("com.gradle.develocity") version("4.2.2")
+    id("com.gradle.develocity") version ("4.3.3")
 }
 
 dependencyResolutionManagement {
@@ -28,6 +40,14 @@ dependencyResolutionManagement {
             from(files("../../gradle/libs.versions.toml"))
         }
     }
+    repositories {
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+            name = "kotlin-dependencies"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
 
 include(":develocity")

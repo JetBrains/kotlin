@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.VariableElement
 
+@K1Deprecation
 class SymbolBasedField(
         element: VariableElement,
         containingClass: JavaClass,
@@ -39,6 +41,11 @@ class SymbolBasedField(
         by lazy { element.constantValue }
 
     override val hasConstantNotNullInitializer: Boolean
+        get() = initializerValue != null
+
+    // Symbol-based view (javac) does not expose non-constant initializer presence; report only
+    // constant initializers, matching [hasConstantNotNullInitializer].
+    override val hasInitializer: Boolean
         get() = initializerValue != null
 
 }

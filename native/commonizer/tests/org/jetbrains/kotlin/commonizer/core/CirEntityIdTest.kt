@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.name.ClassId
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -165,7 +165,7 @@ class CirEntityIdTest {
             "foo/My" to "foo/My",
             "foo/bar/My.Test" to "foo/bar/My.Test",
             "foo/bar/baz/My.Test.Class" to "foo/bar/baz/My.Test.Class"
-        ).forEach { (rawEntityId, asStringRepresentation) ->
+        ).forEach { [rawEntityId, asStringRepresentation] ->
             assertEquals(asStringRepresentation, CirEntityId.create(rawEntityId).toString())
         }
     }
@@ -189,7 +189,7 @@ class CirEntityIdTest {
             "foo/bar/My" to false,
             "foo/bar/My.Test" to true,
             "foo/bar/My.Test.Class" to true,
-        ).forEach { (rawEntityId, isNested) ->
+        ).forEach { [rawEntityId, isNested] ->
             assertEquals(isNested, CirEntityId.create(rawEntityId).isNestedEntity)
         }
     }
@@ -241,7 +241,7 @@ class CirEntityIdTest {
             "Outer.Nested1.Nested2" to "Outer.Nested1",
             "foo/Outer.Nested1.Nested2" to "foo/Outer.Nested1",
             "foo/bar/Outer.Nested1.Nested2" to "foo/bar/Outer.Nested1"
-        ).forEach { (rawEntityId, rawParentEntityId) ->
+        ).forEach { [rawEntityId, rawParentEntityId] ->
             val entityId = CirEntityId.create(rawEntityId)
             val parentEntityId = rawParentEntityId?.let(CirEntityId::create)
             assertSame(parentEntityId, entityId.getParentEntityId())

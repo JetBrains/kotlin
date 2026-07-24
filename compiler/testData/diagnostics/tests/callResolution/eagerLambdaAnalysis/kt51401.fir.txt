@@ -15,7 +15,7 @@ FILE: kt51401.kt
         ^debounce R|kotlin/TODO|()
     }
     public final fun main(x: R|kotlin/Int|): R|kotlin/Unit| {
-        R|<local>/x|.<Ambiguity: debounce, [/debounce, /debounce]>#(::<Ambiguity: foo, [/foo, /foo]>#, ::R|/bar|, <L> = debounce@fun <anonymous>(value: <ERROR TYPE REF: Cannot infer type for parameter value>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+        R|<local>/x|.R|/debounce|<R|kotlin/Int|, R|kotlin/Int|>(::R|/foo|, ::R|/bar|, <L> = debounce@fun <anonymous>(value: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(0)
         }
         )

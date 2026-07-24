@@ -32,7 +32,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirExplicitApiDeclarationChecker,
         FirAnnotationChecker,
         FirPublishedApiChecker,
-        FirContextReceiversDeprecatedDeclarationChecker,
         FirOptInMarkedDeclarationChecker,
         FirExpectConsistencyChecker,
         FirOptionalExpectationDeclarationChecker,
@@ -74,11 +73,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirVersionOverloadsChecker,
     )
 
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
         FirFunctionNameChecker,
         FirFunctionTypeParametersSyntaxChecker,
         FirMemberFunctionsChecker,
-        FirInlineBodySimpleFunctionChecker,
+        FirInlineBodyNamedFunctionChecker,
         FirDataObjectContentChecker,
         ContractSyntaxV2FunctionChecker,
         FirAnyDeprecationChecker,
@@ -180,6 +179,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirTooLargeFunctionImportChecker,
         FirTopLevelPropertiesChecker,
         FirPackageConflictsWithClassifierChecker,
+        FirKotlinPackageChecker,
         PlatformClassMappedToKotlinImportsChecker,
     )
 
@@ -224,6 +224,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirValueParameterDefaultValueTypeMismatchChecker,
         FirMissingDependencyClassForParameterChecker,
         FirDestructuringParameterChecker,
+        FirEqualityBoundAnnotationApplicabilityChecker,
     )
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(

@@ -37,8 +37,8 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
     lateinit var variance: Variance
     var isReified: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val bounds: MutableList<FirTypeRef> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    val bounds: MutableList<FirTypeRef> = []
+    override val annotations: MutableList<FirAnnotation> = []
 
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(

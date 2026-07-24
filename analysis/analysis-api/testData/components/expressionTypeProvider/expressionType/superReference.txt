@@ -1,0 +1,3 @@
+expression: super
+expression PSI: KtConstructorDelegationReferenceExpression
+type: kotlin.Unit

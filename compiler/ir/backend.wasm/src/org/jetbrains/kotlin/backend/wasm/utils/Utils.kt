@@ -59,7 +59,7 @@ internal fun redefinitionError(signature: IdSignature, info: String): Nothing {
 }
 
 internal val String.hasUnpairedSurrogates: Boolean
-    get() = this.withIndex().any { (i, c) ->
+    get() = this.withIndex().any { [i, c] ->
         (c.isLowSurrogate() && (i == 0 || !this[i - 1].isHighSurrogate())) ||
         (c.isHighSurrogate() && (i == this.lastIndex || !this[i + 1].isLowSurrogate()))
     }

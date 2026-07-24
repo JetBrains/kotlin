@@ -1,0 +1,14 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+// Reproducer for KT-87194
+
+MODULES: externalLib, userLib, main
+
+STEP 0:
+    libs: externalLib, userLib, main
+
+STEP 1:
+    libs: externalLib, userLib, main
+
+STEP 2:
+    libs: externalLib, userLib, main

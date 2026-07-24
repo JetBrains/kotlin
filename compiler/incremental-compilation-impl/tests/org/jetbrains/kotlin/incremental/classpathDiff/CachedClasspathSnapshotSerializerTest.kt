@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.incremental.storage.saveToFile
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
 class CachedClasspathSnapshotSerializerTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private val reporter = ClasspathSnapshotBuildReporter(DoNothingBuildReporter)
 
     @Test
     fun `test overwritten snapshot file is not served from cache`() {
-        val snapshotFile = tmpDir.newFile("snapshot.bin")
+        val snapshotFile = tmpDir.resolve("snapshot.bin")
 
         val snapshot1 = ClasspathEntrySnapshot(linkedMapOf("com/example/A.class" to InaccessibleClassSnapshot))
         ClasspathEntrySnapshotExternalizer.saveToFile(snapshotFile, snapshot1)

@@ -15,6 +15,20 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * ### Up to and including body resolution phase
+ *
+ * Represents unresolved collection literal. During body resolution, it is replaced with resolved [FirFunctionCall]
+ * to operator `of`.
+ *
+ * ### After body resolution phase / deserialized
+ *
+ * Represents array literals in annotation arguments or default parameter values.
+ * Both original collection literals and explicit `arrayOf` (`intArrayOf`, `doubleArrayOf`, etc.) calls in annotations are
+ * represented as [FirCollectionLiteral] nodes.
+ *
+ * The structure of its [argumentList] is the same as for [FirVarargArgumentsExpression] - both regular expressions
+ * and [FirSpreadArgumentExpression]s are possible (consider `intArrayOf(0, *[1, 2, 3], 4)`).
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.collectionLiteral]
  */
 abstract class FirCollectionLiteral : FirExpression(), FirCall {

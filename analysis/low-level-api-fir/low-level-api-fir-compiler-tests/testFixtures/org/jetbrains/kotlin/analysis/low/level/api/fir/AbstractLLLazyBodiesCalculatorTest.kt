@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
+import org.junit.jupiter.api.Assertions
 
 abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
@@ -35,19 +35,19 @@ abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest
 
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
-            TestCase.assertFalse(
-                "${FirLazyBlock::class.simpleName} should not present in the tree",
+            Assertions.assertFalse(
                 element is FirLazyBlock,
+                "${FirLazyBlock::class.simpleName} should not present in the tree",
             )
 
-            TestCase.assertFalse(
-                "${FirLazyExpression::class.simpleName} should not present in the tree",
+            Assertions.assertFalse(
                 element is FirLazyExpression,
+                "${FirLazyExpression::class.simpleName} should not present in the tree",
             )
 
-            TestCase.assertFalse(
-                "${FirLazyContractDescription::class.simpleName} should not present in the tree",
+            Assertions.assertFalse(
                 element is FirLazyContractDescription,
+                "${FirLazyContractDescription::class.simpleName} should not present in the tree",
             )
 
             if (element is FirNamedFunction) {
@@ -83,7 +83,7 @@ abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest
 
                 val fullFirFileDump = FirRenderer().renderElementAsString(fullFirFile)
 
-                TestCase.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
+                Assertions.assertEquals(/* expected = */ fullFirFileDump, /* actual = */ laziedFirFileDump)
             }
         }
     }

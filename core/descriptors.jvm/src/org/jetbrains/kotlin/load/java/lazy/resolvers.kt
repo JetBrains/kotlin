@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.utils.mapToIndex
 
+@K1Deprecation
 interface TypeParameterResolver {
     object EMPTY : TypeParameterResolver {
         override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? = null
@@ -31,6 +33,7 @@ interface TypeParameterResolver {
     fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor?
 }
 
+@K1Deprecation
 class LazyJavaTypeParameterResolver(
     private val c: LazyJavaResolverContext,
     private val containingDeclaration: DeclarationDescriptor,

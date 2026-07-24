@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DoWhileGuardEliminationTest : BasicOptimizerTest("do-while-guard-elimination") {
     @Test fun simple() = box()

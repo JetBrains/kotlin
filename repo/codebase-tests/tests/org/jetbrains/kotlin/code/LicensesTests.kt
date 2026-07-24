@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.code
 
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import java.io.File
 
 class LicensesTests {
@@ -35,10 +35,10 @@ class LicensesTests {
             }
         }
 
-        KtUsefulTestCase.assertOrderedEquals(
-            "Incorrect links definitions usage in $readmeFile. Expected - links definitions. Actual - links usages",
+        assertEquals(
+            linksDefinitions.sorted(),
             linksUsages.sorted(),
-            linksDefinitions.sorted()
+            "Incorrect links definitions usage in $readmeFile. Expected - links definitions. Actual - links usages",
         )
     }
 
@@ -53,6 +53,6 @@ class LicensesTests {
         }
 
         val missingFiles = linkedInReadme.filterNot { path -> File(path).exists() }
-        assertEmpty("Files for licenses are missing", missingFiles)
+        assertTrue(missingFiles.isEmpty(), "Files for licenses are missing: $missingFiles")
     }
 }

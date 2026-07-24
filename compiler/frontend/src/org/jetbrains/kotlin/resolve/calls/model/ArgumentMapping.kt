@@ -16,17 +16,21 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
+@K1Deprecation
 interface ArgumentMapping {
     fun isError(): Boolean
 }
 
+@K1Deprecation
 object ArgumentUnmapped : ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
+@K1Deprecation
 enum class ArgumentMatchStatus(val isError: Boolean = true) {
     SUCCESS(false),
     TYPE_MISMATCH(),
@@ -39,6 +43,7 @@ enum class ArgumentMatchStatus(val isError: Boolean = true) {
     UNKNOWN()
 }
 
+@K1Deprecation
 interface ArgumentMatch : ArgumentMapping {
     val valueParameter: ValueParameterDescriptor
     val status: ArgumentMatchStatus
@@ -46,6 +51,7 @@ interface ArgumentMatch : ArgumentMapping {
     override fun isError(): Boolean = status.isError
 }
 
+@K1Deprecation
 class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor) : ArgumentMatch {
     private var _status: ArgumentMatchStatus? = null
 
@@ -64,4 +70,5 @@ class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor) :
 }
 
 //TODO: temporary hack until status.isSuccess is not always correct
+@K1Deprecation
 fun ResolvedCall<*>.isReallySuccess(): Boolean = status.isSuccess && !ErrorUtils.isError(resultingDescriptor)

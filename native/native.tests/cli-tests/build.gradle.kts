@@ -1,14 +1,18 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testFixturesImplementation(project(":native:cli-native"))
 
@@ -20,8 +24,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
-testsJar {}
 
 projectTests {
     testData(isolated, "testData")

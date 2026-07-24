@@ -2,9 +2,15 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
@@ -14,7 +20,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -23,12 +29,10 @@ node {
     download.set(true)
     version.set(nodejsLtsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    if (cacheRedirectorEnabled) {
-        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
-    }
+    distBaseUrl.set(null as String?)
 }
 
-val testJsRuntime by configurations.creating {
+val testJsRuntime = configurations.create("testJsRuntime") {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
@@ -41,7 +45,6 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(protobufFull())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -59,10 +62,12 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCore())
     testFixturesApi(project(":compiler:backend.js"))
+    testFixturesApi(project(":js:js.parser"))
     testFixturesApi(project(":js:js.translator"))
     testFixturesApi(project(":js:typescript-export-standalone"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
-    testImplementation(libs.junit4)
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
@@ -82,14 +87,17 @@ dependencies {
     testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
-    testRuntimeOnly(libs.junit.vintage.engine)
-
     // these dependencies shouldn't be exposed to other modules
     // to avoid potential clashes in cases when another module
     // also needs one of these dependencies but of different
     // version (e.g. tests of kotlinx.serialization)
     testFixturesCompileOnly(libs.kotlinx.serialization.json)
     testRuntimeOnly(libs.kotlinx.serialization.json)
+
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:win-x64@zip")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-arm64@tar.gz")
 }
 
 optInToExperimentalCompilerApi()
@@ -115,11 +123,14 @@ fun Test.setUpJsBoxTests() {
     )
 
     forwardProperties()
+
+    @OptIn(TemporaryTestFederationApi::class)
+    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
 }
 
 fun Test.forwardProperties() {
     val rootLocalProperties = Properties().apply {
-        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+        File(rootDir, "local.properties").takeIf { it.exists() }?.inputStream()?.use {
             load(it)
         }
     }
@@ -148,7 +159,7 @@ projectTests {
         setUpJsBoxTests()
     }
 
-    testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+    testTask("invalidationTest", skipInLocalBuild = true) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         include("org/jetbrains/kotlin/incremental/*")
         forwardProperties()
@@ -193,14 +204,14 @@ val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
 val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
-val prepareNpmTestData by task<Copy> {
+val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestNpmData") {
     from(testJsFile)
     from(packageJsonFile)
     from(packageLockJsonFile)
     into(node.nodeProjectDir)
 }
 
-val npmInstall by tasks.getting(NpmTask::class) {
+val npmInstall = tasks.named("npmInstall", NpmTask::class) {
     val packageLockFile = testDataDir.resolve("package-lock.json")
 
     inputs.file(node.nodeProjectDir.file("package.json"))
@@ -219,7 +230,7 @@ val npmInstall by tasks.getting(NpmTask::class) {
 
 tasks.processTestFixturesResources.configure {
     from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
-    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+    from(project(":compiler").isolated.projectDirectory.dir("testData/debug")) {
         into("debugTestHelpers")
         include("jsTestHelpers/")
     }

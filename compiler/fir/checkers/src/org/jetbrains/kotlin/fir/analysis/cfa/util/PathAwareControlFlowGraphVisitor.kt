@@ -81,10 +81,10 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any>(
 
 inline fun <K, V> PersistentMap<K, V>.merge(other: PersistentMap<K, V>, block: (V, V) -> V): PersistentMap<K, V> =
     mutate {
-        other.mapValuesTo(it) { (label, rightValue) ->
+        other.mapValuesTo(it) { [label, rightValue] ->
             this[label]?.let { leftValue -> block(leftValue, rightValue) } ?: rightValue
         }
     }
 
 inline fun <K, V> PersistentMap<K, V>.transformValues(block: (V) -> V): PersistentMap<K, V> =
-    mutate { mapValuesTo(it) { (_, values) -> block(values) } }
+    mutate { mapValuesTo(it) { [_, values] -> block(values) } }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
 import java.net.URLEncoder
@@ -44,7 +42,6 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
     abstract fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts
@@ -55,7 +52,6 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
 abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
@@ -63,7 +59,6 @@ abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, priv
         return compileToLoweredIr(
             configuration = configuration,
             irLinker = irModuleInfo.deserializer,
-            exportedDeclarations = exportedDeclarations,
             allModules = allModules,
             context = context,
         )
@@ -114,7 +109,6 @@ class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, overri
 class SingleModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC, val isWasmStdlib: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
@@ -122,7 +116,6 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
         return compileToLoweredIr(
             configuration = configuration,
             irLinker = irModuleInfo.deserializer,
-            exportedDeclarations = exportedDeclarations,
             allModules = allModules,
             context = context,
         )
@@ -146,7 +139,7 @@ private fun compileWholeProgramModeToWasmIr(
     idSignatureRetriever: IdSignatureRetriever,
     loweredIr: LoweredIrWithExtraArtifacts,
 ): WasmIrModuleConfiguration {
-    val (allModules, backendContext, typeScriptFragment) = loweredIr
+    (val allModules = loweredIr, val backendContext, val typeScriptFragment) = loweredIr
 
     val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
     val codeGenerator = WasmModuleFragmentGenerator(

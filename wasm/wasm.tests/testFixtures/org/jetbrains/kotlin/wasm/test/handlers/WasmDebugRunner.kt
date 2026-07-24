@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+open class WasmDebugRunner(testServices: TestServices, includeLocalVariableInformation: Boolean = false) :
+    WasmDebugRunnerBase(testServices, includeLocalVariableInformation) {
     private fun processCompilationSet(compilationSet: WasmCompilationSet, mode: String) {
         val outputDirBase = testServices.getWasmTestOutputDirectory()
         val devDir = File(outputDirBase, mode)
@@ -32,10 +33,13 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             val artifacts = modulesToArtifact.values.single() as WasmCompilationSetsBinaryArtifact
+            // run debug tests only in dev (non-DCE) compilation, as DCE:
+            // - is not a supported debug mode in general, and
+            // - can slightly degrade source maps, which can lead to different stepping behavior between dev and dce, which doesn't work with unified EXPECTATIONS blocks
             processCompilationSet(artifacts.compilation, "dev")
-            artifacts.dceCompilation?.let {
-                processCompilationSet(it, "dce")
-            }
         }
     }
 }
+
+class WasmLocalVariableDebugRunner(testServices: TestServices) :
+        WasmDebugRunner(testServices, includeLocalVariableInformation = true)

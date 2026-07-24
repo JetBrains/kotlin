@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.util
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 object ProgressManagerBasedCancellationChecker : CancellationChecker {
     override fun check() {
         ProgressManager.checkCanceled()

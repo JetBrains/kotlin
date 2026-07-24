@@ -109,6 +109,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         var findKotlinClassStats: SideStats = SideStats.EMPTY
         val gcStats = mutableMapOf<String, Pair<GarbageCollectionStats, Long>>()
         var jitTimeMillis: Long = 0
+        var measuredCpuAndUserTime = true
 
         for (moduleStats in this) {
             if (name == null) {
@@ -142,14 +143,14 @@ class StatsCalculator(val reportsData: ReportsData) {
             irLinkingStats += moduleStats.irLinkingStats
             irLoweringStats += moduleStats.irLoweringStats
             backendStats += moduleStats.backendStats
-            moduleStats.dynamicStats?.forEach { (parentPhase, name, time) ->
+            moduleStats.dynamicStats?.forEach { (val parentPhase = parentPhaseType, val name, val time) ->
                 dynamicStats[parentPhase to name] = (dynamicStats[parentPhase to name] ?: Time.ZERO) + time
             }
             findJavaClassStats += moduleStats.findJavaClassStats
             findKotlinClassStats += moduleStats.findKotlinClassStats
             for (gcInfo in moduleStats.gcStats) {
                 val gcKind = gcInfo.kind
-                val (existingGcStats, count) = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) to 0L }
+                val [existingGcStats, count] = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) to 0L }
                 gcStats[gcKind] =
                     GarbageCollectionStats(
                         gcKind,
@@ -158,6 +159,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                     ) to count + 1
             }
             jitTimeMillis += moduleStats.jitTimeMillis ?: 0
+            measuredCpuAndUserTime = measuredCpuAndUserTime && moduleStats.measuredCpuAndUserTime
         }
 
         fun getStats(total: Boolean): UnitStats {
@@ -170,6 +172,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 hasErrors = hasErrors,
                 filesCount = filesCount.let { if (total) it else it / size }.toInt(),
                 linesCount = linesCount.let { if (total) it else it / size }.toInt(),
+                measuredCpuAndUserTime = measuredCpuAndUserTime,
                 initStats = initStats.let { if (total) it else it / size },
                 analysisStats = analysisStats.let { if (total) it else it / size },
                 translationToIrStats = translationToIrStats.let { if (total) it else it / size },
@@ -179,14 +182,14 @@ class StatsCalculator(val reportsData: ReportsData) {
                 irLinkingStats = irLinkingStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
-                dynamicStats = dynamicStats.map { (key, time) ->
-                    val (phaseType, name) = key
+                dynamicStats = dynamicStats.map { [key, time] ->
+                    val [phaseType, name] = key
                     DynamicStats(phaseType, name, if (total) time else time / size)
                 },
                 findJavaClassStats = findJavaClassStats.let { if (total) it else it / size },
                 findKotlinClassStats = findKotlinClassStats.let { if (total) it else it / size },
                 gcStats = gcStats.values.map { gcStatsToCount ->
-                    val (gcStats, count) = gcStatsToCount
+                    val [gcStats, count] = gcStatsToCount
                     GarbageCollectionStats(
                         gcStats.kind,
                         gcStats.millis.let { if (total) it else it / count },

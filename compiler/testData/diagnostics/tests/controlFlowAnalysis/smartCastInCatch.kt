@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // DUMP_CFG
 
 import kotlin.reflect.KClass

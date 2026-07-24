@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 class TargetedAnnotations(
     private val standardAnnotations: List<AnnotationDescriptor>,
     private val targetedAnnotations: List<AnnotationWithTarget>

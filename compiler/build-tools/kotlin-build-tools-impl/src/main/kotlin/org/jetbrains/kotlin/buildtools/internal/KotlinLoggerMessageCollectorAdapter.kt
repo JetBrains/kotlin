@@ -6,29 +6,41 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.api.KotlinCompilationProcessFailedException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 
 internal class KotlinLoggerMessageCollectorAdapter(
     internal val kotlinLogger: KotlinLogger,
     compilerMessageRenderer: CompilerMessageRenderer,
     private val warningsAsErrors: Boolean,
-) : MessageCollector {
+) : MessageCollectorWithDiagnosticId {
 
     private val messageRenderer = compilerMessageRenderer.asMessageRenderer()
 
     override fun clear() {}
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
         val effectiveSeverity = severity.toEffectiveSeverity(warningsAsErrors)
-        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location)
+        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location, diagnosticId)
+
+        if (renderedMessage.isBlank()) return
 
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(
                 renderedMessage,
-                RuntimeException(message)
+                if (KotlinToolchainsImpl.getBtaApiVersion() is BtaApiVersion.Before2_4_20) {
+                    RuntimeException(message)
+                } else {
+                    KotlinCompilationProcessFailedException(message)
+                }
             ) // TODO: get the original exception properly and avoid duplication of stacktrace in message
             CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
             CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(

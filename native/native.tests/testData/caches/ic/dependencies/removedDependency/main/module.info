@@ -1,0 +1,9 @@
+STEP 0:
+    dependencies: removedLib, userLib
+    modifications:
+        U : main.kt -> main.kt
+
+STEP 1:
+    dependencies: userLib
+    modifications:
+        U : main.1.kt -> main.kt

@@ -50,6 +50,8 @@ Unit-style tests using Gradle's `ProjectBuilder` API. Located in [`src/functiona
 
 Use `buildProject {}` or `buildProjectWithMPP {}` from [`util/buildProject.kt`](src/functionalTest/kotlin/org/jetbrains/kotlin/gradle/util/buildProject.kt) to create test projects.
 
+**Assertions on generated text (manifests, build scripts, source files, etc.):** never assert `contains`/`!contains` on a raw `String`. Substring checks pass or fail for reasons unrelated to what's being tested (whitespace, unrelated text elsewhere in the blob, coincidental substring matches) and give useless failure diffs. Instead, parse or extract the specific structured value being asserted on (a field, a block, a single line) and assert on that with `assertEquals`/`assertNull`/etc. This applies to functional and integration tests alike.
+
 ### Integration Tests
 
 End-to-end tests using Gradle TestKit. Located in [`kotlin-gradle-plugin-integration-tests`](../kotlin-gradle-plugin-integration-tests).

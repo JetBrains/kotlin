@@ -19,12 +19,12 @@ class SirClassBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     lateinit var name: String
-    val declarations: MutableList<SirDeclaration> = mutableListOf()
+    val declarations: MutableList<SirDeclaration> = []
     var superClass: SirNominalType? = null
-    val protocols: MutableList<SirProtocol> = mutableListOf()
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val protocols: MutableList<SirProtocol> = []
+    val bridges: MutableList<SirBridge> = []
     var modality: SirModality = SirModality.UNSPECIFIED
 
     fun build(): SirClass {

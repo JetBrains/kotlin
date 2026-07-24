@@ -1,7 +1,0 @@
-KDocName(8,12): 'this'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      extension receiver with type AAA

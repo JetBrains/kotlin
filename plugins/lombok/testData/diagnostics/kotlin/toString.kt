@@ -1,8 +1,8 @@
-<!WRONG_ANNOTATION_TARGET!>@file:ToString<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@file:ToString<!>
 
 import lombok.ToString
 
-<!WRONG_ANNOTATION_TARGET!>@ToString<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
 interface Interface
 
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
@@ -11,7 +11,7 @@ fun func() {}
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
 typealias TA = String
 
-val toStringOnAnonymousObject = <!WRONG_ANNOTATION_TARGET!>@ToString<!> object {}
+val toStringOnAnonymousObject = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> object {}
 
 <!TO_STRING_FUNCTION_ALREADY_EXISTS!>@ToString<!>
 class WithExistingToString(val x: Int) {
@@ -36,7 +36,7 @@ class WithNonConflictingContextualFunction {
 
 @ToString
 class WithBothIncludeAndExclude(
-    <!TO_STRING_EXCLUDE_AND_INCLUDE!>@ToString.Include<!> @ToString.Exclude val conflicting: String,
+    <!EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE!>@ToString.Include<!> @ToString.Exclude val conflicting: String,
     val normal: String,
 )
 
@@ -50,11 +50,11 @@ class WithOnlyExclude(@ToString.Exclude val excluded: String, val normal: String
 @ToString
 class Normal(val x: Int)
 
-// TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = true is Java-specific and has no effect in Kotlin
-@ToString(doNotUseGetters = <!TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
+// DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = true is Java-specific and has no effect in Kotlin
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
 class WithDoNotUseGettersTrue(val x: Int)
 
-// TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = false is Java-specific.
+// DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = false is Java-specific.
 // Despite the absence of behavioral difference, report a warning because the parameter is redundant and it's discrouraged to use in Kotlin.
-@ToString(doNotUseGetters = <!TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)

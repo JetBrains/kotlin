@@ -1,0 +1,2 @@
+KtNameReferenceExpression(78,92): 'TypeAliasOwner'
+  NO_CANDIDATES

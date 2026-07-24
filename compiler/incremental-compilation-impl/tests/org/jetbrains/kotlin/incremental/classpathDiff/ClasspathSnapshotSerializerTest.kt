@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 
 internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
@@ -36,19 +36,23 @@ internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestC
 
 internal class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val sourceFile = TestSourceFile(
-        KotlinSourceFile(
-            baseDir = File(testDataDir, "kotlin/testSimpleClass/src"), relativePath = "com/example/SimpleClass.kt",
-            preCompiledClassFile = ClassFile(File(testDataDir, "kotlin/testSimpleClass/classes"), "com/example/SimpleClass.class")
-        ), tmpDir
-    )
+    override val sourceFile by lazy {
+        TestSourceFile(
+            KotlinSourceFile(
+                baseDir = File(testDataDir, "kotlin/testSimpleClass/src"), relativePath = "com/example/SimpleClass.kt",
+                preCompiledClassFile = ClassFile(File(testDataDir, "kotlin/testSimpleClass/classes"), "com/example/SimpleClass.class")
+            ), tmpDir
+        )
+    }
 }
 
 internal class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val sourceFile = TestSourceFile(
-        JavaSourceFile(
-            baseDir = File(testDataDir, "java/testSimpleClass/src"), relativePath = "com/example/SimpleClass.java",
-        ), tmpDir
-    )
+    override val sourceFile by lazy {
+        TestSourceFile(
+            JavaSourceFile(
+                baseDir = File(testDataDir, "java/testSimpleClass/src"), relativePath = "com/example/SimpleClass.java",
+            ), tmpDir
+        )
+    }
 }

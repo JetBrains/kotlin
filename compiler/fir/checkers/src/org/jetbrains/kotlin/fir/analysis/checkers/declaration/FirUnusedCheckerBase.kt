@@ -117,8 +117,7 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
             for (i in statements.indices) {
                 val statement = statements[i]
                 val isUsed = when {
-                    block.isUnitCoerced -> UsageState.UnusedFromCoercion
-                    i == lastIndex -> data // is implicit return
+                    i == lastIndex -> if (block.isUnitCoerced) UsageState.UnusedFromCoercion else data // is implicit return
                     else -> UsageState.Unused
                 }
                 statement.accept(this, isUsed)

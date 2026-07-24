@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNull
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertFailsWith
 
 class SourceToOutputFilesMapTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     private lateinit var srcDir: File
     private lateinit var classesDir: File
@@ -29,9 +28,9 @@ class SourceToOutputFilesMapTest {
     private lateinit var fooDotKt: File
     private lateinit var fooDotClass: File
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        val workingDir = tmpDir.root
+        val workingDir = tmpDir
 
         srcDir = workingDir.resolve("src")
         classesDir = workingDir.resolve("classes")
@@ -48,7 +47,7 @@ class SourceToOutputFilesMapTest {
         fooDotClass = classesDir.resolve("Foo.class")
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         stofMap.close()
     }

@@ -32,3 +32,11 @@ fun box() {
 // test.kt:14 box: map=kotlin.collections.HashMap, e=EntryRef
 // test.kt:11 box: map=kotlin.collections.HashMap, e=EntryRef
 // test.kt:16 box: map=kotlin.collections.HashMap, e=EntryRef
+
+// EXPECTATIONS WASM
+// test.kt:5 $box: $map:(ref null $kotlin.Any)=null, $e:(ref null $kotlin.Any)=null, $IS_INTERFACE_PARAMETER:(ref null $kotlin.Any)=null (41, 41, 41, 48, 48, 48, 41, 35)
+// test.kt:11 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $e:(ref null $kotlin.Any)=null, $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef) (4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:14 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $e:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef) (8, 8, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 16, 16, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 8, 8, 8)
+// test.kt:11 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $e:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef) (4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
+// test.kt:14 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $e:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef) (8)
+// test.kt:16 $box: $map:(ref $kotlin.collections.HashMap)=(ref $kotlin.collections.HashMap), $e:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef), $IS_INTERFACE_PARAMETER:(ref $kotlin.collections.EntryRef)=(ref $kotlin.collections.EntryRef) (1, 1)

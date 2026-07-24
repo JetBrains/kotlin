@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.types.typeUtil.*
 
+@K1Deprecation
 fun checkEnumsForCompatibility(context: ResolutionContext<*>, reportOn: KtElement, typeA: KotlinType, typeB: KotlinType) {
     if (isIncompatibleEnums(typeA, typeB)) {
         val diagnostic = if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitComparisonOfIncompatibleEnums)) {

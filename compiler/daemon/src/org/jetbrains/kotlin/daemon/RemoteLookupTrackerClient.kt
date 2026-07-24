@@ -67,8 +67,8 @@ class RemoteLookupTrackerClient(
 
         profiler.withMeasure(this) {
             facade.lookupTracker_record(
-                lookups.flatMap { (filePath, lookupsByFile) ->
-                    lookupsByFile.flatMap { (scopeFqName, lookupsByScopeFqName) ->
+                lookups.flatMap { [filePath, lookupsByFile] ->
+                    lookupsByFile.flatMap { [scopeFqName, lookupsByScopeFqName] ->
                         lookupsByScopeFqName.map { lookupInfoOrString ->
                             if (requiresPosition)
                                 lookupInfoOrString as LookupInfo

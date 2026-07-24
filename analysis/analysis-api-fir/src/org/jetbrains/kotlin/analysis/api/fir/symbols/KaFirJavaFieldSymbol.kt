@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -29,7 +29,6 @@ internal class KaFirJavaFieldSymbol(
     override val analysisSession: KaFirSession,
 ) : KaJavaFieldSymbol(), KaFirSymbol<FirFieldSymbol> {
     override val token: KaLifetimeToken get() = builder.token
-    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
@@ -42,13 +41,16 @@ internal class KaFirJavaFieldSymbol(
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
+    override val visibility: KaSymbolVisibility get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
     override val isCompanion: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = withValidityAssertion {
-        KaFirJavaFieldSymbolPointer(analysisSession.createOwnerPointer(this), name, firSymbol.isStatic, this)
+        KaFirJavaFieldSymbolPointer(createOwnerPointer(), name, firSymbol.isStatic, this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

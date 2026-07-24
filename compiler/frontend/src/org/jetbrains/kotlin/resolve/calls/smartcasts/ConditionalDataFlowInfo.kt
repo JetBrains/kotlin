@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 class ConditionalDataFlowInfo(val thenInfo: DataFlowInfo, val elseInfo: DataFlowInfo = thenInfo) {
     fun and(other: ConditionalDataFlowInfo): ConditionalDataFlowInfo = when {
         this == EMPTY -> other

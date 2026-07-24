@@ -58,6 +58,14 @@ fun Variance.convertVariance(): TypeVariance {
     }
 }
 
+fun TypeVariance.convertVariance(): Variance {
+    return when (this) {
+        TypeVariance.INV -> Variance.INVARIANT
+        TypeVariance.IN -> Variance.IN_VARIANCE
+        TypeVariance.OUT -> Variance.OUT_VARIANCE
+    }
+}
+
 interface TypeSystemOptimizationContext {
     /**
      *  @return true is a.arguments == b.arguments, or false if not supported

@@ -29,7 +29,7 @@ object FakePureImplementationsProvider {
         ClassId.topLevel(FqName("java.util.function.BiFunction")) implementedWith fqNameListOf("java.util.function.BinaryOperator")
     }
 
-    private val pureImplementationsFqNames = pureImplementationsClassIds.map { (key, value) ->
+    private val pureImplementationsFqNames = pureImplementationsClassIds.map { [key, value] ->
         key.asSingleFqName() to value.asSingleFqName()
     }.toMap()
 

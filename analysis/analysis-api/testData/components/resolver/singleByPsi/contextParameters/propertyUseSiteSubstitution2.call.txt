@@ -4,12 +4,14 @@ KtNameReferenceExpression(170,173): 'foo'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -19,22 +21,27 @@ KtNameReferenceExpression(170,173): 'foo'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Boolean
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Boolean
       ]
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -44,6 +51,8 @@ KtNameReferenceExpression(170,173): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -57,6 +66,7 @@ KtNameReferenceExpression(170,173): 'foo'
                 type: T
             ]
             type: Base<kotlin/Boolean, T>
+          typeParameters: []
           visibility: PUBLIC
         type = Base<kotlin.Boolean, T>
       extensionReceiver = KaExplicitReceiverValue:
@@ -75,7 +85,7 @@ KtNameReferenceExpression(170,173): 'foo'
             name = c
             receiverType = null
             returnType = kotlin.Boolean
-            symbol = c: kotlin.Boolean
+            symbol = c: C
             contextParameters = []
             callableId = null
         ]

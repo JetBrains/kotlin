@@ -7,11 +7,19 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibFileSystemDiff.Message.*
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.exists
+import kotlin.io.path.fileSize
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.pathString
+import kotlin.io.path.readBytes
+import kotlin.io.path.relativeTo
 
 /**
  * Do the recursive "diff" of the two Klib directories on the file system: [leftRoot] and [rightRoot].
@@ -19,8 +27,8 @@ import java.util.*
  * The entry point is the [recursiveDiff] function, which returns either [Result.Identical] or [Result.Different].
  */
 class KlibFileSystemDiff(
-    private val leftRoot: File,
-    private val rightRoot: File
+    private val leftRoot: Path,
+    private val rightRoot: Path
 ) {
     /** The result of Klib directory comparison */
     sealed interface Result {
@@ -29,8 +37,8 @@ class KlibFileSystemDiff(
 
         /** Klibs are different. All the differences are listed as textual descriptions in [differences]. */
         class Different(
-            private val leftRoot: File,
-            private val rightRoot: File,
+            private val leftRoot: Path,
+            private val rightRoot: Path,
             val differences: List<String>
         ) : Result {
             override fun toString() = buildString {
@@ -42,9 +50,9 @@ class KlibFileSystemDiff(
 
     private enum class FileSystemElementType { REGULAR_FILE, DIRECTORY, OTHER }
 
-    private data class FileSystemElement(val root: File, val path: File = root) {
+    private data class FileSystemElement(val root: Path, val path: Path = root) {
         val type: FileSystemElementType by lazy {
-            val attributes = Files.readAttributes(path.toPath(), BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
+            val attributes = Files.readAttributes(path, BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
             when {
                 attributes.isRegularFile -> FileSystemElementType.REGULAR_FILE
                 attributes.isDirectory -> FileSystemElementType.DIRECTORY
@@ -68,7 +76,7 @@ class KlibFileSystemDiff(
         }
 
         val children: Map<String, FileSystemElement> by lazy {
-            path.listFiles().orEmpty().associate { child ->
+            path.listDirectoryEntries().associate { child ->
                 child.name to this.copy(path = child)
             }
         }
@@ -77,10 +85,10 @@ class KlibFileSystemDiff(
             get() = path.name == KLIB_MANIFEST_FILE_NAME
 
         fun contentEquals(other: FileSystemElement): Boolean {
-            return path.length() == other.path.length() && path.readBytes().contentEquals(other.path.readBytes())
+            return path.fileSize() == other.path.fileSize() && path.readBytes().contentEquals(other.path.readBytes())
         }
 
-        override fun toString(): String = path.relativeTo(root).path
+        override fun toString(): String = path.relativeTo(root).pathString
     }
 
     private sealed class Message {

@@ -3,6 +3,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * AFactory_create__reverse_swift(void * self);
+
+void * _Nullable A_foo_get__reverse_swift(void * self);
+
+void * _Nullable B_foo_get__reverse_swift(void * self);
+
+_Bool Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable item);
+
+void * _Nullable Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable input);
+
+void * _Nullable Producer_produce__reverse_swift(void * self);
+
+NSString * StringProducer_produce__reverse_swift(void * self);
+
+void * AFactory_create(void * self);
+
 void * _Nullable A_foo_get(void * self);
 
 _Bool AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * item);
@@ -36,6 +52,8 @@ void * _Nullable Processor_process__TypesOfArguments__Swift_Optional_anyU20Kotli
 void * _Nullable Producer_produce(void * self);
 
 NSString * StringProducer_produce(void * self);
+
+NSString * StringProducer_produce_direct(void * self);
 
 void * __root___A();
 
@@ -94,6 +112,8 @@ NSDictionary<id, id> * __root___createMap__TypesOfArguments__Swift_Array_main_Pa
 NSArray<id> * __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(NSArray<id> * receiver, _Bool (^predicate)(void * _Nullable ));
 
 void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
+
+_Bool __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
 
 _Bool __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
 

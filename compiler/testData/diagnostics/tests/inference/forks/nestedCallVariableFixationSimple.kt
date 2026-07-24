@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 interface Generic<K, V>
 
 fun <X, Y> Generic<X, Y>.getValue(x: X): Y = TODO()

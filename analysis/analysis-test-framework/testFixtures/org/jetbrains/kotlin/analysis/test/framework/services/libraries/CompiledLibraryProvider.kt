@@ -17,8 +17,11 @@ class CompiledLibraryProvider(private val testServices: TestServices) : TestServ
         if (module.name in libraries) {
             error("Library for module ${module.name} is already compiled")
         }
-        val (libraryJars, librarySourcesJars) =
-            testServices.testModuleCompiler.compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
+        (val libraryJars = binaries, val librarySourcesJars = sources) = testServices.testModuleCompiler.compileTestModuleToLibrary(
+            module,
+            dependencyBinaryRoots,
+            testServices
+        )
 
         return CompiledLibrary(libraryJars, librarySourcesJars).also { libraries[module.name] = it }
     }

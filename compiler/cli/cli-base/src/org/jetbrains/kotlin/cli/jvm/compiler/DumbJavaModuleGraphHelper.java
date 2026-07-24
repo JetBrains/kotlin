@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.intellij.psi.JavaModuleGraphHelper;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaModule;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,4 +29,18 @@ public final class DumbJavaModuleGraphHelper extends JavaModuleGraphHelper {
   public @NotNull Set<PsiJavaModule> getAllTransitiveDependencies(@NotNull PsiJavaModule psiJavaModule) {
     return Collections.emptySet();
   }
+
+    @Override
+    public boolean isAccessible(
+            @NotNull String targetPackageName,
+            @org.jetbrains.annotations.Nullable PsiFile targetFile,
+            @NotNull PsiElement place
+    ) {
+        return false;
+    }
+
+    @Override
+    public boolean isAccessible(@NotNull PsiJavaModule targetModule, @NotNull PsiElement place) {
+        return false;
+    }
 }

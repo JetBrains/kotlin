@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -31,13 +32,16 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
+@K1Deprecation
 interface Qualifier : QualifierReceiver {
     val referenceExpression: KtSimpleNameExpression
 }
 
+@K1Deprecation
 val Qualifier.expression: KtExpression
     get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
+@K1Deprecation
 class PackageQualifier(
     override val referenceExpression: KtSimpleNameExpression,
     override val descriptor: PackageViewDescriptor
@@ -48,6 +52,7 @@ class PackageQualifier(
     override fun toString() = "Package{$descriptor}"
 }
 
+@K1Deprecation
 class TypeParameterQualifier(
     override val referenceExpression: KtSimpleNameExpression,
     override val descriptor: TypeParameterDescriptor
@@ -58,10 +63,12 @@ class TypeParameterQualifier(
     override fun toString() = "TypeParameter{$descriptor}"
 }
 
+@K1Deprecation
 interface ClassifierQualifier : Qualifier {
     override val descriptor: ClassifierDescriptorWithTypeParameters
 }
 
+@K1Deprecation
 class ClassQualifier(
     override val referenceExpression: KtSimpleNameExpression,
     override val descriptor: ClassDescriptor
@@ -82,6 +89,7 @@ class ClassQualifier(
     override fun toString() = "Class{$descriptor}"
 }
 
+@K1Deprecation
 class TypeAliasQualifier(
     override val referenceExpression: KtSimpleNameExpression,
     override val descriptor: TypeAliasDescriptor,
@@ -136,6 +144,7 @@ class TypeAliasQualifier(
     }
 }
 
+@K1Deprecation
 class ClassValueReceiver @JvmOverloads constructor(
     val classQualifier: ClassifierQualifier,
     private val type: KotlinType,

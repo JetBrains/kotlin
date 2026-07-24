@@ -14,9 +14,15 @@ import java.io.File
  * This is to support build cache relocatability
  * (https://docs.gradle.org/current/userguide/build_cache_concepts.html#relocatability).
  */
-class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConverter {
+class RelocatableFileToPathConverter(
+    private val baseDir: File,
+    private val compilerGeneratedSyntheticSources: Set<File> = emptySet(),
+) : FileToPathConverter {
 
     override fun toPath(file: File): String {
+        if (file in compilerGeneratedSyntheticSources) {
+            return file.invariantSeparatorsPath
+        }
         check(file.isAbsolute) { "Expected absolute path but found relative path: ${file.path}" }
 
         // Note: If the given file is located outside `baseDir`, the relative path will start with "../". It's not "clean", but it can work.
@@ -25,6 +31,9 @@ class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConv
     }
 
     override fun toFile(path: String): File {
+        if (File(path) in compilerGeneratedSyntheticSources) {
+            return File(path).normalize()
+        }
         // Note: The given path is Unix-style but baseDir could be Windows-style; call normalize() so that the style of the returned file's
         // path is consistent with baseDir.
         return baseDir.resolve(path).normalize()
@@ -47,7 +56,9 @@ class FileLocations(
     val buildDir: File,
 ) {
 
-    fun getRelocatablePathConverterForSourceFiles() = RelocatableFileToPathConverter(rootProjectDir)
+    fun getRelocatablePathConverterForSourceFiles(compilerGeneratedSyntheticSources: Set<File> = emptySet()) =
+        RelocatableFileToPathConverter(rootProjectDir, compilerGeneratedSyntheticSources)
 
-    fun getRelocatablePathConverterForOutputFiles() = RelocatableFileToPathConverter(buildDir)
+    fun getRelocatablePathConverterForOutputFiles(compilerGeneratedSyntheticSources: Set<File> = emptySet()) =
+        RelocatableFileToPathConverter(buildDir, compilerGeneratedSyntheticSources)
 }

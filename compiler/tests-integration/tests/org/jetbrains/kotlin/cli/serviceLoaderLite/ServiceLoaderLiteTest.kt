@@ -7,30 +7,38 @@ package org.jetbrains.kotlin.cli.serviceLoaderLite
 
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.util.ServiceLoaderLite.ServiceLoadingException
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 import javax.annotation.processing.Processor
 
 class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
+    @Test
     fun testSimple() = applyForDirAndJar("test", processors("test.Foo")) { file ->
         val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
         assertEquals("test.Foo", impls.single())
     }
 
+    @Test
     fun testEmpty() = applyForDirAndJar("test") { file ->
         val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
         assertEquals(0, impls.size)
     }
 
+    @Test
     fun testEmpty2() = applyForDirAndJar("test", Entry("foo", "bar")) { file ->
         val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
         assertEquals(0, impls.size)
     }
 
+    @Test
     fun testEmpty3() = applyForDirAndJar("test", processors("")) { file ->
         val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
         assertEquals(0, impls.size)
     }
 
+    @Test
     fun testSeveralProcessors() {
         val processorsContent = buildString { appendLine("test.Foo").appendLine("test.Bar") }
 
@@ -42,11 +50,13 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testSeveralEntries() = applyForDirAndJar("test", processors("test.Foo"), Entry("foo", "bar")) { file ->
         val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
         assertEquals("test.Foo", impls.single())
     }
 
+    @Test
     fun testSeveralJars() {
         val jar1 = writeJar("test.jar", processors("test.Foo"))
         val jar2 = writeJar("test2.jar", processors("ap.Bar"))
@@ -58,6 +68,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         assertTrue("ap.Bar" in impls)
     }
 
+    @Test
     fun testSeveralDirs() {
         val dir1 = writeDir("test", processors("test.Foo"))
         val dir2 = writeDir("test2", processors("ap.Bar"))
@@ -69,6 +80,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         assertTrue("ap.Bar" in impls)
     }
 
+    @Test
     fun testDirAndJar() {
         val jar = writeJar("test", processors("test.Foo"))
         val dir = writeDir("test2", processors("ap.Bar"))
@@ -80,6 +92,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         assertTrue("ap.Bar" in impls)
     }
 
+    @Test
     fun testParsingError() {
         applyForDirAndJar("test", processors("5")) { file ->
             assertThrows<ServiceLoadingException> {
@@ -88,6 +101,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testParsingError2() {
         applyForDirAndJar("test", processors("a b c")) { file ->
             assertThrows<ServiceLoadingException> {
@@ -96,6 +110,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testCommentsAndWhitespaces() {
         val processorsContent = buildString {
             appendLine("  test.Foo #comment")
@@ -114,6 +129,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testWrongJarName() {
         val file = File(tmpdir, "foo.tar.gz")
         file.writeText("foobar")

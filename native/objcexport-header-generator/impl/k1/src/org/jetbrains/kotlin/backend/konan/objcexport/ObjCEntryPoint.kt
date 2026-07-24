@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoint.Kind.*
-import org.jetbrains.kotlin.konan.file.File
+import java.nio.file.Path
+import kotlin.io.path.useLines
 
 /**
  * An entry point which matches declarations of a given kind and fully-qualified name pattern.
@@ -55,14 +56,13 @@ val ObjCEntryPoint.Kind.parentOrNull: ObjCEntryPoint.Kind?
         }
 
 /** Reads a list of entry points from this file. */
-fun File.readObjCEntryPointList(): List<ObjCEntryPoint> =
-    readStrings()
-        .asSequence()
-        .map { it.trim() }  // Strip leading / trailing whitespaces
+fun Path.readObjCEntryPointList(): List<ObjCEntryPoint> = useLines { lines ->
+    lines.map { it.trim() }  // Strip leading / trailing whitespaces
         .filter { !it.startsWith("//") }  // Strip comment lines
         .filter { it.isNotBlank() }  // Remove empty lines
         .map { it.toObjCEntryPoint() }
         .toList()
+}
 
 /** Convert this string to an entry point kind. */
 private fun String.toObjCEntryPointKind(): ObjCEntryPoint.Kind =

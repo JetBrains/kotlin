@@ -14,26 +14,28 @@ enum class CompilerVersionOfApiDeprecation {
     _2_1_20,
     _2_2_0,
     _2_2_20,
+    _2_4_20,
 }
 
 /**
  * TL;DL:
- * @DeprecatedCompilerApi - IDE-only warning for us, compiler warning for users (in future).
- * @DeprecatedForRemovalCompilerApi - compiler error for us and for users, may @OptIn though.
+ * @DeprecatedCompilerApi - compiler WARNING for us and for users, may @OptIn though.
+ * @DeprecatedForRemovalCompilerApi - compiler ERROR for us and for users, may @OptIn though.
  */
 
 /**
  * An API that we would like to migrate away from in the compiler, and eventually drop.
- * It produces IDE-only warning.
+ * It produces a compiler warning.
  *
  * Note: We don't simply use @Deprecated annotation because of how our build
  * and infrastructure are configured.
  */
 @Target(
-    AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE, AnnotationTarget.TYPEALIAS,
-    AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS,
+    AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR,
     AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD,
 )
+@RequiresOptIn(message = "This compiler API is deprecated", level = RequiresOptIn.Level.WARNING)
 annotation class DeprecatedCompilerApi(
     val deprecatedSince: CompilerVersionOfApiDeprecation,
     val message: String = "",

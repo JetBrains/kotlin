@@ -3,27 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the licenses/LICENSE.txt file.
  */
 
-import org.jetbrains.benchmarksLauncher.*
+import kotlinx.benchmark.*
 
-actual class NumericalLauncher : Launcher() {
-    actual override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "BellardPi" to BenchmarkEntry(::konanBellardPi),
-            "BellardPiCinterop" to BenchmarkEntry(::clangBellardPi)
-    )
-
-}
-
-fun konanBellardPi() {
-    for (n in 1 .. 1000 step 9) {
-        val result = pi_nth_digit(n)
-        Blackhole.consume(result)
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class NumericalHideName {
+    @Benchmark
+    fun BellardPi(bh: Blackhole) {
+        var result = 0
+        for (n in 1 .. 1000 step 9) {
+            result += pi_nth_digit(n)
+        }
+        bh.consume(result)
     }
-}
 
-fun clangBellardPi() {
-    for (n in 1 .. 1000 step 9) {
-        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-        val result = cinterop.pi_nth_digit(n)
-        Blackhole.consume(result)
+    @Benchmark
+    fun BellardPiCinterop(bh: Blackhole) {
+        var result = 0
+        for (n in 1 .. 1000 step 9) {
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            result += cinterop.pi_nth_digit(n)
+        }
+        bh.consume(result)
     }
 }

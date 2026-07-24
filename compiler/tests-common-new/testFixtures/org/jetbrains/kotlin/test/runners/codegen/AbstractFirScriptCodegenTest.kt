@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
@@ -78,6 +78,7 @@ open class AbstractFirScriptAndReplCodegenTest(
                 ::IrTextDumpHandler,
                 ::IrPrettyKotlinDumpHandler,
             )
+            commonIrHandlersForCodegenTest()
         }
         facadeStep(::JvmIrBackendFacade)
         jvmArtifactsHandlersStep {
@@ -166,7 +167,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         } else {
             ctor.newInstance(*arrayOfParameters)
         }
-        for ((fieldName, expectedValue) in expected) {
+        for ([fieldName, expectedValue] in expected) {
             if (expectedValue == "<nofield>") {
                 try {
                     scriptClass.getDeclaredField(fieldName)
@@ -208,12 +209,6 @@ class ScriptingPluginEnvironmentConfigurator(testServices: TestServices) : Envir
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val pluginClasspath = testServices.standardLibrariesPathProvider.scriptingPluginFilesForTests()
         val pluginClassLoader = URLClassLoader(pluginClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
-
-        val pluginRegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME)
-        @Suppress("DEPRECATION_ERROR")
-        (pluginRegistrarClass.getDeclaredConstructor().newInstance() as? ComponentRegistrar)?.also {
-            configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, it)
-        }
 
         val pluginK2RegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_K2_REGISTRAR_NAME)
         (pluginK2RegistrarClass.getDeclaredConstructor().newInstance() as? CompilerPluginRegistrar)?.also {

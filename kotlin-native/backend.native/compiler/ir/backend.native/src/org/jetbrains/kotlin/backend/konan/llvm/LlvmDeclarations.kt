@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import kotlin.math.min
 
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
@@ -123,12 +124,12 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
     context.logMultiple {
         +"$name has following fields:"
         for (i in fieldTypes.indices) {
-            +"  $i: ${llvmtype2string(fieldTypes[i])} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
+            +"  $i: ${fieldTypes[i].toTypeString()} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
         }
         +"  Overall llvm alignment is ${LLVMABIAlignmentOfType(runtime.targetData, classType)}"
         +"  Overall required alignment is ${alignment}"
         +"  Overall size is ${LLVMABISizeOfType(runtime.targetData, classType)}"
-        +"  Resulting type is ${llvmtype2string(classType)}"
+        +"  Resulting type is ${classType.toTypeString()}"
     }
 
     return ClassBodyAndAlignmentInfo(classType, alignment, indices)
@@ -258,7 +259,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 packFields(declaration)
             else
                 context.getLayoutBuilder(declaration).getFields(llvm)
-        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
+        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody("kclassbody:$internalName", fields)
 
         val objectFieldIndices = fields.mapNotNull {
             if (it.type.binaryTypeIsReference()) {
@@ -434,36 +435,32 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     || (declaration.isAccessor && declaration.isFromCInteropLibrary())
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
-            val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)
+            val symbolName = declaration.computeSymbolName(context, forImplementation = true)
+            val proto = LlvmFunctionProto(declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage)
             llvm.externalFunction(proto)
         } else {
-            if (!declaration.shouldGenerateBody()) {
+            if (!declaration.shouldGenerateBody())
                 return
-            }
-            val symbolName = if (declaration.isExported()) {
-                declaration.computeSymbolName().also {
-                    if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(llvm.module, it) == null) {
-                            "Function `$it` is already defined. New definition is required for ${declaration.render()}"
-                        }
-                    } else {
-                        // As a workaround, allow `main` functions to clash because frontend accepts this.
-                        // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
-                    }
-                }
-            } else {
-                if (!context.config.producePerFileCache)
+
+            val symbolName = declaration.computeSymbolName(context, forImplementation = true) {
+                runUnless(context.config.producePerFileCache) {
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
-                else {
-                    val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
-                    declaration.computePrivateSymbolName(containerName)
+                }
+            }
+            if (declaration.isExported()) {
+                if (declaration.name.asString() != "main") {
+                    assert(LLVMGetNamedFunction(llvm.module, symbolName) == null) {
+                        "Function `$symbolName` is already defined. New definition is required for ${declaration.render()}"
+                    }
+                } else {
+                    // As a workaround, allow `main` functions to clash because frontend accepts this.
+                    // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
                 }
             }
 
             val proto = LlvmFunctionProto(declaration, symbolName, this, linkageOf(declaration))
             context.log {
-                "Creating llvm function ${symbolName} for ${declaration.render()}"
+                "Creating llvm function $symbolName for ${declaration.render()}"
             }
             proto.createLlvmFunction(context, llvm.module)
         }

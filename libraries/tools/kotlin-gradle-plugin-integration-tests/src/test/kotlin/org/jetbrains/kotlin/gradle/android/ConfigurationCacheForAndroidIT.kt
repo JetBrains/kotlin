@@ -22,13 +22,14 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("works in android plus kapt project")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testAndroidKaptProject(
         gradleVersion: GradleVersion,
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
-            "kapt2/android-dagger",
+            "kapt/android-dagger",
             gradleVersion,
             buildOptions = buildOptions(gradleVersion).copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location

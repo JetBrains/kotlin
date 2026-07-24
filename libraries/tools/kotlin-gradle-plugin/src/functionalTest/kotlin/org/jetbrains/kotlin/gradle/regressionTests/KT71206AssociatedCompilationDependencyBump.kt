@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
@@ -21,8 +22,9 @@ class KT71206AssociatedCompilationDependencyBump {
     fun nativeDependencyBumpInTest() {
         val project = buildProject {
             enableDependencyVerification(false)
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
-            repositories.mavenLocal()
+
             applyMultiplatformPlugin()
         }
 

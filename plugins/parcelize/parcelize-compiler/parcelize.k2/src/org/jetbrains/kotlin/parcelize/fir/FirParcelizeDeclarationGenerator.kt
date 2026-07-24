@@ -86,7 +86,7 @@ class FirParcelizeDeclarationGenerator(
         if (name != WRITE_TO_PARCEL_NAME) return false
         val parameterSymbols = valueParameterSymbols
         if (parameterSymbols.size != 2) return false
-        val (destSymbol, flagsSymbol) = parameterSymbols
+        val [destSymbol, flagsSymbol] = parameterSymbols
         if (destSymbol.resolvedReturnTypeRef.coneType.classId != PARCEL_ID) return false
         if (!flagsSymbol.resolvedReturnTypeRef.coneType.isInt) return false
         return true

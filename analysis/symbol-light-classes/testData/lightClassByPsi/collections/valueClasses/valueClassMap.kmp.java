@@ -7,8 +7,13 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt> asJsReadonlyMapView();//  asJsReadonlyMapView()
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -21,9 +26,6 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() kotlin.UInt> getKeys();//  getKeys()
-
-  @java.lang.Override()
-  public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
   public int getSize();//  getSize()

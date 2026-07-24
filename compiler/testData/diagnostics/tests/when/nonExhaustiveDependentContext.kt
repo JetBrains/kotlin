@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 fun bar(a: String): String {
     return when {
         a.length == 1 -> {

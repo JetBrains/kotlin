@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
+@K1Deprecation
 class DelegationResolver<T : CallableMemberDescriptor> private constructor(
     private val classOrObject: KtPureClassOrObject,
     private val ownerDescriptor: ClassDescriptor,

@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.test.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE
+import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
 
@@ -22,7 +27,8 @@ import org.junit.jupiter.api.Assumptions
  * - The custom compiler successfully produced a KLIB artifact, which is known to have
  *   a problem that cause the second stage (backend) to crash. It's only allowed to mute
  *   such tests for a specific version of the custom compiler specified in
- *   [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE] directive.
+ *   [IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE], or
+ *   [IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE] directives.
  */
 class CustomKlibCompilerFirstStageTestSuppressor(
     testServices: TestServices,
@@ -39,11 +45,15 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                     processFirstStageException(wrappedException)
                 } else {
                     // The test failed not on the first stage.
-                    processNonFirstStageException(wrappedException)
+                    processNonFirstStageException(wrappedException, IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE)
                 }
             } else if (wrappedException is WrappedException.FromHandler) {
                 // The test failed on a handler.
-                processNonFirstStageException(wrappedException)
+                when (wrappedException.handler) {
+                    is NoFirCompilationErrorsHandler -> processFirstStageException(wrappedException)
+                    is BinaryArtifactHandler -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
+                    else -> listOf(wrappedException)
+                }
             } else {
                 listOf(wrappedException)
             }
@@ -57,7 +67,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         }
     }
 
-    private fun processFirstStageException(wrappedException: WrappedException.FromFacade): List<WrappedException> {
+    private fun processFirstStageException(wrappedException: WrappedException): List<WrappedException> {
         val (exitCode, compilerOutput) = wrappedException.cause as? CustomKlibCompilerException
             ?: return listOf(wrappedException)
 
@@ -100,8 +110,8 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         }
     }
 
-    private fun processNonFirstStageException(wrappedException: WrappedException): List<WrappedException> {
-        if (testServices.versionAndTargetAreIgnored(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion))
+    private fun processNonFirstStageException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
+        if (testServices.versionAndTargetAreIgnored(ignoreDirective, defaultLanguageVersion))
             return emptyList()
 
         if (testServices.moduleStructure.modules.any {
@@ -115,7 +125,10 @@ class CustomKlibCompilerFirstStageTestSuppressor(
     }
 
     override fun checkIfTestShouldBeUnmuted() {
-        testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion)
+        testServices.assertions.assertAll(
+            { testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion) },
+            { testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion) },
+        )
     }
 
     companion object {

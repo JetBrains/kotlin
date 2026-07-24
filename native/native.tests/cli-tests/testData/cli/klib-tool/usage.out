@@ -1,0 +1,42 @@
+Usage: klib <command> <library path> [<options>]
+
+where the commands are:
+    info
+        Print general information about the library.
+
+    dump-abi
+        Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
+        declaration. Whenever an ABI-incompatible change happens to a declaration, this should
+        be visible in the corresponding line of the snapshot.
+
+    dump-ir
+        Dump the intermediate representation (IR) of declarations in the library.
+        The output of this command is intended to be used for debugging purposes only.
+
+    dump-ir-inlinable-functions
+        Dump the intermediate representation (IR) of inlinable functions in the library.
+        The output of this command is intended to be used for debugging purposes only.
+
+    dump-signatures
+        Dump signatures of all non-private declarations in the library and all non-private
+        declarations consumed by this library (as two separate lists). For regular libraries,
+        this command relies on the data in IR. For C-interop libraries, it uses the metadata.
+
+    dump-metadata
+        Dump the metadata of all declarations in the library.
+        The output of this command intended to be used for debugging purposes only.
+
+and the options are:
+    -signature-version {1|2}
+        Render IR signatures of a specific version. By default, the most up-to-date signature version
+        that is supported in the library is used.
+        Supported in commands: dump-abi, dump-signatures
+
+    -only-top-level-signatures {true|false}
+        Dump IR signatures of only top-level declarations.
+        Supported in commands: dump-signatures
+
+    -relative-path-base
+        A file path prefix to be removed from all paths to render them as relative paths.
+        Note: By repeating this option multiple times it's possible to specify multiple prefixes.
+        Supported in commands: dump-ir

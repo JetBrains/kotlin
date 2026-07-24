@@ -311,6 +311,57 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
+        printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
+
+        // Assignment is right-associative, so the left-hand side is parenthesized only when it has
+        // strictly lower precedence (wrongAssoc), matching the former JsBinaryOperator.ASG rendering.
+        JsExpression target = x.getTarget();
+        boolean isTargetEnclosed = parenPush(x, target, true);
+        accept(target);
+        if (isTargetEnclosed) {
+            rightParen();
+        }
+        space();
+        assignment();
+
+        JsExpression value = x.getValue();
+        boolean isValueEnclosed;
+        if (value instanceof JsBinaryOperation && ((JsBinaryOperation) value).getOperator() == JsBinaryOperator.AND) {
+            space();
+            leftParen();
+            isValueEnclosed = true;
+        }
+        else {
+            space();
+            isValueEnclosed = parenPush(x, value, false);
+        }
+        accept(value);
+        if (isValueEnclosed) {
+            rightParen();
+        }
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
+        printCommentsBeforeNode(x);
+        pushSourceInfo(x.getSource());
+
+        x.getPattern().accept(this);
+        space();
+        assignment();
+        space();
+        accept(x.getValue());
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
     public void visitBlock(@NotNull JsBlock x) {
         printJsBlock(x, true, null);
     }
@@ -454,7 +505,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_CATCH);
         space();
         leftParen();
-        accept(x.getParameter().getAssignable());
+        accept(x.getParameter().getDeclarable());
 
         rightParen();
         space();
@@ -686,7 +737,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        JsAssignable assignable = x.getBindingAssignable();
+        JsDeclarable assignable = x.getBindingDeclarable();
         JsVars.Variant variant = x.getBindingVarVariant();
         JsExpression bindingExpression = x.getBindingExpression();
         JsExpression iterableExpression = x.getIterableExpression();
@@ -734,9 +785,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (x.isEs6Arrow()) {
             printEs6Arrow(x);
         } else {
-            p.print(CHARS_FUNCTION);
-            space();
-            printFunction(x);
+            printRegularFunction(x);
         }
 
         printCommentsAfterNode(x);
@@ -756,8 +805,36 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         rightParen();
     }
 
-    // [static?] [get|set?] [name|computedName](<params>) { <body> }
-    private void printFunction(@NotNull JsFunction x) {
+    // function <declaration>
+    private void printRegularFunction(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
+        p.print(CHARS_FUNCTION);
+        space();
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // constructor <declaration>
+    private void printConstructor(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
+        p.print(CHARS_CONSTRUCTOR);
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // [static?] [get|set?] <declaration>
+    private void printClassMember(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
         if (x.isStatic()) {
             p.print(CHARS_STATIC);
             space();
@@ -771,6 +848,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             space();
         }
 
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // [name|computedName](<params>) { <body> }
+    private void printFunction(@NotNull JsFunction x) {
         if (x.isGenerator()) {
             p.print(CHARS_GENERATOR);
         }
@@ -785,7 +870,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             nameOf(x);
         }
 
-        pushSourceInfo(x.getSource());
         printFunctionParameterList(x.getParameters());
         space();
 
@@ -794,9 +878,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         printJsBlock(x.getBody(), true, x.getBody().getSource());
         sourceLocationConsumer.popSourceInfo();
-
-        popSourceInfo();
-
         needSemi = true;
     }
 
@@ -813,6 +894,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             if (singleStatement instanceof JsReturn) {
                 JsReturn jsReturn = (JsReturn) singleStatement;
                 jsReturn.getExpression().accept(this);
+                popSourceInfo();
+                needSemi = true;
                 return;
             }
         }
@@ -853,14 +936,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             blockOpen();
 
             if (x.getConstructor() != null) {
-                p.print(CHARS_CONSTRUCTOR);
                 x.getConstructor().setName(null);
-                printFunction(x.getConstructor());
+                printConstructor(x.getConstructor());
                 newline();
             }
 
             for (JsFunction m : x.getMembers()) {
-                printFunction(m);
+                printClassMember(m);
                 newline();
             }
 
@@ -1169,7 +1251,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             ellipsis();
         }
 
-        accept(x.getAssignable());
+        accept(x.getDeclarable());
 
         JsExpression defaultValue = x.getDefaultValue();
         if (defaultValue != null) {
@@ -1389,7 +1471,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(var.getSource());
         printCommentsBeforeNode(var);
 
-        accept(var.getAssignable());
+        accept(var.getDeclarable());
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
             space();
@@ -1615,12 +1697,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitNamedAssignable(@NotNull JsAssignable.Named assignable) {
-        nameDef(assignable.getName());
+    public void visitNamedDeclarable(@NotNull JsDeclarable.Named declarable) {
+        nameDef(declarable.getName());
     }
 
     @Override
-    public void visitArrayPatternAssignable(@NotNull JsAssignable.ArrayPattern pattern) {
+    public void visitArrayPatternDeclarable(@NotNull JsDeclarable.ArrayPattern pattern) {
         pushSourceInfo(pattern.getSource());
         printCommentsBeforeNode(pattern);
 
@@ -1645,7 +1727,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitObjectPatternAssignable(@NotNull JsAssignable.ObjectPattern pattern) {
+    public void visitObjectPatternDeclarable(@NotNull JsDeclarable.ObjectPattern pattern) {
         pushSourceInfo(pattern.getSource());
         printCommentsBeforeNode(pattern);
 
@@ -1703,6 +1785,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
+    private void pushDeclaration(@NotNull JsFunction declaration) {
+        sourceLocationConsumer.pushDeclarationInfo(declaration.getSource());
+    }
+
     private void printCommentsBeforeNode(JsNode x) {
        printComments(x.getCommentsBeforeNode(), false);
     }
@@ -1733,6 +1819,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (!sourceInfoStack.isEmpty() && sourceInfoStack.remove(sourceInfoStack.size() - 1) != null) {
             sourceLocationConsumer.popSourceInfo();
         }
+    }
+
+    private void popDeclaration() {
+        sourceLocationConsumer.popDeclarationInfo();
     }
 
     private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable JsLocationWithSource defaultClosingBraceLocation) {

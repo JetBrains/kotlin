@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplementationByDelegationWithDifferentGenericSignature
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidJavaClassPropertyReferences
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmSerializableLambdaOnInlinedFunctionLiterals
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSynchronizationByValueClassesAndPrimitives
@@ -70,6 +71,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val WRONG_TYPE_FOR_JAVA_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("WRONG_TYPE_FOR_JAVA_OVERRIDE", WARNING, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, PsiElement::class, getRendererFactory())
     val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE: KtDiagnosticFactory3<FirNamedFunctionSymbol, String, FirNamedFunctionSymbol> = KtDiagnosticFactory3("ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedFunction::class, getRendererFactory())
     val IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE: KtDiagnosticFactoryForDeprecation2<FirNamedFunctionSymbol, FirNamedFunctionSymbol> = KtDiagnosticFactoryForDeprecation2("IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE", ForbidImplementationByDelegationWithDifferentGenericSignature, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class, getRendererFactory())
@@ -85,6 +87,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String> = KtDiagnosticFactory3("NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JAVA_CLASS_ON_COMPANION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_CLASS_ON_COMPANION", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val JAVA_CLASS_PROPERTY_REFERENCE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JAVA_CLASS_PROPERTY_REFERENCE", ForbidJavaClassPropertyReferences, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, PsiElement::class, getRendererFactory())
 
     // Type parameters
@@ -127,6 +130,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val ENUM_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("ENUM_JVM_RECORD", ERROR, SourceElementPositioningStrategies.ENUM_MODIFIER, PsiElement::class, getRendererFactory())
     val JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NON_DATA_CLASS_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_DATA_CLASS_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val NON_DATA_VALUE_CLASS_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_DATA_VALUE_CLASS_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_RECORD_NOT_VAL_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_VAL_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_RECORD_NOT_LAST_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORD_NOT_LAST_VARARG_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INNER_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("INNER_JVM_RECORD", ERROR, SourceElementPositioningStrategies.INNER_MODIFIER, PsiElement::class, getRendererFactory())
@@ -174,6 +178,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE: KtDiagnosticFactoryForDeprecation1<ConeKotlinType> = KtDiagnosticFactoryForDeprecation1("SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE", ProhibitSynchronizationByValueClassesAndPrimitives, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_SYNTHETIC_ON_DELEGATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_SYNTHETIC_ON_DELEGATE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR", ERROR, SourceElementPositioningStrategies.SPREAD_OPERATOR, PsiElement::class, getRendererFactory())
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

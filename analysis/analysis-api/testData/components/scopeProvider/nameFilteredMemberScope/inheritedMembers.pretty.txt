@@ -1,0 +1,10 @@
+declarations:
+  fun foo(): kotlin.Int
+  open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+callables:
+  fun foo(): kotlin.Int
+  open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+classifiers:
+  NO_SYMBOLS

@@ -38,6 +38,14 @@ enum class DuplicatedUniqueNameStrategy(
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
+    ),
+
+    @SerialName("allow-all")
+    ALLOW_ALL(
+        strategyName = "allow-all",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
     );
 
     override val stringRepresentation: String

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
 // LANGUAGE: +AllowContractsOnSomeOperators, +ConditionImpliesReturnsContracts
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // ISSUE: KT-79220
 import kotlin.contracts.*
 
@@ -20,7 +21,7 @@ operator fun <T> PairList<T>?.component2(): T {
 }
 
 fun testDestructuring(pair: PairList<String?>) {
-    val (first, second) = pair
+    val [first, second] = pair
     first.length
     pair.component1().length
 }

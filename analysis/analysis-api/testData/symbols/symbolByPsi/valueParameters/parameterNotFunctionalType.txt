@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /f
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -31,16 +33,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -52,6 +55,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: p
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -68,23 +74,25 @@ KaNamedFunctionSymbol:
             type: ERROR_TYPE
         ]
         type: (kotlin/Int, ERROR CLASS: Symbol not found for p2) -> ERROR CLASS: Incomplete code
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(parameterNotFunctionalType.kt)
       getContainingJvmClassName: ParameterNotFunctionalTypeKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -96,15 +104,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: <no name provided>
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaErrorType:
         annotations: []
         type: ERROR_TYPE
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(parameterNotFunctionalType.kt)
       getContainingJvmClassName: ParameterNotFunctionalTypeKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -112,6 +124,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ParameterNotFunctionalTypeKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: f

@@ -17,10 +17,6 @@ import kotlin.test.*
 
 class CommonizerTaskTests {
 
-    companion object {
-        const val JVM_ECOSYSTEM_PLUGIN_ID = "jvm-ecosystem"
-    }
-
     private val rootProject = ProjectBuilder.builder().build() as ProjectInternal
     private val subproject = ProjectBuilder.builder().withName("subproject").withParent(rootProject).build() as ProjectInternal
 
@@ -178,6 +174,17 @@ class CommonizerTaskTests {
         }
         subprojectWithoutNativeTarget.runLifecycleAwareTest {
             assertContainsNoTaskWithName("commonizeCInterop")
+        }
+    }
+
+    @Test
+    fun testNewKmpCompilationSchemeEnablesCommonization() {
+        val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+        rootProject.applyMultiplatformPlugin()
+        rootProject.enableKmpSeparateCompilation()
+
+        rootProject.runLifecycleAwareTest {
+            assertTrue(rootProject.cInteropCommonizationEnabled())
         }
     }
 }

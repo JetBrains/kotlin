@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analyzer
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
@@ -20,11 +21,13 @@ import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
+@K1Deprecation
 class ResolverForModule(
     val packageFragmentProvider: PackageFragmentProvider,
     val componentProvider: ComponentProvider
 )
 
+@K1Deprecation
 abstract class ResolverForProject<M : ModuleInfo> {
     fun resolverForModule(moduleInfo: M): ResolverForModule = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     abstract fun tryGetResolverForModule(moduleInfo: M): ResolverForModule?
@@ -48,6 +51,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
     }
 }
 
+@K1Deprecation
 class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override val name: String
         get() = "Empty resolver"
@@ -65,12 +69,14 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     }
 }
 
+@K1Deprecation
 data class ModuleContent<out M : ModuleInfo>(
     val moduleInfo: M,
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
 )
 
+@K1Deprecation
 abstract class ResolverForModuleFactory {
     abstract fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
@@ -84,6 +90,7 @@ abstract class ResolverForModuleFactory {
     ): ResolverForModule
 }
 
+@K1Deprecation
 class LazyModuleDependencies<M : ModuleInfo>(
     storageManager: StorageManager,
     private val module: M,

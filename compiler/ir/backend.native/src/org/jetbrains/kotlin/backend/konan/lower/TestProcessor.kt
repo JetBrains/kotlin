@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isString
@@ -151,7 +152,7 @@ class TestProcessor(
     private fun MutableList<TestFunction>.registerFunction(
         function: IrFunction,
         kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) =
-        kinds.forEach { (kind, ignored) ->
+        kinds.forEach { [kind, ignored] ->
             add(TestFunction(function, kind, ignored))
         }
 
@@ -167,11 +168,12 @@ class TestProcessor(
         registerFunction: IrFunction,
         functions: Collection<TestFunction>,
         parent: IrDeclarationParent,
+        registerTestCaseReturnType: IrType = registerTestCase.returnType,
     ) {
         functions.forEach {
             if (it.kind == TestProcessorFunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
-                +irCall(registerTestCase).apply {
+                +irCall(registerTestCase.symbol, registerTestCaseReturnType).apply {
                     dispatchReceiver = irGet(receiver)
                     arguments[1] = irString(it.functionName)
                     arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
@@ -269,7 +271,7 @@ class TestProcessor(
             fun warn(msg: String) = context.diagnosticReporter.at(function, irFile)
                 .report(NativeBackendDiagnostics.NATIVE_TEST_PROCESSOR_WARNING, msg)
 
-            kinds.forEach { (kind, ignored) ->
+            kinds.forEach { [kind, ignored] ->
                 val annotation = kind.annotationFqName
                 when (kind) {
                     in TestProcessorFunctionKind.INSTANCE_KINDS -> with(irClass) {
@@ -500,6 +502,11 @@ class TestProcessor(
                             && it.parameters[2].type.isFunction()  // function: testClassType.() -> Unit
                             && it.parameters[3].type.isBoolean()   // ignored: Boolean
                 }
+                val baseClassSuiteSubstitutor = IrTypeSubstitutor(
+                    baseClassSuite.typeParameters.map { it.symbol },
+                    listOf(testClassType, testCompanionType),
+                )
+                val registerTestCaseReturnType = baseClassSuiteSubstitutor.substitute(registerTestCase.returnType)
                 val registerFunction = baseClassSuite.getFunction("registerFunction") {
                     it.parameters.size == 3
                             && it.parameters[1].type.isTestFunctionKind()  // kind: TestFunctionKind
@@ -521,6 +528,7 @@ class TestProcessor(
                             registerFunction,
                             functions,
                             this@apply,
+                            registerTestCaseReturnType,
                     )
                 }
             }
@@ -663,7 +671,7 @@ class TestProcessor(
 
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == TestProcessorFunctionKind.TEST }
-        }.forEach { (_, testClass) ->
+        }.forEach { [_, testClass] ->
             statements.add(generateClassSuite(testClass, irFile))
         }
 

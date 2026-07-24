@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.commonizer.tree.merge
 
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.mergedtree.PropertyApproximationKey
+import org.junit.jupiter.api.Test
 
 class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
+    @Test
     fun `test simple class`() {
         val aTree = createCirTreeFromSourceCode("class X")
         val bTree = createCirTreeFromSourceCode("class X")
@@ -17,6 +19,7 @@ class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
         clazz.assertNoMissingTargetDeclaration()
     }
 
+    @Test
     fun `test missing target declarations`() {
         val aTree = createCirTreeFromSourceCode("class A")
         val bTree = createCirTreeFromSourceCode("class B")
@@ -30,6 +33,7 @@ class MergeCirTreeClassTest : AbstractMergeCirTreeTest() {
         b.assertOnlyTargetDeclarationAtIndex(1)
     }
 
+    @Test
     fun `test with children`() {
         val aTree = createCirTreeFromSourceCode(
             """

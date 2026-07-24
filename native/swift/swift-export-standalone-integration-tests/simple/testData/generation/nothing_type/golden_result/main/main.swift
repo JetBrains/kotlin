@@ -65,16 +65,23 @@ public func nothingClosure(
     block: @escaping () -> Swift.Never
 ) -> Swift.Never {
     return { __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__({
-        let originalBlock = block
-        return { return { originalBlock() }() }
+        let originalBlock: () -> Swift.Never = block
+        return {
+            let _result = originalBlock()
+            return { _result }()
+        }
     }()); fatalError() }()
 }
 public func nothingClosureParam(
     block: @escaping (Swift.Never) -> Swift.String
 ) -> Swift.String {
     return __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__({
-        let originalBlock = block
-        return { (arg0: Swift.Bool) in return originalBlock({ arg0; fatalError() }()) }
+        let originalBlock: (Swift.Never) -> Swift.String = block
+        return { (arg0: Swift.Bool) in
+            let _arg0: Swift.Never = { arg0; fatalError() }()
+            let _result = originalBlock(_arg0)
+            return _result
+        }
     }())
 }
 public func nothingFunctional() -> () -> Swift.Never {
@@ -93,16 +100,23 @@ public func nothingOptClosure(
     block: @escaping () -> Swift.Never?
 ) -> Swift.Never {
     return { __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___({
-        let originalBlock = block
-        return { return { originalBlock(); return true }() }
+        let originalBlock: () -> Swift.Optional<Swift.Never> = block
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }()); fatalError() }()
 }
 public func nothingOptClosureParam(
     block: @escaping (Swift.Never?) -> Swift.String
 ) -> Swift.String {
     return __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__({
-        let originalBlock = block
-        return { (arg0: Swift.Bool) in return originalBlock({ arg0; return nil }()) }
+        let originalBlock: (Swift.Optional<Swift.Never>) -> Swift.String = block
+        return { (arg0: Swift.Bool) in
+            let _arg0: Swift.Optional<Swift.Never> = { arg0; return nil }()
+            let _result = originalBlock(_arg0)
+            return _result
+        }
     }())
 }
 public func nothingOptFunctional() -> () -> Swift.Never? {

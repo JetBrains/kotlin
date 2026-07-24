@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
@@ -105,7 +105,7 @@ internal object CompilationServiceImpl : CompilationService {
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
         val kotlinFilenameExtensions =
             (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
-        val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
+        val [filteredSources, unknownSources] = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
         if (unknownSources.isNotEmpty()) {
             compilationConfig.logger.warn("Sources with unknown extensions were passed, they will be skipped: ${unknownSources.joinToString()}")
         }
@@ -136,7 +136,7 @@ internal object CompilationServiceImpl : CompilationService {
 
     private fun clearJarCaches() {
         ZipHandler.clearFileAccessorCache()
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.applicationEnvironment?.apply {
             (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
             (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
@@ -287,15 +287,18 @@ internal object CompilationServiceImpl : CompilationService {
             }
         )
 
-        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId,
-            clientIsAliveFile,
-            sessionIsAliveFlagFile,
-            loggerAdapter,
-            isDebugEnabled = true, // actually, prints daemon messages even unrelated to debug logs
-            daemonJVMOptions = jvmOptions,
-            daemonOptions = daemonOptions,
-        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
+        (
+            val daemon = compileService, val sessionId
+        ) =
+            KotlinCompilerRunnerUtils.newDaemonConnection(
+                compilerId,
+                clientIsAliveFile,
+                sessionIsAliveFlagFile,
+                loggerAdapter,
+                isDebugEnabled = true, // actually, prints daemon messages even unrelated to debug logs
+                daemonJVMOptions = jvmOptions,
+                daemonOptions = daemonOptions,
+            ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
 

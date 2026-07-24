@@ -44,7 +44,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
             initControlFlowAnalysis()
             traverseCfg()
 
-            for ((i, preds) in predecessors.withIndex()) {
+            for ([i, preds] in predecessors.withIndex()) {
                 for (pred in preds.toIntArray()) {
                     graph.predecessors[i].add(pred)
                     graph.successors[pred].add(i)

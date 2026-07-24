@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
+@K1Deprecation
 abstract class TreeBasedElement<out T : JCTree>(
         val tree: T,
         val compilationUnit: CompilationUnitTree,

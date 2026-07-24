@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.util.Textifier
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 
 abstract class TransformationMethodVisitor(
     private val delegate: MethodVisitor,
@@ -33,22 +31,9 @@ abstract class TransformationMethodVisitor(
     exceptions: Array<out String>?,
     api: Int = Opcodes.API_VERSION
 ) : MethodVisitor(api) {
-
     private val methodNode = MethodNode(access, name, desc, signature, exceptions).apply {
         localVariables = ArrayList(5)
     }
-
-    val traceMethodVisitorIfPossible: TraceMethodVisitor?
-        get() {
-            val traceMethodVisitor = TraceMethodVisitor(Textifier())
-            try {
-                methodNode.accept(traceMethodVisitor)
-            } catch (e: Throwable) {
-                return null
-            }
-
-            return traceMethodVisitor
-        }
 
     init {
         mv = wrapWithMaxLocalCalc(methodNode)

@@ -15,7 +15,6 @@ object JsLoweredDeclarationOrigin {
     val BRIDGE_WITHOUT_STABLE_NAME by IrDeclarationOriginImpl.Regular
     val BRIDGE_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Regular
     val OBJECT_GET_INSTANCE_FUNCTION by IrDeclarationOriginImpl.Regular
-    val JS_SHADOWED_EXPORT by IrDeclarationOriginImpl.Regular
     val JS_SUPER_CONTEXT_PARAMETER by IrDeclarationOriginImpl.Regular
     val JS_SHADOWED_DEFAULT_PARAMETER by IrDeclarationOriginImpl.Regular
     val ENUM_GET_INSTANCE_FUNCTION by IrDeclarationOriginImpl.Regular

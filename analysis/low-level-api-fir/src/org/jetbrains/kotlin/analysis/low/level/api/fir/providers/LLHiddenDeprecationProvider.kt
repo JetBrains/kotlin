@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
  *
  * After [KT-77114](https://youtrack.jetbrains.com/issue/KT-77114) the provider won't be needed anymore.
  */
-class LLHiddenDeprecationProvider(session: FirSession) : FirHiddenDeprecationProvider(session) {
+internal class LLHiddenDeprecationProvider(session: FirSession) : FirHiddenDeprecationProvider(session) {
     override fun isDeprecationLevelHidden(symbol: FirBasedSymbol<*>): Boolean {
         val fir = symbol.fir
         if (fir is FirJavaClass && fir.origin.fromSource) {

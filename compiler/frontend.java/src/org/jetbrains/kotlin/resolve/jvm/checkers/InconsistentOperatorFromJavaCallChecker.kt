@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * but there's a member in ConcurrentHashMap with acceptable signature that delegates to `containsValue` instead,
  * leading to an unexpected result. See KT-18053
  */
+@K1Deprecation
 object InconsistentOperatorFromJavaCallChecker : CallChecker {
     private val CONCURRENT_HASH_MAP_FQ_NAME = FqName("java.util.concurrent.ConcurrentHashMap")
 

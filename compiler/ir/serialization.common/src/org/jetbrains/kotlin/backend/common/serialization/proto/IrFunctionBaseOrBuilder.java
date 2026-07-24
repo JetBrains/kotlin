@@ -87,18 +87,27 @@ public interface IrFunctionBaseOrBuilder extends
 
   /**
    * <code>optional int32 body = 7;</code>
-   *
-   * <pre>
-   *optional int32 context_receiver_parameters_count = 8;
-   * </pre>
    */
   boolean hasBody();
   /**
    * <code>optional int32 body = 7;</code>
+   */
+  int getBody();
+
+  /**
+   * <code>optional int64 companionExtensionClass = 10;</code>
    *
    * <pre>
    *optional int32 context_receiver_parameters_count = 8;
    * </pre>
    */
-  int getBody();
+  boolean hasCompanionExtensionClass();
+  /**
+   * <code>optional int64 companionExtensionClass = 10;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
+   */
+  long getCompanionExtensionClass();
 }

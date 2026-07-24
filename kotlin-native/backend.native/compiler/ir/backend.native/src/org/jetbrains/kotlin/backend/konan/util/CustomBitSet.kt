@@ -11,13 +11,24 @@ import it.unimi.dsi.fastutil.ints.IntSet
 const val LAZY_CONVERSION_THRESHOLD = 8
 
 /**
- * Provides some bulk operations needed for devirtualization
+ * Provides some bulk operations needed for devirtualization.
+ *
+ * Mutating operations ([or], [orHasChanged], [orWithFilterHasChanged], [and], [andNot])
+ * must not be called with `this` as any of their bitset arguments. Self-application
+ * would either iterate over a set that is being modified, or read a data array that
+ * may be reallocated mid-operation. Callers must [copy] before applying such an
+ * operation to itself.
  */
 internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     var size = size
         private set
     private var data = data
     private var lazy: IntSet? = null
+
+    internal val isLazy: Boolean get() = lazy != null
+
+    /** For testing: the length of the underlying word array (independent of [size]). */
+    internal val dataCapacity: Int get() = data.size
 
     constructor() : this(0, EMPTY) {
         lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
@@ -33,12 +44,23 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun ensureCapacity(index: Int) {
-        if (lazy == null && data.size <= index) {
+        check(!isLazy) { "ensureCapacity called while in lazy mode" }
+        if (data.size <= index) {
             val oldData = data
             data = LongArray((oldData.size * 2).coerceAtLeast(index + 1))
             oldData.copyInto(data)
         }
         if (size <= index) size = index + 1
+    }
+
+    private fun updateLazySize() {
+        check(isLazy) { "updateLazySize called while in dense mode" }
+        size = lazy!!.maxOrNull()?.let { it.ushr(6) + 1 } ?: 0
+    }
+
+    private fun shrinkDenseSize() {
+        check(!isLazy) { "shrinkDenseSize called while in lazy mode" }
+        while (size > 0 && data[size - 1] == 0L) size--
     }
 
     fun set(bitIndex: Int) {
@@ -57,14 +79,17 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     fun clear(bitIndex: Int) {
         lazy?.let { lazy ->
             lazy.remove(bitIndex)
-            size = if (lazy.isNotEmpty()) lazy.max().ushr(6) + 1 else 0
+            updateLazySize()
             return
         }
         val index = bitIndex shr 6
+        if (index >= size) {
+            check(index >= data.size || data[index] == 0L)
+            return
+        }
         val offset = bitIndex and 0x3f
-        ensureCapacity(index)
         data[index] = data[index] and (1L shl offset).inv()
-        while (size > 0 && data[size - 1] == 0L) size--
+        shrinkDenseSize()
     }
 
     operator fun get(bitIndex: Int): Boolean {
@@ -127,6 +152,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     fun or(another: CustomBitSet) {
+        require(another !== this) { "or() must not be called with this as the argument" }
         another.lazy?.let { alazy ->
             alazy.forEach { set(it) }
             return
@@ -140,7 +166,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         }
     }
 
-    fun orWithFilterHasChanged(another: CustomBitSet): Boolean {
+    fun orHasChanged(another: CustomBitSet): Boolean {
+        require(another !== this) { "orHasChanged() must not be called with this as the argument" }
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -165,6 +192,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
 
     fun orWithFilterHasChanged(another: CustomBitSet, filter: CustomBitSet): Boolean {
+        require(another !== this) { "orWithFilterHasChanged() must not be called with this as `another`" }
+        require(filter !== this) { "orWithFilterHasChanged() must not be called with this as `filter`" }
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
@@ -190,23 +219,27 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         val fsize = filter.size
         val adata = another.data
         val asize = another.size
-        ensureCapacity(asize - 1)
+        val minSize = minOf(asize, fsize)
+        ensureCapacity(minSize - 1)
 
         var acc = 0L
-        for (i in 0 until asize.coerceAtMost(fsize)) {
+        for (i in 0 until minSize) {
             val d = data[i]
             val fd = fdata[i]
             val dd = d or (adata[i] and fd)
             acc = acc or (dd xor d)
             data[i] = dd
         }
+        shrinkDenseSize()
 
         return acc != 0L
     }
 
     fun and(another: CustomBitSet) {
+        require(another !== this) { "and() must not be called with this as the argument" }
         lazy?.let { lazy ->
             lazy.retainAll { another[it] }
+            updateLazySize()
             return
         }
         another.lazy?.let { alazy ->
@@ -218,34 +251,40 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             lazy = newLazy
             data = EMPTY
+            updateLazySize()
             return
         }
+        // and only clears bits, so this.size never needs to grow
         val adata = another.data
-        val asize = another.size
-        ensureCapacity(asize - 1)
-        for (i in 0 until asize) {
+        val minSize = minOf(size, another.size)
+        for (i in 0 until minSize) {
             data[i] = data[i] and adata[i]
         }
-        for (i in asize until size) {
+        for (i in minSize until size) {
             data[i] = 0L
         }
+        shrinkDenseSize()
     }
 
     fun andNot(another: CustomBitSet) {
+        require(another !== this) { "andNot() must not be called with this as the argument" }
         lazy?.let { lazy ->
             lazy.retainAll { !another[it] }
+            updateLazySize()
             return
         }
         another.lazy?.let { alazy ->
             alazy.forEach { clear(it) }
             return
         }
+        // andNot only clears bits, so this.size never needs to grow
         val adata = another.data
-        val asize = another.size
-        ensureCapacity(asize - 1)
-        for (i in 0 until asize) {
+        val minSize = minOf(size, another.size)
+        for (i in 0 until minSize) {
             data[i] = data[i] and adata[i].inv()
         }
+        // Every word over minSize stays unchanged
+        shrinkDenseSize()
     }
 
     fun intersects(another: CustomBitSet): Boolean {
@@ -315,7 +354,6 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is CustomBitSet) return false
-        if (size != other.size) return false
         if (lazy != null || other.lazy != null) {
             if (cardinality() != other.cardinality()) return false
             forEachBit {
@@ -323,11 +361,19 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             return true
         }
-
-        for (i in 0 until size) {
+        // Dense-dense: compare logical content. `size` is treated as an upper bound;
+        // stale-high words past the lower size are required to be zero, so the result
+        // is correct even if one side has stale `size`.
+        val minSize = minOf(size, other.size)
+        for (i in 0 until minSize) {
             if (data[i] != other.data[i]) return false
         }
-
+        for (i in minSize until size) {
+            if (data[i] != 0L) return false
+        }
+        for (i in minSize until other.size) {
+            if (other.data[i] != 0L) return false
+        }
         return true
     }
 
@@ -351,6 +397,10 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     companion object {
         private val EMPTY = LongArray(0)
 
-        fun valueOf(data: LongArray) = CustomBitSet(data.size, data)
+        // Create a CustomBitSet with data as the underlying storage.
+        // Does not copy the data array!
+        fun valueOf(data: LongArray): CustomBitSet {
+            return CustomBitSet(data.size, data).also { it.shrinkDenseSize() }
+        }
     }
 }

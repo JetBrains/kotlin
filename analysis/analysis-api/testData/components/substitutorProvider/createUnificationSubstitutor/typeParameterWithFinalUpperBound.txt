@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-T <: kotlin/Int (Original: T <: kotlin/Int)
-
-EXISTENTIAL:
-Substitutor: <map substitutor: {T = kotlin/Int}>
-Substituted pairs:
-kotlin/Int <: kotlin/Int (Original: T <: kotlin/Int)

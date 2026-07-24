@@ -11,6 +11,8 @@ import org.gradle.internal.component.resolution.failure.exception.VariantSelecti
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
@@ -511,7 +513,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve dom-api-compat`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -586,8 +588,8 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - all configurations can resolve stdlib`() {
         val consumer = uklibConsumer {
-            repositories.mavenLocal()
-            repositories.mavenCentral()
+            repositories.kotlinBuildDeps()
+            repositories.mavenCentralCacheRedirector()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -877,7 +879,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - resolution with annotations`() {
         val consumer = uklibConsumer {
-            repositories.mavenCentral()
+            repositories.mavenCentralCacheRedirector()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -944,7 +946,7 @@ class UklibResolutionTestsWithMockComponents {
     @Test
     fun `uklib resolution - resolution with legacy KMP`() {
         val consumer = uklibConsumer {
-            repositories.mavenCentral()
+            repositories.mavenCentralCacheRedirector()
             kotlin {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
@@ -1671,7 +1673,7 @@ class UklibResolutionTestsWithMockComponents {
                 linuxArm64()
                 js()
                 wasmWasi()
-                repositories.mavenCentral()
+                repositories.mavenCentralCacheRedirector()
                 sourceSets.commonMain {
                     dependencies {
                         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")

@@ -1,0 +1,5 @@
+expression: Color.RED.name
+constant: "RED"
+constantValueKind: StringValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: Color.RED.name

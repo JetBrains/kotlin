@@ -19,12 +19,11 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
@@ -32,7 +31,7 @@ internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
 ): T = CachedValuesManager.getCachedValue(this) {
     CachedValueProvider.Result.createSingleDependency(
         computer(),
-        KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this),
+        KotlinAsJavaSupport.getInstance(project).librariesModificationTracker(),
     )
 }
 
@@ -49,7 +48,7 @@ open class KtLightClassForDecompiledDeclaration(
     private val contentFinderCache by lazyPub {
         ClassContentFinderCache(
             extensibleClass = this,
-            modificationTrackers = listOf(KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)),
+            modificationTrackers = listOf(KotlinAsJavaSupport.getInstance(project).librariesModificationTracker()),
         )
     }
 

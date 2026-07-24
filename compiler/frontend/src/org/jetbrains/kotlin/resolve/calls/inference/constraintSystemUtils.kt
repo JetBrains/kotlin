@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
@@ -24,15 +25,18 @@ import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.*
 
+@K1Deprecation
 fun ConstraintSystem.getNestedTypeVariables(type: KotlinType): List<TypeVariable> {
     val nestedTypeParameters = type.getNestedTypeParameters().toSet()
     return typeVariables.filter { it.originalTypeParameter in nestedTypeParameters }
 }
 
+@K1Deprecation
 fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
     return toBuilder { !it.derivedFrom(excludePositionKind) }.build()
 }
 
+@K1Deprecation
 fun ConstraintSystem.descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable {
     return typeVariables.firstOrNull {
         it.call == call && it.originalTypeParameter == descriptor

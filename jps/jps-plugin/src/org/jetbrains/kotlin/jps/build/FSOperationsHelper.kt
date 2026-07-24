@@ -100,7 +100,7 @@ class FSOperationsHelper(
     private fun cleanOutputsForNewDirtyFilesInCurrentRound(target: ModuleBuildTarget, dirtyFiles: Map<File, JavaSourceRootDescriptor>) {
         val dirtyFilesHolder = object : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(compileContext) {
             override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
-                dirtyFiles.forEach { (file, root) -> processor.apply(target, file, root) }
+                dirtyFiles.forEach { [file, root] -> processor.apply(target, file, root) }
             }
 
             override fun hasDirtyFiles(): Boolean = dirtyFiles.isNotEmpty()

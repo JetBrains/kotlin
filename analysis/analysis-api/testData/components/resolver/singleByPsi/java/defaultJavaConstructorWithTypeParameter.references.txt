@@ -1,7 +1,0 @@
-KtNameReferenceExpression(60,69): 'JavaClass'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in ROOT) {psi: PsiClassImpl}open class JavaClass<{psi: PsiTypeParameterImpl} TT : kotlin.Any!> {psi: PsiClassImpl} constructor

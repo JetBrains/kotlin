@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.cli.NativeDistributionListTargets
 import org.jetbrains.kotlin.commonizer.cli.Task
-import org.jetbrains.kotlin.commonizer.cli.TaskType
 import org.jetbrains.kotlin.commonizer.cli.parseTasksFromCommandLineArguments
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
@@ -19,9 +18,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class CommonizerCliTest {
-    @Rule
-    @JvmField
-    var testName: TestName = TestName()
+    private lateinit var testMethodName: String
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        testMethodName = testInfo.testMethod.get().name
+    }
+
 
     @Test
     fun simpleArgfile() {
@@ -29,7 +32,7 @@ class CommonizerCliTest {
             """
             native-dist-print-targets
             -distribution-path
-            ${Files.createTempDirectory(testName.methodName).absolutePathString()}
+            ${Files.createTempDirectory(testMethodName).absolutePathString()}
             """.trimIndent()
         ) { tasks ->
             assertEquals(1, tasks.size, "Expected exactly one task to be parsed")
@@ -47,7 +50,7 @@ class CommonizerCliTest {
             """
             "native-dist-print-targets"
             -distribution-path
-            ${Files.createTempDirectory(testName.methodName).absolutePathString()}
+            ${Files.createTempDirectory(testMethodName).absolutePathString()}
             """.trimIndent()
         ) { tasks ->
             assertEquals(1, tasks.size, "Expected exactly one task to be parsed")
@@ -60,7 +63,7 @@ class CommonizerCliTest {
     }
 
     private fun doTestWithArgfile(contents: String, assertions: (List<Task>) -> Unit) {
-        val tempFile = File.createTempFile("CommonizerCliTest", testName.methodName)
+        val tempFile = File.createTempFile("CommonizerCliTest", testMethodName)
         tempFile.writeText(contents)
         val tasks = parseTasksFromCommandLineArguments(arrayOf("@${tempFile.absoluteFile}"))
         assertions(tasks)

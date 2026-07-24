@@ -1,2 +1,3 @@
 expression: lst
+expression PSI: KtNameReferenceExpression
 type: kotlin.collections.List<kotlin.collections.List<*>>

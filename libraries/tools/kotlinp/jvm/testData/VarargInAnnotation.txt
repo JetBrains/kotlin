@@ -15,6 +15,7 @@ public final enum class A : kotlin/Enum<A> {
 }
 // AnnoAnnotation.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class AnnoAnnotation : kotlin/Annotation {
 
   // signature: <init>(Lkotlin/Array;)V
@@ -28,6 +29,7 @@ public final annotation class AnnoAnnotation : kotlin/Annotation {
 }
 // AnnoEnum.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class AnnoEnum : kotlin/Annotation {
 
   // signature: <init>(Lkotlin/Array;)V
@@ -41,6 +43,7 @@ public final annotation class AnnoEnum : kotlin/Annotation {
 }
 // AnnoInt.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class AnnoInt : kotlin/Annotation {
 
   // signature: <init>([I)V
@@ -54,6 +57,7 @@ public final annotation class AnnoInt : kotlin/Annotation {
 }
 // AnnoKClass.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class AnnoKClass : kotlin/Annotation {
 
   // signature: <init>(Lkotlin/Array;)V
@@ -67,6 +71,7 @@ public final annotation class AnnoKClass : kotlin/Annotation {
 }
 // AnnoString.class
 // ------------------------------------------
+@kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
 public final annotation class AnnoString : kotlin/Annotation {
 
   // signature: <init>(Lkotlin/Array;)V

@@ -1,3 +1,6 @@
+[type]
+A
+
 [direct super types]
 kotlin.Any
 

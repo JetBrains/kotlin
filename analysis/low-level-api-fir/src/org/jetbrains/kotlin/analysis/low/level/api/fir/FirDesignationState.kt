@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 
-abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDesignation) {
+internal abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDesignation) {
     private var context: C? = null
     private val designationState = FirDesignationState(designation)
 

@@ -37,6 +37,11 @@ fun main(args: Array<String>) {
                 model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
+            testClass<AbstractValhallaBlackBoxSmokeTest> {
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+
             testClass<AbstractFirLightTreeHeaderModeCodegenTest> {
                 model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
                 model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
@@ -56,7 +61,7 @@ fun main(args: Array<String>) {
                 model("boxJvm/reflection")
             }
 
-            testClass<AbstractNewReflectionFakeOverridesImplementationTest> {
+            testClass<AbstractReflectionLoadMetadataDirectlyTest> {
                 model("box/reflection")
                 model("boxJvm/reflection")
             }
@@ -100,6 +105,10 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
+            testClass<AbstractLocalVariableTableTest> {
+                model("checkLocalVariablesTable")
+            }
+
             testClass<AbstractFirPsiLocalVariableTest> {
                 model("debug/localVariables")
             }
@@ -122,6 +131,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractWriteSignatureTest> {
+                model("writeSignature")
+            }
+
+            testClass<AbstractWriteFlagsTest> {
+                model("writeFlags")
             }
         }
 

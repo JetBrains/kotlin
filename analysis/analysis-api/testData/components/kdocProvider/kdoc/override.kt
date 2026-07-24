@@ -28,6 +28,24 @@ class B : Foo {
     override fun undocumented() {}
 }
 
+open class Parent {
+    /**
+     * parent property docs
+     */
+    open var v = 0
+}
+
+class Child : Parent() {
+    /**
+     * child property docs
+     */
+    override var v = 0
+}
+
+class GrandChild : Parent() {
+    override var v = 0
+}
+
 fun foo() {
     val fooA: Foo = A()
     val fooB: Foo = B()

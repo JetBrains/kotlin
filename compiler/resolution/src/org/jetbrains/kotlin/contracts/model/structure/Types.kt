@@ -5,35 +5,44 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 sealed class ESType {
     abstract fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType
 }
 
+@K1Deprecation
 abstract class ESBuiltInType : ESType()
 
+@K1Deprecation
 object ESAnyType : ESBuiltInType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = builtIns.anyType
 }
 
+@K1Deprecation
 object ESNullableAnyType : ESBuiltInType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = builtIns.nullableAnyType
 }
 
+@K1Deprecation
 object ESNullableNothingType : ESBuiltInType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = builtIns.nullableNothingType
 }
 
+@K1Deprecation
 object ESNothingType : ESBuiltInType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = builtIns.nothingType
 }
 
+@K1Deprecation
 object ESBooleanType : ESType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = builtIns.booleanType
 }
 
+@K1Deprecation
 class ESKotlinType(val type: KotlinType) : ESType() {
     override fun toKotlinType(builtIns: KotlinBuiltIns): KotlinType = type
     override fun equals(other: Any?): Boolean {
@@ -53,6 +62,7 @@ class ESKotlinType(val type: KotlinType) : ESType() {
 }
 
 
+@K1Deprecation
 fun KotlinType.toESType() = when {
     KotlinBuiltIns.isBoolean(this) -> ESBooleanType
     KotlinBuiltIns.isAny(this) -> ESAnyType
@@ -62,4 +72,5 @@ fun KotlinType.toESType() = when {
     else -> ESKotlinType(this)
 }
 
+@K1Deprecation
 fun ESType?.isBoolean(): Boolean = this is ESBooleanType

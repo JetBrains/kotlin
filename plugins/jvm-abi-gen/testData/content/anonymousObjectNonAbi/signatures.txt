@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class test/TestKt {
+    // source: 'test.kt'
+    public final static @org.jetbrains.annotations.NotNull method bar(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}

@@ -16,6 +16,7 @@ object TestCompilePaths {
     const val KOTLIN_ANNOTATIONS_PATH: String = "kotlin.annotations.path"
     const val KOTLIN_WEB_STDLIB_KLIB_PATH: String = "kotlin.web.stdlib.path"
     const val KOTLIN_JS_STDLIB_KLIB_PATH: String = "kotlin.js.stdlib.klib.path"
+    const val KOTLIN_JKLIB_STDLIB_PATH: String = "kotlin.stdlib.jklib.for.test"
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
 
@@ -40,4 +41,10 @@ object TestCompilePaths {
     const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
     const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
+
+    const val LOMBOK_COMPILER_PLUGIN_JAR_PATH: String = "lombok.compiler.plugin.jar.path"
+    const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
+    const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
+    const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
+    const val KOTLIN_REFLECT_SHADOW_JAR_PATH: String = "kotlin.reflect.shadow.jar.path"
 }

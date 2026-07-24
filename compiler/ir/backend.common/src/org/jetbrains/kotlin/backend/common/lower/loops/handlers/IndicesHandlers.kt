@@ -87,7 +87,7 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
     }
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = getClass()!!.getPropertyGetter("size")!!.owner
+        get() = context.symbols.arraySizePropertyGetter(this)
 }
 
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
 import kotlin.math.min
 
+@K1Deprecation
 class TypeResolver(
     private val annotationResolver: AnnotationResolver,
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,
@@ -598,7 +600,7 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
-        val (collectedArgumentAsTypeProjections, argumentsForOuterClass) =
+        val [collectedArgumentAsTypeProjections, argumentsForOuterClass] =
             collectArgumentsForClassifierTypeConstructor(c, classDescriptor, qualifierResolutionResult.qualifierParts)
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
@@ -695,7 +697,7 @@ class TypeResolver(
             qualifierResolutionResult.qualifierParts.lastOrNull()
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
-        val (argumentElementsFromUserType, argumentsForOuterClass) =
+        val [argumentElementsFromUserType, argumentsForOuterClass] =
             collectArgumentsForClassifierTypeConstructor(c, descriptor, qualifierResolutionResult.qualifierParts)
                 ?: return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
 
@@ -908,7 +910,7 @@ class TypeResolver(
                 reversedQualifierParts.size
             )
 
-        for ((_, _, typeArguments) in nonClassQualifierParts) {
+        for ([_, _, typeArguments] in nonClassQualifierParts) {
             if (typeArguments != null) {
                 c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(typeArguments, "here"))
                 return null

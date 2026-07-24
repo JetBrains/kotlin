@@ -215,7 +215,7 @@ class FunctionCallTransformer(
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
             val callResult =
                 analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
-            val (tokens, dataFrameSchema) = callResult ?: return null
+            (val tokens = markers, val dataFrameSchema = result) = callResult ?: return null
             val token = tokens[0]
             val rootSchemaSymbol = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()!!
             val firstSchema = rootSchemaSymbol.fir
@@ -257,12 +257,12 @@ class FunctionCallTransformer(
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
             val callResult = analyzeRefinedCallShape<GroupBy>(call, Names.GROUP_BY_CLASS_ID, InterpretationErrorReporter.DEFAULT)
-            val (rootMarkers, groupBy) = callResult ?: return null
+            (val rootMarkers = markers, val groupBy = result) = callResult ?: return null
 
             val keyMarker = rootMarkers[0]
             val groupMarker = rootMarkers[1]
 
-            val (keySchema, groupSchema) = if (groupBy != null) {
+            val [keySchema, groupSchema] = if (groupBy != null) {
                 val keySchema = groupBy.keys
                 val groupSchema = groupBy.groups
                 keySchema to groupSchema

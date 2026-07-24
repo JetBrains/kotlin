@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseUseSiteLibraryModuleAnalysisException
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.base.KotlinStandalonePlatformSettings
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest

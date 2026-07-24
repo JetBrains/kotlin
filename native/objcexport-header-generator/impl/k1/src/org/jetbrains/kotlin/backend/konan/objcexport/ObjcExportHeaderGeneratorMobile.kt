@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -22,6 +23,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
 ) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
 
     companion object {
+        @OptIn(K1Deprecation::class)
         fun createInstance(
             configuration: ObjCExportLazy.Configuration,
             problemCollector: ObjCExportProblemCollector,

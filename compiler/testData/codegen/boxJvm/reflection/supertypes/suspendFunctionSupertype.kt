@@ -56,5 +56,7 @@ fun box(): String {
         checkAllSuperclasses(Function1::class, Function::class, Any::class)
     }
 
+    assertEquals(4, S0::class.members.size)
+
     return "OK"
 }

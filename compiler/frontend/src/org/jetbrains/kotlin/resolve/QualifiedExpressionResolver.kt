@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.codeInsight.completion.CompletionUtilCore
 import com.intellij.psi.impl.source.DummyHolder
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isLibraryToSourceAnalysisEnabled
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
 import org.jetbrains.kotlin.utils.CallOnceFunction
 
+@K1Deprecation
 class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSettings) {
     fun resolvePackageHeader(
         packageDirective: KtPackageDirective,
@@ -46,7 +48,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         trace: BindingTrace
     ) {
         val packageNames = packageDirective.packageNames
-        for ((index, nameExpression) in packageNames.withIndex()) {
+        for ([index, nameExpression] in packageNames.withIndex()) {
             storeResult(
                 trace, nameExpression, module.getPackage(packageDirective.getFqName(nameExpression)),
                 shouldBeVisibleFrom = null, position = QualifierPosition.PACKAGE_HEADER, isQualifier = index != packageNames.lastIndex
@@ -68,7 +70,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         reportOn: KtExpression?,
         trace: BindingTrace
     ): ClassifierDescriptor? {
-        val (classifier, isDeprecated) = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
+        (val classifier = descriptor, val isDeprecated) = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
 
         if (isDeprecated && reportOn != null) {
             trace.record(BindingContext.DEPRECATED_SHORT_NAME_ACCESS, reportOn) // For IDE
@@ -107,7 +109,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             return TypeQualifierResolutionResult(userType.asQualifierPartList().first, descriptor)
         }
 
-        val (qualifierPartList, hasError) = userType.asQualifierPartList()
+        val [qualifierPartList, hasError] = userType.asQualifierPartList()
         if (hasError) {
             val descriptor = resolveToPackageOrClass(
                 qualifierPartList, scope.ownerDescriptor.module, trace, ownerDescriptor, scope, position = QualifierPosition.TYPE
@@ -171,7 +173,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         }
 
         if (qualifierPartList.size == 1) {
-            val (name, simpleNameExpression) = qualifierPartList.single()
+            val [name, simpleNameExpression] = qualifierPartList.single()
             val descriptor = scope.findClassifierAndReportDeprecationIfNeeded(
                 name,
                 KotlinLookupLocation(simpleNameExpression),
@@ -454,7 +456,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         scopeForFirstPart: LexicalScope?,
         position: QualifierPosition
     ): DeclarationDescriptor? {
-        val (packageOrClassDescriptor, endIndex) =
+        val [packageOrClassDescriptor, endIndex] =
             resolveToPackageOrClassPrefix(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart, position)
 
         if (endIndex != path.size) {
@@ -509,7 +511,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             storeResult(trace, firstPart.expression, classifierDescriptor, shouldBeVisibleFrom, position)
         }
 
-        val (prefixDescriptor, nextIndexAfterPrefix) =
+        val [prefixDescriptor, nextIndexAfterPrefix] =
             if (classifierDescriptor != null)
                 Pair(classifierDescriptor, 1)
             else
@@ -607,7 +609,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         val path = mapToQualifierParts(qualifiedExpressions, 0)
         val trace = DelegatingBindingTrace(context, "Temp trace for resolving qualified expression")
 
-        val (result, index) = resolveToPackageOrClassPrefix(
+        val [result, index] = resolveToPackageOrClassPrefix(
             path = path,
             moduleDescriptor = scope.ownerDescriptor.module,
             trace = trace,

@@ -86,7 +86,7 @@ class PluginDataFrameSchemaParser {
     private fun parseColumns(jsonObject: JsonObject): Result<List<SimpleCol>> {
         val columns = mutableListOf<SimpleCol>()
 
-        for ((name, value) in jsonObject.entries) {
+        for ([name, value] in jsonObject.entries) {
             if (name.isBlank()) {
                 return Result.parsingError("Column name cannot be blank")
             }
@@ -142,7 +142,7 @@ class PluginDataFrameSchemaParser {
     private fun parseNestedColumns(jsonObject: JsonObject): Result<List<SimpleCol>> {
         val columns = mutableListOf<SimpleCol>()
 
-        for ((key, value) in jsonObject.entries) {
+        for ([key, value] in jsonObject.entries) {
             if (key.isBlank()) {
                 return Result.failure(IllegalArgumentException("Nested column name cannot be blank"))
             }

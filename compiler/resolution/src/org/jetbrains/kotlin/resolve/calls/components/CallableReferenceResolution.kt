@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@K1Deprecation
 sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class UnboundReference(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
     class BoundValueReference(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
@@ -32,6 +34,7 @@ sealed class CallableReceiver(val receiver: ReceiverValueWithSmartCastInfo) {
     class ExplicitValueReceiver(receiver: ReceiverValueWithSmartCastInfo) : CallableReceiver(receiver)
 }
 
+@K1Deprecation
 class CallableReferenceAdaptation(
     val argumentTypes: Array<KotlinType>,
     val coercionStrategy: CoercionStrategy,
@@ -48,6 +51,7 @@ class CallableReferenceAdaptation(
  * C::foo <-> Object
  * D.E::foo <-> Expression
  */
+@K1Deprecation
 fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory): ScopeTowerProcessor<CallableReferenceResolutionCandidate> {
     when (val lhsResult = factory.kotlinCall.lhsResult) {
         LHSResult.Empty, LHSResult.Error, is LHSResult.Expression -> {
@@ -78,6 +82,7 @@ fun createCallableReferenceProcessor(factory: CallableReferencesCandidateFactory
     }
 }
 
+@K1Deprecation
 fun CallableReferenceResolutionCandidate.addConstraints(
     constraintSystem: ConstraintSystemOperation,
     substitutor: FreshVariableNewTypeSubstitutor,
@@ -148,8 +153,10 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     addSubtypeConstraint(receiverType, expectedType, position)
 }
 
+@K1Deprecation
 data class InputOutputTypes(val inputTypes: List<UnwrappedType>, val outputType: UnwrappedType)
 
+@K1Deprecation
 fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: UnwrappedType?): InputOutputTypes? {
     if (expectedType == null) return null
 

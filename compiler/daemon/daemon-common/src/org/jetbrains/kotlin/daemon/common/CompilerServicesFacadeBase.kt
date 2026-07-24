@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
@@ -49,6 +50,20 @@ enum class ReportSeverity(val code: Int) {
     }
 }
 
-fun CompilerServicesFacadeBase.report(category: ReportCategory, severity: ReportSeverity, message: String? = null, attachment: Serializable? = null) {
+fun CompilerServicesFacadeBase.report(
+    category: ReportCategory,
+    severity: ReportSeverity,
+    message: String? = null,
+    attachment: Serializable? = null,
+) {
     report(category.code, severity.code, message, attachment)
+}
+
+data class CompilerMessageAttachment(
+    val location: CompilerMessageSourceLocation?,
+    val diagnosticId: String?,
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }

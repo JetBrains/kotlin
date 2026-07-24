@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -71,20 +74,47 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             dispatchClassSymbol.getContainingDeclaration(context.session) as? FirRegularClassSymbol ?: return
 
         // Called from within a derived class
-        val companionContainingType = companionContainingClassSymbol.defaultType()
         if (context.findClosest<FirClassSymbol<*>> {
-                AbstractTypeChecker.isSubtypeOf(context.session.typeContext, it.defaultType(), companionContainingType)
+                AbstractTypeChecker.isSubtypeOfClass(
+                    context.session.typeContext,
+                    it.toLookupTag(),
+                    companionContainingClassSymbol.toLookupTag()
+                )
             } == null
         ) {
             return
         }
+        // This is an old check using default types, which is not correct for generic classes
+        // TODO: remove this check once we cannot disable ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics
+        if (LanguageFeature.ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics.isDisabled() &&
+            context.findClosest<FirClassSymbol<*>> {
+                AbstractTypeChecker.isSubtypeOf(context.session.typeContext, it.defaultType(), companionContainingClassSymbol.defaultType())
+            } == null
+        ) {
+            reportDiagnosticIfNotWithinSameCompanionOrItsOwner(
+                dispatchClassSymbol, companionContainingClassSymbol, calleeReference.source,
+                FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING
+            )
+            return
+        }
+        reportDiagnosticIfNotWithinSameCompanionOrItsOwner(
+            dispatchClassSymbol, companionContainingClassSymbol, calleeReference.source,
+            FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC
+        )
+    }
 
-        // Called not within the same companion object or its owner class
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportDiagnosticIfNotWithinSameCompanionOrItsOwner(
+        dispatchClassSymbol: FirRegularClassSymbol,
+        companionContainingClassSymbol: FirRegularClassSymbol,
+        source: AbstractKtSourceElement?,
+        diagnostic: KtDiagnosticFactory0,
+    ) {
         if (context.findClosest<FirClassSymbol<*>> {
                 it == dispatchClassSymbol || it == companionContainingClassSymbol
             } == null
         ) {
-            reporter.reportOn(calleeReference.source, FirJvmErrors.SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC)
+            reporter.reportOn(source, diagnostic)
         }
     }
 }

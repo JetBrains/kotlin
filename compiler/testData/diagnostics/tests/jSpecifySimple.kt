@@ -29,7 +29,7 @@ public class NullMarkedAnnotated {
 // FILE: usages.kt
 
 fun usages() {
-    val x: String <!INITIALIZER_TYPE_MISMATCH!>=<!> Annotated.returnNullable()
+    val x: String = Annotated.<!INITIALIZER_TYPE_MISMATCH!>returnNullable<!>()
     Annotated.takeNonNull(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     NullMarkedAnnotated.takeNonNull(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

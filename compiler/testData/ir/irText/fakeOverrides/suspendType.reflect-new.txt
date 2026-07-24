@@ -1,0 +1,9 @@
+KClass: abstract class S0 : Function1, Any
+  constructors:
+    public final fun `<init>`(): S0
+  members:
+    public open operator fun S0.equals(kotlin.Any?): kotlin.Boolean
+    public open fun S0.hashCode(): kotlin.Int
+    public abstract operator fun S0.invoke(P1): kotlin.Unit
+    public open fun S0.toString(): kotlin.String
+  declaredMembers:

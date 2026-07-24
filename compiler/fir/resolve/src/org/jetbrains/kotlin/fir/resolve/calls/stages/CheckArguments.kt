@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 internal object CheckArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -33,7 +34,7 @@ internal object CheckArguments : ResolutionStage() {
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
         val contextArgumentsOfInvoke = candidate.expectedContextParameterCountForInvoke ?: 0
-        for ((index, argument) in candidate.arguments.withIndex()) {
+        for ([index, argument] in candidate.arguments.withIndex()) {
             if (index < contextArgumentsOfInvoke) continue
 
             val expression = argument.expression
@@ -203,7 +204,7 @@ private fun FirExpression.isCallWithGenericReturnTypeAndMatchingLambda(): Boolea
     val postponedAtoms = namedReferenceWithCandidate()?.candidate?.postponedAtoms ?: return false
     return postponedAtoms.any {
         it is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
-                it.expectedType.typeConstructor(session.typeContext) == expressionType.typeConstructor(session.typeContext)
+                it.expectedType.typeConstructor(c = session.typeContext) == expressionType.typeConstructor(c = session.typeContext)
     }
 }
 
@@ -240,5 +241,6 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
 context(context: ResolutionContext)
 private fun CheckerSink.markCandidateForCompatibilityResolve() {
     if (disableCompatibilityModeForNewInference()) return
+    @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // DisableCompatibilityModeForNewInference
     reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }

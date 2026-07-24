@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 fun <T1> underlying(a: IC): T1 = bar(a) { it.value as T1 }
 

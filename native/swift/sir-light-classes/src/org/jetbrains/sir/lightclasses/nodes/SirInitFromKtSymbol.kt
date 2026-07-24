@@ -1,52 +1,31 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.components.containingSymbol
-import org.jetbrains.kotlin.analysis.api.components.defaultType
-import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.SirTypeNamer
-import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
-import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
-import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
-import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.sir.util.isUnavailable
-import org.jetbrains.kotlin.sir.util.name
-import org.jetbrains.kotlin.sir.util.returnType
-import org.jetbrains.kotlin.sir.util.swiftFqName
-import org.jetbrains.kotlin.sir.util.unavailableTypes
-import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
+import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
-import org.jetbrains.sir.lightclasses.utils.OverrideStatus
-import org.jetbrains.sir.lightclasses.utils.computeIsOverride
-import org.jetbrains.sir.lightclasses.utils.translateParameters
-import org.jetbrains.sir.lightclasses.utils.translatedAttributes
-import kotlin.lazy
 
 private val obj = SirParameter(
-    "", "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
+    null, "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
 )
 
 internal sealed class SirInitFromKtSymbol(
@@ -106,6 +85,11 @@ internal sealed class SirInitFromKtSymbol(
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
                 !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
+        }
+
+    protected val isAbstractClass: Boolean
+        get() = withSessions {
+            (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.modality?.isAbstract() ?: false
         }
 
 }
@@ -196,8 +180,10 @@ internal class SirRegularInitFromKtSymbol(
             val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
 
             return@withSessions SirFunctionBody(buildList {
-                (parent as? SirScopeDefiningDeclaration)?.let {
-                    add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
+                if (isAbstractClass) {
+                    (parent as? SirScopeDefiningDeclaration)?.let {
+                        add("if Self.self == ${it.swiftFqName}.self { fatalError(\"Abstract class ${it.swiftFqName} cannot be instantiated directly\") }")
+                    }
                 }
 
                 addAll(allocDescriptor.createSwiftInvocation {
@@ -255,7 +241,7 @@ internal class SirRegularInitFromKtSymbol(
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "__error", it)
+                SirParameter(null, "__error", it)
             },
             isAsync = false,
         )

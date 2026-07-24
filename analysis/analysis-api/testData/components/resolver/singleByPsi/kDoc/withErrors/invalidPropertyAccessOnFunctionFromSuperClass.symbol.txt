@@ -1,2 +1,5 @@
-KtNamedFunction(81,122): '/**'
-  null
+KDocName(89,97): 'A.toName'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SuperClass.toName(<dispatch receiver>: SuperClass): kotlin.String
+    ]

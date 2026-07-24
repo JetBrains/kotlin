@@ -57,10 +57,10 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    foo <!ARGUMENT_TYPE_MISMATCH!>{ [_, b]: B ->
+    foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>[_, b]: B<!> ->
         <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<Short>() }
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-@OptIn(ObsoleteTestInfrastructure::class)
 open class CustomBytecodeTextTest : CodegenTestCase() {
-    override val useFir: Boolean
-        get() = true
 
     override val firParser: FirParser
         get() = FirParser.LightTree
 
+    @Test
     fun testEnumMapping() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         myFiles = CodegenTestFiles.create(
@@ -35,27 +34,26 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
                 }
             }
             """,
-            myEnvironment.project
+            myEnvironment!!.project
         )
 
         val text = generateToText()
         val getstatics = text.lines().filter { it.contains("GETSTATIC MyEnum.") }.map { it.trim() }
-        assertOrderedEquals(
-            "actual bytecode:\n$text",
-            getstatics,
+        assertEquals(
             listOf(
-                "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
-                "GETSTATIC MyEnum.${'$'}ENTRIES : Lkotlin/enums/EnumEntries;",
+                $$"GETSTATIC MyEnum.$VALUES : [LMyEnum;",
+                $$"GETSTATIC MyEnum.$ENTRIES : Lkotlin/enums/EnumEntries;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
-                "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
+                $$"GETSTATIC MyEnum.$VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;"
-            )
-        )
+            ),
+            getstatics
+        ) { "actual bytecode:\n$text" }
     }
 }

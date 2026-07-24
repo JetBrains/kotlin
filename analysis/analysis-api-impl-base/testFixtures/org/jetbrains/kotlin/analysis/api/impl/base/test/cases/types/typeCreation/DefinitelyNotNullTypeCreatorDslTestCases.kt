@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @Suppress("UNUSED")
 class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testCapturedTypeIntOut(): KaType {
         val type = getTypeByCaret("type")
         with(session.typeCreator) {

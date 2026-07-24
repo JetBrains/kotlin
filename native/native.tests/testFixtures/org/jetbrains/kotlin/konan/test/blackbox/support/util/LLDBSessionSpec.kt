@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assumeFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
 import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
@@ -24,19 +26,48 @@ abstract class LLDBSessionSpec {
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
         this += "-o"
-        this += "command script import ${File("native/native.tests/scripts/konan_lldb_test_helper.py").absolutePath}"
+        val testHelper = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/scripts/konan_lldb_test_helper.py")
+        this += "command script import ${testHelper.absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
 
     protected fun sanityCheckLLDBOutput(output: String) {
-        assertFalse(PYTHON_EXCEPTION_HEADER in output) {
-            "Unhandled python exception in debugger: ${output.substring(output.indexOf(PYTHON_EXCEPTION_HEADER))}"
+        // Workaround for KT-84923. Mute the test if the problem occurs:
+        val kt84923Message = "attached to process, but could not pause execution; attach failed"
+        assumeFalse(output.contains(kt84923Message)) { "Test skipped because of KT-84923" }
+
+        // Workaround for KT-87414: an lldb stepping race can leave a step-into command stuck at an already deleted internal breakpoint;
+        // the watchdog in konan_lldb_test_helper.py converts the resulting hang into this failure. Both markers are required:
+        // the watchdog/ message alone may also indicate a genuine deadlock in the tested program, which must still fail the test.
+        val stuckStepMessage = "A single step-into command didn't complete"
+        val deletedBreakpointMessage = "which has been deleted"
+        assumeFalse(output.contains(stuckStepMessage) && output.contains(deletedBreakpointMessage)) {
+            "Test skipped because of KT-87414"
+        }
+
+        // LLDB sporadically fails to run its Objective-C runtime introspection code in the inferior
+        // (timing- and load-dependent, so it only happens on some CI runs) and reports this warning.
+        // It is harmless for these tests: LLDB just falls back to symbol-based type lookup.
+        val sanitizedOutput = output.lineSequence()
+            .filterNot { line -> IGNORED_LLDB_WARNINGS.any { line.startsWith(it) } }
+            .joinToString("\n")
+
+        // Ideally, we should just check that stderr is empty.
+        // Tracked in KT-86532.
+        for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
+            assertFalse(prefix in sanitizedOutput) {
+                "Unexpected output in debugger: ${sanitizedOutput.substring(sanitizedOutput.indexOf(prefix))}"
+            }
         }
     }
 
     companion object {
         private const val PYTHON_EXCEPTION_HEADER = "Traceback (most recent call last):"
+
+        private val IGNORED_LLDB_WARNINGS = listOf(
+            "warning: could not execute support code to read Objective-C class data in the process.",
+        )
     }
 }
 
@@ -83,7 +114,7 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
             """.trimIndent()
         }
 
-        for ((expectedStep, recordedStep) in expectedSteps.zip(recordedSteps)) {
+        for ([expectedStep, recordedStep] in expectedSteps.zip(recordedSteps)) {
             assertTrue(expectedStep.command == recordedStep.command) {
                 """
                     Wrong command in response.
@@ -208,7 +239,7 @@ internal class SteppingLLDBSessionSpec(
                 return@mapNotNull null
             }
 
-            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            val [filePath, lineStr, funRawName] = stepLine.split('\u001f', limit = 3)
             if (filePath !in testSourceFilePaths) {
                 return@mapNotNull null
             }

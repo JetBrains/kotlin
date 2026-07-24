@@ -34,7 +34,7 @@ abstract class CustomKlibCompilerSecondStageFacade<A : ResultingArtifact.Binary<
     final override fun shouldTransform(module: TestModule) = isMainModule(module)
 
     final override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): A {
-        val (regularDependencies: Set<String>, friendDependencies: Set<String>) = collectDependencies(module)
+        val [regularDependencies: Set<String>, friendDependencies: Set<String>] = collectDependencies(module)
 
         return compileBinary(
             module = module,

@@ -54,7 +54,7 @@ public external interface Json {
  */
 public fun json(vararg pairs: Pair<String, Any?>): Json {
     val res: dynamic = js("({})")
-    for ((name, value) in pairs) {
+    for ([name, value] in pairs) {
         res[name] = value
     }
     return res

@@ -32,12 +32,11 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -257,7 +256,9 @@ internal object FirReferenceResolveHelper {
         val ktTypeElementFromFirType = unwrapType(fir.psi)
 
         val classifiersToSkip = expression.parents.takeWhile { it != ktTypeElementFromFirType }.count()
-        var classifier: FirClassLikeSymbol<*>? = fir.coneType.toRegularClassSymbol(session)
+
+        // We use abbreviated type here for the case of nested type aliases
+        var classifier: FirClassifierSymbol<*>? = fir.coneType.abbreviatedTypeOrSelf.toSymbol(session)
         repeat(classifiersToSkip) {
             classifier = classifier?.getContainingClassSymbol()
         }
@@ -301,7 +302,7 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
-        val referencedSymbol = when (val symbol = fir.symbol) {
+        val referencedSymbol = when (val symbol = fir.qualifierSymbol) {
             // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
             is FirRegularClassSymbol if (fir.resolvedToCompanionObject) -> symbol.companionObjectSymbol
             else -> symbol

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableRea
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class FirInferenceLogsDumper {
@@ -143,7 +144,7 @@ abstract class FirInferenceLogsDumper {
                 "Readiness($qualities\n$linePadding)"
             }
             is LegacyVariableReadinessCalculator.TypeVariableFixationReadiness -> readiness.toString()
-            else -> error("Unexpected readiness type: ${readiness::class}")
+            else -> testInfraError("Unexpected readiness type: ${readiness::class}")
         }
     }
 }

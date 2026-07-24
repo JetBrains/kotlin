@@ -28,7 +28,7 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
         source: KtPsiSourceElement,
         psi: KtTypeParameter,
     ) {
-        val (constraint, params) = element.bounds.partition { it.psi?.parent is KtTypeConstraint }
+        val [constraint, params] = element.bounds.partition { it.psi?.parent is KtTypeConstraint }
         if (params.isNotEmpty() && constraint.isNotEmpty()) {
             reporter.reportOn(source, FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS)
         }
@@ -39,7 +39,7 @@ object FirTypeParameterSyntaxChecker : FirDeclarationSyntaxChecker<FirTypeParame
         element: FirTypeParameter,
         source: KtSourceElement,
     ) {
-        val (constraint, params) = element.withNavigator {
+        val [constraint, params] = element.withNavigator {
             element.bounds.partition { it.isInTypeConstraint() }
         }
         if (params.isNotEmpty() && constraint.isNotEmpty()) {

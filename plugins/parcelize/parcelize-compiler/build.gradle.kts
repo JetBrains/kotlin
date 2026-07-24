@@ -4,15 +4,14 @@ import java.util.zip.ZipFile
 description = "Parcelize compiler plugin"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
-}
-
-repositories {
-    google()
+    id("test-inputs-check-v2")
 }
 
 /**
@@ -42,7 +41,7 @@ abstract class AarToJarTransform : TransformAction<TransformParameters.None> {
     }
 }
 
-val robolectricClasspath by configurations.creating {
+val robolectricClasspath = configurations.create("robolectricClasspath") {
     attributes {
         attribute(Attribute.of("artifactType", String::class.java), "jar")
     }
@@ -50,11 +49,11 @@ val robolectricClasspath by configurations.creating {
         checkAndOverrideBouncyCastleVersion(project)
     }
 }
-val robolectricDependency by configurations.creating
+val robolectricDependency = configurations.create("robolectricDependency")
 
-val parcelizeRuntimeForTests by configurations.creating
-val layoutLib by configurations.creating
-val layoutLibApi by configurations.creating
+val parcelizeRuntimeForTests = configurations.create("parcelizeRuntimeForTests")
+val layoutLib = configurations.create("layoutLib")
+val layoutLibApi = configurations.create("layoutLibApi")
 
 dependencies {
     registerTransform(AarToJarTransform::class.java) {
@@ -62,7 +61,6 @@ dependencies {
         to.attribute(Attribute.of("artifactType", String::class.java), "jar")
     }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.common")) { isTransitive = false }
-    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k1")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k2")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.backend")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.cli")) { isTransitive = false }
@@ -71,22 +69,19 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testFixturesApi(intellijCore())
-
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
-
-    testFixturesApi(project(":compiler:frontend"))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
-    testFixturesApi(project(":plugins:parcelize:parcelize-runtime"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
-    testFixturesApi(libs.junit4)
+    testImplementation(project(":compiler:cli-base"))
+    testFixturesImplementation(libs.junit4) // needed for runtime of box tests, see `ParcelizeMainClassProvider`
 
     // Must be kept in sync with ANDROID_API_VERSION in ParcelizeRuntimeClasspathProvider.
     // The dependency version defined here determines the Android API version.
@@ -121,13 +116,13 @@ testsJar()
 
 val projectDir = layout.projectDirectory
 val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")
-val prepareRobolectricDependencies by tasks.registering(Copy::class) {
+val prepareRobolectricDependencies = tasks.register("prepareRobolectricDependencies", Copy::class) {
     from(robolectricDependency)
     into(robolectricDependencyDir)
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
         inputs.files(prepareRobolectricDependencies.map { it.outputs })
             .withNormalizer(ClasspathNormalizer::class)
             .withPropertyName("prepareRobolectricDependenciesOutput")
@@ -140,6 +135,10 @@ projectTests {
         addClasspathProperty(robolectricClasspath, "robolectric.classpath")
         addClasspathProperty(layoutLib, "layoutLib.path")
         addClasspathProperty(layoutLibApi, "layoutLibApi.path")
+        addClasspathProperty("parcelizePlugin.jar") {
+            from(tasks.jar)
+        }
+
 
         val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
         val projectDir = projectDir

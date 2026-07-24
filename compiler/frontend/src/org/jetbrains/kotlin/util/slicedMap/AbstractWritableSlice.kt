@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.util.slicedMap
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 abstract class AbstractWritableSlice<K, V>(debugName: String) : KeyWithSlice<K, V, WritableSlice<K, V>>(debugName), WritableSlice<K, V> {
     override val slice: WritableSlice<K, V>
         get() = this

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
+@K1Deprecation
 interface KotlinToJvmSignatureMapper {
     fun mapToJvmMethodSignature(function: FunctionDescriptor): MethodSignature
 

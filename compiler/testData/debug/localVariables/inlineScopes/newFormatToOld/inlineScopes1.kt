@@ -53,3 +53,27 @@ fun box() {
 // library.kt:8 box: $i$f$flaf:int=0:int, flafVar$iv:int=0:int, fooParam\1$iv:int=0:int, $i$f$foo\1\12:int=0:int, fooVar\1$iv:int=0:int
 // library.kt:21 box: $i$f$flaf:int=0:int, flafVar$iv:int=0:int
 // test.kt:28 box:
+
+// EXPECTATIONS WASM
+// test.kt:27 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (4)
+// library.kt:11 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (18, 18)
+// library.kt:12 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (8, 8, 4, 4, 4)
+// library.kt:6 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (17, 17)
+// library.kt:7 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (10, 10, 4, 4, 4)
+// library.kt:13 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=0:i32, $y:i32=0:i32, $z:i32=0:i32 (16, 16)
+// library.kt:14 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=0:i32, $z:i32=0:i32 (12, 12, 8, 8, 8)
+// library.kt:6 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=0:i32, $z:i32=0:i32 (17, 17)
+// library.kt:7 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=0:i32, $z:i32=0:i32 (10, 10, 4, 4, 4)
+// library.kt:15 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (20, 20, 20)
+// library.kt:16 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (9, 9, 9)
+// library.kt:8 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (1, 1)
+// library.kt:17 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (12, 12, 8, 8, 8)
+// library.kt:6 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (17, 17)
+// library.kt:7 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=0:i32 (10, 10, 4, 4, 4)
+// library.kt:18 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (20, 20, 20)
+// library.kt:19 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (9, 9, 9)
+// library.kt:8 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (1, 1, 1)
+// library.kt:20 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (5, 5, 5)
+// library.kt:8 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (1, 1, 1)
+// library.kt:21 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (1, 1)
+// test.kt:28 $box: $flafVar:i32=0:i32, $fooVar:i32=0:i32, $x:i32=1:i32, $y:i32=2:i32, $z:i32=3:i32 (1, 1)

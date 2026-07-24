@@ -36,7 +36,7 @@ import kotlin.system.measureNanoTime
 
 
 fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
-    for ((session, files) in firFiles.groupBy { it.moduleData.session }) {
+    for ([session, files] in firFiles.groupBy { it.moduleData.session }) {
         val provider = session.firProvider as FirProviderImpl
         provider.ensureConsistent(files)
     }
@@ -141,7 +141,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
-                val (code, linesMapping) = file.getContentsAsStream().reader(Charsets.UTF_8).use {
+                val [code, linesMapping] = file.getContentsAsStream().reader(Charsets.UTF_8).use {
                     it.readSourceFileWithMapping()
                 }
                 totalLines += linesMapping.linesCount
@@ -238,7 +238,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     ) {
         fileCount += firFiles.size
         try {
-            for ((_, processor) in processors.withIndex()) {
+            for ([_, processor] in processors.withIndex()) {
                 //println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
                 runStage(processor, firFileSequence)
@@ -344,7 +344,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun throwFailure() {
         if (fails.any()) {
-            val (transformerClass, failure, file) = fails.first()
+            (val transformerClass = transformer, val failure = throwable, val file) = fails.first()
             throw FirRuntimeException("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
         }
     }
@@ -359,7 +359,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         fileCount,
         totalLines,
         errorTypesReports,
-        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!! }
+        timePerTransformer.mapKeys { [klass, _] -> klass.simpleName!! }
     )
 }
 
@@ -425,7 +425,7 @@ fun FirResolveBench.TotalStatistics.reportTimings(stream: PrintStream) {
             cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count", "L/S")
         }
         separator()
-        timePerTransformer.forEach { (transformer, measure) ->
+        timePerTransformer.forEach { [transformer, measure] ->
             printMeasureAsTable(measure, this@reportTimings, transformer)
         }
 

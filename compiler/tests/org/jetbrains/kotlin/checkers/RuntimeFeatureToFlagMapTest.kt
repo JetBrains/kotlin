@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.diagnostics.rendering.buildRuntimeFeatureToFlagMap
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class RuntimeFeatureToFlagMapTest {
     @Test

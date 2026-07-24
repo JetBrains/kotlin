@@ -1,0 +1,30 @@
+Module: a
+FILE fqName:a fileName:/a.kt
+  TYPEALIAS name:A visibility:public expandedType:kotlin.String
+Module: b
+FILE fqName:b fileName:/b.kt
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.String
+    VALUE_PARAMETER kind:Regular name:f index:1 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.String, f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in b'
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
+          ARG <this>: GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in b.foo' type=kotlin.Function1<kotlin.String, kotlin.String> origin=VARIABLE_AS_FUNCTION
+          ARG p1: GET_VAR 'a: kotlin.String declared in b.foo' type=kotlin.String origin=null
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:kotlin.String [val]
+        CONST String type=kotlin.String value="OK"
+      VAR name:res type:kotlin.String [val]
+        CALL 'public final fun foo (a: kotlin.String, f: kotlin.Function1<kotlin.String, kotlin.String>): kotlin.String declared in b' type=kotlin.String origin=null
+          ARG a: GET_VAR 'val x: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          ARG f: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
+              VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.String declared in <root>.box'
+                  GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        GET_VAR 'val res: kotlin.String declared in <root>.box' type=kotlin.String origin=null

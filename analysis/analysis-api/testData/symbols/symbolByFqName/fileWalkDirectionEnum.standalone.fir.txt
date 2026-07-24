@@ -1,0 +1,282 @@
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: kotlin/collections/listOf
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: element
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin.collections.CollectionsKt
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecation: null
+  returnValueStatus: MustUse
+  importableFqName: kotlin.collections.listOf
+
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: kotlin/collections/listOf
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: elements
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: T
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: kotlin.collections.CollectionsKt
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecation: null
+  returnValueStatus: MustUse
+  importableFqName: kotlin.collections.listOf
+
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: [
+    kotlin/internal/InlineOnly()
+      psi: null
+  ]
+  callableId: kotlin/collections/listOf
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: listOf
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
+  typeParameters: [
+    KaTypeParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      psi: null
+      realPsi: null
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecation: null
+      importableFqName: null
+  ]
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.collections.CollectionsKt
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  deprecation: null
+  returnValueStatus: MustUse
+  importableFqName: kotlin.collections.listOf

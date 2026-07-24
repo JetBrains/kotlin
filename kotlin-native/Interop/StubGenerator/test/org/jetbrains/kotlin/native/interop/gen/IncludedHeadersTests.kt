@@ -58,7 +58,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
     fun `test with headers`() {
         val files = testFiles()
 
-        val (fooH, barH) = createHeaders(files)
+        val [fooH, barH] = createHeaders(files)
 
         val defFile = files.file("test.def", """
             headers = foo.h
@@ -76,7 +76,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
     fun `test with headers and headerFilter`() {
         val files = testFiles()
 
-        val (fooH, _) = createHeaders(files)
+        val [fooH, _] = createHeaders(files)
 
         val defFile = files.file("test.def", """
             headers = foo.h
@@ -92,7 +92,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
 
         val files = testFiles()
 
-        val (fooH, _) = createHeaders(files)
+        val [fooH, _] = createHeaders(files)
 
         val defFile = files.file("test.def", """
             language = Objective-C
@@ -108,7 +108,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
 
         val files = testFiles()
 
-        val (fooH, _) = createHeaders(files)
+        val [fooH, _] = createHeaders(files)
 
         val defFile = files.file("test.def", """
             language = Objective-C

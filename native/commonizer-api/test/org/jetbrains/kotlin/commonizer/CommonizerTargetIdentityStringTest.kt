@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.*
 
-public class CommonizerTargetIdentityStringTest {
+class CommonizerTargetIdentityStringTest {
 
     @Test
-    public fun leafTargets() {
+    fun leafTargets() {
         KonanTarget.predefinedTargets.values.forEach { konanTarget ->
             assertEquals(konanTarget.name, CommonizerTarget(konanTarget).identityString)
             assertEquals(CommonizerTarget(konanTarget), parseCommonizerTarget(CommonizerTarget(konanTarget).identityString))
@@ -20,7 +21,7 @@ public class CommonizerTargetIdentityStringTest {
     }
 
     @Test
-    public fun `simple shared targets are invariant under konanTarget order`() {
+    fun `simple shared targets are invariant under konanTarget order`() {
         val macosFirst = CommonizerTarget(MACOS_X64, LINUX_X64)
         val linuxFirst = CommonizerTarget(LINUX_X64, MACOS_X64)
 
@@ -33,63 +34,63 @@ public class CommonizerTargetIdentityStringTest {
     }
 
     @Test
-    public fun `parsing CommonizerTarget with 1 5 20 notation`() {
+    fun `parsing CommonizerTarget with 1 5 20 notation`() {
         val target = parseCommonizerTarget("(x, (x, y, (a, b), (b, c)))")
         assertEquals(SharedCommonizerTarget(setOf("x", "y", "a", "b", "c").map(::LeafCommonizerTarget).toSet()), target)
     }
 
     @Test
-    public fun `empty shared target`() {
+    fun `empty shared target`() {
         assertEquals(SharedCommonizerTarget(emptySet<LeafCommonizerTarget>()), parseCommonizerTarget("()"))
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 1`() {
-        parseCommonizerTarget("xxx,")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 2`() {
-        parseCommonizerTarget("")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 4`() {
-        parseCommonizerTarget("(xxx")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 5`() {
-        parseCommonizerTarget("xxx)")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 6`() {
-        parseCommonizerTarget("(xxx")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 7`() {
-        parseCommonizerTarget("(xxx yyy)")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 8`() {
-        parseCommonizerTarget(" ")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 9`() {
-        parseCommonizerTarget("xxx?")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    public fun `fail parsing CommonizerTarget 10`() {
-        parseCommonizerTarget("(x, (x, y)")
+    @Test
+    fun `fail parsing CommonizerTarget 1`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("xxx,") }
     }
 
     @Test
-    public fun isCommonizerIdentityString() {
+    fun `fail parsing CommonizerTarget 2`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 4`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("(xxx") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 5`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("xxx)") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 6`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("(xxx") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 7`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("(xxx yyy)") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 8`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget(" ") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 9`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("xxx?") }
+    }
+
+    @Test
+    fun `fail parsing CommonizerTarget 10`() {
+        assertThrows<IllegalArgumentException> { parseCommonizerTarget("(x, (x, y)") }
+    }
+
+    @Test
+    fun isCommonizerIdentityString() {
         assertFalse(isCommonizerTargetIdentityString(""))
         assertTrue(isCommonizerTargetIdentityString("()"))
         assertTrue(isCommonizerTargetIdentityString("(a,b)"))
@@ -99,7 +100,7 @@ public class CommonizerTargetIdentityStringTest {
     }
 
     @Test
-    public fun parseCommonizerTargetOrNull() {
+    fun parseCommonizerTargetOrNull() {
         assertEquals(parseCommonizerTarget("((a,b),c)"), parseCommonizerTargetOrNull("((a,b),c)"))
         assertNull(parseCommonizerTargetOrNull(""))
     }

@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75315
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType, +ContextParameters
+// LANGUAGE: +ContextParameters
 
 enum class MyEnum {
     EnumValue1;

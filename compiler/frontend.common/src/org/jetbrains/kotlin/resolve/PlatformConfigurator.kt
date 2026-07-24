@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.StorageComponentContainer
 
+@K1Deprecation
 interface PlatformConfigurator {
     val platformSpecificContainer: StorageComponentContainer
     fun configureModuleComponents(container: StorageComponentContainer)

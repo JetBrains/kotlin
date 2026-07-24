@@ -34,7 +34,7 @@ internal class GranularModifiersBox(
             val currentMap = modifiersMapReference
             currentMap[modifier]?.let { return it }
 
-            val newMap = currentMap.putAll(newValues)
+            val newMap = currentMap.puttingAll(newValues)
         } while (fieldUpdater.weakCompareAndSet(/* obj = */ this, /* expect = */ currentMap, /* update = */ newMap))
 
         return newValues[modifier] ?: error("Inconsistent state: $modifier")
@@ -102,5 +102,5 @@ internal class GranularModifiersBox(
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun PersistentMap<String, Boolean>.with(modifier: String?): PersistentMap<String, Boolean> {
-    return modifier?.let { put(modifier, true) } ?: this
+    return modifier?.let { putting(modifier, true) } ?: this
 }

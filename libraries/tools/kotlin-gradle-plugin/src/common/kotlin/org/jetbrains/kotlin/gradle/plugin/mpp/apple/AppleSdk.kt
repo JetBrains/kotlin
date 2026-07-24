@@ -38,7 +38,6 @@ internal object AppleSdk {
             platform.startsWith("watchos") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
-                        "armv7k" -> KonanTarget.WATCHOS_ARM32
                         "arm64_32" -> KonanTarget.WATCHOS_ARM64
                         "arm64" -> KonanTarget.WATCHOS_DEVICE_ARM64
                         else -> throw UnknownArchitectureException(platform, arch)
@@ -98,7 +97,6 @@ internal object AppleSdk {
 internal enum class AppleArchitecture : Serializable {
     ARM64,
     X86_64,
-    ARMV7K,
     ARM64_32;
 
     val xcodebuildArch get() = clangArch
@@ -106,7 +104,6 @@ internal enum class AppleArchitecture : Serializable {
         get() = when (this) {
             ARM64 -> "arm64"
             X86_64 -> "x86_64"
-            ARMV7K -> "armv7k"
             ARM64_32 -> "arm64_32"
         }
 }
@@ -128,7 +125,6 @@ internal val KonanTarget.appleArchitecture: AppleArchitecture
         KonanTarget.WATCHOS_X64,
             -> AppleArchitecture.X86_64
 
-        KonanTarget.WATCHOS_ARM32 -> AppleArchitecture.ARMV7K
         KonanTarget.WATCHOS_ARM64 -> AppleArchitecture.ARM64_32
 
         else -> throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")

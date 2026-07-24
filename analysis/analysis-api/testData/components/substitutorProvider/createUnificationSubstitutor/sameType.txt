@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-kotlin/Int <: kotlin/Int (Original: kotlin/Int <: kotlin/Int)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-kotlin/Int <: kotlin/Int (Original: kotlin/Int <: kotlin/Int)

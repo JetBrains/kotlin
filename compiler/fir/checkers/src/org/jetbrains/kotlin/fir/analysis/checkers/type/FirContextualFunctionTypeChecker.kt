@@ -14,16 +14,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.config.FirContextParametersLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParametersDeclarationChecker.checkSubTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
-import org.jetbrains.kotlin.fir.types.contextParameterTypes
 import org.jetbrains.kotlin.fir.types.hasContextParameters
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.psi.KtFunctionType
@@ -48,18 +44,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
         }
 
-        if (LanguageFeature.ContextReceivers.isEnabled()) {
-            if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session))) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
-                )
-            }
-            val message = FirContextParametersLanguageVersionSettingsChecker.DIAGNOSTIC_MESSAGE
-            reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
-        } else {
-            source.requireFeatureSupport(LanguageFeature.ContextParameters)
-        }
+        source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
     private val valueParameterElementSet = setOf(KtStubElementTypes.VALUE_PARAMETER)

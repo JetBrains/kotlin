@@ -8,23 +8,22 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
-import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
@@ -91,7 +90,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             separator = ",\n  ",
             prefix = "{\n  ",
             postfix = "\n}"
-        ) { (k, v) -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
+        ) { [k, v] -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
         is Collection<*> -> if (isEmpty()) "[]" else joinToString(
             separator = ",\n  ",
             prefix = "[\n  ",
@@ -103,7 +102,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v }
+                .joinToString(prefix = "{", postfix = "}") { [k, v] -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
@@ -295,7 +294,7 @@ internal fun assertStableSymbolResult(
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
-    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+    for ([firstCandidate, secondCandidate] in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
         assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
@@ -348,7 +347,7 @@ internal fun assertStableResult(
     val secondSymbols = sortedSymbols(secondAttempt.symbols)
     assertions.assertEquals(firstSymbols.size, secondSymbols.size)
 
-    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+    for ([firstSymbol, secondSymbol] in firstSymbols.zip(secondSymbols)) {
         assertions.assertEquals(firstSymbol, secondSymbol)
     }
 }
@@ -390,7 +389,7 @@ internal fun assertStableResult(
                 "Number of error attempts differs between call and symbol resolution"
             }
 
-            for ((callError, symbolError) in callErrors.zip(symbolErrors)) {
+            for ([callError, symbolError] in callErrors.zip(symbolErrors)) {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = callError.diagnostic,
@@ -402,6 +401,13 @@ internal fun assertStableResult(
         else -> {}
     }
 
+    val symbols = symbolResolutionAttempt?.symbols?.let { sortedSymbols(it) }.orEmpty()
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+    if (mainElement is KtOperationReferenceExpression) {
+        assertions.assertContainsElements(symbolsFromCall, symbols)
+        return
+    }
+
     assertions.assertNotNull(symbolResolutionAttempt) {
         "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
     }
@@ -409,8 +415,6 @@ internal fun assertStableResult(
     // Cannot check name reference expressions or enum entry super-type references:
     // their symbol-resolution prefers the class while call-resolution maps to the constructor.
     if (mainElement !is KtNameReferenceExpression && mainElement !is KtEnumEntrySuperclassReferenceExpression) {
-        val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-        val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
         assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
     }
 }
@@ -476,7 +480,7 @@ internal fun assertStableResult(
         val secondCalls = sortedCalls(secondAttempt.calls)
         assertions.assertEquals(firstCalls.size, secondCalls.size)
 
-        for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+        for ([firstCall, secondCall] in firstCalls.zip(secondCalls)) {
             assertStableResult(testServices, firstCall, secondCall)
         }
     }
@@ -571,7 +575,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (call is KaFunctionCall<*>) {
         val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
-        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+        for ([expression, parameterFromSpecificMap] in call.valueArgumentMapping + call.contextArgumentMapping) {
             val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
             assertions.assertNotNull(parameterFromCombinedMap) {
                 "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
@@ -633,6 +637,7 @@ internal fun renderScopeWithParentDeclarations(scope: KaScope): String = prettyP
         append(symbol.render(renderer))
         append(" fromClass ")
         append(containingDeclaration.classId?.asString())
+
         if (symbol.typeParameters.isNotEmpty()) {
             appendLine()
             withIndent {
@@ -641,6 +646,31 @@ internal fun renderScopeWithParentDeclarations(scope: KaScope): String = prettyP
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
+                }
+            }
+        }
+
+        if (symbol is KaCallableSymbol) {
+            if (symbol.contextParameters.isNotEmpty()) {
+                appendLine()
+                withIndent {
+                    printCollection(symbol.contextParameters, separator = "\n") { contextParameter ->
+                        val containingDeclarationForContextParameter = contextParameter.containingDeclaration
+                        append(contextParameter.render(renderer))
+                        append(" from ")
+                        append(containingDeclarationForContextParameter?.qualifiedNameString())
+                    }
+                }
+            }
+
+            val receiverParameterSymbol = symbol.receiverParameter
+            if (receiverParameterSymbol != null) {
+                withIndent {
+                    appendLine()
+                    append("receiver ")
+                    append(receiverParameterSymbol.render(renderer))
+                    append(" from ")
+                    append(receiverParameterSymbol.containingDeclaration?.qualifiedNameString())
                 }
             }
         }

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 abstract class FirSession @PrivateSessionConstructor constructor(
-    val kind: Kind
+    val kind: Kind,
+    val builtinTypes: BuiltinTypes = BuiltinTypes(),
 ) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
     companion object : ConeTypeRegistry<FirSessionComponent, FirSessionComponent>() {
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
@@ -36,8 +37,6 @@ abstract class FirSession @PrivateSessionConstructor constructor(
             return generateNullableAccessor(T::class)
         }
     }
-
-    open val builtinTypes: BuiltinTypes = BuiltinTypes()
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 

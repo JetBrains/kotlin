@@ -5,7 +5,7 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit [companion]
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
         VALUE_PARAMETER kind:Regular name:p1 index:1 type:kotlin.String
         EXPRESSION_BODY

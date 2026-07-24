@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
@@ -63,7 +62,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     }
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
-        val (loadedIr, module, configuration) = loadedIrArtifact
+        (val loadedIr = moduleInfo, val module = moduleStructure, val configuration) = loadedIrArtifact
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = when (configuration.wasmCompilationMode()) {
             WasmCompilationMode.MULTI_MODULE ->
@@ -74,12 +73,12 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 WholeWorldCompiler(configuration, irFactory)
         }
 
-        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(loadedIr, configuration, module.mainModule)
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(loadedIr, configuration)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(loadedIr, exportedDeclarations = setOf(FqName("main")), allModules, context)
+            compiler.lowerIr(loadedIr, allModules, context)
         }
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

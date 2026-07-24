@@ -12,7 +12,7 @@ FILE: logFieldAlreadyExistsCompanionBlock.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|C.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|C|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
             private constructor(): R|C.Companion| {

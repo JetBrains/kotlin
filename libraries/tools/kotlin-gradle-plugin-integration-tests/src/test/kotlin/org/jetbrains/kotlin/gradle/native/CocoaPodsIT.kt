@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.apple.swiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.io.path.*
@@ -318,7 +321,7 @@ class CocoaPodsIT : KGPBaseTest() {
 
             buildWithCocoapodsWrapper(podspecTaskName)
 
-            buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"12.5\"")
+            buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"18.2\"")
             buildWithCocoapodsWrapper(podspecTaskName) {
                 assertTasksExecuted(podspecTaskName)
             }
@@ -587,6 +590,38 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("syncFramework fails when SwiftPM dependencies are declared alongside CocoaPods")
+    @GradleTest
+    fun testSyncFrameworkFailsWhenSwiftPMDependenciesPresent(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    swiftPMDependencies {
+                        @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+                        swiftPackage(
+                            url = "https://github.com/example/Foo.git",
+                            version = "1.0.0",
+                            products = listOf("Foo"),
+                        )
+                    }
+                }
+            }
+
+            val buildOptions = this.buildOptions.copy(
+                nativeOptions = this.buildOptions.nativeOptions.copy(
+                    cocoapodsPlatform = "iphonesimulator",
+                    cocoapodsArchs = "arm64",
+                    cocoapodsConfiguration = "Debug",
+                ),
+            )
+            buildAndFail("syncFramework", buildOptions = buildOptions) {
+                assertTasksFailed(":checkSwiftPMDependencies")
+                assertOutputContains("You are using CocoaPods integration with SwiftPM dependencies. Please follow the migration guide https://kotl.in/cocoapods-to-swiftpm-migration")
+                assertOutputContains("Direct SwiftPM dependencies: Foo")
+            }
+        }
+    }
+
     @DisplayName("Other tasks use gradle style errors when compilation failed")
     @GradleTest
     fun testOtherTasksUseGradleStyleErrorsWhenCompilationFailed(gradleVersion: GradleVersion) {
@@ -744,7 +779,7 @@ class CocoaPodsIT : KGPBaseTest() {
             cocoapodsSingleKtPod,
             gradleVersion
         ) {
-            buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
+            buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"17.6\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
             }
@@ -1145,7 +1180,7 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addKotlinBlock("iosArm64()")
             buildGradleKts.addCocoapodsBlock(
                 """
-                    ios.deploymentTarget = "15.0"
+                    ios.deploymentTarget = "17.6"
                     
                     pod("MBProgressHUD", version="1.2.0")            
                     pod("SDWebImage", version="5.21.5")
@@ -1178,8 +1213,8 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
-        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-            return super.provideArguments(context).flatMap { arguments ->
+        override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(parameters, context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
                 Stream.of(true, false).map { isStatic ->
                     Arguments.of(gradleVersion, isStatic)
@@ -1277,7 +1312,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.summary                  = 'CocoaPods test library'
                 spec.vendored_frameworks      = 'cocoapods.xcframework'
                 spec.libraries                = 'c++'
-                spec.ios.deployment_target    = '15'
+                spec.ios.deployment_target    = '17.6'
             end
         """.trimIndent()
 
@@ -1291,7 +1326,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.authors                  = { 'Kotlin Dev' => 'kotlin.dev@jetbrains.com' }
                 spec.license                  = 'MIT'
                 spec.summary                  = 'CocoaPods test library'
-                spec.ios.deployment_target    = '15'
+                spec.ios.deployment_target    = '17.6'
                 spec.dependency 'Base64'
                 spec.social_media_url = 'https://twitter.com/kotlin'
                 spec.vendored_frameworks = 'CustomFramework.xcframework'

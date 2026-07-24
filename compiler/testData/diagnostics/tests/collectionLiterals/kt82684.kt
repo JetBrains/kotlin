@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82684
+// LATEST_LV_DIFFERENCE
 
 import kotlin.reflect.KClass
 

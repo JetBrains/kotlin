@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ContextReceivers
 import org.jetbrains.kotlin.descriptors.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.utils.getDeclarationsByLabel
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 object LabelResolver {
     private fun getElementsByLabelName(
         labelName: Name,
@@ -170,7 +172,7 @@ object LabelResolver {
 
         val scope = context.scope
         val declarationsByLabel = scope.getDeclarationsByLabel(labelName)
-        val (elementsByLabel, typedElement) = getElementsByLabelName(
+        val [elementsByLabel, typedElement] = getElementsByLabelName(
             labelName, targetLabelExpression,
             classNameLabelsEnabled = expression is KtThisExpression && context.languageVersionSettings.supportsFeature(ContextReceivers)
         )

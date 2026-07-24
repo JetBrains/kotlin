@@ -23,7 +23,7 @@ package {
   public final fun <T#0 /* T */> foo(x: T#0): T#0
 
   // local delegated property #0
-  // local final /* delegated */ val <T#0 /* T */> y: T#0
+  // local final /* delegated */ val y: kotlin/String
   //   local final get
 
   // module name: test-module

@@ -1,0 +1,241 @@
+KtFile: 'qualifierInTypeArgumentNotRemovable.kt'
+  null
+
+KtPackageDirective(70,82): 'package test'
+  null
+
+KtNameReferenceExpression(78,82): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(82,82): ''
+  null
+
+KtClass(84,93): 'class Foo'
+  null
+
+KtClass(95,150): 'sealed class Base<T> {'
+  null
+
+KtDeclarationModifierList(95,101): 'sealed'
+  null
+
+KtTypeParameterList(112,115): '<T>'
+  null
+
+KtTypeParameter(113,114): 'T'
+  null
+
+KtClassBody(116,150): '{'
+  null
+
+KtClass(122,148): 'class Child<T> : Base<T>()'
+  null
+
+KtTypeParameterList(133,136): '<T>'
+  null
+
+KtTypeParameter(134,135): 'T'
+  null
+
+KtSuperTypeList(139,148): 'Base<T>()'
+  null
+
+KtSuperTypeCallEntry(139,148): 'Base<T>()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.Base<T>
+    ]
+
+KtConstructorCalleeExpression(139,146): 'Base<T>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.Base<T>
+    ]
+
+KtTypeReference(139,146): 'Base<T>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtUserType(139,146): 'Base<T>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(139,143): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtTypeArgumentList(143,146): '<T>'
+  null
+
+KtTypeProjection(144,145): 'T'
+  null
+
+KtTypeReference(144,145): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(144,145): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(144,145): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtValueArgumentList(146,148): '()'
+  null
+
+KtNamedFunction(152,204): 'fun usage(b: Base<Foo>) {'
+  null
+
+KtParameterList(161,175): '(b: Base<Foo>)'
+  null
+
+KtParameter(162,174): 'b: Base<Foo>'
+  null
+
+KtTypeReference(165,174): 'Base<Foo>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtUserType(165,174): 'Base<Foo>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(165,169): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtTypeArgumentList(169,174): '<Foo>'
+  null
+
+KtTypeProjection(170,173): 'Foo'
+  null
+
+KtTypeReference(170,173): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(170,173): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(170,173): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtBlockExpression(176,204): '{'
+  null
+
+KtBinaryExpressionWithTypeRHS(182,202): 'b as Base.Child<Foo>'
+  null
+
+KtNameReferenceExpression(182,183): 'b'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: test.Base<test.Foo>
+    ]
+
+KtOperationReferenceExpression(184,186): 'as'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  null
+
+KtTypeReference(187,202): 'Base.Child<Foo>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtUserType(187,202): 'Base.Child<Foo>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtUserType(187,191): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(187,191): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(192,197): 'Child'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtTypeArgumentList(197,202): '<Foo>'
+  null
+
+KtTypeProjection(198,201): 'Foo'
+  null
+
+KtTypeReference(198,201): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtUserType(198,201): 'Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]
+
+KtNameReferenceExpression(198,201): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Foo
+    ]

@@ -21,16 +21,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 // TODO: Find a better home for this function than Context.
-internal fun Context.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
+internal fun NativeBackendContext.getTypeConversion(actualType: IrType, expectedType: IrType): IrSimpleFunctionSymbol? =
         getTypeConversionImpl(actualType.getInlinedClassNative(), expectedType.getInlinedClassNative())
 
-private fun Context.getTypeConversionImpl(
+private fun NativeBackendContext.getTypeConversionImpl(
         actualInlinedClass: IrClass?,
         expectedInlinedClass: IrClass?
 ): IrSimpleFunctionSymbol? {
@@ -65,8 +63,8 @@ private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
     return Pair(parent, classes.reversed().joinToString(".") { it.name.asString() })
 }
 
-internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+internal fun NativeBackendContext.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -89,8 +87,8 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
     }
 }
 
-internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+internal fun NativeBackendContext.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -113,8 +111,8 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
     }
 }
 
-internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
-    val (parent, fullName) = inlinedClass.getParentAndFullName()
+internal fun NativeBackendContext.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
+    val [parent, fullName] = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -170,7 +168,7 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
     val llvm = generationState.llvm
     val llvmType = kotlinType.defaultType.toLLVMType(llvm)
     val llvmBoxType = llvm.structType(llvm.runtime.objHeaderType, llvmType)
-    val (start, end) = cache.defaultRange
+    val [start, end] = cache.defaultRange
 
     return if (declareOnly) {
         staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
@@ -208,7 +206,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
         IrConstKind.Long -> value.value as Long
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
-    val (start, end) = cacheType.defaultRange
+    val [start, end] = cacheType.defaultRange
     return if (value in start..end) {
         generationState.llvm.let { llvm ->
             val llvmType = llvm.structType(llvm.runtime.objHeaderType, when (cacheType) {

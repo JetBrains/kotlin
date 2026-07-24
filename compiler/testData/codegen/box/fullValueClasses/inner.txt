@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class A$B {
+    // source: 'inner.kt'
+    private final @org.jetbrains.annotations.NotNull field parent: A
+    synthetic final field this$0: A
+    private final field y: int
+    public method <init>(p0: A, p1: int): void
+    public final @org.jetbrains.annotations.NotNull method getParent(): A
+    public final method getX(): int
+    public final method getY(): int
+    public final inner class A$B
+}
+
+@kotlin.Metadata
+public final class A {
+    // source: 'inner.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final inner class A$B
+}
+
+@kotlin.Metadata
+public final class InnerKt {
+    // source: 'inner.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class A$B
+}

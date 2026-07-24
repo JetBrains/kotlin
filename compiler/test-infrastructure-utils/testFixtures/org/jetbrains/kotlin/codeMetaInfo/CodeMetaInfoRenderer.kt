@@ -32,7 +32,7 @@ object CodeMetaInfoRenderer {
         val sortedMetaInfos = mergeAttributesAndSortInfos(codeMetaInfos).groupBy { it.start }
         val opened = Stack<CodeMetaInfo>()
 
-        for ((i, c) in originalText.withIndex()) {
+        for ([i, c] in originalText.withIndex()) {
             processMetaInfosStartedAtOffset(i, sortedMetaInfos, opened, builder)
             builder.append(c)
         }
@@ -95,9 +95,9 @@ object CodeMetaInfoRenderer {
     }
 
     private fun mergeIdenticalInfosWithDifferentAttributes(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
-        return metaInfos.groupBy { it.start }.map { (_, withSameStart) ->
-            withSameStart.groupBy { it.end }.map { (_, withSameEnd) ->
-                withSameEnd.groupBy { it.tag }.map { (_, withSameTag) ->
+        return metaInfos.groupBy { it.start }.map { [_, withSameStart] ->
+            withSameStart.groupBy { it.end }.map { [_, withSameEnd] ->
+                withSameEnd.groupBy { it.tag }.map { [_, withSameTag] ->
                     val visited = mutableSetOf<CodeMetaInfo>()
                     buildList {
                         for (info in withSameTag) {

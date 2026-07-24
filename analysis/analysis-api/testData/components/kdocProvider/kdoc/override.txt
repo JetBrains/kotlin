@@ -37,6 +37,63 @@ KDoc for abstract fun
 ----------/B.undocumented(<dispatch receiver>: B): kotlin.Unit------------------
 null
 
+----------/Parent---------------------------------------------------------------
+null
+
+----------var v: kotlin.Int-----------------------------------------------------
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+----------<getter>(<dispatch receiver>: Parent): kotlin.Int---------------------
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+----------<setter>(<dispatch receiver>: Parent, value: kotlin.Int): kotlin.Unit-
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+
+----------/Child----------------------------------------------------------------
+null
+
+----------var v: kotlin.Int-----------------------------------------------------
+<primary tag="null" subject="null">
+child property docs
+<section="null" subject="null">
+child property docs
+----------<getter>(<dispatch receiver>: Child): kotlin.Int----------------------
+<primary tag="null" subject="null">
+child property docs
+<section="null" subject="null">
+child property docs
+----------<setter>(<dispatch receiver>: Child, value: kotlin.Int): kotlin.Unit--
+<primary tag="null" subject="null">
+child property docs
+<section="null" subject="null">
+child property docs
+
+----------/GrandChild-----------------------------------------------------------
+null
+
+----------var v: kotlin.Int-----------------------------------------------------
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+----------<getter>(<dispatch receiver>: GrandChild): kotlin.Int-----------------
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+----------<setter>(<dispatch receiver>: GrandChild, value: kotlin.Int): kotlin.Unit
+<primary tag="null" subject="null">
+parent property docs
+<section="null" subject="null">
+parent property docs
+
 ----------/foo(): kotlin.Unit---------------------------------------------------
 null
 
@@ -102,4 +159,3 @@ KDoc for abstract fun
 
 ----------/B.undocumented(<dispatch receiver>: B): kotlin.Unit------------------
 null
-

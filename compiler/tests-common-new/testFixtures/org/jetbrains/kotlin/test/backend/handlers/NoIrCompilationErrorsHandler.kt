@@ -32,7 +32,7 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
         val diagnosticsByFilePath = info.diagnosticReporter.diagnosticsByFile
         val diagnosticsService = testServices.diagnosticsService
 
-        for ((file, diagnostics) in diagnosticsByFilePath) {
+        for ([file, diagnostics] in diagnosticsByFilePath) {
             for (diagnostic in diagnostics) {
                 if (
                     diagnostic.severity == Severity.ERROR &&

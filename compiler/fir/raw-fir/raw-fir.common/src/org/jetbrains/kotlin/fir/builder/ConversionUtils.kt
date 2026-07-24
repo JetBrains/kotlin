@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -294,12 +293,16 @@ fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVari
 fun FirVariable.toComponentCall(
     entrySource: KtSourceElement?,
     index: Int,
+    initializerName: Name,
+    isShortFormWithParentheses: Boolean,
 ): FirComponentCall {
     return buildComponentCall {
         val componentCallSource = entrySource?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
         source = componentCallSource
         explicitReceiver = generateResolvedAccessExpression(componentCallSource, this@toComponentCall)
         componentIndex = index + 1
+        this.initializerName = initializerName
+        this.isShortFormWithParentheses = isShortFormWithParentheses
     }
 }
 
@@ -419,7 +422,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 source = propertyReferenceSource
                 variance = Variance.INVARIANT
                 typeRef = buildResolvedTypeRef {
-                    coneType = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                    coneType = ConeTypeParameterType(it.symbol.toLookupTag(), false)
                     source = propertyReferenceSource
                 }
             }

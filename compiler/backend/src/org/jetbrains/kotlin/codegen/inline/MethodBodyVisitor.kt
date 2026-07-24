@@ -26,8 +26,6 @@ open class SkipMaxAndEndVisitor(mv: MethodVisitor) : InstructionAdapter(Opcodes.
 }
 
 open class MethodBodyVisitor(mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
-
-    @Suppress("NOTHING_TO_OVERRIDE")
     override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
     }
 

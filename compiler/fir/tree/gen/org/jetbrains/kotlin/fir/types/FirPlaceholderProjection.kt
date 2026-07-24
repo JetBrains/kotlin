@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * Represents an underscore type argument.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.placeholderProjection]
  */
 abstract class FirPlaceholderProjection : FirTypeProjection() {

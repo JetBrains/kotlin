@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,17 @@ import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
@@ -33,10 +39,12 @@ import java.util.*
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for symbol light classes! Qualified name: ${javaClass.name}")
 
-internal fun KaSession.getContainingSymbolsWithSelf(symbol: KaDeclarationSymbol): Sequence<KaDeclarationSymbol> =
+context(_: KaSession)
+internal fun getContainingSymbolsWithSelf(symbol: KaDeclarationSymbol): Sequence<KaDeclarationSymbol> =
     generateSequence(symbol) { it.containingDeclaration }
 
-internal fun KaSession.mapType(
+context(session: KaSession)
+internal fun mapType(
     type: KaType,
     psiContext: PsiElement,
     mode: KaTypeMappingMode,
@@ -58,7 +66,8 @@ internal fun KaDeclarationSymbol.computeSimpleModality(): String? = when (modali
     KaSymbolModality.OPEN -> null
 }
 
-internal fun KaSession.enumClassModality(symbol: KaClassSymbol): String? {
+context(session: KaSession)
+internal fun enumClassModality(symbol: KaClassSymbol): String? {
     if (symbol.memberScope.callables.any { it.modality == KaSymbolModality.ABSTRACT }) {
         return PsiModifier.ABSTRACT
     }
@@ -70,8 +79,9 @@ internal fun KaSession.enumClassModality(symbol: KaClassSymbol): String? {
     return null
 }
 
-private fun KaSession.requiresSubClass(symbol: KaEnumEntrySymbol): Boolean {
-    val initializer = symbol.enumEntryInitializer ?: return false
+context(session: KaSession)
+private fun requiresSubClass(symbol: KaEnumEntrySymbol): Boolean {
+    val initializer = symbol.initializer ?: return false
     return initializer.combinedDeclaredMemberScope.declarations.any { it !is KaConstructorSymbol }
 }
 
@@ -131,7 +141,8 @@ internal enum class NullabilityAnnotation {
     }
 }
 
-internal fun KaSession.getRequiredNullabilityAnnotation(type: KaType): NullabilityAnnotation {
+context(session: KaSession)
+internal fun getRequiredNullabilityAnnotation(type: KaType): NullabilityAnnotation {
     if (type is KaClassErrorType) return NullabilityAnnotation.NON_NULLABLE
     val ktType = type.fullyExpandedType
 
@@ -284,7 +295,8 @@ internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiEl
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
-internal fun <T : KaSymbol> KaSession.restoreSymbolOrThrowIfDisposed(pointer: KaSymbolPointer<T>): T =
+context(session: KaSession)
+internal fun <T : KaSymbol> restoreSymbolOrThrowIfDisposed(pointer: KaSymbolPointer<T>): T =
     pointer.restoreSymbol()
         ?: errorWithAttachment("${pointer::class} pointer already disposed") {
             withEntry("pointer", pointer) { it.toString() }
@@ -308,8 +320,8 @@ internal inline fun <T : KaSymbol> compareSymbolPointers(
 
 internal inline fun <T : KaSymbol, R> KaSymbolPointer<T>.withSymbol(
     ktModule: KaModule,
-    crossinline action: KaSession.(T) -> R,
-): R = analyzeForLightClasses(ktModule) { action(this, restoreSymbolOrThrowIfDisposed(this@withSymbol)) }
+    crossinline action: context(KaSession) (T) -> R,
+): R = analyzeForLightClasses(ktModule) { action(restoreSymbolOrThrowIfDisposed(this@withSymbol)) }
 
 internal val KaPropertySymbol.isConstOrJvmField: Boolean get() = isConst || isJvmField
 internal val KaPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.hasJvmFieldAnnotation() == true
@@ -331,7 +343,7 @@ internal inline fun <R : PsiElement, T> R.cachedValue(
     } else {
         CachedValueProvider.Result.createSingleDependency(
             value,
-            KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this),
+            KotlinAsJavaSupport.getInstance(project).sourceModificationTracker(),
         )
     }
 }

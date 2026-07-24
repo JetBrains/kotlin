@@ -6,7 +6,6 @@
 import com.github.gradle.node.NodeExtension
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.build.d8.D8Extension
@@ -23,12 +22,10 @@ fun ProjectTestsExtension.jsTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    jUnitMode = JUnitMode.JUnit5,
+    // KTI-3248, the heap size is the same as for the Wasm tests
+    maxHeapSizeMb = 6144,
     skipInLocalBuild = skipInLocalBuild,
 ) {
-    testInputsCheck {
-        allowFlightRecorder.set(true)
-    }
 
     val project = this@jsTestTask.project
 

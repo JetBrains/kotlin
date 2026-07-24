@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class /S0 : kotlin.coroutines/SuspendFunction0<kotlin/Unit> { // /S0|null[0]
+    constructor <init>() // /S0.<init>|<init>(){}[0]
+}

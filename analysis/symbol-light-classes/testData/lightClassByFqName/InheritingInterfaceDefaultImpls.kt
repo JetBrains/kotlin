@@ -22,3 +22,5 @@ interface I1 {
 interface I2 {
     fun bar() = "bar"
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Inheritor.class[bar;foo]

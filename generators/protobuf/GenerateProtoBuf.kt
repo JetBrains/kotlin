@@ -49,8 +49,6 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata/src/metadata.proto"),
     ProtoPath("core/metadata/src/builtins.proto"),
     ProtoPath("core/metadata/src/properties_order_extension.proto", generateDebug = false),
-    ProtoPath("js/js.config/src/js.proto"),
-    ProtoPath("js/js.config/src/js-ast.proto", false),
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),

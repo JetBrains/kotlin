@@ -22,32 +22,21 @@ val Project.platformManager
     get() = extensions.getByType<PlatformManager>()
 
 val Project.kotlinNativeDist: File
-    get() = rootProject.project(":kotlin-native").run {
-        val validPropertiesNames = listOf(
-                "konan.home",
-                "org.jetbrains.kotlin.native.home",
-                "kotlin.native.home"
-        )
-        rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
-    }
+    get() = providers.gradleProperty("konan.home")
+            .orElse(providers.systemProperty("org.jetbrains.kotlin.native.home"))
+            .orElse(providers.systemProperty("kotlin.native.home"))
+            .map( ::File )
+            .getOrElse(rootDir.resolve("kotlin-native/dist"))
 
 val Project.nativeBundlesLocation
-    get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
-
-fun projectOrFiles(proj: Project, notation: String): Any? {
-    val propertyMapper = proj.findProperty("notationMapping") ?: return proj.project(notation)
-    val mapping = (propertyMapper as? Map<*, *>)?.get(notation) as? String ?: return proj.project(notation)
-    return proj.files(mapping).also {
-        proj.logger.info("MAPPING: $notation -> ${it.asPath}")
-    }
-}
+    get() = providers.gradleProperty("nativeBundlesLocation").map { file(it) }.getOrElse(project.projectDir)
 
 //endregion
 
 //region Task dependency.
 
 val Project.isDefaultNativeHome: Boolean
-    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").file("dist").absolutePath
+    get() = kotlinNativeDist.absolutePath == project(":kotlin-native").projectDir.resolve("dist").absolutePath
 
 //endregion
 
@@ -55,3 +44,15 @@ internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create(
 
 internal val FileCollection.isNotEmpty: Boolean
     get() = !isEmpty
+
+
+fun cacheFlavor(target: String, withOptimizations: Boolean) = buildString {
+    append(target)
+    if (withOptimizations) {
+        append("-opt")
+    } else {
+        append("-g")
+    }
+    append("STATIC")
+    append("-system")
+}

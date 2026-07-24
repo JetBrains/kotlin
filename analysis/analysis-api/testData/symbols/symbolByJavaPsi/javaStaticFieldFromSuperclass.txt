@@ -1,10 +1,12 @@
 KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
   annotations: []
   callableId: /SuperClass.count
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -14,13 +16,16 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: count
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/Int!
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: SuperClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SuperClass.count

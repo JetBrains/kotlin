@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
+@K1Deprecation
 interface KotlinResolutionStatelessCallbacks {
     fun isDescriptorFromSource(descriptor: CallableDescriptor): Boolean
     fun isInfixCall(kotlinCall: KotlinCall): Boolean
@@ -55,6 +57,7 @@ interface KotlinResolutionStatelessCallbacks {
     ): SimpleConstraintSystem
 }
 
+@K1Deprecation
 data class ReturnArgumentsInfo(
     val nonErrorArguments: List<KotlinCallArgument>,
     val lastExpression: KotlinCallArgument?,
@@ -66,6 +69,7 @@ data class ReturnArgumentsInfo(
     }
 }
 
+@K1Deprecation
 data class ReturnArgumentsAnalysisResult(
     val returnArgumentsInfo: ReturnArgumentsInfo,
     val inferenceSession: InferenceSession?,
@@ -73,6 +77,7 @@ data class ReturnArgumentsAnalysisResult(
 )
 
 // This components hold state (trace). Work with this carefully.
+@K1Deprecation
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaReturnArguments(
         lambdaArgument: LambdaKotlinCallArgument,

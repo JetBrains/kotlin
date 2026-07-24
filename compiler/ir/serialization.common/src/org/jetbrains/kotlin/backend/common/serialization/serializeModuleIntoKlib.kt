@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToHeader
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
+import java.util.Properties
 
 /**
  * Holds the binary data for a single Kotlin file to be written to a KLIB, i.e., its metadata and IR (unless it's a metadata-only KLIB).
@@ -140,10 +141,10 @@ fun <SourceFile> serializeModuleIntoKlib(
 
     processKlibHeader(header)
 
-    val (fragmentNames, fragmentParts) = compiledKotlinFiles
+    val [fragmentNames, fragmentParts] = compiledKotlinFiles
         .groupBy { it.fqName }
-        .map { (fqn, data) ->
-            fqn to data.sortedBy { it.path }.map { it.metadata }
+        .map { [fqn, serializedData] ->
+            fqn to serializedData.sortedBy { it.path }.map { it.metadata }
         }
         .sortedBy { it.first }
         .unzip()
@@ -168,6 +169,28 @@ fun <SourceFile> serializeModuleIntoKlib(
     )
 }
 
+private fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleName: String,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+): KlibMetadataProtoBuf.Header {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+
+    header.moduleName = moduleName
+
+    addMetadataFlagsToHeader(header, languageVersionSettings)
+
+    fragmentNames.forEach {
+        header.addPackageFragmentName(it)
+    }
+    emptyPackages.forEach {
+        header.addEmptyPackage(it)
+    }
+
+    return header.build()
+}
+
 fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersionSettings: LanguageVersionSettings) {
     val enabledFeatures = languageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures()
     val presentableEnabledFeatures = enabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
@@ -185,5 +208,8 @@ fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersio
     if (presentablePoisoningFeatures.isNotBlank()) {
         manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, presentablePoisoningFeatures)
     }
-}
 
+    if (languageVersionSettings.supportsFeature(LanguageFeature.CompanionBlocks)) {
+        manifestProperties.setProperty(KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION, true.toString())
+    }
+}

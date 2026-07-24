@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 fun main(args: Array<String>) {
     val zero = coerce<Int, String>(0)

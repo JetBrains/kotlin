@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.createInteropLibrary
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assumptions.abort
-import java.io.File
+import java.nio.file.Path
 import java.util.Properties
 import kotlin.collections.forEach
+import kotlin.io.path.nameWithoutExtension
 
 class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>(::CInteropParameters) {
     class CInteropParameters : NativeParameters() {
@@ -50,23 +51,23 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
         }
     }
 
-    override fun writeKlib(parameters: CInteropParameters): File {
+    override fun writeKlib(parameters: CInteropParameters): Path {
         val klibDir = createNewKlibDir()
         val klibLocation = if (parameters.nopack) klibDir else klibDir.resolveSibling(klibDir.nameWithoutExtension + ".klib")
 
         createInteropLibrary(
                 serializedMetadata = parameters.metadata,
-                outputPath = klibLocation.path,
+                outputPath = klibLocation,
                 moduleName = parameters.uniqueName,
-                nativeBitcodeFiles = parameters.bitcodeFiles.map { it.file.path },
+                nativeBitcodeFiles = parameters.bitcodeFiles.map { it.file },
                 target = parameters.target,
                 manifest = Properties().apply {
-                    parameters.customManifestProperties.forEach { (key, value) -> setProperty(key, value) }
+                    parameters.customManifestProperties.forEach { [key, value] -> setProperty(key, value) }
                 },
                 dependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
                 nopack = parameters.nopack,
                 shortName = parameters.shortName,
-                staticLibraries = parameters.nativeIncludedBinaryFiles.map { it.file.path },
+                staticLibraries = parameters.nativeIncludedBinaryFiles.map { it.file },
                 klibAbiCompatibilityLevel = parameters.abiLevel,
         )
 

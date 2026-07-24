@@ -65,7 +65,7 @@ private fun TypeSystemCommonBackendContext.getSubstitutedUnderlyingType(type: Ko
     val mapping = typeParameters.map { it.getTypeConstructor() }.zip(typeArguments).toMap()
     val substitutor = typeSubstitutorForUnderlyingType(mapping)
 
-    val underlyingType = type.getUnsubstitutedUnderlyingType() ?: return null
+    val underlyingType = type.getUnsubstitutedUnderlyingTypeInJvm() ?: return null
     return when (val underlyingTypeParameter = asTypeParameterOrArrayThereof(underlyingType)) {
         null -> substitutor.safeSubstitute(underlyingType)
         else -> substituteUpperBound(

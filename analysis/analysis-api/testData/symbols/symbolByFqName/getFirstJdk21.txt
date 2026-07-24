@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: kotlin/collections/List.getFirst
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getFirst
   origin: JAVA_SOURCE
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -42,6 +44,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.collections.List
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: null

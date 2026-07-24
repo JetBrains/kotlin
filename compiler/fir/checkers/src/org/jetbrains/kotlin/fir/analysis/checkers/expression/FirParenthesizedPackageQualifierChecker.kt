@@ -67,7 +67,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
     private object ImplementationForError {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(expression: FirResolvedQualifier, source: KtSourceElement) {
-            if (expression.symbol != null || source.kind is KtFakeSourceElementKind) return
+            if (expression.qualifierSymbol != null || source.kind is KtFakeSourceElementKind) return
 
             if (checkOutermostPackageParenthesized(expression)) return
             checkNestedPackagesParenthesized(source)
@@ -100,7 +100,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         ) {
             when {
                 // Qualifier corresponds to package itself
-                expression.symbol == null -> {
+                expression.qualifierSymbol == null -> {
                     // Already reported in other checkers
                     if (expression.typeArguments.isNotEmpty() || expression.hasConeTypeArgumentsForOuterClassDiagnostic()) {
                         return

@@ -3,10 +3,10 @@ commonMain
 commonTest
   test:foo:1.0
 jvmMain
-  project :lib
+  project ':lib'
   test:foo:2.0
 jvmTest
-  project :lib
+  project ':lib'
   test:foo:2.0
 linuxMain
   test:foo:1.0

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility
 
+@K1Deprecation
 object ClassicPositioningStrategies {
     @JvmField
     val ACTUAL_DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> =

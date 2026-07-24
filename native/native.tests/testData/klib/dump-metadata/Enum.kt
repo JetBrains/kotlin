@@ -1,6 +1,6 @@
 enum class E(val x: Int = 0) {
-    A,
     B,
+    A,
     C(1) {
         override fun enumFun() = 42
     };

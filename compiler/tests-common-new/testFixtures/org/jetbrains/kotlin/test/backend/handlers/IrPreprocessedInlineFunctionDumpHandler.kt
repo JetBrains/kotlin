@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
-import java.lang.StringBuilder
 
 private const val PREPROCESSED_INLINE_FUNCTIONS_EXTENSION = "preprocessed.ir.txt"
 
@@ -27,6 +28,9 @@ class IrPreprocessedInlineFunctionDumpHandler(
     artifactKind: BackendKind<IrBackendInput>,
 ) : AbstractIrHandler(testServices, artifactKind) {
     private val dumper = MultiModuleInfoDumper()
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     override fun processModule(
         module: TestModule,
@@ -43,9 +47,8 @@ class IrPreprocessedInlineFunctionDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
-        val expectedFile = testServices.moduleStructure.originalTestDataFiles.first().withExtension(PREPROCESSED_INLINE_FUNCTIONS_EXTENSION)
-        assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
+        assertEqualsToDump(PREPROCESSED_INLINE_FUNCTIONS_EXTENSION, actualDump)
     }
 
     private fun IrSimpleFunction.dumpWithCallableId(stringBuilder: StringBuilder, dumpOptions: DumpIrTreeOptions) {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.library.uniqueName
 
 private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
@@ -80,7 +81,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 }
                 LLVMIsAGlobalAlias(value) != null -> cleanCalledFunction(LLVMAliasGetAliasee(value)!!)
                 else -> {
-                    TODO("not implemented call argument ${llvm2string(value)} called in ${llvm2string(this)}")
+                    TODO("not implemented call argument ${value.toValueString()} called in ${this.toValueString()}")
                 }
             }
         }
@@ -111,9 +112,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 (invoke instructions are intertwined with basic blocks, so getting the next instruction requires more code).
                 The function doesn't throw, so nobody should generate "invokes" to it anyway.
                 */
-                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${llvm2string(call)}" }
+                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${call.toValueString()}" }
                 val nextInstruction = LLVMGetNextInstruction(call)
-                check(nextInstruction != null) { "Expected a next instruction after ${llvm2string(call)}" }
+                check(nextInstruction != null) { "Expected a next instruction after ${call.toValueString()}" }
                 nextInstruction
             } else {
                 /*
@@ -163,7 +164,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     calledPtrLlvm = when (val typeKind = LLVMGetTypeKind(calleeInfo.calledPtr.type)) {
                         LLVMTypeKind.LLVMPointerTypeKind -> calleeInfo.calledPtr
                         LLVMTypeKind.LLVMIntegerTypeKind -> LLVMBuildIntToPtr(builder, calleeInfo.calledPtr, llvm.pointerType, "")!!
-                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${llvm2string(calleeInfo.calledPtr)}")
+                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${calleeInfo.calledPtr.toValueString()}")
                     }
                 }
             }
@@ -186,10 +187,6 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         const val CALLED_LLVM_BUILTIN: Long = -2
     }
 }
-
-private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
-private const val functionListSizesGlobal = "Kotlin_callsCheckerKnownFunctionsCounts"
-private const val functionListSizesSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCountsCount"
 
 internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState) {
     val llvm = generationState.llvm
@@ -216,54 +213,5 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
     getFunctions(llvm.module)
             .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
-    // otherwise optimiser can inline it
-    staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesSizeGlobal)?.setExternallyInitialized(true)
     verifyModule(llvm.module)
 }
-
-// this should be a separate pass, to handle DCE correctly
-internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationState) {
-    val llvm = generationState.llvm
-    val staticData = llvm.staticData
-    val context = generationState.context
-
-    val functions = getFunctions(llvm.module)
-            .filter { !it.isExternalFunction() }
-            .map { constPointer(it) }
-            .toList()
-
-    val libName = context.config.libraryToCache?.klib?.uniqueName ?: context.config.moduleId
-    staticData.placeGlobalConstArray(libName.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
-    staticData.placeGlobal(libName.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
-
-    if (generationState.config.isFinalBinary) {
-        val libraryNames = generationState.dependenciesTracker.nativeDependenciesToLink
-                .filter { context.config.cachedLibraries.isLibraryCached(it) }
-                .map { it.uniqueName } + listOf(libName)
-
-        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsGlobalName })
-        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsCountGlobalName })
-
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListGlobal).setInitializer(allFunctionListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(libraryNames.size))
-    }
-    verifyModule(llvm.module)
-}
-
-
-private val String.knownFunctionsGlobalName
-    get() = "_Konan_callsCheckerKnownFunctions_${this}"
-
-private val String.knownFunctionsCountGlobalName
-    get() = "_Konan_callsCheckerKnownFunctionsCount_${this}"
-
-private fun KotlinStaticData.getOrCreateExportedGlobal(type: LLVMTypeRef, name: String) =
-        staticData.getGlobal(name) ?: staticData.createGlobal(type, name, isExported = true)
-
-private fun CodegenLlvmHelpers.exportedGlobalPointerArray(staticData: KotlinStaticData, values: List<String>) =
-        staticData.placeGlobalConstArray("", pointerType, values.map {
-            staticData.getOrCreateExportedGlobal(pointerType, it).pointer
-        })

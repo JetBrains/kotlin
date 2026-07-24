@@ -1,6 +1,9 @@
 description = "Lombok compiler plugin (CLI)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -13,8 +16,6 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:ir.backend.common"))
 
-    implementation(project(":kotlin-lombok-compiler-plugin.common"))
-    implementation(project(":kotlin-lombok-compiler-plugin.k1"))
     implementation(project(":kotlin-lombok-compiler-plugin.k2"))
 
     compileOnly(intellijCore())

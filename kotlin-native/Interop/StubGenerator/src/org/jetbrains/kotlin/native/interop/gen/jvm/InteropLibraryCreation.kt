@@ -21,20 +21,21 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
+import java.nio.file.Path
 import java.util.*
 
 fun createInteropLibrary(
-    serializedMetadata: SerializedMetadata,
-    outputPath: String,
-    moduleName: String,
-    nativeBitcodeFiles: List<String>,
-    target: KonanTarget,
-    manifest: Properties,
-    dependencies: List<KotlinLibrary>,
-    nopack: Boolean,
-    shortName: String?,
-    staticLibraries: List<String>,
-    klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
+        serializedMetadata: SerializedMetadata,
+        outputPath: Path,
+        moduleName: String,
+        nativeBitcodeFiles: List<Path>,
+        target: KonanTarget,
+        manifest: Properties,
+        dependencies: List<KotlinLibrary>,
+        nopack: Boolean,
+        shortName: String?,
+        staticLibraries: List<Path>,
+        klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
 ) {
     KlibWriter {
         format(if (nopack) KlibFormat.Directory else KlibFormat.ZipArchive)

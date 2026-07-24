@@ -8,27 +8,29 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
-import org.jetbrains.kotlin.analysis.api.fir.references.*
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getQualifierSelected
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsByNameArgumentExpression
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsByResolvedImport
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedQualifier
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedTypeRef
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.toTargetSymbol
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionImportCanBeRemovedImpl
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionNotAvailableImpl
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionQualifierCanBeRemovedImpl
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionUsedImpl
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -57,6 +60,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toArrayOfFactoryName
@@ -70,18 +75,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.idea.references.KDocReference
-import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.psi.psiUtil.topParenthesizedParentOrMe
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -123,54 +122,111 @@ internal class KaFirResolver(
      * companion object in a single dot-qualified expression - only the
      * last reference in the chain can do that.
      *
-     * So, if the PSI element of the [KtReference] and the whole [FirResolvedQualifier]
-     * are different, we can certainly say that the [KtReference] does not
+     * So, if the PSI element of the [KtSimpleNameExpression] and the whole [FirResolvedQualifier]
+     * are different, we can certainly say that the [KtSimpleNameExpression] does not
      * point to the companion object.
      */
-    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
-        if (this !is KtSimpleNameReference) {
-            return false
+    override fun isImplicitReferenceToCompanion(simpleNameExpression: KtSimpleNameExpression): Boolean =
+        simpleNameExpression.withPsiValidityAssertion {
+            val implicitInvokeCall = run {
+                val parentCallExpression = simpleNameExpression.parent as? KtCallExpression
+                parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
+            }
+
+            val wholeQualifier = implicitInvokeCall?.explicitReceiver
+                ?: simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
+
+            return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
         }
 
-        val implicitInvokeCall = run {
-            val parentCallExpression = element.parent as? KtCallExpression
-            parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
+    override fun usesContextSensitiveResolution(simpleNameExpression: KtSimpleNameExpression): Boolean =
+        contextSensitiveResolutionStatus(simpleNameExpression) is KaContextSensitiveResolutionStatus.Used
+
+    override fun contextSensitiveResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
+        simpleNameExpression.withPsiValidityAssertion {
+            val fir = simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
+                ?: return KaContextSensitiveResolutionNotAvailableImpl
+
+            if (fir.isResolvedThroughContextSensitiveResolution()) {
+                return KaContextSensitiveResolutionUsedImpl
+            }
+
+            // The hint is attached to the fully resolved outer node — the whole qualified expression
+            // (`Foo.BAR`) or the enclosing type-operator call (`x is Foo.Bar`) — which is not necessarily the
+            // FIR mapped to the simple name itself, so it is re-fetched from the appropriate anchor.
+            val hintHolder = when (fir) {
+                is FirResolvedTypeRef -> simpleNameExpression.enclosingTypeOperatorCall()
+                else -> simpleNameExpression.qualifiedExpressionFir() ?: fir
+            }
+
+            val nonFatalDiagnostics = when (hintHolder) {
+                is FirQualifiedAccessExpression -> hintHolder.nonFatalDiagnostics
+                is FirResolvedQualifier -> hintHolder.nonFatalDiagnostics
+                is FirTypeOperatorCall -> hintHolder.nonFatalDiagnostics
+                else -> emptyList()
+            }
+
+            when {
+                nonFatalDiagnostics.isEmpty() -> KaContextSensitiveResolutionNotAvailableImpl
+                ContextSensitiveResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics -> KaContextSensitiveResolutionImportCanBeRemovedImpl
+                ContextSensitiveResolutionMightBeUsed in nonFatalDiagnostics -> KaContextSensitiveResolutionQualifierCanBeRemovedImpl
+                else -> KaContextSensitiveResolutionNotAvailableImpl
+            }
         }
 
-        val wholeQualifier = implicitInvokeCall?.explicitReceiver
-            ?: element.getOrBuildFir(analysisSession.resolutionFacade)
-
-        return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
+    private fun FirElement.isResolvedThroughContextSensitiveResolution(): Boolean = when (this) {
+        is FirResolvedTypeRef -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+        is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+        else -> toReference(analysisSession.firSession)?.isContextSensitive == true
     }
 
-    override val KtReference.usesContextSensitiveResolution: Boolean
-        get() = withPsiValidityAssertion(element) {
-            if (this !is KtSimpleNameReference) {
-                return false
-            }
+    /**
+     * For a [KtSimpleNameExpression] that is the selector of a [KtDotQualifiedExpression], returns the FIR of
+     * the whole qualified expression — the node the CSR "removable qualifier/import" hint is attached to.
+     *
+     * The hint lives on the fully-resolved outer node, not on the FIR mapped to the selector name itself, so
+     * it has to be re-fetched from the qualified expression:
+     *
+     * ```kotlin
+     * Foo.BAR // for the `BAR` selector, returns the FIR of the whole `Foo.BAR`
+     * ```
+     *
+     * Returns `null` for anything that is not such a selector (e.g. the `Foo` receiver), so that the caller
+     * falls back to the simple name's own FIR.
+     */
+    private fun KtSimpleNameExpression.qualifiedExpressionFir(): FirElement? {
+        return getQualifiedExpressionForSelector()?.getOrBuildFir(analysisSession.resolutionFacade)
+    }
 
-            val fir = element.getOrBuildFir(analysisSession.resolutionFacade) ?: return false
-            when (fir) {
-                is FirResolvedTypeRef -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
-                is FirResolvedQualifier -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
-                else -> {
-                    val firReference = fir.toReference(analysisSession.firSession) ?: return false
-                    firReference.isContextSensitive
-                }
-            }
+    /**
+     * For a [KtSimpleNameExpression] that is the reference of an `is`/`as` operator's (or a `when` `is`-pattern's)
+     * conversion type, returns that operator's [FirTypeOperatorCall] — the node the CSR hint is attached to (see
+     * [buildTypeOperatorCall][org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall] in the raw-FIR builder).
+     *
+     * The hint always concerns the operator's *own* conversion type, so only the name of that type is accepted:
+     *
+     * ```kotlin
+     * b is Base.Child              // `Child` -> the FirTypeOperatorCall; `Base` (qualifier) -> null
+     * when (b) { is Base.Child }   // same, for the `when` `is`-pattern
+     * b as Base.Child<Foo>         // `Child` -> the call; `Foo` (type argument) -> null
+     * ```
+     *
+     * The accepted PSI shape is `KtUserType` -> `KtTypeReference` (optionally through a `KtNullableType` for
+     * `as T?`) -> the operator. A qualifier segment sits under another `KtUserType`, and a name inside a type
+     * argument sits under a `KtTypeReference` whose parent is a projection rather than the operator — both
+     * therefore yield `null`.
+     */
+    private fun KtSimpleNameExpression.enclosingTypeOperatorCall(): FirTypeOperatorCall? {
+        val userType = parent as? KtUserType ?: return null
+        if (userType.referenceExpression != this) return null
+
+        val typeReferenceParent = userType.parent.let { if (it is KtNullableType) it.parent else it } as? KtTypeReference ?: return null
+        return when (val operator = typeReferenceParent.parent) {
+            is KtBinaryExpressionWithTypeRHS, is KtIsExpression, is KtWhenConditionIsPattern ->
+                operator.getOrBuildFir(analysisSession.resolutionFacade) as? FirTypeOperatorCall
+
+            else -> null
         }
-
-    @KaNonPublicApi
-    override fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol? = withValidityAssertion {
-        val element = this.element
-        val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
-        val selectedFqName = element.getQualifiedNameAsFqName()
-        return ClassicKDocReferenceResolver.resolveKdocFqName(
-            analysisSession,
-            selectedFqName,
-            fullFqName,
-            element,
-        ).firstOrNull()
     }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
@@ -198,29 +254,6 @@ internal class KaFirResolver(
         }
     }
 
-    @OptIn(KtExperimentalApi::class)
-    override fun performSymbolResolution(reference: KtReference): KaSymbolResolutionAttempt? {
-        if (reference !is KaFirReference) {
-            return null
-        }
-
-        return when (reference) {
-            // For most constructions the element could be used instead
-            is KaFirArrayAccessReference,
-            is KaFirCollectionLiteralReference,
-            is KaFirConstructorDelegationReference,
-            is KaFirDestructuringDeclarationReference,
-            is KaFirForLoopInReference,
-            is KaFirPropertyDelegationMethodsReference,
-            is KaFirSimpleNameReference,
-            is KaFirKDocReference,
-                -> tryResolveSymbolsForReferenceViaElement(reference)
-
-            is KaFirDefaultAnnotationArgumentReference -> tryResolveSymbolsForDefaultAnnotationArgumentReference(reference)
-            is KaFirInvokeFunctionReference -> tryResolveSymbolsForInvokeReference(reference)
-        }
-    }
-
     /**
      * Some elements require special adjusting on psi or fir level:
      *
@@ -244,7 +277,7 @@ internal class KaFirResolver(
             getSymbolsByNameArgumentExpression(psi, analysisSession, firSymbolBuilder).ifNotEmpty(::KaBaseSymbolResolutionSuccess)
         }
 
-        else -> psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()?.toKaSymbolResolutionAttempt(psi)
+        else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
     }
 
     private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
@@ -277,27 +310,11 @@ internal class KaFirResolver(
         is FirResolvedReifiedParameterReference -> toKaSymbolResolutionAttempt()
         is FirVariableAssignment -> lValue.unwrapExpression().toKaSymbolResolutionAttempt(psi)
         is FirSmartCastExpression -> originalExpression.toKaSymbolResolutionAttempt(psi)
+        is FirSafeCallExpression -> unwrapSelector().toKaSymbolResolutionAttempt(psi)
         is FirResolvedQualifier if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         is FirPackageDirective if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         is FirResolvedImport if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
         else -> null
-    }
-
-    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
-        return doResolveToSymbols(this)
-    }
-
-    private fun doResolveToSymbols(reference: KtReference): Collection<KaSymbol> {
-        checkWithAttachment(
-            reference is KaFirReference,
-            { "${reference::class.simpleName} is not extends ${KaFirReference::class.simpleName}" },
-        ) {
-            withPsiEntry("reference", reference.element)
-        }
-
-        with(reference) {
-            return analysisSession.resolveToSymbols()
-        }
     }
 
     override fun performCallResolution(psi: KtElement): KaCallResolutionAttempt? = wrapError(psi) {
@@ -665,7 +682,7 @@ internal class KaFirResolver(
                 resolveFragmentOfCall
             )
 
-            is FirSafeCallExpression -> unwrapSelector(psi).toKaResolutionAttempt(
+            is FirSafeCallExpression -> unwrapSelector().toKaResolutionAttempt(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall,
@@ -725,20 +742,24 @@ internal class KaFirResolver(
     }
 
     /**
-     * Expressions like `s?.itself["1"]` where [KtSafeQualifiedExpression] is `s?.itself` are wrapped into something like `s?.{ $subj$.itself.get("1") }`,
-     * so we need to extract `itself` from `$subj$.itself` receiver.
-     * But! Expressions like `s?.itself("1")` where [KtSafeQualifiedExpression] is the whole expression might be wrapped the same way.
-     * For instance, it is the case for an implicit invoke. It could be wrapped into something like `s?.{ $subj$.itself.invoke("1") }` as well,
-     * but it has to be resolved into the call since the expression is call
+     * FIR safe calls may cover more syntax than the corresponding [KtSafeQualifiedExpression]. For example,
+     * `s?.itselfFun()["1"]` is represented as `s?.{ $subj$.itselfFun().get("1") }`, even though the PSI safe call
+     * is only `s?.itselfFun()`. Resolve the FIR node that corresponds to the requested PSI selector instead of the
+     * outer desugared call.
+     *
+     * If traversal reaches an implicit `invoke`, it is intentionally returned before searching the receiver: for
+     * `s?.action()`, resolving the call expression should still resolve to `invoke`, not to the callable expression
+     * used as its receiver.
      */
-    private fun FirSafeCallExpression.unwrapSelector(psi: KtElement): FirElement {
-        val selector = selector
-        if (psi !is KtSafeQualifiedExpression || psi.selectorExpression is KtCallExpression || selector !is FirQualifiedAccessExpression) {
-            return selector
+    private fun FirSafeCallExpression.unwrapSelector(): FirElement {
+        fun FirElement.findNestedQualifiedAccess(): FirQualifiedAccessExpression? = when (this) {
+            is FirSmartCastExpression -> originalExpression.findNestedQualifiedAccess()
+            is FirImplicitInvokeCall -> this
+            is FirQualifiedAccessExpression -> explicitReceiver?.findNestedQualifiedAccess() ?: this
+            else -> null
         }
 
-        val nonDefaultReceiver = selector.explicitReceiver?.takeUnless { it is FirCheckedSafeCallSubject }
-        return nonDefaultReceiver ?: selector
+        return selector.findNestedQualifiedAccess() ?: selector
     }
 
     /**
@@ -936,7 +957,7 @@ internal class KaFirResolver(
 
         val typeMapping = typeArgumentMapping as? TypeArgumentMapping.Mapped
         return buildMap {
-            for ((index, parameterSymbol) in typeParameters.withIndex()) {
+            for ([index, parameterSymbol] in typeParameters.withIndex()) {
                 val explicitTypeArgument = typeMapping?.get(index) as? FirTypeProjectionWithVariance
                 if (explicitTypeArgument != null) {
                     put(parameterSymbol, explicitTypeArgument.typeRef.coneType)
@@ -1083,19 +1104,19 @@ internal class KaFirResolver(
             var explicitReceiverPsi = when (psi) {
                 is KtQualifiedExpression -> psi.selectorExpression
                     ?: errorWithAttachment("missing selectorExpression in PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                        withPsiEntry("psi", psi, analysisSession::getModule)
+                        withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                     }
 
                 is KtExpression -> psi
                 else -> errorWithAttachment("unexpected PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                    withPsiEntry("psi", psi, analysisSession::getModule)
+                    withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                 }
             }
 
             if (explicitReceiverPsi is KtCallExpression) {
                 explicitReceiverPsi = explicitReceiverPsi.calleeExpression
                     ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                        withPsiEntry("psi", psi, analysisSession::getModule)
+                        withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                     }
             }
 
@@ -1902,7 +1923,8 @@ internal class KaFirResolver(
             }
 
             is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
-                val symbol = this.symbol ?: return null
+                val symbol = this.qualifierSymbol ?: return null
+                @OptIn(ResolvedQualifierTypeAccess::class)
                 KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKaType())
             }
 
@@ -1941,7 +1963,7 @@ internal class KaFirResolver(
         if (typeArguments.size != typeParameters.size) return emptyMap()
 
         return buildMap(typeArguments.size) {
-            for ((index, projection) in typeArguments.withIndex()) {
+            for ([index, projection] in typeArguments.withIndex()) {
                 if (projection !is ConeKotlinType) return emptyMap()
                 put(typeParameters[index], projection)
             }
@@ -1966,7 +1988,7 @@ internal class KaFirResolver(
 
         val result = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
 
-        for ((index, typeParameter) in typeParameters.withIndex()) {
+        for ([index, typeParameter] in typeParameters.withIndex()) {
             // After resolution all type arguments should be usual types (not FirPlaceholderProjection)
             val typeArgument = typeArguments[index]
             if (typeArgument !is FirTypeProjectionWithVariance || typeArgument.variance != Variance.INVARIANT) return emptyMap()
@@ -2006,7 +2028,7 @@ internal class KaFirResolver(
 
         return when (this) {
             is FirFunctionCall, is FirPropertyAccessExpression -> collectCallCandidates(psi, resolveFragmentOfCall)
-            is FirSafeCallExpression -> unwrapSelector(psi).collectCallCandidates(
+            is FirSafeCallExpression -> unwrapSelector().collectCallCandidates(
                 psi = psi,
                 resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall = resolveFragmentOfCall,
@@ -2035,7 +2057,7 @@ internal class KaFirResolver(
     }
 
     private fun FirResolvedQualifier.findQualifierConstructors(): List<FirConstructorSymbol> {
-        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
+        val classSymbol = this.qualifierSymbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
         return classSymbol.unsubstitutedScope(
             analysisSession.firSession,
             analysisSession.getScopeSessionFor(analysisSession.firSession),
@@ -2045,7 +2067,7 @@ internal class KaFirResolver(
     }
 
     private fun Map<FirTypeParameterSymbol, ConeKotlinType>.asKaTypeParametersMapping(): Map<KaTypeParameterSymbol, KaType> {
-        return map { (key, value) ->
+        return map { [key, value] ->
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(key) to value.asKaType()
         }.toMap()
     }
@@ -2074,12 +2096,31 @@ internal class KaFirResolver(
         resolveFragmentOfCall: Boolean,
     ): List<KaCallCandidate> {
         // If a function call is resolved to an implicit invoke call, the FirImplicitInvokeCall will have the `invoke()` function as the
-        // callee and the variable as the explicit receiver. To correctly get all candidates, we need to get the original function
+        // callee and the variable/qualifier as the explicit receiver. To correctly get all candidates, we need to get the original function
         // call's explicit receiver (if there is any) and callee (i.e., the variable).
-        val unwrappedExplicitReceiver = explicitReceiver?.unwrapSmartcastExpression()
-        val isUnwrappedImplicitInvokeCall = this is FirImplicitInvokeCall && unwrappedExplicitReceiver is FirPropertyAccessExpression
+        val unwrappedExplicitReceiver = explicitReceiver?.unwrapSmartcastExpression()?.takeIf {
+            it is FirPropertyAccessExpression || it is FirResolvedQualifier
+        }
+
+        val isUnwrappedImplicitInvokeCall = this is FirImplicitInvokeCall && unwrappedExplicitReceiver != null
         val originalFunctionCall = if (isUnwrappedImplicitInvokeCall) {
-            val originalCallee = unwrappedExplicitReceiver.calleeReference.safeAs<FirNamedReference>() ?: return emptyList()
+            val originalExplicitReceiver = when (unwrappedExplicitReceiver) {
+                is FirPropertyAccessExpression -> unwrappedExplicitReceiver.explicitReceiver
+                is FirResolvedQualifier -> unwrappedExplicitReceiver.explicitParent
+                else -> errorWithFirSpecificEntries(
+                    "Unsupported receiver type: ${unwrappedExplicitReceiver::class.simpleName}",
+                    fir = this,
+                )
+            }
+
+            val originalCalleeReference = when (unwrappedExplicitReceiver) {
+                is FirPropertyAccessExpression -> unwrappedExplicitReceiver.calleeReference
+                is FirResolvedQualifier -> buildSimpleNamedReference {
+                    source = unwrappedExplicitReceiver.source
+                    name = unwrappedExplicitReceiver.relativeClassFqName?.shortName() ?: return emptyList()
+                }
+            }
+
             buildFunctionCall {
                 // NOTE: We only need to copy the explicit receiver and not the dispatch and extension receivers as only the explicit
                 // receiver is needed by the resolver. The dispatch and extension receivers are only assigned after resolution when a
@@ -2087,9 +2128,9 @@ internal class KaFirResolver(
                 source = this@collectCallCandidates.source
                 annotations.addAll(this@collectCallCandidates.annotations)
                 typeArguments.addAll(this@collectCallCandidates.typeArguments)
-                explicitReceiver = unwrappedExplicitReceiver.explicitReceiver
+                explicitReceiver = originalExplicitReceiver
                 argumentList = this@collectCallCandidates.argumentList
-                calleeReference = originalCallee
+                calleeReference = originalCalleeReference
             }
         } else {
             this
@@ -2362,7 +2403,7 @@ internal class KaFirResolver(
         }
 
         val argumentMapping = LinkedHashMap<KtExpression, KaVariableSignature<KaParameterSymbol>>(size)
-        this.forEach { (firExpression, firValueParameter) ->
+        this.forEach { [firExpression, firValueParameter] ->
             val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, argumentMapping)
         }
@@ -2437,7 +2478,7 @@ internal class KaFirResolver(
             "Error during resolving call ${element::class}",
             exception = e,
         ) {
-            withPsiEntry("psi", element, analysisSession::getModule)
+            withPsiEntry("psi", element) { context(analysisSession) { it.kaModule } }
             element.getOrBuildFir(resolutionFacade)?.let { withFirEntry("fir", it) }
         }
     }

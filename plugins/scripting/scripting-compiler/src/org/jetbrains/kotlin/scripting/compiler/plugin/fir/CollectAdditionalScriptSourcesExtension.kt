@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
@@ -47,6 +48,7 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean =
@@ -74,6 +76,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 )
 
         val hostConfiguration = ensureUpdatedHostConfiguration(providedHostConfiguration, definitionProvider, configuration)
+        val updatedClasspath = LinkedHashSet<File>()
 
         fun SourceCode.collectImports(): List<SourceCode>? {
             val refinedScriptCompilationConfiguration =
@@ -97,6 +100,8 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                         configuration.report(report.severity, report.render(withSeverity = false), null)
                     }
                 }.valueOrNull()
+
+            updatedClasspath.addAll(refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty())
             return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
         }
 
@@ -132,6 +137,8 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 sourceDependencies[sourceCode] = imports
             }
         }
+
+        environment.updateClasspath(updatedClasspath.toList())
 
         class CycleDetected(val node: SourceCode) : Throwable()
         return try {
@@ -212,14 +219,14 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             )
 
             FirJvmSessionFactory.createSourceSession(
-                moduleData = moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>")),
+                moduleData = moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
                 javaSourcesScope = AbstractProjectFileSearchScope.EMPTY,
                 createIncrementalCompilationSymbolProviders = { null },
                 extensionRegistrars = extensionRegistrars,
                 configuration = configuration,
                 context = sessionFactoryContext,
                 needRegisterJavaElementFinder = true,
-                isForLeafHmppModule = false,
+                kmpModuleKind = KmpModuleKind.SingleModule,
                 init = {},
             ).apply {
                 register(

@@ -1,25 +1,29 @@
-import kotlin.io.path.createTempDirectory
-
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("java-test-fixtures")
 }
 
 dependencies {
-    testFixturesApi(project(":kotlin-scripting-compiler"))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
-    testFixturesImplementation(intellijCore())
+    testImplementation(project(":kotlin-scripting-compiler"))
+    testImplementation(project(":core:descriptors"))
+    testImplementation(project(":core:descriptors.jvm"))
+    testImplementation(project(":core:compiler.common.jvm"))
+    testImplementation(project(":compiler:cli-jvm:javac-integration"))
+    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
-    testFixturesApi(platform(libs.junit.bom))
-    testCompileOnly(libs.junit4)
-    testFixturesImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
-    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
-    testRuntimeOnly(libs.junit.vintage.engine)
-    testRuntimeOnly(libs.junit.platform.launcher)
-    testFixturesApi(testFixtures(project(":generators:test-generator")))
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testImplementation(testFixtures(project(":generators:test-generator")))
     testRuntimeOnly(toolsJar())
 }
 
@@ -42,7 +46,7 @@ projectTests {
 
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
-        jUnitMode = JUnitMode.JUnit5
+        javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }

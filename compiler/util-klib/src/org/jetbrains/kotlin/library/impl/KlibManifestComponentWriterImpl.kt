@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.properties.saveToFile
+import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
@@ -18,9 +18,10 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.writeKonanLibraryVersioning
 import org.jetbrains.kotlin.library.writer.KlibManifestWriterSpec
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
+import java.nio.file.Path
 import java.util.Properties
 import kotlin.collections.plusAssign
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.createDirectories
 
 /**
  * An implementation of [KlibComponentWriter] that writes manifest properties to the constructed Klib library.
@@ -32,12 +33,12 @@ internal class KlibManifestComponentWriterImpl(
     val targetNames: List<String>,
     val customProperties: Properties,
 ) : KlibComponentWriter {
-    override fun writeTo(root: KlibFile) {
+    override fun writeTo(root: Path) {
         val properties = assembleProperties()
 
         val layout = KlibManifestComponentLayout(root)
-        layout.manifestFile.parentFile.mkdirs()
-        properties.saveToFile(layout.manifestFile)
+        layout.manifestFile.parent.createDirectories()
+        layout.manifestFile.writeProperties(properties)
     }
 
     private fun assembleProperties(): Properties = Properties().apply {

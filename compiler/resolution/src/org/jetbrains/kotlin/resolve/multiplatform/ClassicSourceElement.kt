@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.mpp.SourceElementMarker
 
+@K1Deprecation
 class ClassicSourceElement(val element: SourceElement?) : SourceElementMarker

@@ -24,7 +24,7 @@ class TrivialConstructorRemoval(private val klass: JsClass) {
             val expressionStatement = statement as? JsExpressionStatement
             val invocation = expressionStatement?.expression as? JsInvocation
             invocation?.qualifier is JsSuperRef && invocation.arguments.size == parameters.size && invocation.arguments.withIndex()
-                .all { (index, argument) -> argument is JsNameRef && argument.name === parameters[index].name }
+                .all { [index, argument] -> argument is JsNameRef && argument.name === parameters[index].name }
         }
     }
 }

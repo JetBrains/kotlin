@@ -101,7 +101,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         input: ArgumentsPipelineArtifact<T>,
         configuration: CompilerConfiguration,
     ) {
-        val (arguments, services, rootDisposable, _, _) = input
+        (val arguments, val services, val rootDisposable, val _ = messageCollector, val _ = performanceManager) = input
         setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
         initializeCommonConfiguration(configuration, arguments, rootDisposable)
         configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)
@@ -241,7 +241,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
 
         arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
-        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_WARNING, WEB_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_ERROR)
     }
 
     internal fun initializeCommonConfiguration(

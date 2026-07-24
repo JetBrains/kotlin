@@ -10,6 +10,7 @@
 // Using internal TailCallBaseContinuationImpl in stdlib replacement
 // DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 // PREFER_IN_TEST_OVER_STDLIB
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: TailCallAsyncStackTraceEntry.kt
 

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 interface NonSealed {
     class Left(val x: String): NonSealed

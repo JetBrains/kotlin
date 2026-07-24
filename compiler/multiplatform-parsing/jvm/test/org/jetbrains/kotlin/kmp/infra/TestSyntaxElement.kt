@@ -31,7 +31,7 @@ abstract class TestSyntaxElement<out T>(
         var hasErrorElement = isErrorElement
 
         children.forEach {
-            val (number, syntaxError) = it.countSyntaxElements()
+            (val number, val syntaxError = hasErrorElement) = it.countSyntaxElements()
             syntaxElementNumber += number
             hasErrorElement = hasErrorElement || syntaxError
         }
@@ -95,7 +95,7 @@ private fun <T> StringBuilder.appendDump(testSyntaxElement: TestSyntaxElement<T>
 
         fun appendLocation(location: Int) {
             if (sourceLinesMapping != null) {
-                val (line, column) = sourceLinesMapping.getLineAndColumnByOffset(location)
+                val [line, column] = sourceLinesMapping.getLineAndColumnByOffset(location)
                 // It's more text-editor-friendly to start lines and columns with `1`
                 if (line != previousLine) {
                     append(line + 1)

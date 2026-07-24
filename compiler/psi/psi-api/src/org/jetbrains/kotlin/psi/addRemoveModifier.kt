@@ -3,134 +3,43 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtNonPublicApi::class)
+
 package org.jetbrains.kotlin.psi.addRemoveModifier
 
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-private fun KtModifierListOwner.addModifierList(newModifierList: KtModifierList): KtModifierList {
-    val anchor = firstChild!!
-        .siblings(forward = true)
-        .dropWhile { it is PsiComment || it is PsiWhiteSpace || it is KtContextParameterList }
-        .first()
-    return addBefore(newModifierList, anchor) as KtModifierList
-}
-
-private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
-    return owner.addModifierList(KtPsiFactory(owner.project).createModifierList(text))
-}
-
+@Deprecated(
+    "Use setModifierList(newModifierList) instead",
+    ReplaceWith("this.setModifierList(newModifierList)", "org.jetbrains.kotlin.idea.base.psi.setModifierList"),
+)
 fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
-    val currentModifierList = modifierList
-    if (currentModifierList != null) {
-        currentModifierList.replace(newModifierList)
-    } else {
-        addModifierList(newModifierList)
-    }
+    KtPsiMutationService.getInstance().setModifierList(this, newModifierList)
 }
 
+@Deprecated(
+    "Use owner.addModifierKeyword(modifier) instead",
+    ReplaceWith("owner.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
+)
 fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
-    val modifierList = owner.modifierList
-    if (modifierList == null) {
-        createModifierList(modifier.value, owner)
-    } else {
-        addModifier(modifierList, modifier)
-    }
+    KtPsiMutationService.getInstance().addModifierKeyword(owner, modifier)
 }
 
-fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
-    val modifierList = owner.modifierList
-    return if (modifierList == null) {
-        createModifierList(annotationEntry.text, owner).annotationEntries.first()
-    } else {
-        modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
-    }
-}
+@Deprecated(
+    "Use owner.addAnnotation(annotationEntry) instead",
+    ReplaceWith("owner.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
+)
+fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
+    KtPsiMutationService.getInstance().addAnnotation(owner, annotationEntry)
 
-internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywordToken) {
-    if (modifierList.hasModifier(modifier)) return
-
-    val newModifier = KtPsiFactory(modifierList.project).createModifier(modifier)
-    val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
-        ?.mapNotNull { modifierList.getModifier(it) }
-        ?.firstOrNull()
-
-    if (modifier == FINAL_KEYWORD && !modifierList.hasModifier(OVERRIDE_KEYWORD)) {
-        if (modifierToReplace != null) {
-            modifierToReplace.delete()
-            if (modifierList.firstChild == null) {
-                modifierList.delete()
-            }
-        }
-        return
-    }
-    if (modifierToReplace != null && modifierList.firstChild == modifierList.lastChild) {
-        modifierToReplace.replace(newModifier)
-    } else {
-        modifierToReplace?.delete()
-        val newModifierOrder = MODIFIER_KEYWORDS_ARRAY.indexOf(modifier)
-
-        fun placeAfter(child: PsiElement): Boolean {
-            if (child is PsiWhiteSpace) return false
-            if (child is KtAnnotation || child is KtAnnotationEntry) return true // place modifiers after annotations
-            val elementType = child.node!!.elementType
-            val order = MODIFIER_KEYWORDS_ARRAY.indexOf(elementType)
-            return newModifierOrder > order
-        }
-
-        val lastChild = modifierList.lastChild
-        val anchor = lastChild?.siblings(forward = false)?.firstOrNull(::placeAfter).let {
-            when {
-                it?.nextSibling is PsiWhiteSpace && (it is KtAnnotation || it is KtAnnotationEntry || it is KtContextParameterList || it is PsiComment) -> it.nextSibling
-                it == null && modifierList.firstChild is PsiWhiteSpace -> modifierList.firstChild
-                else -> it
-            }
-        }
-        modifierList.addAfter(newModifier, anchor)
-
-        if (anchor == lastChild) { // add line break if needed, otherwise visibility keyword may appear on previous line
-            val whiteSpace = modifierList.nextSibling as? PsiWhiteSpace
-            if (whiteSpace != null && whiteSpace.text.contains('\n')) {
-                modifierList.addAfter(whiteSpace, anchor)
-                whiteSpace.delete()
-            }
-        }
-    }
-}
-
+@Deprecated(
+    "Use owner.removeModifierKeyword(modifier) instead",
+    ReplaceWith("owner.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
+)
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
-    val modifierList = owner.modifierList ?: return
-    val modifier = modifierList.getModifier(modifier)
-    if (modifier != null) {
-        val forward = modifierList.lastChild != modifier // go backwards on last modifier, forwards otherwise
-        val rangeStart = modifier
-        val rangeEnd = modifier.siblings(forward = forward, withItself = true)
-            .takeWhile { e -> e is PsiWhiteSpace || e == modifier }
-            .last()
-
-        if (forward) {
-            modifierList.deleteChildRange(rangeStart, rangeEnd)
-        } else {
-            modifierList.deleteChildRange(rangeEnd, rangeStart)
-        }
-    }
-    if (modifierList.firstChild == null) {
-        val rangeEnd = modifierList.siblings(forward = true, withItself = true)
-            .takeWhile { e -> e is PsiWhiteSpace || e == modifierList }
-            .last()
-        owner.deleteChildRange(modifierList, rangeEnd)
-        return
-    }
-
-    val lastChild = modifierList.lastChild
-    if (lastChild is PsiComment) {
-        modifierList.addAfter(KtPsiFactory(owner.project).createNewLine(), lastChild)
-    }
+    KtPsiMutationService.getInstance().removeModifierKeyword(owner, modifier)
 }
 
 fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywordToken> {
@@ -139,19 +48,6 @@ fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywo
         if (index == -1) Int.MAX_VALUE else index
     }
 }
-
-private val MODIFIERS_TO_REPLACE = mapOf(
-    OVERRIDE_KEYWORD to listOf(OPEN_KEYWORD),
-    ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
-    OPEN_KEYWORD to listOf(FINAL_KEYWORD, ABSTRACT_KEYWORD),
-    FINAL_KEYWORD to listOf(ABSTRACT_KEYWORD, OPEN_KEYWORD),
-    PUBLIC_KEYWORD to listOf(PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
-    PROTECTED_KEYWORD to listOf(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
-    PRIVATE_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, INTERNAL_KEYWORD),
-    INTERNAL_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD),
-    EXPECT_KEYWORD to listOf(ACTUAL_KEYWORD),
-    ACTUAL_KEYWORD to listOf(EXPECT_KEYWORD),
-)
 
 @Deprecated(
     "Use `KtTokens.MODIFIER_KEYWORDS_ARRAY` directly",

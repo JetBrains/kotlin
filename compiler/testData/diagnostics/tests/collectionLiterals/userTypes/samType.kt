@@ -1,5 +1,5 @@
 // ISSUE: KT-85497
-// LANGUAGE: +CollectionLiterals, +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals, +CompanionBlocks +CompanionExtensions
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -80,11 +80,11 @@ fun interface NoOf {
 }
 
 private fun test() {
-    val noOf: NoOf <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
-    id<NoOf>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    val noOf: NoOf = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+    id<NoOf>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
 
-    val javaNoOf: JavaSamNoOf <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
-    id<JavaSamNoOf>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    val javaNoOf: JavaSamNoOf = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+    id<JavaSamNoOf>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, companionObject, funInterface, functionDeclaration, functionalType,

@@ -1,21 +1,19 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
-import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -28,21 +26,19 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstrain
 import org.jetbrains.kotlin.fir.resolve.substitution.*
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.asCone
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaSubstitutorProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSubstitutorProvider, KaFirSessionComponent {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
         withValidityAssertion {
             if (subClass == superClass) return KaSubstitutor.Empty(token)
@@ -50,7 +46,7 @@ internal class KaFirSubstitutorProvider(
             val baseFirSymbol = subClass.firSymbol
             val superFirSymbol = superClass.firSymbol
             val inheritancePath = collectInheritancePath(baseFirSymbol, superFirSymbol) ?: return null
-            val substitutors = inheritancePath.map { (type, symbol) ->
+            val substitutors = inheritancePath.map { [type, symbol] ->
                 type.substitutorForSuperType(rootModuleSession, symbol)
             }
             return when (substitutors.size) {
@@ -96,7 +92,7 @@ internal class KaFirSubstitutorProvider(
         if (mappings.isEmpty()) return KaSubstitutor.Empty(token)
 
         val substitution = buildMap {
-            mappings.forEach { (typeParameterSymbol, type) ->
+            mappings.forEach { [typeParameterSymbol, type] ->
                 check(typeParameterSymbol is KaFirTypeParameterSymbolBase<*>)
                 check(type is KaFirType)
                 put(typeParameterSymbol.firSymbol, type.coneType)
@@ -109,77 +105,67 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
-    @KaIdeApi
-    override fun createUnificationSubstitutor(
-        candidateType: KaType,
-        targetType: KaType,
-        constructionPolicy: KaUnificationSubstitutorPolicy,
-    ): KaSubstitutor? = withValidityAssertion {
-        createUnificationSubstitutor(listOf(candidateType to targetType), constructionPolicy)
+    override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = withValidityAssertion {
+        createSubstitutor(KaFirSubstitutorBuilder(token).apply(build).mappings)
     }
 
-    override fun createUnificationSubstitutor(
-        candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
+    override fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+        isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean,
+    ): KaSubstitutor? = withValidityAssertion {
+        createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
+            (leftTypeParameters + rightTypeParameters).filterToSetOrEmpty(isFreeTypeParameter)
+        }
+    }
+
+    override fun createSubtypingUnificationSubstitutor(
+        leftType: KaType,
+        rightType: KaType,
+        constructionPolicy: KaUnificationSubstitutorPolicy,
+    ): KaSubstitutor? = withValidityAssertion {
+        createSubtypingUnificationSubstitutor(listOf(leftType to rightType), constructionPolicy)
+    }
+
+    override fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy
     ): KaSubstitutor? = withValidityAssertion {
+        createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
+            when (constructionPolicy) {
+                KaUnificationSubstitutorPolicy.ASSIGN_LEFT -> leftTypeParameters - rightTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_RIGHT -> rightTypeParameters - leftTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_ALL -> (rightTypeParameters + leftTypeParameters).distinct()
+            }
+        }
+    }
+
+    private fun createSubtypingUnificationSubstitutor(
+        leftTypesToRightTypes: List<Pair<KaType, KaType>>,
+        freeTypeParametersProvider: (
+            leftTypeParameters: Set<KaTypeParameterSymbol>,
+            rightTypeParameters: Set<KaTypeParameterSymbol>,
+        ) -> Collection<KaTypeParameterSymbol>,
+    ): KaSubstitutor? {
         with(analysisSession) {
-            /**
-             * Retrieves all top-level type arguments involved in the signature of [this].
-             *
-             * MyClass<A, Pair<A, B>, List<Int>>.unwrapTypeArguments() -> {A, B}
-             */
-            fun KaType.collectTypeArgumentsFromTheSignature(): Set<KaTypeParameterSymbol> {
-                return when (this) {
-                    is KaTypeParameterType -> setOf(symbol)
-                    is KaClassType -> this.typeArguments.flatMapTo(mutableSetOf()) { typeProjection ->
-                        typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
-                    }
-                    is KaIntersectionType -> this.conjuncts.flatMapTo(mutableSetOf()) { it.collectTypeArgumentsFromTheSignature() }
-                    is KaFlexibleType ->
-                        (this.lowerBound.collectTypeArgumentsFromTheSignature() + this.upperBound.collectTypeArgumentsFromTheSignature()).toSet()
-                    is KaCapturedType -> this.projection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
-                    is KaDefinitelyNotNullType -> this.original.collectTypeArgumentsFromTheSignature()
-                    else -> emptySet()
-                }
-            }
-
-            /**
-             * Retrieves all type arguments [this] depends on. This includes direct type arguments as well as their transitive bounds.
-             */
-            fun KaType.getAllTypeArgumentDependencies(): Set<KaTypeParameterSymbol> {
-                val processingList = collectTypeArgumentsFromTheSignature().toMutableList()
-                val result = processingList.toMutableSet()
-                while (processingList.isNotEmpty()) {
-                    val typeArgument = processingList.pop()
-                    val upperBounds = typeArgument.upperBounds.flatMap { it.collectTypeArgumentsFromTheSignature() }.ifEmpty { continue }
-                    upperBounds.forEach { upperBound ->
-                        if (result.add(upperBound)) {
-                            processingList.add(upperBound)
-                        }
-                    }
-                }
-                return result
-            }
-
-            if (candidateTypesToTargetTypes.isEmpty()) {
+            if (leftTypesToRightTypes.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token)
             }
 
-            val candidateTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            val targetTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            candidateTypesToTargetTypes.forEach { (candidateType, targetType) ->
-                candidateTypeParameters.addAll(candidateType.getAllTypeArgumentDependencies())
-                targetTypeParameters.addAll(targetType.getAllTypeArgumentDependencies())
+            val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+            val rightTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+            leftTypesToRightTypes.forEach { [leftType, rightType] ->
+                leftTypeParameters.addAll(leftType.collectAllTypeArgumentDependencies())
+                rightTypeParameters.addAll(rightType.collectAllTypeArgumentDependencies())
             }
 
             /**
              * If types in all the pairs do not depend on any type parameters,
              * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
              */
-            if (targetTypeParameters.isEmpty() && candidateTypeParameters.isEmpty()) {
+            if (rightTypeParameters.isEmpty() && leftTypeParameters.isEmpty()) {
                 return KaSubstitutor.Empty(analysisSession.token).takeIf {
-                    candidateTypesToTargetTypes.all { (candidateType, targetType) ->
-                        candidateType.isSubtypeOf(targetType)
+                    leftTypesToRightTypes.all { [leftType, rightType] ->
+                        leftType.isSubtypeOf(rightType)
                     }
                 }
             }
@@ -187,43 +173,20 @@ internal class KaFirSubstitutorProvider(
             /**
              * Contains all free type parameters. Free type parameters are parameters for which the constraint system will try
              * to find a mapping to satisfy the constraints.
-             *
-             * The final list depends on the [constructionPolicy].
-             * If we have to check whether the constraints are valid for any values of the type parameters ([KaUnificationSubstitutorPolicy.UNIVERSAL]),
-             * we have to exclude type parameters involved in the candidate types.
-             * If we include candidate type parameters as well, the constraint system could assign any types to them to satisfy the constraint system.
-             * ```kotlin
-             * fun <TARGET: Number> foo(target: TARGET) {}
-             *
-             * fun <CANDIDATE: Any> bar(candidate: CANDIDATE) {}
-             * ```
-             * Here `CANDIDATE` type is not necessarily a subtype of `TARGET`. However, if we include `CANDIDATE` in the constraint system,
-             * the constraint system will not have any contradictions as `CANDIDATE -> TARGET` mapping satisfies the `CANDIDATE <: TARGET` constraint.
-             *
-             * If we just need to find any mapping for which the constraints hold ([KaUnificationSubstitutorPolicy.EXISTENTIAL]),
-             * we include candidate type parameters as well.
              */
-            val allInvolvedTypeParameters = if (constructionPolicy == KaUnificationSubstitutorPolicy.UNIVERSAL) {
-                targetTypeParameters - candidateTypeParameters
-            } else {
-                targetTypeParameters + candidateTypeParameters
-            }.distinct()
-
-            val coneTypeParameterList = allInvolvedTypeParameters.map { kaTypeParameter ->
-                require(kaTypeParameter is KaFirTypeParameterSymbol)
-                ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
-            }
+            val freeTypeParameters = freeTypeParametersProvider(leftTypeParameters, rightTypeParameters)
 
             val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
-            val typeSubstitutor = constraintSystem.registerTypeVariables(coneTypeParameterList)
+            val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
+
             val registeredConstraints =
                 mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
             with(constraintSystem.context) {
-                candidateTypesToTargetTypes.forEach { (candidateType, targetType) ->
-                    val preparedCandidateType = AbstractTypeChecker.prepareType(
+                leftTypesToRightTypes.forEach { [leftType, rightType] ->
+                    val preparedLeftType = AbstractTypeChecker.prepareType(
                         constraintSystem.context,
-                        typeSubstitutor.safeSubstitute(candidateType.coneType)
+                        typeSubstitutor.safeSubstitute(leftType.coneType)
                     ).let {
                         /**
                          * Here it's important to use [org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.captureFromExpression] whenever possible.
@@ -239,10 +202,10 @@ internal class KaFirSubstitutorProvider(
                         constraintSystem.context.captureFromExpression(it) ?: it
                     }
 
-                    val substitutedTargetType = typeSubstitutor.safeSubstitute(targetType.coneType)
+                    val substitutedRightType = typeSubstitutor.safeSubstitute(rightType.coneType)
 
-                    registeredConstraints += preparedCandidateType.asCone() to substitutedTargetType.asCone()
-                    constraintSystem.addSubtypeConstraint(preparedCandidateType, substitutedTargetType)
+                    registeredConstraints += preparedLeftType.asCone() to substitutedRightType.asCone()
+                    constraintSystem.addSubtypeConstraint(preparedLeftType, substitutedRightType)
                 }
             }
 
@@ -253,18 +216,8 @@ internal class KaFirSubstitutorProvider(
             val fixedKaSubstitutorByMap = constraintSystem.fixTypeVariablesAndGetSubstitutor()
 
             return fixedKaSubstitutorByMap.takeIf {
-                if (constructionPolicy == KaUnificationSubstitutorPolicy.UNIVERSAL && constraintSystem.hasContradiction()) {
-                    /**
-                     * Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
-                     * These should only be checked with [KaUnificationSubstitutorPolicy.UNIVERSAL].
-                     * With [KaUnificationSubstitutorPolicy.EXISTENTIAL] it might procude false-positive errors.
-                     * E.g., with
-                     * candidateType = List<A>
-                     * targetType = List<B> where B: Comparable<B>
-                     * we would get
-                     * A -> Any (implicit upper bound, fixed first, A <: B constraint is ignored as B is not fixed yet)
-                     * which would lead to Any <: Comparable<B> constraint error.
-                     */
+                if (constraintSystem.hasContradiction()) {
+                    // Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
                     return@takeIf false
                 }
 
@@ -278,17 +231,17 @@ internal class KaFirSubstitutorProvider(
                 val currentRawSubstitutor = constraintSystem.system.buildCurrentSubstitutor().asCone()
 
                 /**
-                 * This sanity check ensures that substituted candidate types are subtypes of the substituted target types.
+                 * This sanity check ensures that substituted left types are subtypes of the substituted right types.
                  * It's run on the raw substitutor from the constraint system and with prepared types that were registered as constraints.
                  *
                  * Prepared types are needed for the proper handling of captured types and star projections.
                  * E.g., with
-                 * candidateType = A<*>
-                 * targetType = A<T>
+                 * leftType = A<*>
+                 * rightType = A<T>
                  * the produced substitutor is
                  * T -> CapturedType(*).
                  * A<*> is not a subtype of A<CapturedType(*)> as `*` is unknown and can represent anything.
-                 * However, the prepared candidate type is actually A<CapturedType(*)>,
+                 * However, the prepared left type is actually A<CapturedType(*)>,
                  * and this captured projection is actually where this `T -> CapturedType(*)` mapping comes from.
                  * So the type checker can easily verify that these two projections are the same.
                  * Just recapturing star projections is unsafe because recaptures of the same star projection are not considered equal.
@@ -301,6 +254,63 @@ internal class KaFirSubstitutorProvider(
                  */
                 currentRawSubstitutor.isUnificationCorrect(registeredConstraints)
             }
+        }
+    }
+
+    /**
+     * Retrieves all top-level type arguments involved in the signature of [this].
+     *
+     * MyClass<A, Pair<A, B>, List<Int>>.collectTypeArgumentsFromTheSignature() -> {A, B}
+     */
+    private fun KaType.collectTypeArgumentsFromTheSignature(): Set<KaTypeParameterSymbol> = when (this) {
+        is KaTypeParameterType -> setOf(symbol)
+        is KaClassType -> typeArguments.flatMapTo(mutableSetOf()) { typeProjection ->
+            typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+        }
+
+        is KaIntersectionType -> conjuncts.flatMapTo(mutableSetOf()) { it.collectTypeArgumentsFromTheSignature() }
+        is KaFlexibleType ->
+            (lowerBound.collectTypeArgumentsFromTheSignature() + upperBound.collectTypeArgumentsFromTheSignature()).toSet()
+
+        is KaCapturedType -> projection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+        is KaDefinitelyNotNullType -> original.collectTypeArgumentsFromTheSignature()
+        else -> emptySet()
+    }
+
+    /**
+     * Retrieves all type arguments [this] depends on. This includes direct type arguments as well as their transitive bounds.
+     */
+    private fun KaType.collectAllTypeArgumentDependencies(): Set<KaTypeParameterSymbol> {
+        val processingList = collectTypeArgumentsFromTheSignature().toMutableList()
+        val result = processingList.toMutableSet()
+        while (processingList.isNotEmpty()) {
+            val typeArgument = processingList.pop()
+            val upperBounds = typeArgument.upperBounds.flatMap { it.collectTypeArgumentsFromTheSignature() }.ifEmpty { continue }
+            upperBounds.forEach { upperBound ->
+                if (result.add(upperBound)) {
+                    processingList.add(upperBound)
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * Creates a fresh constraint system and registers [freeTypeParameters].
+     * Returns a substitutor that maps registered type parameter symbols to their default types.
+     *
+     * If a passed parameter has a recursive bound, the given type parameter in the corresponding bound is replaced with a star projection.
+     * `T: Comparable<T>, SomeInterface` is seen as `T: Comparable<*>, SomeInterface`.
+     * See KT-86935 for more info.
+     */
+    private fun ConeSimpleConstraintSystemImpl.registerTypeVariablesAndGetSubstitutor(freeTypeParameters: Collection<KaTypeParameterSymbol>): ConeSubstitutor {
+        val coneTypeParameterList = freeTypeParameters.map { kaTypeParameter ->
+            require(kaTypeParameter is KaFirTypeParameterSymbolBase<*>)
+            ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
+        }
+
+        return registerTypeVariablesWithCustomUpperBounds(coneTypeParameterList) { typeParameter, upperBound ->
+            upperBound.replaceRecursiveTypeParameterWithStarProjection(typeParameter)
         }
     }
 
@@ -339,7 +349,7 @@ internal class KaFirSubstitutorProvider(
              * The substitutor acquired from the fixation is [org.jetbrains.kotlin.fir.resolve.substitution.ConeTypeSubstitutorByTypeConstructor].
              * For debug / rendering purposes and simplicity, it has to be turned into a map-based substitutor.
              */
-            val substitution = fixedTypeVariables.mapNotNull { (constructor, type) ->
+            val substitution = fixedTypeVariables.mapNotNull { [constructor, type] ->
                 val variable = allTypeVariables[constructor] as? ConeTypeParameterBasedTypeVariable ?: return@mapNotNull null
                 variable.typeParameterSymbol to type.asCone()
             }.toMap()
@@ -354,10 +364,27 @@ internal class KaFirSubstitutorProvider(
     }
 
     private fun ConeSubstitutor.isUnificationCorrect(registeredConstraints: List<Pair<ConeKotlinType, ConeKotlinType>>): Boolean {
-        return registeredConstraints.all { (subType, targetType) ->
+        return registeredConstraints.all { [subType, rightType] ->
             val substitutedSubType = substituteOrSelf(subType)
-            val substitutedTargetType = substituteOrSelf(targetType)
-            substitutedSubType.isSubtypeOf(substitutedTargetType, this@KaFirSubstitutorProvider.analysisSession.firSession)
+            val substitutedRightType = substituteOrSelf(rightType)
+            substitutedSubType.isSubtypeOf(substitutedRightType, this@KaFirSubstitutorProvider.analysisSession.firSession)
+        }
+    }
+
+    /**
+     * Replaces all occurrences of [recursiveTypeParameter] in [this] with star projections.
+     */
+    private fun ConeKotlinType.replaceRecursiveTypeParameterWithStarProjection(
+        recursiveTypeParameter: ConeTypeParameterLookupTag,
+    ): ConeKotlinType = when (this) {
+        is ConeIntersectionType -> mapTypes { it.replaceRecursiveTypeParameterWithStarProjection(recursiveTypeParameter) }
+        else -> withArguments { projection ->
+            val projectionType = projection.type ?: return@withArguments projection
+            if (projectionType is ConeTypeParameterType && projectionType.lookupTag == recursiveTypeParameter) {
+                ConeStarProjection
+            } else {
+                projection.replaceType(projectionType.replaceRecursiveTypeParameterWithStarProjection(recursiveTypeParameter))
+            }
         }
     }
 }

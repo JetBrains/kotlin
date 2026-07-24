@@ -12,16 +12,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import kotlin.io.path.pathString
 
 // TODO (KT-76785): Handling of duplicated names in KLIBs is a workaround that needs to be removed in the future.
 @OptIn(MessageCollectorAccess::class) // write access
@@ -29,6 +28,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
     private var generatedLibsCounter = 0
 
     // A baseline test.
+    @Test
     fun testNoDuplicatedNames() {
         val libraryPaths = listOf(
             generateNewKlib("a"),
@@ -38,14 +38,14 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         for (strategy in DuplicatedUniqueNameStrategy.entries) {
             val compilerConfiguration = CompilerConfiguration.create().apply {
                 this.duplicatedUniqueNameStrategy = strategy
                 this.messageCollector = object : MessageCollectorImpl() {
                     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-                        fail("$severity: $message at $location")
+                        fail<Unit>("$severity: $message at $location")
                     }
                 }
             }
@@ -55,6 +55,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
     }
 
+    @Test
     fun testDuplicatedNamesAllowAllWithWarning() {
         val libraryPaths = listOf(
             generateNewKlib("a"),
@@ -66,7 +67,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -93,6 +94,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testDuplicatedNamesAllowFirstWithWarning() {
         val libraryPaths = listOf(
             generateNewKlib("a"),
@@ -104,7 +106,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -119,7 +121,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertFalse(resultOfElimination.hasProblems)
         assertEquals(
             listOf(libraryPaths[0], libraryPaths[1], libraryPaths[3]),
-            resultOfElimination.librariesStdlibFirst.map { it.libraryFile.path }
+            resultOfElimination.librariesStdlibFirst.map { it.path.pathString }
         )
 
         assertEquals(2, messageCollector.messages.size)
@@ -136,6 +138,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testDuplicatedNamesDeny() {
         val libraryPaths = listOf(
             generateNewKlib("a"),
@@ -147,7 +150,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -180,7 +183,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         val libraryBaseDir = tmpdir.resolve("lib${generatedLibsCounter++}").apply { mkdirs() }
         val klibDir = libraryBaseDir.resolve(uniqueName)
 
-        assertFalse("KLIB should not exist before compilation: $klibDir", klibDir.exists())
+        assertFalse(klibDir.exists()) { "KLIB should not exist before compilation: $klibDir" }
 
         // Write a fake library with the required unique name.
         KlibWriter {
@@ -191,7 +194,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
             }
         }.writeTo(klibDir.path)
 
-        assertTrue("KLIB should exist after compilation: $klibDir", klibDir.isDirectory)
+        assertTrue(klibDir.isDirectory) { "KLIB should exist after compilation: $klibDir" }
 
         return klibDir.path
     }

@@ -1,7 +1,0 @@
-KtNameReferenceExpression(107,109): 'CC'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in foo.bar.baz.AA.BB) class CC

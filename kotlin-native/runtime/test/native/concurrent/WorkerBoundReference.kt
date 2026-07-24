@@ -232,7 +232,7 @@ class WorkerBoundReference {
         assertEquals(3, local.value.a)
 
         val worker = Worker.start()
-        val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
+        val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { [local, semaphore] ->
             semaphore.incrementAndFetch()
             while (semaphore.load() < 2) {
             }
@@ -284,7 +284,7 @@ class WorkerBoundReference {
         assertEquals(3, local.value.a)
 
         val worker = Worker.start()
-        val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { (local, semaphore) ->
+        val future = worker.execute(TransferMode.SAFE, { Pair(local, semaphore) }) { [local, semaphore] ->
             semaphore.incrementAndFetch()
             while (semaphore.load() < 2) {
             }
@@ -310,7 +310,7 @@ class WorkerBoundReference {
         assertEquals(ownerId, local.worker.id)
 
         val worker = Worker.start()
-        val future = worker.execute(TransferMode.SAFE, { Pair(local, ownerId) }) { (local, ownerId) ->
+        val future = worker.execute(TransferMode.SAFE, { Pair(local, ownerId) }) { [local, ownerId] ->
             assertEquals(ownerId, local.worker.id)
         }
 
@@ -393,7 +393,7 @@ class WorkerBoundReference {
             Worker.start()
         }
         val futures = Array(workers.size) {
-            workers[it].execute(TransferMode.SAFE, { Pair(ref, workerUnlocker) }) { (ref, workerUnlocker) ->
+            workers[it].execute(TransferMode.SAFE, { Pair(ref, workerUnlocker) }) { [ref, workerUnlocker] ->
                 while (workerUnlocker.value < 1) {
                 }
 

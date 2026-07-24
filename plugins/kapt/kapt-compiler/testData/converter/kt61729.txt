@@ -3,6 +3,7 @@ package a;
 @b.RestrictTo(value = {b.RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
+ * @b/RestrictTo(value = [b/RestrictTo.Scope.LIBRARY_GROUP_PREFIX])
  * public final annotation class a/LinkifyMask : kotlin/Annotation {
  *
  *   // signature: <init>()V
@@ -26,7 +27,7 @@ package a;
  *   private constructor()
  *
  *   // signature: addLinks(I)V
- *   private final fun addLinks(mask: kotlin/Int): kotlin/Unit
+ *   private final fun addLinks(@a/LinkifyMask mask: kotlin/Int): kotlin/Unit
  *
  *   // module name: main
  * }

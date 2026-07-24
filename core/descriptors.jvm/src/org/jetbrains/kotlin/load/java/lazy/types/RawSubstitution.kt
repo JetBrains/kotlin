@@ -34,8 +34,8 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
                             "but \"$declarationForUpper\" while for lower it's \"$declaration\""
                 }
 
-                val (lower, isRawL) = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
-                val (upper, isRawU) = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
+                val [lower, isRawL] = eraseInflexibleBasedOnClassDescriptor(type.lowerIfFlexible(), declaration, lowerTypeAttr)
+                val [upper, isRawU] = eraseInflexibleBasedOnClassDescriptor(type.upperIfFlexible(), declarationForUpper, upperTypeAttr)
 
                 if (isRawL || isRawU) {
                     RawTypeImpl(lower, upper)

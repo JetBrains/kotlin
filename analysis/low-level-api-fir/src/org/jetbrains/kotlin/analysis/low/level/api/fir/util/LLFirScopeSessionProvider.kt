@@ -9,8 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import java.util.concurrent.ConcurrentHashMap
 
-
-abstract class LLFirScopeSessionProvider {
+internal abstract class LLFirScopeSessionProvider {
     abstract fun getScopeSession(): ScopeSession
 
     companion object {

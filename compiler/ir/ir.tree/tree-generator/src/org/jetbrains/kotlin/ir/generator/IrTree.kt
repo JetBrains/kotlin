@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Var
+import org.jetbrains.kotlin.ir.generator.model.MapField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -424,6 +424,9 @@ object IrTree : AbstractTreeBuilder() {
     val functionWithLateBinding: Element by declarationWithLateBinding(simpleFunctionSymbol) {
         parent(simpleFunction)
     }
+    val constructorWithLateBinding: Element by declarationWithLateBinding(constructorSymbol) {
+        parent(constructor)
+    }
     val propertyWithLateBinding: Element by declarationWithLateBinding(propertySymbol) {
         parent(property)
     }
@@ -663,7 +666,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +declaredSymbol(fileSymbol)
         +field("module", moduleFragment, isChild = false) {
-            deepCopyExcludeFromApply = true
+            deepCopyExcludeFromConstructor = true
         }
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }
@@ -745,8 +748,11 @@ object IrTree : AbstractTreeBuilder() {
         parent(constructorCall)
         parent(type<AnnotationMarker>())
 
-        +field("classId", type<ClassId>(), nullable = true)
-        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression))
+        +referencedSymbol("classSymbol", classSymbol, mutable = false)
+        +mapField("argumentMapping", type<Name>(), expression.copy(nullable = true), mutability = MapField.Mutability.ImmutableMap)
+        +referencedSymbol("symbol", type = constructorSymbol) {
+            optInAnnotation = deprecatedCompilerApi.withArgument("deprecatedSince", "org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20")
+        }
     }
     val getSingletonValue: Element by element(Expression) {
         nameInVisitorMethod = "SingletonReference"
@@ -1037,8 +1043,8 @@ object IrTree : AbstractTreeBuilder() {
     val const: Element by element(Expression) {
         parent(expression)
 
-        +field("kind", type(Packages.exprs, "IrConstKind"))
-        +field("value", anyType, nullable = true)
+        +field("kind", type(Packages.exprs, "IrConstKind"), mutable = false)
+        +field("value", anyType, nullable = true, mutable = false)
     }
     val constantValue: Element by element(Expression) {
         transformByChildren = true

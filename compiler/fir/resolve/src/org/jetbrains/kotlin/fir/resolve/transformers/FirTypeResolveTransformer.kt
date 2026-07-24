@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotResolveEqualityBoundType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
@@ -26,9 +27,11 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtension
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.TypeResolutionConfiguration
+import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
@@ -376,12 +379,25 @@ open class FirTypeResolveTransformer(
         )
     }
 
+    private fun FirValueParameter.setEqualityBoundType() {
+        val equalityBoundAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, session) ?: return
+        val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
+        val resolvedType = (boundArgument as? FirGetClassCall)?.argument?.let { getClassLhs ->
+            val configuration = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            session.typeResolver.resolveEqualityBoundTypeOrNull(getClassLhs, configuration)
+        }
+        equalityBoundType = resolvedType ?: ConeErrorType(ConeCannotResolveEqualityBoundType)
+    }
+
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: Any?,
     ): FirStatement = whileAnalysing(session, valueParameter) {
         withDeclaration(valueParameter) {
             valueParameter.transformReturnTypeRef(this, data)
+            if (LanguageFeature.StrictEquals.isEnabled()) {
+                valueParameter.setEqualityBoundType()
+            }
             valueParameter.transformAnnotations(this, data)
             valueParameter.transformVarargTypeToArrayType(session)
             valueParameter
@@ -574,7 +590,7 @@ open class FirTypeResolveTransformer(
 
     fun addTypeParametersScope(firMemberDeclaration: FirMemberDeclaration) {
         if (firMemberDeclaration.typeParameters.isNotEmpty()) {
-            scopes = scopes.add(FirMemberTypeParameterScope(firMemberDeclaration))
+            scopes = scopes.adding(FirMemberTypeParameterScope(firMemberDeclaration))
         }
     }
 
@@ -582,8 +598,8 @@ open class FirTypeResolveTransformer(
         // small optimization to skip unnecessary allocations
         val scopesAreTheSame = scopes === staticScopes
 
-        scopes = scopes.addAll(list)
-        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addAll(list)
+        scopes = scopes.addingAll(list)
+        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addingAll(list)
     }
 
     /**

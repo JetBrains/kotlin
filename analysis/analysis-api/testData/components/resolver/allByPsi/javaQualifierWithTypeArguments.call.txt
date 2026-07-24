@@ -40,10 +40,48 @@ KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
       typeArgumentsMapping = {}
 
 KtCallExpression(47,61): 'JavaClass<Int>'
-  null
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(47,56): 'JavaClass'
-  null
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtTypeArgumentList(56,61): '<Int>'
   null
@@ -104,10 +142,48 @@ KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
       valueArgumentMapping = {}
 
 KtCallExpression(79,94): 'JavaClass<Long>'
-  null
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Long)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(79,88): 'JavaClass'
-  null
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Long)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtTypeArgumentList(88,94): '<Long>'
   null

@@ -43,7 +43,7 @@ class FirLocalScope private constructor(
             else -> shouldNotBeCalled()
         }
         return FirLocalScope(
-            properties, functions, classLikeSymbols.put(name, classLikeDeclaration.symbol), session
+            properties, functions, classLikeSymbols.putting(name, classLikeDeclaration.symbol), session
         )
     }
 
@@ -55,13 +55,13 @@ class FirLocalScope private constructor(
 
     fun storeVariable(variable: FirVariable, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties.put(variable.name, variable.symbol), functions, classLikeSymbols, session
+            properties.putting(variable.name, variable.symbol), functions, classLikeSymbols, session
         )
     }
 
     fun storeBackingField(property: FirProperty, session: FirSession): FirLocalScope {
         val enhancedProperties = property.backingField?.symbol?.let {
-            properties.put(BACKING_FIELD, it)
+            properties.putting(BACKING_FIELD, it)
         }
 
         return FirLocalScope(

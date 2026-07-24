@@ -36,7 +36,7 @@ open class FirResolvedNamedReferenceRenderer {
         if (resolvedNamedReference is FirResolvedCallableReference) {
             if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
                 printer.print("<")
-                for ((index, element) in resolvedNamedReference.inferredTypeArguments.withIndex()) {
+                for ([index, element] in resolvedNamedReference.inferredTypeArguments.withIndex()) {
                     if (index > 0) {
                         printer.print(", ")
                     }

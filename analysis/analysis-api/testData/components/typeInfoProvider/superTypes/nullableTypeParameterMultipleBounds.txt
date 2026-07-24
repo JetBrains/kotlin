@@ -1,0 +1,22 @@
+[type]
+T?
+
+[direct super types]
+kotlin.Number?
+kotlin.collections.Iterable<kotlin.Int>?
+
+[approximated direct super types]
+kotlin.Number?
+kotlin.collections.Iterable<kotlin.Int>?
+
+[all super types]
+kotlin.Number?
+kotlin.collections.Iterable<kotlin.Int>?
+kotlin.Any?
+java.io.Serializable?
+
+[approximated all super types]
+kotlin.Number?
+kotlin.collections.Iterable<kotlin.Int>?
+kotlin.Any?
+java.io.Serializable?

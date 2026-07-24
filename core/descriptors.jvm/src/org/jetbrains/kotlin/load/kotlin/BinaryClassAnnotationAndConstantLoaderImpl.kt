@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.compact
 
+@K1Deprecation
 class BinaryClassAnnotationAndConstantLoaderImpl(
     private val module: ModuleDescriptor,
     private val notFoundClasses: NotFoundClasses,
@@ -231,6 +233,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 // Note: this function is needed because we cannot pass MetadataVersion
 // directly to the BinaryClassAnnotationAndConstantLoaderImpl constructor.
 // This constructor is used by dependency injection.
+@K1Deprecation
 fun createBinaryClassAnnotationAndConstantLoader(
     module: ModuleDescriptor,
     notFoundClasses: NotFoundClasses,

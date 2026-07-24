@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 
 class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test simple class`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)", "(a, b, c, d, e)")
@@ -27,6 +29,7 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
         result.assertCommonized("((a,b), (c,d), e)", "expect class X()")
     }
 
+    @Test
     fun `test sample class`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -98,6 +101,7 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
         )
     }
 
+    @Test
     fun `test annotations on class and interface`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.kotlin.dsl.create
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -30,7 +31,7 @@ class KT77539UklibSkikoResolution {
                 enableDefaultJsDomApiDependency(false)
             }
         ) {
-            repositories.mavenCentral()
+            repositories.mavenCentralCacheRedirector()
             kotlin {
                 jvm()
                 iosArm64()

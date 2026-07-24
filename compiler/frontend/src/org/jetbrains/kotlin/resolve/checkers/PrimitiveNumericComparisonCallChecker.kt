@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
 
+@K1Deprecation
 class PrimitiveNumericComparisonInfo(
     val comparisonType: KotlinType,
     val leftPrimitiveType: KotlinType,
@@ -27,6 +29,7 @@ class PrimitiveNumericComparisonInfo(
     val rightType: KotlinType
 )
 
+@K1Deprecation
 object PrimitiveNumericComparisonCallChecker : CallChecker {
 
     private val comparisonOperatorTokens = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ)

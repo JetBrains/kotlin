@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 
 enum class EnumClass {
     VALUE

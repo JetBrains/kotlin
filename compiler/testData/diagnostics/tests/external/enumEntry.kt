@@ -1,14 +1,13 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83104
-// LATEST_LV_DIFFERENCE
 
 enum class E {
-    <!DEPRECATED_MODIFIER_FOR_TARGET!>external<!> A {
+    <!WRONG_MODIFIER_TARGET!>external<!> A {
         fun foo() {}
     },
 
     B,
-    <!DEPRECATED_MODIFIER_FOR_TARGET!>external<!> C
+    <!WRONG_MODIFIER_TARGET!>external<!> C
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

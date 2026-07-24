@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 enum class JavaTypeFlexibility {
     INFLEXIBLE,
     FLEXIBLE_UPPER_BOUND,

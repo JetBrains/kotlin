@@ -20,7 +20,7 @@ internal class FunctionDefaultParametersActualizer(
     private val visitor = FunctionDefaultParametersActualizerVisitor(symbolRemapper)
 
     fun actualize() {
-        for ((expect, actual) in expectActualMap.symbolMap) {
+        for ([expect, actual] in expectActualMap.symbolMap) {
             if (expect is IrFunctionSymbol) {
                 actualize(expect.owner, (actual as IrFunctionSymbol).owner)
             }
@@ -28,7 +28,7 @@ internal class FunctionDefaultParametersActualizer(
     }
 
     private fun actualize(expectFunction: IrFunction, actualFunction: IrFunction) {
-        expectFunction.parameters.zip(actualFunction.parameters).forEach { (expectParameter, actualParameter) ->
+        expectFunction.parameters.zip(actualFunction.parameters).forEach { [expectParameter, actualParameter] ->
             val expectDefaultValue = expectParameter.defaultValue
             if (actualParameter.defaultValue == null && expectDefaultValue != null) {
                 actualParameter.defaultValue = expectDefaultValue.deepCopyWithSymbols(actualFunction).transform(visitor, null)

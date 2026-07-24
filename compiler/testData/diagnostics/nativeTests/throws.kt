@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_FIR_DIAGNOSTICS
+// ALLOW_KOTLIN_PACKAGE
 // ISSUE: KT-65105
 
 // FILE: kotlin.kt
@@ -39,6 +41,12 @@ fun foo() {}
 
 <!THROWS_LIST_EMPTY!>@Throws()<!>
 fun throwsEmptyParens() {}
+
+@Throws(*[], Exception1::class)
+fun throwsEmptySpreadThenNonEmpty() {}
+
+@Throws(*arrayOf(elements = [Exception2::class]))
+fun throwsDeeplyNested() {}
 
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsUnresolved() {}

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 import javax.inject.Inject
 
+@K1Deprecation
 sealed class DoubleColonLHS(val type: KotlinType) {
     /**
      * [isObjectQualifier] is true iff the LHS of a callable reference is a qualified expression which references a named object.
@@ -82,6 +84,7 @@ private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBa
 internal val KtCallExpression.isWithoutValueArguments: Boolean
     get() = valueArgumentList == null && lambdaArguments.isEmpty()
 
+@K1Deprecation
 class DoubleColonExpressionResolver(
     val callResolver: CallResolver,
     val qualifiedExpressionResolver: QualifiedExpressionResolver,
@@ -354,8 +357,10 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
-            resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        (val isReservedExpressionSyntax, val doubleColonLHS = lhs, val traceAndCacheFromReservedDoubleColonLHS = traceAndCache) = resolveReservedExpressionSyntaxOnDoubleColonLHS(
+            doubleColonExpression,
+            c
+        )
 
         if (isReservedExpressionSyntax) return doubleColonLHS
 
@@ -540,7 +545,7 @@ class DoubleColonExpressionResolver(
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 
-        val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
+        val [lhs, resolutionResults] = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
         val doesSomeExtensionReceiverContainsStubType =
             resolutionResults != null && resolutionResults.resultingCalls.any { resolvedCall ->
@@ -884,6 +889,7 @@ class DoubleColonExpressionResolver(
  * [LanguageVersionDependent] should be used which makes the code check if the corresponding language feature is enabled.
  */
 @DefaultImplementation(FunctionWithBigAritySupport.Enabled::class)
+@K1Deprecation
 interface FunctionWithBigAritySupport {
     val shouldCheckLanguageVersionSettings: Boolean
 
@@ -900,6 +906,7 @@ interface FunctionWithBigAritySupport {
  * Generic array class literals (`Array<String>::class.java`) are enabled on all platforms until 1.4, and only on JVM since 1.4.
  */
 @DefaultImplementation(GenericArrayClassLiteralSupport.Disabled::class)
+@K1Deprecation
 interface GenericArrayClassLiteralSupport {
     val isEnabled: Boolean
 

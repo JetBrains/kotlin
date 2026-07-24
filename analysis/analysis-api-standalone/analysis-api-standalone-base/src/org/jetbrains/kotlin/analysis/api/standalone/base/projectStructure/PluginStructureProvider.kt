@@ -11,14 +11,22 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
+import com.intellij.openapi.extensions.ExtensionDescriptor
+import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.openapi.util.IntellijInternalApi
+import com.intellij.platform.pluginSystem.parser.impl.PluginDescriptorReaderContext
+import com.intellij.platform.pluginSystem.parser.impl.RawPluginDescriptor
+import com.intellij.platform.pluginSystem.parser.impl.ScopedElementsContainer
+import com.intellij.platform.pluginSystem.parser.impl.elements.ExtensionElement
+import com.intellij.platform.pluginSystem.parser.impl.elements.ListenerElement
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.messages.ListenerDescriptor
 import com.intellij.util.messages.impl.MessageBusEx
+import com.intellij.util.messages.impl.PluginListenerDescriptor
 import com.intellij.util.xml.dom.NoOpXmlInterner
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.utils.SmartList
-import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -35,13 +43,15 @@ object PluginStructureProvider {
      */
     private val fakePluginDescriptor = DefaultPluginDescriptor("analysis-api-standalone-base-loader")
 
-    private object ReadContext : ReadModuleContext {
+    private object ReadContext : PluginDescriptorReaderContext {
         override val interner get() = NoOpXmlInterner
         override val isMissingIncludeIgnored: Boolean get() = false
     }
 
     private class ResourceDataLoader(val classLoader: ClassLoader) : DataLoader {
-        override fun load(path: String, pluginDescriptorSourceOnly: Boolean): InputStream? = classLoader.getResource(path)?.openStream()
+        override fun load(path: String, pluginDescriptorSourceOnly: Boolean): ByteArray? =
+            classLoader.getResource(path)?.openStream()?.readBytes()
+
         override fun toString(): String = "resources data loader"
     }
 
@@ -53,17 +63,16 @@ object PluginStructureProvider {
 
     private fun getOrCalculatePluginDescriptor(
         designation: PluginDesignation,
-    ): RawPluginDescriptor = pluginDescriptorsCache.computeIfAbsent(designation) {
+    ): RawPluginDescriptor? = pluginDescriptorsCache.computeIfAbsent(designation) {
         PluginXmlPathResolver.DEFAULT_PATH_RESOLVER.resolvePath(
             readContext = ReadContext,
             dataLoader = ResourceDataLoader(designation.classLoader),
             relativePath = designation.relativePath,
-            readInto = null,
-        ) ?: RawPluginDescriptor()
+        )?.build()
     }
 
     fun registerApplicationServices(application: MockApplication, pluginRelativePath: String) {
-        val containerDescriptor = RawPluginDescriptor::appContainerDescriptor
+        val containerDescriptor = RawPluginDescriptor::appElementsContainer
 
         registerExtensionPoints(application, pluginRelativePath, containerDescriptor)
         registerExtensionPointImplementations(application, pluginRelativePath)
@@ -71,7 +80,7 @@ object PluginStructureProvider {
     }
 
     fun registerProjectServices(project: MockProject, pluginRelativePath: String) {
-        val containerDescriptor = RawPluginDescriptor::projectContainerDescriptor
+        val containerDescriptor = RawPluginDescriptor::projectElementsContainer
 
         registerExtensionPoints(project, pluginRelativePath, containerDescriptor)
         registerExtensionPointImplementations(project, pluginRelativePath)
@@ -82,17 +91,17 @@ object PluginStructureProvider {
     private inline fun registerExtensionPoints(
         componentManager: MockComponentManager,
         pluginRelativePath: String,
-        containerDescriptor: RawPluginDescriptor.() -> ContainerDescriptor,
+        containerDescriptor: RawPluginDescriptor.() -> ScopedElementsContainer,
     ) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
-        for (extensionPointDescriptor in pluginDescriptor.containerDescriptor().extensionPoints.orEmpty()) {
-            val extensionPointName = extensionPointDescriptor.name
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager)) ?: return
+        for (extensionPointDescriptor in pluginDescriptor.containerDescriptor().extensionPoints) {
+            val extensionPointName = extensionPointDescriptor.qualifiedName ?: continue
             if (extensionPointName in forbiddenExtensionPointNames) continue
 
             CoreApplicationEnvironment.registerExtensionPoint(
                 componentManager.extensionArea,
                 extensionPointName,
-                componentManager.loadClass<Any>(extensionPointDescriptor.className, fakePluginDescriptor),
+                componentManager.loadClass<Any>(extensionPointDescriptor.`interface` ?: continue, fakePluginDescriptor),
             )
         }
     }
@@ -100,11 +109,12 @@ object PluginStructureProvider {
     private inline fun registerServices(
         componentManager: MockComponentManager,
         pluginRelativePath: String,
-        containerDescriptor: RawPluginDescriptor.() -> ContainerDescriptor,
+        containerDescriptor: RawPluginDescriptor.() -> ScopedElementsContainer,
     ) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager)) ?: return
         for (serviceDescriptor in pluginDescriptor.containerDescriptor().services) {
-            val serviceImplementationClass = componentManager.loadClass<Any>(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
+            val serviceImplementation = serviceDescriptor.serviceImplementation ?: continue
+            val serviceImplementationClass = componentManager.loadClass<Any>(serviceImplementation, fakePluginDescriptor)
             val serviceInterface = serviceDescriptor.serviceInterface
             if (serviceInterface != null) {
                 val serviceInterfaceClass = componentManager.loadClass<Any>(serviceInterface, fakePluginDescriptor)
@@ -118,29 +128,51 @@ object PluginStructureProvider {
     }
 
     private fun registerProjectListeners(project: MockProject, pluginRelativePath: String) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, project))
-        val listenerDescriptors = pluginDescriptor.projectContainerDescriptor.listeners.orEmpty().ifEmpty {
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, project)) ?: return
+        val listenerDescriptors = pluginDescriptor.projectElementsContainer.listeners.ifEmpty {
             return
-        }
+        }.map { it.toDescriptor() }
 
-        val listenersMap = ConcurrentHashMap<String, MutableList<ListenerDescriptor>>()
+        val listenersMap = ConcurrentHashMap<String, MutableList<PluginListenerDescriptor>>()
         for (listenerDescriptor in listenerDescriptors) {
-            listenerDescriptor.pluginDescriptor = fakePluginDescriptor
-            listenersMap.computeIfAbsent(listenerDescriptor.topicClassName) { SmartList() }.add(listenerDescriptor)
+            listenersMap.computeIfAbsent(listenerDescriptor.descriptor.topicClassName) { SmartList() }.add(listenerDescriptor)
         }
 
         (project.analysisMessageBus as MessageBusEx).setLazyListeners(listenersMap)
     }
 
+    private fun ListenerElement.toDescriptor(): PluginListenerDescriptor =
+        PluginListenerDescriptor(
+            ListenerDescriptor(
+                os?.convert(),
+                listenerClassName,
+                topicClassName,
+                activeInTestMode,
+                activeInHeadlessMode
+            ),
+            fakePluginDescriptor
+        )
+
     private fun registerExtensionPointImplementations(componentManager: MockComponentManager, pluginRelativePath: String) {
         val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
-        val extensionPointImplementations = pluginDescriptor.epNameToExtensions.orEmpty()
+        val extensionPointImplementations = pluginDescriptor?.extensions.orEmpty()
         for (allowedExtensionPointName in allowedExtensionPointNames) {
             val point = componentManager.extensionArea.getExtensionPointIfRegistered<Any>(allowedExtensionPointName) ?: continue
-            val descriptors = extensionPointImplementations[allowedExtensionPointName] ?: continue
+            val descriptors = extensionPointImplementations[allowedExtensionPointName].orEmpty().map { it.toDescriptor() }
+            @OptIn(IntellijInternalApi::class)
             point.registerExtensions(descriptors, fakePluginDescriptor, null)
         }
     }
+
+    private fun ExtensionElement.toDescriptor(): ExtensionDescriptor =
+        ExtensionDescriptor(
+            implementation,
+            os?.convert(),
+            orderId,
+            LoadingOrder.readOrder(order),
+            element,
+            hasExtraAttributes
+        )
 
     /**
      * The list of extension points that are forbidden to be registered automatically.

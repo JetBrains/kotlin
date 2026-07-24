@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
 
 
+@K1Deprecation
 class FakeKotlinCallArgumentForCallableReference(
     val index: Int,
     val name: Name?
@@ -29,6 +31,7 @@ class FakeKotlinCallArgumentForCallableReference(
     override val argumentName: Name? get() = name
 }
 
+@K1Deprecation
 class ReceiverExpressionKotlinCallArgument private constructor(
     override val receiver: ReceiverValueWithSmartCastInfo,
     override val isSafeCall: Boolean = false,

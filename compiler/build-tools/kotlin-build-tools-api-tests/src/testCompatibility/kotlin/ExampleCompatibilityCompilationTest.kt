@@ -17,11 +17,11 @@ import org.junit.jupiter.api.DisplayName
 class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample compatibility compilation test that is run as part of each test suit")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
             module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")

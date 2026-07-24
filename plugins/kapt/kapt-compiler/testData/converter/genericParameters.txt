@@ -5,6 +5,7 @@
  *   public constructor(list: kotlin/collections/List<T#0>, function: kotlin/Function1<T#0, T#1>)
  *
  *   // signature: get(I)Ljava/lang/Object;
+ *   // must-use return value
  *   public open operator fun get(index: kotlin/Int): T#1
  *
  *   // field: function:Lkotlin/jvm/functions/Function1;
@@ -17,6 +18,7 @@
  *     public final get
  *
  *   // getter: getSize()I
+ *   // must-use return value
  *   public open val size: kotlin/Int
  *     public open (* non-default *) get
  *

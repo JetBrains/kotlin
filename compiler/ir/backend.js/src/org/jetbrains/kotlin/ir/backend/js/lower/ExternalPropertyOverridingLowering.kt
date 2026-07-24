@@ -121,7 +121,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
             .statements
             .addAll(positionInConstructorForAccessors, declaredSuperVariableAndFields.map { it.value })
 
-        declaredSuperVariableAndFields.forEach { (variable, field) ->
+        declaredSuperVariableAndFields.forEach { (val variable = value, val field) ->
             if (field == null) return@forEach
             externalPropertyAccessorsTransformer.primaryConstructorBody.statements.add(
                 JsIrBuilder.buildSetField(

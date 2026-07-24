@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.checkers.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 interface AbstractTestDiagnostic : Comparable<AbstractTestDiagnostic> {
     val name: String
 

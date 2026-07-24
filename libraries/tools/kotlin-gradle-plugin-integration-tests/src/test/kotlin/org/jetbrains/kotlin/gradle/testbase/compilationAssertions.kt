@@ -246,7 +246,7 @@ fun BuildResult.assertKotlinCompilationSteps(
     )
     val zippedSteps = sourcesPerStep.zip(actualSourcesPerStep)
     for (i in zippedSteps.indices) {
-        val (expected, actual) = zippedSteps[i]
+        val [expected, actual] = zippedSteps[i]
         assertSameFiles(expected, actual, "Error in compilationStep[$i]:")
     }
 }

@@ -1,0 +1,3 @@
+expression: a[0]--
+expression PSI: KtPostfixExpression
+type: kotlin.Int

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
+@K1Deprecation
 class JavaResolverComponents(
     val storageManager: StorageManager,
     val finder: JavaClassFinder,
@@ -79,6 +81,7 @@ class JavaResolverComponents(
     )
 }
 
+@K1Deprecation
 interface JavaResolverSettings {
     val correctNullabilityForNotNullTypeParameter: Boolean
     val typeEnhancementImprovementsInStrictMode: Boolean
@@ -115,6 +118,7 @@ interface JavaResolverSettings {
     }
 }
 
+@K1Deprecation
 class LazyJavaResolverContext internal constructor(
     val components: JavaResolverComponents,
     val typeParameterResolver: TypeParameterResolver,
@@ -136,15 +140,18 @@ class LazyJavaResolverContext internal constructor(
     val module: ModuleDescriptor get() = components.module
 }
 
+@K1Deprecation
 fun LazyJavaResolverContext.child(
     typeParameterResolver: TypeParameterResolver
 ) = LazyJavaResolverContext(components, typeParameterResolver, delegateForDefaultTypeQualifiers)
 
+@K1Deprecation
 fun LazyJavaResolverContext.computeNewDefaultTypeQualifiers(
     additionalAnnotations: Annotations
 ): JavaTypeQualifiersByElementType? =
     components.annotationTypeQualifierResolver.extractAndMergeDefaultQualifiers(defaultTypeQualifiers, additionalAnnotations)
 
+@K1Deprecation
 fun LazyJavaResolverContext.replaceComponents(
     components: JavaResolverComponents
 ) = LazyJavaResolverContext(components, typeParameterResolver, delegateForDefaultTypeQualifiers)
@@ -162,12 +169,14 @@ private fun LazyJavaResolverContext.child(
     delegateForTypeQualifiers
 )
 
+@K1Deprecation
 fun LazyJavaResolverContext.childForMethod(
     containingDeclaration: DeclarationDescriptor,
     typeParameterOwner: JavaTypeParameterListOwner,
     typeParametersIndexOffset: Int = 0
 ) = child(containingDeclaration, typeParameterOwner, typeParametersIndexOffset, delegateForDefaultTypeQualifiers)
 
+@K1Deprecation
 fun LazyJavaResolverContext.childForClassOrPackage(
     containingDeclaration: ClassOrPackageFragmentDescriptor,
     typeParameterOwner: JavaTypeParameterListOwner? = null,
@@ -177,6 +186,7 @@ fun LazyJavaResolverContext.childForClassOrPackage(
     lazy(LazyThreadSafetyMode.NONE) { computeNewDefaultTypeQualifiers(containingDeclaration.annotations) }
 )
 
+@K1Deprecation
 fun LazyJavaResolverContext.copyWithNewDefaultTypeQualifiers(
     additionalAnnotations: Annotations
 ) = when {

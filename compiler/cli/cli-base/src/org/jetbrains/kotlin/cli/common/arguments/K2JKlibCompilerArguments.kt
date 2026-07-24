@@ -252,6 +252,17 @@ The default value is 'indy'.""",
             field = value
         }
 
+    // TODO(KT-87172): Remove if we decide to extend CommonKlibBasedCompilerArguments 
+    @Argument(
+        value = "-Xklib-zip-file-accessor-cache-limit",
+        description = "Maximum number of klibs that can be cached during compilation. Default is 500.",
+    )
+    var klibZipFileAccessorCacheLimit: String = "500"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun copyOf(): Freezable = TODO() // copyK2JKlibCompilerArguments(this, K2JKlibCompilerArguments())
 
     @get:Transient

@@ -24,6 +24,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
+ * Describes the role of a source module for which a session is created, used to choose
+ * the proper layout of dependency symbol providers (see [FirAbstractSessionFactory]).
+ */
+enum class KmpModuleKind {
+    SingleModule, // used for modules without KMP (pure jvm compilation, for example)
+    NonLeafRegularModule, // non-leaf module in KMP compilation when hmpp is disabled
+    LeafRegularModule, // leaf module in KMP compilation when hmpp is disabled
+    NonLeafHmppModule, // non-leaf module in KMP compilation when hmpp is enabled
+    LeafHmppModule; // leaf module in KMP compilation when hmpp is enabled
+
+    companion object {
+        fun leafModule(isHmppEnabled: Boolean): KmpModuleKind {
+            return if (isHmppEnabled) LeafHmppModule else LeafRegularModule
+        }
+
+        fun nonLeafModule(isHmppEnabled: Boolean): KmpModuleKind {
+            return if (isHmppEnabled) NonLeafHmppModule else NonLeafRegularModule
+        }
+    }
+}
+
+/**
  * This is the base class for factories, which create various sessions for compilation.
  * Some details are different between platforms, but the main session structure is the same
  * for all platforms and looks like the following:
@@ -191,6 +213,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 StructuredProviders::class,
                 StructuredProviders(
                     sourceProviders = emptyList(),
+                    incrementalProvider = null,
                     dependencyProviders = providers,
                     sharedProvider = when {
                         createSeparateSharedProviders -> FirEmptySymbolProvider(this)
@@ -225,7 +248,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         context: CONTEXT,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
@@ -273,11 +296,11 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 this,
                 moduleData,
                 languageVersionSettings,
-                isForLeafHmppModule,
+                kmpModuleKind,
             )
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
-            val (sourceProviders, additionalOptionalAnnotationsProvider) = createProviders(
+            val (sourceProviders, incrementalProvider, additionalOptionalAnnotationsProvider) = createProviders(
                 this,
                 kotlinScopeProvider,
                 firProvider.symbolProvider,
@@ -289,14 +312,22 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 // metadata klibs for specific source sets contain declarations only from exactly this source set
                 // so to see declarations from previous source sets (e.g. common, if we are in jvmAndJs module) we need to
                 // propagate binary dependencies from our source dependsOn modules
-                if (!isForLeafHmppModule) {
+                if (kmpModuleKind != KmpModuleKind.LeafHmppModule) {
                     moduleData.dependsOnDependencies.flatMapTo(this) { it.session.structuredProviders.dependencyProviders }
                 }
                 addIfNotNull(additionalOptionalAnnotationsProvider)
             }
 
+            val incrementalProviderCommonsMapping = computeIncrementalSymbolProvider(
+                session = this,
+                moduleData,
+                incrementalProviderOfCurrentModule = incrementalProvider,
+                properKmpIcIsEnabled = configuration.languageVersionSettings.getFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled),
+            )
+
             val structuredProvidersForModule = StructuredProviders(
                 sourceProviders = sourceProviders,
+                incrementalProvider = incrementalProviderCommonsMapping,
                 dependencyProviders = allLibrariesProviders,
                 sharedProvider = structuredDependencyProvidersWithoutSource.sharedProvider,
             ).also {
@@ -308,7 +339,11 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 addAll(structuredProvidersForModule.sharedProvider.flattenAndFilterOwnProviders())
             }.distinct()
 
-            val providersList = structuredProvidersForModule.sourceProviders + providersListWithoutSources
+            val providersList = buildList {
+                addAll(structuredProvidersForModule.sourceProviders)
+                addIfNotNull(incrementalProviderCommonsMapping)
+                addAll(providersListWithoutSources)
+            }
 
             register(
                 FirSymbolProvider::class,
@@ -328,6 +363,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
 
     protected data class SourceProviders(
         val sourceProviders: List<FirSymbolProvider>,
+        val incrementalProvider: FirSymbolProvider?,
         val additionalOptionalAnnotationsProvider: FirSymbolProvider? = null,
     )
 
@@ -350,7 +386,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         session: FirSession,
         moduleData: FirModuleData,
         languageVersionSettings: LanguageVersionSettings,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
     ): StructuredProviders {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
@@ -377,7 +413,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
                 val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
                 val sourceProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
-                for ((dependencyModuleData, providers) in providersFromDependencies) {
+                for ([dependencyModuleData, providers] in providersFromDependencies) {
                     when (dependencyModuleData.session.kind) {
                         // dependency session of the current module
                         FirSession.Kind.Library -> {
@@ -405,7 +441,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                  * module, so for common modules we create fallback provider **only** for the root common module and
                  * for the platform module (as it has its own stdlib in dependencies)
                  */
-                if (binaryProvidersFromCommonModules.any { it is FirFallbackBuiltinSymbolProvider } && !isForLeafHmppModule) {
+                if (binaryProvidersFromCommonModules.any { it is FirFallbackBuiltinSymbolProvider } && kmpModuleKind != KmpModuleKind.LeafHmppModule) {
                     binaryProvidersFromPlatformModule.removeAll { it is FirFallbackBuiltinSymbolProvider }
                 }
 
@@ -422,7 +458,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             }
 
             else -> {
-                dependencyProviders = providersFromDependencies.flatMap { (dependencyModuleData, providers) ->
+                dependencyProviders = providersFromDependencies.flatMap { [dependencyModuleData, providers] ->
                     when (dependencyModuleData.session.kind) {
                         FirSession.Kind.Library -> providers.dependencyProviders.also { check(providers.sourceProviders.isEmpty()) }
                         // Dependency providers for common and platform modules are basically the same, so there is no need in duplicating them.
@@ -433,16 +469,43 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 // regular modules.
                 // TODO(KT-75896): Such dependencies might occur only in old tests, which are not migrated to CLI facades yet.
                 sharedProvider = providersFromDependencies
-                    .first { (moduleData, _) -> moduleData.session.kind == FirSession.Kind.Library }
+                    .first { [moduleData, _] -> moduleData.session.kind == FirSession.Kind.Library }
                     .second.sharedProvider
             }
         }
 
         return StructuredProviders(
             sourceProviders = emptyList(),
+            incrementalProvider = null,
             dependencyProviders,
             sharedProvider
         )
+    }
+
+    private fun computeIncrementalSymbolProvider(
+        session: FirSession,
+        moduleData: FirModuleData,
+        incrementalProviderOfCurrentModule: FirSymbolProvider?,
+        properKmpIcIsEnabled: Boolean,
+    ): FirSymbolProvider? {
+        return when {
+            incrementalProviderOfCurrentModule == null -> null
+            properKmpIcIsEnabled -> {
+                val structuredProvidersFromDependsOnFragments = moduleData.dependsOnDependencies
+                    .filter { it.session.kind == FirSession.Kind.Source }
+                    .mapNotNull { it.session.structuredProviders.incrementalProvider }
+                when {
+                    structuredProvidersFromDependsOnFragments.isEmpty() -> incrementalProviderOfCurrentModule
+                    else -> FirCommonDeclarationsMappingSymbolProvider(
+                        session,
+                        commonSymbolProvider = createCachingCompositeProviderIfNeeded(session, structuredProvidersFromDependsOnFragments.distinct()),
+                        platformSymbolProvider = incrementalProviderOfCurrentModule
+                    )
+                }
+            }
+            else -> incrementalProviderOfCurrentModule
+        }
+
     }
 
     /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.

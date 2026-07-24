@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
@@ -73,8 +72,16 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     protected val imitateLambdaSuspendModifier: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
 
-    val nameBasedDestructuringShortForm: Boolean =
+    private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
+
+    fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind {
+        return when {
+            hasSquareBrackets -> DestructuringKind.PositionalWithSquareBrackets
+            isFullForm || nameBasedDestructuringShortFormEnabled -> DestructuringKind.NameBased
+            else -> DestructuringKind.PositionalWithParentheses
+        }
+    }
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String
@@ -366,7 +373,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             source = this@toDelegatedSelfType.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
             coneType = ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterType(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }
@@ -1157,7 +1164,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
         private fun generateComponentFunctions() {
             var componentIndex = 1
-            for ((sourceNode, firProperty) in zippedParameters) {
+            for ([sourceNode, firProperty] in zippedParameters) {
                 if (!firProperty.isVal && !firProperty.isVar) continue
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
@@ -1503,7 +1510,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         }
         isLocal = firConstructor.isLocal
 
-        for ((ktParameter, firProperty) in zippedParameters) {
+        for ([ktParameter, firProperty] in zippedParameters) {
             val propertyName = firProperty.name
             val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction.Parameter)
 

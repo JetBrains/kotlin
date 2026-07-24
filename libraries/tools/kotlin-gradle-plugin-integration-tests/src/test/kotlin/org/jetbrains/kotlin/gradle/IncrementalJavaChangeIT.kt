@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
@@ -68,28 +66,6 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
             build("compileKotlin", "--rerun-tasks") {
                 assertTasksExecuted(":compileKotlin")
                 assertTrue(kotlinClassesDir().notExists())
-            }
-        }
-    }
-
-    @DisplayName("Type alias change is incremental")
-    @GradleTest
-    open fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
-        project("typeAlias", gradleVersion) {
-            build("build")
-
-            val curryKt = kotlinSourcesDir().resolve("Curry.kt")
-            val useCurryKt = kotlinSourcesDir().resolve("UseCurry.kt")
-
-            curryKt.modify {
-                it.replace("class Curry", "internal class Curry")
-            }
-
-            build("build") {
-                assertCompiledKotlinSources(
-                    listOf(curryKt, useCurryKt).map { it.relativeTo(projectPath) },
-                    output
-                )
             }
         }
     }
@@ -344,35 +320,4 @@ abstract class IncrementalCompilationJavaChangesBase(
 
     abstract fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion)
     abstract fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion)
-}
-
-@JvmGradlePluginTests
-class BasicIncrementalJavaInteropIT : KGPBaseTest() {
-
-    @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
-    @GradleTest
-    fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
-        project("kt-69042-basic-java-interop", gradleVersion) {
-            buildGradleKts.appendText(
-                """
-                // Hack: Read property to ensure Gradle 9.1.0+ invalidates CC when it changes
-                providers.gradleProperty("invalidateCC").orNull
-                """.trimIndent()
-            )
-            build("assemble")
-
-            val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
-            javaSource.replaceWithVersion("newValue")
-
-            // KT-75850: we need to explicitly invalidate the CC here, as changing the logLevel doesn't trigger it
-            build(
-                "assemble",
-                "-PinvalidateCC=${generateIdentifier()}", // Now this will actually trigger invalidation
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
-            ) {
-                assertTasksExecuted(":compileJava", ":compileKotlin")
-                assertIncrementalCompilation(listOf(kotlinSourcesDir().resolve("usage.kt")).relativizeTo(projectPath))
-            }
-        }
-    }
 }

@@ -9,6 +9,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.api.components.collectDiagnostics
+import org.jetbrains.kotlin.analysis.api.components.diagnostics
+import org.jetbrains.kotlin.analysis.api.components.directDiagnostics
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -97,7 +100,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         )
     }
 
-    private fun KaSession.collectFileDiagnostics(ktFile: KtFile): List<DiagnosticKey> =
+    context(_: KaSession)
+    private fun collectFileDiagnostics(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
             .collectDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
             .map { it.getDiagnosticKey() }
@@ -133,7 +137,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         appendLine("$indentString  PSI: ${key.psi::class.simpleName} at ${key.psi.getLineColumnRange()}")
     }
 
-    private fun KaSession.checkDiagnosticsFromElements(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+    context(_: KaSession)
+    private fun checkDiagnosticsFromElements(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
         val diagnosticsFromElements = buildList {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
@@ -153,7 +158,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         )
     }
 
-    private fun KaSession.checkDiagnosticsFromSequence(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+    context(_: KaSession)
+    private fun checkDiagnosticsFromSequence(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
         assertEquals(
             diagnosticsFromFile,
             ktFile.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)

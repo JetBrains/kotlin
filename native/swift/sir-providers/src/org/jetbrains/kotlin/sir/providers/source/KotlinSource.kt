@@ -32,6 +32,8 @@ public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
 
 public class KotlinMarkerProtocol(symbol: KaNamedClassSymbol) : KotlinSource(symbol)
 
+public class KotlinImplementationMarkerProtocol(symbol: KaNamedClassSymbol) : KotlinSource(symbol)
+
 public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
     public class ReceiverParameter(public val parameter: KaReceiverParameterSymbol) : KotlinParameterOrigin()

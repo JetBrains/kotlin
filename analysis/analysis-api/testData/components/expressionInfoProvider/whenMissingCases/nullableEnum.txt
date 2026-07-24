@@ -1,4 +1,4 @@
-EnumCheckIsMissing - MyEnum.A
-EnumCheckIsMissing - MyEnum.B
-EnumCheckIsMissing - MyEnum.C
-NullIsMissing - null
+EnumEntryCase(/MyEnum.A)
+EnumEntryCase(/MyEnum.B)
+EnumEntryCase(/MyEnum.C)
+NullCase

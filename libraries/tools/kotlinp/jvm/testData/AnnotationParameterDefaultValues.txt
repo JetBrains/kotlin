@@ -16,7 +16,7 @@ public final annotation class B : kotlin/Annotation {
 public final annotation class Other : kotlin/Annotation {
 
   // signature: <init>(Ljava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;LB;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;)V
-  public constructor(str: kotlin/String /* = ... */, enum: kotlin/annotation/AnnotationTarget /* = ... */, klass: kotlin/reflect/KClass<*> /* = ... */, klass2: kotlin/reflect/KClass<*> /* = ... */, anno: B /* = ... */, stra: kotlin/Array<kotlin/String> /* = ... */, ka: kotlin/Array<kotlin/reflect/KClass<*>> /* = ... */, ea: kotlin/Array<kotlin/annotation/AnnotationTarget> /* = ... */, aa: kotlin/Array<B> /* = ... */)
+  public constructor(str: kotlin/String = "OK", enum: kotlin/annotation/AnnotationTarget = kotlin/annotation/AnnotationTarget.CLASS, klass: kotlin/reflect/KClass<*> = B::class, klass2: kotlin/reflect/KClass<*> = kotlin/IntArray::class, anno: B = B(value = "B"), stra: kotlin/Array<kotlin/String> = ["OK"], ka: kotlin/Array<kotlin/reflect/KClass<*>> = [kotlin/Double::class, kotlin/Unit::class, kotlin/LongArray::class, kotlin/Array<kotlin/String::class>], ea: kotlin/Array<kotlin/annotation/AnnotationTarget> = [kotlin/annotation/AnnotationTarget.TYPEALIAS, kotlin/annotation/AnnotationTarget.FIELD], aa: kotlin/Array<B> = [B(value = "1"), B(value = "2")])
 
   // getter: aa()[LB;
   public final val aa: kotlin/Array<B>
@@ -61,7 +61,7 @@ public final annotation class Other : kotlin/Annotation {
 public final annotation class PrimitiveArrays : kotlin/Annotation {
 
   // signature: <init>([Z[C[B[S[I[F[J[D)V
-  public constructor(za: kotlin/BooleanArray /* = ... */, ca: kotlin/CharArray /* = ... */, ba: kotlin/ByteArray /* = ... */, sa: kotlin/ShortArray /* = ... */, ia: kotlin/IntArray /* = ... */, fa: kotlin/FloatArray /* = ... */, ja: kotlin/LongArray /* = ... */, da: kotlin/DoubleArray /* = ... */)
+  public constructor(za: kotlin/BooleanArray = [true], ca: kotlin/CharArray = ['c'], ba: kotlin/ByteArray = [1.toByte()], sa: kotlin/ShortArray = [2.toShort()], ia: kotlin/IntArray = [42], fa: kotlin/FloatArray = [3.14f], ja: kotlin/LongArray = [9223372036854775807L], da: kotlin/DoubleArray = [NaN])
 
   // getter: ba()[B
   public final val ba: kotlin/ByteArray
@@ -102,7 +102,7 @@ public final annotation class PrimitiveArrays : kotlin/Annotation {
 public final annotation class Primitives : kotlin/Annotation {
 
   // signature: <init>(ZCBSIFJD)V
-  public constructor(z: kotlin/Boolean /* = ... */, c: kotlin/Char /* = ... */, b: kotlin/Byte /* = ... */, s: kotlin/Short /* = ... */, i: kotlin/Int /* = ... */, f: kotlin/Float /* = ... */, j: kotlin/Long /* = ... */, d: kotlin/Double /* = ... */)
+  public constructor(z: kotlin/Boolean = true, c: kotlin/Char = 'c', b: kotlin/Byte = 1.toByte(), s: kotlin/Short = 2.toShort(), i: kotlin/Int = 42, f: kotlin/Float = 3.14f, j: kotlin/Long = 9223372036854775807L, d: kotlin/Double = NaN)
 
   // getter: b()B
   public final val b: kotlin/Byte
@@ -143,28 +143,20 @@ public final annotation class Primitives : kotlin/Annotation {
 public final annotation class Unsigned : kotlin/Annotation {
 
   // signature: <init>(Lkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;)V
-  public constructor(ui: kotlin/UInt /* = ... */, ub: kotlin/UByte /* = ... */, us: kotlin/UShort /* = ... */, ul: kotlin/ULong /* = ... */)
+  public constructor(ui: kotlin/UInt = 4294967295u, ub: kotlin/UByte = 0.toUByte(), us: kotlin/UShort = 0.toUShort(), ul: kotlin/ULong = 18446744073709551615uL)
 
-  // requires compiler version 1.4.30 (level=ERROR)
-  // requires language version 1.4.0 (level=ERROR)
   // getter: ub()B
   public final val ub: kotlin/UByte
     public final get
 
-  // requires compiler version 1.4.30 (level=ERROR)
-  // requires language version 1.4.0 (level=ERROR)
   // getter: ui()I
   public final val ui: kotlin/UInt
     public final get
 
-  // requires compiler version 1.4.30 (level=ERROR)
-  // requires language version 1.4.0 (level=ERROR)
   // getter: ul()J
   public final val ul: kotlin/ULong
     public final get
 
-  // requires compiler version 1.4.30 (level=ERROR)
-  // requires language version 1.4.0 (level=ERROR)
   // getter: us()S
   public final val us: kotlin/UShort
     public final get

@@ -6,7 +6,7 @@
 package org.jetbrains.abi.tools.test
 
 import org.jetbrains.abi.tools.test.api.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class IgnoredClassesTests : BaseKotlinGradleTest() {

@@ -1,0 +1,179 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(32,44): 'package test'
+  null
+
+KtNameReferenceExpression(40,44): 'test'
+  null
+
+KtImportList(46,71): 'import a.foo'
+  null
+
+KtImportDirective(46,58): 'import a.foo'
+  null
+
+KtDotQualifiedExpression(53,58): 'a.foo'
+  null
+
+KtNameReferenceExpression(53,54): 'a'
+  null
+
+KtNameReferenceExpression(55,58): 'foo'
+  null
+
+KtImportDirective(59,71): 'import b.foo'
+  null
+
+KtDotQualifiedExpression(66,71): 'b.foo'
+  null
+
+KtNameReferenceExpression(66,67): 'b'
+  null
+
+KtNameReferenceExpression(68,71): 'foo'
+  null
+
+KtClass(73,80): 'class C'
+  null
+
+KtNamedFunction(82,109): 'fun usage() {'
+  null
+
+KtParameterList(91,93): '()'
+  null
+
+KtBlockExpression(94,109): '{'
+  null
+
+KtDotQualifiedExpression(100,107): 'C.foo()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = a/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = a/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = b/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = b/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtNameReferenceExpression(100,101): 'C'
+  null
+
+KtCallExpression(102,107): 'foo()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = a/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = a/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = b/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = b/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtNameReferenceExpression(102,105): 'foo'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = a/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = a/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = b/foo(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = b/foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtValueArgumentList(105,107): '()'
+  null

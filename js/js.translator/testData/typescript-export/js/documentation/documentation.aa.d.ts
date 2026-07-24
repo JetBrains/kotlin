@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     /**
      * A simple exported function with just a description.
      */
@@ -229,7 +228,8 @@ declare namespace JS_TESTS {
          */
         constructor();
         /**
-         * A property to be overridden with a custom JS name in the implementing class.
+         * Case 1: @JsName on an overridden property.
+         * The JavaScript name differs from the Kotlin override.
          */
         get jsOverridableProp(): string;
         /**
@@ -306,3 +306,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

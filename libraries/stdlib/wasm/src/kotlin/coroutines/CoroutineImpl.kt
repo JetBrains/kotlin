@@ -10,25 +10,30 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal abstract class CoroutineImpl(private val resultContinuation: Continuation<Any?>?) : Continuation<Any?> {
+internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Continuation<R>?) : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
-    protected var result: Any? = null
-    protected var exception: Throwable? = null
-    protected var finallyPath: Array<Int>? = null
 
-    private val _context: CoroutineContext? = resultContinuation?.context
+    @UsedFromCompilerGeneratedCode
+    internal var result: Any? = null
+    @UsedFromCompilerGeneratedCode
+    internal var exception: Throwable? = null
 
+    protected open val _context: CoroutineContext? = resultContinuation?.context
     public override val context: CoroutineContext get() = _context!!
 
-    private var intercepted_: Continuation<Any?>? = null
+    protected var intercepted_: Continuation<T>? = null
 
-    public fun intercepted(): Continuation<Any?> =
-        intercepted_
-                ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                    .also { intercepted_ = it }
+    public fun intercepted(): Continuation<T> = intercepted_
+        ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
+            .also { intercepted_ = it }
 
-    override fun resumeWith(result: Result<Any?>) {
+    // Remove after bootstrap.
+    // By now bootstrap uses older symbols resolver that does not
+    // resolve CoroutineImpl to CoroutineImplStateMachine/StackSwitching
+    @Suppress("UNCHECKED_CAST")
+    override fun resumeWith(result: Result<T>) {
+
         var current = this
         var currentResult: Any? = result.getOrNull()
         var currentException: Throwable? = result.exceptionOrNull()
@@ -54,19 +59,19 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                     currentException = exception
                 }
 
-                releaseIntercepted() // this state machine instance is terminating
+                releaseIntercepted() // this instance is terminating
 
                 val completion = resultContinuation!!
 
-                if (completion is CoroutineImpl) {
+                if (completion is CoroutineImpl<*, *>) {
                     // unrolling recursion via loop
-                    current = completion
+                    current = completion as CoroutineImpl<T, R>
                 } else {
                     // top-level completion reached -- invoke and return
                     if (currentException != null) {
                         completion.resumeWithException(currentException)
                     } else {
-                        completion.resume(currentResult)
+                        completion.resume(currentResult as R)
                     }
                     return
                 }
@@ -74,7 +79,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
         }
     }
 
-    private fun releaseIntercepted() {
+    protected fun releaseIntercepted() {
         val intercepted = intercepted_
         if (intercepted != null && intercepted !== this) {
             context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)

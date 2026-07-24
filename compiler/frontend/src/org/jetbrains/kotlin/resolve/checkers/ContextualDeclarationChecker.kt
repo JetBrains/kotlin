@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isContextualDeclaration
 import org.jetbrains.kotlin.resolve.checkContextReceiversAreEnabled
 import org.jetbrains.kotlin.resolve.checkSubtypingBetweenContextReceivers
 
+@K1Deprecation
 object ContextualDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
@@ -28,6 +30,7 @@ object ContextualDeclarationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 object SubtypingBetweenContextReceiversChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) || !declaration.isContextualDeclaration()) {

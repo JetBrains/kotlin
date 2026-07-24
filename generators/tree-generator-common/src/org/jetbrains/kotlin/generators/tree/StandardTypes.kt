@@ -16,5 +16,6 @@ object StandardTypes {
     val mutableList = type("kotlin.collections", "MutableList")
     val collection = type<Collection<*>>()
     val map = type<Map<*, *>>()
+    val mutableMap = type<MutableMap<*, *>>()
     val hashMap = type("kotlin.collections", "HashMap", TypeKind.Class)
 }

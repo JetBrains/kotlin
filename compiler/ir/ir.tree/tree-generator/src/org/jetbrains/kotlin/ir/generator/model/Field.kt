@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.model
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
+import org.jetbrains.kotlin.generators.tree.MapField as AbstractMapField
 
 sealed class Field(
     override val name: String,
@@ -98,5 +99,39 @@ class ListField(
         Var,
         MutableList,
         Array
+    }
+}
+
+class MapField(
+    name: String,
+    override var keyType: TypeRef,
+    override var valueType: TypeRef,
+    private val isNullable: Boolean,
+    val mutability: Mutability,
+    override val isChild: Boolean,
+) : Field(name, mutability == Mutability.Var), AbstractMapField {
+    override val mapType: ClassRef<PositionTypeParameterRef> = when (mutability) {
+        Mutability.MutableMap -> StandardTypes.mutableMap
+        Mutability.Var, Mutability.ImmutableMap -> StandardTypes.map
+    }
+
+    override val typeRef: ClassRef<PositionTypeParameterRef>
+        get() = mapType.withArgs(keyType, valueType).copy(isNullable)
+
+    override val symbolClass: Symbol? = null
+
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        keyType = keyType.substitute(map)
+        valueType = valueType.substitute(map)
+    }
+
+    override fun internalCopy(): Field {
+        return MapField(name, keyType, valueType, isNullable, mutability, isChild)
+    }
+
+    enum class Mutability {
+        Var,
+        MutableMap,
+        ImmutableMap
     }
 }

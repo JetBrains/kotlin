@@ -133,7 +133,7 @@ object KlibCompilerInvocationTestUtils {
                 val moduleUnderTest = testStructure.modules[moduleName]
                     ?: fail { "No module $moduleName found on step ${projectStep.id}" }
 
-                val (moduleInfo, moduleTestDataDir, moduleSourceDir, moduleOutputDir) = moduleUnderTest
+                (val moduleInfo, val moduleTestDataDir = testDataDir, val moduleSourceDir = sourceDir, val moduleOutputDir = outputDir) = moduleUnderTest
                 val moduleStep = moduleInfo.steps.getValue(projectStep.id)
 
                 moduleStep.modifications.forEach { modification ->

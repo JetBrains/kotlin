@@ -1,7 +1,13 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
 }
@@ -12,17 +18,21 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(libs.javaDiffUtils)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -45,7 +55,6 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testFixturesApi(jpsModel()) { isTransitive = false }
     testFixturesApi(jpsModelImpl()) { isTransitive = false }
-    testFixturesApi(libs.junit4)
 
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -59,13 +68,13 @@ optInToUnsafeDuringIrConstructionAPI()
 optInToK1Deprecation()
 
 tasks.processTestFixturesResources.configure {
-    from(project(":compiler").layout.projectDirectory.dir("testData")) {
+    from(project(":compiler").isolated.projectDirectory.dir("testData")) {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
         include("/ir/interpreter/helpers/**")
     }
     into("stdlib") {
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("src/kotlin")) {
             into("src/kotlin")
             include("ranges/Progressions.kt")
             include("ranges/ProgressionIterators.kt")
@@ -78,16 +87,16 @@ tasks.processTestFixturesResources.configure {
             include("internal/Annotations.kt")
             include("experimental/inferenceMarker.kt")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("unsigned/src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("unsigned/src/kotlin")) {
             into("unsigned/src/kotlin")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/src/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("jvm/src/kotlin")) {
             into("jvm/src/kotlin")
             include("util/UnsignedJVM.kt")
             include("collections/TypeAliases.kt")
             include("reflect/**")
         }
-        from(project(":kotlin-stdlib").layout.projectDirectory.dir("jvm/runtime/kotlin")) {
+        from(project(":kotlin-stdlib").isolated.projectDirectory.dir("jvm/runtime/kotlin")) {
             into("jvm/runtime/kotlin")
             include("TypeAliases.kt")
             include("text/TypeAliases.kt")
@@ -126,14 +135,17 @@ projectTests {
     withThirdPartyJsr305()
 
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0, // e.g. org.jetbrains.kotlin.test.runners.ForeignAnnotationsCompiledJavaTestGenerated.Java11Tests
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
         )
-    )
+    ) {
+        smokeTestConfig = SmokeTestConfig.Enabled(
+            autoSmokeTestPercentage = 3
+        )
+    }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt", generateTestsInBuildDirectory = true)
 }

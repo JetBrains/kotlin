@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
+@K1Deprecation
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(
         superDescriptor: CallableDescriptor,

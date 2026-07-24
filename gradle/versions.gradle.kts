@@ -12,15 +12,6 @@ FileReader(propertiesFile).use {
     }
 }
 
-val gradleJars = listOf(
-    "gradle-api",
-    "gradle-tooling-api",
-    "gradle-base-services",
-    "gradle-wrapper",
-    "gradle-core",
-    "gradle-base-services-groovy"
-)
-
 val androidStudioVersion = if (extra.has("versions.androidStudioRelease"))
     extra["versions.androidStudioRelease"]?.toString()?.replace(".", "")?.substring(0, 2)
 else
@@ -36,11 +27,6 @@ val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterI
 val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 rootProject.extra["versions.platform"] = platform
-
-
-for (jar in gradleJars) {
-    extra["versions.jar.$jar"] = extra["versions.gradle-api"]
-}
 
 if (!extra.has("versions.androidStudioRelease")) {
     extra["ignore.jar.android-base-common"] = true

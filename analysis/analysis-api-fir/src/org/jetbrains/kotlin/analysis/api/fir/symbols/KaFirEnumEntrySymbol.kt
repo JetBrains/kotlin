@@ -1,19 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.isExternalDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -46,8 +45,6 @@ internal class KaFirEnumEntrySymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: findPsi() }
-
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
@@ -73,8 +70,7 @@ internal class KaFirEnumEntrySymbol private constructor(
             else
                 firSymbol.getCallableId()
         }
-
-    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
+    override val initializer: KaAnonymousObjectSymbol?
         get() = withValidityAssertion {
             if (firSymbol.fir.initializer == null) {
                 return@withValidityAssertion null
@@ -88,13 +84,23 @@ internal class KaFirEnumEntrySymbol private constructor(
             }
 
             val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
-            classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KaFirEnumEntryInitializerSymbol
+            classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol)
+        }
+
+    @Deprecated("Use 'initializer' instead. See KT-87199", replaceWith = ReplaceWith("initializer"))
+    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
+        get() = withValidityAssertion {
+            if (firSymbol.fir.initializer == null) {
+                return@withValidityAssertion null
+            }
+
+            initializer as? KaFirEnumEntryInitializerSymbol
                 ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
         }
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>()
-            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name, this)
+            ?: KaFirEnumEntrySymbolPointer(createOwnerPointer(), name, this)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

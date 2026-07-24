@@ -1,0 +1,17 @@
+// EXISTS: out.js
+// CONTAINS: out.js.map, "sourceRoot":"/common/sources/folder/"
+
+// CONTAINS: out.js.map, "file1.kt"
+// CONTAINS: out.js.map, "file2.kt"
+// CONTAINS: out.js.map, "file3.kt"
+// CONTAINS: out.js.map, "file4.kt"
+
+// NOT_CONTAINS: out.js.map, "sourceMapRoot/file1.kt"
+// NOT_CONTAINS: out.js.map, "sourceMapRoot/file2.kt"
+// NOT_CONTAINS: out.js.map, "sourceMapRoot/file3.kt"
+// NOT_CONTAINS: out.js.map, "sourceMapRoot/file4.kt"
+
+// NOT_CONTAINS: out.js.map, "/common/sources/folder/file1.kt"
+// NOT_CONTAINS: out.js.map, "/common/sources/folder/file2.kt"
+// NOT_CONTAINS: out.js.map, "/common/sources/folder/file3.kt"
+// NOT_CONTAINS: out.js.map, "/common/sources/folder/file4.kt"

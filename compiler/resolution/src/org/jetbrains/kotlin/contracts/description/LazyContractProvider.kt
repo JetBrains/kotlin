@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ContractProvider
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 abstract class AbstractContractProvider : ContractProvider {
     abstract fun getContractDescription(): ContractDescription?
 }
@@ -31,6 +33,7 @@ abstract class AbstractContractProvider : ContractProvider {
  * Such contract providers are present only for source-based declarations, where we need additional
  * resolve (force-resolve of the body) to get ContractDescription
  */
+@K1Deprecation
 class LazyContractProvider(private val storageManager: StorageManager, private val computation: () -> Any?) : AbstractContractProvider() {
     @Volatile
     private var isComputed: Boolean = false
@@ -57,9 +60,11 @@ class LazyContractProvider(private val storageManager: StorageManager, private v
  * Such contract providers are used where we can be sure about contract presence and don't need
  * additional resolve (e.g., for deserialized declarations)
  */
+@K1Deprecation
 class ContractProviderImpl(private val contractDescription: ContractDescription) : AbstractContractProvider() {
     override fun getContractDescription(): ContractDescription = contractDescription
 }
 
 // For storing into UserDataMap of FunctionDescriptor
+@K1Deprecation
 object ContractProviderKey : CallableDescriptor.UserDataKey<AbstractContractProvider?>

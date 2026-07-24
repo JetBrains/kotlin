@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.tree.config.AbstractElementConfigurator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.MapField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 
 abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field, Element.Category>() {
@@ -57,6 +58,23 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
     ): ListField = ListField(
         name = name,
         baseType = baseType,
+        isNullable = nullable,
+        mutability = mutability,
+        isChild = isChild,
+    ).apply(initializer)
+
+    protected fun mapField(
+        name: String,
+        keyType: TypeRef,
+        valueType: TypeRef,
+        nullable: Boolean = false,
+        mutability: MapField.Mutability,
+        isChild: Boolean = true,
+        initializer: MapField.() -> Unit = {}
+    ): MapField = MapField(
+        name = name,
+        keyType = keyType,
+        valueType = valueType,
         isNullable = nullable,
         mutability = mutability,
         isChild = isChild,

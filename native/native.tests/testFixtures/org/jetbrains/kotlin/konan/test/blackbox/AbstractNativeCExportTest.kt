@@ -64,7 +64,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             .map { testPathFull.resolve(it) }
         ktSources.forEach { muteTestIfNecessary(it) }
 
-        val (clangMode, cSources) = run {
+        val [clangMode, cSources] = run {
             val cSources = testPathFull.list()!!
                 .filter { it.endsWith(".c") }
                 .map { testPathFull.resolve(it) }

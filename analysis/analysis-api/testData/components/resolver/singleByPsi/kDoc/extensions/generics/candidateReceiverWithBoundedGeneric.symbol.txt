@@ -1,2 +1,5 @@
-KtNamedFunction(144,192): '/**'
-  null
+KDocName(152,173): 'Derived.someExtension'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /someExtension(<extension receiver>: Base<DerivedBound>): kotlin.Unit
+    ]

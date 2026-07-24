@@ -14,6 +14,6 @@ kotlin {
     cocoapods {
         homepage = "https://github.com/JetBrains/kotlin"
         summary = "CocoaPods test library"
-        ios.deploymentTarget = "15"
+        ios.deploymentTarget = "17.6"
     }
 }

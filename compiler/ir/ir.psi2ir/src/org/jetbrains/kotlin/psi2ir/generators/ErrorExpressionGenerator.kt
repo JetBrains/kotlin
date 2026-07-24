@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorCallExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -72,6 +73,7 @@ internal class ErrorExpressionGenerator(statementGenerator: StatementGenerator) 
 
 }
 
+@K1Deprecation
 class ErrorExpressionException(val ktElement: KtElement, cause: Throwable?) : RuntimeException(
     "${cause?.message}: ${ktElement::class.java.simpleName}:\n${ktElement.text}",
     cause

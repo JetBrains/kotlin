@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,21 +45,25 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
                 "\n"
 
     private const val PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE =
-        "\nTo prevent atomic properties from being referenced outside the current Kotlin module, they should be declared as either private or internal. " +
+        "\nTo prevent atomic properties from being referenced outside the current Kotlin module, they must be declared as either private or internal. " +
                 "Note, that `@kotlin.PublishedApi` annotation, when applied to a class or a member with internal visibility, makes it effectively public.\n" +
-                "Please consider setting the visibility of the property `''{0}''` to private or internal or limit the scope of the containing class. \n" +
+                "Consider setting the visibility of the property `''{0}''` to private or internal or limit the scope of the containing class. \n" +
                 "Alternatively, if you need to expose the atomic property value to the public, you can use a delegated property declared within the same scope, e.g:\n" +
                 "```\n" +
                 "private val _a = atomic<T>(initial) \n" +
                 "public val a: T by _a \n" +
                 "```\n"
 
-    private const val ATOMIC_PROEPRTIES_SHOULD_BE_VAL_MESSAGE = "Please consider declaring `''{0}''` as a private val or internal val.\n" +
+    private const val ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE = "Consider declaring `''{0}''` as a private val or internal val.\n" +
             "If you need to declare a variable with accessors delegated to the atomic property value, you can use a delegated property declared within the same scope, e.g:\n" +
             "```\n" +
             "private val _a = atomic<T>(initial) \n" +
             "public var a: T by _a \n" +
             "```\n"
+
+    private const val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN_MESSAGE =
+        "\nTo prevent atomic properties defined in companion blocks or as companion extensions " +
+                "from being referenced outside the current Kotlin file, they must be declared as private."
 
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("Atomicfu Plugin") { map ->
         map.put(
@@ -69,7 +73,10 @@ object AtomicfuErrorMessages : BaseDiagnosticRendererFactory() {
             AtomicfuErrors.PUBLISHED_API_ATOMICS_ARE_FORBIDDEN, PUBLIC_ATOMICS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
         map.put(
-            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROEPRTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
+            AtomicfuErrors.ATOMIC_PROPERTIES_SHOULD_BE_VAL, ATOMIC_PROPERTIES_SHOULD_BE_VAL_MESSAGE, Renderers.TO_STRING
+        )
+        map.put(
+            AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN, NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN_MESSAGE, Renderers.TO_STRING
         )
     }
 

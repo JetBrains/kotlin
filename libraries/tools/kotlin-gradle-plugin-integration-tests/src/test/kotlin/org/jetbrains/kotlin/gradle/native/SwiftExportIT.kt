@@ -7,17 +7,22 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.apple.createLocalSwiftPackage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
@@ -35,7 +40,7 @@ class SwiftExportIT : KGPBaseTest() {
     // See docs/swift-export/testing-usr-stability.md.
 
     private companion object {
-        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
+        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "17.6"
     }
 
     @DisplayName("embedSwiftExportForXcode fail")
@@ -54,7 +59,7 @@ class SwiftExportIT : KGPBaseTest() {
             }
             buildAndFail(":embedSwiftExportForXcode") {
                 assertOutputContains("Please run the embedSwiftExportForXcode task from Xcode")
-                assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
+                assertConfigurationCacheStored()
             }
         }
     }
@@ -612,6 +617,18 @@ class SwiftExportIT : KGPBaseTest() {
                         SwiftSymbol(
                             demangledId = "KotlinRuntimeSupport.KotlinError.description : Swift.String",
                             pathComponents = listOf("KotlinError.description")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.SealedType",
+                            pathComponents = listOf("SealedType")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.SealedType.T",
+                            pathComponents = listOf("SealedType", "T")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "KotlinRuntimeSupport.SealedType.value : A.T",
+                            pathComponents = listOf("SealedType", "value")
                         )
                     )
                 )
@@ -666,6 +683,60 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertOutputContains("Could not find ${multiplatformLibrary.rootCoordinate}")
+            }
+        }
+    }
+
+    @DisplayName("embedSwiftExport overrides the version of an external dependency defined in Swift Export DSL with highest on classpath")
+    @GradleTest
+    fun testSwiftExportDSLWithExternalDependencyVersionResolution(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Publish dependencies
+        val multiplatformLibraryV1 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "1.0")
+        val multiplatformLibraryV2 = publishMultiplatformLibrary(gradleVersion, libraryVersion = "2.0") {
+            iosArm64()
+            sourceSets.commonMain.get().compileSource("class FooV2")
+        }
+
+        project(
+            "empty",
+            gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            addPublishedProjectToRepositories(multiplatformLibraryV1)
+            addPublishedProjectToRepositories(multiplatformLibraryV2)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    with(swiftExport) {
+                        @OptIn(ExperimentalSwiftExportDsl::class)
+                        export(multiplatformLibraryV1.rootCoordinate)
+                    }
+                    sourceSets.commonMain {
+                        dependencies {
+                            implementation(multiplatformLibraryV2.rootCoordinate)
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val librarySwiftPath = projectPath
+                    .resolve("build/SwiftExport/iosArm64/Debug/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
+                assertFileExists(librarySwiftPath)
+                assertContains(
+                    librarySwiftPath.readText(),
+                    "public final class FooV2"
+                )
             }
         }
     }
@@ -727,6 +798,146 @@ class SwiftExportIT : KGPBaseTest() {
                     )
                 )
             )
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-86015: swiftPMDependencies cinterop klib is visible to Swift Export binary link task")
+    @GradleTest
+    fun testMainCinteropKlibIsLinkedInSwiftExportBinary(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package
+        // via xcodebuild (the same project template used by SwiftPMImport tests).
+        project("emptyxcode", gradleVersion) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package producer
+                            fun localGreeting(): String {
+                                return swiftPMImport.shared.LocalHelper.greeting()
+                            }
+                        """.trimIndent()
+                    )
+
+                    with(swiftExport) {
+                        configure {
+                            freeCompilerArgs.add("-Xpartial-linkage-loglevel=error")
+                        }
+                    }
+
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = envVars
+            ) {
+                // The swiftPMImport cinterop task must have run.
+                assertTasksExecuted(":cinteropSwiftPMImportIosArm64")
+                // The Swift Export compilation and binary link must succeed end-to-end.
+                assertTasksExecuted(":compileSwiftExportMainKotlinIosArm64")
+                assertTasksExecuted(":linkSwiftExportBinaryDebugStaticIosArm64")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, EnvironmentalVariablesOverride::class)
+    @DisplayName("KT-84852: embedSwiftExportForXcode fails when linkage package is not integrated")
+    @GradleTest
+    fun testEmbedSwiftExportForXcodeFailsWhenLinkagePackageNotIntegrated(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            buildAndFail(
+                ":embedSwiftExportForXcode",
+                environmentVariables = envVars,
+            ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.SwiftPMLinkagePackageNotIntegratedInXcodeProject)
+            }
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = envVars,
+            ) {
+                assertNoDiagnostic(KotlinToolingDiagnostics.SwiftPMLinkagePackageNotIntegratedInXcodeProject)
+            }
         }
     }
 }

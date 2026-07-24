@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.stats.ModulesReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
 import org.jetbrains.kotlin.util.UnitStats
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -27,6 +29,7 @@ import kotlin.time.measureTime
 class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String get() = tmpdir.absolutePath
 
+    @Test
     fun test() {
         val modulesCount = 2000
 
@@ -59,13 +62,13 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                     }
 
                     duration = measureTime {
-                        val (output, exitCode) = compileKotlin(
+                        val [output, exitCode] = compileKotlin(
                             emptyFile.name,
                             testDataDirectory,
                             expectedFileName = null,
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -75,14 +78,14 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                 VirtualFilesCachingMode.SingleModule -> {
                     val compiler = K2JVMCompiler()
                     duration = measureTime {
-                        val (output, exitCode) = compileKotlin(
+                        val [output, exitCode] = compileKotlin(
                             kotlinFiles.first().name,
                             testDataDirectory,
                             expectedFileName = null,
                             additionalSources = kotlinFiles.drop(1).map { it.name },
                             compiler = compiler,
                         )
-                        assertEmpty(output)
+                        assert(output.isEmpty())
                         assertEquals(ExitCode.OK, exitCode)
                     }
 
@@ -94,13 +97,13 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
                     duration = measureTime {
                         for (kotlinFile in kotlinFiles) {
                             val compiler = K2JVMCompiler()
-                            val (output, exitCode) = compileKotlin(
+                            val [output, exitCode] = compileKotlin(
                                 kotlinFile.name,
                                 testDataDirectory,
                                 expectedFileName = null,
                                 compiler = compiler,
                             )
-                            assertEmpty(output)
+                            assert(output.isEmpty())
                             assertEquals(ExitCode.OK, exitCode)
                             aggregatedStats[kotlinFile.name] = compiler.defaultPerformanceManager.unitStats
                         }
@@ -121,10 +124,10 @@ class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
 
         getDurationAndStats(VirtualFilesCachingMode.Warmup)
 
-        val (singleModuleDuration, singleModuleStats) = getDurationAndStats(VirtualFilesCachingMode.SingleModule)
+        val [singleModuleDuration, singleModuleStats] = getDurationAndStats(VirtualFilesCachingMode.SingleModule)
 
         // Simulate compilation of multiple modules
-        val (multipleModulesDuration, multipleModulesStats) = getDurationAndStats(VirtualFilesCachingMode.MultipleModules)
+        val [multipleModulesDuration, multipleModulesStats] = getDurationAndStats(VirtualFilesCachingMode.MultipleModules)
 
         printTimeDiff(
             multipleModulesDuration.inWholeNanoseconds,

@@ -32,20 +32,20 @@ public class Base {
 package test
 
 fun test() {
-    val a: Base = <!UNRESOLVED_REFERENCE!>[]<!>
-    val b: Base = <!UNRESOLVED_REFERENCE!>[1]<!>
-    val c: Base = <!UNRESOLVED_REFERENCE!>[1, 2]<!>
-    val d: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
-    val e: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3, 4]<!>
+    val a: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val b: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>
+    val c: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>
+    val d: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+    val e: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>
 }
 
 class Child : Base() {
     fun test() {
-        val a: Base = <!UNRESOLVED_REFERENCE!>[]<!>
-        val b: Base = <!UNRESOLVED_REFERENCE!>[1]<!>
-        val c: Base = <!UNRESOLVED_REFERENCE!>[1, 2]<!>
-        val d: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
-        val e: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3, 4]<!>
+        val a: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+        val b: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>
+        val c: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>
+        val d: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+        val e: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>
     }
 }
 
@@ -55,20 +55,20 @@ package other
 import test.Base
 
 fun test() {
-    val a: Base = <!UNRESOLVED_REFERENCE!>[]<!>
-    val b: Base = <!UNRESOLVED_REFERENCE!>[1]<!>
-    val c: Base = <!UNRESOLVED_REFERENCE!>[1, 2]<!>
-    val d: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
-    val e: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3, 4]<!>
+    val a: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val b: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>
+    val c: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>
+    val d: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+    val e: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>
 }
 
 class Child : Base() {
     fun test() {
-        val a: Base = <!UNRESOLVED_REFERENCE!>[]<!>
-        val b: Base = <!UNRESOLVED_REFERENCE!>[1]<!>
-        val c: Base = <!UNRESOLVED_REFERENCE!>[1, 2]<!>
-        val d: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
-        val e: Base = <!UNRESOLVED_REFERENCE!>[1, 2, 3, 4]<!>
+        val a: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+        val b: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>
+        val c: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>
+        val d: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+        val e: Base = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>
     }
 }
 

@@ -7,6 +7,8 @@ implicit values:
       type: ERROR_TYPE
     ownerSymbol = KaNamedClassSymbol:
       kotlin/myPackage/SomeClass
+    label = SomeClass
+
 
 scopes:
   LocalScope, index = 0
@@ -20,16 +22,17 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
+        anchorPsi: KtParameter
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        contextParameters: []
         contextReceivers: []
-        generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -41,11 +44,15 @@ scopes:
         modality: FINAL
         name: param
         origin: SOURCE
+        primaryConstructorProperty: null
+        psi: KtParameter
+        realPsi: KtParameter
         receiverParameter: null
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: kotlin/String
+        typeParameters: []
         visibility: PUBLIC
     constructors: 0
 

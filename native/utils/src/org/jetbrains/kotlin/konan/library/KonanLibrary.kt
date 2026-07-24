@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.konan.library
 
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.commonizerNativeTargets
 import org.jetbrains.kotlin.library.nativeTargets

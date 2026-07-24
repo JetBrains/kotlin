@@ -31,6 +31,7 @@ object JsKlibErrors : KtDiagnosticsContainer() {
 
     val JS_SOURCE_MAP_WARNING by warningWithoutSource()
     val JS_LONG_EXPORT_ERROR by errorWithoutSource()
+    val JS_SUSPEND_LAMBDA_EXPORT_ERROR by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJsKlibErrorMessages
@@ -72,11 +73,11 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JsKlibErrors.JSCODE_CAN_NOT_VERIFY_JAVASCRIPT,
-            "Cannot verify JavaScript code because the argument is not a constant string"
+            "Cannot verify JavaScript code because the argument is not a constant string."
         )
         map.put(
             JsKlibErrors.JSCODE_NO_JAVASCRIPT_PRODUCED,
-            "An argument for the js() function must be non-empty JavaScript code"
+            "An argument for the js() function must be non-empty JavaScript code."
         )
         map.put(
             JsKlibErrors.JSCODE_ERROR,
@@ -90,10 +91,11 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION,
-            "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
+            "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration.",
             IrDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(JsKlibErrors.JS_SOURCE_MAP_WARNING, "{0}")
-        map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long can't be exported without using the bigint type. Add the '-Xes-long-as-bigint' compiler argument.")
+        map.put(JsKlibErrors.JS_LONG_EXPORT_ERROR, "Long cannot be exported without using the bigint type. Add the ''-Xes-long-as-bigint'' compiler argument.")
+        map.put(JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR, "Suspend lambdas cannot be exported without using generators. Add the ''-Xes-generator'' compiler argument.")
     }
 }

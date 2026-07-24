@@ -8,18 +8,20 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.AbstractFileViewProvider
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.TestWithDisposable
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.*
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
+import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.bind
@@ -75,6 +78,7 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
+@AffectedByAnalysisApi
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest {
     abstract val configurator: AnalysisApiTestConfigurator
 
@@ -175,9 +179,52 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
     protected open fun doTest(testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
+        (val mainFile, val mainModule = module) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
+
+        if (AnalysisApiTestDirectives.STUB_BASED in testServices.moduleStructure.allDirectives) {
+            requireNotNull(mainFile) {
+                "The '${AnalysisApiTestDirectives.STUB_BASED.name}' directive requires a main file, but none was found"
+            }
+
+            forceStubTree(mainFile, testServices)
+        }
 
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
+    }
+
+    /**
+     * Puts [file] into a stub-based state: drops the loaded AST (if any) and marks the file's view provider as physical so
+     * that stub requests are allowed. After this call, the file is served from its stub, and any access to the AST will trigger
+     * tree loading (which can be guarded against with [withAstLoadingAssertion]).
+     *
+     * @see com.intellij.psi.AbstractFileViewProvider
+     */
+    protected fun forceStubTree(file: KtFile, testServices: TestServices) {
+        val viewProvider = file.viewProvider as AbstractFileViewProvider
+        val myPhysicalField = AbstractFileViewProvider::class.java.getDeclaredField("myPhysical").apply { isAccessible = true }
+
+        // A hack to enable AST loading assertion and allow stub requests
+        myPhysicalField.set(viewProvider, true)
+
+        file.setTreeElementPointer(null)
+        testServices.assertions.assertNotNull(file.stub) { "Stub should be present for unloaded file" }
+    }
+
+    /**
+     * Runs the given [action] with an assertion that fails the test on any attempt to load the AST of [file].
+     *
+     * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
+     * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
+     */
+    protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
+        val virtualFile = file.virtualFile
+        val disposable = Disposer.newDisposable("AST loading assertion")
+        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
+        return try {
+            action()
+        } finally {
+            Disposer.dispose(disposable)
+        }
     }
 
     private lateinit var testInfo: KotlinTestInfo
@@ -504,13 +551,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         }
     }
 
-    private fun createTestConfiguration(): NonGroupingPhaseTestConfiguration {
+    private fun createTestConfiguration(): NonGroupingStageTestConfiguration {
         val testConfiguration = testConfiguration(testDataPath.toString(), configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         return testConfiguration
     }
 
-    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingPhaseTestConfiguration) {
+    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingStageTestConfiguration) {
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             testDataPath.toString(),
             testConfiguration.directives,
@@ -519,7 +566,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         testServices.register(TestModuleStructure::class, moduleStructure)
     }
 
-    private fun prepareToTheAnalysis(testConfiguration: NonGroupingPhaseTestConfiguration) {
+    private fun prepareToTheAnalysis(testConfiguration: NonGroupingStageTestConfiguration) {
         val moduleStructure = testServices.moduleStructure
         val artifactsProvider = ArtifactsProvider()
         testServices.registerArtifactsProvider(artifactsProvider)
@@ -532,7 +579,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         }
     }
 
-    private fun onTestFinished(testConfiguration: NonGroupingPhaseTestConfiguration, isFailure: Boolean) {
+    private fun onTestFinished(testConfiguration: NonGroupingStageTestConfiguration, isFailure: Boolean) {
         testConfiguration.afterAnalysisCheckers.forEach { it.check(isFailure) }
     }
 
@@ -558,7 +605,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     protected fun <E : KtElement, R> copyAwareAnalyzeForTest(
         contextElement: E,
         danglingFileResolutionMode: KaDanglingFileResolutionMode = KaDanglingFileResolutionMode.IGNORE_SELF,
-        action: KaSession.(E) -> R,
+        action: context(KaSession) (E) -> R,
     ): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
@@ -569,6 +616,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
                     "The copied file should have the same original file as the original file" +
                             " (original file: '$originalContainingFile', copied file: '$fileCopy')."
                 }
+
                 action(getDependentElementFromFile(contextElement, fileCopy))
             }
         } else {
@@ -597,7 +645,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      *
      * If the test supports dependent analysis, [copyAwareAnalyzeForTest] should be used instead.
      */
-    protected fun <R> analyzeForTest(contextElement: KtElement, action: KaSession.() -> R): R {
+    protected fun <R> analyzeForTest(contextElement: KtElement, action: context(KaSession) () -> R): R {
         check(!configurator.analyseInDependentSession) {
             "The `analyzeForTest` function should not be used in tests which support dependent analysis mode." +
                     " Use `copyAwareAnalyzeForTest` instead."

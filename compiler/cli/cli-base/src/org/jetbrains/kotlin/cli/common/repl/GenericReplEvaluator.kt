@@ -64,7 +64,7 @@ open class GenericReplEvaluator(
                 return@eval ReplEvalResult.HistoryMismatch(firstMismatch.first?.id?.no ?: firstMismatch.second?.no ?: -1 /* means error? */)
             }
 
-            val (classLoader, scriptClass) = try {
+            val [classLoader, scriptClass] = try {
                 historyActor.processClasses(compileResult)
             }
             catch (e: Exception) {

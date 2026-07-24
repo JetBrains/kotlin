@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_FIR_DIAGNOSTICS
+// ALLOW_KOTLIN_PACKAGE
 // FILE: kotlin.kt
 package kotlin.native
 

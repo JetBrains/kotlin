@@ -41,6 +41,25 @@ export declare namespace foo {
             const constructor: abstract new () => C;
         }
     }
+    interface InterfaceWithCompanionWithStaticFun {
+        readonly __doNotUseOrImplementIt: {
+            readonly "foo.InterfaceWithCompanionWithStaticFun": unique symbol;
+        };
+    }
+    namespace InterfaceWithCompanionWithStaticFun {
+        function bar(): string;
+        abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+            private constructor();
+        }
+        namespace Companion {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    private constructor();
+                }
+            }
+        }
+    }
     function box(): string;
     function asyncList(): Promise<kotlin.collections.KtList<number>>;
     function arrayOfLists(): Array<kotlin.collections.KtList<number>>;

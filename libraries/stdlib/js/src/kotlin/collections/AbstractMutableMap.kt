@@ -41,7 +41,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
 
     actual override fun putAll(from: Map<out K, V>) {
         checkIsMutable()
-        for ((key, value) in from) {
+        for ([key, value] in from) {
             put(key, value)
         }
     }

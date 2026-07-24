@@ -34,7 +34,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, W
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {
     override fun executePhase(input: WebFir2IrPipelineArtifact): WebFir2IrPipelineArtifact {
-        val (fir2IrResult, firOutput, configuration) = input
+        (val fir2IrResult = result, val firOutput = frontendOutput, val configuration) = input
         processIncrementalCompilationRoundIfNeeded(configuration, firOutput, fir2IrResult)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,

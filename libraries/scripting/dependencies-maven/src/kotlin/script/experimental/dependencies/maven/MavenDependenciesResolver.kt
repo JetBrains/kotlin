@@ -57,7 +57,7 @@ class MavenDependenciesResolver(
         }
 
         return try {
-            val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
+            val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME, JavaScopes.PROVIDED)
             val kind = when (options.partialResolution) {
                 true -> ResolutionKind.TRANSITIVE_PARTIAL
                 false, null -> when (options.transitive) {
@@ -128,9 +128,6 @@ class MavenDependenciesResolver(
          * Here we set all the authentication information we have, unconditionally.
          * Actual information that will be used (as well as lower-level checks,
          * such as nullability or emptiness) is determined by implementation.
-         *
-         * @see org.eclipse.aether.transport.wagon.WagonTransporter.getProxy
-         * @see org.apache.maven.wagon.shared.http.AbstractHttpClientWagon.openConnectionInternal
          */
         val auth = AuthenticationBuilder()
             .addUsername(username)

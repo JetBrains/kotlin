@@ -82,7 +82,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
 
     // Sets all bits after the last available bit (size - 1) to 0.
     private fun clearUnusedTail() {
-        val (lastElementIndex, lastBitOffset) = lastIndex.asBitCoordinates
+        val [lastElementIndex, lastBitOffset] = lastIndex.asBitCoordinates
         bits[bits.lastIndex] = bits[bits.lastIndex] and lastBitOffset.asMaskBefore
         for (i in lastElementIndex + 1 until bits.size) {
             bits[i] = ALL_FALSE
@@ -122,7 +122,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     actual fun set(index: Int, value: Boolean = true) {
         ensureCapacity(index)
-        val (elementIndex, offset) = index.asBitCoordinates
+        val [elementIndex, offset] = index.asBitCoordinates
         setBitsWithMask(elementIndex, offset.asMask, value)
     }
 
@@ -140,8 +140,8 @@ actual constructor(size: Int = ELEMENT_SIZE) {
             return
         }
         ensureCapacity(range.endInclusive)
-        val (fromIndex, fromOffset) = range.start.asBitCoordinates
-        val (toIndex, toOffset) = range.endInclusive.asBitCoordinates
+        val [fromIndex, fromOffset] = range.start.asBitCoordinates
+        val [toIndex, toOffset] = range.endInclusive.asBitCoordinates
         if (toIndex == fromIndex) {
             val mask = getMaskBetween(fromOffset, toOffset)
             setBitsWithMask(fromIndex, mask, value)
@@ -172,7 +172,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
         if (startIndex >= size) {
             return if (lookFor) -1 else startIndex
         }
-        val (startElementIndex, startOffset) = startIndex.asBitCoordinates
+        val [startElementIndex, startOffset] = startIndex.asBitCoordinates
         // Look for the next set bit in the first element.
         var element = bits[startElementIndex]
         for (offset in startOffset..MAX_BIT_OFFSET) {
@@ -219,7 +219,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
         if (index >= size) {
             return false
         }
-        val (elementIndex, offset) = index.asBitCoordinates
+        val [elementIndex, offset] = index.asBitCoordinates
         return bits[elementIndex] and offset.asMask != 0L
     }
 

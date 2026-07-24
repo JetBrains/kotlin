@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 interface JsKlibModuleChecker<E : IrModuleFragment> {
-    fun check(module: E, context: JsKlibDiagnosticContext, reporter: IrDiagnosticReporter)
+    fun check(module: E, context: CommonKlibDiagnosticContext, reporter: IrDiagnosticReporter)
 }

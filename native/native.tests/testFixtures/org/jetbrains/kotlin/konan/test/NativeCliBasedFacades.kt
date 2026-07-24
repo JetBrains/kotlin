@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
+import kotlin.io.path.absolutePathString
 
 // NativeCliBasedFacades
 
@@ -65,7 +67,7 @@ class KlibSerializerNativeCliFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = super.additionalServices + listOf(service(::ModuleDescriptorProvider))
+        get() = super.additionalServices + listOf(service(::LibraryProvider), service(::ModuleDescriptorProvider))
 
     override fun transform(
         module: TestModule,
@@ -93,7 +95,7 @@ class KlibSerializerNativeCliFacade(
         dependencyLibraries: Collection<KotlinLibrary>,
         languageVersionSettings: LanguageVersionSettings,
     ) {
-        val (builtIns, dependencyModuleDescriptors) = loadDependencies(dependencyLibraries, languageVersionSettings)
+        val [builtIns, dependencyModuleDescriptors] = loadDependencies(dependencyLibraries, languageVersionSettings)
 
         val libraryLoadingResult = KlibLoader { libraryPaths(outputKlibPath) }.load()
         testServices.assertions.assertTrue(!libraryLoadingResult.hasProblems && libraryLoadingResult.librariesStdlibFirst.size == 1) {
@@ -127,7 +129,7 @@ class KlibSerializerNativeCliFacade(
         var builtIns: KotlinBuiltIns? = null
 
         fun loadOrCreateModuleDescriptor(library: KotlinLibrary): ModuleDescriptorImpl {
-            val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
+            val moduleDescriptor = testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
                 val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                     library,
                     languageVersionSettings,
@@ -169,6 +171,7 @@ class KlibSerializerNativeCliFacade(
     }
 
     companion object {
+        @OptIn(K1Deprecation::class)
         private val klibFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
     }
 }

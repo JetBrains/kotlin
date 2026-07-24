@@ -470,9 +470,11 @@ public actual class StringBuilder private constructor(
         if (newLength == 0) {
             jsString = jsEmptyString
         } else if (newLength > length) {
-            val chars = WasmCharArray(newLength - length)
-            chars.fill(length, { '\u0000' })
-            jsString = jsConcat(jsString, jsFromCharCodeArray(chars, 0, newLength - length).unsafeCast<JsString>()).unsafeCast<JsString>()
+            val lengthDiff = newLength - length
+            val chars = WasmCharArray(lengthDiff)
+            chars.fill(lengthDiff, { '\u0000' })
+
+            jsString = jsConcat(jsString, jsFromCharCodeArray(chars, 0, lengthDiff).unsafeCast<JsString>()).unsafeCast<JsString>()
         } else if (newLength < length) {
             jsString = jsSubstring(jsString, 0, newLength).unsafeCast<JsString>()
         }

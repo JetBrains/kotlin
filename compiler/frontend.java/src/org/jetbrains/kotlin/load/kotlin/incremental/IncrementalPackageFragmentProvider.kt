@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
 
+@K1Deprecation
 class IncrementalPackageFragmentProvider(
     sourceFiles: Collection<KtFile>,
     val moduleDescriptor: ModuleDescriptor,

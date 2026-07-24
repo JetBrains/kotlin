@@ -1,14 +1,15 @@
 KaValueParameterSymbol:
+  anchorPsi: PsiAnnotationMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -20,14 +21,18 @@ KaValueParameterSymbol:
   modality: FINAL
   name: name
   origin: JAVA_SOURCE
+  primaryConstructorProperty: null
+  psi: PsiAnnotationMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaAnnotation
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

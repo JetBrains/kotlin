@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C1 { // /C1|null[0]
+    final val o // /C1.o|{}o[0]
+        final fun <get-o>(): kotlin/String // /C1.o.<get-o>|<get-o>(){}[0]
+    constructor <init>() // /C1.<init>|<init>(){}[0]
+}
+final class /C2 { // /C2|null[0]
+    final val k // /C2.k|{}k[0]
+        final fun <get-k>(): kotlin/String // /C2.k.<get-k>|<get-k>(){}[0]
+    constructor <init>() // /C2.<init>|<init>(){}[0]
+}
+final class /E { // /E|null[0]
+    constructor <init>() // /E.<init>|<init>(){}[0]
+    final class I { // /E.I|null[0]
+        constructor <init>() // /E.I.<init>|<init>(){}[0]
+    }
+}
+final companion val /a // /a|#companion@E(C1;C2){}a[0]
+    final companion fun (context(/C1, /C2)).(/E).<get-a>(): kotlin/String // /a.<get-a>|<get-a>#companion@E(C1;C2)(){}[0]
+final companion fun (context(/C1, /C2)).(/E.I)./bar(): kotlin/String // /bar|bar#companion@E.I(C1;C2)(){}[0]
+final companion fun (context(/C1, /C2)).(/C2)./baz(): kotlin/String // /baz|baz#companion@C2(C1;C2)(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final companion fun (context(/C1, /C2)).(/E)./foo(): kotlin/String // /foo|foo#companion@E(C1;C2)(){}[0]

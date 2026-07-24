@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
+@K1Deprecation
 abstract class OperationInstruction protected constructor(
     element: KtElement,
     blockScope: BlockScope,
@@ -51,6 +53,7 @@ abstract class OperationInstruction protected constructor(
         setResult(factory?.newValue(valueElement, this))
 }
 
+@K1Deprecation
 class CallInstruction private constructor(
     element: KtElement,
     blockScope: BlockScope,
@@ -88,6 +91,7 @@ class CallInstruction private constructor(
 //      consume input values (so that they aren't considered unused)
 //      denote value transformation which can't be expressed by other instructions (such as call or read)
 //      pass more than one value to instruction which formally requires only one (e.g. jump)
+@K1Deprecation
 class MagicInstruction(
     element: KtElement,
     blockScope: BlockScope,
@@ -120,6 +124,7 @@ class MagicInstruction(
     override fun toString() = renderInstruction("magic[$kind]", render(element))
 }
 
+@K1Deprecation
 enum class MagicKind(val sideEffectFree: Boolean = false) {
     // builtin operations
     STRING_TEMPLATE(true),
@@ -144,6 +149,7 @@ enum class MagicKind(val sideEffectFree: Boolean = false) {
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)
+@K1Deprecation
 class MergeInstruction private constructor(
     element: KtElement,
     blockScope: BlockScope,

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.DeprecationLevel.*
 
 class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, List<CirAnnotation>>() {
@@ -276,8 +276,45 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
         )
     )
 
+    @Test
+    fun sameObjCName() = doTestSuccess(
+        expected = listOf(mockObjCName(swiftName = "UserDefaults")),
+        listOf(mockObjCName(swiftName = "UserDefaults")),
+        listOf(mockObjCName(swiftName = "UserDefaults")),
+        listOf(mockObjCName(swiftName = "UserDefaults"))
+    )
+
+    @Test
+    fun differentObjCName() = doTestSuccess(
+        expected = emptyList(),
+        listOf(mockObjCName(swiftName = "UserDefaults")),
+        listOf(mockObjCName(swiftName = "Defaults")),
+        listOf(mockObjCName(swiftName = "UserDefaults"))
+    )
+
+    @Test
+    fun missingObjCNameOnOneTarget() = doTestSuccess(
+        expected = emptyList(),
+        listOf(mockObjCName(swiftName = "UserDefaults")),
+        emptyList(),
+        listOf(mockObjCName(swiftName = "UserDefaults"))
+    )
+
     override fun createCommonizer() = AnnotationsCommonizer.asCommonizer()
 }
+
+private fun mockObjCName(
+    name: String = "",
+    swiftName: String = "",
+    exact: Boolean = false
+): CirAnnotation = mockAnnotation(
+    classId = "kotlin/native/ObjCName",
+    constantValueArguments = HashMap<CirName, CirConstantValue>().apply {
+        if (name.isNotEmpty()) this[CirName.create("name")] = StringValue(name)
+        if (swiftName.isNotEmpty()) this[CirName.create("swiftName")] = StringValue(swiftName)
+        if (exact) this[CirName.create("exact")] = BooleanValue(true)
+    }
+)
 
 private fun mockAnnotation(
     classId: String,

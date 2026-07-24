@@ -36,8 +36,12 @@ fun main(args: Array<String>) {
     // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
     val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
-    // TODO: Remove excludedPattern and ignore it correctly after fixing KT-86166
-    val excludePatternForSingleModuleTest = "transitiveClash.kt"
+    // These tests exercise low-level coroutine intrinsics.
+    // The Stack Switching implementation intentionally doesn't reproduce those intrinsic semantics.
+    // Supporting them would require extra flags/checks for working with special cases of internal testing.
+    // We exclude these tests instead of muting them per-mode.
+    val excludedPatternStackSwitchingCoroutines =
+        "^(intercepted|startCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn)\\.kt$"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -136,7 +140,7 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = excludePatternForSingleModuleTest)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
             testClass<AbstractFirWasmJsCodegenMultiModuleBoxTest> {
@@ -144,7 +148,31 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirWasmJsCodegenBoxTest> {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest> {
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest> {
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
             }
 
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
@@ -202,6 +230,10 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("debug/stepping")
+            }
+
+            testClass<AbstractFirWasmJsLocalVariableTest> {
+                model("debug/localVariables")
             }
         }
         testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {

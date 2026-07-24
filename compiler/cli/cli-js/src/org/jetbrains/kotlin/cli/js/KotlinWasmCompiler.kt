@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.cli.js
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.pipeline.web.CommonWasmConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.WasmCliPipeline
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
@@ -19,14 +17,6 @@ class KotlinWasmCompiler : KotlinWebCompilerBase<KotlinWasmCompilerArguments>() 
     override val platform: TargetPlatform = WasmPlatforms.unspecifiedWasmPlatform
 
     override fun executableScriptFileName(): String = "kotlinc-wasm"
-
-    override fun setupPlatformSpecificArgumentsAndServices(
-        configuration: CompilerConfiguration,
-        arguments: KotlinWasmCompilerArguments,
-        services: Services,
-    ) {
-        CommonWasmConfigurationUpdater.setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-    }
 
     override fun createArguments(): KotlinWasmCompilerArguments {
         return KotlinWasmCompilerArguments()

@@ -1,10 +1,12 @@
 KaJavaFieldSymbol:
+  anchorPsi: ClsFieldImpl
   annotations: []
   callableId: java/lang/String.value
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -14,10 +16,13 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: value
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl
+  realPsi: ClsFieldImpl
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
     type: kotlin/CharArray!
+  typeParameters: []
   visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -26,16 +31,18 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaJavaFieldSymbol:
+  anchorPsi: ClsFieldImpl
   annotations: []
   callableId: java/lang/String.hash
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -45,11 +52,14 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: hash
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl
+  realPsi: ClsFieldImpl
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -58,13 +68,13 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.hash32
-  compilerVisibility: PackageVisibility
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -86,6 +96,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -102,17 +114,19 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaJavaFieldSymbol:
+  anchorPsi: ClsFieldImpl
   annotations: []
   callableId: java/lang/String.hash32
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -122,11 +136,14 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: hash32
   origin: JAVA_LIBRARY
+  psi: ClsFieldImpl
+  realPsi: ClsFieldImpl
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -135,19 +152,21 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaSyntheticJavaPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: null
   callableId: java/lang/String.length
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: ClsMethodImpl
     annotations: []
     callableId: java/lang/String.length
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -161,11 +180,14 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
+    psi: ClsMethodImpl
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -175,7 +197,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: java.lang.String
     getContainingModule: KaLibraryModule "SDK jdk"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -183,11 +205,10 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
@@ -197,6 +218,8 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -212,15 +235,15 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: length
   javaSetterName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.isEmpty
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -242,6 +265,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: isEmpty
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -258,14 +283,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.codePointAt
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -287,6 +312,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointAt
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -295,16 +322,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -316,16 +344,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -337,14 +369,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.codePointBefore
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -366,6 +398,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointBefore
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -374,16 +408,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -395,16 +430,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -416,14 +455,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.codePointCount
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -445,6 +484,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: codePointCount
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -453,16 +494,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -474,28 +516,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: beginIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -507,16 +554,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: endIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -528,14 +579,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.offsetByCodePoints
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -557,6 +608,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: offsetByCodePoints
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -565,16 +618,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -586,28 +640,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -619,16 +678,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: codePointOffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -640,14 +703,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.getChars
-  compilerVisibility: PackageVisibility
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -669,6 +732,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -677,16 +742,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -698,27 +764,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dst
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -730,16 +801,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dstBegin
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
@@ -751,14 +826,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.getChars
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -780,6 +855,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -788,16 +865,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -809,28 +887,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: srcBegin
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -842,28 +925,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: srcEnd
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -875,27 +963,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dst
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -907,16 +1000,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dstBegin
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -928,17 +1025,17 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: java/lang/String.getBytes
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -960,6 +1057,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -968,16 +1067,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -989,28 +1089,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: srcBegin
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1022,28 +1127,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: srcEnd
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1055,27 +1165,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dst
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1087,16 +1202,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: dstBegin
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1108,14 +1227,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.getBytes
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1137,6 +1256,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1144,16 +1265,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1165,15 +1287,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: charsetName
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1185,14 +1311,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.getBytes
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1214,6 +1340,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1221,16 +1349,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1242,15 +1371,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: charset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1262,14 +1395,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.getBytes
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1291,6 +1424,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -1306,14 +1441,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.equals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1335,6 +1470,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1343,16 +1480,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1364,16 +1502,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: anObject
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: @EnhancedNullability kotlin/Any?
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1385,14 +1527,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.contentEquals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1414,6 +1556,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1422,16 +1566,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1443,15 +1588,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: sb
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuffer!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1463,14 +1612,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.contentEquals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1492,6 +1641,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1500,16 +1651,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1521,15 +1673,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: cs
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1541,14 +1697,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.equalsIgnoreCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1570,6 +1726,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: equalsIgnoreCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1578,16 +1736,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1599,15 +1758,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: anotherString
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1619,14 +1782,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1648,6 +1811,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1656,16 +1821,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1677,15 +1843,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: anotherString
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1697,14 +1867,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.compareToIgnoreCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1726,6 +1896,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: compareToIgnoreCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1734,16 +1906,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1755,15 +1928,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1775,14 +1952,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.regionMatches
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1804,6 +1981,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1812,16 +1991,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1833,28 +2013,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: toffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1866,27 +2051,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1898,28 +2088,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ooffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -1931,16 +2126,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: len
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -1952,14 +2151,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.regionMatches
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1981,6 +2180,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1989,16 +2190,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2010,28 +2212,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ignoreCase
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2043,28 +2250,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: toffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2076,27 +2288,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: other
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2108,28 +2325,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ooffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2141,16 +2363,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: len
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2162,14 +2388,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.startsWith
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2191,6 +2417,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2199,16 +2427,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2220,27 +2449,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: prefix
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2252,16 +2486,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: toffset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2273,14 +2511,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.startsWith
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2302,6 +2540,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2310,16 +2550,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2331,15 +2572,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: prefix
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2351,14 +2596,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.endsWith
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2380,6 +2625,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: endsWith
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2388,16 +2635,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2409,15 +2657,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: suffix
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2429,14 +2681,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.hashCode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2458,6 +2710,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2474,14 +2728,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.indexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2503,6 +2757,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2511,16 +2767,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2532,16 +2789,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2553,14 +2814,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.indexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2582,6 +2843,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2590,16 +2853,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2611,28 +2875,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2644,16 +2913,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2665,14 +2938,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.indexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2694,6 +2967,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2702,16 +2977,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2723,15 +2999,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2743,14 +3023,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.indexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2772,6 +3052,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2780,16 +3062,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2801,27 +3084,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2833,16 +3121,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -2854,14 +3146,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.indexOfSupplementary
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2883,6 +3175,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: indexOfSupplementary
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -2891,16 +3185,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2912,28 +3207,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -2945,16 +3245,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PRIVATE
@@ -2966,14 +3270,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.lastIndexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2995,6 +3299,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3003,16 +3309,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3024,16 +3331,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3045,14 +3356,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.lastIndexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3074,6 +3385,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3082,16 +3395,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3103,28 +3417,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3136,16 +3455,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3157,14 +3480,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.lastIndexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3186,6 +3509,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3194,16 +3519,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3215,15 +3541,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3235,14 +3565,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.lastIndexOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3264,6 +3594,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3272,16 +3604,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3293,27 +3626,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3325,16 +3663,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3346,14 +3688,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.lastIndexOfSupplementary
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3375,6 +3717,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: lastIndexOfSupplementary
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3383,16 +3727,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3404,28 +3749,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: ch
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3437,16 +3787,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: fromIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PRIVATE
@@ -3458,14 +3812,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.substring
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3487,6 +3841,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3494,16 +3850,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3515,16 +3872,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: beginIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3536,14 +3897,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.substring
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3565,6 +3926,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3572,16 +3935,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3593,28 +3957,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: beginIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3626,16 +3995,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: endIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3647,14 +4020,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.subSequence
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3676,6 +4049,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: subSequence
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -3684,16 +4059,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3705,28 +4081,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: beginIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3738,16 +4119,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: endIndex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3759,14 +4144,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.concat
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3788,6 +4173,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: concat
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3795,16 +4182,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3816,15 +4204,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: str
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3836,14 +4228,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.replace
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3865,6 +4257,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3872,16 +4266,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3893,28 +4288,33 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: oldChar
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Char
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -3926,16 +4326,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: newChar
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Char
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -3947,14 +4351,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.replace
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3976,6 +4380,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -3983,16 +4389,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4004,27 +4411,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: target
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4036,15 +4448,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: replacement
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4056,14 +4472,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.matches
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4085,6 +4501,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: matches
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4093,16 +4511,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4114,15 +4533,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4134,14 +4557,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.contains
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4163,6 +4586,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: contains
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4171,16 +4596,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4192,15 +4618,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: s
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharSequence!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4212,14 +4642,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.replaceFirst
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4241,6 +4671,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replaceFirst
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4248,16 +4680,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4269,27 +4702,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4301,15 +4739,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: replacement
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4321,14 +4763,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.replaceAll
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4350,6 +4792,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: replaceAll
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4357,16 +4801,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4378,27 +4823,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4410,15 +4860,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: replacement
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4430,14 +4884,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.split
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4459,6 +4913,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4466,16 +4922,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4487,27 +4944,32 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4519,16 +4981,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: limit
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4540,14 +5006,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.split
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4569,6 +5035,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4576,16 +5044,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4597,15 +5066,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: regex
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4617,14 +5090,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toLowerCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4646,6 +5119,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4653,16 +5128,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4674,15 +5150,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: locale
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/util/Locale!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4694,14 +5174,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toLowerCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4723,6 +5203,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4738,14 +5220,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toUpperCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4767,6 +5249,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4774,16 +5258,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -4795,15 +5280,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: locale
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/util/Locale!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -4815,14 +5304,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toUpperCase
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4844,6 +5333,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4859,14 +5350,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.trim
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4888,6 +5379,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: trim
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4903,14 +5396,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4932,6 +5425,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toString
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -4948,14 +5443,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.toCharArray
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4977,6 +5472,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: toCharArray
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -4992,14 +5489,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.intern
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -5021,6 +5518,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: intern
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
@@ -5036,14 +5535,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: false
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: java/lang/String.get
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -5065,6 +5564,8 @@ KaNamedFunctionSymbol:
   modality: OPEN
   name: get
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5073,16 +5574,17 @@ KaNamedFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5094,16 +5596,20 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: index
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -5115,16 +5621,16 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: java.lang.String
   canBeOperator: true
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedClassSymbol:
+  anchorPsi: ClsClassImpl
   annotations: []
   classId: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -5137,6 +5643,8 @@ KaNamedClassSymbol:
   modality: OPEN
   name: CaseInsensitiveComparator
   origin: JAVA_LIBRARY
+  psi: ClsClassImpl
+  realPsi: ClsClassImpl
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -5159,15 +5667,16 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "SDK jdk"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: java.lang.String.CaseInsensitiveComparator
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5179,6 +5688,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5190,14 +5701,15 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5209,6 +5721,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5217,16 +5731,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5238,29 +5753,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: original
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5272,6 +5792,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5280,16 +5802,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5301,29 +5824,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: value
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5335,6 +5863,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5343,16 +5873,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5364,27 +5895,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: value
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5396,28 +5932,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5429,30 +5970,35 @@ KaConstructorSymbol:
       modality: FINAL
       name: count
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5464,6 +6010,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5472,16 +6020,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5493,27 +6042,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: codePoints
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/IntArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5525,28 +6079,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5558,33 +6117,38 @@ KaConstructorSymbol:
       modality: FINAL
       name: count
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5596,6 +6160,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5604,16 +6170,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5625,27 +6192,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: ascii
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5657,28 +6229,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: hibyte
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5690,28 +6267,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5723,33 +6305,38 @@ KaConstructorSymbol:
       modality: FINAL
       name: count
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5761,6 +6348,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5769,16 +6358,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5790,27 +6380,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: ascii
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5822,30 +6417,35 @@ KaConstructorSymbol:
       modality: FINAL
       name: hibyte
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5857,6 +6457,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -5865,16 +6467,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5886,27 +6489,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5918,28 +6526,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5951,28 +6564,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: length
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -5984,29 +6602,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: charsetName
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6018,6 +6641,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6026,16 +6651,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6047,27 +6673,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6079,28 +6710,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6112,28 +6748,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: length
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6145,29 +6786,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: charset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6179,6 +6825,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6187,16 +6835,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6208,27 +6857,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6240,29 +6894,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: charsetName
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/String!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6274,6 +6933,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6282,16 +6943,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6303,27 +6965,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6335,29 +7002,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: charset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/nio/charset/Charset!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6369,6 +7041,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6377,16 +7051,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6398,27 +7073,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6430,28 +7110,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6463,30 +7148,35 @@ KaConstructorSymbol:
       modality: FINAL
       name: length
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6498,6 +7188,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6506,16 +7198,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6527,29 +7220,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytes
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/ByteArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6561,6 +7259,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6569,16 +7269,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6590,29 +7291,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: buffer
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuffer!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6624,6 +7330,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6632,16 +7340,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6653,29 +7362,34 @@ KaConstructorSymbol:
       modality: FINAL
       name: builder
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: java/lang/StringBuilder!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: []
   callableId: null
-  compilerVisibility: PackageVisibility
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6687,6 +7401,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6695,16 +7411,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6716,27 +7433,32 @@ KaConstructorSymbol:
       modality: FINAL
       name: value
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6748,33 +7470,38 @@ KaConstructorSymbol:
       modality: FINAL
       name: share
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Boolean
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.String
 
 KaConstructorSymbol:
+  anchorPsi: ClsMethodImpl
   annotations: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
   callableId: null
-  compilerVisibility: PackageVisibility
   containingClassId: java/lang/String
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -6786,6 +7513,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: JAVA_LIBRARY
+  psi: ClsMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -6794,16 +7523,17 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6815,28 +7545,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: offset
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6848,28 +7583,33 @@ KaConstructorSymbol:
       modality: FINAL
       name: count
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
+      anchorPsi: ClsParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -6881,20 +7621,24 @@ KaConstructorSymbol:
       modality: FINAL
       name: value
       origin: JAVA_LIBRARY
+      primaryConstructorProperty: null
+      psi: ClsParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
         type: kotlin/CharArray!
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: java.lang.String
       getContainingModule: KaLibraryModule "SDK jdk"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: java.lang.String
   getContainingModule: KaLibraryModule "SDK jdk"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=false)
   importableFqName: java.lang.String

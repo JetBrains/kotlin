@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava.Companion.createModuleData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 
+@K1Deprecation
 class RuntimeModuleData private constructor(
     val deserialization: DeserializationComponents,
     val packagePartScopeCache: PackagePartScopeCache

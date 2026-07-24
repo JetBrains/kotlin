@@ -1,8 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -19,8 +22,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
-testsJar {}
 
 projectTests {
     testData(project.isolated, "testData")

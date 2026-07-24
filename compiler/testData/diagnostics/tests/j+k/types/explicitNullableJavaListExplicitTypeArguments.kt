@@ -28,7 +28,7 @@ fun test(xs: List<String?>, ys: List<String>) {
     val d: String = JavaLists.id<String>(ys)[0]
 
     val badElement: String <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaLists.id<String?>(xs)[0]
-    val badList: List<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaLists.id<String?>(xs)
+    val badList: List<String> = JavaLists.<!INITIALIZER_TYPE_MISMATCH!>id<!><String?>(xs)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.mightHaveAnnotations
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirAnnotationListForDeclaration private constructor(
@@ -60,15 +60,9 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         }
 
     companion object {
-        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList {
-            return when {
-                firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
-                    KaFirAnnotationListForDeclaration(firSymbol, builder)
-                firSymbol.annotations.isEmpty() ->
-                    KaBaseEmptyAnnotationList(builder.token)
-                else ->
-                    KaFirAnnotationListForDeclaration(firSymbol, builder)
-            }
+        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList = when {
+            firSymbol.mightHaveAnnotations -> KaFirAnnotationListForDeclaration(firSymbol, builder)
+            else -> KaBaseEmptyAnnotationList(builder.token)
         }
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsStaticDeclaration
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -38,7 +37,7 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
             }
         } ?: return null
 
-        declaration.excludeFromJsExport()
+        declaration.excludeFromJsExport(context)
 
         return if (parentClass.isCompanion) {
             staticScopeOwner.declarations.add(proxyDeclaration)
@@ -87,14 +86,5 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
                 }
             }
         }
-    }
-
-
-    private fun IrDeclaration.excludeFromJsExport() {
-        annotations += generateJsExportIgnoreAnnotation()
-    }
-
-    private fun generateJsExportIgnoreAnnotation(): IrAnnotation {
-        return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 }

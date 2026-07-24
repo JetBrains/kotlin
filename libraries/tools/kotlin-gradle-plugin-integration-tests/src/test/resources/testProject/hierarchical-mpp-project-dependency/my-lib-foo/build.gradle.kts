@@ -14,16 +14,16 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val commonMain by getting
+        val commonMain = getByName("commonMain")
 
-        val commonTest by getting {
+        val commonTest = getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
 
-        val jvmAndJsMain by creating {
+        val jvmAndJsMain = create("jvmAndJsMain") {
             dependsOn(commonMain)
             dependencies {
                 // Add the third-party-lib dependency only to these two platforms, 
@@ -32,15 +32,15 @@ kotlin {
             }
         }
         
-        val jvmAndJsTest by creating {
+        val jvmAndJsTest = create("jvmAndJsTest") {
             dependsOn(commonTest)
         }
 
-        val linuxAndJsMain by creating {
+        val linuxAndJsMain = create("linuxAndJsMain") {
             dependsOn(commonMain)
         }
         
-        val linuxAndJsTest by creating {
+        val linuxAndJsTest = create("linuxAndJsTest") {
             dependsOn(commonTest)
         }
 

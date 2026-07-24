@@ -14,7 +14,6 @@ package org.jetbrains.kotlin.gradle.utils
  *
  * @param[defaultIndent] Each block will be indented with this string.
  */
-@StringBlockBuilderDsl
 internal fun buildStringBlock(
     defaultIndent: String = "    ",
     block: StringBlockBuilder.() -> Unit,
@@ -54,7 +53,6 @@ internal fun buildStringBlock(
  *     -c third_option
  * ```
  */
-@StringBlockBuilderDsl
 internal fun StringBlockBuilder.connectedLines(
     lineSuffix: String,
     block: ConnectedLinesBuilder.() -> Unit,
@@ -78,7 +76,6 @@ internal sealed interface StringBlockBuilder {
     /**
      * Add a line to the current block.
      */
-    @StringBlockBuilderDsl
     fun line(content: String = "")
 
     /**
@@ -88,7 +85,6 @@ internal sealed interface StringBlockBuilder {
      *
      * [open] and [close] will _not_ be indented.
      */
-    @StringBlockBuilderDsl
     fun block(open: String, close: String, content: StringBlockBuilder.() -> Unit)
 }
 
@@ -140,7 +136,6 @@ internal sealed interface ConnectedLinesBuilder {
  * )
  * ```
  */
-@StringBlockBuilderDsl
 internal fun StringBlockBuilder.commaSeparatedEntries(
     block: CommaSeparatedEntriesBuilder.() -> Unit,
 ) {
@@ -165,7 +160,6 @@ internal sealed interface CommaSeparatedEntriesBuilder {
      * A comma will be appended to the last line of this entry,
      * unless it is the final entry in the list.
      */
-    @StringBlockBuilderDsl
     fun entry(content: StringBlockBuilder.() -> Unit)
 }
 
@@ -265,7 +259,6 @@ internal annotation class StringBlockBuilderDsl
  * Emit a list of items, each potentially multi-line, with proper comma separation.
  * Items are separated by commas, with no trailing comma after the last item.
  */
-@StringBlockBuilderDsl
 internal fun StringBlockBuilder.emitListItems(items: List<String>) {
     items.forEachIndexed { index, item ->
         val isLast = index == items.lastIndex

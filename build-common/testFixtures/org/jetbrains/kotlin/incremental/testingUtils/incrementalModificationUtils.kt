@@ -102,7 +102,7 @@ fun getModificationsToPerform(
                 var moduleName = fileName.substring(0, underscore)
                 var moduleFileName = fileName.substring(underscore + 1)
                 if (moduleName.all { it.isDigit() }) {
-                    val (moduleName1, moduleFileName1) = moduleFileName.split("_")
+                    val [moduleName1, moduleFileName1] = moduleFileName.split("_")
                     moduleName = moduleName1
                     moduleFileName = moduleFileName1
                 }
@@ -128,14 +128,14 @@ fun getModificationsToPerform(
         for (file in testDataDir.walkTopDown()) {
             if (!file.isFile) continue
 
-            val (suffix, createModification) = rules.entries.firstOrNull { file.path.endsWith(it.key) } ?: continue
+            val [suffix, createModification] = rules.entries.firstOrNull { file.path.endsWith(it.key) } ?: continue
 
             // NOTE: the code do not allow to combine module prefixes with directory structure
             val relativeFilePath = file.toRelativeString(testDataDir)
             val relativeFilePathWithoutVariant =
                 relativeFilePath.genVariantMatchingName(optionalVariantSuffix) ?: continue
 
-            val (moduleName, fileName) = splitToModuleNameAndFileName(relativeFilePathWithoutVariant)
+            val [moduleName, fileName] = splitToModuleNameAndFileName(relativeFilePathWithoutVariant)
             val srcDir = moduleName?.let { "$it/src" } ?: "src"
             val targetPath = srcDir + "/" + fileName.removeSuffix(suffix)
 

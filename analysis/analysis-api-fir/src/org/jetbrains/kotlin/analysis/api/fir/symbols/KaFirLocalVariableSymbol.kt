@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,17 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.entryName
-import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
@@ -47,11 +48,11 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
         analysisSession = session,
     )
 
-    override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
-
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
 
     override val returnType: KaType
         get() = withValidityAssertion { firSymbol.returnType(builder) }
@@ -62,11 +63,20 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
         // See changes in KT-76578
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit }
 
+    override val isDelegated: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null) {
+                (backingPsi as? KtProperty)?.hasDelegate() == true
+            } else {
+                (firSymbol as? FirPropertySymbol)?.isDelegatedProperty == true
+            }
+        }
+
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }
 
         if (firSymbol.fir.source?.kind is KtFakeSourceElementKind.ScriptParameter) {
-            return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this), this)
+            return KaFirScriptParameterSymbolPointer(name, createOwnerPointer(), this)
         }
 
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
@@ -158,4 +168,7 @@ internal class KaFirErrorVariableSymbol : KaFirLocalOrErrorVariableSymbol {
      */
     override val isVal: Boolean
         get() = withValidityAssertion { true }
+
+    override val realPsi: PsiElement?
+        get() = withValidityAssertion { null }
 }

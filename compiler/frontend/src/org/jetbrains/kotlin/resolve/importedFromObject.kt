@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
+@K1Deprecation
 fun FunctionDescriptor.asImportedFromObject(descriptor: FunctionImportedFromObject? = null) =
     FunctionImportedFromObject(this, descriptor?.original)
 
+@K1Deprecation
 fun PropertyDescriptor.asImportedFromObject(descriptor: PropertyImportedFromObject? = null) =
     PropertyImportedFromObject(this, descriptor?.original)
 
+@K1Deprecation
 abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
     val callableFromObject: TCallable,
     private val originalOrNull: TCallable?
@@ -37,6 +41,7 @@ abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemb
 }
 
 // members imported from object should be wrapped to not require dispatch receiver
+@K1Deprecation
 class FunctionImportedFromObject(
     functionFromObject: FunctionDescriptor,
     originalOrNull: FunctionDescriptor? = null
@@ -58,6 +63,7 @@ class FunctionImportedFromObject(
     }
 }
 
+@K1Deprecation
 class PropertyImportedFromObject(
     propertyFromObject: PropertyDescriptor,
     originalOrNull: PropertyDescriptor? = null

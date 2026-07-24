@@ -1,0 +1,1 @@
+val prop: ERROR(Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue])

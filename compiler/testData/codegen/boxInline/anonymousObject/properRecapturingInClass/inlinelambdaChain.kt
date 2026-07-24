@@ -1,4 +1,3 @@
-// WASM_FAILS_IN: WasmEdge, NodeJs, Wasmtime
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 

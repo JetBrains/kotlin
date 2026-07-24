@@ -1,0 +1,63 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|example/Foo|
+                Type: example.Foo
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirDefaultStarImportingScope
+    Element 12
+        Scope: FirExplicitStarImportingScope
+    Element 13
+        Scope: FirDefaultSimpleImportingScope
+    Element 14
+        Scope: FirDefaultSimpleImportingScope
+    Element 15
+        Scope: FirPackageMemberScope
+    Element 16
+        Scope: FirExplicitSimpleImportingScope
+    Element 17
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|example/Foo|
+                Type: example.Foo
+    Element 18
+        Scope: FirExplicitStarImportingScope
+    Element 19
+        Scope: FirExplicitSimpleImportingScope
+    Element 20
+        Scope: FirLocalScope
+    Element 21
+        Scope: FirLocalScope
+    Element 22
+        Scope: FirLocalScope
+    Element 23
+        Scope: FirLocalScope
+    Element 24
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lval nString: R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] fragment.kt
+    CODE FRAGMENT: {
+        [ResolvedTo(BODY_RESOLVE)] lval nString: R|kotlin/String| = this@R|special/anonymous|.R|example/Foo.n|.R|kotlin/Int.toString|()
+        this@R|special/anonymous|.R|example/Foo.text|.R|kotlin/String.plus|(R|<local>/nString|)
+    }

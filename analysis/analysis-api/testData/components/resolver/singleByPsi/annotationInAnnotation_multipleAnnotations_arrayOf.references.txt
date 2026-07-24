@@ -1,7 +1,0 @@
-KtNameReferenceExpression(138,143): 'annos'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      vararg annos: Annotation

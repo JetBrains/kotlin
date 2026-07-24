@@ -1,25 +1,24 @@
 import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
-    api(project(":core:compiler.common"))
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
-    api(project(":kotlin-script-runtime"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     compileOnly(libs.intellij.fastutil)
 
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:psi:psi-impl"))
+    runtimeOnly(project(":compiler:psi:psi-impl"))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
@@ -47,7 +46,7 @@ private val stableNonPublicMarkers = listOf(
     "org.jetbrains.kotlin.psi.KtImplementationDetail",
 )
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/psi-utils-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

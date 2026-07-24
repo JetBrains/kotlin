@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: Generic.java
 public class Generic<T> {
     public static class ML<E> {}

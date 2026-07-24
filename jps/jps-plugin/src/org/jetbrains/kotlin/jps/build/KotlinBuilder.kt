@@ -472,7 +472,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (!isKotlinBuilderInDumbMode) markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
 
         val kotlinTargets = kotlinContext.targetsBinding
-        for ((target, outputItems) in generatedFiles) {
+        for ([target, outputItems] in generatedFiles) {
             val kotlinTarget = kotlinTargets[target] ?: error("Could not find Kotlin target for JPS target $target")
             kotlinTarget.registerOutputItems(outputConsumer, outputItems)
         }
@@ -511,7 +511,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             val changesCollector = ChangesCollector()
 
-            for ((target, files) in generatedFiles) {
+            for ([target, files] in generatedFiles) {
                 val kotlinModuleBuilderTarget = kotlinContext.targetsBinding[target]!!
                 kotlinModuleBuilderTarget.updateCaches(
                     kotlinDirtyFilesHolder,
@@ -693,7 +693,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         fsOperations: FSOperationsHelper
     ) {
-        for ((target, files) in generatedFiles) {
+        for ([target, files] in generatedFiles) {
             val kotlinModuleBuilderTarget = kotlinContext.targetsBinding[target] ?: continue
             val cache = incrementalCaches[kotlinModuleBuilderTarget] as? IncrementalJvmCache ?: continue
             val generated = files.filterIsInstance<GeneratedJvmClass>()
@@ -755,7 +755,10 @@ private fun ChangesCollector.getDirtyFiles(
     lookupStorageManager: JpsLookupStorageManager
 ): FilesToRecompile {
     val reporter = JpsICReporter()
-    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = getChangedAndImpactedSymbols(caches, reporter)
+    (val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile) = getChangedAndImpactedSymbols(
+        caches,
+        reporter
+    )
     val dirtyFilesFromLookups = lookupStorageManager.withLookupStorage {
         mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
     }

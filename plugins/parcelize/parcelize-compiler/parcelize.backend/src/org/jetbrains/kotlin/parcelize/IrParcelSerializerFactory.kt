@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.parcelize
 
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
@@ -66,9 +75,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
         fun getChild(elementType: IrType, allowDataClasses: Boolean = false) =
             get(elementType, scope, parcelizeType, strict(), inDataClass = inDataClass || allowDataClasses)
 
-        scope.getCustomSerializer(irType)?.let { parceler ->
-            return IrCustomParcelSerializer(parceler)
-        }
+        scope.getCustomSerializer(irType)?.let { return it }
 
         val classifier = irType.erasedUpperBound
         val classifierFqName = classifier.fqNameWhenAvailable?.asString()
@@ -248,7 +255,11 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                         }
 
                     if (simpleSerializer != null) {
-                        return simpleSerializer
+                        return if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES) {
+                            wrapNullableSerializerIfNeeded(irType, simpleSerializer)
+                        } else {
+                            simpleSerializer
+                        }
                     }
                 }
 
@@ -256,9 +267,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 val actualSerializer =
                     when (classifierFqName) {
                         in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES ->
-                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+                            listSerializer.convertDeserializedToPersistent(symbols.kotlinIterableToPersistentListExtension, listOf(elementType))
                         in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES ->
-                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentSetExtension)
+                            listSerializer.convertDeserializedToPersistent(symbols.kotlinIterableToPersistentSetExtension, listOf(elementType))
                         else -> listSerializer
                     }
 
@@ -276,7 +287,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
 
                 val actualSerializer =
                     if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES)
-                        mapSerializer.withDeserializationPostprocessing(symbols.kotlinMapToPersistentMapExtension)
+                        mapSerializer.convertDeserializedToPersistent(symbols.kotlinMapToPersistentMapExtension, listOf(keyType, valueType))
                     else
                         mapSerializer
                 return wrapNullableSerializerIfNeeded(irType, actualSerializer)
@@ -288,6 +299,12 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             classifier.isSubclassOfFqName("android.os.Parcelable")
                     // Avoid infinite loops when deriving parcelers for enum or object classes.
                     && !(toplevel && (classifier.isObject || classifier.isEnumClass)) -> {
+
+                // During incremental compilation, classes from unchanged files in the same module are loaded from pre-compiled bytecode and
+                // will have null metadata. To support this case, we fall back to comparing module names.
+                val isCurrentModule = classifier.metadata != null ||
+                        (classifier as? IrLazyClassBase)?.moduleName == parcelizeType.classOrFail.owner.file.module.name.asStringStripSpecialMarkers()
+
                 // We try to use writeToParcel/createFromParcel directly whenever possible, but there are some caveats.
                 //
                 // According to the JLS, changing a class from final to non-final is a binary compatible change, hence we
@@ -300,7 +317,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 // for writeToParcel/createFromParcel. For Java classes (or compiled Kotlin classes annotated with
                 // @Parcelize), we'll have a field in the class itself. Finally, with Parcelable instances which were
                 // manually implemented in Kotlin, we'll instead have an @JvmField property getter in the companion object.
-                return if (classifier.modality == Modality.FINAL && classifier.metadata != null
+                return if (classifier.modality == Modality.FINAL && isCurrentModule
                     && (classifier.isParcelize(parcelizeAnnotations) || classifier.hasCreatorField)
                 ) {
                     wrapNullableSerializerIfNeeded(irType, IrEfficientParcelableParcelSerializer(classifier))
@@ -325,10 +342,12 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
 
             classifier.isData && (inDataClass || irType.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_CLASS_ID)) -> {
                 val typeMapping = classifier.typeParameterMapping(irType)
-                val members = classifier.properties.mapNotNullTo(mutableListOf()) { property ->
-                    val field = property.backingField ?: return@mapNotNullTo null
-                    if (!field.isFromPrimaryConstructor) return@mapNotNullTo null
-                    property.symbol to getChild(field.type.substitute(typeMapping), allowDataClasses = true)
+                val primaryConstructor = classifier.primaryConstructor
+                    ?: throw IllegalArgumentException("Primary constructor of data class '${classifier.name}' is missing")
+
+                val members = primaryConstructor.parameters.map { valueParameter ->
+                    val property = classifier.findCorrespondingDataClassProperty(valueParameter)
+                    property.symbol to getChild(valueParameter.type.substitute(typeMapping), allowDataClasses = true)
                 }
                 return wrapNullableSerializerIfNeeded(irType, IrDataClassParcelSerializer(irType, members))
             }
@@ -344,8 +363,32 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
         }
     }
 
+    private fun IrClass.findCorrespondingDataClassProperty(primaryConstructorValueParameter: IrValueParameter): IrProperty {
+        require(this.isData) { "This function is to be used for data classes only" }
+
+        return properties.singleOrNull { it.name == primaryConstructorValueParameter.name }
+            ?: throw IllegalArgumentException(
+                "Data class '${primaryConstructorValueParameter.name}' must have exactly one property " +
+                        "matching primary constructor parameter '${primaryConstructorValueParameter.name}'"
+            )
+    }
+
     private fun wrapNullableSerializerIfNeeded(irType: IrType, serializer: IrParcelSerializer) =
         if (irType.isNullable()) IrNullAwareParcelSerializer(serializer) else serializer
+
+    private fun IrParcelSerializer.convertDeserializedToPersistent(
+        mapper: IrSimpleFunctionSymbol,
+        returnTypeArguments: List<IrType>,
+    ): IrParcelSerializer =
+        object : IrParcelSerializer by this {
+            override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+                val readResult = with(this@convertDeserializedToPersistent) { readParcel(parcel) }
+                val returnType = mapper.owner.returnType.classifierOrFail.typeWith(returnTypeArguments)
+                return irCall(mapper, returnType).apply {
+                    arguments[0] = readResult
+                }
+            }
+        }
 
     private val irBuiltIns: IrBuiltIns
         get() = symbols.irBuiltIns
@@ -353,13 +396,13 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val stringArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArray, symbols.parcelWriteStringArray)
     private val stringListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArrayList, symbols.parcelWriteStringList)
     private val stringPersistentListSerializer by lazy {
-        stringListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+        stringListSerializer.convertDeserializedToPersistent(symbols.kotlinIterableToPersistentListExtension, listOf(irBuiltIns.stringType))
     }
     private val iBinderSerializer = IrSimpleParcelSerializer(symbols.parcelReadStrongBinder, symbols.parcelWriteStrongBinder)
     private val iBinderArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArray, symbols.parcelWriteBinderArray)
     private val iBinderListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArrayList, symbols.parcelWriteBinderList)
     private val iBinderPersistentListSerializer by lazy {
-        iBinderListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+        iBinderListSerializer.convertDeserializedToPersistent(symbols.kotlinIterableToPersistentListExtension, listOf(symbols.androidOsIBinder.defaultType))
     }
     private val serializableSerializer = IrSimpleParcelSerializer(symbols.parcelReadSerializable, symbols.parcelWriteSerializable)
     private val stringSerializer = IrSimpleParcelSerializer(symbols.parcelReadString, symbols.parcelWriteString)
@@ -391,6 +434,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
+
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = false)
 
     // Unsigned array types
     private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(

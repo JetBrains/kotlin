@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -55,7 +56,7 @@ internal class NativeGenerationState(
         config: NativeSecondStageCompilationConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
-        val context: Context,
+        val context: NativeBackendContext,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
@@ -70,6 +71,7 @@ internal class NativeGenerationState(
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
+    val trivialGetters = mutableListOf<SerializedTrivialGetter>()
     var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState
@@ -93,6 +95,9 @@ internal class NativeGenerationState(
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
+
+    val bindClassToObjCNameClassAdapters = mutableMapOf<String, ConstPointer>()
+    val bindClassToObjCNameInterfaceAdapters = mutableMapOf<String, ConstPointer>()
 
     lateinit var objCExport: ObjCExport
 
@@ -130,7 +135,7 @@ internal class NativeGenerationState(
         isDisposed = true
     }
 
-    override val heldBackendContext: Context
+    override val heldBackendContext: NativeBackendContext
         get() = context
 
     override val llvmModule: LLVMModuleRef

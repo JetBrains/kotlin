@@ -1,0 +1,18 @@
+--- a/internalStdlibOverride.ir.txt
++++ b/internalStdlibOverride.ir.js_ir.txt
+@@ -23,6 +23,15 @@
+           TYPE_ARG K: kotlin.Int
+           TYPE_ARG V: kotlin.Int
+         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>]' type=kotlin.Unit
++    FUN FAKE_OVERRIDE name:asJsReadonlyMapView visibility:public modality:OPEN returnType:kotlin.js.collections.JsReadonlyMap<kotlin.Int, kotlin.Int> [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<kotlin.Int, kotlin.Int>
++      annotations:
++        ExperimentalJsExport
++        ExperimentalJsCollectionsApi
++        JsDontExportDefaultImplementation
++        SinceKotlin(version = "2.0")
++      overridden:
++        public open fun asJsReadonlyMapView (): kotlin.js.collections.JsReadonlyMap<K of kotlin.collections.AbstractMap, V of kotlin.collections.AbstractMap> declared in kotlin.collections.AbstractMap
+     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>
+       VALUE_PARAMETER kind:Regular name:key index:1 type:kotlin.Int

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.explicitParameters as _explicitParameters
@@ -31,5 +32,6 @@ import org.jetbrains.kotlin.descriptors.explicitParameters as _explicitParameter
     message = "Please use org.jetbrains.kotlin.descriptors.explicitParameters",
     ReplaceWith("explicitParameters", "org.jetbrains.kotlin.descriptors.explicitParameters")
 )
+@K1Deprecation
 val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
     get() = _explicitParameters

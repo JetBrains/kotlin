@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,10 +27,16 @@ internal class KaFirPackageSymbol(
     private val project: Project,
     override val token: KaLifetimeToken,
 ) : KaPackageSymbol(), KaLifetimeOwner {
-    override val psi: PsiElement? by cached {
+    override val realPsi: PsiElement? by cached {
         JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
             ?: KtPackage(PsiManager.getInstance(project), fqName, GlobalSearchScope.allScope(project)/*TODO*/)
     }
+
+    override val anchorPsi: PsiElement?
+        get() = realPsi
+
+    override val psi: PsiElement?
+        get() = realPsi
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { KaSymbolOrigin.SOURCE } // TODO

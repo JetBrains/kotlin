@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 
 @DefaultImplementation(FileScopeProviderImpl::class)
+@K1Deprecation
 interface FileScopeProvider {
     fun getFileResolutionScope(file: KtFile): LexicalScope = getFileScopes(file).lexicalScope
     fun getImportResolver(file: KtFile): ImportForceResolver = getFileScopes(file).importForceResolver
@@ -37,6 +39,7 @@ interface FileScopeProvider {
     }
 }
 
+@K1Deprecation
 class FileScopeProviderImpl(
     private val fileScopeFactory: FileScopeFactory,
     private val bindingTrace: BindingTrace,
@@ -53,8 +56,10 @@ class FileScopeProviderImpl(
     override fun getFileScopes(file: KtFile) = cache(file)
 }
 
+@K1Deprecation
 interface FileScopesCustomizer {
     fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes
 }
 
+@K1Deprecation
 var KtFile.fileScopesCustomizer: FileScopesCustomizer? by UserDataProperty(Key.create("FILE_SCOPES_CUSTOMIZER"))

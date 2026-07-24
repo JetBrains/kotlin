@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.isDynamic
 
+@K1Deprecation
 class SimpleCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
@@ -191,6 +193,7 @@ class SimpleCandidateFactory(
     }
 }
 
+@K1Deprecation
 fun PropertyDescriptor.isSyntheticEnumEntries(): Boolean {
     return isSynthesized && dispatchReceiverParameter == null && extensionReceiverParameter == null &&
             (containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS

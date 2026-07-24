@@ -269,28 +269,25 @@ class UklibConsumptionIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                /consumeIn_appleMain|consumeIn_appleMain(Producer_commonMain;Producer_nativeMain;Producer_appleMain){}[0]
-                /consumeIn_commonMain|consumeIn_commonMain(Producer_commonMain){}[0]
-                /consumeIn_iosArm64Main|consumeIn_iosArm64Main(Producer_commonMain;Producer_nativeMain;Producer_appleMain;Producer_iosArm64Main){}[0]
-                /consumeIn_iosMain|consumeIn_iosMain(Producer_commonMain;Producer_nativeMain;Producer_appleMain;Producer_iosMain){}[0]
-                /consumeIn_nativeMain|consumeIn_nativeMain(Producer_commonMain;Producer_nativeMain){}[0]
-
+                public final fun consumeIn_appleMain(Producer_commonMain: Producer_commonMain, Producer_nativeMain: Producer_nativeMain, Producer_appleMain: Producer_appleMain): kotlin/Unit
+                public final fun consumeIn_commonMain(Producer_commonMain: Producer_commonMain): kotlin/Unit
+                public final fun consumeIn_iosArm64Main(Producer_commonMain: Producer_commonMain, Producer_nativeMain: Producer_nativeMain, Producer_appleMain: Producer_appleMain, Producer_iosArm64Main: Producer_iosArm64Main): kotlin/Unit
+                public final fun consumeIn_iosMain(Producer_commonMain: Producer_commonMain, Producer_nativeMain: Producer_nativeMain, Producer_appleMain: Producer_appleMain, Producer_iosMain: Producer_iosMain): kotlin/Unit
+                public final fun consumeIn_nativeMain(Producer_commonMain: Producer_commonMain, Producer_nativeMain: Producer_nativeMain): kotlin/Unit
                 """.trimIndent(),
                 dumpKlibMetadataSignatures(klibs.iosArm64Klib),
             )
 
             assertEquals(
                 """
-                /consumeIn_iosMain|consumeIn_iosMain(Producer_commonMain;Producer_nativeMain;Producer_appleMain;Producer_iosMain){}[0]
-
+                public final fun consumeIn_iosMain(Producer_commonMain: Producer_commonMain, Producer_nativeMain: Producer_nativeMain, Producer_appleMain: Producer_appleMain, Producer_iosMain: Producer_iosMain): kotlin/Unit
                 """.trimIndent(),
                 dumpKlibMetadataSignatures(klibs.iosMainKlib),
             )
 
             assertEquals(
                 """
-                /consumeIn_commonMain|consumeIn_commonMain(Producer_commonMain){}[0]
-
+                public final fun consumeIn_commonMain(Producer_commonMain: Producer_commonMain): kotlin/Unit
                 """.trimIndent(),
                 dumpKlibMetadataSignatures(klibs.commonMainKlib),
             )
@@ -1356,7 +1353,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)
@@ -1452,7 +1453,7 @@ class UklibConsumptionIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, maxVersion = TestVersions.AGP.AGP_813)
     fun `uklib consumption - KMP androidLibrary with stub JVM variant - KT-81434`(
         version: GradleVersion,
         androidVersion: String,
@@ -1468,6 +1469,7 @@ class UklibConsumptionIT : KGPBaseTest() {
         val producer = project(
             "empty",
             version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
@@ -1483,7 +1485,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)

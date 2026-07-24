@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
+import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.deprecation
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -65,7 +69,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
             else -> error("Unexpected element: $declaration")
         }
 
-        for ((symbolGetter, name) in symbolSuppliers) {
+        for ([symbolGetter, name] in symbolSuppliers) {
             analyze(mainModule.ktModule) {
                 val symbol = when (declaration) {
                     is KtDeclaration -> declaration.symbol
@@ -81,7 +85,8 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         }
     }
 
-    private fun KaSession.testSymbol(
+    context(session: KaSession)
+    private fun testSymbol(
         rootSymbol: KaSymbol,
         symbolSupplier: (KaSymbol) -> KaSymbol?,
         testServices: TestServices,
@@ -92,7 +97,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         val targetSymbol = symbolSupplier(rootSymbol) ?: return
         testServices.assertions.assertEqualsToTestOutputFile(beforeRendered, extension = ".${name}.before.txt")
         val deprecationStatus = buildString {
-            appendLine("Declaration deprecation: " + targetSymbol.deprecationStatus)
+            appendLine("Declaration deprecation: " + targetSymbol.deprecation)
         }
         testServices.assertions.assertEqualsToTestOutputFile(
             renderFirElement(rootSymbolFir.fir),

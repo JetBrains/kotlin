@@ -19,14 +19,15 @@ class SirVariableBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val bridges: MutableList<SirBridge> = []
+    var isConstant: Boolean = false
     lateinit var name: String
     lateinit var type: SirType
-    lateinit var getter: SirGetter
+    var getter: SirGetter? = null
     var setter: SirSetter? = null
 
     fun build(): SirVariable {
@@ -39,6 +40,7 @@ class SirVariableBuilder {
             isInstance,
             modality,
             bridges,
+            isConstant,
             name,
             type,
             getter,
@@ -54,4 +56,26 @@ inline fun buildVariable(init: SirVariableBuilder.() -> Unit): SirVariable {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return SirVariableBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() -> Unit): SirVariable {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = SirVariableBuilder()
+    copyBuilder.origin = original.origin
+    copyBuilder.visibility = original.visibility
+    copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
+    copyBuilder.isOverride = original.isOverride
+    copyBuilder.isInstance = original.isInstance
+    copyBuilder.modality = original.modality
+    copyBuilder.bridges.addAll(original.bridges)
+    copyBuilder.isConstant = original.isConstant
+    copyBuilder.name = original.name
+    copyBuilder.type = original.type
+    copyBuilder.getter = original.getter
+    copyBuilder.setter = original.setter
+    return copyBuilder.apply(init).build()
 }

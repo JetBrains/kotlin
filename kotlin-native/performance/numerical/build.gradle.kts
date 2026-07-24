@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.benchmarkingTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
@@ -16,7 +16,7 @@ kotlin {
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.compilations.getByName("main") {
             cinterops {
-                val cinterop by creating {
+                val cinterop = create("cinterop") {
                     headers("$projectDir/src/nativeInterop/cinterop/pi.h")
                     extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
                     extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
@@ -27,6 +27,6 @@ kotlin {
     }
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "Numerical"
 }

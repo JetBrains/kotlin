@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// WITH_NEW_INFERENCE
 // documents inconsistency between scripts and classes, see DeclarationScopeProviderImpl
 // DUMP_CFG: LEVELS
 
@@ -12,7 +11,7 @@ class Nested {
 }
 
 
-<!INNER_ON_TOP_LEVEL_SCRIPT_CLASS_WARNING!>inner<!> class Inner {
+<!INNER_ON_TOP_LEVEL_SCRIPT_CLASS_ERROR!>inner<!> class Inner {
     fun innerFun() = function()
     val innerProp = property
     fun innerThisFun() = this<!UNRESOLVED_LABEL!>@NestedInnerClass<!>.function()

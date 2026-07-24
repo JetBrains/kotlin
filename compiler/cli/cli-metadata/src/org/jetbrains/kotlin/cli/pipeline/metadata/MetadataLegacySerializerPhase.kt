@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
 import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
-import org.jetbrains.kotlin.cli.metadata.getClassFilePath
-import org.jetbrains.kotlin.cli.metadata.getPackageFilePath
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.ModuleNameUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
@@ -21,23 +18,22 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtensionBase
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializableStringTable
+import org.jetbrains.kotlin.serialization.deserialization.DOT_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.metadataVersion
 import java.io.ByteArrayOutputStream
@@ -50,13 +46,13 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
         destDir: File,
         metadataVersion: BinaryVersion,
     ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
+        (val session, val scopeSession, val firFiles = fir) = analysisResult.single()
         val contentPerPackage = collectPackagesContent(firFiles)
 
         val packageTable = mutableMapOf<FqName, PackageParts>()
         val counters = Counters()
 
-        for ((packageFqName, content) in contentPerPackage) {
+        for ([packageFqName, content] in contentPerPackage) {
             val (classes, membersPerFile) = content
             for (klass in classes) {
                 val destFile = File(destDir, getClassFilePath(klass.classId))
@@ -65,7 +61,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                     destFile, session, scopeSession, metadataVersion, counters
                 ).serialize()
             }
-            for ((file, members) in membersPerFile) {
+            for ([file, members] in membersPerFile) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
                 PackageSerializer(
                     packageFqName, classes = emptyList(), members = members,
@@ -77,7 +73,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                 }.addMetadataPart(destFile.nameWithoutExtension)
             }
         }
-        val kotlinModuleFile = File(destDir, JvmCodegenUtil.getMappingFileName(JvmCodegenUtil.prepareModuleName(session.moduleData.name)))
+        val kotlinModuleFile = File(destDir, ModuleNameUtil.getMappingFileName(ModuleNameUtil.prepareModuleName(session.moduleData.name)))
         val packageTableBytes = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (table in packageTable.values) {
                 table.addTo(this)
@@ -89,38 +85,12 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
         return OutputInfo(counters.totalSize, counters.totalFiles)
     }
 
-}
+    private fun getClassFilePath(classId: ClassId): String =
+        classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
 
-object MetadataBuiltinsSerializerPhase : MetadataLegacySerializerPhaseBase(name = "MetadataBuiltinsSerializerPhase") {
-    override fun serialize(
-        analysisResult: List<SingleModuleFrontendOutput>,
-        destDir: File,
-        metadataVersion: BinaryVersion,
-    ): OutputInfo {
-        val (session, scopeSession, firFiles) = analysisResult.single()
-        destDir.deleteRecursively()
-        if (!destDir.mkdirs()) {
-            error("Could not make directories: $destDir")
-        }
-
-        val contentPerPackage = collectPackagesContent(firFiles)
-        @OptIn(SymbolInternals::class)
-        contentPerPackage.getOrPut(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) { PackageContent() }.classes +=
-            FirCloneableSymbolProvider(session, session.moduleData, session.kotlinScopeProvider)
-                .getClassLikeSymbolByClassId(StandardClassIds.Cloneable)!!.fir as FirRegularClass
-
-        val counters = Counters()
-        for ((packageFqName, content) in contentPerPackage) {
-            val destFile = File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
-            val serializer = PackageSerializer(
-                packageFqName, content.classes, content.membersPerFile.values.flatten(),
-                destFile, session, scopeSession, BuiltInsBinaryVersion.INSTANCE, counters
-            )
-            serializer.serialize()
-        }
-
-        return OutputInfo(counters.totalSize, counters.totalFiles)
-    }
+    private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
+        packageFqName.asString().replace('.', '/') + "/" +
+                PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
 }
 
 @OptIn(DirectDeclarationsAccess::class)
@@ -132,7 +102,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
-        val (firResult, configuration, _) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)
@@ -232,7 +202,7 @@ abstract class MetadataLegacySerializerPhaseBase(
         }
 
         private fun serializeStringTable() {
-            val (strings, qualifiedNames) = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
+            val [strings, qualifiedNames] = (extension.stringTable as? SerializableStringTable)?.buildProto() ?: return
             proto.strings = strings
             proto.qualifiedNames = qualifiedNames
         }

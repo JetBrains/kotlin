@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// SKIP_TXT
 
 import kotlin.reflect.KClass
 

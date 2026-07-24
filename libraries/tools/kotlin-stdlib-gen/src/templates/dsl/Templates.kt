@@ -101,7 +101,7 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
     private fun Sequence<Pair<Family, TParam>>.applyFilter() =
             filterPredicate?.let { predicate ->
-                filter { (family, p) -> predicate(family, p) }
+                filter { [family, p] -> predicate(family, p) }
             } ?: this
 
 
@@ -127,7 +127,7 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
         return parametrize()
                 .applyFilter()
-                .map { (family, p) -> platformMemberBuilders(family, p) }
+                .map { [family, p] -> platformMemberBuilders(family, p) }
                 .flatten()
     }
 
@@ -184,7 +184,7 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
     }
 
     override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = sequence {
-        for ((family, primitives) in familyPrimitives) {
+        for ([family, primitives] in familyPrimitives) {
             if (primitives.isEmpty())
                 yield(family to null)
             else
@@ -213,7 +213,7 @@ class PairPrimitiveMemberDefinition : MemberTemplateDefinition<Pair<PrimitiveTyp
     }
 
     init {
-        builderWith { (p1, _) -> primitive = p1 }
+        builderWith { [p1, _] -> primitive = p1 }
     }
 }
 

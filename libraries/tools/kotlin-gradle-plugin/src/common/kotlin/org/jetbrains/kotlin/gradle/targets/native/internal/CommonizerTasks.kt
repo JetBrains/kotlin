@@ -42,9 +42,10 @@ import javax.inject.Inject
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
     KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-    return kotlinPropertiesProvider.enableCInteropCommonization
-        ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin
-        ?: false
+    return (kotlinPropertiesProvider.separateKmpCompilation.orNull ||
+            kotlinPropertiesProvider.enableCInteropCommonization
+            ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin
+            ?: false)
 }
 
 internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
@@ -243,7 +244,7 @@ internal abstract class CleanNativeDistributionCommonizerTask : DefaultTask() {
 
     @TaskAction
     fun action() {
-        NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
+        KotlinInterprocessDirectoryLock(commonizerDirectory.get()).withLock { lockFile ->
             val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
             fileSystemOperations.delete {
                 it.delete(files)

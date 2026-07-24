@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.utils.CallOnceFunction
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class LazyExplicitImportScope(
     private val languageVersionSettings: LanguageVersionSettings,
     private val packageOrClassDescriptor: DeclarationDescriptor,

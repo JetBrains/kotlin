@@ -3,23 +3,23 @@ import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 description = "Embeddable JAR of Kotlin/Native compiler"
 group = "org.jetbrains.kotlin"
-
-repositories {
-    mavenCentral()
-}
 
 val kotlinNativeEmbedded = configurations.dependencyScope("kotlinNativeEmbedded")
 val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbeddableClasspath") {
     extendsFrom(kotlinNativeEmbedded.get())
 }
 
-val kotlinNativeSources by configurations.creating {
+val kotlinNativeSources = configurations.create("kotlinNativeSources") {
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -29,7 +29,7 @@ val kotlinNativeSources by configurations.creating {
     }
 }
 
-val kotlinNativeJavadoc by configurations.creating {
+val kotlinNativeJavadoc = configurations.create("kotlinNativeJavadoc") {
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -54,8 +54,11 @@ dependencies {
     kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
     kotlinNativeJavadoc(project(":native:cli-native"))
 
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinStdlib())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
@@ -115,7 +118,9 @@ open class ProjectTestArgumentProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testData(isolated, "testData")
+
+    testTask {
         /**
          * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
          */
@@ -127,5 +132,6 @@ projectTests {
             nativeDistributionRoot.set(project.nativeDistribution.map { it.root })
             dependsOn(":kotlin-native:distRuntime")
         })
+        dependsOn(":kotlin-native:distInvalidateStaleCaches")
     }
 }

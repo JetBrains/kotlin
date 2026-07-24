@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.build
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
-class JoinToReadableStringTest : TestCase() {
+class JoinToReadableStringTest {
+    @Test
     fun test0() {
         assertEquals(
             "",
@@ -15,6 +17,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test1() {
         assertEquals(
             "a",
@@ -22,6 +25,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test2() {
         assertEquals(
             "a and b",
@@ -29,6 +33,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test3() {
         assertEquals(
             "a, b and c",
@@ -36,6 +41,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test4() {
         assertEquals(
             "a, b, c and d",
@@ -43,6 +49,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test5() {
         assertEquals(
             "a, b, c, d and e",
@@ -50,6 +57,7 @@ class JoinToReadableStringTest : TestCase() {
         )
     }
 
+    @Test
     fun test6() {
         assertEquals(
             "a, b, c, d, e and 1 more",

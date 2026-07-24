@@ -12,5 +12,5 @@ final class /C2 { // /C2|null[0]
     final object Companion // /C2.Companion|null[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun /invoke(kotlin/Any): kotlin/Any // /invoke|invoke#companion@C2(kotlin.Any){}[0]
-final fun /invoke(kotlin/String): kotlin/String // /invoke|invoke#companion@C(kotlin.String){}[0]
+final companion fun (/C)./invoke(kotlin/String): kotlin/String // /invoke|invoke#companion@C(kotlin.String){}[0]
+final companion fun (/C2)./invoke(kotlin/Any): kotlin/Any // /invoke|invoke#companion@C2(kotlin.Any){}[0]

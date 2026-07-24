@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
-
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -20,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -36,9 +32,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.*
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -103,9 +97,13 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     diagnosticsCollector = DiagnosticsCollectorImpl()
                 }
 
-                val (sourceFiles, sourceDependencies) =
-                    collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) {
-                        context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
+                val project = context.environment.project
+                val [sourceFiles, sourceDependencies] =
+                    collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) { source ->
+                        context.scriptConfigurationsProvider?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(source, initialConfiguration)
+                        }
                     }
 
                 val firstFailure = sourceDependencies.firstOrNull { it.sourceDependencies is ResultWithDiagnostics.Failure }
@@ -114,7 +112,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
+                val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
                 checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
 
@@ -126,11 +124,13 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
-                    @Suppress("DEPRECATION")
-                    val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
-                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)
-                        ?.valueOrNull()?.configuration
-                        ?: context.baseScriptCompilationConfiguration
+                    val updatedConfiguration = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider)
+                        .firstOrNull()?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(
+                                KtFileScriptSource(snippetKtFile), context.baseScriptCompilationConfiguration
+                            )?.valueOrNull()?.configuration
+                        } ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,
                         context.environment
@@ -164,6 +164,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     snippetKtFile.project,
                     compilationState.analyzerEngine.module,
                     compilerConfiguration,
+                    jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilationState.analyzerEngine.module),
                     diagnosticReporter = diagnosticsCollector,
                 )
 
@@ -171,7 +172,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     override fun getPreviousScripts() =
                         state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
-                val codegenFactory = JvmIrCodegenFactory(
+                val codegenFactory = K1JvmIrCodegenFactory(
                     compilerConfiguration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
@@ -183,7 +184,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
                 }
 
-                codegenFactory.generateModule(generationState, irBackendInput)
+                codegenFactory.normalFactory.generateModule(generationState, irBackendInput)
 
                 if (CheckDiagnosticCollector.checkHasErrors(compilerConfiguration)) {
                     return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
@@ -191,16 +192,18 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 state.history.push(lineId, scriptDescriptor)
 
-                val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
+                val configurationsProvider = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
                 makeCompiledScript(
                     generationState,
                     snippet,
-                    { it.getKtFile(definition, context.environment.project).declarations.firstIsInstance<KtScript>().fqName },
+                    { it.getKtFile(definition, project).declarations.firstIsInstance<KtScript>().fqName },
                     sourceDependencies,
                     { source ->
-                        configurationsProvider?.getScriptCompilationConfiguration(source, context.baseScriptCompilationConfiguration)
-                            ?.valueOrNull()?.configuration
-                            ?: context.baseScriptCompilationConfiguration
+                        configurationsProvider?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(source, context.baseScriptCompilationConfiguration)
+                                ?.valueOrNull()?.configuration
+                        } ?: context.baseScriptCompilationConfiguration
                     },
                     extractResultFields(irBackendInput.irModuleFragment)
                 ).onSuccess { compiledScript ->
@@ -364,14 +367,14 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     }
 
     private val manglerAndSymbolTable by lazy {
-        val mangler = JvmDescriptorMangler(
+        val mangler = K1JvmDescriptorMangler(
             MainFunctionDetector(analyzerEngine.trace.bindingContext, environment.configuration.languageVersionSettings)
         )
-        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
+        val symbolTable = SymbolTable(K1JvmIdSignatureDescriptor(mangler), IrFactoryImpl)
         mangler to symbolTable
     }
 
-    val mangler: JvmDescriptorMangler get() = manglerAndSymbolTable.first
+    val mangler: K1JvmDescriptorMangler get() = manglerAndSymbolTable.first
     val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }
 

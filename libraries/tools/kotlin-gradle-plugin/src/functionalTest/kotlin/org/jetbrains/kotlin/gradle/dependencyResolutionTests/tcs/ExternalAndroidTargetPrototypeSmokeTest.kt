@@ -12,6 +12,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.jetbrains.kotlin.gradle.android.androidTargetPrototype
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.anyDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
@@ -54,7 +55,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
         project.androidLibrary { compileSdk = 31 }
 
         val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         project.evaluate()
 
@@ -85,6 +86,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
         setAndroidSdkDirProperty(project)
@@ -106,7 +108,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
         setAndroidSdkDirProperty(project)
@@ -126,7 +128,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
+            repositories.kotlinBuildDeps()
             repositories.mavenCentralCacheRedirector()
         }
         setAndroidSdkDirProperty(project)

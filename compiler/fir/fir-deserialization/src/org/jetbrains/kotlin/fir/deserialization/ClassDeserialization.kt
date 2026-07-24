@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -248,12 +247,12 @@ fun deserializeClassToSymbol(
 
         valueClassRepresentation =
             classProto.loadValueClassRepresentation(
-                session.deserializationExtension?.isMaybeMultiFieldValueClass(containerSource) == true,
+                session.deserializationExtension?.isMaybeFullValueClass(containerSource) == true,
                 context.nameResolver,
                 context.typeTable,
                 context.typeDeserializer::rigidType,
             ) { name ->
-                val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.name == name }
+                val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.contextParameters.isEmpty() && it.name == name }
                 (member as FirProperty?)?.returnTypeRef?.coneType as ConeRigidType
             } ?: computeValueClassRepresentation(this, session)
 
@@ -310,7 +309,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
         returnTypeRef = buildResolvedTypeRef {
             val typeArguments = if (classId.shortClassName == ARRAY) {
                 arrayOf(
-                    ConeTypeParameterTypeImpl(
+                    ConeTypeParameterType(
                         ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isMarkedNullable = false
                     )
                 )

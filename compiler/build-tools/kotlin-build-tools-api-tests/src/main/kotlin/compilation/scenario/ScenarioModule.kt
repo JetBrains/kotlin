@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 
-interface ScenarioModule {
+interface ScenarioDependency
+
+interface ScenarioModule : ScenarioDependency {
     /**
      * Performs registered existing file modification.
      *
@@ -51,6 +53,11 @@ interface ScenarioModule {
     fun createPredefinedFile(fileName: String, version: String)
 
     fun compile(
+        forceOutput: LogLevel? = null,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit = {},
+    )
+
+    fun link(
         forceOutput: LogLevel? = null,
         assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )

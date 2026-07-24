@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
 import org.jetbrains.kotlin.utils.sure
 
+@K1Deprecation
 class NewResolutionOldInference(
     private val candidateResolver: CandidateResolver,
     private val towerResolver: TowerResolver,
@@ -252,7 +254,7 @@ class NewResolutionOldInference(
         basicCallContext: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<D> {
         val resolvedCalls = candidates.map {
-            val (diagnostics, resolvedCall) = it
+            val [diagnostics, resolvedCall] = it
             if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
                 // todo hacks
                 tracing.bindReference(resolvedCall.variableCall.trace, resolvedCall.variableCall)
@@ -586,9 +588,11 @@ class NewResolutionOldInference(
 
 }
 
+@K1Deprecation
 fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) =
     transformToReceiverWithSmartCastInfo(scope.ownerDescriptor, trace.bindingContext, dataFlowInfo, receiver, languageVersionSettings, dataFlowValueFactory)
 
+@K1Deprecation
 fun transformToReceiverWithSmartCastInfo(
     containingDescriptor: DeclarationDescriptor,
     bindingContext: BindingContext,

@@ -138,7 +138,7 @@ class CompilerHost {
 class ClassWriter(private val outputDir: Path) {
     fun writeCompiledSnippet(snippet: KJvmCompiledScript) {
         val moduleInMemory = snippet.getCompiledModule() as KJvmCompiledModuleInMemory
-        moduleInMemory.compilerOutputFiles.forEach { (name, bytes) ->
+        moduleInMemory.compilerOutputFiles.forEach { [name, bytes] ->
             if (name.endsWith(".class")) {
                 writeClass(bytes, outputDir.resolve(name))
             }

@@ -46,7 +46,7 @@ class MultiThreadedRandomSmokeTest {
         val workers = Array(10) { Worker.start() }
         val canStart = AtomicInt(0)
         val futures = workers.map {
-            it.execute(TransferMode.SAFE, { subject to canStart }) { (subject, canStart) ->
+            it.execute(TransferMode.SAFE, { subject to canStart }) { [subject, canStart] ->
                 var result1 = 0
                 var result2 = -1
                 while (canStart.value == 0) {}
@@ -62,7 +62,7 @@ class MultiThreadedRandomSmokeTest {
         var result1 = 0
         var result2 = -1
         futures.forEach {
-            val (r1, r2) = it.result
+            val [r1, r2] = it.result
             result1 = result1 or r1
             result2 = result2 and r2
         }

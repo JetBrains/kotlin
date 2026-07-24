@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.DeserializedContainerSourceWithJvmClassName
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubDeserializedBuiltInsContainerSource
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -15,6 +16,7 @@ import java.util.*
 
 internal fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
 
+@KaImplementationDetail
 fun FirCallableSymbol<*>.jvmClassNameIfDeserialized(): JvmClassName? {
     return when (val containerSource = fir.containerSource) {
         is JvmStubDeserializedBuiltInsContainerSource -> containerSource.facadeClassName

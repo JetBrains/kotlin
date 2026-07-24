@@ -59,7 +59,7 @@ class ImportedSchemasGenerator(
                     ExtensionProperty(id, returnType, owner = classSymbol)
                 }
 
-                nestedSchemas[classSymbol.name]?.entries?.forEach { (nested, columns) ->
+                nestedSchemas[classSymbol.name]?.entries?.forEach { [nested, columns] ->
                     columns.mapTo(this) { column ->
                         val id = CallableId(classSymbol.packageFqName(), Name.identifier(column.name))
                         val returnType = generateReturnType(column, classSymbol, Name.identifier(column.name))

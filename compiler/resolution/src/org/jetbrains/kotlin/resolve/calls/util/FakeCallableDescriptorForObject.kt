@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
+@K1Deprecation
 open class FakeCallableDescriptorForObject(
     val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {

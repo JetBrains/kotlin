@@ -28,8 +28,6 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.reflect.KClass
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
@@ -54,13 +52,14 @@ internal class DescriptorKFunction private constructor(
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: FunctionDescriptor,
+        boundReceiver: Any? = CallableReference.NO_RECEIVER,
         overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
     ) : this(
         container,
         descriptor.name.asString(),
         RuntimeTypeMapper.mapSignature(descriptor).asString(),
         descriptor,
-        CallableReference.NO_RECEIVER,
+        boundReceiver,
         overriddenStorage
     )
 
@@ -107,7 +106,7 @@ internal class DescriptorKFunction private constructor(
         val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
-                getFunctionWithDefaultParametersForValueClassOverride(this)?.let { defaultImplsFunction ->
+                getFunctionWithDefaultParametersForValueClassOverride()?.let { defaultImplsFunction ->
                     val defaultImplsFunctionName = defaultImplsFunction.signature.substringBefore('(')
                     val defaultImplsFunctionDesc = defaultImplsFunction.signature.substring(defaultImplsFunctionName.length)
                     val patchingResult =
@@ -174,21 +173,11 @@ internal class DescriptorKFunction private constructor(
         }
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKFunction =
-        DescriptorKFunction(container, descriptor, overriddenStorage)
+        DescriptorKFunction(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
-        if (
-            function.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
-            (function.container as? KClass<*>)?.isValue == true &&
-            Modifier.isStatic(caller.member!!.modifiers)
-        ) {
-            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
-            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
-            return function.overridden
-                .firstOrNull { function -> function.valueParameters.any { (it as? ReflectKParameter)?.declaresDefaultValue == true } }
-        }
-        return null
-    }
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
+        if (this.rawBoundReceiver === boundReceiver) this
+        else DescriptorKFunction(container, descriptor, boundReceiver, overriddenStorage)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,

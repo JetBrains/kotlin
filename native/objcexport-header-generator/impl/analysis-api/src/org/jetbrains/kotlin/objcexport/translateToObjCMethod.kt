@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -84,6 +85,11 @@ internal fun ObjCExportContext.buildObjCMethod(
         } else {
             attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
         }
+
+        if (this.exportSession.configuration.explicitMethodFamilyName && !symbol.isConstructor && selector.isASpecialName()) {
+            attributes += "objc_method_family(none)"
+        }
+
         return attributes
     }
 
@@ -134,7 +140,7 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         append(getMangledName(symbol, forSwift = true))
         append("(")
 
-        parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
+        parameters@ for ([bridge, parameter: KtObjCParameterData?] in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
                     parameter?.isReceiver == true -> {
@@ -244,9 +250,9 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         return anyMethodSelector
     }
 
-    sb.append(getMangledName(symbol, forSwift = false))
+    val methodName = getMangledName(symbol, forSwift = false)
 
-    parameters.forEachIndexed { index, (bridge, parameter) ->
+    parameters.forEachIndexed { index, [bridge, parameter] ->
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
@@ -268,21 +274,29 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         }
 
         if (index == 0) {
-            sb.append(
+            val firstParam = (
                 when {
                     bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
                     bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
                     method.isConstructor -> "With"
                     else -> ""
                 }
-            )
-            sb.append(name.replaceFirstChar(Char::uppercaseChar))
+                ) + name.replaceFirstChar(Char::uppercaseChar)
+
+            // First parameter, when combined with the method name may require mangling. E.g.: fun N(ULL: Int)
+            sb.append((methodName + firstParam).mangleIfStdMacro())
         } else {
-            sb.append(name)
+            sb.append(name.mangleIfStdMacro())
         }
 
         if (!isPropertyGetter) sb.append(':')
     }
+
+    // No parameters to add to the method name. Mangle and append the method name.
+    if (parameters.isEmpty()) {
+        sb.append(methodName.mangleIfStdMacro())
+    }
+
     return sb.toString()
 }
 
@@ -290,15 +304,22 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 fun ObjCExportContext.getMangledName(symbol: KaFunctionSymbol, forSwift: Boolean): String {
+    val explicitMethodFamilyName = this.exportSession.configuration.explicitMethodFamilyName
+
     return if (symbol.isConstructor) {
         if (analysisSession.isArrayConstructor(symbol) && !forSwift) "array" else "init"
     } else {
-        getObjCFunctionName(symbol).name(forSwift).handleSpecialNames("do")
+        val name = getObjCFunctionName(symbol).name(forSwift)
+        if (!explicitMethodFamilyName || name == "init" || name.startsWith("initWith")) {
+            name.handleSpecialNames(prefix = "do")
+        } else {
+            name
+        }
     }
 }
 
 internal fun String.startsWithWords(words: String) = this.startsWith(words) &&
-        (this.length == words.length || !this[words.length].isLowerCase())
+    (this.length == words.length || !this[words.length].isLowerCase())
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReturnType]

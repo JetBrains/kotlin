@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.native.interop.indexer.MacroNamesCollectingMode
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
 const val NODEFAULTLIBS_DEPRECATED = "nodefaultlibs"
 const val NODEFAULTLIBS = "no-default-libs"
-const val NOENDORSEDLIBS = "no-endorsed-libs"
 const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
 const val PROJECT_DIR = "Xproject-dir"
@@ -60,8 +59,6 @@ open class CommonInteropArguments(val argParser: ArgParser) {
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
             description = "don't link the libraries from dist/klib automatically",
             deprecatedWarning = "Old form of flag. Please, use $NODEFAULTLIBS.").default(false)
-    val noendorsedlibs by argParser.option(ArgType.Boolean, NOENDORSEDLIBS,
-            description = "don't link the endorsed libraries from dist automatically").default(false)
     val purgeUserLibs by argParser.option(ArgType.Boolean, PURGE_USER_LIBS,
             description = "don't link unused libraries even explicitly specified").default(false)
     val nopack by argParser.option(ArgType.Boolean, fullName = NOPACK,
@@ -172,6 +169,9 @@ open class CInteropArguments(argParser: ArgParser =
             fullName = KLIB_ABI_COMPATIBILITY_LEVEL,
             description = "Generate a library compatible with the specified KLIB ABI version"
     ).default(KlibAbiCompatibilityLevel.LATEST_STABLE)
+
+    val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
+            description = "Generate only metadata, skip bridge validation and bitcode compilation. Declarations with non-compilable C bridges will not be deprecated or excluded in this mode, deferring errors to link-time.").default(false)
 }
 
 internal fun warn(msg: String) {

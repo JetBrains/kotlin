@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -14,10 +15,11 @@ abstract class AbstractCommonizerTest<T, R> {
 
     class ObjectsNotEqual(message: String) : Throwable(message)
 
-    @Test(expected = IllegalCommonizerStateException::class)
+    @Test
     fun failOnNoVariantsSubmitted() {
-        createCommonizer().result
-        fail()
+        assertThrows<IllegalCommonizerStateException> {
+            createCommonizer().result
+        }
     }
 
     protected abstract fun createCommonizer(): Commonizer<T, R>
@@ -37,9 +39,16 @@ abstract class AbstractCommonizerTest<T, R> {
         if (!areEqual(expected, actual)) throw ObjectsNotEqual("Expected: $expected\nActual: $actual")
     }
 
-    protected fun doTestFailure(
+    protected inline fun <reified E : Throwable> doTestFailure(
         vararg variants: T,
         shouldFailOnFirstVariant: Boolean = false // by default should fail on the last variant
+    ) {
+        assertThrows<E> { doTestFailureImpl(variants, shouldFailOnFirstVariant) }
+    }
+
+    protected fun doTestFailureImpl(
+        variants: Array<out T>,
+        shouldFailOnFirstVariant: Boolean // by default should fail on the last variant
     ) {
         check(variants.isNotEmpty())
 

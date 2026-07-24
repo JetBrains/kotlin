@@ -23,9 +23,10 @@ abstract class SirVariable : SirBridged(), SirDeclaration, SirDeclarationParent,
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
     abstract override val bridges: List<SirBridge>
+    abstract val isConstant: Boolean
     abstract val name: String
     abstract val type: SirType
-    abstract val getter: SirGetter
+    abstract val getter: SirGetter?
     abstract val setter: SirSetter?
     override fun toString(): String {
         return this.debugString

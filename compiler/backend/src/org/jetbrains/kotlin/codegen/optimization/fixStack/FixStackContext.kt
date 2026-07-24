@@ -42,7 +42,7 @@ internal class FixStackContext(val methodNode: MethodNode) {
 
     init {
         isThereAnyTryCatch = saveStackMarkerForRestoreMarker.isNotEmpty()
-        for ((restore, save) in saveStackMarkerForRestoreMarker) {
+        for ([restore, save] in saveStackMarkerForRestoreMarker) {
             restoreStackMarkersForSaveMarker.getOrPut(save) { SmartList() }.add(restore)
         }
 

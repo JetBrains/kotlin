@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
-import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols.Impl
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
@@ -38,6 +37,11 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.backend.konan.checkers.NativeKlibCheckers
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.native.Fir2IrOutput
 import org.jetbrains.kotlin.native.NativeFir2IrExtensions
 import org.jetbrains.kotlin.native.runPreSerializationLowerings
@@ -111,7 +115,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
         }
         val symbols = Impl(actualizedResult.irBuiltIns)
         if (diagnosticsReporter.hasErrors) {
-            throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
+            return null
         }
         val fir2IrResult = Fir2IrOutput(frontendOutput, symbols, actualizedResult, usedLibraries)
         try {
@@ -144,10 +148,26 @@ object NativePreSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact,
         val phaserState = PhaserState()
         val engine = PhaseEngine(phaseConfig, phaserState, phaseContext)
         val loweredResult = engine.runPreSerializationLowerings(fir2IrOutput, configuration)
+
+        runCheckers(configuration, loweredResult)
+
         return NativeFir2IrArtifact(
             fir2IrOutput = loweredResult,
             configuration = configuration,
             phaseContext = phaseContext,
         )
+    }
+
+    private fun runCheckers(
+        configuration: CompilerConfiguration,
+        loweredResult: Fir2IrOutput,
+    ) {
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(configuration.diagnosticsCollector, configuration.languageVersionSettings)
+        val checker = NativeKlibCheckers.makeChecker(
+            irDiagnosticReporter,
+            configuration
+        )
+        loweredResult.fir2irActualizedResult.irModuleFragment.acceptVoid(checker)
     }
 }

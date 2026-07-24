@@ -38,7 +38,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * It corresponds 1 to 1 with [IrFunction.parameters], and therefore should have the same size.
      * `null` value usually means that the default value of the corresponding parameter will be used.
      */
-    val arguments: ValueArgumentsList = ValueArgumentsList()
+    open val arguments: ValueArgumentsList = ValueArgumentsList()
 
     internal fun initializeTargetShapeExplicitly(parameterCount: Int) {
         repeat((parameterCount - arguments.size).coerceAtLeast(0)) {

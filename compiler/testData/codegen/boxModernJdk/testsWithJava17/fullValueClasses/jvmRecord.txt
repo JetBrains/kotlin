@@ -1,0 +1,38 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'jvmRecord.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'jvmRecord.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method x(): int
+    public final method y(): int
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.Metadata
+public final class JvmRecordKt {
+    // source: 'jvmRecord.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

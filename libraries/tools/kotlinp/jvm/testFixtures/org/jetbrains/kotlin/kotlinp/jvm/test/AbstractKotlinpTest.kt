@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -37,6 +39,10 @@ abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
+        }
+
+        configureIrHandlersStep {
+            commonIrHandlersForCodegenTest()
         }
 
         configureJvmArtifactsHandlersStep {

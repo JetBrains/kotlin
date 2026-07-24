@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.Companion.processGene
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -43,9 +42,9 @@ private class State<T>(val path: MutableList<String>) {
 }
 
 internal class IrTypeAnnotationCollector(private val context: JvmBackendContext) {
-    private val state: State<IrConstructorCall> = State(arrayListOf())
+    private val state: State<IrAnnotation> = State(arrayListOf())
 
-    fun collectTypeAnnotations(kotlinType: IrType, mode: TypeMappingMode): List<TypePathInfo<IrConstructorCall>> {
+    fun collectTypeAnnotations(kotlinType: IrType, mode: TypeMappingMode): List<TypePathInfo<IrAnnotation>> {
         kotlinType.gatherTypeAnnotations(mode)
         return state.results
     }
@@ -80,9 +79,9 @@ internal class IrTypeAnnotationCollector(private val context: JvmBackendContext)
         )
     }
 
-    private fun IrType.extractAnnotations(): List<IrConstructorCall> {
+    private fun IrType.extractAnnotations(): List<IrAnnotation> {
         return annotations.filter {
-            val annotationClass = it.symbol.owner.parentAsClass
+            val annotationClass = it.classSymbol.owner
 
             // We only generate annotations which have the TYPE_USE Java target.
             // Those are type annotations which were compiled with JVM target bytecode version 1.8 or greater

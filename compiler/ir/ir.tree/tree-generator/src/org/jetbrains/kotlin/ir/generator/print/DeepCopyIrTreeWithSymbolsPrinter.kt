@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.MapField
 import org.jetbrains.kotlin.ir.generator.model.symbol.symbolRemapperMethodName
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -32,7 +33,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
         get() = listOf(irDeepCopyBaseType)
 
-    override val optIns: List<ClassRef<*>> = listOf(irImplementationDetailType)
+    override val optIns: List<PrintableAnnotation> = listOf(irImplementationDetailType, deprecatedCompilerApi)
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.OpenClass
@@ -132,6 +133,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         copyField(element, field)
                         println(",")
                     }
+                    if (element.isSubclassOf(IrTree.file)) {
+                        println("module = transformedModule ?: ${element.visitorParameterName}.module,")
+                    }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
                 printApply(element, fieldsInApply)
@@ -140,22 +144,28 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     }
 
     private fun ImportCollectingPrinter.copyField(element: Element, field: Field) {
-        if (field is ListField) {
-            print(element.visitorParameterName, ".", field.name, field.call(), "memoryOptimizedMap")
-            print(" { ")
-            copyValue(field, "it")
-            print(" }")
-        } else {
-            copyValue(field, element.visitorParameterName, ".", field.name)
+        when (field) {
+            is ListField -> {
+                print(element.visitorParameterName, ".", field.name, field.call(), "memoryOptimizedMap")
+                print(" { ")
+                copyValue(field, field.baseType,"it")
+                print(" }")
+            }
+            is MapField -> {
+                print(element.visitorParameterName, ".", field.name, field.call(), "map")
+                print(" { ")
+                copyValue(field, field.keyType,"it.key")
+                print(" to ")
+                copyValue(field, field.valueType,"it.value")
+                print(" }.toMap()")
+            }
+            else -> {
+                copyValue(field, field.typeRef, element.visitorParameterName, ".", field.name)
+            }
         }
     }
 
-    private fun ImportCollectingPrinter.copyValue(field: Field, vararg valueArgs: Any?) {
-        val typeRef = if (field is ListField) {
-            field.baseType
-        } else {
-            field.typeRef
-        }
+    private fun ImportCollectingPrinter.copyValue(field: Field, typeRef: TypeRef, vararg valueArgs: Any?) {
         val symbolFieldClass = field.symbolClass
         val safeCall = if (typeRef.nullable) "?." else "."
         when {
@@ -212,16 +222,13 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                     field is ListField && field.mutability == ListField.Mutability.MutableList -> {
                         addImport(ArbitraryImportable("org.jetbrains.kotlin.utils.addToStdlib", "assignFrom"))
                         print("${field.name}.assignFrom(${element.visitorParameterName}.${field.name}) { it")
-                        copyValue(field)
+                        copyValue(field, field.baseType)
                         println(" }")
                     }
                 }
             }
             if (element.isSubclassOf(IrTree.function)) {
                 println("parameters = ${element.visitorParameterName}.parameters.memoryOptimizedMap { it.transform() }")
-            }
-            if (element.isSubclassOf(IrTree.file)) {
-                println("module = transformedModule ?: ${element.visitorParameterName}.module")
             }
             if (element.isSubclassOf(IrTree.moduleFragment)) {
                 println("this@DeepCopyIrTreeWithSymbols.transformedModule = null")

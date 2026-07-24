@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
@@ -82,7 +83,8 @@ internal abstract class SymbolLightParameterCommon(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
 
-    protected open fun KaSession.computeType(parameterSymbol: KaParameterSymbol): PsiType {
+    context(session: KaSession)
+    protected open fun computeType(parameterSymbol: KaParameterSymbol): PsiType {
         val ktType = parameterSymbol.returnType
 
         return ktType.asPsiType(

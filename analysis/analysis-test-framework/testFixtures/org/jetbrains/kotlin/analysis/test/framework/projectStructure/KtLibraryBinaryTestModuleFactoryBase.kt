@@ -30,7 +30,10 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        val (binaryRoots, _) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
+        (val binaryRoots = roots, val _ = sourceRoots) = testServices.compiledLibraryProvider.compileToLibrary(
+            testModule,
+            dependencyBinaryRoots
+        )
         val decompiledFiles = binaryRoots.flatMap { decompileToPsiFiles(it, testServices, project) }
 
         val libraryModule = KaLibraryModuleImpl(

@@ -53,6 +53,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE by error<PsiElement>()
 
         val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
@@ -116,6 +117,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
         }
+        val JAVA_CLASS_PROPERTY_REFERENCE by deprecationError<PsiElement>(
+            featureForError = ForbidJavaClassPropertyReferences,
+            positioningStrategy = PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED,
+        )
 
         val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
@@ -185,6 +190,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val ENUM_JVM_RECORD by error<PsiElement>(PositioningStrategy.ENUM_MODIFIER)
         val JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS by error<PsiElement>()
         val NON_DATA_CLASS_JVM_RECORD by error<PsiElement>()
+        val NON_DATA_VALUE_CLASS_JVM_RECORD by error<PsiElement>()
         val JVM_RECORD_NOT_VAL_PARAMETER by error<PsiElement>()
         val JVM_RECORD_NOT_LAST_VARARG_PARAMETER by error<PsiElement>()
         val INNER_JVM_RECORD by error<PsiElement>(PositioningStrategy.INNER_MODIFIER)
@@ -280,6 +286,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR by error<PsiElement>()
         val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()

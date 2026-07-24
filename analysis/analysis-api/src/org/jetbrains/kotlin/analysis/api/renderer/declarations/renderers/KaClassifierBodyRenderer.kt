@@ -88,7 +88,7 @@ public abstract class KaClassifierBodyWithMembersRenderer : KaClassifierBodyRend
 
         printer.withIndentInBraces {
             var previous: KaDeclarationSymbol? = null
-            for ((member, rendered) in membersToPrint) {
+            for ([member, rendered] in membersToPrint) {
                 if (previous != null) {
                     printer.append(declarationRenderer.codeStyle.getSeparatorBetweenMembers(analysisSession, previous, member))
                 }

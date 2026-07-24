@@ -1,0 +1,347 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.asJava
+
+import com.intellij.psi.*
+import com.intellij.psi.util.MethodSignature
+import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+
+fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
+
+
+class PsiClassRenderer private constructor(
+    private val renderInner: Boolean,
+    private val membersFilter: MembersFilter
+) {
+
+    interface MembersFilter {
+        fun includeEnumConstant(psiEnumConstant: PsiEnumConstant): Boolean = true
+        fun includeField(psiField: PsiField): Boolean = true
+        fun includeMethod(psiMethod: PsiMethod): Boolean = true
+        fun includeClass(psiClass: PsiClass): Boolean = true
+
+        companion object {
+            val DEFAULT = object : MembersFilter {}
+        }
+    }
+
+    companion object {
+        fun renderClass(
+            psiClass: PsiClass,
+            renderInner: Boolean = false,
+            membersFilter: MembersFilter = MembersFilter.DEFAULT
+        ): String =
+            PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+
+        fun renderType(psiType: PsiType): String = with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT)) {
+            psiType.renderType()
+        }
+    }
+
+    private fun IndentedTextBuilder.renderClass(psiClass: PsiClass) {
+        val classWord = when {
+            psiClass.isRecord -> "record"
+            psiClass.isAnnotationType -> "@interface"
+            psiClass.isInterface -> "interface"
+            psiClass.isEnum -> "enum"
+            else -> "class"
+        }
+
+        append(psiClass.renderModifiers())
+        append("$classWord ")
+        append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
+        append(psiClass.typeParameters.renderTypeParams())
+
+        if (psiClass.isRecord) {
+            append(psiClass.renderRecordHeader())
+        }
+
+        append(psiClass.extendsList.renderRefList("extends"))
+        append(psiClass.implementsList.renderRefList("implements"))
+        appendLine(" {")
+        withIndent {
+            if (psiClass.isEnum) {
+                psiClass.fields
+                    .filterIsInstance<PsiEnumConstant>()
+                    .filter { membersFilter.includeEnumConstant(it) }
+                    .map { it.renderEnumConstant() }
+                    .let { appendCollection(it, separator = ",\n") }
+
+                append(";\n\n")
+            }
+
+            renderMembers(psiClass)
+        }
+
+        append("}")
+    }
+
+    private fun renderClass(psiClass: PsiClass): String = buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
+        renderClass(psiClass)
+    }
+
+    private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
+
+    private fun PsiType.renderType(sb: StringBuffer) {
+        fun renderAnnotations(leadingAnnotations: Boolean) {
+            annotations.ifNotEmpty {
+                joinTo(
+                    buffer = sb,
+                    separator = " ",
+                    postfix = " ",
+                    prefix = if (leadingAnnotations) "" else " ",
+                ) { it.renderAnnotation() }
+            }
+        }
+
+        when (this) {
+            is PsiEllipsisType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("...")
+
+                return
+            }
+
+            is PsiArrayType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("[]")
+
+                return
+            }
+        }
+
+        renderAnnotations(leadingAnnotations = true)
+
+        when (this) {
+            is PsiClassType -> {
+                sb.append(PsiNameHelper.getQualifiedClassName(canonicalText, false))
+                if (parameterCount > 0) {
+                    sb.append("<")
+                    parameters.forEachIndexed { index, type ->
+                        type.renderType(sb)
+                        if (index < parameterCount - 1) sb.append(", ")
+                    }
+                    sb.append(">")
+                }
+            }
+            is PsiWildcardType -> {
+                if (!isBounded) {
+                    sb.append("?")
+                } else {
+                    if (isSuper) {
+                        sb.append(PsiWildcardType.SUPER_PREFIX)
+                    } else {
+                        sb.append(PsiWildcardType.EXTENDS_PREFIX)
+                    }
+
+                    bound?.renderType(sb)
+                }
+            }
+            is PsiPrimitiveType -> {
+                sb.append(name)
+            }
+            else -> {
+                sb.append(getCanonicalText(/* annotated = */ true))
+            }
+        }
+    }
+
+
+    private fun PsiReferenceList?.renderRefList(keyword: String, sortReferences: Boolean = true): String {
+        if (this == null) return ""
+
+        val references = referencedTypes
+        if (references.isEmpty()) return ""
+
+        val referencesTypes = references.map { it.renderType() }.toTypedArray()
+
+        if (sortReferences) referencesTypes.sort()
+
+        return " " + keyword + " " + referencesTypes.joinToString()
+    }
+
+    private fun PsiVariable.renderVar(): String {
+        var result = this.renderModifiers() + type.renderType() + " " + name
+        if (this is PsiParameter && this.isVarArgs) {
+            result += " /* vararg */"
+        }
+
+        if (hasInitializer()) {
+            result += " = ${initializer?.text} /* initializer type: ${initializer?.type?.renderType()} */"
+        }
+
+        computeConstantValue()?.let { result += " /* constant value $it */" }
+
+        return result
+    }
+
+    private fun PsiClass.renderRecordHeader(): String {
+        return recordHeader?.recordComponents.orEmpty().joinToString(prefix = "(", postfix = ")") { it.renderRecordComponent() }
+    }
+
+    private fun PsiRecordComponent.renderRecordComponent(): String =
+        renderModifiers() + type.renderType() + " " + name
+
+    private fun Array<PsiTypeParameter>.renderTypeParams() =
+        if (isEmpty()) ""
+        else "<" + joinToString {
+            val extendsListTypes = it.extendsListTypes
+            val bounds = if (extendsListTypes.isNotEmpty()) {
+                " extends " + extendsListTypes.joinToString(" & ", transform = { it.renderType() })
+            } else {
+                ""
+            }
+
+            it.renderModifiers() + it.name!! + bounds
+        } + "> "
+
+    private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
+        is PsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
+        is PsiAnnotation -> renderAnnotation()
+        is PsiClassObjectAccessExpression -> operand.type.canonicalText + ".class"
+        else -> text
+    }
+
+    private fun PsiMethod.renderMethod() =
+        renderModifiers() +
+                (if (isVarArgs) "/* vararg */ " else "") +
+                typeParameters.renderTypeParams() +
+                (returnType?.renderType() ?: "") + " " +
+                name +
+                "(" + parameterList.parameters.joinToString { it.renderModifiers() + it.type.renderType() } + ")" +
+                (this as? PsiAnnotationMethod)?.defaultValue?.let { " default " + it.renderAnnotationMemberValue() }.orEmpty() +
+                throwsList.referencedTypes.let { thrownTypes ->
+                    if (thrownTypes.isEmpty()) ""
+                    else " throws " + thrownTypes.joinToString { it.renderType() }
+                } +
+                ";" +
+                "// ${getSignature(PsiSubstitutor.EMPTY).renderSignature()}"
+
+    private fun MethodSignature.renderSignature(): String {
+        val typeParams = typeParameters.renderTypeParams()
+        val paramTypes = parameterTypes.joinToString(prefix = "(", postfix = ")") { it.renderType() }
+        val name = if (isConstructor) ".ctor" else name
+        return "$typeParams $name$paramTypes"
+    }
+
+    private fun PsiEnumConstant.renderEnumConstant(): String {
+        val annotations = this@renderEnumConstant.annotations
+            .map { it.renderAnnotation() }
+            .filter { it.isNotBlank() }
+            .joinToString(separator = " ", postfix = " ")
+            .takeIf { it.isNotBlank() }
+            ?: ""
+
+        val initializingClass = initializingClass ?: return "$annotations$name"
+        return buildIndentedText {
+            append(annotations)
+            appendLine("$name {")
+            renderMembers(initializingClass)
+            append("}")
+        }
+    }
+
+    private fun IndentedTextBuilder.renderMembers(psiClass: PsiClass) {
+        var wasRendered = false
+        val fields = psiClass.fields.filterNot { it is PsiEnumConstant }.filter { membersFilter.includeField(it) }
+        appendSorted(fields, wasRendered) {
+            it.renderVar() + ";"
+        }
+
+        fields.ifNotEmpty { wasRendered = true }
+        val methods = psiClass.methods.filter { membersFilter.includeMethod(it) }
+        appendSorted(methods, wasRendered) {
+            it.renderMethod()
+        }
+
+        methods.ifNotEmpty { wasRendered = true }
+        val classes = psiClass.innerClasses.filter { membersFilter.includeClass(it) }
+        appendSorted(classes, wasRendered) {
+            val name = it.name
+            if (renderInner || name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
+                renderClass(it, renderInner)
+            else {
+                "class $name ..."
+            }
+        }
+
+        classes.ifNotEmpty { wasRendered = true }
+        if (wasRendered) {
+            appendLine()
+        }
+    }
+
+    private fun <T> IndentedTextBuilder.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
+        if (list.isEmpty()) return
+        val prefix = if (addPrefix) "\n\n" else ""
+        val sortedChunks = list.map(render).sorted()
+        appendCollection(sortedChunks, separator = "\n\n", prefix = prefix)
+    }
+
+    private fun PsiAnnotation.renderAnnotation(): String {
+
+        if (qualifiedName == "kotlin.Metadata") return ""
+
+        val renderedAttributes = parameterList.attributes.map {
+            val attributeValue = it.value?.renderAnnotationMemberValue() ?: "?"
+
+            val isAnnotationQualifiedName =
+                (qualifiedName?.startsWith("java.lang.annotation.") == true || qualifiedName?.startsWith("kotlin.annotation.") == true)
+
+            val name = if (it.name == null && isAnnotationQualifiedName) "value" else it.name
+
+
+            if (name != null) "$name = $attributeValue" else attributeValue
+        }
+
+        val renderedAttributesString = renderedAttributes.joinToString()
+        if (qualifiedName == null && renderedAttributesString.isEmpty()) {
+            return ""
+        }
+        return "@$qualifiedName(${renderedAttributes.joinToString()})"
+    }
+
+
+    private fun PsiModifierListOwner.renderModifiers(): String {
+        val annotationsBuffer = mutableListOf<String>()
+        var nullableIsRendered = false
+        var notNullIsRendered = false
+
+        for (annotation in annotations) {
+            if (annotation.qualifiedName == "org.jetbrains.annotations.Nullable") {
+                if (nullableIsRendered) continue
+                nullableIsRendered = true
+            }
+
+            if (annotation.qualifiedName == "org.jetbrains.annotations.NotNull") {
+                if (notNullIsRendered) continue
+                notNullIsRendered = true
+            }
+
+            val renderedAnnotation = annotation.renderAnnotation()
+            if (renderedAnnotation.isNotEmpty()) {
+                val whitespace = if (this is PsiParameter || this is PsiTypeParameter || this is PsiRecordComponent) " " else "\n"
+                annotationsBuffer.add(renderedAnnotation + whitespace)
+            }
+        }
+        annotationsBuffer.sort()
+
+        val resultBuffer = StringBuffer(annotationsBuffer.joinToString(separator = ""))
+        for (modifier in PsiModifier.MODIFIERS.filter(::hasModifierProperty)) {
+            if (modifier == PsiModifier.DEFAULT) {
+                resultBuffer.append(PsiModifier.ABSTRACT).append(" ")
+            } else if (modifier != PsiModifier.FINAL || !(this is PsiClass && this.isEnum)) {
+                resultBuffer.append(modifier).append(" ")
+            }
+        }
+        return resultBuffer.toString()
+    }
+}

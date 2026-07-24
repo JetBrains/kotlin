@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 /**
  * Enum describing the different kinds of [FirInaccessibleReceiverExpression].

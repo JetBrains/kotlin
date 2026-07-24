@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class DeserializedTypeParameterDescriptor(
     private val c: DeserializationContext,
     val proto: ProtoBuf.TypeParameter,

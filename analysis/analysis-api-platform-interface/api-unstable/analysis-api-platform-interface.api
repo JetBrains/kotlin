@@ -963,3 +963,7 @@ public final class org/jetbrains/kotlin/analysis/api/platform/utils/UtilsKt {
 	public static final fun forEachNonKotlinPsiElementFinder (Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaResolvableReferenceBridge {
+	public abstract fun resolveToSymbols (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Ljava/util/Collection;
+}
+

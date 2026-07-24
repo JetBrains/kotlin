@@ -1,7 +1,0 @@
-KtNameReferenceExpression(58,64): 'sample'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: true
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      package my.sample

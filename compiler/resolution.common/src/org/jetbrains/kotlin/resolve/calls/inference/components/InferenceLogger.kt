@@ -54,7 +54,7 @@ abstract class InferenceLogger {
         fun freezeConstraintsAfterFixation(): List<String> = formattedConstraintsAfterFixation
             ?: constraints
                 .map { it to formatConstraintForFixation(it) }
-                .filter { (constraint, formatted) ->
+                .filter { [constraint, formatted] ->
                     constraint !in formattedConstraintsBeforeFixation || formatted != formattedConstraintsBeforeFixation[constraint]
                 }
                 .map { it.second }
@@ -88,6 +88,12 @@ abstract class InferenceLogger {
     ): T
 
     abstract fun logFixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, system: ConstraintSystemMarker)
+
+    abstract class Snapshot {
+        abstract fun rollback()
+    }
+
+    abstract fun getSnapshot(): Snapshot
 
     /**
      * Exists to satisfy K1's dependency injection as it doesn't support `null` values.
@@ -135,6 +141,8 @@ abstract class InferenceLogger {
             constraint2: Constraint,
             block: () -> T,
         ): T = error("Should never be called")
+
+        override fun getSnapshot(): Snapshot = error("Should never be called")
     }
 }
 

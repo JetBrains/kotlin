@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
+import org.jetbrains.kotlin.buildtools.api.KotlinCompilationProcessFailedException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 
@@ -21,7 +22,14 @@ internal class CapturingDelegatingKotlinLogger(private val origin: KotlinLogger,
     val capturedLines: List<String> get() = _capturedLines
 
     override fun error(msg: String, throwable: Throwable?) {
-        origin.error(msg, throwable)
+        if (throwable is KotlinCompilationProcessFailedException) {
+            // Skipping Kotlin compiler/daemon internal errors stacktrace to not pollute the build log
+            // It is handled via tooling diagnostics
+            origin.error(msg)
+        } else {
+            origin.error(msg, throwable)
+        }
+
         withBuildReportModeAtLeast(BuildReportMode.SIMPLE) {
             _capturedLines += msg
         }

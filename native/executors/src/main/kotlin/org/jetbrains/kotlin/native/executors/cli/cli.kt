@@ -45,7 +45,7 @@ private fun Array<String>.parse(): Args {
     var timeout: String? = null
     var executable: String? = null
     var args: List<String>? = null
-    for ((index, arg) in withIndex()) {
+    for ([index, arg] in withIndex()) {
         when {
             arg == "--" -> {
                 executable = this[index + 1]

@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.source
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPureElement
 
+@K1Deprecation
 class KotlinSourceElement(override val psi: KtElement) : PsiSourceElement
 
+@K1Deprecation
 fun KtPureElement?.toSourceElement(): SourceElement = if (this == null) SourceElement.NO_SOURCE else KotlinSourceElement(psiOrParent)

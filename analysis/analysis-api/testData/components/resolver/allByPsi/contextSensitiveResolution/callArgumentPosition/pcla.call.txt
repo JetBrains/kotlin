@@ -289,12 +289,14 @@ KtCallExpression(295,303): 'yield(m)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -304,6 +306,8 @@ KtCallExpression(295,303): 'yield(m)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -314,6 +318,7 @@ KtCallExpression(295,303): 'yield(m)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -350,12 +355,14 @@ KtNameReferenceExpression(295,300): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -365,6 +372,8 @@ KtNameReferenceExpression(295,300): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -375,6 +384,7 @@ KtNameReferenceExpression(295,300): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -434,12 +444,14 @@ KtCallExpression(312,320): 'yield(X)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -449,6 +461,8 @@ KtCallExpression(312,320): 'yield(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -459,6 +473,7 @@ KtCallExpression(312,320): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -495,12 +510,14 @@ KtNameReferenceExpression(312,317): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -510,6 +527,8 @@ KtNameReferenceExpression(312,317): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -520,6 +539,7 @@ KtNameReferenceExpression(312,317): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -670,12 +690,14 @@ KtCallExpression(351,359): 'yield(X)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -685,6 +707,8 @@ KtCallExpression(351,359): 'yield(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -695,6 +719,7 @@ KtCallExpression(351,359): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -731,12 +756,14 @@ KtNameReferenceExpression(351,356): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -746,6 +773,8 @@ KtNameReferenceExpression(351,356): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -756,6 +785,7 @@ KtNameReferenceExpression(351,356): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -818,12 +848,14 @@ KtCallExpression(368,376): 'yield(m)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -833,6 +865,8 @@ KtCallExpression(368,376): 'yield(m)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -843,6 +877,7 @@ KtCallExpression(368,376): 'yield(m)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -879,12 +914,14 @@ KtNameReferenceExpression(368,373): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -894,6 +931,8 @@ KtNameReferenceExpression(368,373): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -904,6 +943,7 @@ KtNameReferenceExpression(368,373): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1061,12 +1101,14 @@ KtCallExpression(423,431): 'yield(X)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1076,6 +1118,8 @@ KtCallExpression(423,431): 'yield(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -1086,6 +1130,7 @@ KtCallExpression(423,431): 'yield(X)'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1122,12 +1167,14 @@ KtNameReferenceExpression(423,428): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1137,6 +1184,8 @@ KtNameReferenceExpression(423,428): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -1147,6 +1196,7 @@ KtNameReferenceExpression(423,428): 'yield'
                 type: MyEnum
             ]
             type: Controller<MyEnum>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<MyEnum>
       extensionReceiver = null
@@ -1301,12 +1351,14 @@ KtCallExpression(462,470): 'yield(X)'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1316,6 +1368,8 @@ KtCallExpression(462,470): 'yield(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -1325,6 +1379,7 @@ KtCallExpression(462,470): 'yield(X)'
                 type: ERROR_TYPE
             ]
             type: Controller<ERROR CLASS: Cannot infer argument for type parameter S>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<ERROR CLASS: Cannot infer argument for type parameter S>
       extensionReceiver = null
@@ -1361,12 +1416,14 @@ KtNameReferenceExpression(462,467): 'yield'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1376,6 +1433,8 @@ KtNameReferenceExpression(462,467): 'yield'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -1385,6 +1444,7 @@ KtNameReferenceExpression(462,467): 'yield'
                 type: ERROR_TYPE
             ]
             type: Controller<ERROR CLASS: Cannot infer argument for type parameter S>
+          typeParameters: []
           visibility: PUBLIC
         type = Controller<ERROR CLASS: Cannot infer argument for type parameter S>
       extensionReceiver = null

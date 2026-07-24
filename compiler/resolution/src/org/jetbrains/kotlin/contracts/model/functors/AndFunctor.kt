@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ConditionalEffect
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.structure.*
 
+@K1Deprecation
 class AndFunctor : AbstractBinaryFunctor() {
     override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when {
         constant.isTrue -> computation.effects

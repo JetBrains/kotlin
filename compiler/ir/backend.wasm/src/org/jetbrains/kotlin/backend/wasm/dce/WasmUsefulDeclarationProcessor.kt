@@ -25,11 +25,6 @@ internal class WasmUsefulDeclarationProcessor(
     dumpReachabilityInfoToFile: String?,
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
-    // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
-    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun = context.fileContexts.mapValues { (_, fileContext) ->
-        fileContext.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to fileContext.closureCallExports[k] }
-    }
-
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
@@ -95,6 +90,13 @@ internal class WasmUsefulDeclarationProcessor(
                 call.typeArguments[0]?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
                 true
             }
+            in context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
+                val classType = call.arguments[0]!!.type
+                classType.classOrFail.functions.singleOrNull {
+                    it.owner.name.asString() == "invoke"
+                }!!.owner.enqueue(from, "suspend invoke")
+                true
+            }
             context.wasmSymbols.boxIntrinsic -> {
                 val type = call.typeArguments[0]!!
                 if (type == context.irBuiltIns.booleanType) {
@@ -153,7 +155,7 @@ internal class WasmUsefulDeclarationProcessor(
             if (removeUnusedAssociatedObjects && !klass.isReachable()) continue
 
             for (annotation in klass.annotations) {
-                val annotationClass = annotation.symbol.owner.constructedClass
+                val annotationClass = annotation.classSymbol.owner
                 if (removeUnusedAssociatedObjects && !annotationClass.isReachable()) continue
 
                 annotation.associatedObject()?.objectGetInstanceFunction?.enqueue(klass, "associated object factory")
@@ -231,12 +233,6 @@ internal class WasmUsefulDeclarationProcessor(
 
         irFunction.forEachEffectiveValueParameters { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
-
-        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction.fileOrNull]?.get(irFunction)?.enqueue(
-            irFunction,
-            "kotlin closure to JS closure conversion",
-            false
-        )
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {

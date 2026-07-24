@@ -31,7 +31,7 @@ fun createQualifierReceiver(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
 ): QualifierReceiver? {
-    val classLikeSymbol = explicitReceiver.symbol
+    val classLikeSymbol = explicitReceiver.qualifierSymbol
     return when {
         classLikeSymbol != null -> {
             val classSymbol = classLikeSymbol.fir.fullyExpandedClass(useSiteSession)?.symbol ?: return null

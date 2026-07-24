@@ -227,6 +227,12 @@ interface KotlinBackingFieldStub : KotlinStubElement<KtBackingField> {
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinDestructuringDeclarationStub : KotlinStubElement<KtDestructuringDeclaration> {
+    val isVar: Boolean
+    val hasInitializer: Boolean
+}
+
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     val isVar: Boolean
     val hasDelegate: Boolean

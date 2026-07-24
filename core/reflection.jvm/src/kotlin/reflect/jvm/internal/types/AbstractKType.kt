@@ -42,6 +42,11 @@ internal abstract class AbstractKType(
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
 
+    abstract val lazyAnnotations: Lazy<List<Annotation>>
+
+    override val annotations: List<Annotation>
+        get() = lazyAnnotations.value
+
     override fun equals(other: Any?): Boolean =
         other is AbstractKType && AbstractStrictEqualityTypeChecker.strictEqualTypes(ReflectTypeSystemContext, this, other)
 

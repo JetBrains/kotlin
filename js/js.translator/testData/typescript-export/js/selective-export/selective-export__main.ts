@@ -7,7 +7,9 @@ function box(): string {
         new foo.ExportedClass().value,
         foo.fileLevelExportedVal,
         foo.fileLevelExportedFun(),
-        new foo.FileLevelExportedClass().value
+        new foo.FileLevelExportedClass().value,
+        new foo.FileLevelExportedValueClass(10).value,
+        foo.createFileLevelExportedValueClass(10).value
     ];
 
     if (tens.every((value) => value === 10))

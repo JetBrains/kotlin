@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-private fun invokeKlibTool(
+fun invokeKlibTool(
     kotlinNativeClassLoader: ClassLoader,
-    klibFile: File,
-    command: String,
-    printSignatures: Boolean,
-    signatureVersion: KotlinIrSignatureVersion?,
-    absolutePathPrefixes: List<String> = emptyList(),
-): String {
+    args: List<String>,
+): Pair<Int, String> {
     val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
         .declaredMethods
         .single { it.name == "exec" }
@@ -25,99 +20,109 @@ private fun invokeKlibTool(
     val stdout = StringBuilder()
     val stderr = StringBuilder()
 
-    val args: Array<String> = mutableListOf(
-        command, klibFile.canonicalPath,
-        "-test-mode", "true",
-    ).apply {
-        runIf(printSignatures) {
-            this += "-print-signatures"
-            this += "true"
+    val exitCode = entryPoint.invoke(null, stdout, stderr, args.toTypedArray()) as Int
+    val output = stdout.toString() + stderr.toString()
+
+    return exitCode to output
+}
+
+private fun invokeKlibTool(
+    kotlinNativeClassLoader: ClassLoader,
+    klibFile: File,
+    command: String,
+    metadataTestMode: String? = null,
+    signatureVersion: KotlinIrSignatureVersion? = null,
+    onlyTopLevelSignatures: Boolean = false,
+    absolutePathPrefixes: List<String> = emptyList(),
+): String {
+    val args = buildList<String> {
+        this += command
+        this += klibFile.canonicalPath
+        metadataTestMode?.let {
+            this += "-dump-metadata-test-mode"
+            this += metadataTestMode
         }
         signatureVersion?.let {
             this += "-signature-version"
             this += signatureVersion.number.toString()
         }
+        if (onlyTopLevelSignatures) {
+            this += "-only-top-level-signatures"
+            this += "true"
+        }
         absolutePathPrefixes.forEach {
-            this += "-absolute-path-prefix"
+            this += "-relative-path-base"
             this += it
         }
-    }.toTypedArray()
+    }
 
-    val exitCode = entryPoint.invoke(null, stdout, stderr, args) as Int
+    val [exitCode, output] = invokeKlibTool(kotlinNativeClassLoader, args)
+
     if (exitCode != 0) {
         error(
             buildString {
                 appendLine("Execution of KLIB tool finished with exit code $exitCode")
                 args.joinTo(this, prefix = "Arguments: [", postfix = "]\n")
                 appendLine()
-                appendLine("========== BEGIN: STDOUT ==========")
-                append(stdout)
-                if (stdout.isNotEmpty() && stdout.last() != '\n') appendLine()
-                appendLine("========== END: STDOUT ==========")
-                appendLine()
-                appendLine("========== BEGIN: STDERR ==========")
-                append(stderr)
-                if (stderr.isNotEmpty() && stderr.last() != '\n') appendLine()
-                appendLine("========== END: STDERR ==========")
+                appendLine("========== BEGIN: OUTPUT ==========")
+                append(output)
+                if (output.isNotEmpty() && output.last() != '\n') appendLine()
+                appendLine("========== END: OUTPUT ==========")
             }
         )
-    } else {
-        return stdout.toString()
     }
+
+    return output
 }
 
 fun TestCompilationArtifact.KLIB.dumpMetadata(
     kotlinNativeClassLoader: ClassLoader,
-    printSignatures: Boolean,
-    signatureVersion: KotlinIrSignatureVersion?
-): String = klibFile.dumpMetadata(kotlinNativeClassLoader, printSignatures, signatureVersion)
+    metadataTestMode: String? = "compact-with-stable-order",
+): String = klibFile.dumpMetadata(kotlinNativeClassLoader, metadataTestMode)
 
 fun File.dumpMetadata(
     kotlinNativeClassLoader: ClassLoader,
-    printSignatures: Boolean,
-    signatureVersion: KotlinIrSignatureVersion?
+    metadataTestMode: String? = "compact-with-stable-order",
 ): String = invokeKlibTool(
     kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-metadata",
-    printSignatures,
-    signatureVersion
+    metadataTestMode = metadataTestMode,
 )
 
 fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-): String = klibFile.dumpIr(kotlinNativeClassLoader)
+    absolutePathPrefixes: List<String> = emptyList(),
+): String = klibFile.dumpIr(kotlinNativeClassLoader, absolutePathPrefixes)
 
 fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
     absolutePathPrefixes: List<String> = emptyList(),
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader,
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-ir",
-    printSignatures = false,
-    signatureVersion = null,
-    absolutePathPrefixes,
+    absolutePathPrefixes = absolutePathPrefixes,
 )
 
-fun TestCompilationArtifact.KLIB.dumpMetadataSignatures(
+fun TestCompilationArtifact.KLIB.dumpSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
-): String = invokeKlibTool(
-    kotlinNativeClassLoader,
-    klibFile,
-    command = "dump-metadata-signatures",
-    printSignatures = false,
-    signatureVersion
+    onlyTopLevelSignatures: Boolean,
+): String = klibFile.dumpSignatures(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    signatureVersion = signatureVersion,
+    onlyTopLevelSignatures = onlyTopLevelSignatures,
 )
 
-fun TestCompilationArtifact.KLIB.dumpIrSignatures(
+fun File.dumpSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
+    onlyTopLevelSignatures: Boolean,
 ): String = invokeKlibTool(
-    kotlinNativeClassLoader,
-    klibFile,
-    command = "dump-ir-signatures",
-    printSignatures = false,
-    signatureVersion
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    klibFile = this,
+    command = "dump-signatures",
+    signatureVersion = signatureVersion,
+    onlyTopLevelSignatures = onlyTopLevelSignatures,
 )

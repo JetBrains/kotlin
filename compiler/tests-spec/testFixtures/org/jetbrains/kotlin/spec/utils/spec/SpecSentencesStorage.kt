@@ -18,7 +18,7 @@ class SpecSentencesStorage {
 
     fun getLatest(): SentencesByLocation? {
         return specSentences.getOrPut("latest") {
-            val (version, htmlSpec) = HtmlSpecLoader.loadLatestSpec()
+            val [version, htmlSpec] = HtmlSpecLoader.loadLatestSpec()
             if (htmlSpec == null) return null
             latestSpecVersion = version
             HtmlSpecSentencesMapBuilder.build(htmlSpec)

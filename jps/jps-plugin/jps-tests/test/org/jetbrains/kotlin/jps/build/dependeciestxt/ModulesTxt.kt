@@ -199,12 +199,12 @@ class ModulesTxtBuilder {
                 muted = true
             }
             line.contains("->") -> {
-                val (from, rest) = line.split("->", limit = 2)
+                val [from, rest] = line.split("->", limit = 2)
                 if (rest.isBlank()) {
                     // `name -> ` - module
                     newModule(ValueWithFlags(from))
                 } else {
-                    val (to, flags) = parseValueWithFlags(rest.trim())
+                    (val to = value, val flags) = parseValueWithFlags(rest.trim())
                     newDependency(from.trim(), to.trim(), flags) // `from -> to [flag1, flag2, ...]` - dependency
                 }
             }
@@ -218,7 +218,7 @@ class ModulesTxtBuilder {
     private fun parseValueWithFlags(str: String): ValueWithFlags {
         val parts = str.split("[", limit = 2)
         return if (parts.size > 1) {
-            val (value, flags) = parts
+            val [value, flags] = parts
             ValueWithFlags(
                 value = value.trim(),
                 flags = flags.trim()

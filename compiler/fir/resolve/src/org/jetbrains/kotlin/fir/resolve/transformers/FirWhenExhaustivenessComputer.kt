@@ -91,6 +91,7 @@ object FirWhenExhaustivenessComputer {
 
     context(c: SessionHolder)
     private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(): Collection<ConeKotlinType> {
+        @Suppress("SuspiciousWhenOverConeKotlinType")
         return when (this) {
             is ConeIntersectionType -> intersectedTypes
             is ConeTypeParameterType if LanguageFeature.ImprovedExhaustivenessChecksIn21.isEnabled()
@@ -452,7 +453,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
         whenExpression.accept(ConditionChecker, info)
         val notCheckedSubclasses = allSubclasses - checkedSubclasses
-        val (notCheckedEnumClasses, notCheckedRegularClasses) = notCheckedSubclasses.partition { it.isEnumClass }
+        val [notCheckedEnumClasses, notCheckedRegularClasses] = notCheckedSubclasses.partition { it.isEnumClass }
 
         for (notCheckedEnumClasses in notCheckedEnumClasses) {
             WhenOnEnumExhaustivenessChecker.computeMissingCases(
@@ -498,12 +499,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 else -> return
             }
             val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-            val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir
-            val symbol = if (firClass?.classKind == ClassKind.OBJECT) {
-                firClass.symbol
-            } else {
-                firClass?.companionObjectSymbol
-            } ?: return
+            val symbol = argument.accessedObjectSymbol ?: return
 
             processBranch(symbol, isNegated, data)
         }
@@ -690,9 +686,10 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
             if (!session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) return
             if (equalityOperatorCall.operation != FirOperation.EQ && equalityOperatorCall.operation != FirOperation.IDENTITY) return
             val argument = equalityOperatorCall.arguments[1]
-            val symbol = (argument as? FirResolvedQualifier)?.symbol ?: return
+            val symbol = (argument as? FirResolvedQualifier)?.qualifierSymbol ?: return
 
             if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.OBJECT) {
+                @OptIn(ResolvedQualifierTypeAccess::class) // TODO(KT-86905) looks like a bug
                 data.add(argument.resolvedType)
             }
         }

@@ -64,6 +64,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
   @TestMetadata("constValInSerialName.kt")
   public void testConstValInSerialName() {
     run("constValInSerialName.kt");
@@ -103,6 +109,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   @TestMetadata("delegatedProperty.kt")
   public void testDelegatedProperty() {
     run("delegatedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("encodeDefaultArrayContentEquals.kt")
+  public void testEncodeDefaultArrayContentEquals() {
+    run("encodeDefaultArrayContentEquals.kt");
   }
 
   @Test
@@ -265,12 +277,6 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   @TestMetadata("mppInheritance.kt")
   public void testMppInheritance() {
     run("mppInheritance.kt");
-  }
-
-  @Test
-  @TestMetadata("multiFieldValueClasses.kt")
-  public void testMultiFieldValueClasses() {
-    run("multiFieldValueClasses.kt");
   }
 
   @Test

@@ -3,15 +3,15 @@ FILE: kCallableName.kt
         ^id this@R|/id|
     }
     public final class A : R|kotlin/Any| {
-        public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.OK] OK: R|kotlin/Int|, [CorrespondingProperty=/A.somePropertyWithLongName] somePropertyWithLongName: R|kotlin/String|): R|A| {
+        public constructor(OK: R|kotlin/Int|, somePropertyWithLongName: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [IsFromPrimaryConstructor=true] val OK: R|kotlin/Int| = R|<local>/OK|
-            public [ContainingClassKey=A] get(): R|kotlin/Int|
+        public final val OK: R|kotlin/Int| = R|<local>/OK|
+            public get(): R|kotlin/Int|
 
-        public final [IsFromPrimaryConstructor=true] val somePropertyWithLongName: R|kotlin/String| = R|<local>/somePropertyWithLongName|
-            public [ContainingClassKey=A] get(): R|kotlin/String|
+        public final val somePropertyWithLongName: R|kotlin/String| = R|<local>/somePropertyWithLongName|
+            public get(): R|kotlin/String|
 
         public final fun foo(): R|kotlin/Unit| {
         }

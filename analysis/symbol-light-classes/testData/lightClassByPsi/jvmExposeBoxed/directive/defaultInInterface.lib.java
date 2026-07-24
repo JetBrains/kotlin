@@ -25,12 +25,6 @@ public final class IC /* IC*/ {
 }
 
 public abstract interface Test /* Test*/ {
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  private abstract IC foo(IC);//  foo(IC)
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  private abstract IC getBar();//  getBar()
-
   private abstract IC getBar-qjS0p_s();//  getBar-qjS0p_s()
 
   private abstract int foo-Eh1mVAw(int);//  foo-Eh1mVAw(int)

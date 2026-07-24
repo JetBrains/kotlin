@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 sealed class ESEffect {
     /**
      * Returns:
@@ -31,6 +34,7 @@ sealed class ESEffect {
  *
  * SimpleEffect alone means that this effect will definitely be fired.
  */
+@K1Deprecation
 abstract class SimpleEffect : ESEffect()
 
 /**
@@ -38,6 +42,7 @@ abstract class SimpleEffect : ESEffect()
  *
  * Has the same semantics as [org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration]
  */
+@K1Deprecation
 class ConditionalEffect(val condition: ESExpression, val simpleEffect: SimpleEffect) : ESEffect() {
     // Conservatively, always return null, indicating absence of information
     override fun isImplies(other: ESEffect): Boolean? = null

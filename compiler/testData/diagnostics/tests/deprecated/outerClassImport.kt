@@ -23,10 +23,10 @@ class ForHidden {
 
 // FILE: test.kt
 import <!DEPRECATION_ERROR!>my.ForError.Nested1<!>
-import <!DEPRECATION_OF_OUTER_CLASS!>my.ForError.Nested1.Nested2<!>
-import <!DEPRECATION_OF_OUTER_CLASS!>my.ForError.Nested1.Nested2.Nested3<!>
+import <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>my.ForError.Nested1.Nested2<!>
+import <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>my.ForError.Nested1.Nested2.Nested3<!>
 import <!DEPRECATION_ERROR!>my.ForHidden.Nested4<!>
-import <!DEPRECATION_OF_OUTER_CLASS!>my.ForHidden.Nested4.Nested5<!>
-import <!DEPRECATION_OF_OUTER_CLASS!>my.ForHidden.Nested4.Nested5.Nested6<!>
+import <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>my.ForHidden.Nested4.Nested5<!>
+import <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>my.ForHidden.Nested4.Nested5.Nested6<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, nestedClass, stringLiteral */

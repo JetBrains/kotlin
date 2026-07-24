@@ -6,6 +6,9 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
@@ -55,6 +58,7 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
 createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
+createConfigurationToBeConsumedInTests("composeCompilerRuntimeTestUtils", ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils")
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
@@ -134,7 +138,6 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.oshi.core)
 
@@ -153,7 +156,7 @@ tasks.register<Delete>("cleanTestKitCache") {
     delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
-val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
+val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
     description = "Only runs on CI. " +
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
 
@@ -230,7 +233,8 @@ val gradleVersions = listOf(
     "9.2.1",
     "9.3.1",
     "9.4.1",
-    "9.5.0",
+    "9.5.1",
+    "9.6.1",
 )
 
 // Keep in sync with testTags.kt
@@ -238,6 +242,7 @@ enum class JunitTag {
     JvmKGP,
     DaemonsKGP,
     JsKGP,
+    JsBrowserKGP,
     NativeKGP,
     MppKGP,
     AndroidKGP,
@@ -319,6 +324,11 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
+        )
+
+        JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
+            "Run tests for Kotlin/JS part of Gradle plugin",
+            "kgpJsBrowserTests",
         )
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
@@ -428,9 +438,9 @@ tasks.withType<Test>().configureEach {
         dependsOn(it)
     }
 
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
-    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
+    systemProperty("composeVersion", composeRuntimeSnapshot.versions.runtime.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
     val classpathVariables = configurationToBeConsumedInTests

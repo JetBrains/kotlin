@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.script.examples.jvm.embeddable.test
 
 import org.jetbrains.kotlin.script.examples.jvm.embeddable.host.evalFile
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
-import org.junit.Test
 import kotlin.script.experimental.api.ResultWithDiagnostics
 
 class SimpleTest {
@@ -18,9 +18,9 @@ class SimpleTest {
         // see comments in the script file
         val res = evalFile(File("testData/useGuava.simplescript.kts"))
 
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
+        Assertions.assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
         )
     }
 }

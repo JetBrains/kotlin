@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 
 class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test simple parameterized class`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -44,6 +46,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized type alias - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -80,6 +83,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized type alias - 1`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -116,6 +120,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized type alias - 2`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -155,6 +160,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized type alias - 3`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -200,6 +206,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized type alias - 4`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -235,6 +242,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
     }
 
 
+    @Test
     fun `test type alias from dependencies parameterized with library source type`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -283,6 +291,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized function - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -307,6 +316,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized function - 1`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -332,6 +342,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized function - 2`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -360,6 +371,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test parameterized function - 3`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -390,6 +402,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test member function - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -424,6 +437,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test member function - 1`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -464,7 +478,8 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
-    @Suppress("unused") // https://youtrack.jetbrains.com/issue/KT-48850
+    @Test
+    @Disabled // KT-48850
     fun `KT-48850 - test non-commonizable type alias arguments - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -526,6 +541,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test nested arguments`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -551,6 +567,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test nested arguments - with typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -582,6 +599,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test KT-51686 - type argument is parameterized class`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -619,6 +637,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test KT-51686 - type argument is parameterized class - nullability - 0`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -650,6 +669,7 @@ class ParameterizedTypesCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test KT-51686 - type argument is parameterized class - nullability - 1`() {
         val result = commonize {
             outputTarget("(a, b)")

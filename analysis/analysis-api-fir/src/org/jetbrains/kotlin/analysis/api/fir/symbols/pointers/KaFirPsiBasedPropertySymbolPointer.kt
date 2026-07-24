@@ -22,7 +22,7 @@ internal class KaFirPsiBasedPropertySymbolPointer(
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? =
         when (val variable = with(analysisSession) { variableSymbolPointer.restoreSymbol() }) {
             is KaKotlinPropertySymbol -> variable
-            is KaValueParameterSymbol -> variable.generatedPrimaryConstructorProperty
+            is KaValueParameterSymbol -> variable.primaryConstructorProperty
             else -> null
         }
 

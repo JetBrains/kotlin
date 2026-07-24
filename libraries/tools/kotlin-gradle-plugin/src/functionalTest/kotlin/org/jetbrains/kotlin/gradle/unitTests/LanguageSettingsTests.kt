@@ -253,7 +253,6 @@ class LanguageSettingsTests {
             "androidRelease" to "compileReleaseKotlinAndroid",
             "androidUnitTest" to "compileDebugUnitTestKotlinAndroid",
             "androidUnitTestDebug" to "compileDebugUnitTestKotlinAndroid",
-            "androidUnitTestRelease" to "compileReleaseUnitTestKotlinAndroid",
             "appleMain" to "compileKotlinMetadata",
             "appleTest" to "compileKotlinMetadata",
             "commonMain" to "compileKotlinMetadata",

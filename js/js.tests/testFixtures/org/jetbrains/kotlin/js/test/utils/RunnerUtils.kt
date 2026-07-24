@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.utils
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.common.safeModuleName
@@ -63,19 +62,19 @@ private fun extractJsFiles(
         .filter { it.second.isJsFile || it.second.isMjsFile }
 
     val after = inputJsFiles
-        .filter { (module, inputJsFile) ->
+        .filter { [module, inputJsFile] ->
             inputJsFile.name.endsWith(
                 "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
             )
         }
-        .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
+        .map { [module, inputJsFile] -> copyInputJsFile(module, inputJsFile) }
     val before = inputJsFiles
-        .filterNot { (module, inputJsFile) ->
+        .filterNot { [module, inputJsFile] ->
             inputJsFile.name.endsWith(
                 "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
             )
         }
-        .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
+        .map { [module, inputJsFile] -> copyInputJsFile(module, inputJsFile) }
 
     return before to after
 }
@@ -96,11 +95,11 @@ fun getAdditionalFiles(
     val additionalFiles = mutableListOf<File>()
     if (withModuleSystem) additionalFiles += ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".js")
         .takeIf { it.exists() }
         ?.let { additionalFiles += it }
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".mjs")
         .takeIf { it.exists() }
         ?.let {
             File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode), it.name).apply {
@@ -165,13 +164,13 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
+    val [module, compilerResult] = modulesToArtifact.entries.mapNotNull { [m, c] -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
         .single()
     val result = mutableMapOf<TranslationMode, List<String>>()
 
-    compilerResult.entries.forEach { (mode, outputs) ->
+    compilerResult.entries.forEach { [mode, outputs] ->
         val outputFile = getModeOutputFilePath(testServices, module, mode)
-        val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
+        val [inputJsFilesBefore, inputJsFilesAfter] = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
         val additionalFiles = getAdditionalFilePaths(testServices, mode)
         val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 
@@ -302,8 +301,27 @@ fun TestServices.compiledTestOutputDirectory(
     require(suffixPathSequence.size < fullPathSequence.size) {
         "Folder $stopFile (which is set by PATH_TO_TEST_DIR directive) must contain $parentAbsoluteFile"
     }
-    return suffixPathSequence
+    val pathParts = suffixPathSequence
         .map { it.name }
         .toList().asReversed()
-        .fold(testGroupOutputDir, ::File)
+
+    return maybeShortenWindowsPath(pathParts).fold(testGroupOutputDir, ::File)
+}
+
+// --- Shared Windows path shortener -------------------------------------------------------------
+
+/**
+ * Shorten very long output directory paths on Windows by hashing the deep test subpath to avoid MAX_PATH (~260) limitation
+ * in runners that write deeply nested `box/...` directories. No effect on non-Windows.
+ *
+ * Example: path construction without shortening:
+ *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\box\inference\pcla\...\oneTypeInfoOriginSourceSinkFeedContexts
+ * with shortening becomes:
+ *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\3f2a9d1c\SourceSinkFeedContexts
+ */
+private fun maybeShortenWindowsPath(pathParts: List<String>): List<String> {
+    val osName = System.getProperty("os.name") ?: ""
+    if (!osName.startsWith("Windows", ignoreCase = true)) return pathParts
+    if (pathParts.size <= 2) return pathParts
+    return listOf(pathParts.joinToString().hashCode().toHexString(), pathParts.last())
 }

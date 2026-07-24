@@ -1,2 +1,2 @@
-KtNamedFunction(46,92): '/**'
+KDocName(54,73): 'JavaChild.staticFun'
   NO_CANDIDATES

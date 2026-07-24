@@ -60,7 +60,7 @@ fun test() {
         var t: Int?
         t = 42
         val _: Z = Z.of({ t = null })
-        <!SMARTCAST_IMPOSSIBLE!>t<!>.plus(42)
+        t<!UNSAFE_CALL!>.<!>plus(42)
     }
 }
 

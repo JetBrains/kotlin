@@ -7,15 +7,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -36,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createSourceSession
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
@@ -186,7 +182,9 @@ class ScriptJvmK2CompilerImpl(
             )
 
         val allSourceFiles = mutableListOf(script)
-        val (classpath, newSources, sourceDependencies) =
+        (
+            val classpath, val newSources = sources, val sourceDependencies
+        ) =
             collectScriptsCompilationDependenciesRecursively(allSourceFiles) { importedScript ->
                 state.hostConfiguration.getOrStoreRefinedCompilationConfiguration(importedScript) { source, baseConfig ->
                     baseConfig.refineAll(source)
@@ -205,6 +203,7 @@ class ScriptJvmK2CompilerImpl(
                 ignoredOptionsReportingState,
                 true
             )
+            state.updateContext(compilerConfiguration)
         }
 
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
@@ -225,7 +224,7 @@ class ScriptJvmK2CompilerImpl(
             compilerConfiguration,
             context = state.sessionFactoryContext,
             needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
             init = {},
         )
 
@@ -248,9 +247,6 @@ class ScriptJvmK2CompilerImpl(
         val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
 
         if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
-
-        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values)
-
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
         val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
@@ -317,7 +313,7 @@ fun <T> withK2ScriptCompilerWithLightTree(
 fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter: BaseDiagnosticsCollector): FirFile {
     val sourcesToPathsMapper = session.sourcesToPathsMapper
     val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-    val (sanitizedText, linesMapping) = text.byteInputStream(Charsets.UTF_8).use {
+    val [sanitizedText, linesMapping] = text.byteInputStream(Charsets.UTF_8).use {
         it.reader().readSourceFileWithMapping()
     }
     return builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->
@@ -335,14 +331,14 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         configureLibrarySessionIfNeeded(this, compilerContext.environment.configuration, dependencies)
     }
     return dummySessionForAnnotationResolution ?: (createSourceSession(
-        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>")),
+        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
         AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerContext.environment.configuration,
         context = sessionFactoryContext,
         needRegisterJavaElementFinder = true,
-        isForLeafHmppModule = false,
+        kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     ).apply {
         register(

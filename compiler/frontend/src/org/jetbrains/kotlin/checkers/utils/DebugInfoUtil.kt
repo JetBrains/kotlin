@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.HashMap
 
+@K1Deprecation
 object DebugInfoUtil {
     private val MAY_BE_UNRESOLVED = TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
     private val EXCLUDED = TokenSet.create(

@@ -14,14 +14,18 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
@@ -67,6 +71,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             customIgnoreDirective,
             additionalIgnoreDirectives,
         )
+        setupStepsForWasmFirstStageUpToSerialization()
         commonConfigurationForWasmSecondStageTest(
             pathToTestDir,
             testGroupOutputDirPrefix,
@@ -101,7 +106,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 }
 
 fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>
-        TestConfigurationBuilder.commonConfigurationForWasmFirstStageTest(
+        TestConfigurationBuilderBase<*, *>.commonConfigurationForWasmFirstStageTest(
     targetFrontend: FrontendKind<R>,
     targetPlatform: TargetPlatform,
     wasmTarget: WasmTarget,
@@ -139,21 +144,39 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
     useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
+}
 
+fun TestConfigurationBuilder.setupStepsForWasmFirstStageUpToSerialization(
+    includeBasicFirHandlers: Boolean = true,
+    includeDumpFirHandlers: Boolean = true
+) {
     facadeStep(::FirCliWebFacade)
 
     firHandlersStep {
-        useHandlers(::FirDiagnosticsHandler)
+        if (includeBasicFirHandlers) {
+            useHandlers(
+                ::FirCfgConsistencyHandler,
+                ::FirResolvedTypesVerifier,
+                ::FirDiagnosticsHandler,
+            )
+        }
+        if (includeDumpFirHandlers) {
+            useHandlers(
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
+            )
+        }
+
     }
 
     facadeStep(::Fir2IrCliWebFacade)
     irHandlersStep {
-        useHandlers(::NoIrCompilationErrorsHandler)
+        commonIrHandlersForCodegenTest()
     }
 
     facadeStep(::WasmPreSerializationLoweringFacade)
     loweredIrHandlersStep {
-        useHandlers(::NoIrCompilationErrorsHandler)
+        commonIrHandlersForCodegenTest()
     }
 
     facadeStep(::FirKlibSerializerCliWasmFacade)

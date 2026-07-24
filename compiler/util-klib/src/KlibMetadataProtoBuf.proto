@@ -28,10 +28,10 @@ message Header {
   required string module_name = 1;
   /*
     Possible values are listed in KlibMetadataHeaderFlags class.
+    Flags are also stored in the manifest.
   */
   optional int32 flags = 2;
-  optional org.jetbrains.kotlin.metadata.StringTable strings = 4;
-  optional org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;
+
   repeated string package_fragment_name = 7;
   repeated string empty_package = 8;
 
@@ -40,6 +40,10 @@ message Header {
   // (patch << 16) + (minor << 8) + major
   // optional int32 js_code_binary_version = 3 [default = 1];
 
+  // WARNING: Don't occupy index 4 which was previously used for storing string table.
+  // optional org.jetbrains.kotlin.metadata.StringTable strings = 4;
+  // WARNING: Don't occupy index 5 which was previously used for storing qualified name table.
+  // optional org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;
   // WARNING: Don't occupy index 6 which was previously used for storing Annotations.
   // org.jetbrains.kotlin.metadata.Annotation annotation = 6;
   // WARNING: Don't occupy index 9 which was previously used for storing file names.
@@ -48,6 +52,10 @@ message Header {
 
 extend org.jetbrains.kotlin.metadata.Package {
   optional int32 package_fq_name = 171;
+}
+
+extend org.jetbrains.kotlin.metadata.TypeAlias {
+  optional int32 type_alias_file = 170 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.Class {

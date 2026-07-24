@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAnyAccessor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
 
+@K1Deprecation
 object LateinitModifierApplicabilityChecker {
     fun checkLateinitModifierApplicability(
         trace: BindingTrace,

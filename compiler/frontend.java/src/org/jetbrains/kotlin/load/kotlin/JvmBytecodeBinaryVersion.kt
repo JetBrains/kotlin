@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
+
 /**
  * Bytecode version was in the Kotlin metadata ([Metadata.bytecodeVersion]) since 1.0, but it was never used meaningfully in the compiler,
  * outside of one very special case regarding experimental coroutines, which is now obsolete.
  * It is still used only because it's stored in persistent incremental compilation caches. We can probably remove it and increase
  * the cache version there. Once it's done, this class can be removed.
  */
+@K1Deprecation
 class JvmBytecodeBinaryVersion(vararg numbers: Int) {
     val major: Int = numbers.getOrNull(0) ?: -1
     val minor: Int = numbers.getOrNull(1) ?: -1

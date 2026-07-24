@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
@@ -41,9 +40,6 @@ internal class KaFirBackingFieldSymbol private constructor(
         backingOwningProperty = owningProperty
     )
 
-    override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi }
-
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion { backingOwningProperty }
 
@@ -51,7 +47,7 @@ internal class KaFirBackingFieldSymbol private constructor(
         get() = withValidityAssertion { true }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
+        get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
 
     override val isVal: Boolean
         get() = withValidityAssertion { backingOwningProperty.isVal }
@@ -90,8 +86,8 @@ internal class KaFirBackingFieldSymbol private constructor(
  * The compiler preserves annotations on backing fields for properties coming from libraries, so for them the FIR tree needs to be
  * checked directly. However, the FIR tree for compiled declarations is already resolved, so a direct check is virtually free.
  */
-private fun KaFirKotlinPropertySymbol<*>.mayHaveBackingFieldAnnotation(): Boolean {
-    val annotationEntries = backingPsi?.annotationEntries ?: return false
+internal fun KaFirKotlinPropertySymbol<*>.mayHaveBackingFieldAnnotation(): Boolean {
+    val annotationEntries = backingPsi?.annotationEntries ?: return true
     return annotationEntries.any {
         when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
             null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD, AnnotationUseSiteTarget.ALL -> true

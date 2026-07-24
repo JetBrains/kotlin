@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.enableByConfigurationKey
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
-import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 import org.junit.jupiter.api.BeforeAll
 
 abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
@@ -41,6 +40,7 @@ abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
             if (!precompileIsDone) {
                 precompileWasmModules(PrecompileSetup.REGULAR)
                 precompileWasmModules(PrecompileSetup.NEW_EXCEPTION_PROPOSAL)
+                precompileWasmModules(PrecompileSetup.STACK_SWITCHING_PROPOSAL)
                 precompileIsDone = true
             }
         }
@@ -68,7 +68,7 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
-        builder.configureIgnoredTestSuppressor(WASM_FAILS_IN_SINGLE_MODULE_MODE)
+        builder.configureCodegenIrHandlerSteps()
         builder.enableByConfigurationKey(WASM_INCLUDED_MODULE_ONLY)
     }
 }
@@ -135,3 +135,23 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
         }
     }
 }
+
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
+    testGroupOutputDirPrefix: String = "codegen/singleModuleBoxStackSwitching"
+) : AbstractWasmJsCodegenSingleModuleRegularStdTest(pathToTestDir, testGroupOutputDirPrefix) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmStackSwitchingWithPrecompiledRunner
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
+        }
+    }
+}
+
+class WasmStackSwitchingWithPrecompiledRunner(
+    testServices: TestServices,
+) : WasmBoxRunnerWithPrecompiled(testServices, executeWithV8Only = true)

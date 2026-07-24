@@ -27,10 +27,10 @@ import kotlin.io.path.exists
 class SnapshotPathSmokeTest : BaseCompilationTest() {
     @DisplayName("Deprecated 4-parameter builder creates snapshot with hardcoded filename ignoring custom name")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testDeprecatedBuilderIgnoresCustomSnapshotFilename(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             val customSnapshotDir = module1.buildDirectory.resolve("my-custom-snapshot")
             customSnapshotDir.createDirectories()
             val customSnapshotFile = customSnapshotDir.resolve("my-custom-snapshot-name.bin")
@@ -62,10 +62,10 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
 
     @DisplayName("New 3-parameter builder creates snapshot with auto-generated path under workingDirectory")
     @DefaultStrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testNewBuilderAutoGeneratesSnapshotPath(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             val icWorkDir = module1.buildDirectory.resolve("ic-work")
 
             module1.compile(

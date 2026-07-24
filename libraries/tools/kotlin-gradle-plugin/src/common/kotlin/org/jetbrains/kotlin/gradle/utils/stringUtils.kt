@@ -111,3 +111,11 @@ private fun isPrintableUnicode(c: Char): Boolean {
             block != Character.UnicodeBlock.VARIATION_SELECTORS &&
             block != Character.UnicodeBlock.VARIATION_SELECTORS_SUPPLEMENT
 }
+
+internal fun String.reportXcodeError() {
+    println("error: $this")
+}
+
+internal fun String.reportXcodeWarning() {
+    println("warning: $this")
+}

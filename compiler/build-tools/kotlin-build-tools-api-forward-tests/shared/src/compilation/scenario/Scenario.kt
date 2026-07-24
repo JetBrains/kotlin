@@ -1,0 +1,114 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario
+
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.AbstractProject
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.Dependency
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.FileDependency
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.SnapshotConfig
+
+interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
+    val kotlinToolchains: KotlinToolchains
+    val project: AbstractProject<*, B, IC>
+    val strategyConfig: ExecutionPolicy
+
+    /**
+     * Creates a module for a scenario.
+     *
+     * Modules with the same combination of [Module.scenarioDslCacheKey], [compilationConfigAction], and [icOptionsConfigAction] are compiled initially only once per tests run.
+     *
+     * In the case you are using custom values for [compilationConfigAction] or [icOptionsConfigAction], consider sharing the same lambda between tests for better cacheability results.
+     *
+     * @param moduleName The name of the module.
+     * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
+     * @param snapshotConfig Snapshotter settings including granulairty and whether to enable snapshotting inlined classes.
+     * @param compilationConfigAction (optional) A function that can be used to modify the compilation configuration for this module.
+     * @param icOptionsConfigAction (optional) A function that can be used to modify the incremental compilation configuration for this module.
+     * @return The created scenario module in the compiled state.
+     */
+    fun module(
+        moduleName: String,
+        dependencies: List<ScenarioDependency> = emptyList(),
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction)
+    }
+
+    /**
+     * Creates a module for a scenario.
+     *
+     * Modules with the same combination of [Module.scenarioDslCacheKey], [compilationConfigAction], and [icOptionsConfigAction] are compiled initially only once per tests run.
+     *
+     * In the case you are using custom values for [compilationConfigAction] or [icOptionsConfigAction], consider sharing the same lambda between tests for better cacheability results.
+     *
+     * The difference with [module] is that it uses built-in IC machinery to track source changes instead of emulating external tracking.
+     *
+     * @param moduleName The name of the module.
+     * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
+     * @param snapshotConfig Snapshotter settings including granulairty and whether to enable snapshotting inlined classes.
+     * @param compilationConfigAction (optional) A function that can be used to modify the compilation configuration for this module.
+     * @param icOptionsConfigAction (optional) A function that can be used to modify the incremental compilation configuration for this module.
+     * @return The created scenario module in the compiled state.
+     */
+    fun trackedModule(
+        moduleName: String,
+        dependencies: List<ScenarioDependency> = emptyList(),
+        snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, true)
+    }
+}
+
+private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> Scenario<B, IC>.createModule(
+    dependencies: List<ScenarioDependency>,
+    moduleName: String,
+    snapshotConfig: SnapshotConfig,
+    compilationConfigAction: (B) -> Unit,
+    icOptionsConfigAction: (IC) -> Unit,
+    tracked: Boolean = false,
+): ScenarioModule {
+    val moduleDependencies = mutableListOf<ScenarioModule>()
+    val fileDependencies = mutableListOf<FileDependency>()
+    for (dependency in dependencies) {
+        when (dependency) {
+            is ScenarioModule -> moduleDependencies += dependency
+            is FileDependency -> fileDependencies += dependency
+            else -> error("Unsupported dependency type: $dependency")
+        }
+    }
+
+    val transformedDependencies: List<Dependency> = moduleDependencies.map {
+        (it as? BaseScenarioModule<*, *>)?.module ?: error("ScenarioModule is not an instance of BaseScenarioModule")
+    } + fileDependencies
+
+    val module =
+        project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
+    return GlobalCompiledProjectsCache.getProjectFromCache(
+        module,
+        strategyConfig,
+        snapshotConfig,
+        icOptionsConfigAction,
+        tracked,
+        moduleDependencies,
+    )
+        ?: GlobalCompiledProjectsCache.putProjectIntoCache(
+            module,
+            strategyConfig,
+            snapshotConfig,
+            icOptionsConfigAction,
+            tracked,
+            moduleDependencies,
+        )
+}

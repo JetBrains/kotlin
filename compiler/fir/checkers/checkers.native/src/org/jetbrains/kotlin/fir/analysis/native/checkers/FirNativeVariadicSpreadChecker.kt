@@ -39,7 +39,7 @@ internal object FirNativeVariadicSpreadChecker : FirFunctionCallChecker(MppCheck
         isObjC: Boolean
     ) {
         val argumentMapping = call.resolvedArgumentMapping ?: return
-        for ((argument, parameter) in argumentMapping) {
+        for ([argument, parameter] in argumentMapping) {
             if (parameter.isVararg) {
                 (argument as? FirVarargArgumentsExpression)?.let {
                     for (element in it.arguments) {

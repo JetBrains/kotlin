@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.kapt.stubs
 
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -51,7 +50,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         oos.writeInt(KaptStubLineInformation.METADATA_VERSION)
 
         oos.writeInt(lineInfo.size)
-        for ((fqName, kotlinPosition) in lineInfo) {
+        for ([fqName, kotlinPosition] in lineInfo) {
             oos.writeUTF(fqName)
             oos.writeUTF(kotlinPosition.path)
             oos.writeBoolean(kotlinPosition.isRelativePath)
@@ -59,7 +58,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         }
 
         oos.writeInt(signatureInfo.size)
-        for ((javacSignature, methodDesc) in signatureInfo) {
+        for ([javacSignature, methodDesc] in signatureInfo) {
             oos.writeUTF(javacSignature)
             oos.writeUTF(methodDesc)
         }
@@ -89,8 +88,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
     fun getPosition(clazz: ClassNode, field: FieldNode): KotlinPosition? = lineInfo[clazz.name + "#" + field.name]
 
     private fun register(asmNode: Any, fqName: String) {
-        val origin = kaptContext.origins[asmNode]
-        val ir = (origin as? JvmIrDeclarationOrigin)?.declaration ?: return
+        val ir = kaptContext.origins[asmNode]?.declaration ?: return
         val offset = computeOffset(ir)
 
         lineInfo[fqName] = KotlinPosition(ir.fileParent.fileEntry.name, isRelativePath = false, offset)

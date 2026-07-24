@@ -1,2 +1,2 @@
-KtProperty(75,104): '/** [pp] */'
+KDocName(80,82): 'pp'
   NO_CANDIDATES

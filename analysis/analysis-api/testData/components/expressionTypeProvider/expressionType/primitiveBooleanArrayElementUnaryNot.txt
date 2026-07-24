@@ -1,2 +1,0 @@
-expression: !a[0]
-type: kotlin.Boolean

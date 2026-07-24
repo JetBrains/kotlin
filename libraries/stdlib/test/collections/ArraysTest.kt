@@ -992,7 +992,7 @@ class ArraysTest {
             assertArrayNotSameButEquals(longArrayOf(), LongArray(3) { it.toLong() }.copyOfRange(pos, pos))
         }
 
-        for ((start, end) in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
+        for ([start, end] in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
             val bounds = "start: $start, end: $end"
             val exClass = if (start > end) IllegalArgumentException::class else IndexOutOfBoundsException::class
             assertFailsWith(exClass, bounds) { arrayOf("x").copyOfRange(start, end) }
@@ -1021,7 +1021,7 @@ class ArraysTest {
             dest.copyInto(dest, 1, 0, 2)
             assertTEquals(result3, dest, "Overlapping forward copy: ${result2.toStringT()}, ${dest.toStringT()}")
 
-            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0, 0 to -1)) {
+            for ([start, end] in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0, 0 to -1)) {
                 val bounds = "start: $start, end: $end"
                 val ex = assertFails(bounds) { newValues.copyInto(dest, 0, start, end) }
                 assertTrue(ex is IllegalArgumentException || ex is IndexOutOfBoundsException, "Unexpected exception type: $ex")
@@ -1621,7 +1621,7 @@ class ArraysTest {
             snapshot: TArray.() -> List<T>
         ) {
             val arrays = (0..7).map { n -> n to (0 until n).build() }
-            for ((size, array) in arrays) {
+            for ([size, array] in arrays) {
                 for (fromIndex in 0 until size) {
                     for (toIndex in fromIndex..size) {
                         val original = array.snapshot().toMutableList()
@@ -2096,7 +2096,7 @@ class ArraysTest {
             snapshot: TArray.() -> List<T>
         ) {
             val arrays = (0..7).map { n -> n to (-2 until n - 2).shuffled().build() }
-            for ((size, array) in arrays) {
+            for ([size, array] in arrays) {
                 for (fromIndex in 0 until size) {
                     for (toIndex in fromIndex..size) {
                         val original = array.snapshot().toMutableList()
@@ -2140,7 +2140,7 @@ class ArraysTest {
             snapshot: TArray.() -> List<T>
         ) {
             val arrays = (0..7).map { n -> n to (-2 until n - 2).build() }
-            for ((size, array) in arrays) {
+            for ([size, array] in arrays) {
                 for (fromIndex in 0 until size) {
                     for (toIndex in fromIndex..size) {
                         val original = array.snapshot().toMutableList()

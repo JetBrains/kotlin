@@ -3,11 +3,53 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool MyInterface_bar__reverse_swift(void * self);
+
+NSString * MyInterface_foo_get__reverse_swift(void * self);
+
+_Bool MyInterface_foo_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
+
+_Bool MyInterface_optInFunWithDefault__reverse_swift(void * self);
+
+_Bool MyInterface_optInFun__reverse_swift(void * self);
+
+NSString * MyInterface_optInProp_get__reverse_swift(void * self);
+
+_Bool MyInterface_optInProp_set__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * newValue);
+
 _Bool MyImplementation_bar(void * self);
+
+_Bool MyImplementation_experimentalFun(void * self);
+
+NSString * MyImplementation_experimentalProp_get(void * self);
+
+_Bool MyImplementation_experimentalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
 NSString * MyImplementation_foo_get(void * self);
 
 _Bool MyImplementation_foo_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+_Bool MyImplementation_internalFun(void * self);
+
+NSString * MyImplementation_internalProp_get(void * self);
+
+_Bool MyImplementation_internalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+_Bool MyInterface_bar(void * self);
+
+NSString * MyInterface_foo_get(void * self);
+
+_Bool MyInterface_foo_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+_Bool MyInterface_optInFun(void * self);
+
+_Bool MyInterface_optInFunWithDefault(void * self);
+
+_Bool MyInterface_optInFunWithDefault_direct(void * self);
+
+NSString * MyInterface_optInProp_get(void * self);
+
+_Bool MyInterface_optInProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
 void * __root___MyImplementation_init_allocate();
 

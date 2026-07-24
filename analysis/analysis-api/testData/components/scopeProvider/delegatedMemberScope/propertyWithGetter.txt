@@ -1,14 +1,15 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /A.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -22,11 +23,14 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: DELEGATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -36,7 +40,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -45,11 +49,10 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: true
   isStatic: false
@@ -58,6 +61,9 @@ KaKotlinPropertySymbol:
   modality: OPEN
   name: foo
   origin: DELEGATED
+  primaryConstructorParameter: null
+  psi: KtProperty
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -73,7 +79,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   isInline: false

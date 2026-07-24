@@ -107,6 +107,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_24 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_25 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_27 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -139,6 +140,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getShowProcessorStats ()Z
 	public abstract fun getStrictMode ()Z
 	public abstract fun getStripMetadata ()Z
+	public abstract fun getStubGenerationScheme ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseBuildCache ()Z
 	public abstract fun getUseLightAnalysis ()Z
 	public abstract fun javacOptions (Lkotlin/jvm/functions/Function1;)V
@@ -164,6 +166,13 @@ public final class org/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig$DefaultIm
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption {
 	public abstract fun option (Ljava/lang/String;)V
 	public abstract fun option (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme : java/lang/Enum {
+	public static final field DIRECT Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static final field JTREE Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KaptStubGenerationScheme;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension : org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension {
@@ -490,8 +499,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatf
 	public abstract fun getWasmJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWasmWasiMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWasmWasiTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public abstract fun getWatchosArm32Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public abstract fun getWatchosArm32Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWatchosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWatchosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public abstract fun getWatchosDeviceArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -569,6 +576,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 	public static final field KOTLIN_2_4 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_5 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_6 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final field KOTLIN_2_7 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getVersion ()Ljava/lang/String;
@@ -1051,7 +1059,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinHierarc
 	public abstract fun withWasmJs ()V
 	public abstract fun withWasmWasi ()V
 	public abstract fun withWatchos ()V
-	public abstract fun withWatchosArm32 ()V
 	public abstract fun withWatchosArm64 ()V
 	public abstract fun withWatchosDeviceArm64 ()V
 	public abstract fun withWatchosSimulatorArm64 ()V
@@ -1359,6 +1366,23 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinCompilerDiagnosticAdditionalData : org/gradle/api/problems/AdditionalData {
+	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsAdditionalData : org/gradle/api/problems/AdditionalData {
+	public abstract fun getSeverity ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field FATAL Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field STRONG_WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static final field WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnosticsSeverity;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion : java/io/Serializable, java/lang/Comparable {
 	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun compareTo (Ljava/lang/Object;)I
@@ -1369,12 +1393,16 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotli
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_3_20 : org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_3_20;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_4_0 : org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_4_0;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_4_20 : org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_4_20;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_5_0 : org/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableCacheInKotlinVersion$2_5_0;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCacheApi : java/lang/annotation/Annotation {

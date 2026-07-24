@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsBackendSecondStageTest
 import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
@@ -62,6 +63,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
 
         useAdditionalSourceProviders(
             ::CoroutineHelpersSourceFilesProvider,
+            ::JsAdditionalSourceProvider,
             ::AdditionalDiagnosticsSourceFilesProvider,
         )
 

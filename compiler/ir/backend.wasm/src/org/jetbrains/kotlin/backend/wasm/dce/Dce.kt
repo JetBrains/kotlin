@@ -93,15 +93,13 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     if (context.isWasmJsTarget) {
         add(context.wasmSymbols.jsRelatedSymbols.getKotlinException.owner)
         add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
+        if (context.wasmUseStackSwitching) {
+            add(context.wasmSymbols.jsRelatedSymbols.getJsError.owner)
+        }
     }
 
     context.fileContexts.values.forEach { crossFileContext ->
         crossFileContext.nonConstantFieldInitializer?.let { add(it) }
-    }
-
-    // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
-    context.fileContexts.values.forEach {
-        removeAll(it.closureCallExports.values)
     }
 }
 

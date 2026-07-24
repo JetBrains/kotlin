@@ -66,10 +66,10 @@ kotlin {
                 }
 
                 sharedLib([RELEASE]) {
-                    export project(':exported')
+                    export(dependencies.project(path: ":exported"))
                 }
                 staticLib([RELEASE]) {
-                    export project(':exported')
+                    export(dependencies.project(path: ":exported"))
                 }
             }
             // Check that we can access binaries/tasks:

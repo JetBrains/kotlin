@@ -1,0 +1,20 @@
+KtNameReferenceExpression(74,81): 'static1'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = static1
+        receiverType = Foo
+        returnType = kotlin.Boolean
+        symbol = val static1: kotlin.Boolean
+        contextParameters = []
+        callableId = /static1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

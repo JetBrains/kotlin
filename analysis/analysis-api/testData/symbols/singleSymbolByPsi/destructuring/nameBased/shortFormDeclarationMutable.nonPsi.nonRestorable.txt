@@ -1,6 +1,6 @@
 KaDestructuringDeclarationSymbol:
+  anchorPsi: KtDestructuringDeclaration
   annotations: []
-  compilerVisibility: Local
   entries: [
     KaLocalVariableSymbol(<local>/first)
     KaLocalVariableSymbol(<local>/second)
@@ -11,8 +11,10 @@ KaDestructuringDeclarationSymbol:
   location: LOCAL
   modality: FINAL
   origin: SOURCE
+  psi: KtDestructuringDeclaration
+  realPsi: KtDestructuringDeclaration
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(shortFormDeclarationMutable.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

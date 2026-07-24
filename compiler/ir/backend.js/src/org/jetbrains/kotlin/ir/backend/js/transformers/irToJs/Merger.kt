@@ -37,7 +37,7 @@ class Merger(
                 rename(f.declarations)
                 rename(f.exports)
 
-                f.imports.entries.forEach { (declaration, importStatement) ->
+                f.imports.entries.forEach { [declaration, importStatement] ->
                     val importName = nameMap[declaration]
 
                     if (importName == null && !isEsModules) {
@@ -50,7 +50,7 @@ class Merger(
                 val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)
                     .also { f.classes.clear() }
 
-                classModels.entries.forEach { (name, model) ->
+                classModels.entries.forEach { [name, model] ->
                     f.classes[rename(name)] = JsIrIcClassModel(model.dependsOnClasses.map { rename(it) }).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                         it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
@@ -64,7 +64,7 @@ class Merger(
             }
         }
 
-        for ((tag, crossModuleJsImport) in crossModuleReferences.jsImports) {
+        for ([tag, crossModuleJsImport] in crossModuleReferences.jsImports) {
             val importName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
             importStatements.putIfAbsent(tag, crossModuleJsImport.renameImportedSymbolInternalName(importName))
         }
@@ -75,7 +75,7 @@ class Merger(
             val internalModuleName = ReservedJsNames.makeInternalModuleName()
 
             if (isEsModules) {
-                val exportedElements = crossModuleReferences.exports.entries.map { (tag, hash) ->
+                val exportedElements = crossModuleReferences.exports.entries.map { [tag, hash] ->
                     val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
                     JsExport.Element(internalName.makeRef(), JsName(hash, false))
                 }
@@ -88,7 +88,7 @@ class Merger(
                 ).makeStmt()
                 additionalExports += createExportBlock
 
-                crossModuleReferences.exports.entries.forEach { (tag, hash) ->
+                crossModuleReferences.exports.entries.forEach { [tag, hash] ->
                     val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
                     val crossModuleRef = ReservedJsNames.makeCrossModuleNameRef(ReservedJsNames.makeInternalModuleName())
                     additionalExports += jsAssignment(JsNameRef(hash, crossModuleRef), JsNameRef(internalName)).makeStmt()
@@ -107,7 +107,7 @@ class Merger(
             }
         }
 
-        this.nameBindings.entries.forEach { (tag, name) ->
+        this.nameBindings.entries.forEach { [tag, name] ->
             val existingName = nameMap.getOrPut(tag) { name }
             if (existingName !== name) {
                 result[name] = existingName
@@ -145,8 +145,8 @@ class Merger(
     private fun declareAndCallJsExporter(): List<JsStatement> {
         if (isEsModules) {
             val allExportRelatedStatements = fragments.flatMap { it.exports.statements }
-            val (allExportStatements, restStatements) = allExportRelatedStatements.partitionIsInstance<JsStatement, JsExport>()
-            val (currentModuleNamedExportStatements, restExportStatements) = allExportStatements.partition { it.subject is JsExport.Subject.Elements }
+            val [allExportStatements, restStatements] = allExportRelatedStatements.partitionIsInstance<JsStatement, JsExport>()
+            val [currentModuleNamedExportStatements, restExportStatements] = allExportStatements.partition { it.subject is JsExport.Subject.Elements }
             val exportedElements = currentModuleNamedExportStatements.takeIf { it.isNotEmpty() }
                 ?.asSequence()
                 ?.flatMap { (it.subject as JsExport.Subject.Elements).elements }

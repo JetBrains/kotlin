@@ -28,7 +28,7 @@ internal class CirProvidedClassifiersByModules internal constructor(
 
     private val typeAliasesByUnderlyingTypes = run {
         CommonizerMap<CirEntityId, MutableList<CirEntityId>>().also { map ->
-            classifiers.forEach { (id, classifier) ->
+            classifiers.forEach { [id, classifier] ->
                 if (classifier is CirProvided.TypeAlias) {
                     val set = map.computeIfAbsent(classifier.underlyingType.classifierId) { ArrayList() }
                     set.add(id)
@@ -175,7 +175,7 @@ private fun readClass(
     typeParameterIndexOffset: Int,
     consumer: (CirEntityId, CirProvided.Classifier) -> Unit
 ) {
-    val (classId, classProto) = classEntry
+    (val classId, val classProto = proto) = classEntry
 
     val typeParameterNameToIndex = HashMap<Int, Int>()
 

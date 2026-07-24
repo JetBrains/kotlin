@@ -1,2 +1,3 @@
 expression: privateFunc()
+expression PSI: KtCallExpression
 type: Invariant<in kotlin.Number>

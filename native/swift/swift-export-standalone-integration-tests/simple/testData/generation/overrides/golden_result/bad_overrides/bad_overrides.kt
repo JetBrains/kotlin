@@ -2,12 +2,41 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(weird.A::class, "22ExportedKotlinPackages5weirdO13bad_overridesE1AC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(weird.B::class, "22ExportedKotlinPackages5weirdO13bad_overridesE1BC")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("weird_A_bar_get__reverse_swift")
+internal external fun weird_A_bar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(weird.A::class, "<get-bar>")
+public fun weird_A_bar_get__reverse(self: weird.A): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = weird_A_bar_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("weird_A_throws__reverse_swift")
+internal external fun weird_A_throws__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(weird.A::class, "throws")
+public fun weird_A_throws__reverse(self: weird.A): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = weird_A_throws__reverse_swift(__self)
+    return run<Unit> { _result }
+}
 
 @ExportedBridge("weird_A_bar_get")
 public fun weird_A_bar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
+    val _result = run { __self.bar }
+    return _result
+}
+
+@ExportedBridge("weird_A_bar_get_direct", nonVirtualTargetMethod = "<get-bar>")
+public fun weird_A_bar_get_direct(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
     val _result = run { __self.bar }
     return _result
@@ -34,6 +63,19 @@ public fun weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoin
 
 @ExportedBridge("weird_A_throws")
 public fun weird_A_throws(self: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.throws() }
+        return run { _result; true }
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return false
+    }
+}
+
+@ExportedBridge("weird_A_throws_direct", nonVirtualTargetMethod = "throws")
+public fun weird_A_throws_direct(self: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
     val ___out_error = _out_error
     try {

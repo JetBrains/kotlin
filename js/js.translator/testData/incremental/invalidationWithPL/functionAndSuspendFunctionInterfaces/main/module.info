@@ -1,0 +1,23 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : helpers.0.kt -> helpers.kt
+        U : test.0.kt -> test.kt
+        U : m.0.kt -> m.kt
+    added file: helpers.kt, test.kt, m.kt
+STEP 1:
+    dependencies: lib1
+    modified ir: test.kt
+STEP 2:
+    dependencies: lib1
+    modified ir: test.kt
+STEP 3:
+    dependencies: lib1
+    modified ir: test.kt
+STEP 4:
+    dependencies: lib1
+    modified ir: test.kt
+STEP 5:
+    dependencies: lib1
+    rebuild klib: false
+    updated imports: test.kt

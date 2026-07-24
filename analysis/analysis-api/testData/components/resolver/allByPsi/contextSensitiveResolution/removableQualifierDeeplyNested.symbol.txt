@@ -1,0 +1,123 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(27,39): 'package main'
+  null
+
+KtNameReferenceExpression(35,39): 'main'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
+
+KtImportList(39,39): ''
+  null
+
+KtNamedFunction(41,307): 'fun usage(): test.Top.Foo {'
+  null
+
+KtParameterList(50,52): '()'
+  null
+
+KtTypeReference(54,66): 'test.Top.Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo
+    ]
+
+KtUserType(54,66): 'test.Top.Foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo
+    ]
+
+KtUserType(54,62): 'test.Top'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top
+    ]
+
+KtUserType(54,58): 'test'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(54,58): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(59,62): 'Top'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top
+    ]
+
+KtNameReferenceExpression(63,66): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo
+    ]
+
+KtBlockExpression(67,307): '{'
+  null
+
+KtReturnExpression(282,305): 'return test.Top.Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main/usage(): test.Top.Foo
+    ]
+
+KtDotQualifiedExpression(289,305): 'test.Top.Foo.BAR'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo.BAR
+    ]
+
+KtDotQualifiedExpression(289,301): 'test.Top.Foo'
+  null
+
+KtDotQualifiedExpression(289,297): 'test.Top'
+  null
+
+KtNameReferenceExpression(289,293): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtNameReferenceExpression(294,297): 'Top'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top
+    ]
+
+KtNameReferenceExpression(298,301): 'Foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo
+    ]
+
+KtNameReferenceExpression(302,305): 'BAR'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Top.Foo.BAR
+    ]

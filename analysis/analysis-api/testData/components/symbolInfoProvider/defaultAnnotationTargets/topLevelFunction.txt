@@ -1,0 +1,4 @@
+Symbol:
+  KaNamedFunctionSymbol
+Default annotation targets:
+  FUNCTION

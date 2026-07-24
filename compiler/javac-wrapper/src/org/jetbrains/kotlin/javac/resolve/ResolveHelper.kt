@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.resolve
 
 import com.sun.source.tree.CompilationUnitTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -96,6 +97,7 @@ internal class ResolveHelper(private val javac: JavacWrapper,
 
 }
 
+@K1Deprecation
 fun JavaClass.collectAllSupertypes(): Set<JavaClass> =
         hashSetOf(this).apply {
             supertypes.mapNotNull { it.classifier as? JavaClass }.forEach { addAll(it.collectAllSupertypes()) }

@@ -1,0 +1,46 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNameAwareOnlyCallablesScope
+            Properties:
+                FirRegularPropertySymbol public final static const val COMPANION_CONSTANT: R|kotlin/String|
+                    public static get(): R|kotlin/String|
+        Static scope owner symbol: FirRegularClassSymbol public final class Owner : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Owner : R|kotlin/Any|
+                Type: foo.Owner
+
+FILE: [ResolvedTo(IMPORTS)] companionBlockLevel.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/String|): R|foo/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val FILE_CONSTANT: R|kotlin/String| = String(file)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Owner : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static const [ResolvedTo(BODY_RESOLVE)] val COMPANION_CONSTANT: R|kotlin/String| = String(companion)
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = R|foo/FILE_CONSTANT|.R|kotlin/String.plus|(Q|foo/Owner|.R|foo/Owner.COMPANION_CONSTANT|) [evaluated = String(filecompanion)]) <DANGLING MODIFIER: Top level declaration expected>
+    }

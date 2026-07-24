@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
-import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Ignore
-import org.junit.Test
+import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -66,6 +67,7 @@ const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
 val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5")
 
 
+@SmokeTest
 class MainKtsTest {
 
     @Test
@@ -86,7 +88,7 @@ class MainKtsTest {
         assertSucceeded(resOk)
 
         val resErr = evalFile(File("$TEST_DATA_ROOT/resolve-error-hamcrest-via-junit.main.kts"))
-        Assert.assertTrue(
+        assertTrue(
             resErr is ResultWithDiagnostics.Failure &&
                     resErr.reports.any { it.message.contains("Unresolved reference") && it.message.contains("hamcrest") }
         )
@@ -103,11 +105,12 @@ class MainKtsTest {
         assertEquals("MimeTypedResult", value::class.simpleName)
     }
 
-//    @Test
+    @Test
     // this test is disabled: the resolving works fine, but ivy resolver is not processing "pom"-type dependencies correctly (
     //  as far as I can tell)
     // TODO: 1. find non-default but non-pom dependency suitable for an example to test resolving
     // TODO: 2. implement proper handling of pom-typed dependencies (e.g. consider to reimplement it on aether as in JarRepositoryManager (from IDEA))
+    @Disabled
     fun testResolveWithArtifactType() {
         val res = evalFile(File("$TEST_DATA_ROOT/resolve-moneta.main.kts"))
         assertSucceeded(res)
@@ -148,7 +151,7 @@ class MainKtsTest {
             assertSucceeded(res)
         }.lines()
 
-        Assert.assertEquals(OUT_FROM_IMPORT_TEST, out)
+        assertEquals(OUT_FROM_IMPORT_TEST, out)
     }
 
     @Test
@@ -159,7 +162,7 @@ class MainKtsTest {
             assertSucceeded(res)
         }.lines()
 
-        Assert.assertEquals(OUT_FROM_IMPORT_TEST, out)
+        assertEquals(OUT_FROM_IMPORT_TEST, out)
     }
 
     @Test
@@ -174,6 +177,17 @@ class MainKtsTest {
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
         // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
         assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
+    }
+
+    @Test
+    fun testKt86352() {
+
+        val out = captureOut {
+            val res = evalFile(File("$TEST_DATA_ROOT/kt86352-main.main.kts"))
+            assertSucceeded(res)
+        }.lines()
+
+        assertEquals(listOf("result = MyData"), out)
     }
 
     @Test
@@ -243,7 +257,7 @@ class MainKtsTest {
     }
 
     @Test
-    @Ignore // Overriding provided properties is no supported yet, the test was working by errorneous coincidence. See #KT-52986
+    @Disabled // Overriding provided properties is no supported yet, the test was working by errorneous coincidence. See #KT-52986
     fun ignore_testScriptFileLocationDefaultVariableRedefinition() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-redefine-variable.kts"))
         assertSucceeded(resOk)
@@ -284,7 +298,7 @@ class MainKtsTest {
     @Test
     fun testUtf8Bom() {
         val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
-        Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
+        assertTrue(File(scriptPath).readText().startsWith(UTF8_BOM), "Expect file '$scriptPath' to start with UTF-8 BOM")
         val res = evalFile(File(scriptPath))
         assertSucceeded(res)
     }
@@ -295,16 +309,16 @@ class MainKtsTest {
             val res = evalFile(File("$TEST_DATA_ROOT/use-slf4j.main.kts"))
             assertSucceeded(res)
         }.second
-        Assert.assertTrue(
-            "Expect info log line with \"test-slf4j\" text, got:\n$err",
-            err.contains("INFO  - test-slf4j")
+        assertTrue(
+            err.contains("INFO  - test-slf4j"),
+            "Expect info log line with \"test-slf4j\" text, got:\n$err"
         )
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
-        Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Success
+        assertTrue(
+            res is ResultWithDiagnostics.Success,
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
         )
     }
 
@@ -324,11 +338,11 @@ class MainKtsTest {
             1 -> " with the message \"${expectedErrors[0]}\""
             else -> " with any of the messages: ${expectedErrors.joinToString("\", \"", "\"", "\";")}"
         }
-        Assert.assertTrue(
+        assertTrue(
+            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.containsIgnoringPunctuation(it) } },
             "test failed - expecting a failure$expected but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${reports.joinToString("\n  ")}",
-            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.containsIgnoringPunctuation(it) } }
+                    ":\n  ${reports.joinToString("\n  ")}"
         )
     }
 
@@ -414,7 +428,7 @@ class CacheDirectoryDetectorTest {
 
     private fun assertCacheDir(path: String?) {
         val file = path?.let(::File)
-        Assert.assertEquals(file, directories.cache)
+        assertEquals(file, directories.cache)
     }
 
     private val systemProperties = Properties().apply {

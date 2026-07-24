@@ -77,6 +77,9 @@ sealed class CallKind(
     )
 
     /**
+     * NB! Only used for non-trivial collection literals in `WithExpectedType` or `ContextDependent` call kinds.
+     * The other collection literals fallback earlier.
+     *
      * For collection literal, we only need stages that either:
      * 1. are part of candidate constraint system construction, or
      * 2. in green code, ensure that we choose the correct one among operator `of`s ([MapArguments], [CheckCallModifiers], ...)
@@ -137,6 +140,7 @@ sealed class CallKind(
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckContextArguments,
         CheckShadowedImplicits,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.writer
 
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
 
 /**
  * A "writer" of a specific component of the constructed Klib library.
@@ -15,5 +15,5 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * and is responsible for writing all the necessary files to the library.
  */
 interface KlibComponentWriter {
-    fun writeTo(root: KlibFile)
+    fun writeTo(root: Path)
 }

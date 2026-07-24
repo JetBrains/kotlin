@@ -302,7 +302,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         // For delegated properties, the getter and setter contain a reference each as the second argument to getValue
         // and setValue. Since it's highly unlikely that anyone will call get/set on these, optimize for space.
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
-            val (_, index) = data.kProperties.getOrPut(expression.symbol) {
+            (val index) = data.kProperties.getOrPut(expression.symbol) {
                 PropertyInstance(createReflectedKProperty(expression), data.kProperties.size)
             }
             irCall(arrayItemGetter).apply {

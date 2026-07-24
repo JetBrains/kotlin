@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.js.engine.loadFiles
 import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -65,7 +65,7 @@ object V8JsTestChecker {
         entryModulePath: String? = null,
     ) {
         val actualResult = run(files, testModuleName, testPackageName, testFunctionName, "", withModuleSystem, entryModulePath)
-        Assert.assertEquals(expectedResult, actualResult.normalize())
+        Assertions.assertEquals(expectedResult, actualResult.normalize())
     }
 
     fun checkWithTestFunctionArgs(
@@ -79,7 +79,7 @@ object V8JsTestChecker {
         entryModulePath: String? = null
     ) {
         val actualResult = run(files, testModuleName, testPackageName, testFunctionName, testFunctionArgs, withModuleSystem, entryModulePath)
-        Assert.assertEquals(expectedResult, actualResult.normalize())
+        Assertions.assertEquals(expectedResult, actualResult.normalize())
     }
 
     private fun run(
@@ -115,7 +115,7 @@ object V8JsTestChecker {
             }
         run(newFiles) {
             val actualResult = eval(GET_KOTLIN_OUTPUT)
-            Assert.assertEquals(expectedResult, actualResult.normalize())
+            Assertions.assertEquals(expectedResult, actualResult.normalize())
             ""
         }
     }

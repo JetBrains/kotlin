@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 
+@K1Deprecation
 interface K1ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemContext {
     val shouldCheckReturnTypesOfCallables: Boolean
 

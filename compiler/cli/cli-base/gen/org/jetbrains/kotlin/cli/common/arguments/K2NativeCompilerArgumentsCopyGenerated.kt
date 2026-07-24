@@ -15,7 +15,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.autoCacheableFrom = from.autoCacheableFrom.copyOf()
     to.backendThreads = from.backendThreads
     to.binaryOptions = from.binaryOptions.copyOf()
-    to.bundleId = from.bundleId
     to.cacheDirectories = from.cacheDirectories.copyOf()
     to.cachedLibraries = from.cachedLibraries.copyOf()
     to.checkDependencies = from.checkDependencies
@@ -25,7 +24,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.debug = from.debug
     to.debugInfoFormatVersion = from.debugInfoFormatVersion
     to.debugPrefixMap = from.debugPrefixMap.copyOf()
-    to.destroyRuntimeMode = from.destroyRuntimeMode
+    to.dumpBuiltCachesTo = from.dumpBuiltCachesTo
     to.emitLazyObjCHeader = from.emitLazyObjCHeader
     to.enableAssertions = from.enableAssertions
     to.exportKDoc = from.exportKDoc
@@ -47,10 +46,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.konanDataDir = from.konanDataDir
     to.libraries = from.libraries.copyOf()
     to.libraryToAddToCache = from.libraryToAddToCache
-    @Suppress("DEPRECATION")
-    to.libraryVersion = from.libraryVersion
-    @Suppress("DEPRECATION")
-    to.lightDebugDeprecated = from.lightDebugDeprecated
     to.lightDebugString = from.lightDebugString
     to.linkerArguments = from.linkerArguments.copyOf()
     to.listTargets = from.listTargets
@@ -66,8 +61,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.nativeLibraries = from.nativeLibraries.copyOf()
     to.noObjcGenerics = from.noObjcGenerics
     to.nodefaultlibs = from.nodefaultlibs
-    @Suppress("DEPRECATION")
-    to.noendorsedlibs = from.noendorsedlibs
     to.nomain = from.nomain
     to.nopack = from.nopack
     to.nostdlib = from.nostdlib
@@ -97,7 +90,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.testDumpOutputPath = from.testDumpOutputPath
     to.verifyBitCode = from.verifyBitCode
     to.verifyCompiler = from.verifyCompiler
-    to.workerExceptionHandling = from.workerExceptionHandling
     to.writeDependenciesOfProducedKlibTo = from.writeDependenciesOfProducedKlibTo
 
     return to

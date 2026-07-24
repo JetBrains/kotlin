@@ -105,7 +105,7 @@ object PositioningStrategies {
         }
 
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
-            val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
+            val [returnTypeRef, nameIdentifierOrPlaceholder] = when (declaration) {
                 is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
                 is KtPropertyAccessor -> Pair(declaration.typeReference, declaration.namePlaceholder)
                 else -> Pair(null, null)
@@ -969,6 +969,13 @@ object PositioningStrategies {
         }
     }
 
+    val REFERENCE_OR_OPERATOR: PositioningStrategy<KtExpression> = object : PositioningStrategy<KtExpression>() {
+        override fun mark(element: KtExpression): List<TextRange> {
+            (element as? KtBinaryExpression)?.right?.referenceIfShort()?.let { return super.mark(it) }
+            return OPERATOR.mark(element)
+        }
+    }
+
     val DOT_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             if (element is KtBinaryExpression && element.operationToken in KtTokens.ALL_ASSIGNMENTS) {
@@ -1073,14 +1080,38 @@ object PositioningStrategies {
     val REIFIED_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.REIFIED_KEYWORD)
 
+    private fun KtExpression.referenceIfShort(): KtExpression? =
+        when (this) {
+            is KtCallableReferenceExpression -> callableReference.referenceIfShort()
+            is KtQualifiedExpression -> selectorExpression?.referenceIfShort()
+            is KtCallExpression -> calleeExpression
+            is KtArrayAccessExpression -> null
+            is KtReferenceExpression -> this
+            is KtThisExpression -> this
+            else -> null
+        }
+
     val VARIABLE_INITIALIZER: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+
         override fun mark(element: KtElement): List<TextRange> = markElement(
             when (element) {
-                is KtProperty -> element.equalsToken ?: element.initializer ?: element
+                is KtProperty -> {
+                    element.initializer?.referenceIfShort() ?: element.equalsToken ?: element.initializer
+                    ?: element
+                }
                 // Type reference is used as a target for loop variable type mismatches
-                is KtParameter -> element.equalsToken ?: element.defaultValue ?: element.typeReference ?: element
-                is KtDestructuringDeclarationEntry -> element.equalsToken ?: element.initializer ?: element.typeReference ?: element
-                is KtBackingField -> element.equalsToken ?: element.initializer ?: element
+                is KtParameter -> {
+                    element.defaultValue?.referenceIfShort() ?: element.equalsToken ?: element.defaultValue
+                    ?: element.typeReference ?: element
+                }
+                is KtDestructuringDeclarationEntry -> {
+                    element.initializer?.referenceIfShort() ?: element.equalsToken ?: element.initializer
+                    ?: element.typeReference ?: element
+                }
+                is KtBackingField -> {
+                    element.initializer?.referenceIfShort() ?: element.equalsToken ?: element.initializer
+                    ?: element
+                }
                 else -> element
             }
         )
@@ -1216,6 +1247,9 @@ object PositioningStrategies {
      */
     class FindReferencePositioningStrategy(val locateReferencedName: Boolean) : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtObjectLiteralExpression) {
+                return DEFAULT.mark(element)
+            }
             if (element is KtBinaryExpression && element.operationToken == KtTokens.EQ) {
                 // Look for reference in LHS of variable assignment.
                 element.left?.let { return mark(it) }
@@ -1240,9 +1274,13 @@ object PositioningStrategies {
                 is KtConstructorDelegationCall -> element.calleeExpression ?: element
                 is KtSuperTypeCallEntry -> element.calleeExpression.also {
                     if (it.textRange.isEmpty) {
-                        val grandParent = element.parent.parent
+                        val grandParent = element.parent?.parent
                         if (grandParent is KtEnumEntry) return mark(grandParent)
                     }
+                }
+                is KtConstructorCalleeExpression if element.textRange.isEmpty -> {
+                    val ggParent = element.parent?.parent?.parent
+                    if (ggParent is KtEnumEntry) return mark(ggParent) else element
                 }
                 is KtOperationExpression -> element.operationReference
                 is KtWhenConditionInRange -> element.operationReference

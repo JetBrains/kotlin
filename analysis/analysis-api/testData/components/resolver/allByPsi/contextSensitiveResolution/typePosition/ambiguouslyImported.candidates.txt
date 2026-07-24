@@ -164,12 +164,14 @@ KtNameReferenceExpression(238,239): 'y'
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -179,11 +181,14 @@ KtNameReferenceExpression(238,239): 'y'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Right

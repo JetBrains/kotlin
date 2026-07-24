@@ -24,7 +24,7 @@ fun createUnsafeNumberAnnotationIfNecessary(
 
     val actualPlatformTypes = mutableMapOf<String, RenderedType>()
 
-    inputTypes.zip(targets).forEach { (type, target) ->
+    inputTypes.zip(targets).forEach { [type, target] ->
         target.allLeaves().forEach { leafCommonizerTarget ->
             actualPlatformTypes[leafCommonizerTarget.name] = renderTypeForUnsafeNumberAnnotation(type)
         }
@@ -82,7 +82,7 @@ private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, Render
 
     override val constantValueArguments: Map<CirName, CirConstantValue> = mapOf(
         CirName.create("actualPlatformTypes") to CirConstantValue.ArrayValue(
-            actualPlatformTypes.toSortedMap().map { (platform, type) ->
+            actualPlatformTypes.toSortedMap().map { [platform, type] ->
                 CirConstantValue.StringValue("$platform: $type")
             }
         )

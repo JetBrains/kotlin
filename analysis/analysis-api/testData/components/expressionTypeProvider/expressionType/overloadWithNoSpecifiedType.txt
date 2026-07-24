@@ -1,0 +1,3 @@
+expression: Main().foo()
+expression PSI: KtDotQualifiedExpression
+type: kotlin.Int

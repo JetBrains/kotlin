@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtOperationExpression
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 
+@K1Deprecation
 fun KtOperationExpression.reportDeprecatedDefinitelyNotNullSyntax(
     rhs: KtTypeReference?,
     context: ExpressionTypingContext

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.getClassAndItsOuterClassesWhenLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -32,7 +33,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
         val nullableToDefinitelyNotNull =
-            !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
+            !subtype.canBeNull() && supertype.withNullability(nullable = false, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }
@@ -131,7 +132,7 @@ fun findStaticallyKnownSubtype(
             findCorrespondingSupertypes(
                 typeCheckerState,
                 subtypeWithVariablesType,
-                normalizedType.typeConstructor(context.session.typeContext)
+                normalizedType.typeConstructor(c = context.session.typeContext)
             ).firstOrNull()
 
         val variables: List<FirTypeParameterSymbol> = subTypeClassSymbol.typeParameterSymbols

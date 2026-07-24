@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProviderImpl
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 
+@K1Deprecation
 object CompilerEnvironment : TargetEnvironment("Compiler") {
     override fun configure(container: StorageComponentContainer) {
         configureCompilerEnvironment(container)

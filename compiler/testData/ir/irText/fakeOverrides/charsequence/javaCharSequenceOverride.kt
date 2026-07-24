@@ -3,6 +3,9 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// KT-85832 Reflection: KClass.members for interface with explicit toString contains abstract toString
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 import org.jetbrains.annotations.NotNull;
 

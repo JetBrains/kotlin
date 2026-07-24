@@ -68,7 +68,7 @@ class CompoundDependenciesResolver(val resolvers: List<ExternalDependenciesResol
         while (artifactToResolverIndex.isNotEmpty()) {
             val resolverGroups = mutableMapOf<Int, MutableList<ArtifactWithLocation>>()
 
-            for ((artifactWithLocation, resolverIndex) in artifactToResolverIndex) {
+            for ([artifactWithLocation, resolverIndex] in artifactToResolverIndex) {
                 val (artifact, sourceCodeLocation) = artifactWithLocation
 
                 var currentIndex = resolverIndex + 1
@@ -92,7 +92,7 @@ class CompoundDependenciesResolver(val resolvers: List<ExternalDependenciesResol
             }
 
             artifactToResolverIndex.clear()
-            for ((resolverIndex, artifacts) in resolverGroups) {
+            for ([resolverIndex, artifacts] in resolverGroups) {
                 val resolver = resolvers[resolverIndex]
                 val resolveResult = resolver.resolve(artifacts, options)
                 resultsCollector.add(resolveResult)

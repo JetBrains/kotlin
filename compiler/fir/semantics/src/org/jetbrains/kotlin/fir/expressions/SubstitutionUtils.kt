@@ -36,7 +36,7 @@ fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
         // Type arguments are ignored defensively if `callableSymbol` can't provide enough type parameters (and vice versa). For
         // example, when call candidates are collected, the candidate's `callableSymbol` might have fewer type parameters than the
         // inferred call's type arguments.
-        typeArguments.zip(callableSymbol.typeParameterSymbols).forEach { (typeArgument, typeParameterSymbol) ->
+        typeArguments.zip(callableSymbol.typeParameterSymbols).forEach { [typeArgument, typeParameterSymbol] ->
             val type = (typeArgument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEach
             if (type is ConeErrorType && discardErrorTypes) return@forEach
 

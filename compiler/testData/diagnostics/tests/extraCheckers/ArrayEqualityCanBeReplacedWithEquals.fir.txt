@@ -1,4 +1,4 @@
-FILE: ArrayEqualityCanBeReplacedWithEquals.kt
+FILE: test.kt
     public final typealias A<T> = R|kotlin/Array<T>|
     public final fun foo(p: R|kotlin/Int|): R|kotlin/Unit| {
         lval a: R|kotlin/Array<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
@@ -22,4 +22,63 @@ FILE: ArrayEqualityCanBeReplacedWithEquals.kt
         ==(R|<local>/a|, R|<local>/b|)
         ==(R|<local>/a|, R|<local>/c|)
         !=(R|<local>/a|, R|<local>/b|)
+    }
+    public final fun <T> eq1(a: R|T|, b: R|T|): R|kotlin/Boolean| {
+        ^eq1 when () {
+            (R|<local>/a| is R|kotlin/IntArray|) && (R|<local>/b| is R|kotlin/IntArray|) ->  {
+                ==(R|<local>/a|, R|<local>/b|)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final inline fun <reified T> eq2(a: R|T|, b: R|T|): R|kotlin/Boolean| {
+        ^eq2 when () {
+            (R|<local>/a| is R|kotlin/IntArray|) && (R|<local>/b| is R|kotlin/IntArray|) ->  {
+                ==(R|<local>/a|, R|<local>/b|)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final fun <T : R|kotlin/Cloneable|> eq3(a: R|T|, b: R|T|): R|kotlin/Boolean| {
+        ^eq3 when () {
+            (R|<local>/a| is R|kotlin/IntArray|) && (R|<local>/b| is R|kotlin/IntArray|) ->  {
+                ==(R|<local>/a|, R|<local>/b|)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final fun eq4(a: R|kotlin/Any?|, b: R|kotlin/Any?|): R|kotlin/Boolean| {
+        ^eq4 when () {
+            (R|<local>/a| is R|kotlin/IntArray|) && (R|<local>/b| is R|kotlin/IntArray|) ->  {
+                ==(R|<local>/a|, R|<local>/b|)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    public final fun flexible(a: R|kotlin/Array<kotlin/String>|, b: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        ==(R|<local>/a|, Q|J|.R|/J.makeFlexible*s|<R|kotlin/Array<kotlin/String>!|>(R|<local>/b|))
+    }
+    public final class Box<T> : R|kotlin/Any| {
+        public constructor<T>(item: R|T|): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val item: R|T| = R|<local>/item|
+            public get(): R|T|
+
+    }
+    public final fun captured(box: R|Box<out kotlin/IntArray>|, box2: R|Box<out kotlin/IntArray>|): R|kotlin/Unit| {
+        ==(R|<local>/box|.R|SubstitutionOverride</Box.item: R|CapturedType(out kotlin/IntArray)|>|, R|<local>/box2|.R|SubstitutionOverride</Box.item: R|CapturedType(out kotlin/IntArray)|>|)
     }

@@ -1,0 +1,3 @@
+expected symbols:
+receiver parameter kotlin.String
+expect val kotlin.String.size: kotlin.Int

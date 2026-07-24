@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
+@K1Deprecation
 class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<KtFile>) : DeclarationProviderFactoryService() {
 
     override fun create(

@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -29,17 +28,18 @@ import kotlin.io.path.name
 import kotlin.io.path.walk
 import kotlin.io.path.writeText
 
+@SmokeTest
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
     @DefaultStrategyAndPlatformAgnosticScenarioTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun multiModuleExternallyTracked(scenario: ScenarioCreator) {
         runMultiModuleTest(scenario, useTrackedModules = false)
     }
 
     @DisplayName("IC works with the changes tracking via our internal machinery, similarly to Maven")
     @DefaultStrategyAndPlatformAgnosticScenarioTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun multiModuleInternallyTracked(scenario: ScenarioCreator) {
         runMultiModuleTest(scenario, useTrackedModules = true)
     }
@@ -135,18 +135,17 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
                     "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchains.getCompilerVersion()}"
                 )
-                assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
             }
             val module1 = if (useTrackedModules) {
-                trackedModule("jvm-module-1")
+                trackedModule("basic-multimodule-project/module-1")
             } else {
-                module("jvm-module-1")
+                module("basic-multimodule-project/module-1")
             }
 
             val module2 = if (useTrackedModules) {
-                trackedModule("jvm-module-2", listOf(module1))
+                trackedModule("basic-multimodule-project/module-2", listOf(module1))
             } else {
-                module("jvm-module-2", listOf(module1))
+                module("basic-multimodule-project/module-2", listOf(module1))
             }
 
             module1.createPredefinedFile("secret.kt", "new-file")

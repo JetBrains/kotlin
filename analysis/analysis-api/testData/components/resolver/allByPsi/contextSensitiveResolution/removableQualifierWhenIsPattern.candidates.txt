@@ -1,0 +1,224 @@
+KtFile: 'removableQualifierWhenIsPattern.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(70,82): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(78,82): 'test'
+  NO_CANDIDATES
+
+KtImportList(82,82): ''
+  NO_CANDIDATES
+
+KtClass(84,130): 'sealed class Base {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(84,90): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(102,130): '{'
+  NO_CANDIDATES
+
+KtClass(108,128): 'class Child : Base()'
+  NO_CANDIDATES
+
+KtSuperTypeList(122,128): 'Base()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(122,128): 'Base()'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(122,126): 'Base'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(122,126): 'Base'
+  NO_CANDIDATES
+
+KtUserType(122,126): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(122,126): 'Base'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(126,128): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(132,214): 'fun usage(b: Base) {'
+  NO_CANDIDATES
+
+KtParameterList(141,150): '(b: Base)'
+  NO_CANDIDATES
+
+KtParameter(142,149): 'b: Base'
+  NO_CANDIDATES
+
+KtTypeReference(145,149): 'Base'
+  NO_CANDIDATES
+
+KtUserType(145,149): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(145,149): 'Base'
+  NO_CANDIDATES
+
+KtBlockExpression(151,214): '{'
+  NO_CANDIDATES
+
+KtWhenExpression(157,212): 'when (b) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(163,164): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base
+        symbol = b: test.Base
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(176,206): 'is Base.Child -> "".hashCode()'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(176,189): 'is Base.Child'
+  NO_CANDIDATES
+
+KtTypeReference(179,189): 'Base.Child'
+  NO_CANDIDATES
+
+KtUserType(179,189): 'Base.Child'
+  NO_CANDIDATES
+
+KtUserType(179,183): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(179,183): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(184,189): 'Child'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(193,206): '"".hashCode()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtStringTemplateExpression(193,195): '""'
+  NO_CANDIDATES
+
+KtCallExpression(196,206): 'hashCode()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(196,204): 'hashCode'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(204,206): '()'
+  NO_CANDIDATES

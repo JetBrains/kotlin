@@ -119,12 +119,14 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(bridged)
 
         +field("name", string)
+        +listField("associatedValueTypes", typeType)
     }
 
     val struct: Element by element {
         customParentInVisitor = scopeDefiningDeclaration
         parent(scopeDefiningDeclaration)
         parent(declarationContainer)
+        parent(protocolConformingDeclaration)
     }
 
     val protocol: Element by element {
@@ -214,10 +216,11 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(classMemberDeclaration)
         parent(bridged)
 
+        +field("isConstant", boolean)
         +field("name", string)
         +field("type", typeType)
 
-        +field("getter", getter)
+        +field("getter", getter, nullable = true)
         +field("setter", setter, nullable = true)
     }
 

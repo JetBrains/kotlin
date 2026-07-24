@@ -66,7 +66,7 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
     /**
      * If the candidate is a function, then the arguments
      * order representation is an array containing the
-     * parameters count and the indices of the parameters
+     * value and context parameters count and the indices of the parameters
      * that the call arguments correspond to in the order
      * the call arguments happen to be.
      *
@@ -81,7 +81,7 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
             if (!argumentMappingInitialized) return null
             val mapping = argumentMapping
             val result = IntArray(mapping.size + 1) { function.valueParameters.size }
-            for ((index, parameter) in mapping.values.withIndex()) {
+            for ([index, parameter] in mapping.values.withIndex()) {
                 result[index + 1] = parametersToIndices[parameter] ?: error("Unmapped argument in arguments mapping")
             }
             return result

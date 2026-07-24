@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.cli
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBeanTo
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
 
-class ArgumentUtilTest : TestCase() {
+class ArgumentUtilTest {
+    @Test
     fun testCopyDoesNotCopyTransientFields() {
         assertTrue(Modifier.isTransient(K2JVMCompilerArguments::errors.javaField!!.modifiers))
 

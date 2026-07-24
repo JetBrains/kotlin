@@ -1,0 +1,3 @@
+expression: throw Exception("Exception")
+expression PSI: KtThrowExpression
+type: kotlin.Nothing

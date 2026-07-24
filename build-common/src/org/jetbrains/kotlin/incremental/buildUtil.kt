@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -108,7 +108,8 @@ fun updateIncrementalCache(
     generatedFiles: Iterable<GeneratedFile>,
     cache: IncrementalJvmCache,
     changesCollector: ChangesCollector,
-    javaChangesTracker: JavaClassesTrackerImpl?
+    javaChangesTracker: JavaClassesTrackerImpl?,
+    jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
     for (generatedFile in generatedFiles) {
         when {
@@ -120,8 +121,12 @@ fun updateIncrementalCache(
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
+    }
+
+    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveMetadataToCache(moduleName, metadata)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
@@ -248,7 +253,7 @@ fun mapClassesFqNamesToFiles(
         }
     }
 
-    for ((classFqName, affectedFiles) in fqNameToAffectedFiles) {
+    for ([classFqName, affectedFiles] in fqNameToAffectedFiles) {
         reporter.reportMarkDirtyClass(affectedFiles, classFqName.asString())
     }
 
@@ -301,7 +306,7 @@ fun withSubtypes(
 
 fun clearJarCaches() {
     ZipHandler.clearFileAccessorCache()
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     KotlinCoreEnvironment.applicationEnvironment?.apply {
         (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
         (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()

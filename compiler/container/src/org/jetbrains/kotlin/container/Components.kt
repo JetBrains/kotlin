@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.container
 
 import java.lang.reflect.*
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 open class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
 
     override fun getValue(): Any = instance
@@ -30,6 +32,7 @@ open class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor 
     }
 }
 
+@K1Deprecation
 class DefaultInstanceComponentDescriptor(instance: Any): InstanceComponentDescriptor(instance) {
     override fun toString() = "Default instance: ${instance.javaClass.simpleName}"
 }

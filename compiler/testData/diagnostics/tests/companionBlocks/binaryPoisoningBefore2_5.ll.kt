@@ -4,10 +4,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // LANGUAGE_VERSION: 2.4
+// API_VERSION: 2.4
 // LATEST_LV_DIFFERENCE
 
 // MODULE: m1
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FILE: m1.kt
 class C {
     companion {
@@ -16,7 +17,7 @@ class C {
 }
 
 // MODULE: m2(m1)
-// LANGUAGE: -CompanionBlocksAndExtensions
+// LANGUAGE: -CompanionBlocks -CompanionExtensions
 // FILE: m2.kt
 fun test() {
     C()

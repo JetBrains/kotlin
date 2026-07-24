@@ -4,7 +4,7 @@
 // DIAGNOSTICS: -PRE_RELEASE_CLASS
 
 // MODULE: m1
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FILE: m1.kt
 class C {
     companion {
@@ -36,7 +36,7 @@ enum class E {
 }
 
 // MODULE: m2(m1)
-// LANGUAGE: -CompanionBlocksAndExtensions
+// LANGUAGE: -CompanionBlocks -CompanionExtensions
 // FILE: m2.kt
 
 fun test() {

@@ -30,7 +30,7 @@ internal class ImplementationPrinter(
     printer: ImportCollectingPrinter
 ) : AbstractImplementationPrinter<Implementation, Element, Field>(printer) {
 
-    override val implementationOptInAnnotation: ClassRef<*>
+    override val implementationOptInAnnotation: PrintableAnnotation
         get() = firImplementationDetailType
 
 
@@ -283,7 +283,7 @@ internal class ImplementationPrinter(
             ) {
                 println()
                 if (field.name == "source") {
-                    println("@${firImplementationDetailType.render()}")
+                    println(firImplementationDetailType.render())
                 }
                 replaceFunctionDeclaration(field, override = true, kind!!, overridenType, forceNullable)
                 if (isInterface || isAbstract) {

@@ -16,11 +16,15 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-open class LocalObjectsBenchmark {
-    //Benchmark
-    fun localArray(): Int {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class LocalObjects : SkipWhenBaseOnly() {
+    @Benchmark
+    fun localArray(bh: Blackhole) {
+        skipWhenBaseOnly()
         val size = 48
         val array = IntArray(size)
         for (i in 1..size) {
@@ -30,9 +34,6 @@ open class LocalObjectsBenchmark {
         for (i in 0 until size) {
             result += array[i]
         }
-        if (result > 10) {
-            return 1
-        }
-        return 2
+        bh.consume(result)
     }
 }

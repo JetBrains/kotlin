@@ -66,9 +66,9 @@ class Test3(val a: String) : Parcelable
 @TypeParceler<StringData, StringDataParceler>
 class StringDataParcelerTest(
     val a: StringData,
-    val b: <!PARCELABLE_TYPE_NOT_SUPPORTED!>StringData?<!>,
+    val b: StringData?,
     val c: Data<String>,
-    val d: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Data<String>?<!>,
+    val d: Data<String>?,
 ) : Parcelable
 
 @Parcelize

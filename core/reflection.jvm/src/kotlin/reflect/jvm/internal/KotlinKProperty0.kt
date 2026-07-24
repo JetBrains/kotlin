@@ -28,6 +28,15 @@ internal open class KotlinKProperty0<out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
 
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        KotlinKProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKProperty<V> =
+        KotlinKProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+        throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+
     class Getter<out R>(override val property: KotlinKProperty0<R>) : KotlinKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
     }
@@ -43,6 +52,15 @@ internal class KotlinKMutableProperty0<V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKMutableProperty0(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
+        KotlinKMutableProperty0(container, signature, boundReceiver, kmProperty, overriddenStorage)
+
+    override fun unbindToHigherArity(): ReflectKProperty<V> =
+        KotlinKMutableProperty1<Any?, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+        throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
 
     class Setter<R>(override val property: KotlinKMutableProperty0<R>) : KotlinKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)

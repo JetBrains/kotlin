@@ -26,6 +26,7 @@ Tower Data Context:
                 FirValueParameterSymbol a: R|kotlin/String| = String(foo)
                 FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
                 FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+Expression Stability: ALIEN_PUBLIC_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_initializer.kt
     public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] TypeParameter> : R|kotlin/Any| {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, withName: Boolean = true): String = buildString {
     if (withName) {
         append(if (this@computeJvmDescriptor is ConstructorDescriptor) "<init>" else name.asString())
@@ -44,6 +46,7 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
     }
 }
 
+@K1Deprecation
 fun PropertyDescriptor.computeJvmDescriptorWithoutName() = buildString {
     append("(")
 
@@ -62,6 +65,7 @@ fun PropertyDescriptor.computeJvmDescriptorWithoutName() = buildString {
 
 // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation
 // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt')
+@K1Deprecation
 fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
     if (f !is FunctionDescriptor) return false
 
@@ -106,6 +110,7 @@ private fun StringBuilder.appendErasedType(type: KotlinType) {
 internal fun KotlinType.mapToJvmType(): JvmType =
     mapType(this, JvmTypeFactoryImpl, TypeMappingMode.DEFAULT, TypeMappingConfigurationImpl, descriptorTypeWriter = null)
 
+@K1Deprecation
 sealed class JvmType {
     // null means 'void'
     class Primitive(val jvmPrimitiveType: JvmPrimitiveType?) : JvmType()
@@ -127,6 +132,7 @@ sealed class JvmType {
     }
 }
 
+@K1Deprecation
 object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
     override fun boxType(possiblyPrimitiveType: JvmType) =
         when {
@@ -185,6 +191,7 @@ object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
 
 }
 
+@K1Deprecation
 object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType> {
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
         throw AssertionError("There should be no intersection type in existing descriptors, but found: " + types.joinToString())

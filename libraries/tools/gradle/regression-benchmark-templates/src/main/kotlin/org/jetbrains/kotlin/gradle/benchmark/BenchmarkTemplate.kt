@@ -72,7 +72,7 @@ abstract class BenchmarkTemplate(
         checkoutRepository()
 
         repoPatch?.let {
-            it().forEach { (patchName, patch) ->
+            it().forEach { [patchName, patch] ->
                 repoApplyPatch(patchName, patch)
             }
         }
@@ -544,7 +544,7 @@ abstract class BenchmarkTemplate(
                 kotlinVersions.map { scenario to it }
             }
             .flatten()
-            .map { (scenario, version) ->
+            .map { [scenario, version] ->
                 "${scenario.title} $version".normalizeTitle
             }
         output.writeText(

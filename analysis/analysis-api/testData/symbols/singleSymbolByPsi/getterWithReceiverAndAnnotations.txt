@@ -1,4 +1,5 @@
 KaPropertyGetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: [
     GetAnnotation()
       psi: KtAnnotationEntry
@@ -6,7 +7,7 @@ KaPropertyGetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -20,16 +21,20 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -39,6 +44,8 @@ KaPropertyGetterSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/x)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
@@ -47,20 +54,22 @@ KaPropertyGetterSymbol:
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
     getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
   getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

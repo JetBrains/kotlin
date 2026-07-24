@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.name.Name
 import java.util.TreeMap
 
 class JsPolyfills {
@@ -37,10 +38,12 @@ class JsPolyfills {
         val orderedMapOfPolyfills = TreeMap<String, List<JsStatement>>()
 
         for (declaration in this) {
-            val polyfillCodeExpression = declaration.getAnnotation(JsAnnotations.JsPolyfillFqn)?.arguments?.get(0) ?: compilationException(
-                "there is no @JsPolyfill annotation, while the declaration was added to the polyfilled declaration set",
-                declaration
-            )
+            val polyfillCodeExpression = declaration.getAnnotation(JsAnnotations.JsPolyfillFqn)
+                ?.argumentMapping[Name.identifier("implementation")]
+                ?: compilationException(
+                    "there is no @JsPolyfill annotation, while the declaration was added to the polyfilled declaration set",
+                    declaration
+                )
 
             val polyfillCodeString = (polyfillCodeExpression as IrConst).value as String
 

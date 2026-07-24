@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.writeTo
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 private val outputDir: File
-    get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("Please set output dir path"))
+    get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("Please set output dir path"))
 private val stdlibPath =
-    File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: error("Please set stdlib path")).canonicalPath
+    File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: testInfraError("Please set stdlib path")).canonicalPath
 private val kotlinTestPath =
-    File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: error("Please set kotlin-test path")).canonicalPath
+    File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: testInfraError("Please set kotlin-test path")).canonicalPath
 
 const val precompiledStdlibOutputName: String = "kotlin-kotlin-stdlib"
 const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
@@ -38,24 +39,35 @@ const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
 internal enum class PrecompileSetup(
     val debugFriendly: Boolean,
     val newExceptionProposal: Boolean,
+    val wasmCoroutinesStackSwitching: Boolean,
     val stdlibOutputDir: File,
     val kotlinTestOutputDir: File,
 ) {
     REGULAR(
         debugFriendly = false,
         newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = false,
         File(outputDir, "out/precompile/$precompiledStdlibOutputName"),
         File(outputDir, "out/precompile/$precompiledKotlinTestOutputName")
     ),
     NEW_EXCEPTION_PROPOSAL(
         debugFriendly = false,
         newExceptionProposal = true,
+        wasmCoroutinesStackSwitching = false,
         File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName"),
         File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
+    ),
+    STACK_SWITCHING_PROPOSAL(
+        debugFriendly = false,
+        newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = true,
+        File(outputDir, "out/precompile_stack_switching/$precompiledStdlibOutputName"),
+        File(outputDir, "out/precompile_stack_switching/$precompiledKotlinTestOutputName")
     ),
     DEBUG_FRIENDLY(
         debugFriendly = true,
         newExceptionProposal = false,
+        wasmCoroutinesStackSwitching = false,
         stdlibOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledStdlibOutputName"),
         kotlinTestOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledKotlinTestOutputName")
     ),
@@ -89,6 +101,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             wasmIncludedModuleOnly = true
             wasmUseNewExceptionProposal = setup.newExceptionProposal
             wasmForceDebugFriendlyCompilation = setup.debugFriendly
+            wasmUseStackSwitchingProposal = setup.wasmCoroutinesStackSwitching
             this.libraries = libraries
             this.includes = includes
         }

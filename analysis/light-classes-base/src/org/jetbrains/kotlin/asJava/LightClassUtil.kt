@@ -258,7 +258,7 @@ object LightClassUtil {
             }
         }
 
-        val (setters, getters) = accessorWrappers.partition { it.isSetter }
+        val [setters, getters] = accessorWrappers.partition { it.isSetter }
 
         val allGetters = listOfNotNull(specialGetter) + getters.filterNot { it == specialGetter }
         val allSetters = listOfNotNull(specialSetter) + setters.filterNot { it == specialSetter }

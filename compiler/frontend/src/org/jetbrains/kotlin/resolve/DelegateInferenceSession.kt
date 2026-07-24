@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@K1Deprecation
 class DelegateInferenceSession(
     val variableDescriptor: VariableDescriptorWithAccessors,
     val expectedType: UnwrappedType?,
@@ -109,6 +111,7 @@ class DelegateInferenceSession(
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 }
 
+@K1Deprecation
 class InferenceSessionForExistingCandidates(
     private val resolveReceiverIndependently: Boolean,
     override val parentSession: InferenceSession?

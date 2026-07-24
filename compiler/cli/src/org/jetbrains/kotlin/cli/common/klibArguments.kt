@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemCacheableAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import java.util.*
 import kotlin.reflect.KProperty1
 
 /**
@@ -43,7 +42,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
 
     duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(
         arguments.duplicatedUniqueNameStrategy,
-        default = if (isKlibMetadataCompilation) DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING else DuplicatedUniqueNameStrategy.DENY
+        default = if (isKlibMetadataCompilation) DuplicatedUniqueNameStrategy.ALLOW_ALL else DuplicatedUniqueNameStrategy.DENY
     )
 
     // Set up the custom ABI version (the one that has no effect on the KLIB serialization, though will be written to manifest).
@@ -169,8 +168,8 @@ fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
 
 private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL: Map<LanguageVersion, KlibAbiCompatibilityLevel> =
     buildMap {
-        this[LanguageVersion.KOTLIN_2_3] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
         this[LanguageVersion.KOTLIN_2_4] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_4
+        this[LanguageVersion.KOTLIN_2_5] = KlibAbiCompatibilityLevel.ABI_LEVEL_2_5
 
         check(size == KlibAbiCompatibilityLevel.entries.size) {
             "All declared ${KlibAbiCompatibilityLevel::class.java.simpleName} entries should be mapped to language versions"

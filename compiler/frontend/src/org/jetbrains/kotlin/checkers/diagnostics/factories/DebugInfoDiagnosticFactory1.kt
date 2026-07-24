@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.checkers.diagnostics.factories
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
+@K1Deprecation
 class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     DebugInfoDiagnosticFactory {
     private val privateName: String
@@ -41,7 +43,7 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
         moduleDescriptor: ModuleDescriptorImpl?
     ) = when (privateName) {
         EXPRESSION_TYPE.privateName -> {
-            val (type, dataFlowTypes) = CheckerTestUtil.getTypeInfo(
+            val [type, dataFlowTypes] = CheckerTestUtil.getTypeInfo(
                 element,
                 bindingContext,
                 dataFlowValueFactory,
@@ -52,7 +54,7 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
             this.on(element, Renderers.renderExpressionType(type, dataFlowTypes))
         }
         CALL.privateName -> {
-            val (fqName, typeCall) = CheckerTestUtil.getCallDebugInfo(element, bindingContext)
+            val [fqName, typeCall] = CheckerTestUtil.getCallDebugInfo(element, bindingContext)
             this.on(element, Renderers.renderCallInfo(fqName, typeCall))
         }
         CALLABLE_OWNER.privateName -> {

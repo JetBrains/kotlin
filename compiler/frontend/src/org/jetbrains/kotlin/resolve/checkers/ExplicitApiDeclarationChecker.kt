@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
+@K1Deprecation
 class ExplicitApiDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         fun extractState(flag: AnalysisFlag<ExplicitApiMode>): ExplicitApiMode? {
@@ -150,5 +152,6 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 val LanguageVersionSettings.explicitApiEnabled: Boolean
     get() = getFlag(AnalysisFlags.explicitApiMode) != ExplicitApiMode.DISABLED

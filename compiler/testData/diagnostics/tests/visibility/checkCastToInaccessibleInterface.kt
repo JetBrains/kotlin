@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 // DONT_WARN_ON_ERROR_SUPPRESSION
 // WITH_STDLIB
 
@@ -51,36 +50,36 @@ object `_`
 fun main() {
     println(f1<_>(Public1, Public2)) // ok
     println(f1(Public1, Public2)) // ok
-    println(f2<<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
-    println(<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_ERROR!>f2<!>(Public1, Public2)) // fails in run time
+    println(f2<<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>f2<!>(Public1, Public2)) // fails in run time
     println(f2_(Public1, Public2)) // fails in compile time
-    println(f3<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
-    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f3<!>(Public1, Public2)) // fails in run time
-    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f4<!>(Public1, Public2)) // ok
-    println(f4<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // ok
-    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f5<!>(Public1, Public2)) // fails in run time
-    println(f5<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
-    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f6<!>(Public1, Public2)) // fails in run time
-    println(f6<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
-    println(f7(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
-    println(f7<_>(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
-    val f8_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8(Public1, Public2)<!> // fails in run time
-    val f8_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8<_>(Public1, Public2)<!> // fails in run time
-    val f9_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f9(Public1, Public2)<!> // fails in run time
-    val f9_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f9<_>(Public1, Public2)<!> // fails in run time
+    println(f3<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>f3<!>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>f4<!>(Public1, Public2)) // ok
+    println(f4<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>_<!>>(Public1, Public2)) // ok
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>f5<!>(Public1, Public2)) // fails in run time
+    println(f5<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>f6<!>(Public1, Public2)) // fails in run time
+    println(f6<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>_<!>>(Public1, Public2)) // fails in run time
+    println(f7(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>arrayOf<!>(Public1, Public2))) // fails in run time
+    println(f7<_>(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING!>arrayOf<!>(Public1, Public2))) // fails in run time
+    val f8_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>f8(Public1, Public2)<!> // fails in run time
+    val f8_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>f8<_>(Public1, Public2)<!> // fails in run time
+    val f9_1 = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>f9(Public1, Public2)<!> // fails in run time
+    val f9_2 = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>f9<_>(Public1, Public2)<!> // fails in run time
     f8(<!UNRESOLVED_REFERENCE!>Unresolved<!>(), 2)
-    <!INFERRED_INVISIBLE_RETURN_TYPE_ERROR!>f8(listOf(Public1), listOf(Public2))<!>[0] // fails in run time
-    val condition1 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
-    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
+    <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>f8(listOf(Public1), listOf(Public2))<!>[0] // fails in run time
+    val condition1 = <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>if (2.toLong() == 3L) Public1 else Public2<!> // fails in run time
     if (2.toLong() == 3L) Public1 else Public2.let {}
-    val condition2 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
-    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
+    val condition2 = <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>if (2.toLong() == 3L) listOf(Public1) else listOf(Public2)<!> // fails in run time
     if (2.toLong() == 3L) listOf(Public1) else listOf(Public2).let {}
-    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when { // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>when { // fails in run time
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2)
     }<!>
-    val condition3 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when { // fails in run time
+    val condition3 = <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>when { // fails in run time
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2)
     }<!>
@@ -88,11 +87,11 @@ fun main() {
         2.toLong() == 3L -> listOf(Public1)
         else -> listOf(Public2).let {}
     }
-    <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when (2.toLong()) { // fails in run time
+    <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>when (2.toLong()) { // fails in run time
         3L -> listOf(Public1)
         else -> listOf(Public2)
     }<!>
-    val condition4 = <!INFERRED_INVISIBLE_WHEN_TYPE_ERROR!>when (2.toLong()) { // fails in run time
+    val condition4 = <!INFERRED_INVISIBLE_WHEN_TYPE_WARNING!>when (2.toLong()) { // fails in run time
         3L -> listOf(Public1)
         else -> listOf(Public2)
     }<!>

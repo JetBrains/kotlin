@@ -26,7 +26,7 @@ kotlin {
         browser {
         }
         binaries.executable()
-        val main by compilations.getting
+        val main = compilations.getByName("main")
         main.binaries
             .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
             .matching { it is JsIrBinary }

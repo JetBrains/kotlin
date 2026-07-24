@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.test.testInfraError
 import java.lang.reflect.Method
 
 private fun ClassLoader.loadClassOrNull(name: String): Class<*>? =
@@ -22,7 +23,7 @@ private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<
     }
 
 fun getGeneratedClass(classLoader: ClassLoader, className: String): Class<*> =
-    classLoader.loadClassOrNull(className) ?: error("No class file was generated for: $className")
+    classLoader.loadClassOrNull(className) ?: testInfraError("No class file was generated for: $className")
 
 fun getBoxMethodOrNull(aClass: Class<*>): Method? =
     aClass.getMethodOrNull("box")

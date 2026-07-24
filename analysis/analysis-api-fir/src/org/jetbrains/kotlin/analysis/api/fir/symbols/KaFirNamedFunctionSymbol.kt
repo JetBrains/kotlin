@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.KaSyntheticJavaPropertyAccessorKind
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
@@ -68,7 +68,6 @@ internal class KaFirNamedFunctionSymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: findPsi() }
     override val name: Name get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
@@ -239,6 +238,13 @@ internal class KaFirNamedFunctionSymbol private constructor(
             psiBasedModality ?: firSymbol.kaSymbolModality
         }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion {
+            val compilerVisibility = backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
+            compilerVisibility.asKaSymbolVisibility
+        }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion {
             backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
@@ -274,7 +280,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
         return KaFirMemberFunctionSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             signature = FirCallableSignature.createSignature(firSymbol),
             isStatic = firSymbol.isStatic,
@@ -318,7 +324,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
                 if (matchesAccessor) {
                     return KaFirJavaSyntheticPropertyAccessorFunctionSymbolPointer(
-                        ownerPointer = analysisSession.createOwnerPointer(this),
+                        ownerPointer = createOwnerPointer(),
                         propertyName = propertyName,
                         isGetter = accessorKind == KaSyntheticJavaPropertyAccessorKind.GETTER,
                         originalSymbol = this

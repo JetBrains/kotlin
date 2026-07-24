@@ -157,7 +157,7 @@ class JavaClassUseSiteMemberScope(
          */
         val fromSupertypes = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processPropertiesByName)
 
-        val (fieldsFromSupertype, propertiesFromSupertypes) = fromSupertypes.partition {
+        val [fieldsFromSupertype, propertiesFromSupertypes] = fromSupertypes.partition {
             it is ResultOfIntersection.SingleMember && it.chosenSymbol is FirFieldSymbol
         }
 
@@ -189,7 +189,7 @@ class JavaClassUseSiteMemberScope(
     }
 
     internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
-        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ (symbol, baseScope) ->
+        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ (val symbol = member, val baseScope) ->
             // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
             // So we need to use raw status here
             if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@superMember null
@@ -350,7 +350,7 @@ class JavaClassUseSiteMemberScope(
         // e.g. 'removeAt' or 'toInt'
         val builtinName = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name) ?: return false
         val builtinSpecialFromSuperTypes = supertypeScopeContext.collectMembersGroupedByScope(builtinName, FirScope::processFunctionsByName)
-            .flatMap { (scope, symbols) ->
+            .flatMap { [scope, symbols] ->
                 symbols.filter { it.doesOverrideBuiltinWithDifferentJvmName(scope, session) }
             }
         if (builtinSpecialFromSuperTypes.isEmpty()) return false
@@ -391,9 +391,9 @@ class JavaClassUseSiteMemberScope(
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
         val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
             .flatMap { it.overriddenMembers }
-            .filterNot { (member, _) ->
+            .filterNot { (val member, val _ = baseScope) ->
                 member.valueParameterSymbols.all { it.resolvedReturnType.lowerBoundIfFlexible().isAny }
-            }.mapNotNull { (member, scope) ->
+            }.mapNotNull { (val member, val scope = baseScope) ->
                 BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope)
             }
 
@@ -560,7 +560,7 @@ class JavaClassUseSiteMemberScope(
         explicitlyDeclaredFunction: FirNamedFunctionSymbol?,
     ): Boolean {
         // E.g. contains(String) or contains(T)
-        val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { (member, scope) ->
+        val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { (val member, val scope = baseScope) ->
             BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope) != null
         }?.member ?: return false
 
@@ -577,7 +577,7 @@ class JavaClassUseSiteMemberScope(
 
         destination += symbolToBeCollected
         directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
-        for ((member, _) in resultOfIntersection.overriddenMembers) {
+        for ((val member, val _ = baseScope) in resultOfIntersection.overriddenMembers) {
             overrideByBase[member] = symbolToBeCollected
         }
         return true
@@ -740,7 +740,7 @@ class JavaClassUseSiteMemberScope(
         // Both parts must have name of naturalName
         // Example when both exist: testWeirdCharBuffers, class CharBufferXAllInherited : CharSequence, X
         // interface X in this example contains get(Int): Char
-        val (intersectedOverridingRenamedBuiltin, intersectedOverridingNonBuiltin) =
+        val [intersectedOverridingRenamedBuiltin, intersectedOverridingNonBuiltin] =
             resultOfIntersectionWithNaturalName.overriddenMembers.partition {
                 it.member.getJvmMethodNameIfSpecial(it.baseScope, session) == jvmName
             }
@@ -887,7 +887,7 @@ class JavaClassUseSiteMemberScope(
 
         val currentJvmDescriptor = functionSymbol.fir.computeJvmDescriptor(includeReturnType = false)
 
-        val getterDescriptorMatches = accessorDescriptors.any { (getterJvmDescriptor, _) ->
+        val getterDescriptorMatches = accessorDescriptors.any { [getterJvmDescriptor, _] ->
             val gettersAreSame = currentJvmDescriptor == getterJvmDescriptor && run {
                 val propertyType = this.fir.returnTypeRef.probablyJavaTypeRefToConeType()
                 val functionType = functionSymbol.fir.returnTypeRef.probablyJavaTypeRefToConeType()
@@ -898,13 +898,13 @@ class JavaClassUseSiteMemberScope(
 
         if (getterDescriptorMatches && this.isVal) return true
 
-        val setterDescriptorMatches = accessorDescriptors.any { (_, setterJvmDescriptor) ->
+        val setterDescriptorMatches = accessorDescriptors.any { [_, setterJvmDescriptor] ->
             currentJvmDescriptor == setterJvmDescriptor
         }
 
         if (!setterDescriptorMatches) return false
 
-        val (getterOverride, setterOverride) = when (getterDescriptorMatches) {
+        val [getterOverride, setterOverride] = when (getterDescriptorMatches) {
             true -> functionSymbol to findSetterOverride(this@JavaClassUseSiteMemberScope)
             false -> findGetterOverride(this@JavaClassUseSiteMemberScope) to functionSymbol
         }
@@ -1092,7 +1092,7 @@ class JavaClassUseSiteMemberScope(
                 this.valueParameters.clear()
                 explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
                     relevantFunctionFromSupertypes.fir.valueParameters
-                ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+                ).mapTo(this.valueParameters) { [overrideParameter, parameterFromSupertype] ->
                     if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
                         allParametersAreAny = false
                     }
@@ -1166,21 +1166,21 @@ class FirRenamedForOverrideSymbolsStorage(cachesFactory: FirCachesFactory) : Fir
     constructor(session: FirSession) : this(session.firCachesFactory)
 
     val renamedFunctionsCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, RenamedFunctionCreationContext> =
-        cachesFactory.createCache { (originalSymbol, naturalName), (klass, isHidden, origin) ->
+        cachesFactory.createCache { [originalSymbol, naturalName], (klass, isHidden, origin) ->
             JavaClassUseSiteMemberScope.createCopyWithNaturalName(originalSymbol, naturalName, klass, isHidden, origin)
         }
 
     data class RenamedFunctionCreationContext(val klass: FirJavaClass, val isHidden: Boolean, val origin: FirDeclarationOrigin?)
 
     val declaredFunctionCopyWithParameterTypesFromSupertypeCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol?, FirNamedFunctionSymbol> =
-        cachesFactory.createCache { (explicitlyDeclaredFunctionWithErasedValueParameters, name), relevantFunctionFromSupertypes ->
+        cachesFactory.createCache { [explicitlyDeclaredFunctionWithErasedValueParameters, name], relevantFunctionFromSupertypes ->
             JavaClassUseSiteMemberScope.createDeclaredFunctionCopyWithParameterTypesFromSupertype(
                 explicitlyDeclaredFunctionWithErasedValueParameters, name, relevantFunctionFromSupertypes
             )
         }
 
     val accidentalOverrideWithDeclaredFunctionHiddenCopyIfDeclaredFunctionParametersAreErasedCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, AccidentalOverrideWithDeclaredFunctionHiddenCopyCreationContext> =
-        cachesFactory.createCache { (accidentalOverrideWithDeclaredFunction, name), (explicitlyDeclaredFunctionWithErasedValueParameters, klass) ->
+        cachesFactory.createCache { [accidentalOverrideWithDeclaredFunction, name], (explicitlyDeclaredFunctionWithErasedValueParameters, klass) ->
             JavaClassUseSiteMemberScope.createAccidentalOverrideWithDeclaredFunctionHiddenIfDeclaredFunctionParametersAreErasedCopy(
                 accidentalOverrideWithDeclaredFunction,
                 name,
@@ -1195,7 +1195,7 @@ class FirRenamedForOverrideSymbolsStorage(cachesFactory: FirCachesFactory) : Fir
     )
 
     val accidentalOverrideWithDeclaredFunctionHiddenCopyIfInheritedFunctionParametersAreErasedCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, FirJavaClass> =
-        cachesFactory.createCache { (relevantFunctionFromSupertypes, name), klass ->
+        cachesFactory.createCache { [relevantFunctionFromSupertypes, name], klass ->
             JavaClassUseSiteMemberScope.createAccidentalOverrideWithDeclaredFunctionHiddenIfInheritedFunctionParametersAreErasedCopy(
                 relevantFunctionFromSupertypes, name, klass,
             )

@@ -47,7 +47,7 @@ class BuildSessionLogger(
     private var buildSession: BuildSession? = null
 
     //New FUS file should use comma (,) as a separator, but for old FUS files a semicolon (;) is used
-    private val metricsContainer = MetricsContainer.createMetricsContainerForKotlinProfileFile(forceValuesValidation)
+    private val metricsContainer = MetricsContainer.createMetricsContainerForV2KotlinProfileFile(forceValuesValidation)
 
     @Synchronized
     fun startBuildSession(buildUid: String) {
@@ -116,4 +116,8 @@ class BuildSessionLogger(
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?) =
         metricsContainer.report(metric, value, subprojectName, weight)
+
+    override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
+
 }

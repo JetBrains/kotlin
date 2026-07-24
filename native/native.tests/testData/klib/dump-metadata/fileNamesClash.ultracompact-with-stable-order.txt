@@ -1,0 +1,8 @@
+public final annotation class Bar : kotlin/Annotation
+public constructor Bar.<init>()
+public final class Class1 : kotlin/Any
+public constructor Class1.<init>()
+public final class Class2 : kotlin/Any
+public constructor Class2.<init>()
+public final annotation class Foo : kotlin/Annotation
+public constructor Foo.<init>()

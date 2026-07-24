@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final companion val /compExtVal // /compExtVal|#companion@A{}compExtVal[0]
+    final companion fun (/A).<get-compExtVal>(): kotlin/UInt // /compExtVal.<get-compExtVal>|<get-compExtVal>#companion@A(){}[0]
+final companion val /compExtValI // /compExtValI|#companion@A{}compExtValI[0]
+    final companion fun (/A).<get-compExtValI>(): kotlin/Int // /compExtValI.<get-compExtValI>|<get-compExtValI>#companion@A(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final inline companion fun (/A)./compExtFun(kotlin/UInt = ...): kotlin/String // /compExtFun|compExtFun#companion@A(kotlin.UInt){}[0]

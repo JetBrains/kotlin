@@ -125,7 +125,7 @@ internal fun BaseContinuationImpl.getSpilledVariableFieldMapping(): Array<String
     if (debugMetadata.version < COROUTINES_DEBUG_METADATA_VERSION_1_3) return null
     val res = arrayListOf<String>()
     val label = getLabel()
-    for ((i, labelOfIndex) in debugMetadata.indexToLabel.withIndex()) {
+    for ([i, labelOfIndex] in debugMetadata.indexToLabel.withIndex()) {
         if (labelOfIndex == label) {
             res.add(debugMetadata.spilled[i])
             res.add(debugMetadata.localNames[i])

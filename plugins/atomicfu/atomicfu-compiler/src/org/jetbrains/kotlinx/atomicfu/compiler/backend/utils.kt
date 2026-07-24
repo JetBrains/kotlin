@@ -11,3 +11,5 @@ import org.jetbrains.kotlin.ir.util.render
 
 internal fun IrProperty.atomicfuRender(): String =
     (if (isVar) "var" else "val") + " " + name.asString() + ": " + backingField?.type?.render()
+
+internal val IrProperty.hasStaticBackingField get() = backingField?.isStatic == true

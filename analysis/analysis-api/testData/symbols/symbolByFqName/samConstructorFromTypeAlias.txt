@@ -1,7 +1,8 @@
 KaSamConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: one/MyAlias
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -13,6 +14,8 @@ KaSamConstructorSymbol:
   modality: FINAL
   name: MyAlias
   origin: SAM_CONSTRUCTOR
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -21,16 +24,17 @@ KaSamConstructorSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -42,6 +46,9 @@ KaSamConstructorSymbol:
       modality: FINAL
       name: function
       origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -52,16 +59,17 @@ KaSamConstructorSymbol:
             type: kotlin/Unit
         ]
         type: () -> kotlin/Unit
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
       getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
   getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: one.MyAlias

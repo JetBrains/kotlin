@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 
 fun referenceAllCommonDependencies(outputs: List<SingleModuleFrontendOutput>) {
     val platformSession = outputs.last().session
-    if (!platformSession.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)) return
+    if (!platformSession.languageVersionSettings.hmppProvidersEnabled) return
     val visitor = Visitor(platformSession)
 
     val dependantFragments = outputs.dropLast(1)
-    for ((_, _, files) in dependantFragments) {
+    for ((val _ = session, val _ = scopeSession, val files = fir) in dependantFragments) {
         for (file in files) {
             file.accept(visitor)
         }
@@ -55,8 +55,9 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-        lookupInType(resolvedQualifier.resolvedType)
-        visitElement(resolvedQualifier)
+        resolvedQualifier.qualifierSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+        resolvedQualifier.accessedObjectSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+        resolvedQualifier.acceptChildren(this)
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {

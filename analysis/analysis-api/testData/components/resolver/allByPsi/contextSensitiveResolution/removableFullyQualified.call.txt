@@ -1,0 +1,153 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(27,39): 'package main'
+  null
+
+KtNameReferenceExpression(35,39): 'main'
+  null
+
+KtImportList(41,63): 'import test.expectsFoo'
+  null
+
+KtImportDirective(41,63): 'import test.expectsFoo'
+  null
+
+KtDotQualifiedExpression(48,63): 'test.expectsFoo'
+  null
+
+KtNameReferenceExpression(48,52): 'test'
+  null
+
+KtNameReferenceExpression(53,63): 'expectsFoo'
+  null
+
+KtNamedFunction(65,109): 'fun usage() {'
+  null
+
+KtParameterList(74,76): '()'
+  null
+
+KtBlockExpression(77,109): '{'
+  null
+
+KtCallExpression(83,107): 'expectsFoo(test.Foo.BAR)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test.Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(83,93): 'expectsFoo'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test.Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(93,107): '(test.Foo.BAR)'
+  null
+
+KtValueArgument(94,106): 'test.Foo.BAR'
+  null
+
+KtDotQualifiedExpression(94,106): 'test.Foo.BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(94,102): 'test.Foo'
+  null
+
+KtNameReferenceExpression(94,98): 'test'
+  null
+
+KtNameReferenceExpression(99,102): 'Foo'
+  null
+
+KtNameReferenceExpression(103,106): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}

@@ -22,6 +22,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.configuration.project.ConfigureProjectBuildOperationType
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.CopyOnWriteArraySet
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -169,10 +169,13 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     ) {
         val details = operationDescriptor?.details
         if (details is ConfigureProjectBuildOperationType.Details) {
-            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) return
+            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) {
+                log.debug("Skipping duplicate message with id ${operationDescriptor.id.id}")
+                return
+            }
 
             val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
-            buildMetrics.buildTimes.addTimeNs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
+            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
             addConfigurationRecord(
                 getPath(details),
                 OperationFinishEvent::class.java,
@@ -214,8 +217,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             additionalTags = HashSet(buildConfigurationTags.get()),
         )
 
+        @Synchronized
         private fun registerIfAbsentImpl(
             project: Project,
+            buildOperationListenerManager: BuildOperationListenerManager
         ): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
@@ -258,6 +263,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
                 subscribeForTaskEvents(project, it)
+                buildOperationListenerManager.addListener(it.get())
             }
 
         }
@@ -341,8 +347,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        fun registerIfAbsent(project: Project) =
-            registerIfAbsentImpl(project)?.also { serviceProvider ->
+        fun registerIfAbsent(project: Project, buildOperationListenerManager: BuildOperationListenerManager) =
+            registerIfAbsentImpl(project, buildOperationListenerManager)?.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
                     project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
                         task.buildMetricsService.value(serviceProvider).disallowChanges()

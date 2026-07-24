@@ -114,7 +114,13 @@ class JsGenerationContext(
         originalName: String?,
         cache: MutableMap<Int, JsLocation>,
         offsetSelector: IrElement.() -> Int,
-    ): JsLocation? = cache.getOrPut(irElement.offsetSelector()) {
-        irElement.getSourceLocation(currentFileEntry, offsetSelector) ?: return null
-    }.copy(name = originalName)
+    ): JsLocation? {
+        return cache.getOrPut(irElement.offsetSelector()) {
+            when (val location = irElement.getSourceLocation(currentFileEntry, offsetSelector)) {
+                JsLocation.IGNORED -> return JsLocation.IGNORED
+                null -> return null
+                else -> location.copy(name = originalName)
+            }
+        }
+    }
 }

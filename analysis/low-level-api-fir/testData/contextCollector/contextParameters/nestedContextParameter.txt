@@ -52,6 +52,7 @@ Tower Data Context:
                 Type: C
     Element 18
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 Smart Casts:
     FirValueParameterSymbol a: R|T|
     Stability: STABLE_VALUE

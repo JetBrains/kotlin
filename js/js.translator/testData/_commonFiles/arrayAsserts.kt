@@ -1,3 +1,4 @@
+@file:Suppress("KOTLIN_PACKAGE_USAGE")
 package kotlin
 
 fun <T> assertArrayEquals(expected: Array<out T>, actual: Array<out T>, message: String? = null) {

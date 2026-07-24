@@ -34,7 +34,7 @@ abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
     private val log = Logging.getLogger(javaClass)
 
     override fun apply(target: Settings) {
-        // `kotlin-build-gradle-plugin` is not used here intentionally, as it caches properties, we don't want to cache them before modification
+        // `kotlin-build-helpers` is not used here intentionally, as it caches properties, we don't want to cache them before modification
         val shouldApplyPlugin = target.providers.gradleProperty(PLUGIN_SWITCH_PROPERTY).orElse("false").map(String::toBoolean)
         if (!shouldApplyPlugin.get()) return // the plugin is disabled, do nothing at all
         val isTeamCityBuild = (target as? ExtensionAware)?.extra?.has("teamcity") == true || System.getenv("TEAMCITY_VERSION") != null

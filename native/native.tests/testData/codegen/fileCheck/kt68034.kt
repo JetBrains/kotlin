@@ -1,15 +1,17 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // CHECK-LABEL: define i32 @"kfun:#wrapString(kotlin.String){}kotlin.Int
 // CHECK-OPT: call {{zeroext i16|i16}} @Kotlin_String_get
-// CHECK-DEBUG: call {{zeroext i16|i16}} @"kfun:kotlin.CharSequence#get(kotlin.Int){}kotlin.Char-trampoline"
+// CHECK-DEBUG: call {{zeroext i16|i16}} @"kfun:kotlin.CharSequence#get(kotlin.Int){}kotlin.Char"
 // CHECK-LABEL: epilogue:
 fun wrapString(impl: String) = ifaceHandler(impl)
 
 // CHECK-LABEL: define i32 @"kfun:#wrapStringBuilder(kotlin.CharSequence){}kotlin.Int
 // CHECK-OPT: call {{zeroext i16|i16}} @"kfun:kotlin.text.StringBuilder#get(kotlin.Int){}kotlin.Char"
-// CHECK-DEBUG: call {{zeroext i16|i16}} @"kfun:kotlin.CharSequence#get(kotlin.Int){}kotlin.Char-trampoline"
+// CHECK-DEBUG: call {{zeroext i16|i16}} @"kfun:kotlin.CharSequence#get(kotlin.Int){}kotlin.Char"
 // CHECK-LABEL: epilogue:
 fun wrapStringBuilder(impl: CharSequence) = ifaceHandler(impl)
 

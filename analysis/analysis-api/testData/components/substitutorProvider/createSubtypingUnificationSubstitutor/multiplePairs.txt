@@ -1,0 +1,20 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {B = D & Any, C = it(kotlin/Int & A)}>
+Substituted pairs:
+D & Any <: kotlin/Any (Original: B <: kotlin/Any)
+it(kotlin/Int & A) <: A (Original: C <: A)
+D & Any <: D (Original: B <: D)
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {A = C, D = B}>
+Substituted pairs:
+B <: kotlin/Any (Original: B <: kotlin/Any)
+C <: C (Original: C <: A)
+B <: B (Original: B <: D)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {A = kotlin/Number, B = kotlin/Any, D = kotlin/Any, C = kotlin/Int}>
+Substituted pairs:
+kotlin/Any <: kotlin/Any (Original: B <: kotlin/Any)
+kotlin/Int <: kotlin/Number (Original: C <: A)
+kotlin/Any <: kotlin/Any (Original: B <: D)

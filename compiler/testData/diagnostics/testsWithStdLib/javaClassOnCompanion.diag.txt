@@ -1,9 +1,15 @@
-/javaClassOnCompanion.kt:16:12: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
+/javaClassOnCompanion.kt:23:12: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
 
-/javaClassOnCompanion.kt:17:17: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
+/javaClassOnCompanion.kt:24:13: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<T>'. Use '::class.java' to access type 'Class<T>'.
 
-/javaClassOnCompanion.kt:28:12: error: Unresolved reference 'javaClass'.
+/javaClassOnCompanion.kt:25:17: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<A>'. Use '::class.java' to access type 'Class<A>'.
 
-/javaClassOnCompanion.kt:32:16: warning: The resulting type of this 'javaClass' call is 'Class<Int.Companion>' and not 'Class<Int>'. Use '::class.java' to access type 'Class<Int>'.
+/javaClassOnCompanion.kt:26:18: warning: The resulting type of this 'javaClass' call is 'Class<A.Companion>' and not 'Class<T>'. Use '::class.java' to access type 'Class<T>'.
 
-/javaClassOnCompanion.kt:35:22: warning: The resulting type of this 'javaClass' call is 'Class<String.Companion>' and not 'Class<String>'. Use '::class.java' to access type 'Class<String>'.
+/javaClassOnCompanion.kt:38:12: error: Unresolved reference 'javaClass'.
+
+/javaClassOnCompanion.kt:42:16: warning: The resulting type of this 'javaClass' call is 'Class<Int.Companion>' and not 'Class<Int>'. Use '::class.java' to access type 'Class<Int>'.
+
+/javaClassOnCompanion.kt:45:22: warning: The resulting type of this 'javaClass' call is 'Class<String.Companion>' and not 'Class<String>'. Use '::class.java' to access type 'Class<String>'.
+
+/javaClassOnCompanion.kt:48:12: warning: The resulting type of this 'javaClass' call is 'Class<G.Companion>' and not 'Class<G<*>>'. Use '::class.java' to access type 'Class<G<*>>'.

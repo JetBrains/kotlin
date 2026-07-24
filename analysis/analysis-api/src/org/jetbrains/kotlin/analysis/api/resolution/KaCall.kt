@@ -87,7 +87,6 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
      * @see valueArgumentMapping
      * @see combinedArgumentMapping
      */
-    @KaExperimentalApi
     public val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
 
     /**

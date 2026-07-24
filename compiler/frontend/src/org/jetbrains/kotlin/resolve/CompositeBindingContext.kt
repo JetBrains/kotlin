@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import com.google.common.collect.ImmutableMap
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
+@K1Deprecation
 class CompositeBindingContext private constructor(
     private val delegates: LinkedHashSet<BindingContext>
 ) : BindingContext {

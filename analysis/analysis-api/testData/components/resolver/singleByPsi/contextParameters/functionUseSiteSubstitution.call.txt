@@ -5,12 +5,14 @@ KtCallExpression(168,182): 'foo(1L, "str")'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -20,21 +22,26 @@ KtCallExpression(168,182): 'foo(1L, "str")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Long
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Long,
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -44,11 +51,14 @@ KtCallExpression(168,182): 'foo(1L, "str")'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/usage)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Boolean
+            typeParameters: []
             visibility: PUBLIC
           type = kotlin.Boolean
       ]
@@ -82,7 +92,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
             name = <unused var>
             receiverType = null
             returnType = kotlin.Long
-            symbol = <unused var>: kotlin.Long
+            symbol = <unused var>: T
             contextParameters = []
             callableId = null,
           KaVariableSignature:

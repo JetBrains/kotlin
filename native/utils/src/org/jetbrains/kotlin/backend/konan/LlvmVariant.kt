@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.nio.file.Path
 
 sealed class LlvmVariant {
     object User : LlvmVariant() {
@@ -25,9 +26,9 @@ sealed class LlvmVariant {
             konanPropertiesKey to "\$llvm.${HostManager.Companion.hostName}.dev-with-asserts"
     }
 
-    class Custom(val path: File) : LlvmVariant() {
+    class Custom(val path: Path) : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
-                konanPropertiesKey to path.canonicalPath
+                konanPropertiesKey to path.canonicalPathString()
 
     }
 

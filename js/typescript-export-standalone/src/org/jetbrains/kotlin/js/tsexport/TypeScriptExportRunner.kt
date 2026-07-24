@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.js.tsexport
 
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
@@ -25,6 +24,9 @@ public data class TypeScriptExportConfig(
     public val artifactConfiguration: WebArtifactConfiguration,
     public val compileLongAsBigInt: Boolean,
     public val implementableInterfaces: Boolean,
+    public val exportableSuspendLambdas: Boolean,
+    public val dataClassCopyRespectsConstructorVisibility: Boolean,
+    public val exportUntypedAsUnknown: Boolean,
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>
@@ -43,8 +45,9 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
     }
 
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
-    val exportModel = klibs.map {
-        generateExportModelForModule(it, kaModules, config)
+    val generator = ExportModelGenerator(config)
+    val exportModel = analyze(kaModules.useSiteModule) {
+        generator.generateExport(kaModules)
     }
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
@@ -62,6 +65,7 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
                 JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_MODULE -> artifacts.map { artifact ->
                     val jsFileName = config.artifactConfiguration.outputJsFile(artifact.externalModuleName).name
                     val dtsFile = config.artifactConfiguration.outputDtsFile(artifact.externalModuleName).normalizedAbsoluteFile
+                    dtsFile.parentFile?.mkdirs()
                     val tsDefinitions = listOf(artifact.exportModel.toTypeScriptFragment(config.artifactConfiguration.moduleKind))
                         .toTypeScript(jsFileName, config.artifactConfiguration.moduleKind)
                     dtsFile.writeText(tsDefinitions)
@@ -104,11 +108,3 @@ internal data class FileArtifactKey(
     val fileName: String,
 )
 
-private fun generateExportModelForModule(
-    klib: KlibInputModule<TypeScriptModuleConfig>,
-    kaModules: KaModules<TypeScriptModuleConfig>,
-    config: TypeScriptExportConfig,
-): ProcessedModule = analyze(kaModules.useSiteModule) {
-    val library = kaModules.mainModules.single { it.libraryName == klib.name }
-    ExportModelGenerator(config).generateExport(library, klib.config)
-}

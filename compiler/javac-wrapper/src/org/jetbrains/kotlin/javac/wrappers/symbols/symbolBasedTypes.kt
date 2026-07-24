@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.sun.tools.javac.code.Symbol
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.*
 
+@K1Deprecation
 sealed class SymbolBasedType<out T : TypeMirror>(
     val typeMirror: T,
     val javac: JavacWrapper
@@ -56,6 +58,7 @@ sealed class SymbolBasedType<out T : TypeMirror>(
 
 }
 
+@K1Deprecation
 class SymbolBasedPrimitiveType(
     typeMirror: TypeMirror,
     javac: JavacWrapper
@@ -66,6 +69,7 @@ class SymbolBasedPrimitiveType(
 
 }
 
+@K1Deprecation
 class SymbolBasedClassifierType<out T : TypeMirror>(
     typeMirror: T,
     javac: JavacWrapper
@@ -125,6 +129,7 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
         get() = !isFake && super.isDeprecatedInJavaDoc
 }
 
+@K1Deprecation
 class SymbolBasedWildcardType(
     typeMirror: WildcardType,
     javac: JavacWrapper
@@ -141,6 +146,7 @@ class SymbolBasedWildcardType(
 
 }
 
+@K1Deprecation
 class SymbolBasedArrayType(
     typeMirror: ArrayType,
     javac: JavacWrapper

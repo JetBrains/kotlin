@@ -1,2 +1,2 @@
-include(":composeApp")
+include(":composeShared")
 include(":library")

@@ -9,15 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
-import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationConfigurationKeys.SERIALIZATION_DISABLE_INTRINSIC
 import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 
@@ -65,30 +57,8 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
     companion object {
         fun registerExtensions(extensionStorage: ExtensionStorage, intrinsicsState: SerializationIntrinsicsState = SerializationIntrinsicsState.NORMAL) = with(extensionStorage) {
-            // This method is never called in the IDE, therefore this extension is not available there.
-            // Since IDE does not perform any serialization of descriptors, metadata written to the 'serializationDescriptorSerializer'
-            // is never deleted, effectively causing memory leaks.
-            // So we create SerializationDescriptorSerializerPlugin only outside of IDE.
-            val serializationDescriptorSerializer = SerializationDescriptorSerializerPlugin()
-            DescriptorSerializerPlugin.registerExtension(serializationDescriptorSerializer)
-
-            SyntheticResolveExtension.registerExtension(SerializationResolveExtension(serializationDescriptorSerializer))
-
-            IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, intrinsicsState))
-
-            StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
-
+            IrGenerationExtension.registerExtension(SerializationLoweringExtension(intrinsicsState))
             FirExtensionRegistrar.registerExtension(FirSerializationExtensionRegistrar())
         }
-    }
-}
-
-class SerializationPluginComponentContainerContributor : StorageComponentContainerContributor {
-    override fun registerModuleComponents(
-        container: StorageComponentContainer,
-        platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor
-    ) {
-        container.useInstance(SerializationPluginDeclarationChecker())
     }
 }

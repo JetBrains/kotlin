@@ -21,7 +21,7 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         val className = testInfo.className
         val methodName = testInfo.methodName
         if (!onWindows && className.length + methodName.length < 255) {
-            return@lazy KtTestUtil.tmpDirForTest(className, methodName)
+            return@lazy KtTestUtil.tmpDirForTest(className.stripDollarSymbols(), methodName)
         }
 
         // This code will simplify directory name for windows. This is needed because there can occur errors due to long name
@@ -50,7 +50,11 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         private val onWindows: Boolean = System.getProperty("os.name").lowercase(Locale.getDefault()).contains("windows")
 
         private fun String.getOnlyUpperCaseSymbols(): String {
-            return this.filter { it.isUpperCase() || it == '$' }.toList().joinToString(separator = "")
+            return this.stripDollarSymbols().filter { it.isUpperCase() }
+        }
+
+        private fun String.stripDollarSymbols(): String {
+            return this.replace('$', '_')
         }
     }
 }

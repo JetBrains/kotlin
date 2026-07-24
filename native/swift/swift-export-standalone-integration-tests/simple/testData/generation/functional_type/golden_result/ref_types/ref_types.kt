@@ -9,7 +9,11 @@ public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_O
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: Int?, arg1: Bar?, arg2: kotlin.String?, arg3: kotlin.collections.Set<kotlin.Any>? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else arg0.objcPtr(), if (arg1 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg1), if (arg2 == null) kotlin.native.internal.NativePtr.NULL else arg2.objcPtr(), if (arg3 == null) kotlin.native.internal.NativePtr.NULL else arg3.objcPtr())
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else arg0.objcPtr()
+            val _arg1 = if (arg1 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
+            val _arg2 = if (arg2 == null) kotlin.native.internal.NativePtr.NULL else arg2.objcPtr()
+            val _arg3 = if (arg3 == null) kotlin.native.internal.NativePtr.NULL else arg3.objcPtr()
+            val _result = kotlinFun(_arg0, _arg1, _arg2, _arg3)
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
@@ -22,7 +26,8 @@ public fun __root___consume_block_with_reftype_consumer__TypesOfArguments__U28da
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
         { arg0: Foo ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -48,7 +53,8 @@ public fun __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: Bar ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
@@ -61,7 +67,9 @@ public fun __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Fo
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: Foo, arg1: Foo ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0), kotlin.native.internal.ref.createRetainedExternalRCRef(arg1))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _arg1 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
+            val _result = kotlinFun(_arg0, _arg1)
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Bar
         }
     }

@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> A.kt
+        U : file2.kt -> B.kt
+    added cache: A.kt, B.kt
+
+STEP 1:
+    modifications:
+        U : file1.kt -> B.kt
+        U : file2.kt -> A.kt
+    removed cache: A.kt, B.kt
+    added cache: A.kt, B.kt
+

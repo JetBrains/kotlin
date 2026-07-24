@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
-import org.jetbrains.kotlin.konan.file.use
 import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipFile

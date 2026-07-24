@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // API_VERSION: 2.0
 // WITH_PLATFORM_LIBS
+// IGNORE_FIR_DIAGNOSTICS
 
 import kotlinx.cinterop.*
 import platform.darwin.*

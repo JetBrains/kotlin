@@ -19,9 +19,10 @@ class SirStructBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     lateinit var name: String
-    val declarations: MutableList<SirDeclaration> = mutableListOf()
+    val declarations: MutableList<SirDeclaration> = []
+    val protocols: MutableList<SirProtocol> = []
 
     fun build(): SirStruct {
         return SirStructImpl(
@@ -31,6 +32,7 @@ class SirStructBuilder {
             attributes,
             name,
             declarations,
+            protocols,
         )
     }
 

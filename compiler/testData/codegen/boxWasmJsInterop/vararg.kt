@@ -1,5 +1,6 @@
 // Partial copy of js/js.translator/testData/box/native/vararg.kt
 // With some additions for concrete number types, strings and function references
+// RUN_THIRD_PARTY_OPTIMIZER
 
 package foo
 

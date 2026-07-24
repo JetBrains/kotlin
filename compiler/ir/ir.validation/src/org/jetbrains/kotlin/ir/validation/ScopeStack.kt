@@ -13,32 +13,38 @@ class ScopeStack<E> {
     // The outer list is never empty
     private val scopes = mutableListOf<MutableList<Scope<E>>>(mutableListOf())
 
-    private fun <R> withNestedScope(isGlobalScope: Boolean, populateScope: MutableSet<E>.() -> Unit = {}, block: () -> R): R =
-        scopes.last().temporarilyPushing(Scope(isGlobalScope)) {
-            it.values.populateScope()
-            block()
-        }
+    private fun withNestedScope(isGlobalScope: Boolean, populateScope: MutableSet<E>.() -> Unit = {}) {
+        val newScope = Scope<E>(isGlobalScope).apply { values.populateScope() }
+        scopes.last().add(newScope)
+    }
 
     /**
-     * Creates a new scope and runs [block] with it.
+     * Creates a new scope.
      *
      * @param isGlobalScope Whether values of this new scope are always visible in nested scopes,
      *   even for those nested scopes where [outerScopesAreInvisible] is `true`.
      * @param outerScopesAreInvisible Whether values of outer scopes are invisible in this new scope, except when an outer scope is global.
      */
-    fun <R> withNewScope(
+    fun enterScope(
         isGlobalScope: Boolean = false,
         outerScopesAreInvisible: Boolean = false,
         populateScope: MutableSet<E>.() -> Unit = {},
-        block: () -> R,
-    ): R =
+    ) {
         if (outerScopesAreInvisible) {
-            scopes.temporarilyPushing(scopes.last().filterTo(mutableListOf(), Scope<E>::isGlobal)) {
-                withNestedScope(isGlobalScope = false, populateScope, block)
-            }
+            scopes.add(scopes.last().filterTo(mutableListOf(), Scope<E>::isGlobal))
+            withNestedScope(isGlobalScope = false, populateScope)
         } else {
-            withNestedScope(isGlobalScope, populateScope, block)
+            withNestedScope(isGlobalScope, populateScope,)
         }
+    }
+
+    fun exitScope(outerScopesAreInvisible: Boolean = false) {
+        if (outerScopesAreInvisible) {
+            scopes.removeLast()
+        } else {
+            scopes.last().removeLast()
+        }
+    }
 
     fun addToCurrentScope(element: E) {
         scopes.last().lastOrNull()?.values?.add(element)

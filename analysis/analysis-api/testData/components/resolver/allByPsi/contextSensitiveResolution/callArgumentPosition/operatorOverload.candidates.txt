@@ -240,7 +240,7 @@ KtNameReferenceExpression(339,340): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(341,342): '+'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -353,7 +353,7 @@ KtNameReferenceExpression(358,359): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(360,361): '+'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -448,7 +448,7 @@ KtNameReferenceExpression(382,383): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(384,385): '-'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -22,11 +22,13 @@ import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.kapt.base.KaptContext
 import org.jetbrains.kotlin.kapt.base.KaptOptions
+import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.kapt.stubs.KaptIrOrigin
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class KaptContextForStubGeneration(
@@ -34,9 +36,10 @@ class KaptContextForStubGeneration(
     withJdk: Boolean,
     logger: KaptLogger,
     val compiledClasses: List<ClassNode>,
-    val origins: Map<Any, JvmDeclarationOrigin>,
+    val origins: Map<Any, KaptIrOrigin>,
     val generationState: GenerationState,
     val firFiles: List<FirFile>,
+    val irBuiltIns: IrBuiltIns,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
@@ -51,5 +54,18 @@ class KaptContextForStubGeneration(
     override fun close() {
         (treeMaker as? KaptTreeMaker)?.dispose()
         super.close()
+    }
+
+    internal fun textGenerationError(message: String): String {
+        if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
+            error(message)
+        }
+        return "TEXT_GENERATION_ERROR"
+    }
+
+    internal inline fun textGenerationRequire(check: Boolean, lazyMessage: () -> String) {
+        if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
+            require(check, lazyMessage)
+        }
     }
 }

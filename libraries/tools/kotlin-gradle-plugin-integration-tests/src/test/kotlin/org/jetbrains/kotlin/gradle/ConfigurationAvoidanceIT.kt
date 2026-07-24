@@ -74,7 +74,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @DisplayName("KGP/Kapt does not eagerly configure any tasks")
     @GradleTest
     fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project("kapt/simple", gradleVersion) {
             assertEquals(
                 mapOf(":" to setOf("clean", "help")),
                 configuredTasks().buildAndReturn("--dry-run"),
@@ -85,6 +85,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testAndroidUnrelatedTaskNotConfigured(
         gradleVersion: GradleVersion,
         agpVersion: String,

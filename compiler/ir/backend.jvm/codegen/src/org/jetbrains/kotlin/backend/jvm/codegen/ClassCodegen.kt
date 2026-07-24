@@ -9,7 +9,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
-import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_FLAG
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -76,7 +77,7 @@ class ClassCodegen private constructor(
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
-            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+            context, irClass, type, visitor, parentClassCodegen?.metadataSerializer
         )
     }
 
@@ -108,14 +109,13 @@ class ClassCodegen private constructor(
     private val jvmMethodSignatureClashDetector = JvmMethodSignatureClashDetector(this)
     private val jvmFieldSignatureClashDetector = JvmFieldSignatureClashDetector(this)
 
-    private val visitor = state.factory.newVisitor(irClass.descriptorOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
+    private val visitor = state.factory.newVisitor(irClass, type, irClass.fileParent.loadSourceFilesInfo()).apply {
         val signature = typeMapper.mapClassSignature(irClass, type, state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
-            irClass.psiElement,
             config.classFileVersion,
             irClass.getFlags(config.languageVersionSettings),
             signature.name,
@@ -174,7 +174,7 @@ class ClassCodegen private constructor(
             generateField(field)
         }
         // 4. Generate nested classes at the end, to ensure that when the companion's metadata is serialized
-        //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
+        //    everything moved to the outer class has already been recorded in the metadata serializer.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
                 getOrCreate(declaration, context, intrinsicExtensions).generate()
@@ -276,6 +276,20 @@ class ClassCodegen private constructor(
     }
 
     private fun generateKotlinMetadataAnnotation() {
+        fun addSyntheticClassVisibilityFlags(extraFlags: Int): Int {
+            val normalizedVisibilityForSyntheticClass: DescriptorVisibility =
+                if (irClass.isOriginallyLocal && irClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
+                    // `package-private` is used for lambdas for historical reasons, but we want them to be
+                    // normalized to `local` instead of `protected`
+                    DescriptorVisibilities.LOCAL
+                } else irClass.visibility.normalize()
+            val visibilityFlagsValue = ProtoEnumFlags.visibility(normalizedVisibilityForSyntheticClass.delegate).number
+            val maxVisibilityBits =
+                1 + JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_LAST - JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST
+            assert(visibilityFlagsValue in 0 until (1 shl maxVisibilityBits)) { "Visibility flag value is out of range: $visibilityFlagsValue" }
+            return extraFlags or (visibilityFlagsValue shl JvmAnnotationNames.METADATA_SYNTHETIC_CLASS_VISIBILITY_BIT_FIRST)
+        }
+
         val facadeClassName = irClass.multifileFacadeForPart
         val metadata = irClass.metadata
         val entry = irClass.fileParent.fileEntry
@@ -301,17 +315,21 @@ class ClassCodegen private constructor(
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
+        if (kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
+            extraFlags = addSyntheticClassVisibilityFlags(extraFlags)
+        }
+
         // There are four kinds of classes which are regenerated during inlining.
-        // 1) Anonymous classes which are in the scope of an inline function.
-        // 2) SAM wrappers used in an inline function. These are identified by name, since they
-        //    can be reused in different functions and are thus generated in the enclosing top-level
-        //    class instead of inside of an inline function.
+        // 1) Anonymous classes which are in the scope of an inline function, including anonymous
+        //    objects, function references and lambda classes.
+        // 2) SAM wrappers used in an inline function. These are marked with `isPublicAbi` in
+        //    `JvmSingleAbstractMethodLowering`
         // 3) WhenMapping classes used from public inline functions. These are collected in
         //    `JvmBackendContext.publicAbiSymbols` in `MappedEnumWhenLowering`.
         // 4) Annotation implementation classes used from public inline function. Similar to
         //    public WhenMapping classes, these are collected in `publicAbiSymbols` in
         //    `JvmAnnotationImplementationTransformer`.
-        val isPublicAbi = irClass.isPublicAbi || irClass.isInlineSamWrapper ||
+        val isPublicAbi = irClass.isPublicAbi ||
                 type.isAnonymousClass && irClass.isInPublicInlineScope
 
         writeKotlinMetadata(visitor, context.config, kind, isPublicAbi, extraFlags) { av ->
@@ -321,7 +339,7 @@ class ClassCodegen private constructor(
                     is MetadataSource.CodeFragment -> null
                     else -> error("Cannot serialize class metadata without containing file: ${irClass.render()}")
                 }
-                metadataSerializer.serialize(metadata, containingFile)?.let { (proto, stringTable) ->
+                metadataSerializer.serialize(metadata, containingFile)?.let { [proto, stringTable] ->
                     AsmUtil.writeAnnotationData(
                         av, JvmProtoBufUtil.writeData(proto, stringTable), ArrayUtil.toStringArray(stringTable.strings),
                     )
@@ -365,7 +383,7 @@ class ClassCodegen private constructor(
         val fieldName = field.name.asString()
         val flags = field.computeFieldFlags(context, config.languageVersionSettings)
         val fv = visitor.newField(
-            field.descriptorOrigin, flags, fieldName, fieldType.descriptor,
+            field, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst)?.value
         )
 
@@ -423,7 +441,7 @@ class ClassCodegen private constructor(
         }
 
         // Only allow generation of one inline method at a time, to avoid deadlocks when files call inline methods of each other.
-        val (node, smap) =
+        (val node, val smap = classSMAP) =
             generatedInlineMethods[method] ?: synchronized(context.inlineMethodGenerationLock) {
                 generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
             }
@@ -436,12 +454,12 @@ class ClassCodegen private constructor(
             return
         }
 
-        val (node, smap) = generateMethodNode(method)
+        (val node, val smap = classSMAP) = generateMethodNode(method)
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
-        val mv = with(node) { visitor.newMethod(method.descriptorOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
+        val mv = with(node) { visitor.newMethod(method, access, name, desc, signature, exceptions.toTypedArray()) }
         val smapCopyingVisitor = SourceMapCopyingMethodVisitor(classSMAP, smap, mv)
 
         if (method.hasContinuation()) {
@@ -536,9 +554,6 @@ class ClassCodegen private constructor(
 
     private val IrClass.isAnonymousInnerClass: Boolean
         get() = isSamWrapper || name.isSpecial || isAnnotationImplementation // NB '<Continuation>' is treated as anonymous inner class here
-
-    private val IrClass.isInlineSamWrapper: Boolean
-        get() = isSamWrapper && visibility == DescriptorVisibilities.PUBLIC
 
     private val IrClass.isSamWrapper: Boolean
         get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION

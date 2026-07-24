@@ -1,0 +1,15 @@
+fun box(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = 1
+      val tmp1_Explain: Int = 1
+      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = tmp1_Explain).not()
+      assertTrue(condition = tmp2_Explain, messageSupplier = local fun <anonymous>(): String {
+        return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 176, source = "    assertTrue(1 != 1)", arguments = listOf<Argument>(elements = [Argument(startOffset = 15, endOffset = 21, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 15, endOffset = 16, displayOffset = 15, value = tmp0_Explain), LiteralExpression(startOffset = 20, endOffset = 21, displayOffset = 20, value = tmp1_Explain), ValueExpression(startOffset = 15, endOffset = 21, displayOffset = 17, value = tmp2_Explain)]))])) */)
+      }
+ /*-> @FlexibleNullability Supplier<@FlexibleNullability String?>? */)
+    }
+  }
+)
+}
+

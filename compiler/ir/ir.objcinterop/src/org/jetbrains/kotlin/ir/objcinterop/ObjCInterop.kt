@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
@@ -35,12 +37,20 @@ private fun IrFunction.isFakeOverrideInProgressOfBuilding() = this is IrFunction
 internal val interopPackageName = NativeStandardInteropNames.cInteropPackage
 internal val objCObjectFqName = NativeStandardInteropNames.objCObjectClassId.asSingleFqName()
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
+private val objCClassOfFqName = interopPackageName.child(Name.identifier("ObjCClassOf"))
 private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCProtocol"))
+private val objCObjectBaseFqName = interopPackageName.child(Name.identifier("ObjCObjectBase"))
+private val objCObjectBaseMetaFqName = interopPackageName.child(Name.identifier("ObjCObjectBaseMeta"))
+val allStdlibClassesImplementingObjCObject: Set<FqName> =
+    setOf(objCObjectFqName, objCClassFqName, objCClassOfFqName, objCProtocolFqName, objCObjectBaseFqName, objCObjectBaseMetaFqName)
+
+
 val externalObjCClassFqName = NativeStandardInteropNames.externalObjCClassClassId.asSingleFqName()
 val objCDirectFqName = NativeStandardInteropNames.objCDirectClassId.asSingleFqName()
 val objCMethodFqName = NativeStandardInteropNames.objCMethodClassId.asSingleFqName()
 val objCConstructorFqName = NativeStandardInteropNames.objCConstructorClassId.asSingleFqName()
 val objCFactoryFqName = NativeStandardInteropNames.objCFactoryClassId.asSingleFqName()
+val objCUnavailableFqName = NativeStandardInteropNames.objCUnavailableClassId.asSingleFqName()
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -55,8 +65,30 @@ private fun IrClass.selfOrAnySuperClass(pred: (IrClass) -> Boolean): Boolean {
     return superTypes.any { it.classOrNull!!.owner.selfOrAnySuperClass(pred) }
 }
 
-fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
-        selfOrAnySuperClass { it.hasEqualFqName(objCObjectFqName) }
+fun IrClass.isObjCClass(allowUnboundSymbols: Boolean = false): Boolean {
+    if (this.packageFqName == interopPackageName) {
+        return false
+    }
+
+    // Search the class hierarchy for `ObjCClass` interface, potentially skipping any unbound symbol in super types.
+    // Not yet linked symbols may be present if this function is called during linkage, as part of computing
+    // signatures for deserialized C-Interop declarations.
+    // In this specific case it is safe to skip visiting unlinked parts of the class hierarchy, because:
+    //   1. Unliked symbols may only occur while linking an interop Klib.
+    //   2. Interop Klibs may reference only Stdlib, itself, or other interop Klibs.
+    //   3. Hence, all super types of classes defined inside interop Klibs may come only from Stdlib or interop Klibs.
+    //   4. Stdlib case: It contains a small number of types inheriting from ObjCClass, all of which are checked for below, by signature.
+    //        Note: We could also check just for those types that may actually be put as a supertypes by StubGenerator.
+    //   5. Interop Klib case: Class symbols deserialized from interop Klibs are guaranteed to be bound right away.
+    //        In turn, super types of those classes follow starting from point 2.
+
+    fun inheritsObjCObject(clazz: IrClassSymbol): Boolean {
+        require(clazz.isBound || allowUnboundSymbols) { "Class symbol in a supertype hierarchy is unbound: $clazz" }
+        return clazz.fqNameWhenAvailable in allStdlibClassesImplementingObjCObject ||
+                clazz.getOwnerIfBound()?.superTypes?.any { inheritsObjCObject(it.classOrNull!!) } == true
+    }
+    return inheritsObjCObject(this.symbol)
+}
 
 fun IrType.isObjCObjectType(): Boolean = DFS.ifAny(
     /* nodes = */ listOf(this.classifierOrFail),
@@ -97,8 +129,8 @@ fun IrClass.isObjCProtocolClass(): Boolean = hasEqualFqName(objCProtocolFqName)
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName
 
-fun IrFunction.isObjCClassMethod() =
-        this.parent.let { it is IrClass && it.isObjCClass() }
+fun IrFunction.isObjCClassMethod(allowUnboundSymbols: Boolean = false) =
+        this.parent.let { it is IrClass && it.isObjCClass(allowUnboundSymbols) }
 
 fun IrFunction.isExternalObjCClassMethod() =
     this.parent.let {it is IrClass && it.isExternalObjCClass()}
@@ -131,21 +163,24 @@ private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
 
     val methodInfo = this.annotations.findAnnotation(objCMethodFqName)?.let {
         ObjCMethodInfo(
-                selector = it.getAnnotationStringValue("selector"),
-                encoding = it.getAnnotationStringValue("encoding"),
-                isStret = it.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
-                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.getAnnotationStringValue("symbol"),
+            selector = it.getConstArgument<String>("selector")!!,
+            encoding = it.getConstArgument<String>("encoding")!!,
+            isStret = it.getConstArgument("isStret") ?: false,
+            directSymbol = annotations.findAnnotation(objCDirectFqName)?.let { it.getConstArgument<String>("symbol")!! },
         )
     }
 
     return methodInfo
 }
 
+fun IrDeclaration.isObjCUnavailable(): Boolean =
+    annotations.hasAnnotation(objCUnavailableFqName)
+
 private fun objCMethodInfo(annotation: IrAnnotation) = ObjCMethodInfo(
-        selector = annotation.getAnnotationStringValue("selector"),
-        encoding = annotation.getAnnotationStringValue("encoding"),
-        isStret = annotation.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
-        directSymbol = null,
+    selector = annotation.getConstArgument<String>("selector")!!,
+    encoding = annotation.getConstArgument<String>("encoding")!!,
+    isStret = annotation.getConstArgument("isStret") ?: false,
+    directSymbol = null,
 )
 
 /**
@@ -213,7 +248,7 @@ val ConstructorDescriptor.isObjCConstructor get() = this.annotations.hasAnnotati
 // TODO-DCE-OBJC-INIT: Selector should be preserved by DCE.
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     return this.annotations.findAnnotation(objCConstructorFqName)?.let {
-        val initSelector = it.getAnnotationStringValue("initSelector")
+        val initSelector = it.getConstArgument<String>("initSelector")!!
         this.constructedClass.declarations.asSequence()
                 .filterIsInstance<IrSimpleFunction>()
                 .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
@@ -273,4 +308,4 @@ fun IrClass.getExternalObjCProtocolBinaryName(): String? =
     this.getExplicitExternalObjCClassBinaryName()
 
 private fun IrClass.getExplicitExternalObjCClassBinaryName() =
-        this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")
+    annotations.findAnnotation(externalObjCClassFqName)!!.getConstArgument<String>("binaryName")

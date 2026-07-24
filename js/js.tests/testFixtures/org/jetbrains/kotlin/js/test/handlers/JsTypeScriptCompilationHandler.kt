@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -18,9 +20,9 @@ import java.io.File
 class JsTypeScriptCompilationHandler(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
-        val allDirectives = moduleStructure.allDirectives
-        if (JsEnvironmentConfigurationDirectives.GENERATE_DTS !in allDirectives) return
+        val allDirectives = testServices.moduleStructure.allDirectives
+        val tsCompilationStrategy = allDirectives[TS_COMPILATION_STRATEGY].lastOrNull() ?: return
+        if (tsCompilationStrategy == TsCompilationStrategy.NONE) return
 
         val outputFile = compiledTypeScriptOutput(testServices, TranslationMode.FULL_DEV)
 
@@ -28,10 +30,14 @@ class JsTypeScriptCompilationHandler(testServices: TestServices) : AbstractJsArt
         val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, mainModule)
         val mainTsFile = getMainTsFile(testServices, moduleKind.tsExtension) ?: return
 
+        val dtsFiles = JsEnvironmentConfigurator
+            .getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DEV)
+            .listFiles { it.name.endsWith(".d.ts") || it.name.endsWith(".d.mts") }!!
+            .toList()
+
         TypeScriptCompilation(
             testServices,
-            modulesToArtifact,
-            { it.dtsFile },
+            dtsFiles,
             mainTsFile,
             outputFile,
             File(allDirectives[JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR].first()),

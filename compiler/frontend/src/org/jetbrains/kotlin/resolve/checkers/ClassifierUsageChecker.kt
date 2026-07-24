@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -30,10 +31,12 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAlia
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 
+@K1Deprecation
 interface ClassifierUsageChecker {
     fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext)
 }
 
+@K1Deprecation
 class ClassifierUsageCheckerContext(
     override val trace: BindingTrace,
     override val languageVersionSettings: LanguageVersionSettings,
@@ -42,6 +45,7 @@ class ClassifierUsageCheckerContext(
 ) : CheckerContext
 
 
+@K1Deprecation
 fun checkClassifierUsages(
     declarations: Collection<PsiElement>,
     checkers: Iterable<ClassifierUsageChecker>,

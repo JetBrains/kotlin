@@ -1,4 +1,5 @@
 // Two
+// STDLIB_JDK8
 // FULL_JDK
 // LIBRARY_PLATFORMS: JVM
 

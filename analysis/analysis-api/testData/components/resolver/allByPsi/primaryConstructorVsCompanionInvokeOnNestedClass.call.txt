@@ -1,0 +1,707 @@
+KtFile: 'primaryConstructorVsCompanionInvokeOnNestedClass.kt'
+  null
+
+KtPackageDirective(0,19): 'package com.example'
+  null
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  null
+
+KtNameReferenceExpression(8,11): 'com'
+  null
+
+KtNameReferenceExpression(12,19): 'example'
+  null
+
+KtImportList(21,50): 'import com.example.Foo.Nested'
+  null
+
+KtImportDirective(21,50): 'import com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(28,50): 'com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(28,43): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(28,39): 'com.example'
+  null
+
+KtNameReferenceExpression(28,31): 'com'
+  null
+
+KtNameReferenceExpression(32,39): 'example'
+  null
+
+KtNameReferenceExpression(40,43): 'Foo'
+  null
+
+KtNameReferenceExpression(44,50): 'Nested'
+  null
+
+KtClass(52,204): 'class Foo {'
+  null
+
+KtClassBody(62,204): '{'
+  null
+
+KtClass(67,202): 'class Nested(s: String) {'
+  null
+
+KtPrimaryConstructor(79,90): '(s: String)'
+  null
+
+KtParameterList(79,90): '(s: String)'
+  null
+
+KtParameter(80,89): 's: String'
+  null
+
+KtTypeReference(83,89): 'String'
+  null
+
+KtUserType(83,89): 'String'
+  null
+
+KtNameReferenceExpression(83,89): 'String'
+  null
+
+KtClassBody(91,202): '{'
+  null
+
+KtObjectDeclaration(99,197): 'companion object {'
+  null
+
+KtDeclarationModifierList(99,108): 'companion'
+  null
+
+KtClassBody(116,197): '{'
+  null
+
+KtNamedFunction(127,189): 'operator fun invoke(param: Int) = Nested("str") // constructor'
+  null
+
+KtDeclarationModifierList(127,135): 'operator'
+  null
+
+KtParameterList(146,158): '(param: Int)'
+  null
+
+KtParameter(147,157): 'param: Int'
+  null
+
+KtTypeReference(154,157): 'Int'
+  null
+
+KtUserType(154,157): 'Int'
+  null
+
+KtNameReferenceExpression(154,157): 'Int'
+  null
+
+KtCallExpression(161,174): 'Nested("str")'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(161,167): 'Nested'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(167,174): '("str")'
+  null
+
+KtValueArgument(168,173): '"str"'
+  null
+
+KtStringTemplateExpression(168,173): '"str"'
+  null
+
+KtLiteralStringTemplateEntry(169,172): 'str'
+  null
+
+KtNamedFunction(206,369): 'fun main() {'
+  null
+
+KtParameterList(214,216): '()'
+  null
+
+KtBlockExpression(217,369): '{'
+  null
+
+KtCallExpression(222,231): 'Nested(1)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(222,228): 'Nested'
+  null
+
+KtValueArgumentList(228,231): '(1)'
+  null
+
+KtValueArgument(229,230): '1'
+  null
+
+KtConstantExpression(229,230): '1'
+  null
+
+KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(235,238): 'Foo'
+  null
+
+KtCallExpression(239,248): 'Nested(2)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(239,245): 'Nested'
+  null
+
+KtValueArgumentList(245,248): '(2)'
+  null
+
+KtValueArgument(246,247): '2'
+  null
+
+KtConstantExpression(246,247): '2'
+  null
+
+KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtDotQualifiedExpression(252,267): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(252,263): 'com.example'
+  null
+
+KtNameReferenceExpression(252,255): 'com'
+  null
+
+KtNameReferenceExpression(256,263): 'example'
+  null
+
+KtNameReferenceExpression(264,267): 'Foo'
+  null
+
+KtCallExpression(268,277): 'Nested(3)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(268,274): 'Nested'
+  null
+
+KtValueArgumentList(274,277): '(3)'
+  null
+
+KtValueArgument(275,276): '3'
+  null
+
+KtConstantExpression(275,276): '3'
+  null
+
+KtDotQualifiedExpression(282,301): 'Nested.Companion(4)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(282,288): 'Nested'
+  null
+
+KtCallExpression(289,301): 'Companion(4)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(289,298): 'Companion'
+  null
+
+KtValueArgumentList(298,301): '(4)'
+  null
+
+KtValueArgument(299,300): '4'
+  null
+
+KtConstantExpression(299,300): '4'
+  null
+
+KtDotQualifiedExpression(305,328): 'Foo.Nested.Companion(5)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtDotQualifiedExpression(305,315): 'Foo.Nested'
+  null
+
+KtNameReferenceExpression(305,308): 'Foo'
+  null
+
+KtNameReferenceExpression(309,315): 'Nested'
+  null
+
+KtCallExpression(316,328): 'Companion(5)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(316,325): 'Companion'
+  null
+
+KtValueArgumentList(325,328): '(5)'
+  null
+
+KtValueArgument(326,327): '5'
+  null
+
+KtConstantExpression(326,327): '5'
+  null
+
+KtDotQualifiedExpression(332,367): 'com.example.Foo.Nested.Companion(6)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        6 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtDotQualifiedExpression(332,354): 'com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(332,347): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(332,343): 'com.example'
+  null
+
+KtNameReferenceExpression(332,335): 'com'
+  null
+
+KtNameReferenceExpression(336,343): 'example'
+  null
+
+KtNameReferenceExpression(344,347): 'Foo'
+  null
+
+KtNameReferenceExpression(348,354): 'Nested'
+  null
+
+KtCallExpression(355,367): 'Companion(6)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        6 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(355,364): 'Companion'
+  null
+
+KtValueArgumentList(364,367): '(6)'
+  null
+
+KtValueArgument(365,366): '6'
+  null
+
+KtConstantExpression(365,366): '6'
+  null

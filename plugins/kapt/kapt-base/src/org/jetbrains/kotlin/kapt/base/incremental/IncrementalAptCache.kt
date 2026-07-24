@@ -48,7 +48,7 @@ class IncrementalAptCache : Serializable {
         aggregatedTypes.addAll(aggregating.flatMap { it.getAggregatedTypes() })
 
         isolating.forEach {
-            it.getGeneratedToSources().forEach { (file, type) ->
+            it.getGeneratedToSources().forEach { [file, type] ->
                 isolatingMapping[file] = type!!
             }
         }
@@ -72,7 +72,7 @@ class IncrementalAptCache : Serializable {
      */
     fun invalidateIsolatingForOriginTypes(originatingTypes: Set<String>) {
         val isolatingGenerated = mutableSetOf<File>()
-        isolatingMapping.forEach { (file, type) ->
+        isolatingMapping.forEach { [file, type] ->
             if (type in originatingTypes) {
                 isolatingGenerated.add(file)
             }
@@ -94,7 +94,7 @@ class IncrementalAptCache : Serializable {
         // We need to do it in a loop because mapping could be: [AGenerated.java -> A.java, AGeneratedGenerated.java -> AGenerated.java]
         while (currentOrigins.isNotEmpty()) {
             val generated = mutableSetOf<File>()
-            isolatingMapping.forEach { (file, origin) ->
+            isolatingMapping.forEach { [file, origin] ->
                 if (origin in currentOrigins) {
                     generated.add(file)
                 }

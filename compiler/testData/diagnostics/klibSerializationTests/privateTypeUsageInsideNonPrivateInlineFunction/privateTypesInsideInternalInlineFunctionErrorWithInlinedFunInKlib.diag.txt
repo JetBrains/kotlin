@@ -1,55 +1,55 @@
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:47:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:47:5: error: Public-API inline function accesses a non Public-API class.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:47:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:47:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:47:13: error: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:48:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:48:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:48:7: error: The signature of 'fun toString(): String' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:49:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:49:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:49:5: error: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:50:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:50:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:50:5: error: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:51:5: error: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:53:5: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:53:5: error: Public-API inline function accesses a non Public-API class 'A'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:54:5: error: Public-API inline function accesses a non Public-API object 'O'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:54:5: error: Public-API inline function accesses a non Public-API object 'O'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineO(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: Public-API inline function accesses a non Public-API interface 'I'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: Public-API inline function accesses a non Public-API interface 'I'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineI(): I
 
 
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:55:5: error: The signature of 'fun privateInlineI(): I' contains 'private-in-file' type 'I', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: error: Public-API inline function accesses a non Public-API annotation class 'AC'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:56:5: error: Public-API inline function accesses a non Public-API annotation class 'AC'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineAC(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:57:5: error: Public-API inline function accesses a non Public-API enum class 'EC'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:57:5: error: Public-API inline function accesses a non Public-API enum class 'EC'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInlineEC(): Any
 
 
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Local classes are not yet supported in inline functions.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:19: error: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration.
 
@@ -57,46 +57,46 @@ private inline fun privateInlineEC(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:58:27: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:59:13: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:5: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:60:13: error: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:61:5: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:61:5: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:61:5: error: Public-API inline function accesses a non Public-API class.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:13: error: Public-API inline function accesses a non Public-API class.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:21: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:21: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:67:21: error: The signature of 'fun makeA(): A' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:68:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:68:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:68:15: error: The signature of 'fun toString(): String' contains 'private-in-file' type 'A', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:69:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:69:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:69:13: error: The signature of 'fun makeNested(): A.Nested' contains 'private-in-file' type 'A.Nested', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:70:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:70:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:70:13: error: The signature of 'fun makeLocal(): <anonymous>' contains 'local' type '<anonymous>', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:72:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:72:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:72:13: error: The signature of 'fun makeEffectivelyPrivateLocal(): <anonymous>.Inner' contains 'local' type '<anonymous>.Inner', but is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:13: error: Public-API inline function accesses a non Public-API class 'A'. This could happen as a result of cascaded inlining of the following functions:
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:73:13: error: Public-API inline function accesses a non Public-API class 'A'. This can happen as a result of cascaded inlining of the following functions:
 private inline fun privateInline(): Any
 
 
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:27: error: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration.
 
@@ -104,17 +104,17 @@ private inline fun privateInline(): Any
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:74:35: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:75:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:75:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:75:21: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:76:21: error: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: error: 'private-in-file' type 'A' is accessed from 'internal' inline declaration.
 
-/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: error: Public-API inline function accesses a non Public-API class
+/privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:77:13: error: Public-API inline function accesses a non Public-API class.
 
 /privateTypesInsideInternalInlineFunctionErrorWithInlinedFunInKlib.kt:90:9: error: Local classes are not yet supported in inline functions.
 

@@ -19,3 +19,67 @@ FILE[kind=Script[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=AnnotationOnFullNameBasedDestructuringScript.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
+      REFERENCE_EXPRESSION[referencedName=x]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+      REFERENCE_EXPRESSION[referencedName=x]

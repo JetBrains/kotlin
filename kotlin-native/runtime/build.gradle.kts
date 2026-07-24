@@ -4,6 +4,7 @@
  */
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import org.jetbrains.kotlin.cacheFlavor
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
@@ -14,16 +15,12 @@ import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistributi
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
-val kotlinVersion: String by rootProject.extra
-
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("base")
     id("compile-to-bitcode")
-}
-
-repositories {
-    githubTag("google", "breakpad")
-    githubCommit("google", "googletest")
 }
 
 val breakpad = configurations.dependencyScope("breakpad")
@@ -57,7 +54,7 @@ val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     into(breakpadLocationNoDependency)
 }
 
-val breakpadSources by configurations.creating {
+val breakpadSources = configurations.create("breakpadSources") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -108,7 +105,7 @@ bitcode {
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_TV" to "1",
             )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
                 "TARGET_OS_EMBEDDED" to "1",
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_WATCH" to "1",
@@ -191,7 +188,7 @@ bitcode {
             sourceSets {}
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("breakpad") {
                 srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
                 val sources = listOf(
@@ -624,7 +621,7 @@ bitcode {
             }
         }
 
-        if (!project.hasProperty("disableBreakpad")) {
+        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
             module("impl_crashHandler") {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
                 // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
@@ -667,7 +664,7 @@ bitcode {
     }
 }
 
-val objcExportApi by configurations.creating {
+val objcExportApi = configurations.create("objcExportApi") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -682,7 +679,7 @@ artifacts {
     add(objcExportApi.name, layout.projectDirectory.dir("src/objcExport/cpp"))
 }
 
-val runtimeBitcode by configurations.creating {
+val runtimeBitcode = configurations.create("runtimeBitcode") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -709,13 +706,13 @@ targetList.forEach { target ->
     }
 }
 
-val hostRuntime by tasks.registering {
+val hostRuntime = tasks.register("hostRuntime") {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
-val hostRuntimeTests by tasks.registering {
+val hostRuntimeTests = tasks.register("hostRuntimeTests") {
     description = "Runs all runtime tests for host"
     group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}RuntimeTests")
@@ -725,19 +722,22 @@ tasks.named("assemble") {
     dependsOn(targetList.map { "${it}Runtime" })
 }
 
-val hostAssemble by tasks.registering {
+val hostAssemble = tasks.register("hostAssemble") {
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
 tasks.named("clean", Delete::class) {
     this.delete(layout.buildDirectory)
+
+    // Make sure `clean` always run, when requested.
+    this.outputs.upToDateWhen { false }
 }
 
 // region: Stdlib
 
 val nativeBootstrapDistribution = registerNativeBootstrapDistribution()
 
-val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
@@ -749,7 +749,6 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
 
     this.extraOpts.addAll(listOfNotNull(
             "-no-default-libs",
-            "-no-endorsed-libs",
             "-nostdlib",
             "-Werror".takeIf { !kotlinBuildProperties.disableWerror },
             "-Xallow-kotlin-package",
@@ -757,6 +756,8 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xexpect-actual-classes",
             "-Xklib-ir-inliner=intra-module",
             "-Xcontext-parameters",
+            "-Xname-based-destructuring=complete",
+            "-Xcollection-literals",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
@@ -780,55 +781,66 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
     ))
 
-    val common by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
-        srcDir(project(":kotlin-stdlib").file("common/src/generated"))
-        srcDir(project(":kotlin-stdlib").file("unsigned/src"))
-        srcDir(project(":kotlin-stdlib").files("src").builtBy(":prepare:build.version:writeStdlibVersion"))
-        srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
-        srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
+    val common = sourceSets.create("common") {
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/kotlin"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/generated"))
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("unsigned/src"))
+        srcDir(project.files(project(":kotlin-stdlib").projectDir.resolve("src")).builtBy(":prepare:build.version:writeStdlibVersion"))
+        srcDir(project(":kotlin-test").projectDir.resolve("annotations-common/src/main/kotlin"))
+        srcDir(project(":kotlin-test").projectDir.resolve("common/src/main/kotlin"))
     }
 
-    val commonNonJvm by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("common-non-jvm/src"))
+    val commonNonJvm = sourceSets.create("commonNonJvm") {
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("common-non-jvm/src"))
     }
 
-    val nativeWasm by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
+    val nativeWasm = sourceSets.create("nativeWasm") {
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/src/"))
     }
 
-    val nativeWasmWasi by sourceSets.creating {
-        srcDir(project(":kotlin-stdlib").file("native-wasm/wasi/"))
+    val nativeWasmWasi = sourceSets.create("nativeWasmWasi") {
+        srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/wasi/"))
     }
 
-    val nativeMain by sourceSets.creating {
-        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
-        srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
+    val nativeMain = sourceSets.create("nativeMain") {
+        srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/main/kotlin"))
+        srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/native/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
 }
 
-val nativeStdlib by tasks.registering(Sync::class) {
+val nativeStdlib = tasks.register("nativeStdlib", Sync::class) {
     from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
+}
+val nativeStdlibConf = configurations.consumable("nativeStdlib")
+artifacts {
+    add(nativeStdlibConf.name, nativeStdlib)
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 cacheableTargetNames.forEach { targetName ->
-    tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-        val dist = nativeDistribution
+    for (withOptimizations in listOf(false, true)) {
+        val optSuffix = if (withOptimizations) "Opt" else ""
+        tasks.register("${targetName}StdlibCache${optSuffix}", KonanCacheTask::class.java) {
+            val dist = nativeDistribution
 
-        // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
-        this.compilerDistributionRoot.set(dist.map { it.root })
-        dependsOn(":kotlin-native:distCompiler")
-        dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
-        inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
+            // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
+            this.compilerDistributionRoot.set(dist.map { it.root })
+            dependsOn(":kotlin-native:distCompiler")
+            dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
+            inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
 
-        this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
-        this.target.set(targetName)
-        // This path is used in `:kotlin-native:${targetName}StdlibCache`
-        this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system/$KOTLIN_NATIVE_STDLIB_NAME-cache"))
+            this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
+            this.target.set(targetName)
+            this.withOptimizations.set(withOptimizations)
+            this.makePerFileCache.set(!withOptimizations)
+            // This path is used in `:kotlin-native:${targetName}StdlibCache`
+            val cacheFlavor = cacheFlavor(targetName, withOptimizations)
+            this.cacheDirectory.set(layout.buildDirectory.dir("cache/$targetName/$cacheFlavor"))
+            this.cacheName.set(KOTLIN_NATIVE_STDLIB_NAME)
+        }
     }
 }
 

@@ -76,14 +76,8 @@ fun box() {
 // test.kt:10 <init>
 // test.kt:4 <init>
 // test.kt:22 box
-// test.kt:7 <get-x>
-// test.kt:7 <get-x>
-// test.kt:7 <get-x>
 // test.kt:12 getValue
 // test.kt:23 box
-// test.kt:7 <set-x>
-// test.kt:7 <set-x>
-// test.kt:7 <set-x>
 // test.kt:16 setValue
 // test.kt:17 setValue
 // test.kt:24 box

@@ -1,0 +1,5 @@
+expression: -(l1@ +(@Anno(33) (-(-(+1L)))))
+constant: -1
+constantValueKind: LongValue
+constantValueSource: PREFIX_EXPRESSION
+constantValueSourceText: -(l1@ +(@Anno(33) (-(-(+1L)))))

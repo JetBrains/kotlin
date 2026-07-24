@@ -1,0 +1,19 @@
+KtNameReferenceExpression(75,82): 'static1'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = Foo
+        returnType = kotlin.Unit
+        symbol = /static1(<extension receiver>: Foo): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /static1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

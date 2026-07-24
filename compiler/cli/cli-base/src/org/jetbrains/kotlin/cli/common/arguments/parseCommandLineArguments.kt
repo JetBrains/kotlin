@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -30,8 +30,33 @@ import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
 /**
- * @property isObsolete Set to `true`if you want the compiler to treat this option as unknown and show the appropriate diagnostics,
- * but you still want it around for some reason.
+ * An annotation used to define metadata for a field that represents an argument in a command-line interface.
+ * This annotation allows specification of argument-related properties, such as its name, description, and delimiter.
+ *
+ * @property value The primary name of the argument. This field is mandatory and represents the identifier
+ * for the argument in input parsing.
+ *
+ * @property shortName An optional shorthand name for the argument, typically prefixed with a single dash.
+ * If not provided, no shorthand identifier will be associated with the argument.
+ *
+ * @property deprecatedName An optional, previously used name for the argument. Useful for maintaining backward
+ * compatibility when migrating to a new name.
+ *
+ * @property delimiter The delimiter used to parse values that represent collections or lists. This property
+ * must use predefined constants from the [Delimiters] object. Use of the raw value for this property requires
+ * opt-in via the [RawDelimiter] annotation.
+ *
+ * @property valueDescription An optional description of the expected format or type of the argument value. Helps
+ * provide guidance to users about how the argument should be used.
+ *
+ * @property description A human-readable explanation of the purpose of this argument. This provides details
+ * about what the argument is and when it should be used.
+ *
+ * @property deprecatedVersion Specifies the version in which this argument was marked as deprecated. If empty,
+ * the argument has not been marked as deprecated.
+ *
+ * @property removedVersion Specifies the version in which this argument was removed. If empty, the argument
+ * has not been scheduled or marked for removal.
  */
 @Target(AnnotationTarget.FIELD)
 annotation class Argument(
@@ -42,7 +67,8 @@ annotation class Argument(
     val delimiter: String = Delimiters.default,
     val valueDescription: String = "",
     val description: String,
-    val isObsolete: Boolean = false,
+    val deprecatedVersion: String = "",
+    val removedVersion: String = "",
 ) {
     @RequiresOptIn(
         message = "The raw delimiter value needs to be resolved. See 'resolvedDelimiter'. Using the raw value requires opt-in",
@@ -75,6 +101,11 @@ val Argument.resolvedDelimiter: String?
         Argument.Delimiters.none -> null
         Argument.Delimiters.pathSeparator -> File.pathSeparator
         else -> delimiter
+    }
+
+val Argument.isAlreadyRemoved: Boolean
+    get() = removedVersion.takeIf { it.isNotEmpty() }.let {
+        it != null && parseKotlinVersion(removedVersion) <= KotlinVersion.CURRENT
     }
 
 private const val ADVANCED_ARGUMENT_PREFIX = "-X"
@@ -134,6 +165,18 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
 }
 
 private val argumentsCache = ConcurrentHashMap<Class<*>, ArgumentsInfo>()
+private val removedArguments: ArgumentsInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    extractArgumentsInfo(@Suppress("DEPRECATION_ERROR") RemovedCompilerArguments::class.java)
+}
+
+enum class ArgumentLifecycleStatus {
+    REGULAR,
+    WILL_BE_DEPRECATED,
+    WILL_BE_REMOVED,
+    DEPRECATED,
+    DEPRECATED_AND_WILL_BE_REMOVED,
+    REMOVED,
+}
 
 data class ArgumentField(
     val getter: Method,
@@ -141,9 +184,43 @@ data class ArgumentField(
     val argument: Argument,
     val enablesAnnotations: List<Enables>,
     val disablesAnnotations: List<Disables>,
+    val deprecatedAnnotation: Deprecated?,
 ) {
     val changesLanguageFeatures: Boolean
         get() = enablesAnnotations.isNotEmpty() || disablesAnnotations.isNotEmpty()
+
+    val status: ArgumentLifecycleStatus
+        get() {
+            val removedVersion = argument.removedVersion
+            val deprecatedVersion = argument.deprecatedVersion
+
+            if (removedVersion.isNotEmpty()) {
+                return when {
+                    parseKotlinVersion(removedVersion) <= KotlinVersion.CURRENT -> {
+                        ArgumentLifecycleStatus.REMOVED
+                    }
+                    deprecatedVersion.isEmpty() || deprecatedVersion == removedVersion -> {
+                        ArgumentLifecycleStatus.WILL_BE_REMOVED
+                    }
+                    else -> {
+                        ArgumentLifecycleStatus.DEPRECATED_AND_WILL_BE_REMOVED
+                    }
+                }
+            }
+
+            if (deprecatedVersion.isNotEmpty()) {
+                return when {
+                    parseKotlinVersion(deprecatedVersion) <= KotlinVersion.CURRENT -> {
+                        ArgumentLifecycleStatus.DEPRECATED
+                    }
+                    else -> {
+                        ArgumentLifecycleStatus.WILL_BE_DEPRECATED
+                    }
+                }
+            }
+
+            return ArgumentLifecycleStatus.REGULAR
+        }
 }
 
 data class ArgumentsInfo(
@@ -158,29 +235,35 @@ data class ArgumentsInfo(
 }
 
 fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
+    require(CommonToolArguments::class.java.isAssignableFrom(klass))
     return argumentsCache.getOrPut(klass) {
-        ArgumentsInfo(
-            cliArgNameToArguments = buildMap {
-                val superclass = klass.superclass
-                if (CommonToolArguments::class.java.isAssignableFrom(superclass)) {
-                    putAll(getArgumentsInfo(superclass).cliArgNameToArguments)
-                }
-                for (field in klass.declaredFields) {
-                    val argument = field.getAnnotation(Argument::class.java) ?: continue
-                    val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
-                    val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
-                    val getter = klass.getMethod(JvmAbi.getterName(field.name))
-                    val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
-                    val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
-                    for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
-                        if (key.isNotEmpty()) put(key, argumentField)
-                    }
-                }
-            },
-            defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() },
-        )
+        extractArgumentsInfo(klass)
     }
 }
+
+private fun extractArgumentsInfo(klass: Class<*>): ArgumentsInfo = ArgumentsInfo(
+    cliArgNameToArguments = buildMap {
+        for (field in klass.declaredFields) {
+            val argument = field.getAnnotation(Argument::class.java) ?: continue
+            val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
+            val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
+            val getter = klass.getMethod(JvmAbi.getterName(field.name))
+            val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
+            val deprecatedAnnotation =
+                getter.getAnnotation(Deprecated::class.java) // Check the getter because `@Deprecated` doesn't have `FIELD` target
+            val argumentField =
+                ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations, deprecatedAnnotation)
+            for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
+                if (key.isNotEmpty()) put(key, argumentField)
+            }
+        }
+        val superclass = klass.superclass
+        if (CommonToolArguments::class.java.isAssignableFrom(superclass)) {
+            putAll(extractArgumentsInfo(superclass).cliArgNameToArguments)
+        }
+    },
+    defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() },
+)
 
 private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     args: List<String>,
@@ -215,7 +298,15 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             else -> '='
         }
         val key = arg.substringBefore(delimiter)
-        val argumentField = properties[key]
+        var argumentField = properties[key]
+        var removedArg = false
+
+        if (argumentField == null) {
+            argumentField = removedArguments.cliArgNameToArguments[key]
+            // We still should parse a value of the removed argument to get rid of potential CLI parse error.
+            removedArg = true
+        }
+
         if (argumentField == null) {
             when {
                 // Unknown -X argument
@@ -233,11 +324,6 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         if (key != arg && key == argument.shortName) {
             errors.value.unknownArgs.add(arg)
             continue
-        }
-
-        if (argument.isObsolete) {
-            // Add to unknown to show the diagnostic, but keep parsing.
-            errors.value.unknownArgs.add(arg)
         }
 
         val deprecatedName = argument.deprecatedName
@@ -288,7 +374,11 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             }
         }
 
-        argumentField.setter(result, newValue)
+        if (!removedArg) {
+            // We can't set the value if the argument is removed because object types are incompatible.
+            // Moreover, the object for removed args doesn't even exist.
+            argumentField.setter(result, newValue)
+        }
     }
 
     result.freeArgs += freeArgs
@@ -399,8 +489,8 @@ fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
             )
         }
         errors.stringLangFeatureArgumentsWithIncorrectValue.forEach { argWithAllowedValued ->
-            val (arg, allowedValues) = argWithAllowedValued
-            val (argName, argValue) = arg.split('=')
+            val [arg, allowedValues] = argWithAllowedValued
+            val [argName, argValue] = arg.split('=')
             val allowedValuesString = allowedValues.joinToString(", ") { "'$it'" }
             add(
                 "Incorrect value for argument '$argName'. " +

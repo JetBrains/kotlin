@@ -51,6 +51,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
   }
 
   @Test
+  @TestMetadata("compileTimeFunctionArgument.kt")
+  public void testCompileTimeFunctionArgument() {
+    run("compileTimeFunctionArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("compileTimeFunctionArgument_IntrinsicConstEvaluationDisabled.kt")
+  public void testCompileTimeFunctionArgument_IntrinsicConstEvaluationDisabled() {
+    run("compileTimeFunctionArgument_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("deprecated.kt")
   public void testDeprecated() {
     run("deprecated.kt");
@@ -91,6 +103,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
     @TestMetadata("arrayType2.kt")
     public void testArrayType2() {
       run("arrayType2.kt");
+    }
+
+    @Test
+    @TestMetadata("complexAnnotation.kt")
+    public void testComplexAnnotation() {
+      run("complexAnnotation.kt");
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -19,6 +18,10 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    companion object {
+        val annotationsForTests = listOf("AllOpen", "AllOpen2", "test.AllOpen")
+    }
+
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(AllOpenDirectives)
 
@@ -27,10 +30,9 @@ class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentCo
         configuration: CompilerConfiguration
     ) {
         if (ENABLE_ALLOPEN !in module.directives) return
-        val annotations = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS +
+        val annotations = annotationsForTests +
                 AllOpenPluginNames.SUPPORTED_PRESETS.flatMap { it.value }
 
-        DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
         FirExtensionRegistrar.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 }

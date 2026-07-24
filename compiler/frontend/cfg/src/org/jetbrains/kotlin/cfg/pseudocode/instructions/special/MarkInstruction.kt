@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
+@K1Deprecation
 class MarkInstruction(
     element: KtElement,
     blockScope: BlockScope

@@ -170,7 +170,7 @@ class Maps {
         fun forOverEntries() {
             val map = mapOf("beverage" to 2.7, "meal" to 12.4, "dessert" to 5.8)
 
-            for ((key, value) in map) {
+            for ([key, value] in map) {
                 println("$key - $value") // prints: beverage - 2.7
                                          // prints: meal - 12.4
                                          // prints: dessert - 5.8
@@ -419,7 +419,7 @@ class Maps {
         @Sample
         fun mapNotNull() {
             val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
-            val adults = map.mapNotNull { (name, age) -> name.takeIf { age >= 18 } }
+            val adults = map.mapNotNull { [name, age] -> name.takeIf { age >= 18 } }
 
             assertPrints(adults, "[Alice, Bob]")
         }
@@ -453,7 +453,7 @@ class Maps {
         fun mapToList() {
             val peopleToAge = mapOf("Alice" to 20, "Bob" to 21)
             assertPrints(
-                peopleToAge.map { (name, age) -> "$name is $age years old" },
+                peopleToAge.map { [name, age] -> "$name is $age years old" },
                 "[Alice is 20 years old, Bob is 21 years old]"
             )
             assertPrints(peopleToAge.map { it.value }, "[20, 21]")
@@ -462,7 +462,7 @@ class Maps {
         @Sample
         fun flatMap() {
             val map = mapOf("122" to 2, "3455" to 3)
-            assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
+            assertPrints(map.flatMap { [key, value] -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
         }
     }
 

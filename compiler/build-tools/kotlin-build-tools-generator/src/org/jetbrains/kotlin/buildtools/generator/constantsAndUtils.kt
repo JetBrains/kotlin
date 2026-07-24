@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.NameBasedDestructuringMode
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.arguments.dsl.types.SamConversionsMode
 import org.jetbrains.kotlin.arguments.dsl.types.StringConcatMode
+import org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportMode
 import org.jetbrains.kotlin.arguments.dsl.types.VerifyIrMode
 import org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -91,7 +92,8 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
-)
+    CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
+) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
     when {
@@ -137,6 +139,7 @@ internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
         ReturnValueCheckerMode::class to KotlinReleaseVersion.v2_3_0,
         SamConversionsMode::class to KotlinReleaseVersion.v2_4_0,
         StringConcatMode::class to KotlinReleaseVersion.v2_4_0,
+        ValhallaSupportMode::class to KotlinReleaseVersion.v2_5_0,
         VerifyIrMode::class to KotlinReleaseVersion.v2_4_0,
         WhenExpressionsMode::class to KotlinReleaseVersion.v2_4_0
-    ).mapKeys { (clazz, _) -> clazz.toBtaEnumClassName() }
+    ).mapKeys { [clazz, _] -> clazz.toBtaEnumClassName() }

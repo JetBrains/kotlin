@@ -7,9 +7,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "4.0.3" apply false
 }
 
-repositories {
-    mavenCentral()
-}
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating

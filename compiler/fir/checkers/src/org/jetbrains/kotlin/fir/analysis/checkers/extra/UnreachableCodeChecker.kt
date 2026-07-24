@@ -22,7 +22,7 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
     context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun analyze(graph: ControlFlowGraph) {
         val nodes = graph.allNodes()
-        val (unreachableNodes, reachableNodes) = nodes.filterNot { it.skipNode() }.partition { it.isDead }
+        val [unreachableNodes, reachableNodes] = nodes.filterNot { it.skipNode() }.partition { it.isDead }
         if (unreachableNodes.isEmpty()) return
         val unreachableSources = unreachableNodes.mapNotNull { it.fir.source }.toSet()
         val reachableSources = reachableNodes.mapNotNull { it.fir.source }.toSet()

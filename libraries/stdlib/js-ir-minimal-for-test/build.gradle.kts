@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
-    id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
 }
 
 kotlin {
@@ -10,7 +13,7 @@ kotlin {
         nodejs()
     }
 }
-val commonMainFullSources by task<Sync> {
+val commonMainFullSources = tasks.register<Sync>("commonMainFullSources") {
     dependsOn(":prepare:build.version:writeStdlibVersion")
 
     val sources = listOf(
@@ -28,7 +31,7 @@ val commonMainFullSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainFullSources"))
 }
 
-val commonNonJvmMainFullSources by task<Sync> {
+val commonNonJvmMainFullSources = tasks.register<Sync>("commonNonJvmMainFullSources") {
     val sources = listOf(
         "libraries/stdlib/common-non-jvm/src/",
     )
@@ -40,7 +43,7 @@ val commonNonJvmMainFullSources by task<Sync> {
     into(layout.buildDirectory.dir("commonNonJvmMainFullSources"))
 }
 
-val commonMainSources by task<Sync> {
+val commonMainSources = tasks.register<Sync>("commonMainSources") {
     dependsOn(commonMainFullSources)
     from {
         exclude(
@@ -88,7 +91,7 @@ val commonMainSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainSources"))
 }
 
-val commonMainCollectionSources by task<Sync> {
+val commonMainCollectionSources = tasks.register<Sync>("commonMainCollectionSources") {
     dependsOn(commonMainFullSources)
     from {
         include("libraries/stdlib/src/kotlin/collections/PrimitiveIterators.kt")
@@ -98,7 +101,7 @@ val commonMainCollectionSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainCollectionSources"))
 }
 
-val commonNonJvmMainSources by task<Sync> {
+val commonNonJvmMainSources = tasks.register<Sync>("commonNonJvmMainSources") {
     dependsOn(commonNonJvmMainFullSources)
     from {
         exclude(
@@ -110,7 +113,7 @@ val commonNonJvmMainSources by task<Sync> {
     into(layout.buildDirectory.dir("commonNonJvmMainSources"))
 }
 
-val commonJsAndWasmJsSources by task<Sync> {
+val commonJsAndWasmJsSources = tasks.register<Sync>("commonJsAndWasmJsSources") {
     val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/common-js-wasmjs")
 
     from("$jsAndWasmJsDir/src") {
@@ -124,7 +127,7 @@ val commonJsAndWasmJsSources by task<Sync> {
     into(layout.buildDirectory.dir("commonJsAndWasmJsSources"))
 }
 
-val jsMainSources by task<Sync> {
+val jsMainSources = tasks.register<Sync>("jsMainSources") {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
 
@@ -179,16 +182,16 @@ val jsMainSources by task<Sync> {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
             kotlin.srcDir("common-src")
         }
-        val commonNonJvmMain by creating {
+        val commonNonJvmMain = create("commonNonJvmMain") {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
-        val commonJsAndWasmJs by creating {
+        val commonJsAndWasmJs = create("commonJsAndWasmJs") {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
         }

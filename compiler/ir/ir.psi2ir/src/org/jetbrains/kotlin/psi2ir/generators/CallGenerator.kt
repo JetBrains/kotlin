@@ -411,7 +411,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             val valueArguments = call.getValueArgumentsInParameterOrder()
             val extensionReceiverOffset = if (irCall.symbol.descriptor.extensionReceiverParameter != null) 1 else 0
             val indexOffset = dispatchReceiverOffset + extensionReceiverOffset + contextReceivers.size
-            for ((index, valueArgument) in valueArguments.withIndex()) {
+            for ([index, valueArgument] in valueArguments.withIndex()) {
                 irCall.arguments[index + indexOffset] = valueArgument
             }
             irCall
@@ -471,7 +471,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         val resolvedCall = call.original
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
         val valueArgumentsToIndex = HashMap<ResolvedValueArgument, Int>()
-        for ((index, valueArgument) in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
+        for ([index, valueArgument] in resolvedCall.valueArgumentsByIndex!!.withIndex()) {
             valueArgumentsToIndex[valueArgument] = index
         }
         for (valueArgument in resolvedCall.valueArguments.values) {

@@ -3,6 +3,8 @@
 
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_VALHALLA
+// ^ Not JDK 1.6
 
 import kotlin.annotation.AnnotationTarget.*
 

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
@@ -19,13 +18,11 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
         moduleDescriptor: ModuleDescriptor,
-        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
     ): List<KlibMetadataDeserializedPackageFragment> {
         val metadata = library.metadata
-        val header = customMetadataProtoLoader?.loadModuleHeader(library)
-            ?: parseModuleHeader(metadata.moduleHeaderData)
+        val header = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFqNames = buildSet {
             addAll(header.packageFragmentNameList)
@@ -45,7 +42,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,
@@ -56,7 +52,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,
@@ -70,7 +65,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         packageFragments: List<ByteArray>,
         moduleDescriptor: ModuleDescriptor,
         storageManager: StorageManager
-    ) = packageFragments.map { byteArray ->
+    ): List<KlibMetadataPackageFragment> = packageFragments.map { byteArray ->
         KlibMetadataCachedPackageFragment(byteArray, storageManager, moduleDescriptor)
     }
 

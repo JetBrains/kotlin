@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -58,7 +60,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
-    private val moduleDescriptor: FirModuleDescriptor,
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
@@ -67,7 +68,7 @@ class Fir2IrConverter(
 
     private fun runSourcesConversion(
         allFirFiles: List<FirFile>,
-        irModuleFragment: IrModuleFragmentImpl,
+        irModuleFragment: IrModuleFragment,
         fir2irVisitor: Fir2IrVisitor
     ) {
         for (firFile in allFirFiles) {
@@ -141,7 +142,7 @@ class Fir2IrConverter(
         }
         val irFile = IrFileImpl(
             fileEntry,
-            moduleDescriptor.getPackage(file.packageFqName).fragments.first(),
+            moduleFragment.descriptor.getPackage(file.packageFqName).fragments.first(),
             moduleFragment
         )
         if (file.origin is FirDeclarationOrigin.Synthetic.PluginFile) {
@@ -241,17 +242,15 @@ class Fir2IrConverter(
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
-            declarationStorage.enterScope(irConstructor.symbol)
-            if (irClass.isSingleFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
+            declarationStorage.withScope(irConstructor.symbol) {
+                allDeclarations += when (irClass.valueClassRepresentation) {
+                    is InlineClassRepresentation -> dataClassMembersGenerator.generateInlineClassMembers(klass, irClass)
+                    is FullValueClassRepresentation if irClass.modality != Modality.ABSTRACT && irClass.modality != Modality.SEALED ->
+                        dataClassMembersGenerator.generateFullValueClassMembers(klass, irClass)
+                    else if irClass.isData -> dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
+                    else -> emptyList()
+                }
             }
-            if (irClass.isMultiFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
-            }
-            if (irClass.isData) {
-                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
-            }
-            declarationStorage.leaveScope(irConstructor.symbol)
         }
         return irClass
     }
@@ -602,12 +601,12 @@ class Fir2IrConverter(
     }
 
     companion object {
-        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
 
-            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor)
+            val irModuleFragment = components.module
 
             val allFirFiles = buildList {
                 addAll(session.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded())

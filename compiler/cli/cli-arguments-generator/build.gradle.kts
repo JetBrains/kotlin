@@ -1,17 +1,17 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
 }
 
-val runtimeOnly by configurations
-val compileOnly by configurations
-runtimeOnly.extendsFrom(compileOnly)
+configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
 
 dependencies {
     implementation(project(":generators"))
-    implementation(project(":core:compiler.common"))
+    implementation(project(":compiler:config"))
     implementation(project(":compiler:arguments"))
-    implementation(project(":compiler:plugin-api"))
 
     compileOnly(intellijCore())
 

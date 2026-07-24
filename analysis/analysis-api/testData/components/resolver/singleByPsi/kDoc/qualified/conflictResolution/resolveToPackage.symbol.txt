@@ -1,2 +1,5 @@
-KtNamedFunction(30,62): '/**'
-  null
+KDocName(38,40): 'pp'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pp
+    ]

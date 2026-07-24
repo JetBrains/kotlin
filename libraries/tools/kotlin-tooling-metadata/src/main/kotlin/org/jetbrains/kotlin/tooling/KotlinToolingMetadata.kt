@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.tooling
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class KotlinToolingMetadata(
     val schemaVersion: String,
     /**
@@ -28,17 +30,20 @@ data class KotlinToolingMetadata(
     val projectTargets: List<ProjectTargetMetadata>,
 ) {
 
+    @Serializable
     data class ProjectSettings(
         val isHmppEnabled: Boolean,
         val isCompatibilityMetadataVariantEnabled: Boolean,
-        val isKPMEnabled: Boolean,
+        val isKPMEnabled: Boolean = false,
     )
 
+    @Serializable(with = ProjectTargetMetadataSerializer::class)
     data class ProjectTargetMetadata(
         val target: String,
         val platformType: String,
-        val extras: Extras
+        val extras: Extras = Extras()
     ) {
+        @Serializable
         data class Extras(
             val jvm: JvmExtras? = null,
             val android: AndroidExtras? = null,
@@ -46,21 +51,25 @@ data class KotlinToolingMetadata(
             val native: NativeExtras? = null
         )
 
+        @Serializable
         data class JvmExtras(
-            val jvmTarget: String?,
+            val jvmTarget: String? = null,
             val withJavaEnabled: Boolean
         )
 
+        @Serializable
         data class AndroidExtras(
             val sourceCompatibility: String,
             val targetCompatibility: String,
         )
 
+        @Serializable
         data class JsExtras(
             val isBrowserConfigured: Boolean,
             val isNodejsConfigured: Boolean,
         )
 
+        @Serializable
         data class NativeExtras(
             val konanTarget: String,
             val konanVersion: String,

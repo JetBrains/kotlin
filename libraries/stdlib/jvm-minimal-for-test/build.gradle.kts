@@ -1,8 +1,9 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 description = "Kotlin Mock Runtime for Tests"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
 }
@@ -11,13 +12,13 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
-val builtinsMetadata: Configuration by configurations.creating
+val builtinsMetadata = configurations.create("builtinsMetadata")
 
 dependencies {
     builtinsMetadata(project(":kotlin-stdlib"))
 }
 
-val copyCommonSources by task<Sync> {
+val copyCommonSources = tasks.register<Sync>("copyCommonSources") {
     from(stdlibProjectDir.resolve("src"))
         .include(
             "kotlin/Annotation.kt",
@@ -61,7 +62,7 @@ val copyCommonSources by task<Sync> {
     into(layout.buildDirectory.dir("src/common"))
 }
 
-val copySources by task<Sync> {
+val copySources = tasks.register<Sync>("copySources") {
     from(stdlibProjectDir.resolve("jvm/runtime"))
         .include(
             "kotlin/NoWhenBranchMatchedException.kt",
@@ -87,7 +88,7 @@ val copySources by task<Sync> {
 kotlin {
     jvm {
         compilations {
-            val main by getting {
+            val main = getByName("main") {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
@@ -132,7 +133,7 @@ kotlin {
                 compileOnly(project(":kotlin-stdlib"))
             }
         }
-        val jvmMain by getting {
+        val jvmMain = getByName("jvmMain") {
             kotlin {
                 srcDir("jvm-src")
                 srcDir(copySources)
@@ -141,7 +142,7 @@ kotlin {
     }
 }
 
-val jvmJar by tasks.existing(Jar::class) {
+val jvmJar = tasks.named("jvmJar", Jar::class) {
     archiveAppendix = null
     dependsOn(builtinsMetadata)
     from {
@@ -160,6 +161,6 @@ publishing {
     }
 
     repositories {
-        maven(rootProject.layout.buildDirectory.dir("internal/repo"))
+        maven(rootProject.isolated.projectDirectory.dir("build/internal/repo"))
     }
 }

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// WASM_FAILS_IN: WasmEdge
+// WASM_IGNORE_FOR: vm=WasmEdge
 
 // FILE: 1.kt
 package test

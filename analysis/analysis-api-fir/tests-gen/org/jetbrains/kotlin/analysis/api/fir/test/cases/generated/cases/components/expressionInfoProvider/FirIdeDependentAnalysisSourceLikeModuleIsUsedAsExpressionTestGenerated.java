@@ -788,6 +788,42 @@ public class FirIdeDependentAnalysisSourceLikeModuleIsUsedAsExpressionTestGenera
   }
 
   @Test
+  @TestMetadata("doubleColonLHSAnnotation.kt")
+  public void testDoubleColonLHSAnnotation() {
+    run("doubleColonLHSAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSInterface.kt")
+  public void testDoubleColonLHSInterface() {
+    run("doubleColonLHSInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSReceiver.kt")
+  public void testDoubleColonLHSReceiver() {
+    run("doubleColonLHSReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSScript.kts")
+  public void testDoubleColonLHSScript() {
+    run("doubleColonLHSScript.kts");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSTypeAlias.kt")
+  public void testDoubleColonLHSTypeAlias() {
+    run("doubleColonLHSTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("doubleColonLHSTypeParameter.kt")
+  public void testDoubleColonLHSTypeParameter() {
+    run("doubleColonLHSTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("doubleColonUnqualifiedCompanionLHS.kt")
   public void testDoubleColonUnqualifiedCompanionLHS() {
     run("doubleColonUnqualifiedCompanionLHS.kt");

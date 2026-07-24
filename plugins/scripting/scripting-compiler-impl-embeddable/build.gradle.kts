@@ -1,6 +1,9 @@
 description = "Kotlin Compiler Infrastructure for Scripting for embeddable compiler"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     java
 }
 

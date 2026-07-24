@@ -1,0 +1,22 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedQualifierImpl
+FIR source kind: DesugaredPlusAssign
+
+FIR element rendered:
+Q|one/ClientTransaction|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] assignOnObject_lhs.kt
+    package one
+
+    public final [ResolvedTo(STATUS)] object ClientTransaction : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=ClientTransaction] constructor(): R|one/ClientTransaction| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final operator [ResolvedTo(STATUS)] fun plusAssign([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        Q|one/ClientTransaction|.R|one/ClientTransaction.plusAssign|(Int(10))
+    }

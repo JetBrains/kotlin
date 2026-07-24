@@ -3,13 +3,16 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 description = "kotlinp-jvm"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("java-test-fixtures")
 }
 
-val shadows by configurations.creating
+val shadows = configurations.create("shadows")
 
 dependencies {
     compileOnly(project(":kotlin-metadata"))
@@ -46,7 +49,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/serialization")
 
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", generateTestsInBuildDirectory = true)
 
@@ -59,7 +62,7 @@ projectTests {
     withScriptingPlugin()
 }
 
-val shadowJar by task<ShadowJar> {
+val shadowJar = tasks.register<ShadowJar>("shadowJar") {
     archiveClassifier.set("shadow")
     archiveVersion.set("")
     configurations = listOf(shadows)

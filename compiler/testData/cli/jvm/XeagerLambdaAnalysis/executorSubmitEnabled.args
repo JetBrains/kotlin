@@ -1,0 +1,4 @@
+-Xeager-lambda-analysis
+$TESTDATA_DIR$/executorSubmit.kt
+-d
+$TEMP_DIR$

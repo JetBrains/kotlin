@@ -37,7 +37,7 @@ public class KDocLexer extends MergingLexerAdapterBase {
         public IElementType merge(IElementType type, Lexer originalLexer) {
             IElementType nextTokenType = originalLexer.getTokenType();
             String nextTokenText = originalLexer.getTokenText();
-            if (type == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && nextTokenText.matches("`{3,}|~{3,}")) {
+            if (type == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && isValidCodeFence(nextTokenText)) {
                 originalLexer.advance();
                 return KDocTokens.TEXT; // Don't treat the trailing line as a part of a code block
             } else if (type == KDocTokens.CODE_BLOCK_TEXT || type == KDocTokens.CODE_SPAN_TEXT || type == KDocTokens.TEXT || type == TokenType.WHITE_SPACE) {
@@ -48,5 +48,15 @@ public class KDocLexer extends MergingLexerAdapterBase {
 
             return type;
         }
+    }
+
+    private static boolean isValidCodeFence(String str) {
+        if (str.length() < 3) return false;
+        char firstChar = str.charAt(0);
+        if (firstChar != '`' && firstChar != '~') return false;
+        for (int i = 1; i < str.length(); ++i) {
+            if (str.charAt(i) != firstChar) return false;
+        }
+        return true;
     }
 }

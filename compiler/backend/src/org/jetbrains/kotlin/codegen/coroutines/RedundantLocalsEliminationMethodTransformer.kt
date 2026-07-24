@@ -38,8 +38,8 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
         val frames = interpreter.run(internalClassName, methodNode)
 
         val unreachableInstructions = methodNode.instructions.asSequence().zip(frames.asSequence())
-            .filter { (_, frame) -> frame == null }
-            .map { (insn, _) -> insn }
+            .filter { [_, frame] -> frame == null }
+            .map { [insn, _] -> insn }
             .toSet()
 
         // delete LVT entries where all instructions meaningless or unreachable
@@ -50,7 +50,7 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
         toDelete.addAll(unreachableInstructions.filter { it !is LabelNode })
 
         // Mark all spillable "GETSTATIC kotlin/Unit.INSTANCE" instructions for deletion
-        for ((unit, uses) in interpreter.unitUsageInformation) {
+        for ([unit, uses] in interpreter.unitUsageInformation) {
             if (unit !in interpreter.unspillableUnitValues && unit !in suspensionPoints) {
                 toDelete += unit
                 toDelete += uses
@@ -102,7 +102,7 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
     fun run(internalClassName: String, methodNode: MethodNode): Array<Frame<BasicValue>?> {
         val frames = FastMethodAnalyzer<BasicValue>(internalClassName, methodNode, this).analyze()
         // The ASM analyzer does not visit POP instructions, so we do so here.
-        for ((insn, frame) in methodNode.instructions.asSequence().zip(frames.asSequence())) {
+        for ([insn, frame] in methodNode.instructions.asSequence().zip(frames.asSequence())) {
             if (frame != null && insn.opcode == POP) {
                 val value = frame.top()
                 if (value is UnitValue) {

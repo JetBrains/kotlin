@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // ISSUE: KT-53719
 
 @Target(AnnotationTarget.EXPRESSION)

@@ -1,7 +1,0 @@
-KtNameReferenceExpression(67,75): 'Sequence'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in kotlin.sequences) interface Sequence<FAKE>

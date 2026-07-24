@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIr
 class NativeAtomicfuIrBuilder(
     override val atomicfuSymbols: NativeAtomicSymbols,
     symbol: IrSymbol,
-): AbstractAtomicfuIrBuilder(atomicfuSymbols.irBuiltIns, symbol) {
+) : AbstractAtomicfuIrBuilder(atomicfuSymbols.irBuiltIns, symbol) {
 
     override fun irCallFunction(
         symbol: IrSimpleFunctionSymbol,
@@ -51,6 +51,7 @@ class NativeAtomicfuIrBuilder(
                 typeArguments[0] = valueType
             }
             this.arguments.assignFrom(castedArgs)
+            if (symbol.owner.returnType.isTypeParameter()) this.type = valueType
         }
         return if (isAtomicArrayHandler && valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
@@ -78,6 +79,8 @@ class NativeAtomicfuIrBuilder(
                     "addAndGet" -> addAndGetField(getAtomicHandler, valueType, valueArguments[0])
                     "incrementAndGet" -> incrementAndGetField(getAtomicHandler, valueType)
                     "decrementAndGet" -> decrementAndGetField(getAtomicHandler, valueType)
+                    "plusAssign" -> getAndAddField(getAtomicHandler, valueType, valueArguments[0])
+                    "minusAssign" -> getAndAddField(getAtomicHandler, valueType, irUnaryMinus(valueArguments[0]))
                     else -> error("Unsupported atomic function name $functionName")
                 }
             }
@@ -87,12 +90,12 @@ class NativeAtomicfuIrBuilder(
     override fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer
     ): IrField =
         // On K/N a volatile Boolean field is generated instead of an AtomicBoolean property
-        irVolatileField(name, valueType, annotations, parentContainer).apply {
+        irVolatileField(name, valueType, originalField, parentContainer).apply {
             if (initExpr != null) {
                 this.initializer = context.irFactory.createExpressionBody(initExpr)
             }

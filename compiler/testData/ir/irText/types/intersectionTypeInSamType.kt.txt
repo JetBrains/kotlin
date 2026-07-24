@@ -64,7 +64,7 @@ fun test1() {
   g.checkFoo(x = local fun <anonymous>(it: Any) {
     return Unit
   }
- /*-> IFoo<in Nothing> */)
+ /*-> IFoo<out Any> */)
 }
 
 fun test2() {
@@ -72,13 +72,14 @@ fun test2() {
   g.checkFoo(x = local fun <anonymous>(it: Any) {
     return Unit
   }
- /*-> IFoo<in Nothing> */)
+ /*-> IFoo<out Any> */)
   g.checkBar1(x = local fun <anonymous>(it: Any) {
     return Unit
   }
- /*-> IBar1<in Nothing> */)
+ /*-> IBar1<out Any> */)
   g.checkBar2(x = local fun <anonymous>(it: Any) {
     return Unit
   }
- /*-> IBar2<in Nothing> */)
+ /*-> IBar2<out Any> */)
 }
+

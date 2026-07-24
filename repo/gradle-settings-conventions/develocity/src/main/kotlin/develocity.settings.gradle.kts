@@ -1,5 +1,6 @@
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
+import org.gradle.kotlin.dsl.develocity
 
 plugins {
     id("com.gradle.develocity")

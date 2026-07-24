@@ -65,14 +65,14 @@ class JvmKotlinp(settings: Settings) : Kotlinp(settings) {
 
         withIndent {
             val module = metadata.kmModule
-            module.packageParts.forEach { (fqName, kmPackageParts) ->
+            module.packageParts.forEach { [fqName, kmPackageParts] ->
                 val presentableFqName = fqName.ifEmpty { "<root>" }
                 appendLine("package ", presentableFqName, " {")
                 withIndent {
                     for (fileFacade in kmPackageParts.fileFacades) {
                         appendLine(fileFacade)
                     }
-                    for ((multiFileClassPart, facade) in kmPackageParts.multiFileClassParts) {
+                    for ([multiFileClassPart, facade] in kmPackageParts.multiFileClassParts) {
                         appendLine(multiFileClassPart, " (", facade, ")")
                     }
                 }

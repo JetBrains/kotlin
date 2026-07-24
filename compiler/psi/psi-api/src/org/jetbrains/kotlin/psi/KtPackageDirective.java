@@ -116,31 +116,13 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return new FqName(getQualifiedNameOf(nameExpression));
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPackageFqName(this, fqName)}
+     * instead.
+     */
+    @Deprecated
     public void setFqName(@NotNull FqName fqName) {
-        if (fqName.isRoot()) {
-            if (!getFqName().isRoot()) {
-                //noinspection ConstantConditions
-                replace(new KtPsiFactory(getProject()).createFile("").getPackageDirective());
-            }
-            return;
-        }
-
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        PsiElement newExpression = psiFactory.createExpression(fqName.asString());
-        KtExpression currentExpression = getPackageNameExpression();
-        if (currentExpression != null) {
-            currentExpression.replace(newExpression);
-            return;
-        }
-
-        PsiElement keyword = getPackageKeyword();
-        if (keyword != null) {
-            addAfter(newExpression, keyword);
-            addAfter(psiFactory.createWhiteSpace(), keyword);
-            return;
-        }
-
-        replace(psiFactory.createPackageDirective(fqName));
+        KtPsiMutationService.getInstance().setPackageFqName(this, fqName);
     }
 
     @NotNull
@@ -181,4 +163,3 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         return visitor.visitPackageDirective(this, data);
     }
 }
-

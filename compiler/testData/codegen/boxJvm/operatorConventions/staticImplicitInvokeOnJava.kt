@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks
 // FILE: J.java
 public class J {
     public static String invoke(String s) {

@@ -1,0 +1,3 @@
+expected symbols:
+receiver parameter kotlin.Int
+expect infix fun kotlin.Int.foo(other: kotlin.Int): kotlin.Int

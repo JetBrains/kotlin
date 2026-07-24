@@ -44,7 +44,7 @@ fun FirClassLikeSymbol<*>.getPrimaryConstructorSymbol(
     scopeSession: ScopeSession,
 ): FirConstructorSymbol? {
     var constructorSymbol: FirConstructorSymbol? = null
-    val (_, constructorsScope) = expandedClassWithConstructorsScope(
+    val [_, constructorsScope] = expandedClassWithConstructorsScope(
         session, scopeSession,
         memberRequiredPhaseForRegularClasses = null,
     ) ?: return null

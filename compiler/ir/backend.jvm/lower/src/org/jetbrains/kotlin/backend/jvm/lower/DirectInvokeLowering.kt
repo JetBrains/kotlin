@@ -39,7 +39,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                     // When inlining directly invoked lambdas, preserve parameter names and forbid their elimination,
                     // so we keep them in LVT and do not lose any debug info.
                     require(receiver.boundValues.isEmpty()) { "Lambda-originated function reference can't have bound values" }
-                    receiver.invokeFunction.parameters.zip(expression.arguments.drop(1)).map { (parameter, argument) ->
+                    receiver.invokeFunction.parameters.zip(expression.arguments.drop(1)).map { [parameter, argument] ->
                         require(argument != null) { "Unexpected null argument of direct lambda invocation" }
                         scope.createTemporaryVariable(
                             argument,

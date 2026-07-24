@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// SKIP_TXT
 // FILE: Bar.java
 
 public class Bar<K, N> { }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.tests.emulator
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.kotlin.android.tests.PathManager
@@ -39,8 +40,8 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                 "create", "avd", "--force", "-n", AVD_NAME, "-p", pathManager.getAndroidAvdRoot(), "-k"
             )
 
-            // Allow override of system image via system property
-            val overrideImage = System.getProperty("kotlin.android.avd.systemImage")
+            // Allow override of system image via the Gradle project property forwarded to the test JVM.
+            val overrideImage = System.getProperty("kotlin.test.android.avd.systemImage")
             if (overrideImage != null && !overrideImage.isEmpty()) {
                 commandLine.addParameter(overrideImage)
             } else if (platform == X86) {
@@ -51,6 +52,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
             commandLine.withEnvironment("ANDROID_SDK_ROOT", pathManager.androidSdkRoot)
             commandLine.withEnvironment("ANDROID_HOME", pathManager.androidSdkRoot)
+            commandLine.withEnvironment("JAVA_HOME", System.getProperty("java.home"))
 
             return commandLine
         }
@@ -146,11 +148,21 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         return commandLine
     }
 
-    suspend fun startServer() {
+    suspend fun startAdbServer() {
         val commandLine = createAdbCommand()
         commandLine.addParameter("start-server")
         println("Start adb server...")
-        runProcessCancellable(commandLine)
+        runProcessCancellable(commandLine, timeout = 120.seconds)
+        // Wait until daemon is actually ready
+        val checkCommand = createAdbCommand().also { it.addParameter("devices") }
+        repeat(10) { attempt ->
+            val result = runProcessCancellable(checkCommand, checkExitCode = false, timeout = 5.seconds)
+            if (result.exitCode == 0) return
+            println("Waiting for adb daemon to be ready (attempt ${attempt + 1})...")
+            delay(10.seconds)
+        }
+
+        error("Failed to start adb server")
     }
 
     suspend fun runEmulator() {
@@ -171,35 +183,54 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
     suspend fun waitEmulatorStart() {
         println("Waiting for emulator start...")
 
-        withTimeout(androidStartupTimeout()) {
-            runProcessCancellable(waitCommand)
+        try {
+            withTimeout(androidStartupTimeout()) {
+                runProcessCancellable(waitCommand)
 
-            val bootCheckCommand = createAdbCommand()
-            bootCheckCommand.addParameters("shell", "getprop", "sys.boot_completed")
+                val bootCheckCommand = createAdbCommand()
+                bootCheckCommand.addParameters("shell", "getprop", "sys.boot_completed")
 
-            while (true) {
-                val result = runProcessCancellable(
-                    bootCheckCommand,
-                    timeout = 30.seconds,
-                    checkExitCode = false,
-                )
-                if (result.exitCode == 0 && result.stdout.trim() == "1") break
-                delay(10.seconds)
+                var retries = 0
+                while (true) {
+                    val result = runProcessCancellable(
+                        bootCheckCommand,
+                        timeout = 30.seconds,
+                        checkExitCode = false,
+                    )
+                    if (result.exitCode == 0 && result.stdout.trim() == "1") break
+                    if (result.exitCode == -1) {
+                        retries++
+                        println("adb shell timed out $retries times...")
+                        if (retries >= 3) {
+                            println("adb shell timed out $retries times consecutively, restarting adb server...")
+                            retries = 0
+                            stopAdbServer()
+                            startAdbServer()
+                            runProcessCancellable(waitCommand)
+                        }
+                    } else {
+                        retries = 0
+                    }
+                    delay(10.seconds)
+                }
+
+                println("Waiting for Package Manager...")
+                val packageManagerCheckCommand = createAdbCommand()
+                packageManagerCheckCommand.addParameters("shell", "pm", "path", "android")
+
+                while (true) {
+                    val result = runProcessCancellable(
+                        packageManagerCheckCommand,
+                        timeout = 30.seconds,
+                        checkExitCode = false,
+                    )
+                    if (result.exitCode == 0 && result.stdout.contains("package:")) break
+                    delay(10.seconds)
+                }
             }
-
-            println("Waiting for Package Manager...")
-            val packageManagerCheckCommand = createAdbCommand()
-            packageManagerCheckCommand.addParameters("shell", "pm", "path", "android")
-
-            while (true) {
-                val result = runProcessCancellable(
-                    packageManagerCheckCommand,
-                    timeout = 30.seconds,
-                    checkExitCode = false,
-                )
-                if (result.exitCode == 0 && result.stdout.contains("package:")) break
-                delay(10.seconds)
-            }
+        } catch (e: TimeoutCancellationException) {
+            dumpInstallDiagnostics("Timeout waiting for emulator start")
+            throw e
         }
     }
 
@@ -232,7 +263,10 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         runProcessCancellable(stopCommandForAdb)
     }
 
-    suspend fun runTestsViaInstrumentation(suiteClassName: String?): String {
+    suspend fun runTestsViaInstrumentation(
+        suiteClassName: String?,
+        stdoutProcessor: (String) -> Unit,
+    ): String {
         println("Running tests via adb instrumentation for $suiteClassName...")
         val adbCommand = createAdbCommand()
         adbCommand.addParameters(
@@ -240,7 +274,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
             "-e", "class", suiteClassName,
             "org.jetbrains.kotlin.android.tests.gradle/org.jetbrains.kotlin.android.tests.KotlinBoxInstrumentation"
         )
-        val execute = runProcessCancellable(adbCommand)
+        val execute = runProcessCancellable(adbCommand, stdoutProcessor = stdoutProcessor)
         return execute.stdout
     }
 
@@ -248,7 +282,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         val commandLine = createAdbCommand()
         commandLine.addParameters(*parameters)
         println("Diagnostic command: ${commandLine.commandLineString}")
-        val result = runProcessCancellable(commandLine, checkExitCode = false)
+        val result = runProcessCancellable(commandLine, checkExitCode = false, timeout = 30.seconds)
         println("Diagnostic exit code: ${result.exitCode}")
     }
 

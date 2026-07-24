@@ -3,6 +3,68 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+int32_t kotlin_CharSequence_length_get__reverse_swift(void * self);
+
+void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t startIndex, int32_t endIndex);
+
+int8_t kotlin_Number_toByte__reverse_swift(void * self);
+
+uint16_t kotlin_Number_toChar__reverse_swift(void * self);
+
+double kotlin_Number_toDouble__reverse_swift(void * self);
+
+float kotlin_Number_toFloat__reverse_swift(void * self);
+
+int32_t kotlin_Number_toInt__reverse_swift(void * self);
+
+int64_t kotlin_Number_toLong__reverse_swift(void * self);
+
+int16_t kotlin_Number_toShort__reverse_swift(void * self);
+
+void * _Nullable kotlin_Throwable_cause_get__reverse_swift(void * self);
+
+NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
+
+NSString * kotlin_Throwable_toString__reverse_swift(void * self);
+
+uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
+
+int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
+
+void * kotlin_collections_Iterable_iterator__reverse_swift(void * self);
+
+_Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
+
+void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
+
+_Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_CharProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_CharProgression_isEmpty__reverse_swift(void * self);
+
+void * kotlin_ranges_CharProgression_iterator__reverse_swift(void * self);
+
+NSString * kotlin_ranges_CharProgression_toString__reverse_swift(void * self);
+
+_Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_UIntProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_UIntProgression_isEmpty__reverse_swift(void * self);
+
+NSString * kotlin_ranges_UIntProgression_toString__reverse_swift(void * self);
+
+_Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_ULongProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_ULongProgression_isEmpty__reverse_swift(void * self);
+
+NSString * kotlin_ranges_ULongProgression_toString__reverse_swift(void * self);
+
 void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_Array_iterator(void * self);
@@ -773,6 +835,8 @@ int8_t kotlin_Number_toByte(void * self);
 
 uint16_t kotlin_Number_toChar(void * self);
 
+uint16_t kotlin_Number_toChar_direct(void * self);
+
 double kotlin_Number_toDouble(void * self);
 
 float kotlin_Number_toFloat(void * self);
@@ -943,6 +1007,8 @@ NSString * kotlin_String_toString(void * self);
 
 void * _Nullable kotlin_Throwable_cause_get(void * self);
 
+void * _Nullable kotlin_Throwable_cause_get_direct(void * self);
+
 void * kotlin_Throwable_getStackTrace(void * self);
 
 void * kotlin_Throwable_init_allocate();
@@ -957,9 +1023,13 @@ _Bool kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRaw
 
 NSString * _Nullable kotlin_Throwable_message_get(void * self);
 
+NSString * _Nullable kotlin_Throwable_message_get_direct(void * self);
+
 _Bool kotlin_Throwable_printStackTrace(void * self);
 
 NSString * kotlin_Throwable_toString(void * self);
+
+NSString * kotlin_Throwable_toString_direct(void * self);
 
 uint8_t kotlin_UByte_Companion_MAX_VALUE_get(void * self);
 
@@ -1453,19 +1523,29 @@ void * kotlin_ranges_CharProgression_Companion_get();
 
 _Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint16_t kotlin_ranges_CharProgression_first_get(void * self);
 
 int32_t kotlin_ranges_CharProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_CharProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_CharProgression_isEmpty(void * self);
 
+_Bool kotlin_ranges_CharProgression_isEmpty_direct(void * self);
+
 void * kotlin_ranges_CharProgression_iterator(void * self);
+
+void * kotlin_ranges_CharProgression_iterator_direct(void * self);
 
 uint16_t kotlin_ranges_CharProgression_last_get(void * self);
 
 int32_t kotlin_ranges_CharProgression_step_get(void * self);
 
 NSString * kotlin_ranges_CharProgression_toString(void * self);
+
+NSString * kotlin_ranges_CharProgression_toString_direct(void * self);
 
 void * kotlin_ranges_CharRange_Companion_EMPTY_get(void * self);
 
@@ -1497,11 +1577,17 @@ void * kotlin_ranges_UIntProgression_Companion_get();
 
 _Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint32_t kotlin_ranges_UIntProgression_first_get(void * self);
 
 int32_t kotlin_ranges_UIntProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_UIntProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_UIntProgression_isEmpty(void * self);
+
+_Bool kotlin_ranges_UIntProgression_isEmpty_direct(void * self);
 
 void * kotlin_ranges_UIntProgression_iterator(void * self);
 
@@ -1510,6 +1596,8 @@ uint32_t kotlin_ranges_UIntProgression_last_get(void * self);
 int32_t kotlin_ranges_UIntProgression_step_get(void * self);
 
 NSString * kotlin_ranges_UIntProgression_toString(void * self);
+
+NSString * kotlin_ranges_UIntProgression_toString_direct(void * self);
 
 void * kotlin_ranges_UIntRange_Companion_EMPTY_get(void * self);
 
@@ -1541,11 +1629,17 @@ void * kotlin_ranges_ULongProgression_Companion_get();
 
 _Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint64_t kotlin_ranges_ULongProgression_first_get(void * self);
 
 int32_t kotlin_ranges_ULongProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_ULongProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_ULongProgression_isEmpty(void * self);
+
+_Bool kotlin_ranges_ULongProgression_isEmpty_direct(void * self);
 
 void * kotlin_ranges_ULongProgression_iterator(void * self);
 
@@ -1554,6 +1648,8 @@ uint64_t kotlin_ranges_ULongProgression_last_get(void * self);
 int64_t kotlin_ranges_ULongProgression_step_get(void * self);
 
 NSString * kotlin_ranges_ULongProgression_toString(void * self);
+
+NSString * kotlin_ranges_ULongProgression_toString_direct(void * self);
 
 void * kotlin_ranges_ULongRange_Companion_EMPTY_get(void * self);
 

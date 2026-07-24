@@ -21,6 +21,7 @@ import lib.impl.Impl;
 
 @lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
 /**
+ * @lib/Anno(impls = [lib/impl/Impl::class])
  * public final class test/Bar : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -46,6 +47,7 @@ import lib.impl.Impl;
 
 @lib.Anno(impls = {lib.impl.Impl.class})
 /**
+ * @lib/Anno(impls = [lib/impl/Impl::class])
  * public final class test/Boo : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -71,6 +73,7 @@ import lib.impl.Impl;
 
 @lib.Anno(impls = {lib.impl.Impl.class})
 /**
+ * @lib/Anno(impls = [lib/impl/Impl::class])
  * public final class test/Foo : kotlin/Any {
  *
  *   // signature: <init>()V

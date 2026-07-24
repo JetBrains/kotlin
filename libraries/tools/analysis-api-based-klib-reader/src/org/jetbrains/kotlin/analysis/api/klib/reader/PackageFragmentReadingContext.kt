@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.FqName
 import java.nio.file.Path
-import kotlin.io.path.Path
 
 internal fun PackageFragmentReadingContext(
     library: KotlinLibrary,
@@ -21,7 +20,7 @@ internal fun PackageFragmentReadingContext(
     val nameResolver = NameResolverImpl(packageFragmentProto.strings, packageFragmentProto.qualifiedNames)
     val packageFqName = packageFragmentProto.`package`.getExtensionOrNull(KlibMetadataProtoBuf.packageFqName)
         ?.let { packageFqNameStringIndex -> nameResolver.getPackageFqName(packageFqNameStringIndex) } ?: ""
-    return PackageFragmentReadingContext(Path(library.libraryFile.path), FqName(packageFqName), nameResolver)
+    return PackageFragmentReadingContext(library.path, FqName(packageFqName), nameResolver)
 }
 
 internal class PackageFragmentReadingContext(

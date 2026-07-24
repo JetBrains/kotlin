@@ -8,6 +8,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: the argument '-Xuse-fir-lt' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
 compiler/testData/cli/jvm/XXmultiPlatformProject/firMultiplatformCompilationWithoutErrors/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect interface A {
 ^^^^^^

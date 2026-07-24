@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 interface ClassLiteralChecker {
     fun check(expression: KtClassLiteralExpression, type: KotlinType, context: ResolutionContext<*>)
 }

@@ -145,7 +145,7 @@ abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
     override fun save(output: DataOutput, map: Map<String, T>?) {
         output.writeInt(map!!.size)
 
-        for ((key, value) in map.entries) {
+        for ([key, value] in map.entries) {
             output.writeString(key)
             writeValue(output, value)
         }
@@ -374,7 +374,7 @@ open class MapExternalizer<K, V, M : Map<K, V>>(
 
     override fun save(output: DataOutput, map: M) {
         output.writeInt(map.size)
-        for ((key, value) in map) {
+        for ([key, value] in map) {
             keyExternalizer.save(output, key)
             valueExternalizer.save(output, value)
         }

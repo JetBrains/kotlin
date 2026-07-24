@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -39,7 +41,61 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaLifetime
 
     override val token: KaLifetimeToken get() = analysisSession.token
     override val origin: KaSymbolOrigin get() = withValidityAssertion { symbolOrigin() }
+    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
+
+    override val realPsi: PsiElement?
+        get() = withValidityAssertion {
+            backingPsi ?: when (origin) {
+                KaSymbolOrigin.SOURCE,
+                KaSymbolOrigin.LIBRARY,
+                KaSymbolOrigin.JAVA_SOURCE,
+                KaSymbolOrigin.JAVA_LIBRARY,
+                    -> firSymbol.realPsi
+
+                else -> null
+            }
+        }
+
+    override val anchorPsi: PsiElement?
+        get() = withValidityAssertion {
+            realPsi ?: firSymbol.source?.psi
+        }
 }
+
+private val FirBasedSymbol<*>.realPsi: PsiElement?
+    get() {
+        when (fir.origin) {
+            FirDeclarationOrigin.Source,
+            FirDeclarationOrigin.Library,
+            is FirDeclarationOrigin.Java,
+            FirDeclarationOrigin.BuiltIns,
+            FirDeclarationOrigin.BuiltInsFallback,
+            FirDeclarationOrigin.Precompiled,
+                -> {
+                // Recheck `FirDeclarationOrigin` as it's more specific than `KaSymbolOrigin`
+                // In particular, `Enhancement` shouldn't have real psi as they cannot be restored
+            }
+
+            else -> return null
+        }
+
+        @OptIn(SuspiciousFakeSourceCheck::class)
+        return when (val source = source) {
+            is KtRealPsiSourceElement -> source.psi
+
+            // Not all source elements are real. For instance, default property accessors are treated as sources,
+            // but they have a fake source, which points to the containing declaration
+            is KtFakePsiSourceElement -> when (source.kind) {
+                KtFakeSourceElementKind.ReceiverFromType -> source.psi
+                else -> null
+            }
+
+            else -> null
+        }
+    }
+
+private val KaFirSymbol<*>.backingPsi: PsiElement?
+    get() = (this as? KaFirPsiSymbol<*, *>)?.backingPsi
 
 internal fun KaFirSymbol<*>.symbolEquals(other: Any?): Boolean = when {
     this === other -> true

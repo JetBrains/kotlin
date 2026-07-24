@@ -26,7 +26,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppChec
         val method = expression.getCallableId() ?: return
         if (method !in triggerOn) return
         val calleeOn = expression.explicitReceiver ?: return
-        if (!calleeOn.resolvedType.canBeNull(context.session)) {
+        if (!calleeOn.resolvedType.canBeNull()) {
             reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL)
         }
     }

@@ -3,7 +3,7 @@ KtForExpression(23,37): 'for(i in f) {}'
     attempts = [
       KaSymbolResolutionError:
         candidateSymbols = []
-        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>,
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'Foo'.>,
       KaSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>,

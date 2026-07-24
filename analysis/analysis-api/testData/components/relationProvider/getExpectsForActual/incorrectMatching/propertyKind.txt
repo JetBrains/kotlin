@@ -1,0 +1,2 @@
+expected symbols:
+expect val name: kotlin.String

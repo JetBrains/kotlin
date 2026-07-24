@@ -24,7 +24,7 @@ class MathJVMTest {
                 doubleArrayOf( 3.75, -1.25),
                 doubleArrayOf( 4.0,  -1.0)
         )
-        for ((a, r) in data) {
+        for ([a, r] in data) {
             assertEquals(r, a.IEEErem(2.5), "($a).IEEErem(2.5)")
         }
 

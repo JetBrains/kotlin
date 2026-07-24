@@ -90,5 +90,6 @@ internal class KotlinWasmNode(
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.7.")
     override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
 }

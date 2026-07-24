@@ -352,7 +352,10 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
@@ -372,9 +375,9 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
-     * @param name The NPM dependency name
+     * @param name The NPM dependency name.
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
      */
@@ -394,7 +397,7 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
@@ -414,7 +417,10 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
@@ -430,12 +436,12 @@ interface KotlinDependencyHandler : HasProject {
      *
      * Note: The created dependency should be manually added to this entity using other methods from this DSL:
      * ```
-     * kotlin.sourceSets["jsMain"].dependencies {
+     * kotlin.sourceSets.jsMain.dependencies {
      *     implementation(devNpm("is-odd-even", project.file("npm/is-odd-even")))
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param directory The directory where dependency files are located
@@ -458,7 +464,7 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#repository) keyword)
@@ -478,7 +484,10 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version
@@ -494,12 +503,12 @@ interface KotlinDependencyHandler : HasProject {
      *
      * Note: The created dependency should be manually added to this entity using other methods from this DSL:
      * ```
-     * kotlin.sourceSets["jsMain"].dependencies {
+     * kotlin.sourceSets.jsMain.dependencies {
      *     implementation(optionalNpm("is-odd-even", project.file("npm/is-odd-even")))
      * }
      * ```
      *
-     * **Note**: Only relevant for Kotlin entities targeting only [KotlinPlatformType.js] or [KotlinPlatformType.wasm]!
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param directory The directory where dependency files are located
@@ -522,7 +531,7 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param directory The directory where dependency files are located
      * (See NPM [directory](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths) keyword)
@@ -542,7 +551,10 @@ interface KotlinDependencyHandler : HasProject {
      * }
      * ```
      *
-     * This is only relevant for Kotlin entities that target only [KotlinPlatformType.js] or [KotlinPlatformType.wasm].
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
      *
      * @param name The NPM dependency name
      * @param version The NPM dependency version

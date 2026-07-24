@@ -1,55 +1,84 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
+import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
+import org.jetbrains.kotlin.analysis.api.components.resolveToCall
+import org.jetbrains.kotlin.analysis.api.components.returnType
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.types.isUnitType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.withSession
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+@KaImplementationDetail
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
-    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", replaceWith = ReplaceWith("resolveSymbol()"))
-    override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = with(analysisSession) { resolveSymbol() }
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsExpressionInformationProvider, KaFirSessionComponent {
+    override fun targetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? =
+        with(analysisSession) { returnExpression.resolveSymbol() }
 
-    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
-        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
-        return withSession(analysisSession.resolutionFacade.useSiteFirSession) {
-            FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+    override fun computeMissingCases(whenExpression: KtWhenExpression): List<KaWhenMissingCase> =
+        whenExpression.withPsiValidityAssertion {
+            val firWhenExpression =
+                whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
+            val compilerMissingCases = withSession(analysisSession.resolutionFacade.useSiteFirSession) {
+                FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+            }
+            return compilerMissingCases.map { it.toKaWhenMissingCase() }
+        }
+
+    override fun isUsedAsExpression(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
+        context(analysisSession) {
+            isUsed(expression, null)
         }
     }
 
-    override val KtExpression.isUsedAsExpression: Boolean
-        get() = withPsiValidityAssertion { isUsed(this, null) }
+    override fun isUsedAsResultOfLambda(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
+        val additionalInfoCollector = AdditionalInfoCollector()
+            .also { collector -> context(analysisSession) { isUsed(expression, collector) } }
+        additionalInfoCollector.isUsedAsResultOfLambda
+    }
 
-    override val KtExpression.isUsedAsResultOfLambda: Boolean
-        get() = withPsiValidityAssertion {
-            val additionalInfoCollector = AdditionalInfoCollector()
-                .also { collector -> isUsed(this, collector) }
-            additionalInfoCollector.isUsedAsResultOfLambda
+    override fun isStableForSmartCasting(expression: KtExpression): Boolean =
+        expression.withPsiValidityAssertion {
+            val firFile = expression.containingKtFile.getOrBuildFirFile(resolutionFacade)
+            val context = ContextCollector.process(resolutionFacade, firFile, targetElement = expression)
+                ?: errorWithAttachment("Cannot find context for ${expression::class}") {
+                    withPsiEntry("position", expression)
+                }
+
+            return context.expressionStability == SmartcastStability.STABLE_VALUE
         }
 
-    private class AdditionalInfoCollector() {
+    private class AdditionalInfoCollector {
         var isUsedAsResultOfLambda: Boolean = false
     }
 
@@ -66,9 +95,10 @@ internal class KaFirExpressionInformationProvider(
      *
      * The methods are _conservative_, erring on the side of answering `true`.
      */
+    context(session: KaSession)
     private fun isUsed(
         psiElement: PsiElement,
-        additionalElementUsageInfoContext: AdditionalInfoCollector?
+        additionalElementUsageInfoContext: AdditionalInfoCollector?,
     ): Boolean = when (psiElement) {
         /**
          * DECLARATIONS
@@ -130,10 +160,11 @@ internal class KaFirExpressionInformationProvider(
             doesParentUseChild(psiElement.parent, psiElement, additionalElementUsageInfoContext)
     }
 
+    context(session: KaSession)
     private fun doesParentUseChild(
         parent: PsiElement,
         child: PsiElement,
-        additionalInfoCollector: AdditionalInfoCollector?
+        additionalInfoCollector: AdditionalInfoCollector?,
     ): Boolean = when (parent) {
         /**
          * NON-EXPRESSION PARENTS
@@ -250,13 +281,12 @@ internal class KaFirExpressionInformationProvider(
         // Lambdas do not use their expression-blocks if they are inferred
         // to be of the Unit type
         is KtFunctionLiteral ->
-            (parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)).also { value ->
+            (parent.bodyBlockExpression == child && !returnsUnit(parent)).also { value ->
                 additionalInfoCollector?.isUsedAsResultOfLambda = value
             }
 
         /** See [doesNamedFunctionUseBody] */
-        is KtNamedFunction ->
-            analysisSession.doesNamedFunctionUseBody(parent, child)
+        is KtNamedFunction -> doesNamedFunctionUseBody(parent, child)
 
         // Function parameter declarations use their default value expressions.
         is KtParameter ->
@@ -294,7 +324,7 @@ internal class KaFirExpressionInformationProvider(
         // Calls use only the callee directly -- arguments are wrapped in a
         // KtValueArgument container
         is KtCallExpression ->
-            parent.calleeExpression == child && analysisSession.doesCallExpressionUseCallee(child)
+            parent.calleeExpression == child && doesCallExpressionUseCallee(child)
 
         // Collection literals use each of its constituent expressions.
         is KtCollectionLiteralExpression ->
@@ -306,7 +336,7 @@ internal class KaFirExpressionInformationProvider(
 
         /** See [doesDoubleColonUseLHS] */
         is KtDoubleColonExpression ->
-            parent.lhs == child && doesDoubleColonUseLHS(child)
+            parent.lhs == child && with(analysisSession) { doesDoubleColonUseLHS(child) }
 
         // Parentheses are ignored for this analysis.
         is KtParenthesizedExpression ->
@@ -409,19 +439,35 @@ internal class KaFirExpressionInformationProvider(
  *
  *  If it resolves to a non-class declaration, it does _not_ refer to a type.
  */
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
 private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     val reference = when (val inner = lhs.unwrapParenthesesLabelsAndAnnotations()) {
-        is KtReferenceExpression ->
-            inner.mainReference
-        is KtDotQualifiedExpression ->
-            (inner.selectorExpression as? KtReferenceExpression)?.mainReference ?: return true
-        else ->
-            return true
-    }
+        is KtReferenceExpression -> inner
+        is KtDotQualifiedExpression -> inner.selectorExpression
+        else -> null
+    } as? KtResolvable ?: return true
 
-    val resolution = reference.resolve()
-    return resolution != null && resolution !is KtClass
+    return reference.canReferenceCallable
 }
+
+@OptIn(KtExperimentalApi::class)
+context(session: KaSession)
+private val KtResolvable.canReferenceCallable: Boolean
+    get() {
+        // No candidates -> cannot check -> it is safer to assume it can reference a callable
+        val symbols = tryResolveSymbols()?.symbols?.takeUnless(List<KaSymbol>::isEmpty) ?: return true
+
+        return symbols.any { symbol ->
+            when (symbol) {
+                is KaCallableSymbol -> true
+
+                // Objects are classified as callable in this context since they can be used as expressions
+                is KaClassSymbol -> symbol.classKind.isObject
+                else -> false
+            }
+        }
+    }
 
 /**
  * Invocations of _statically named_ callables are not considered a use.
@@ -432,7 +478,8 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
-private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
+context(_: KaSession)
+private fun doesCallExpressionUseCallee(callee: PsiElement): Boolean {
     return callee !is KtReferenceExpression || isVariableAccessCall(callee)
 }
 
@@ -450,27 +497,36 @@ private fun doesPropertyAccessorUseBody(propertyAccessor: KtPropertyAccessor, bo
  *  - the function body is a block e.g., `fun foo(): Int { return bar }` or
  *  - the function itself returns Unit
  */
-private fun KaSession.doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
+context(session: KaSession)
+private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
     // The body is a block expression e.g., fun foo(): Int { return bar }
-    namedFunction.bodyBlockExpression == body ->
-        false
+    namedFunction.bodyBlockExpression == body -> false
     // Note that `namedFunction.hasBlockBody() == false` means the function definition uses `=` e.g., fun foo() = bar
-    !returnsUnit(namedFunction) ->
-        true
-    namedFunction.bodyExpression == body ->
-        (body as KtExpression).expressionType?.isUnitType == true
+    !returnsUnit(namedFunction) -> true
+    namedFunction.bodyExpression == body -> (body as KtExpression).expressionType?.isUnitType == true
+    else -> false
+}
+
+
+context(session: KaSession)
+private fun isVariableAccessCall(reference: KtReferenceExpression): Boolean = when (val resolution = reference.resolveToCall()) {
+    is KaSuccessCallInfo ->
+        resolution.call is KaVariableAccessCall
     else ->
         false
 }
 
+context(session: KaSession)
+private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.isUnitType
 
-private fun KaSession.isVariableAccessCall(reference: KtReferenceExpression): Boolean =
-    when (val resolution = reference.resolveToCall()) {
-        is KaSuccessCallInfo ->
-            resolution.call is KaVariableAccessCall
-        else ->
-            false
-    }
-
-private fun KaSession.returnsUnit(declaration: KtDeclarationWithReturnType): Boolean =
-    declaration.returnType.isUnitType
+internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
+    is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase
+    is WhenMissingCase.ConditionTypeIsExpect.SealedClass -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedClassCase
+    is WhenMissingCase.ConditionTypeIsExpect.SealedInterface -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedInterfaceCase
+    is WhenMissingCase.ConditionTypeIsExpect.Enum -> KaWhenMissingCase.ExpectTypeCase.ExpectEnumCase
+    is WhenMissingCase.NullIsMissing -> KaWhenMissingCase.NullCase
+    is WhenMissingCase.BooleanIsMissing.TrueIsMissing -> KaWhenMissingCase.BooleanCase(true)
+    is WhenMissingCase.BooleanIsMissing.FalseIsMissing -> KaWhenMissingCase.BooleanCase(false)
+    is WhenMissingCase.IsTypeCheckIsMissing -> KaWhenMissingCase.TypeCase(classId, isSingleton, ownTypeParametersCount)
+    is WhenMissingCase.EnumCheckIsMissing -> KaWhenMissingCase.EnumEntryCase(callableId)
+}

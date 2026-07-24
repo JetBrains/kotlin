@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONL
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import java.io.File
 
 class FirCliMetadataFrontendFacade(
@@ -55,11 +56,11 @@ class FirCliMetadataSerializerFacade(val testServices: TestServices) : AbstractT
     override fun transform(
         module: TestModule,
         inputArtifact: FirOutputArtifact,
-    ): BinaryArtifacts.KLib? {
-        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
+    ): BinaryArtifacts.KLib {
+        checkTestInfrastructure(inputArtifact is FirCliBasedOutputArtifact<*>) {
             "Incompatible type of input artifact: expected ${FirCliBasedOutputArtifact::class}, actual ${inputArtifact::class}"
         }
-        require(inputArtifact.cliArtifact is MetadataFrontendPipelineArtifact) {
+        checkTestInfrastructure(inputArtifact.cliArtifact is MetadataFrontendPipelineArtifact) {
             "Incompatible type of input artifact: expected ${MetadataFrontendPipelineArtifact::class}, actual ${inputArtifact.cliArtifact::class}"
         }
         val input = inputArtifact.cliArtifact

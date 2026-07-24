@@ -119,7 +119,7 @@ class JsPerModuleCache(
     }
 
     override fun loadRequiredJsIrModules(crossModuleReferences: Map<JsIrModuleHeader, CrossModuleReferences>) {
-        for ((header, references) in crossModuleReferences) {
+        for ([header, references] in crossModuleReferences) {
             val cachedInfo = headerToCachedInfo[header] ?: notFoundIcError("artifact for module ${header.moduleName}")
             val actualCrossModuleHash = references.crossModuleReferencesHashForIC()
             if (header.associatedModule == null && cachedInfo.crossModuleReferencesHash != actualCrossModuleHash) {

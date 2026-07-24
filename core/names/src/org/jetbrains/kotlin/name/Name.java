@@ -62,11 +62,16 @@ public final class Name implements Comparable<Name> {
         return new Name(name, false);
     }
 
+    // JVM spec:
+    //
+    // 4.2.2. Unqualified Names
+    // Names of methods, fields, local variables, and formal parameters <...> must not contain any of the ASCII characters . ; [ /
+    // (that is, period or semicolon or left square bracket or forward slash).
     public static boolean isValidIdentifier(@NotNull String name) {
         if (name.isEmpty() || name.startsWith("<")) return false;
         for (int i = 0; i < name.length(); i++) {
             char ch = name.charAt(i);
-            if (ch == '.' || ch == '/' || ch == '\\') {
+            if (ch == '.' || ch == ';' || ch == '[' || ch == '/') {
                 return false;
             }
         }

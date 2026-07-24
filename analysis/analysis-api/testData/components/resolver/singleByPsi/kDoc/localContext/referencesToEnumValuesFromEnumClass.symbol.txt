@@ -1,2 +1,5 @@
-KtClass(0,34): '/**'
-  null
+KDocName(7,9): 'BB'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.BB
+    ]

@@ -1,0 +1,284 @@
+Module: m1
+FILE: module_m1_dataClasses.kt
+    public final data class Regular1 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Regular1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Regular1|.R|/Regular1.x|): R|Regular1|
+
+    }
+    public final data class ExplicitAnnotated1 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|ExplicitAnnotated1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override operator fun equals([EqualityBoundType=ExplicitAnnotated1] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ExplicitAnnotated1|) [evaluated = <getClass>(Q|ExplicitAnnotated1|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/ExplicitAnnotated1|.R|/ExplicitAnnotated1.x|, R|<local>/other|.R|/ExplicitAnnotated1.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/ExplicitAnnotated1|.R|/ExplicitAnnotated1.x|): R|ExplicitAnnotated1|
+
+    }
+    public final data class Explicit1 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Explicit1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|Explicit1|) && ==(this@R|/Explicit1|.R|/Explicit1.x|, R|<local>/other|.R|/Explicit1.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Explicit1|.R|/Explicit1.x|): R|Explicit1|
+
+    }
+    public abstract interface Interface : R|kotlin/Any| {
+        public abstract val x: R|kotlin/CharSequence|
+            public get(): R|kotlin/CharSequence|
+
+        public abstract override operator fun equals([EqualityBoundType=Interface] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Interface|) [evaluated = <getClass>(Q|Interface|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+    public final data class ExplicitInherited1 : R|Interface| {
+        public constructor(x: R|kotlin/String|): R|ExplicitInherited1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public open override operator fun equals([EqualityBoundType=Interface] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/ExplicitInherited1|.R|/ExplicitInherited1.x|, R|<local>/other|.R|/Interface.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/ExplicitInherited1|.R|/ExplicitInherited1.x|): R|ExplicitInherited1|
+
+    }
+    public open class WithFinalEquals : R|kotlin/Any| {
+        public constructor(): R|WithFinalEquals| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/CharSequence| = String(!)
+            public get(): R|kotlin/CharSequence|
+
+        public final override operator fun equals([EqualityBoundType=WithFinalEquals] @R|kotlin/EqualityBound|(bound = <getClass>(Q|WithFinalEquals|) [evaluated = <getClass>(Q|WithFinalEquals|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|WithFinalEquals|)
+        }
+
+    }
+    public final data class NotGenerated1 : R|WithFinalEquals| {
+        public constructor(x: R|kotlin/String|): R|NotGenerated1| {
+            super<R|WithFinalEquals|>()
+        }
+
+        public open override val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/NotGenerated1|.R|/NotGenerated1.x|): R|NotGenerated1|
+
+    }
+    public final data class Generic1<T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/CharSequence|>(x: R|T|): R|Generic1<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+        public final operator fun component1(): R|T|
+
+        public final fun copy(x: R|T| = this@R|/Generic1|.R|/Generic1.x|): R|Generic1<T>|
+
+    }
+Module: m2
+FILE: module_m2_dataClasses.kt
+    public final data class Regular2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Regular2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Regular2|.R|/Regular2.x|): R|Regular2|
+
+    }
+    public final data class ExplicitAnnotated2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|ExplicitAnnotated2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override operator fun equals([EqualityBoundType=ExplicitAnnotated2] @R|kotlin/EqualityBound|(bound = <getClass>(Q|ExplicitAnnotated2|) [evaluated = <getClass>(Q|ExplicitAnnotated2|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/ExplicitAnnotated2|.R|/ExplicitAnnotated2.x|, R|<local>/other|.R|/ExplicitAnnotated2.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/ExplicitAnnotated2|.R|/ExplicitAnnotated2.x|): R|ExplicitAnnotated2|
+
+    }
+    public final data class Explicit2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Explicit2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|Explicit2|) && ==(this@R|/Explicit2|.R|/Explicit2.x|, R|<local>/other|.R|/Explicit2.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Explicit2|.R|/Explicit2.x|): R|Explicit2|
+
+    }
+    public final data class ExplicitInherited2 : R|Interface| {
+        public constructor(x: R|kotlin/String|): R|ExplicitInherited2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public open override operator fun equals([EqualityBoundType=Interface] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ==(this@R|/ExplicitInherited2|.R|/ExplicitInherited2.x|, R|<local>/other|.R|/Interface.x|)
+        }
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/ExplicitInherited2|.R|/ExplicitInherited2.x|): R|ExplicitInherited2|
+
+    }
+    public final data class NotGenerated2 : R|WithFinalEquals| {
+        public constructor(x: R|kotlin/String|): R|NotGenerated2| {
+            super<R|WithFinalEquals|>()
+        }
+
+        public open override val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/String| = this@R|/NotGenerated2|.R|/NotGenerated2.x|): R|NotGenerated2|
+
+    }
+    public final data class Generic2<T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/CharSequence|>(x: R|T|): R|Generic2<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+        public final operator fun component1(): R|T|
+
+        public final fun copy(x: R|T| = this@R|/Generic2|.R|/Generic2.x|): R|Generic2<T>|
+
+    }
+    public final fun useSite(r1: R|Regular1|, r2: R|Regular2|, ea1: R|ExplicitAnnotated1|, ea2: R|ExplicitAnnotated2|, e1: R|Explicit1|, e2: R|Explicit2|, ei1: R|ExplicitInherited1|, ei2: R|ExplicitInherited2|, ng1: R|NotGenerated1|, ng2: R|NotGenerated2|, gen1: R|Generic1<kotlin/String>|, gen2: R|Generic2<kotlin/String>|, nany: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/r1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/Regular1.x|
+            }
+        }
+
+        when () {
+            ==(R|<local>/r2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/Regular2.x|
+            }
+        }
+
+        when () {
+            ==(R|<local>/ea1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/ExplicitAnnotated1.x|
+            }
+        }
+
+        when () {
+            ==(R|<local>/ea2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/ExplicitAnnotated2.x|
+            }
+        }
+
+        when () {
+            ==(R|<local>/e1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.<Unresolved name: x>#
+            }
+        }
+
+        when () {
+            ==(R|<local>/e2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.<Unresolved name: x>#
+            }
+        }
+
+        when () {
+            ==(R|<local>/ei1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/Interface.x|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|/Interface.x|.<Unresolved name: plus>#(String(!))
+            }
+        }
+
+        when () {
+            ==(R|<local>/ei2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/Interface.x|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|/Interface.x|.<Unresolved name: plus>#(String(!))
+            }
+        }
+
+        when () {
+            ==(R|<local>/ng1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/WithFinalEquals.x|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|/WithFinalEquals.x|.<Unresolved name: plus>#(String(!))
+            }
+        }
+
+        when () {
+            ==(R|<local>/ng2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|/WithFinalEquals.x|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|/WithFinalEquals.x|.<Unresolved name: plus>#(String(!))
+            }
+        }
+
+        when () {
+            ==(R|<local>/gen1|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|SubstitutionOverride</Generic1.x: R|CapturedType(*)|>|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|SubstitutionOverride</Generic1.x: R|CapturedType(*)|>|.R|kotlin/plus<Candidate is inapplicable because of receiver type mismatch: kotlin/plus>#|(String(!))
+            }
+        }
+
+        when () {
+            ==(R|<local>/gen2|, R|<local>/nany|) ->  {
+                R|<local>/nany|.R|SubstitutionOverride</Generic2.x: R|CapturedType(*)|>|.R|kotlin/CharSequence.length|
+                R|<local>/nany|.R|SubstitutionOverride</Generic2.x: R|CapturedType(*)|>|.R|kotlin/plus<Candidate is inapplicable because of receiver type mismatch: kotlin/plus>#|(String(!))
+            }
+        }
+
+    }

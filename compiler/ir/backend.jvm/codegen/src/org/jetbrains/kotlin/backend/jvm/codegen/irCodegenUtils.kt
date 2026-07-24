@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
@@ -16,12 +13,14 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.FrameMapBase
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.config.ValhallaSupportMode
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.valhallaSupportMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -43,33 +41,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
-class IrFrameMap : FrameMapBase<IrSymbol>() {
-    private val typeMap = mutableMapOf<IrSymbol, Type>()
-
-    override fun enter(key: IrSymbol, type: Type): Int {
-        typeMap[key] = type
-        return super.enter(key, type)
-    }
-
-    override fun leave(key: IrSymbol): Int {
-        typeMap.remove(key)
-        return super.leave(key)
-    }
-
-    fun typeOf(symbol: IrSymbol): Type = typeMap[symbol]
-        ?: error("No mapping for symbol: ${symbol.owner.render()}")
-}
-
-internal val IrFunction.isStatic
-    get() = (this.dispatchReceiverParameter == null && this !is IrConstructor)
-
-fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
-    return enter(irDeclaration.symbol, type)
-}
-
-fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
-    return leave(irDeclaration.symbol)
-}
+internal val IrFunction.isStatic: Boolean
+    get() = this.dispatchReceiverParameter == null && this !is IrConstructor
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     val irFile = declaration.fileParent
@@ -95,13 +68,7 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     )
 }
 
-val IrType.isExtensionFunctionType: Boolean
-    get() = isFunctionTypeOrSubtype() && hasAnnotation(FqNames.extensionFunctionType)
-
-
 /* Borrowed with modifications from AsmUtil.java */
-
-private val NO_FLAG_LOCAL = 0
 
 private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
     if (isInlineOrContainedInInline(parent as? IrDeclaration)) Opcodes.ACC_PUBLIC else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
@@ -118,8 +85,16 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
-            (if (isInner) 0 else Opcodes.ACC_STATIC)
+            (if (isInner) 0 else Opcodes.ACC_STATIC) or
+            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
 }
+
+
+private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean =
+    when (context.configuration.languageVersionSettings.valhallaSupportMode) {
+        ValhallaSupportMode.NONE, null -> false
+        else -> true
+    }
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {
@@ -149,7 +124,7 @@ fun IrDeclarationWithVisibility.getVisibilityAccessFlag(): Int {
         JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE -> Opcodes.ACC_PROTECTED
         DescriptorVisibilities.PUBLIC -> Opcodes.ACC_PUBLIC
         DescriptorVisibilities.INTERNAL -> Opcodes.ACC_PUBLIC
-        DescriptorVisibilities.LOCAL -> NO_FLAG_LOCAL
+        DescriptorVisibilities.LOCAL -> 0
         JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
         else -> throw IllegalStateException("$visibility is not a valid visibility in backend for ${ir2string(this)}")
     }
@@ -239,7 +214,7 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, genera
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
     if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
         // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
-        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
+        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise, it tries to "correct"
         // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
         // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
@@ -281,11 +256,12 @@ fun IrClass.getVisibilityAccessFlagForClass(): Int {
     if (kind == ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
-    return if (visibility === DescriptorVisibilities.PUBLIC ||
+    return if (isPublicAbi ||
+        visibility === DescriptorVisibilities.PUBLIC ||
         visibility === DescriptorVisibilities.PROTECTED ||
+        visibility === DescriptorVisibilities.INTERNAL ||
         // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
-        visibility === DescriptorVisibilities.LOCAL ||
-        visibility === DescriptorVisibilities.INTERNAL
+        visibility === DescriptorVisibilities.LOCAL
     ) {
         Opcodes.ACC_PUBLIC
     } else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
@@ -299,7 +275,7 @@ val IrDeclaration.isAnnotatedWithJavaLangDeprecated: Boolean
 
 internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boolean =
     isAnnotatedWithDeprecated ||
-            annotations.any { it.symbol == context.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
+            annotations.any { it.classSymbol == context.symbols.javaLangDeprecatedWithDeprecatedFlag }
 
 internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
     origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||
@@ -332,7 +308,7 @@ val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
     get() {
         val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
         fun processTypeParameters(type: IrType) {
-            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+            for (supertypeArgument in type.arguments.orEmpty()) {
                 if (supertypeArgument is IrTypeProjection) {
                     val typeArgument = supertypeArgument.type
                     if (typeArgument.isReifiedTypeParameter) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 
@@ -46,8 +46,12 @@ public interface KaAnnotationUseSiteTargetRenderer {
             annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
-            val useSite = annotation.useSiteTarget ?: return
-            printer.append(useSite.renderName)
+            val name = when (owner) {
+                is KaReceiverParameterSymbol -> AnnotationUseSiteTarget.RECEIVER.renderName
+                else -> return
+            }
+
+            printer.append(name)
             printer.append(':')
         }
     }
@@ -61,31 +65,7 @@ public interface KaAnnotationUseSiteTargetRenderer {
             annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
-            @Suppress("REDUNDANT_ELSE_IN_WHEN")
-            val print = when (owner) {
-                !is KaCallableSymbol -> return
-                is KaAnonymousFunctionSymbol -> true
-                is KaConstructorSymbol -> true
-                is KaNamedFunctionSymbol -> true
-                is KaPropertyGetterSymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_GETTER
-                is KaPropertySetterSymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY_SETTER
-                is KaSamConstructorSymbol -> true
-                is KaBackingFieldSymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.FIELD
-                is KaEnumEntrySymbol -> true
-                is KaValueParameterSymbol -> {
-                    val containingSymbol = with(analysisSession) { owner.containingDeclaration }
-                    containingSymbol !is KaPropertySetterSymbol || annotation.useSiteTarget != AnnotationUseSiteTarget.SETTER_PARAMETER
-                }
-                is KaParameterSymbol -> true
-                is KaJavaFieldSymbol -> true
-                is KaLocalVariableSymbol -> true
-                is KaPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
-                else -> return
-            }
-
-            if (print) {
-                WITH_USES_SITE.renderUseSiteTarget(analysisSession, annotation, owner, annotationRenderer, printer)
-            }
+            WITH_USES_SITE.renderUseSiteTarget(analysisSession, annotation, owner, annotationRenderer, printer)
         }
     }
 }

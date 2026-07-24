@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 fun <X> select(vararg x: X): X = x[0]
 fun <E> myE(): Out<E>? =  null

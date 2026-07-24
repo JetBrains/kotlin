@@ -19,9 +19,12 @@ import org.jetbrains.kotlin.library.KlibMockDSL
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.Test
-import java.io.File
+import java.nio.file.Path
 import java.util.Properties
 import kotlin.collections.set
+import kotlin.io.path.name
+import kotlin.io.path.readBytes
+import kotlin.io.path.writeBytes
 import kotlin.random.Random
 
 abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters: () -> P) : AbstractKlibWriterTest<P>(newParameters) {
@@ -35,7 +38,7 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
         final override var builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.NATIVE
             set(_) = abort<Nothing>("only NATIVE built-ins platform is supported")
 
-        class BinaryFile(val file: File, content: ByteArray) {
+        class BinaryFile(val file: Path, content: ByteArray) {
             init {
                 file.writeBytes(content)
             }

@@ -1,0 +1,98 @@
+KtFile: 'nestedCompanionBlock.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,179): 'class C {'
+  null
+
+KtClassBody(73,179): '{'
+  null
+
+KtCompanionBlock(79,177): 'companion {'
+  null
+
+KtDeclarationModifierList(79,88): 'companion'
+  null
+
+KtClassBody(89,177): '{'
+  null
+
+KtCompanionBlock(99,147): 'companion {'
+  null
+
+KtDeclarationModifierList(99,108): 'companion'
+  null
+
+KtClassBody(109,147): '{'
+  null
+
+KtNamedFunction(123,137): 'fun inner() {}'
+  null
+
+KtParameterList(132,134): '()'
+  null
+
+KtBlockExpression(135,137): '{}'
+  null
+
+KtNamedFunction(157,171): 'fun outer() {}'
+  null
+
+KtParameterList(166,168): '()'
+  null
+
+KtBlockExpression(169,171): '{}'
+  null
+
+KtNamedFunction(181,210): 'fun usage() {'
+  null
+
+KtParameterList(190,192): '()'
+  null
+
+KtBlockExpression(193,210): '{'
+  null
+
+KtDotQualifiedExpression(199,208): 'C.outer()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C.outer(): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(199,200): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(201,208): 'outer()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C.outer(): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(201,206): 'outer'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C.outer(): kotlin.Unit
+    ]
+
+KtValueArgumentList(206,208): '()'
+  null

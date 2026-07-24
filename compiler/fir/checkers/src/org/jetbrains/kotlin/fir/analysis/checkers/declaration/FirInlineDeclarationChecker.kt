@@ -169,7 +169,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun EffectiveVisibility.isReachableDueToLocalDispatchReceiver(access: FirStatement): Boolean {
             val receiverType = access.localDispatchReceiver() ?: return false
-            val receiverProtected = EffectiveVisibility.Protected(receiverType.typeConstructor(session.typeContext))
+            val receiverProtected = EffectiveVisibility.Protected(receiverType.typeConstructor(c = session.typeContext))
             val relation = receiverProtected.relation(this, session.typeContext)
             return relation == EffectiveVisibility.Permissiveness.SAME || relation == EffectiveVisibility.Permissiveness.LESS
         }
@@ -400,7 +400,6 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             function.valueParameters.any { it.isInlinable(context.session) } || function.contextParameters.any { it.isInlinable(context.session) }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
-        if (function.returnTypeRef.needsMultiFieldValueClassFlattening(session)) return
 
         reporter.reportOn(function.source, FirErrors.NOTHING_TO_INLINE)
     }

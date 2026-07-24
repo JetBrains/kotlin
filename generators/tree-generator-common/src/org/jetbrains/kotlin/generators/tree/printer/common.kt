@@ -174,7 +174,7 @@ class TreeGenerator(private val generationPath: File, val treeGeneratorReadme: S
         createVisitorPrinters: List<Pair<ClassRef<*>, (ImportCollectingPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, ElementField>>>,
     ) where Element : AbstractElement<Element, ElementField, *>,
             ElementField : AbstractField<ElementField> {
-        createVisitorPrinters.mapTo(generatedFiles) { (visitorClass, createVisitorPrinter) ->
+        createVisitorPrinters.mapTo(generatedFiles) { [visitorClass, createVisitorPrinter] ->
             printGeneratedType(generationPath, treeGeneratorReadme, visitorClass.packageName, visitorClass.simpleName) {
                 createVisitorPrinter(this, visitorClass).printVisitor(model.elements)
             }

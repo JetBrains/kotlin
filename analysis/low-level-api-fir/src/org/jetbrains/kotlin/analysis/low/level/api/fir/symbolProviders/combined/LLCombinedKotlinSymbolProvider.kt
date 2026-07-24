@@ -92,7 +92,7 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
-        val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
+        val [ktClass, provider] = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
 
         // We've picked the symbol provider via the `ktClass`, so `ktClass` must be contained in the symbol provider's module.
         @OptIn(LLModuleSpecificSymbolProviderAccess::class)
@@ -162,7 +162,7 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
             buildList {
                 getCallables(callableId)
                     .groupBy { getModule(it) }
-                    .forEach { (module, callables) ->
+                    .forEach { [module, callables] ->
                         // If `module` cannot be found in the map, `callables` cannot be processed by any of the available providers,
                         // because none of them belong to the correct module. We can skip in that case because iterating through all
                         // providers wouldn't lead to any results for `callables`.

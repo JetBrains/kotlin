@@ -2,6 +2,10 @@
  * public abstract interface Flow<T#0 (* T *)> : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

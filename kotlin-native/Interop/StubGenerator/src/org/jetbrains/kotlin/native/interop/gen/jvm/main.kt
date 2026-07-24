@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibLoaderResult
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.native.interop.gen.*
@@ -45,9 +47,12 @@ import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import java.io.File
 import java.nio.file.*
 import java.util.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String?, val manifest: String? = null,
@@ -203,7 +208,7 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
 
     val virtualRoot = Paths.get(System.getProperty("java.io.tmpdir")).resolve("konanSystemInclude")
 
-    val virtualPathToReal = relativeToRoot.map { (relativePath, realRoot) ->
+    val virtualPathToReal = relativeToRoot.map { [relativePath, realRoot] ->
         virtualRoot.resolve(relativePath) to realRoot.resolve(relativePath)
     }.toMap()
 
@@ -307,10 +312,8 @@ private fun processCLib(
     val outKtPkg = fqParts.joinToString(".")
     checkPackageName(outKtPkg)
 
-    val resolver = getLibraryResolver(cinteropArguments, tool.target)
-
-    val allLibraryDependencies = when (flavor) {
-        KotlinPlatform.NATIVE -> resolveDependencies(resolver, cinteropArguments)
+    val loadedLibraries = when (flavor) {
+        KotlinPlatform.NATIVE -> loadLibraries(cinteropArguments, tool.target)
         else -> listOf()
     }
 
@@ -318,17 +321,20 @@ private fun processCLib(
 
     val tempFiles = TempFiles(cinteropArguments.tempDir)
 
-    val imports = parseImports(allLibraryDependencies)
+    val imports = parseImports(loadedLibraries)
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val (nativeIndex, compilation) = buildNativeIndexImpl(
+    (
+        val nativeIndex = index, val compilation
+    ) =
+        buildNativeIndexImpl(
             library,
             verbose,
             allowPrecompiledHeaders = nativeLibsDir != null,
             macroNamesCollectingMode = cinteropArguments.macroCollectionImpl
-    )
+        )
 
     val target = tool.target
 
@@ -350,6 +356,7 @@ private fun processCLib(
             disableExperimentalAnnotation = cinteropArguments.disableExperimentalAnnotation ?: false,
             target = target,
             cCallMode = cinteropArguments.cCallMode,
+            headerMode = cinteropArguments.headerMode,
     )
 
 
@@ -388,7 +395,7 @@ private fun processCLib(
         val driverOptions = StubIrDriver.DriverOptions(
                 entryPoint,
                 moduleName,
-                File(outCFile.absolutePath),
+                File(outCFile.absolutePathString()),
                 outKtFileCreator,
                 cinteropArguments.dumpBridges ?: false,
         )
@@ -431,41 +438,45 @@ private fun processCLib(
     }
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
-    val nativeOutputPath: String? = when (flavor) {
-        KotlinPlatform.JVM -> {
-            val outOFile = tempFiles.create(libName,".o")
-            val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
-            runCmd(compilerCmd, verbose)
-            val linkerOpts =
-                    def.config.linkerOpts.toTypedArray() +
-                            tool.getDefaultCompilerOptsForLanguage(library.language) +
-                            additionalLinkerOpts
-            val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
-            val linkerCmd = arrayOf(linker,
-                    outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
-                    *linkerOpts)
-            runCmd(linkerCmd, verbose)
-            outOFile.absolutePath
-        }
-        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
-            // Don't generate the bitcode (and don't pack it into the resulting klib),
-            // because indirect CCall is the main reason for having it.
-            // We could introduce another flag to control that, but let's keep things simple for now.
-            null
-        }
-        KotlinPlatform.NATIVE -> {
-            val outLib = File(nativeLibsDir, "$libName.bc")
-            // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
-            // The source file is passed in via stdin to ensure the output library is deterministic.
-            val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-            runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
-            outLib.absolutePath
+    val nativeOutputPath: String? = if (cinteropArguments.headerMode) null else {
+        when (flavor) {
+            KotlinPlatform.JVM -> {
+                val outOFile = tempFiles.create(libName,".o")
+                val compilerCmd = arrayOf(compiler, *compilerArgs,
+                        "-c", outCFile.absolutePathString(), "-o", outOFile.absolutePathString())
+                runCmd(compilerCmd, verbose)
+                val linkerOpts =
+                        def.config.linkerOpts.toTypedArray() +
+                                tool.getDefaultCompilerOptsForLanguage(library.language) +
+                                additionalLinkerOpts
+                val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
+                val linkerCmd = arrayOf(linker,
+                        outOFile.absolutePathString(), "-shared", "-o", outLib.absolutePath,
+                        *linkerOpts)
+                runCmd(linkerCmd, verbose)
+                outOFile.absolutePathString()
+            }
+            KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
+                // Don't generate the bitcode (and don't pack it into the resulting klib),
+                // because indirect CCall is the main reason for having it.
+                // We could introduce another flag to control that, but let's keep things simple for now.
+                null
+            }
+            KotlinPlatform.NATIVE -> {
+                val outLib = File(nativeLibsDir, "$libName.bc")
+                // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+                // The source file is passed in via stdin to ensure the output library is deterministic.
+                val compilerCmd = arrayOf(compiler, *compilerArgs,
+                        "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
+                runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
+                outLib.absolutePath
+            }
         }
     }
 
-    val compiledFiles = compileSources(nativeLibsDir, tool, cinteropArguments)
+    val compiledFiles = if (cinteropArguments.headerMode) emptyList() else {
+        compileSources(nativeLibsDir, tool, cinteropArguments)
+    }
 
     return when (stubIrOutput) {
         is StubIrDriver.Result.SourceCode -> {
@@ -473,11 +484,7 @@ private fun processCLib(
             argsToCompiler(staticLibraries, libraryPaths) + bitcodePaths
         }
         is StubIrDriver.Result.Metadata -> {
-            val stdlibDependency = resolver.resolveWithDependencies(
-                    emptyList(),
-                    noDefaultLibs = true,
-                    noEndorsedLibs = true
-            ).getFullList()
+            val stdlib = loadedLibraries.first { it.isNativeStdlib }
 
             val nopack = cinteropArguments.nopack
             val outputPath = cinteropArguments.output.let {
@@ -491,15 +498,15 @@ private fun processCLib(
 
             createInteropLibrary(
                     serializedMetadata = serializedMetadata,
-                    nativeBitcodeFiles = compiledFiles + listOfNotNull(nativeOutputPath),
+                    nativeBitcodeFiles = (compiledFiles + listOfNotNull(nativeOutputPath)).map(::Path),
                     target = tool.target,
                     moduleName = moduleName,
-                    outputPath = outputPath,
+                    outputPath = Path(outputPath),
                     manifest = def.manifestAddendProperties,
-                    dependencies = stdlibDependency + imports.requiredLibraries.toList(),
+                    dependencies = listOf(stdlib) + imports.requiredLibraries.toList(),
                     nopack = nopack,
                     shortName = cinteropArguments.shortModuleName,
-                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths),
+                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths).map(::Path),
                     klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel,
             )
             return null
@@ -545,26 +552,15 @@ private fun checkCCallModeCompatibility(
     }
 }
 
-// TODO (KT-84721): Reconsider how exactly the export in P.V. feature should work in further versions (ex: 2.5.0) if we decide to upgrade LLVM.
-private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) {
-    val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel
-    val cCallMode = cinteropArguments.cCallMode
-
-    when (klibAbiCompatibilityLevel) {
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> {
-            check(cCallMode == CCallMode.DIRECT) {
-                "-$CCALL_MODE ${cCallMode.name.lowercase()} is not supported in combination with -$KLIB_ABI_COMPATIBILITY_LEVEL ${klibAbiCompatibilityLevel}\n" +
-                        "Please use -$KLIB_ABI_COMPATIBILITY_LEVEL ${KlibAbiCompatibilityLevel.LATEST_STABLE} or specify -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}"
+private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) =
+        when (val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel) {
+            KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
+                warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
             }
-
-            warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
+            KlibAbiCompatibilityLevel.ABI_LEVEL_2_5 -> {
+                // No specific restrictions for now.
+            }
         }
-
-        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
-            // No specific restrictions for now.
-        }
-    }
-}
 
 private fun compileSources(
         nativeLibsDir: String,
@@ -580,29 +576,38 @@ private fun compileSources(
     outputFileName
 }
 
-private fun getLibraryResolver(
-        cinteropArguments: CInteropArguments, target: KonanTarget
-): KotlinLibraryResolverImpl<KotlinLibrary> {
-    return defaultResolver(
-        directLibs = cinteropArguments.library,
-        target,
-        Distribution(cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
-    ).libraryResolver(resolveManifestDependenciesLenient = true)
+private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTarget): List<KotlinLibrary> {
+    val distribution = Distribution(
+            cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath,
+            konanDataDir = cinteropArguments.konanDataDir
+    )
+    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
+
+    val loadingResult = KlibLoader {
+        libraryPaths(cinteropArguments.library)
+        libraryProviders(
+                KlibNativeDistributionLibraryProvider(File(distribution.konanHome)) {
+                    withStdlib()
+                    runUnless(noDefaultLibs) { withPlatformLibs(target) }
+                }
+        )
+        platformChecker(KlibPlatformChecker.Native(target.name))
+        maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+        manifestTransformer(KlibNativeManifestTransformer(target))
+    }.load()
+
+    validateLoadingResults(loadingResult)
+
+    return loadingResult.librariesStdlibFirst
 }
 
-private fun resolveDependencies(
-        resolver: KotlinLibraryResolverImpl<KotlinLibrary>, cinteropArguments: CInteropArguments
-): List<KotlinLibrary> {
-    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    val resolvedLibraries = resolver.resolveWithDependencies(
-        unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
-        noStdLib = false,
-        noDefaultLibs = noDefaultLibs,
-        noEndorsedLibs = noEndorsedLibs
-    ).getFullList()
-    validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
-    return resolvedLibraries
+private fun validateLoadingResults(loadingResult: KlibLoaderResult) {
+    val problems = buildList {
+        loadingResult.reportLoadingProblemsIfAny { _, message -> add(message) }
+    }
+    check(problems.isEmpty()) {
+        "Failed to load libraries:\n${problems.joinToString("\n")}"
+    }
 }
 
 internal fun prepareTool(
@@ -694,6 +699,7 @@ internal fun buildNativeLibrary(
             headerExclusionPolicy = headerExclusionPolicy,
             headerFilter = headerFilter,
             objCClassesIncludingCategories = objCClassesIncludingCategories,
+            apiNotesSwiftName = def.config.apiNotesSwiftName,
             allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
     )
 }

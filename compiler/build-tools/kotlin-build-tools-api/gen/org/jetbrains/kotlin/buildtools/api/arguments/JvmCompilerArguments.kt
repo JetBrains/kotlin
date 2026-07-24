@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 
 /**
@@ -47,7 +48,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
@@ -90,14 +91,14 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
     /**
      * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
      */
-    public fun build(): JvmCompilerArguments
+    override fun build(): JvmCompilerArguments
   }
 
   public companion object {
@@ -321,6 +322,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_IR_INLINER", KotlinReleaseVersion(1, 9, 0))
 
     /**
+     * Experimental direct java support.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_JAVA_DIRECT: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_JAVA_DIRECT", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Package prefix for Java files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -342,7 +353,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
      * This also sets the value of '-jvm-target' to be equal to the selected JDK version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -404,9 +415,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Paths to cross-platform libraries in the .klib format.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_KLIB: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_KLIB", KotlinReleaseVersion(1, 4, 0))
 
@@ -433,10 +447,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
      * Deprecated in Kotlin version 2.0.0.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
+    @RemovedCompilerArgument
     public val X_LINK_VIA_SIGNATURES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_LINK_VIA_SIGNATURES", KotlinReleaseVersion(1, 7, 0))
 
@@ -626,12 +642,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Suppress warnings about deprecated JVM target versions.
-     * This option has no effect and will be deleted in a future version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 1.7.20.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING", KotlinReleaseVersion(1, 5, 0))
 
@@ -722,6 +742,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_USE_TYPE_TABLE", KotlinReleaseVersion(1, 2, 40))
 
     /**
+     * Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<ValhallaSupportMode?> =
+        JvmCompilerArgument("X_VALHALLA_SUPPORT", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Validate generated JVM bytecode before and after optimizations.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -735,9 +765,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable experimental value classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES", KotlinReleaseVersion(1, 8, 20))
 
@@ -746,7 +779,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
      *                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
      * -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-     * The default value is 'inline'.
+     * The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
@@ -789,7 +822,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.
      */
     @JvmField
     public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> =

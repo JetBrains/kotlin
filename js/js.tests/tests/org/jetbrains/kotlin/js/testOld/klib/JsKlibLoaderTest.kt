@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.js.testOld.klib
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibLoaderTest
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
-import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 
 @Suppress("JUnitTestCaseWithNoTests")
 class JsKlibLoaderTest : AbstractKlibLoaderTest() {
@@ -35,23 +36,23 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
         )
 
     override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
+        parameters: CompilationParameters
     ) {
         runJsCompiler {
-            if (asFile) {
-                outputDir = klibLocation.parent
+            if (parameters.asFile) {
+                outputDir = parameters.klibLocation.parent.pathString
             } else {
                 nopack = true
-                outputDir = klibLocation.path
+                outputDir = parameters.klibLocation.pathString
             }
             libraries = stdlib
-            moduleName = sourceFile.nameWithoutExtension
-            irModuleName = sourceFile.nameWithoutExtension
-            customKlibAbiVersion = abiVersion.toString()
-            freeArgs = listOf(sourceFile.absolutePath)
+            moduleName = parameters.sourceFile.nameWithoutExtension
+            irModuleName = parameters.sourceFile.nameWithoutExtension
+            customKlibAbiVersion = parameters.abiVersion.toString()
+            freeArgs = listOf(parameters.sourceFile.absolutePathString())
+            if (parameters.withCompanionBlocksAndExtensionsFeature) {
+                companionBlocksAndExtensions = true
+            }
         }
     }
 }

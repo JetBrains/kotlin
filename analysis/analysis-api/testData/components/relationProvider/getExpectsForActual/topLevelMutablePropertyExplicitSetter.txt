@@ -1,0 +1,2 @@
+expected symbols:
+private expect set(value: kotlin.Int)

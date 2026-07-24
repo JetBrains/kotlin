@@ -25,24 +25,25 @@ Tower Data Context:
         Scope: FirLocalScope
 Smart Casts:
     FirLocalPropertySymbol lvar x: R|kotlin/Int?|
-    Stability: STABLE_VALUE
+    Stability: CAPTURED_VARIABLE
     Types:
         kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] nestedSinkBad2.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int?| = Int(42)
-        R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/x| = Null(null)
         }
         )
-        R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             when () {
                 !=(R|<local>/x|, Null(null)) ->  {
-                    R|<local>/x|.R|kotlin/Int.inc|()
+                    R|<local>/x|.R|kotlin/Int.inc<Inapplicable(UNSTABLE_SMARTCAST): kotlin/Int.inc>#|()
                 }
             }
 
         }
         )
     }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] R> run([ResolvedTo(STATUS)] block: R|() -> R|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -38,7 +38,10 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
             testModule.targetPlatform(testServices).isMultiPlatform(),
         )
 
-        val (libraryJars, librarySourcesJars) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
+        (val libraryJars = roots, val librarySourcesJars = sourceRoots) = testServices.compiledLibraryProvider.compileToLibrary(
+            testModule,
+            dependencyBinaryRoots
+        )
 
         require(librarySourcesJars.isNotEmpty())
 

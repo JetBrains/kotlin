@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.*
 
+@K1Deprecation
 object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
     override val defaultImportsProvider: DefaultImportsProvider = NativeDefaultImportsProvider

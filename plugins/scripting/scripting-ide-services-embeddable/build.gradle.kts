@@ -1,6 +1,9 @@
 description = "Kotlin Scripting Compiler extension providing code completion and static analysis (for using in embeddable mode)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     java
 }
 

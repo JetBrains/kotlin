@@ -114,6 +114,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
         TYPE_REFERENCE
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=null]
+  DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=null]
     TYPE_REFERENCE
       MODIFIER_LIST[]
@@ -149,4 +150,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
                                 REFERENCE_EXPRESSION[referencedName=B]
                 TYPE_REFERENCE
         TYPE_REFERENCE
+  DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
   PROPERTY[fqName=c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=c]

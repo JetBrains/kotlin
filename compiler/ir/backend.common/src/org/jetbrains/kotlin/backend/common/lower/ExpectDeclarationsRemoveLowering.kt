@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.isExpect
 
 /**
  * This pass removes all declarations with `isExpect == true`, which usually come as unactualized optional expectations, like
@@ -20,14 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.*
  */
 class ExpectDeclarationsRemoveLowering(val context: LoweringContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
-        irFile.declarations.removeAll {
-            when (it) {
-                is IrClass -> it.isExpect
-                is IrFunction -> it.isExpect
-                is IrProperty -> it.isExpect
-                else -> false
-            }
-        }
+        irFile.declarations.removeIf { it.isExpect }
     }
 }

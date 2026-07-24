@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.konan.test.cli.AbstractKlibToolCliTest
 import org.jetbrains.kotlin.konan.test.cli.AbstractNativeCliTest
 
 fun main(args: Array<String>) {
@@ -14,10 +15,13 @@ fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
 
     val testsRoot = args[0]
-    generateTestGroupSuiteWithJUnit4(args, mainClassName) {
+    generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot, "native/native.tests/cli-tests/testData") {
             testClass<AbstractNativeCliTest> {
                 model("cli", extension = "args", testMethod = "doNativeTest", recursive = false)
+            }
+            testClass<AbstractKlibToolCliTest> {
+                model("cli/klib-tool", extension = "args", testMethod = "doKlibToolTest", recursive = false)
             }
         }
     }

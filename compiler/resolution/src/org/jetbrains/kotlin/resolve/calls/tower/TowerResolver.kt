@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -31,9 +32,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
+@K1Deprecation
 interface Candidate {
     // this operation should be very fast
     val isSuccessful: Boolean
@@ -43,6 +46,7 @@ interface Candidate {
     fun addCompatibilityWarning(other: Candidate)
 }
 
+@K1Deprecation
 interface CandidateFactory<out C : Candidate> {
     fun createCandidate(
         towerCandidate: CandidateWithBoundDispatchReceiver,
@@ -59,6 +63,7 @@ interface CandidateFactory<out C : Candidate> {
     ): C
 }
 
+@K1Deprecation
 interface CandidateFactoryProviderForInvoke<C : Candidate> {
 
     // variable here is resolved, invoke -- only chosen
@@ -71,6 +76,7 @@ interface CandidateFactoryProviderForInvoke<C : Candidate> {
     fun factoryForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValueWithSmartCastInfo, CandidateFactory<C>>?
 }
 
+@K1Deprecation
 sealed class TowerData {
     object Empty : TowerData()
     class OnlyImplicitReceiver(val implicitReceiver: ReceiverValueWithSmartCastInfo) : TowerData()
@@ -84,6 +90,7 @@ sealed class TowerData {
     class ForLookupForNoExplicitReceiver(val level: ScopeTowerLevel) : TowerData()
 }
 
+@K1Deprecation
 interface ScopeTowerProcessor<out C> {
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
@@ -92,6 +99,7 @@ interface ScopeTowerProcessor<out C> {
     fun recordLookups(skippedData: Collection<TowerData>, name: Name)
 }
 
+@K1Deprecation
 class TowerResolver {
     fun <C : Candidate> runResolve(
         scopeTower: ImplicitScopeTower,
@@ -187,7 +195,7 @@ class TowerResolver {
 
             val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
             var firstImportingScopeIndex = 0
-            for ((i, scope) in parentScopes.withIndex()) {
+            for ([i, scope] in parentScopes.withIndex()) {
                 if (scope !is LexicalScope) {
                     firstImportingScopeIndex = i
                     break
@@ -459,6 +467,7 @@ class TowerResolver {
             return candidate.resultingApplicability.shouldStopResolve
         }
 
+        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
         private fun isPreserveCompatibilityCandidate(candidate: C): Boolean =
             candidate.resultingApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 

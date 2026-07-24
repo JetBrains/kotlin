@@ -1,0 +1,213 @@
+KtFile: 'companionExtensionViaTypeAlias.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,72): 'class C'
+  null
+
+KtTypeAlias(74,90): 'typealias TA = C'
+  null
+
+KtTypeReference(89,90): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(89,90): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(89,90): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNamedFunction(92,116): 'companion fun C.foo() {}'
+  null
+
+KtDeclarationModifierList(92,101): 'companion'
+  null
+
+KtTypeReference(106,107): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(106,107): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(106,107): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtParameterList(111,113): '()'
+  null
+
+KtBlockExpression(114,116): '{}'
+  null
+
+KtProperty(117,152): 'companion val C.prop: Int get() = 1'
+  null
+
+KtDeclarationModifierList(117,126): 'companion'
+  null
+
+KtTypeReference(131,132): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(131,132): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(131,132): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtTypeReference(139,142): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(139,142): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(139,142): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtPropertyAccessor(143,152): 'get() = 1'
+  null
+
+KtParameterList(146,148): '()'
+  null
+
+KtConstantExpression(151,152): '1'
+  null
+
+KtNamedFunction(154,207): 'fun usage() {'
+  null
+
+KtParameterList(163,165): '()'
+  null
+
+KtBlockExpression(166,207): '{'
+  null
+
+KtDotQualifiedExpression(172,180): 'TA.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(172,174): 'TA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/TA
+    ]
+
+KtCallExpression(175,180): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(175,178): 'foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtValueArgumentList(178,180): '()'
+  null
+
+KtDotQualifiedExpression(185,192): 'TA.prop'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
+
+KtNameReferenceExpression(185,187): 'TA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/TA
+    ]
+
+KtNameReferenceExpression(188,192): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
+
+KtCallableReferenceExpression(198,205): 'TA::foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(198,200): 'TA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/TA
+    ]
+
+KtNameReferenceExpression(202,205): 'foo'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(<extension receiver>: test.C): kotlin.Unit
+    ]

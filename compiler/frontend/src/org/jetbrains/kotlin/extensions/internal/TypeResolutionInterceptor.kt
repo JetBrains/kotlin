@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.extensions.internal
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
 @OptIn(InternalNonStableExtensionPoints::class)
+@K1Deprecation
 class TypeResolutionInterceptor(project: Project) {
     private val extensions = getInstances(project)
 

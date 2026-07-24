@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 class BindingTraceFilter(val ignoreDiagnostics: Boolean) {
     companion object {
         val ACCEPT_ALL = BindingTraceFilter(false)

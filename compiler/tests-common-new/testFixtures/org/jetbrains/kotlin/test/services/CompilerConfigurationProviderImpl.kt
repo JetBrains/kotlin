@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.extensionsStorage
@@ -19,9 +20,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.enableIrNestedOffsetsChecks
-import org.jetbrains.kotlin.config.enableIrVarargTypesChecks
-import org.jetbrains.kotlin.config.enableIrVisibilityChecks
+import org.jetbrains.kotlin.config.additionalIrCheckers
+import org.jetbrains.kotlin.config.disableIrCheckers
+import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrVarargCheckers
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.targetPlatform
@@ -33,9 +38,12 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
@@ -43,7 +51,7 @@ import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 open class CompilerConfigurationProviderImpl(
     testServices: TestServices,
     override val testRootDisposable: Disposable,
-    override val configurators: List<AbstractEnvironmentConfigurator>
+    override val configurators: List<AbstractEnvironmentConfigurator>,
 ) : CompilerConfigurationProvider(testServices) {
     private val environmentCache: MutableMap<TestModule, KotlinCoreEnvironment> = mutableMapOf()
     private val configurationCache: MutableMap<Pair<TestModule, CompilationStage>, CompilerConfiguration> = mutableMapOf()
@@ -57,12 +65,16 @@ open class CompilerConfigurationProviderImpl(
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         val platform = module.targetPlatform(testServices)
         val configFiles = platform.platformToEnvironmentConfigFiles()
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
             testRootDisposable,
             CompilerConfiguration.create()
         )
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
             configuration,
@@ -122,11 +134,8 @@ fun createCompilerConfiguration(
     }
 
     configuration.verifyIr = IrVerificationMode.ERROR
-    configuration.enableIrVisibilityChecks = !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, testServices)
-    configuration.enableIrVarargTypesChecks = !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, testServices)
-
-    configuration.enableIrNestedOffsetsChecks = CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS in module.directives &&
-            !CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS.isApplicableTo(module, testServices)
+    configuration.disableIrCheckers = IrCheckersDisabledByTestDirectives.filter { it.key.isApplicableTo(module, testServices) }.values.toList()
+    configuration.additionalIrCheckers = IrCheckersEnabledByTestDirectives.filter { module.directives.contains(it.key) }.values.toList()
 
     val messageCollector = MessageCollectorForCompilerTests(System.err, CompilerTestMessageRenderer(module))
     @OptIn(MessageCollectorAccess::class) // write access
@@ -143,6 +152,21 @@ fun createCompilerConfiguration(
 
     return configuration
 }
+
+val IrCheckersDisabledByTestDirectives = mapOf<ValueDirective<TargetBackend>, String>(
+    // KT-80071
+    // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
+    // so visibility checks are only performed if requested via a flag, and in tests.
+    CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS to IrVisibilityChecker::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_FIELD_VISIBILITY_CHECK to IrFieldVisibilityChecker::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS to IrVarargCheckers::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS to IrNestedOffsetRangeChecker::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS to IrTypeParameterScopeChecker::class.java.simpleName,
+)
+
+val IrCheckersEnabledByTestDirectives = mapOf<SimpleDirective, String>(
+    CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS to IrNestedOffsetRangeChecker::class.java.simpleName,
+)
 
 private operator fun <T : Any> CompilerConfiguration.set(key: CompilerConfigurationKey<T>, value: T) {
     put(key, value)

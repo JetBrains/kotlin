@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.tree.merge
 
+import org.junit.jupiter.api.Test
+
 class MergeCirTreeClassConstructorTest : AbstractMergeCirTreeTest() {
 
+    @Test
     fun `test simple constructors`() {
         val aTree = createCirTreeFromSourceCode("class X(val x: Int)")
         val bTree = createCirTreeFromSourceCode("class X(val x: Int)")
@@ -15,6 +18,7 @@ class MergeCirTreeClassConstructorTest : AbstractMergeCirTreeTest() {
         constructor.assertNoMissingTargetDeclaration()
     }
 
+    @Test
     fun `test missing target declaration`() {
         val aTree = createCirTreeFromSourceCode("class X(val a: Int)")
         val bTree = createCirTreeFromSourceCode("class X(val b: Short)")

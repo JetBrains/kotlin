@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
@@ -30,6 +29,10 @@ import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,18 +41,21 @@ import kotlin.reflect.KMutableProperty1
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     private val enableICFixture = EnableICFixture()
 
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         enableICFixture.setUp()
     }
 
+    @AfterEach
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { enableICFixture.tearDown() },
-            ThrowableRunnable { super.tearDown() }
+            { enableICFixture.tearDown() },
+            { super.tearDown() }
         ).run()
     }
 
+    @Test
     fun testJpsBuildReportIC() {
 
         val reportDir = workDir.resolve("buildReport")
@@ -102,8 +108,9 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             "Compiler code generation:"
         )
 
+        @Test
         fun testImpl() {
-            assertTrue("Daemon was not enabled!", isDaemonEnabled())
+            assertTrue(isDaemonEnabled(), "Daemon was not enabled!")
             doTest()
 
             validateAndDeleteReportFile(
@@ -129,14 +136,16 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         }
     }
 
+    @Test
     fun testJpsDaemonIC() {
+        @Test
         fun testImpl() {
-            assertTrue("Daemon was not enabled!", isDaemonEnabled())
+            assertTrue(isDaemonEnabled(), "Daemon was not enabled!")
 
             doTest()
             val module = myProject.modules[0]
             val mainKtClassFile = findFileInOutputDir(module, "MainKt.class")
-            assertTrue("$mainKtClassFile does not exist!", mainKtClassFile.exists())
+            assertTrue(mainKtClassFile.exists(), "$mainKtClassFile does not exist!")
 
             val fooKt = File(workDir, "src/Foo.kt")
             change(fooKt.path, null)
@@ -155,6 +164,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         }
     }
 
+    @Test
     fun testManyFiles() {
         doTest()
 
@@ -177,6 +187,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(createTouchAction("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
     }
 
+    @Test
     fun testManyFilesForPackage() {
         doTest()
 
@@ -214,16 +225,19 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     }
 
     @WorkingDir("LanguageOrApiVersionChanged")
+    @Test
     fun testLanguageVersionChanged() {
         languageOrApiVersionChanged(CommonCompilerArguments::languageVersion)
     }
 
     @WorkingDir("LanguageOrApiVersionChanged")
+    @Test
     fun testApiVersionChanged() {
         languageOrApiVersionChanged(CommonCompilerArguments::apiVersion)
     }
 
     @WorkingDir("LanguageOrApiVersionChanged")
+    @Test
     fun testLanguageVersionExperimental() {
         initProject(LibraryDependency.JVM_MOCK_RUNTIME)
         val module = myProject.modules.first()
@@ -253,6 +267,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
      * So if we also have changed facet configuration of `module2` - it will be marked for recompilation and will try to clean its caches.
      * Such `clean` action of opened maps will lead to "storage is already closed" exception if maps are not reopened properly
      */
+    @Test
     fun testRebuildAfterCachesOpened() {
         assertTrue(IncrementalCompilation.isEnabledForJvm())
 
@@ -282,6 +297,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(createChangeAction("module1/src/Base.kt", newContent), null, null)
     }
 
+    @Test
     fun testUseSerializationPluginWithClassesInOut() {
         assertTrue(IncrementalCompilation.isEnabledForJvm())
         initProject(LibraryDependency.SERIALIZATION)

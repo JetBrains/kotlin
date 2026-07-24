@@ -1,0 +1,34 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.forward.tests
+
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+
+@Disabled("Example tests for evaluation purposes of the DSL")
+class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Sample compatibility compilation test that is run as part of each test suit")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
+
+            module1.compile {
+                assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
+            }
+            module2.compile {
+                assertOutputs("AKt.class", "BKt.class")
+            }
+        }
+    }
+}

@@ -5,6 +5,8 @@ implicit values:
     type = ERROR(Cannot infer argument for type parameter T)
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): ERROR CLASS: Unresolved name: e
+    label = with
+
 
 scopes:
   LocalScope, index = 0
@@ -67,4 +69,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
-

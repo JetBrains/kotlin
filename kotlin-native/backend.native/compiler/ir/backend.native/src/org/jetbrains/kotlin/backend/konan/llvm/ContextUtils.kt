@@ -9,7 +9,7 @@ import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -133,7 +133,7 @@ internal sealed class Lifetime(val slotType: SlotType) {
 internal interface ContextUtils : RuntimeAware {
     val generationState: NativeGenerationState
 
-    val context: Context
+    val context: NativeBackendContext
         get() = generationState.context
 
     override val runtime: Runtime
@@ -191,13 +191,7 @@ internal interface ContextUtils : RuntimeAware {
             }
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
-                    val symbolName = if (KonanBinaryInterface.isExported(this)) {
-                        this.computeSymbolName()
-                    } else {
-                        val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
-                                ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this)
-                        this.computePrivateSymbolName(containerName)
-                    }
+                    val symbolName = this.computeSymbolName(context, forImplementation = true)
                     val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
                     llvm.externalFunction(proto)
                 }
@@ -374,8 +368,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
             require(getGlobalFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
-                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()}, " +
-                        "found: ${LLVMPrintTypeToString(getGlobalFunctionType(found))!!.toKString()}"
+                "Inconsistent function type of ${llvmFunctionProto.name}. Expected: ${llvmFunctionProto.signature.llvmFunctionType.toTypeString()}, " +
+                        "found: ${getGlobalFunctionType(found).toTypeString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
             return LlvmCallable(found, llvmFunctionProto.signature)
@@ -656,3 +650,19 @@ class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializ
  */
 @JvmInline
 value class RuntimeInitializer(val llvmCallable: LlvmCallable)
+
+context(llvm: CodegenLlvmHelpers)
+internal fun Boolean.toLlvmConstInt32(): ConstInt32 =
+        llvm.constInt32(if (this) 1 else 0)
+
+context(llvm: CodegenLlvmHelpers)
+internal fun Int.toLlvmConstInt32(): ConstInt32 =
+        llvm.constInt32(this)
+
+context(llvm: CodegenLlvmHelpers)
+internal fun UByte.toLlvmConstUInt8(): ConstUInt8 =
+        llvm.constUInt8(this)
+
+context(llvm: CodegenLlvmHelpers)
+internal fun String?.toCStringLiteral(): ConstPointer =
+        if (this != null) llvm.staticData.cStringLiteral(this) else llvm.nullPointer

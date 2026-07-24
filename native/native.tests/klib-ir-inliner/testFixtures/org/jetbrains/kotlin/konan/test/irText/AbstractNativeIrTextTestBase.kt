@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -73,6 +74,7 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
+                +ALLOW_KOTLIN_PACKAGE
             }
         }
     }

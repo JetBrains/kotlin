@@ -40,7 +40,7 @@ internal fun String.indented(nSpaces: Int = 4, skipFirstLine: Boolean = false): 
 
     return lines()
         .withIndex()
-        .joinToString(separator = "\n") { (index, line) ->
+        .joinToString(separator = "\n") { [index, line] ->
             if (skipFirstLine && index == 0) return@joinToString line
             if (line.isNotBlank()) "$spaces$line" else line
         }

@@ -119,7 +119,7 @@ internal class WasmVarargExpressionLowering(
                         else seq
                     }
 
-                for ((element, index) in exprs.asSequence().zip(indexes)) {
+                for ([element, index] in exprs.asSequence().zip(indexes)) {
                     +irCall(destArrDescr.setMethod).apply {
                         dispatchReceiver = irGet(destArr)
                         arguments[1] = index
@@ -213,7 +213,7 @@ internal class WasmVarargExpressionLowering(
         val segments: List<VarargSegmentBuilder> = sequence {
             val currentElements = mutableListOf<IrVariable>()
 
-            for ((el, tempVar) in irVararg.elements.zip(elementVars)) {
+            for ([el, tempVar] in irVararg.elements.zip(elementVars)) {
                 when (el) {
                     is IrExpression -> currentElements.add(tempVar)
                     is IrSpreadElement -> {

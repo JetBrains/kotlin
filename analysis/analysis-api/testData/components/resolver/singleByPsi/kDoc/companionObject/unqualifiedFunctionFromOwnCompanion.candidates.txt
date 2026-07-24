@@ -1,2 +1,2 @@
-KtClass(0,81): '/**'
+KDocName(8,11): 'foo'
   NO_CANDIDATES

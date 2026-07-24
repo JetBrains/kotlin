@@ -12,6 +12,11 @@ fun checkSupertype(klass: KClass<*>, expectedSupertype: String) {
     if (expectedSupertype !in supertypes) {
         throw AssertionError("Purely implemented supertype '$expectedSupertype' not found: $supertypes")
     }
+
+    val classifierFqName = expectedSupertype.substringBefore('<')
+    if (supertypes.split(classifierFqName).size != 2) {
+        throw AssertionError("Superclass $classifierFqName appears more than once in supertypes: $supertypes")
+    }
 }
 
 fun box(): String {

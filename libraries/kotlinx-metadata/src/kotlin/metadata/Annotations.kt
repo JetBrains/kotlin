@@ -36,7 +36,7 @@ public class KmAnnotation(public val className: ClassName, public val arguments:
      * Returns string representation of this instance with `@` sign, [className], and [arguments] in parentheses.
      */
     override fun toString(): String {
-        val args = arguments.toList().joinToString { (k, v) -> "$k = $v" }
+        val args = arguments.toList().joinToString { [k, v] -> "$k = $v" }
         return "@$className($args)"
     }
 }

@@ -9,6 +9,25 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
 
     val searchPathResolver: SearchPathResolver<L>
 
+    @Deprecated(
+        "noEndorsedLibs is deprecated since 1.9.20",
+        ReplaceWith("resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)"),
+        DeprecationLevel.HIDDEN,
+    )
+    fun resolveWithDependencies(
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean = false,
+        noDefaultLibs: Boolean = false,
+        noEndorsedLibs: Boolean = false,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.DENY,
+    ): KotlinLibraryResolveResult =
+        resolveWithDependencies(
+            unresolvedLibraries,
+            noStdLib,
+            noDefaultLibs,
+            duplicatedUniqueNameStrategy,
+        )
+
     /**
      * Given the list of Kotlin/Native library names, ABI version and other parameters
      * resolves libraries and evaluates dependencies between them.
@@ -17,18 +36,19 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
-        noEndorsedLibs: Boolean = false,
         duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.DENY,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             unresolvedLibraries,
             noStdLib,
             noDefaultLibs,
-            noEndorsedLibs,
             duplicatedUniqueNameStrategy,
         ).resolveDependencies()
 
-    @Deprecated("Restored to keep ABI compatibility with kotlinx-benchmark Gradle plugin (KT-71414)", level = DeprecationLevel.HIDDEN)
+    @Deprecated(
+        "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
+        level = DeprecationLevel.HIDDEN
+    )
     fun resolveWithDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
@@ -39,15 +59,26 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
             unresolvedLibraries,
             noStdLib,
             noDefaultLibs,
-            noEndorsedLibs,
             DuplicatedUniqueNameStrategy.DENY
         )
 
+    @Deprecated(
+        "noEndorsedLibs is deprecated since 1.9.20",
+        ReplaceWith("resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)"),
+        DeprecationLevel.HIDDEN,
+    )
     fun resolveWithoutDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
         noEndorsedLibs: Boolean = false,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
+    ): List<KotlinLibrary> = resolveWithoutDependencies(unresolvedLibraries, noStdLib, noDefaultLibs, duplicatedUniqueNameStrategy)
+
+    fun resolveWithoutDependencies(
+        unresolvedLibraries: List<UnresolvedLibrary>,
+        noStdLib: Boolean = false,
+        noDefaultLibs: Boolean = false,
         duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategy,
     ): List<KotlinLibrary>
 

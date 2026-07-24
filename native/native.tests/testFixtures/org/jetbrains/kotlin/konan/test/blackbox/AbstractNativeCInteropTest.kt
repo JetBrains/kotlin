@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
+import kotlin.test.assertFalse
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.konan.library.components.bitcode
 
 abstract class AbstractNativeCInteropFModulesTest : AbstractNativeCInteropTest() {
     override val fmodules = true
@@ -33,6 +37,21 @@ abstract class AbstractNativeCInteropNoFModulesTest : AbstractNativeCInteropTest
     override val fmodules = false
 
     override val defFileName: String = "pod1.def"
+}
+
+abstract class AbstractNativeCInteropHeaderModeTest : AbstractNativeCInteropNoFModulesTest() {
+    override val extraCInteropArgs: List<String>
+        get() = listOf("-Xheader-mode")
+
+    override fun verifyCompilationResult(result: TestCompilationResult<out KLIB>) {
+        if (result !is TestCompilationResult.Success) return
+
+        val klibFile = result.resultingArtifact.klibFile
+        val library = KlibLoader { libraryPaths(klibFile.path) }.load().librariesStdlibFirst.single()
+        val bitcodeFiles = library.bitcode(targets.testTarget)?.bitcodeFilePaths ?: emptyList()
+
+        assertTrue(bitcodeFiles.isEmpty()) { "Klib contains bitcode files: $bitcodeFiles" }
+    }
 }
 
 abstract class AbstractNativeCInteropFModulesLegacyMacroCollectionTest : AbstractNativeCInteropFModulesTest() {
@@ -82,6 +101,10 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     open val ignoreExperimentalForeignApi: Boolean
         get() = true
 
+    open val extraCInteropArgs: List<String> get() = emptyList()
+
+    open fun verifyCompilationResult(result: TestCompilationResult<out KLIB>) {}
+
     @Synchronized
     protected fun runTest(@TestDataFile testPath: String) {
         // FIXME: check the following failures under Android with -fmodules
@@ -124,8 +147,10 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         val testCompilationResult = cinteropToLibrary(
             defFile,
             buildDir,
-            includeArgs + fmodulesArgs + macroCollectionImplArgs + additionalArgs
+            includeArgs + fmodulesArgs + macroCollectionImplArgs + additionalArgs + TestCInteropArgs(extraCInteropArgs)
         )
+        verifyCompilationResult(testCompilationResult)
+        
         if ("# EXPECT_FAILURE" in defContents) {
             assertTrue(testCompilationResult is TestCompilationResult.CompilationToolFailure) {
                 "Test expected to fail but passed successfully. CInterop compilation result was: $testCompilationResult"
@@ -139,7 +164,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             }
         } else {
             val metadata = testCompilationResult.assertSuccess().resultingArtifact
-                .dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+                .dumpMetadata(kotlinNativeClassLoader.classLoader)
                 .let(::normalizeCSymbolNames)
 
             val filteredMetadata = if (ignoreExperimentalForeignApi)
@@ -180,7 +205,6 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.TVOS_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_X64 -> "X64"
-            KonanTarget.WATCHOS_ARM32 -> "CPointerByteVar"
             KonanTarget.WATCHOS_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_DEVICE_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"

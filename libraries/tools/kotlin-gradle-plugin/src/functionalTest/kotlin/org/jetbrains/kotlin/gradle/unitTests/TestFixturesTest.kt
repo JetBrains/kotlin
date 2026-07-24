@@ -14,6 +14,7 @@ import org.gradle.api.tasks.testing.Test as TestTask
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -256,7 +257,7 @@ class TestFixturesTest {
     private fun testNoDuplicatedResourcesInClasspath(project: ProjectInternal, targetPrefix: String? = null) = with(project) {
         plugins.apply("java-test-fixtures")
         repositories {
-            mavenLocal()
+            kotlinBuildDeps()
             mavenCentralCacheRedirector()
         }
         evaluate()

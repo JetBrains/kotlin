@@ -30,18 +30,18 @@ FILE: dataSchemaVisibility.kt
     }
 FILE: /__GENERATED__CALLABLES__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<A>|.a: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(A_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<B>|.a: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(B_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<C>|.a: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(C_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<D>|.a: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(D_a)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<A>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(A_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<B>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(B_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<C>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(C_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<D>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(D_a)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

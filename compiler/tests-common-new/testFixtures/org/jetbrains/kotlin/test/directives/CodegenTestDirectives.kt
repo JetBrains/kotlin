@@ -81,6 +81,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignore dex checkers"
     )
 
+    val IGNORE_VALHALLA by directive(
+        description = "Ignore the test in the Valhalla codegen smoke test runner (e.g. behaviour that legitimately differs on a real Valhalla JDK)"
+    )
+
     val IGNORE_ERRORS by directive(
         description = """
             If this directive is enabled then ${JvmIrBackendFacade::class} won't produce any binaries for test
@@ -110,6 +114,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS by directive(
         description = "Dumps generated backend IR of preprocessed inline functions (enables ${IrPreprocessedInlineFunctionDumpHandler::class})"
+    )
+
+    val DUMP_IR_DIFFERENCE by enumDirective<TargetBackend>(
+        description = "Specifies list of target backends which have different golden data for IR dumps"
     )
 
     val DUMP_EXTERNAL_CLASS by stringDirective(
@@ -214,7 +222,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     // TODO: Drop this directive and make the offset validation enabled by default when KT-81475 is fixed.
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS by stringDirective(
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS by directive(
         description = "Enables validation of the nested IR elements offsets"
     )
 
@@ -226,8 +234,16 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Don't check for visibility violations when validating IR on the target backend"
     )
 
+    val DISABLE_IR_FIELD_VISIBILITY_CHECK by enumDirective<TargetBackend>(
+        description = "Don't check for fields having non-private visibility when validating IR on the target backend"
+    )
+
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
+    )
+
+    val DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS by enumDirective<TargetBackend>(
+        description = "Don't check for out-of-scope type parameter usages when validating IR on the target backend"
     )
 }
 

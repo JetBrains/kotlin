@@ -116,7 +116,7 @@ private object SupertypesInheritorsImpact : Impact {
 
     private fun getClassIdToSubclassesMap(allClasses: Iterable<AccessibleClassSnapshot>): Map<ClassId, Set<ClassId>> {
         val classIdToSubclasses = mutableMapOf<ClassId, MutableSet<ClassId>>()
-        getClassIdToSupertypesMap(allClasses).forEach { (classId, supertypes) ->
+        getClassIdToSupertypesMap(allClasses).forEach { [classId, supertypes] ->
             supertypes.forEach { supertype ->
                 classIdToSubclasses.getOrPut(supertype) { mutableSetOf() }.add(classId)
             }

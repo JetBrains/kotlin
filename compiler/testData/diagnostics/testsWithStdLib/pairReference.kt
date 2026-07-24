@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 typealias MPair<K> = Pair<K, Int>
 typealias TextWithOffset = MPair<String>

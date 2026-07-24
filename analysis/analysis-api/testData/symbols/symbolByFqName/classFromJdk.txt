@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: ClsClassImpl
   annotations: []
   classId: java/lang/String
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,6 +16,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: String
   origin: JAVA_LIBRARY
+  psi: ClsClassImpl
+  realPsi: ClsClassImpl
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -42,6 +44,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "SDK jdk"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: java.lang.String

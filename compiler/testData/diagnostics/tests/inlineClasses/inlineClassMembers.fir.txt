@@ -65,32 +65,6 @@ FILE: inlineClassMembers.kt
         }
 
     }
-    public final inline class ReservedMembersMfvc : R|kotlin/Any| {
-        public constructor(x: R|kotlin/Int|, y: R|kotlin/Int|): R|ReservedMembersMfvc| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final val x: R|kotlin/Int| = R|<local>/x|
-            public get(): R|kotlin/Int|
-
-        public final val y: R|kotlin/Int| = R|<local>/y|
-            public get(): R|kotlin/Int|
-
-        public final fun box(): R|kotlin/Unit| {
-        }
-
-        public final fun unbox(): R|kotlin/Unit| {
-        }
-
-        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
-            ^equals Boolean(true)
-        }
-
-        public open override fun hashCode(): R|kotlin/Int| {
-            ^hashCode Int(1)
-        }
-
-    }
     public final inline class SecondaryConstructors : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|SecondaryConstructors| {
             super<R|kotlin/Any|>()

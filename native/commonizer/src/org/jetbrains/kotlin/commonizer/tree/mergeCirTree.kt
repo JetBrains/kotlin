@@ -31,7 +31,7 @@ internal fun mergeCirTree(
     settings: CommonizerSettings,
 ): CirRootNode {
     val node = buildRootNode(storageManager, classifiers.commonDependencies, roots.size)
-    roots.targets.withIndex().forEach { (targetIndex, target) ->
+    roots.targets.withIndex().forEach { [targetIndex, target] ->
         node.targetDeclarations[targetIndex] = CirRoot.create(target)
         node.buildModules(
             TargetBuildingContext(

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawTypeAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import kotlin.apply
 
-object JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
+class JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
     private val kotlinJvmInternalPackage: IrExternalPackageFragmentImpl =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
 

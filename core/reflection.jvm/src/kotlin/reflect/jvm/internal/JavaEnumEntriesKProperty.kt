@@ -10,6 +10,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.enums.EnumEntries
+import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.Modality
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
@@ -48,6 +49,17 @@ internal class JavaEnumEntriesKProperty(
     override fun shallowCopy(
         container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
     ): ReflectKCallable<EnumEntries<*>> = JavaEnumEntriesKProperty(enumClass)
+
+    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<EnumEntries<*>> {
+        require(boundReceiver === CallableReference.NO_RECEIVER) { "Cannot bind JavaEnumEntriesKProperty: $this" }
+        return JavaEnumEntriesKProperty(enumClass)
+    }
+
+    override fun unbindToHigherArity(): ReflectKProperty<EnumEntries<*>> =
+        throw KotlinReflectionInternalError("Cannot unbind JavaEnumEntriesKProperty: $this")
+
+    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<EnumEntries<*>> =
+        throw KotlinReflectionInternalError("Cannot bind JavaEnumEntriesKProperty: $this")
 
     override val caller: Caller<*> = JavaEnumEntriesCaller()
     override val callerWithDefaults: Caller<*>? get() = null
@@ -97,6 +109,9 @@ internal class JavaEnumEntriesKProperty(
             container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
         ): ReflectKCallable<EnumEntries<*>> =
             error("Property accessors can only be copied by copying the corresponding property")
+
+        override fun rebind(boundReceiver: Any?): ReflectKCallable<EnumEntries<*>> =
+            error("Property accessors can only be bound by copying the corresponding property")
 
         override fun equals(other: Any?): Boolean = other is Getter && property == other.property
         override fun hashCode(): Int = property.hashCode()

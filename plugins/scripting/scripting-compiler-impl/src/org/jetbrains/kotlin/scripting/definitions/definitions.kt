@@ -61,6 +61,7 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
     return findScriptDefinition(project, VirtualFileScriptSource(this))
 }
 
+@OptIn(K1SpecificScriptingServiceAccessor::class)
 fun findScriptDefinition(project: Project, script: SourceCode): ScriptDefinition {
     val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
         ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")

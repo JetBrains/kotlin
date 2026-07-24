@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiPackageStatement
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
@@ -32,14 +32,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.IOException
 import kotlin.reflect.jvm.javaField
 
 @OptIn(SymbolInternals::class)
-abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
+abstract class AbstractFirTypeEnhancementTest {
     private lateinit var javaFilesDir: File
 
     private lateinit var environment: KotlinCoreEnvironment
@@ -49,16 +52,15 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             return environment.project
         }
 
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
-        javaFilesDir = KotlinTestUtils.tmpDirForTest(this)
+    @BeforeEach
+    fun setUp(info: TestInfo) {
+        javaFilesDir = KotlinTestUtils.tmpDirForTest(info)
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun tearDown() {
         FileUtil.delete(javaFilesDir)
         this::environment.javaField!![this] = null
-        super.tearDown()
     }
 
     private fun createJarWithForeignAnnotations(): List<File> {
@@ -74,7 +76,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         )
     }
 
-    private fun createEnvironment(content: String): KotlinCoreEnvironment {
+    private fun createEnvironment(content: String, testRootDisposable: Disposable): KotlinCoreEnvironment {
         val classpath = mutableListOf(getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests())
         if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_KOTLIN_JVM_ANNOTATIONS")) {
             classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests())
@@ -82,20 +84,20 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         if (InTextDirectivesUtils.isDirectiveDefined(content, "FOREIGN_ANNOTATIONS")) {
             classpath.addAll(createJarWithForeignAnnotations())
         }
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             newConfiguration(
                 ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.FULL_JDK, classpath, listOf(javaFilesDir)
             ),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).apply {
-            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
-        }
+        )
     }
 
     @OptIn(ObsoleteTestInfrastructure::class)
-    fun doTest(path: String) {
-        val javaFile = File(path)
+    fun runTest(path: String): Unit = runWithDisposable { testRootDisposable ->
+        val javaFile = ForTestCompileRuntime.transformTestDataPath(path)
         val javaLines = javaFile.readLines()
         val content = javaLines.joinToString(separator = "\n")
         val hasSkipDirective = InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")
@@ -128,7 +130,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                     }
                 }
             )
-            environment = createEnvironment(content)
+            environment = createEnvironment(content, testRootDisposable)
             val virtualFiles = srcFiles.map {
                 object : LightVirtualFile(
                     it.name, JavaLanguage.INSTANCE, StringUtilRt.convertLineSeparators(it.readText())

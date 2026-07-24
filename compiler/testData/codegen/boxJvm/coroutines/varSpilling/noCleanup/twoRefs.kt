@@ -6,6 +6,7 @@
 
 // kotlin package is being relocated in Android tests
 // IGNORE_BACKEND: ANDROID
+// ALLOW_KOTLIN_PACKAGE
 
 // FILE: Spilling.kt
 

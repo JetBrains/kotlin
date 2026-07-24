@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Anno(vararg val x: String, val y: String)
 

@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 
 fun test() {
     val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[1, 2, 3]<!>

@@ -41,7 +41,7 @@ class DefectInfo(
         }
 
     private fun compareAttributes(other: DefectInfo): Int {
-        for ((key, value) in attributes) {
+        for ([key, value] in attributes) {
             val otherValue = other[key] ?: return 1
             when (val valueCmp = value.compareTo(otherValue)) {
                 0 -> continue

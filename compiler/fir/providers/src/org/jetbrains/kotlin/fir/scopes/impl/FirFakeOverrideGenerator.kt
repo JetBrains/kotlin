@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
@@ -237,17 +236,17 @@ object FirFakeOverrideGenerator {
                 emptyList()
             }
             newTypeParameters == null -> {
-                val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+                val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(
                     useSiteSession, baseFunction, symbolForOverride, ConeSubstitutor.Empty, origin
                 )
                 val copiedParameterTypes = baseFunction.valueParameters.map {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
                 }
                 val symbol = baseFunction.symbol
-                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                val [copiedReceiverType, copiedContextParameterTypes, possibleReturnType] = substituteReceiverAndReturnType(
                     baseFunction as FirCallableDeclaration, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
-                val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
+                val [copiedReturnType, newCallableCopySubstitutionForTypeUpdater] = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
                     else -> null to DeferredReturnTypeOfSubstitution(substitutor, symbol)
                 }
@@ -333,10 +332,14 @@ object FirFakeOverrideGenerator {
         contextParameters += baseFunction.contextParameters.zip(
             newContextParameterTypes ?: List(baseFunction.contextParameters.size) { null }
         ) { contextParameter, newType ->
-            buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
-            }
+            buildCopyForValueParameter(
+                contextParameter,
+                contextParameter.returnTypeRef.withReplacedConeType(newType),
+                origin,
+                fakeFunctionSymbol,
+                this@configureAnnotationsAndSignature.source ?: contextParameter.source,
+                copyDefaultValues = false,
+            )
         }
     }
 
@@ -344,7 +347,7 @@ object FirFakeOverrideGenerator {
         original: FirValueParameter,
         returnTypeRef: FirTypeRef,
         origin: FirDeclarationOrigin,
-        containingDeclarationSymbol: FirFunctionSymbol<*>,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
         source: KtSourceElement?,
         copyDefaultValues: Boolean = true,
     ): FirValueParameter = buildValueParameterCopy(original) {
@@ -491,7 +494,7 @@ object FirFakeOverrideGenerator {
                 isVal = baseField.isVal
 
                 configureAnnotationsAndSignature(
-                    baseField, newReceiverType, newContextParameterTypes, explicitBackingFieldNewReturnType,
+                    baseField, symbol, newReceiverType, newContextParameterTypes, explicitBackingFieldNewReturnType,
                     explicitBackingFieldCopySubstitutionForTypeUpdater, updateReceiver = false,
                 )
             }
@@ -567,7 +570,7 @@ object FirFakeOverrideGenerator {
             modality = modality,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
-            parameterSource = valueParameters.first().source,
+            parameterSource = newSource ?: valueParameters.first().source,
             isOverride = true,
             attributes = attributes.copy(),
         ).apply {
@@ -585,19 +588,19 @@ object FirFakeOverrideGenerator {
             resolvePhase = origin.resolvePhaseForCopy
             this.status = status.copy(visibility = newVisibility)
             this.attributes = this@buildCopy.attributes.copy()
-        }.also {
-            if (it.isSetter) {
-                val originalParameter = it.valueParameters.first()
+        }.also { fakeFirAccessor ->
+            if (fakeFirAccessor.isSetter) {
+                val originalParameter = fakeFirAccessor.valueParameters.first()
                 val newParameter = buildCopyForValueParameter(
                     original = originalParameter,
                     returnTypeRef = propertyReturnTypeRef,
                     origin = origin,
-                    containingDeclarationSymbol = it.symbol,
-                    source = originalParameter.source,
+                    containingDeclarationSymbol = fakeFirAccessor.symbol,
+                    source = fakeFirAccessor.source ?: originalParameter.source,
                 )
-                it.replaceValueParameters(listOf(newParameter))
+                fakeFirAccessor.replaceValueParameters(listOf(newParameter))
             } else {
-                it.replaceReturnTypeRef(propertyReturnTypeRef)
+                fakeFirAccessor.replaceReturnTypeRef(propertyReturnTypeRef)
             }
         }
     }.also { accessor ->
@@ -634,7 +637,7 @@ object FirFakeOverrideGenerator {
         dispatchReceiverType = newDispatchReceiverType
         attributes = baseField.attributes.copy()
         configureAnnotationsAndSignature(
-            baseField, newReceiverType, newContextParameterTypes, newReturnType,
+            baseField, newSymbol, newReceiverType, newContextParameterTypes, newReturnType,
             deferredReturnTypeCalculation, updateReceiver = false
         )
         deprecationsProvider = baseField.deprecationsProvider
@@ -654,30 +657,30 @@ object FirFakeOverrideGenerator {
         return when {
             baseProperty.typeParameters.isEmpty() -> {
                 configureAnnotationsAndSignature(
-                    baseProperty, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
+                    baseProperty, symbol, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
                 )
                 emptyList()
             }
             newTypeParameters == null -> {
-                val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+                val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(
                     useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty, origin,
                 )
-                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                val [copiedReceiverType, copiedContextParameterTypes, possibleReturnType] = substituteReceiverAndReturnType(
                     baseProperty, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
-                val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
+                val [copiedReturnType, newCallableCopySubstitutionForTypeUpdater] = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
                     else -> null to DeferredReturnTypeOfSubstitution(substitutor, baseProperty.symbol)
                 }
                 configureAnnotationsAndSignature(
-                    baseProperty, copiedReceiverType, copiedContextParameterTypes,
+                    baseProperty, symbol, copiedReceiverType, copiedContextParameterTypes,
                     copiedReturnType, newCallableCopySubstitutionForTypeUpdater
                 )
                 copiedTypeParameters.filterIsInstance<FirTypeParameter>()
             }
             else -> {
                 configureAnnotationsAndSignature(
-                    baseProperty, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
+                    baseProperty, symbol, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
                 )
                 newTypeParameters
             }
@@ -718,6 +721,7 @@ object FirFakeOverrideGenerator {
 
     private fun FirVariableBuilder.configureAnnotationsAndSignature(
         baseVariable: FirVariable,
+        fakeVariableSymbol: FirVariableSymbol<*>,
         newReceiverType: ConeKotlinType?,
         newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
@@ -752,10 +756,14 @@ object FirFakeOverrideGenerator {
         contextParameters += baseVariable.contextParameters.zip(
             newContextParameterTypes ?: List(baseVariable.contextParameters.size) { null }
         ) { contextParameter, newType ->
-            buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol()
-                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
-            }
+            buildCopyForValueParameter(
+                contextParameter,
+                contextParameter.returnTypeRef.withReplacedConeType(newType),
+                origin,
+                fakeVariableSymbol,
+                this@configureAnnotationsAndSignature.source ?: contextParameter.source,
+                copyDefaultValues = false
+            )
         }
     }
 
@@ -881,7 +889,7 @@ object FirFakeOverrideGenerator {
          * <T_, C_ : Collection<T1> constructor(): TColl<T1, T2>
          * ```
          */
-        val (ownTypeParameters, constructedClassTypeParameters) = original.typeParameters
+        val [ownTypeParameters, constructedClassTypeParameters] = original.typeParameters
             .zip(newTypeParameters)
             .partition { it.first !is FirConstructedClassTypeParameterRef }
 
@@ -889,8 +897,8 @@ object FirFakeOverrideGenerator {
             pairs: List<Pair<FirTypeParameterRef, FirTypeParameterBuilder>>,
             useSiteSession: FirSession,
         ): ConeSubstitutor = substitutorByMap(
-            pairs.associate { (originalTypeParameter, new) ->
-                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
+            pairs.associate { [originalTypeParameter, new] ->
+                Pair(originalTypeParameter.symbol, ConeTypeParameterType(new.symbol.toLookupTag(), isMarkedNullable = false))
             },
             useSiteSession
         )
@@ -904,7 +912,7 @@ object FirFakeOverrideGenerator {
         )
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
-        for ((newTypeParameter, originalTypeParameter) in newTypeParameters.zip(original.typeParameters)) {
+        for ([newTypeParameter, originalTypeParameter] in newTypeParameters.zip(original.typeParameters)) {
             for (boundTypeRef in originalTypeParameter.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = chainedSubstitutor.substituteOrNull(typeForBound)

@@ -1,7 +1,11 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -27,8 +31,5 @@ projectTests {
     nativeTestTask(
         "test",
         allowParallelExecution = false, // some of the tests may spawn quite a lot of threads
-    ) {
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
-    }
+    )
 }

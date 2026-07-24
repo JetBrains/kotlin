@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
@@ -37,6 +39,7 @@ import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
+@SmokeTest
 class ScriptCliCompilationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
 
@@ -112,6 +115,7 @@ class ScriptCliCompilationTest {
             loadScriptingPlugin(this, testRootDisposable)
         }
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         return compileAndExecuteScript(script.toScriptSource(), environment, args) to collector

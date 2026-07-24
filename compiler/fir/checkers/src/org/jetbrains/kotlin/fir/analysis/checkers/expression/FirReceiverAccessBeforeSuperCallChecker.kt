@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
 object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(MppCheckerKind.Common) {

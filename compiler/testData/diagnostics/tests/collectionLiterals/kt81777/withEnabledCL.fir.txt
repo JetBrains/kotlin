@@ -18,7 +18,10 @@ FILE: withEnabledCL.kt
             ^ Unit
         }
         )
-        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+            ^ Unit
+        }
+        )
         Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
@@ -27,7 +30,10 @@ FILE: withEnabledCL.kt
             ^ Int(42)
         }
         )
-        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: <ERROR TYPE REF: Cannot infer type for parameter x>): <ERROR TYPE REF: Cannot infer type for parameter x> <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
     }
     public final fun testWithAnons(): R|kotlin/Unit| {
         lval anon: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {

@@ -95,6 +95,20 @@ public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     }
 
     @Override
+    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
+        accept(x.getTarget());
+    }
+
+    @Override
+    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
+        // The left-most token is the assignment target. An object pattern starts with '{',
+        // which would otherwise be parsed as a block at the beginning of a statement.
+        if (x.getPattern() instanceof JsDeclarable.ObjectPattern) {
+            needsParentheses = true;
+        }
+    }
+
+    @Override
     public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         accept(x.getArg());
     }

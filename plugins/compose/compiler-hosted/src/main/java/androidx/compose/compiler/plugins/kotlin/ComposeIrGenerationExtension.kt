@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
 import com.intellij.openapi.progress.ProgressManager
@@ -42,10 +41,8 @@ class ComposeIrGenerationExtension(
     private val traceMarkersEnabled: Boolean = true,
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
-    private val useK2: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
-    private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
     private val targetRuntimeVersion: ComposeRuntimeVersion? = null,
@@ -64,13 +61,10 @@ class ComposeIrGenerationExtension(
 
         val stabilityInferencer = StabilityInferencer(
             pluginContext.platform.isJvm(),
-            pluginContext.moduleDescriptor,
             stableTypeMatchers,
         )
 
-        if (useK2) {
-            moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
-        }
+        moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
 
         if (moduleMetricsFactory != null) {
             metrics = moduleMetricsFactory.invoke(stabilityInferencer, featureFlags)
@@ -83,22 +77,18 @@ class ComposeIrGenerationExtension(
         if (pluginContext.platform.isNative()) {
             AddHiddenFromObjCLowering(
                 pluginContext,
+                moduleFragment,
                 metrics,
-                descriptorSerializerContext?.hideFromObjCDeclarationsSet,
                 stabilityInferencer,
                 featureFlags,
             ).lower(moduleFragment)
         }
 
         ClassStabilityTransformer(
-            useK2,
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
-            classStabilityInferredCollection = descriptorSerializerContext
-                ?.classStabilityInferredCollection?.takeIf {
-                    !pluginContext.platform.isJvm()
-                },
             featureFlags,
             pluginContext.diagnosticReporter,
         ).lower(moduleFragment)
@@ -111,6 +101,7 @@ class ComposeIrGenerationExtension(
                 usePerFileEnabledFlag = liveLiteralsV2Enabled,
                 keyVisitor = DurableKeyVisitor(),
                 context = pluginContext,
+                irModule = moduleFragment,
                 metrics = metrics,
                 stabilityInferencer = stabilityInferencer,
                 featureFlags = featureFlags,
@@ -123,16 +114,13 @@ class ComposeIrGenerationExtension(
 
         val functionKeyTransformer = DurableFunctionKeyTransformer(
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
         )
 
         functionKeyTransformer.lower(moduleFragment)
-
-        if (!useK2) {
-            CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
-        }
 
         ProgressManager.checkCanceled()
 
@@ -143,9 +131,24 @@ class ComposeIrGenerationExtension(
         // Generate default wrappers for virtual functions
         ComposableDefaultParamLowering(
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
-            featureFlags
+            featureFlags,
+        ).lower(moduleFragment)
+
+        ProgressManager.checkCanceled()
+
+        // Strip the K-prefix from `KComposableFunctionN` static types of refs that
+        // ComposerParamTransformer will lower to adapted refs (runtime carrier:
+        // `AdaptedFunctionReference`, which doesn't implement `KFunction`). Must run before
+        // ComposerLambdaMemoization so the patched type propagates into `remember<T>` wrappers.
+        AdaptedComposableReferenceTypePatcher(
+            pluginContext,
+            moduleFragment,
+            metrics,
+            stabilityInferencer,
+            featureFlags,
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
@@ -153,6 +156,7 @@ class ComposeIrGenerationExtension(
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
@@ -165,6 +169,7 @@ class ComposeIrGenerationExtension(
         // parameter.
         ComposerParamTransformer(
             pluginContext,
+            moduleFragment,
             stabilityInferencer,
             metrics,
             featureFlags,
@@ -174,6 +179,7 @@ class ComposeIrGenerationExtension(
 
         ComposableTargetAnnotationsTransformer(
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
             featureFlags,
@@ -187,6 +193,7 @@ class ComposeIrGenerationExtension(
 
         ComposableFunctionBodyTransformer(
             pluginContext,
+            moduleFragment,
             metrics,
             stabilityInferencer,
             sourceInformationEnabled,
@@ -195,9 +202,12 @@ class ComposeIrGenerationExtension(
             featureFlags,
         ).lower(moduleFragment)
 
+        ComposableAnnotationRemover().lower(moduleFragment)
+
         if (isKlibTarget) {
             KlibAssignableParamTransformer(
                 pluginContext,
+                moduleFragment,
                 metrics,
                 stabilityInferencer,
                 featureFlags,
@@ -207,6 +217,7 @@ class ComposeIrGenerationExtension(
         if (pluginContext.platform.isJs() || pluginContext.platform.isWasm()) {
             WrapJsComposableLambdaLowering(
                 pluginContext,
+                moduleFragment,
                 metrics,
                 stabilityInferencer,
                 featureFlags,

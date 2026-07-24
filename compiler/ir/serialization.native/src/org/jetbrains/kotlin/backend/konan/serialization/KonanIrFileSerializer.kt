@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -18,13 +17,6 @@ open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: KonanDeclarationTable,
 ) : IrFileSerializer(settings, declarationTable) {
-    private val fakeOverrideClassFilter =
-        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
-            K1LazyFakeOverrideClassFilter
-        } else {
-            KonanFakeOverrideClassFilter
-        }
-
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {
             is IrFunction -> NativeRuntimeNames.Annotations.exportForCppRuntimeClassId
@@ -36,5 +28,5 @@ open class KonanIrFileSerializer(
     }
 
     override fun backendSpecificSerializeAllMembers(irClass: IrClass): Boolean =
-        !fakeOverrideClassFilter.needToConstructFakeOverrides(irClass)
+        !K1LazyFakeOverrideClassFilter.needToConstructFakeOverrides(irClass)
 }

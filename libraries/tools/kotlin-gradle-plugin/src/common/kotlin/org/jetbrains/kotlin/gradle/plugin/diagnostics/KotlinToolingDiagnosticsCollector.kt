@@ -96,7 +96,7 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
             return
         }
 
-        if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
+        if (diagnostic.severity == KotlinToolingDiagnosticsSeverity.FATAL) {
             throw diagnostic.createAnExceptionForFatalDiagnostic(options)
         }
     }

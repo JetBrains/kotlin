@@ -1,10 +1,10 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/Deprecated(message = "Use 'bar() instead", replaceWith = kotlin/ReplaceWith(expression = "bar()", , imports = [], ))
       psi: null
   ]
   callableId: lib/foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -26,6 +26,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: foo
   origin: LIBRARY
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -38,6 +40,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: lib.LibKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: lib.foo

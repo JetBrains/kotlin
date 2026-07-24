@@ -35,7 +35,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
         val mapCopy = ConcurrentHashMap<K, ReferenceWithCleanup<K, V>>(backingMap.size)
         val queueCopy = ReferenceQueue<V>()
 
-        for ((key, reference) in backingMap) {
+        for ([key, reference] in backingMap) {
             val value = reference.get() ?: continue
             mapCopy[key] = createReference(key, value, queueCopy)
         }

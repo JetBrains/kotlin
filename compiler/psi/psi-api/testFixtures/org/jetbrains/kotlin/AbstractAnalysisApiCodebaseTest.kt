@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,18 +11,16 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseTest.SourceDirectory
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import java.io.File
 
 /**
@@ -32,11 +30,12 @@ import java.io.File
  *
  * See [AbstractAnalysisApiCodebaseDumpFileComparisonTest] and [AbstractAnalysisApiCodebaseValidationTest]
  */
-abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTestCase() {
+@AffectedByAnalysisApi
+abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDisposable() {
     protected fun doTest() {
-        val environment = createProjectEnvironment(
+        val environment = JvmFrontendPipelinePhase.createProjectEnvironment(
             CompilerConfiguration.create(),
-            testRootDisposable,
+            disposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
         )
         val psiManager = PsiManager.getInstance(environment.project)
@@ -70,6 +69,56 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
         if (this.extension != "kt" && this.extension != "java") return null
         return createPsiFile(this.path, psiManager, fileSystem)
     }
+
+    /**
+     * Adds a new annotation to the given declaration with the given text and returns the resulting file text.
+     */
+    protected fun fileTextWithNewAnnotation(declaration: KtDeclaration, newAnnotationText: String): String =
+        fileTextWithNewAnnotations(listOf(CodebaseDeclarationAnnotation(declaration, newAnnotationText)))
+
+    /**
+     * Pairs an unmarked [declaration] with the [annotation] text (including the leading `@`) that should be inserted above it.
+     *
+     * @see AbstractAnalysisApiCodebaseTest.fileTextWithNewAnnotations
+     */
+    data class CodebaseDeclarationAnnotation(val declaration: KtDeclaration, val annotation: String)
+
+    /**
+     * Inserts each `(declaration, annotation)` pair into the containing file's text in a single pass and returns the rewritten content.
+     *
+     * All [insertions] must refer to declarations of the same [KtFile]. The new annotation line is indented to match the declaration it
+     * precedes. Insertions are applied in reverse offset order so earlier offsets remain valid.
+     */
+    protected fun fileTextWithNewAnnotations(insertions: List<CodebaseDeclarationAnnotation>): String {
+        require(insertions.isNotEmpty())
+
+        val text = insertions.first().declaration.containingKtFile.text
+
+        val edits = insertions.map { (declaration, annotation) ->
+            // `anchor.nextLeaf()?.endOffset` lands right past any trailing whitespace after a KDoc or the last existing annotation, which
+            // puts us at the column of the declaration's first keyword. When no anchor is present, `declaration.startOffset` is already at
+            // the keyword. We then back up to the start of the keyword's line and preserve that line's indent, so the inserted annotation
+            // aligns with the keyword regardless of nesting.
+            val anchor = declaration.annotationEntries.lastOrNull() ?: declaration.docComment
+            val keywordOffset = anchor?.nextLeaf()?.endOffset ?: declaration.startOffset
+
+            val lineStart = text.lastIndexOf('\n', keywordOffset - 1) + 1
+            val indent = leadingIndentOf(text, keywordOffset)
+            lineStart to "$indent$annotation\n"
+        }.sortedByDescending { it.first }
+
+        val sb = StringBuilder(text)
+        for ([offset, payload] in edits) {
+            sb.insert(offset, payload)
+        }
+        return sb.toString()
+    }
+
+    protected fun KtAnnotated.hasAnnotation(annotationName: String): Boolean = annotationEntries.any { annotation ->
+        annotation.shortName.toString() == annotationName
+    }
+
+    protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(Deprecated::class.simpleName!!)
 
     sealed class SourceDirectory(val sourcePaths: List<String>) {
         class ForValidation(sourcePaths: List<String>) : SourceDirectory(sourcePaths)
@@ -122,7 +171,59 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
         val psiFile = psiManager.findFile(file)
         return psiFile
     }
+
+    private fun leadingIndentOf(text: String, offset: Int): String {
+        val lineStart = text.lastIndexOf('\n', offset - 1) + 1
+        var i = lineStart
+        while (i < offset && (text[i] == ' ' || text[i] == '\t')) {
+            i += 1
+        }
+        return text.substring(lineStart, i)
+    }
 }
+
+/**
+ * Iterates over all non-local declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalDeclaration(action)
+        }
+    }
+}
+
+/**
+ * Iterates over all non-local public declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalPublicDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        if (!declaration.isPubliclyVisible) continue
+
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+}
+
+val KtModifierListOwner.isPubliclyVisible: Boolean
+    get() = !hasModifier(KtTokens.PRIVATE_KEYWORD) && !hasModifier(KtTokens.INTERNAL_KEYWORD)
 
 /**
  * Test for checking the code base against the master file.

@@ -4,15 +4,12 @@
  */
 package org.jetbrains.kotlin.buildtools.generator
 
-import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonJsAndWasmArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
+import org.jetbrains.kotlin.arguments.description.*
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.CustomCompilerArgument
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.SSoTCompilerArgument
@@ -32,8 +29,10 @@ sealed interface ArgumentTransform {
         val warningSince: KotlinReleaseVersion,
         val errorSince: KotlinReleaseVersion? = null,
     ) : ArgumentTransform
+
     class CustomArgument(val argument: CustomCompilerArgument) : ArgumentTransform
     class Override(val argument: CustomCompilerArgument) : ArgumentTransform
+    class Fix(val argument: KotlinCompilerArgument) : ArgumentTransform
 //    data class Rename(val to: String) : ArgumentTransform // possible future operations
 }
 
@@ -69,6 +68,10 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
             drop("Xfragment-friend-dependency")
+
+            // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
+            fix("XXdump-model") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
+            fix("XXLanguage") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
         }
         with(removedCommonCompilerArguments) {
             drop("Xuse-k2")
@@ -84,11 +87,15 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         with(actualMetadataArguments) {
             restrict(
                 "d",
-                reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
+                reason = "The destination is configured via the destination parameter of metadataKlibCompilationOperationBuilder.",
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // configured explicitly when instantiating operations
-            drop("Xlegacy-metadata-jar-k2")
+            restrict(
+                "Xlegacy-metadata-jar-k2",
+                warningSince = KotlinReleaseVersion.v2_5_0,
+                errorSince = KotlinReleaseVersion.v2_6_0
+            ) // unsupported in BTA, we produce only metadata klib
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {
@@ -110,9 +117,13 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // breaks incremental compilation (KT-75540)
+
             override("Xprofile", CustomCompilerArguments.profileCompilerCommandArgumentFactory)
             override("Xnullability-annotations", CustomCompilerArguments.nullabilityAnnotationFactory)
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
+
+            // KMP related
+            drop("Xuse-metadata-on-incremental-classpath")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")
@@ -158,6 +169,12 @@ private fun MutableMap<String, ArgumentTransform>.override(name: String, argumen
 }
 
 context(level: KotlinCompilerArgumentsLevel)
+private fun MutableMap<String, ArgumentTransform>.fix(name: String, argumentTransform: (KotlinCompilerArgument) -> KotlinCompilerArgument) {
+    val argument = level.arguments.find { it.name == name } ?: error("Argument $name is not found in level $level")
+    put(name, ArgumentTransform.Fix(argumentTransform(argument)))
+}
+
+context(level: KotlinCompilerArgumentsLevel)
 private fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
@@ -173,10 +190,12 @@ private fun KotlinCompilerArgumentsLevel.generateOverriddenArguments(): List<Bta
 
 internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
+        when (val op = argument.transform()) {
             is ArgumentTransform.NoOp -> SSoTCompilerArgument(argument)
             is ArgumentTransform.Drop, is ArgumentTransform.Restrict,
-            is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
+            is ArgumentTransform.CustomArgument, is ArgumentTransform.Override,
+                -> null
+            is ArgumentTransform.Fix -> SSoTCompilerArgument(op.argument)
         }
     }
 
@@ -185,9 +204,10 @@ internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompi
 
 internal fun KotlinCompilerArgumentsLevel.transformImplArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
+        when (val op = argument.transform()) {
             is ArgumentTransform.NoOp, is ArgumentTransform.Drop, is ArgumentTransform.Restrict -> SSoTCompilerArgument(argument)
             is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
+            is ArgumentTransform.Fix -> SSoTCompilerArgument(op.argument)
         }
     }
 
@@ -210,7 +230,7 @@ internal data class RestrictedArgInfo(
 internal fun collectRestrictedArgInfo(level: KotlinCompilerArgumentsLevel): List<RestrictedArgInfo> {
     val transforms = levelsToArgumentTransforms[level.name] ?: return emptyList()
     val result = mutableListOf<RestrictedArgInfo>()
-    for ((argName, transform) in transforms) {
+    for ([argName, transform] in transforms) {
         if (transform !is ArgumentTransform.Restrict) continue
         val arg = level.arguments.find { it.name == argName } ?: continue
         result.add(
@@ -239,4 +259,127 @@ private fun KotlinCompilerArgumentsLevel.findAncestorsTo(targetLevel: KotlinComp
         if (path != null) return listOf(this) + path
     }
     return null
+}
+
+internal class SyntheticArgumentInterface(
+    val name: String,
+    val level: KotlinCompilerArgumentsLevel,
+    val parentInterfaces: List<SyntheticArgumentInterface>,
+    val concreteClassName: String? = null,
+    val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
+)
+
+/**
+ * Looks up the merged argument level (actual + removed arguments) by name from [kotlinCompilerArguments].
+ *
+ * The synthetic KLIB-based interfaces must use the merged level rather than the raw `actual*Arguments`
+ * objects, otherwise removed arguments (declared in the separate `removed*Arguments` levels and combined
+ * only via `mergeWith` in `compilerArguments.kt`) would never reach the API generator.
+ */
+private fun findMergedLevel(name: String): KotlinCompilerArgumentsLevel {
+    fun search(level: KotlinCompilerArgumentsLevel): KotlinCompilerArgumentsLevel? {
+        if (level.name == name) return level
+        for (nested in level.nestedLevels) {
+            search(nested)?.let { return it }
+        }
+        return null
+    }
+    return search(kotlinCompilerArguments.topLevel) ?: error("Merged level $name is not found in kotlinCompilerArguments")
+}
+
+internal val syntheticArgumentInterfaces = buildList {
+    val commonKlibBasedArguments = findMergedLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments)
+    val commonJsAndWasmArguments = findMergedLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments)
+    val jsArguments = findMergedLevel(CompilerArgumentsLevelNames.jsArguments)
+    val wasmArguments = findMergedLevel(CompilerArgumentsLevelNames.wasmArguments)
+
+    val commonKlibBasedCompilerArguments = SyntheticArgumentInterface(
+        "CommonKlibBasedArguments",
+        commonKlibBasedArguments,
+        emptyList(),
+        "CommonKlibBasedArgumentsImpl",
+    ).also(::add)
+    val commonKlibBasedCompilerKlibArguments = SyntheticArgumentInterface(
+        "CommonKlibBasedArgumentsKlibArguments",
+        commonKlibBasedArguments,
+        listOf(commonKlibBasedCompilerArguments),
+        "CommonKlibBasedArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
+    ).also(::add)
+    val commonKlibBasedCompilerLinkingArguments = SyntheticArgumentInterface(
+        "CommonKlibBasedArgumentsLinkingArguments",
+        commonKlibBasedArguments,
+        listOf(commonKlibBasedCompilerArguments),
+        "CommonKlibBasedArgumentsImpl",
+        KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
+
+    val commonJsAndWasmCompilerArguments = SyntheticArgumentInterface(
+        "CommonJsAndWasmArguments",
+        commonJsAndWasmArguments,
+        listOf(commonKlibBasedCompilerArguments),
+        "CommonJsAndWasmArgumentsImpl",
+    ).also(::add)
+
+    val commonJsAndWasmCompilerKlibArguments = SyntheticArgumentInterface(
+        "CommonJsAndWasmCompilerKlibArguments",
+        commonJsAndWasmArguments,
+        listOf(commonJsAndWasmCompilerArguments, commonKlibBasedCompilerKlibArguments),
+        "CommonJsAndWasmArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
+    ).also(::add)
+
+    val commonJsAndWasmCompilerLinkingArguments = SyntheticArgumentInterface(
+        "CommonJsAndWasmCompilerLinkingArguments",
+        commonJsAndWasmArguments,
+        listOf(commonJsAndWasmCompilerArguments, commonKlibBasedCompilerLinkingArguments),
+        "CommonJsAndWasmArgumentsImpl",
+        KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
+
+    val jsCompilerArguments = SyntheticArgumentInterface(
+        "JsCompilerArguments",
+        jsArguments,
+        listOf(commonJsAndWasmCompilerArguments),
+        "JsArgumentsImpl",
+    ).also(::add)
+
+    SyntheticArgumentInterface(
+        "JsCompilerKlibArguments",
+        jsArguments,
+        listOf(jsCompilerArguments, commonJsAndWasmCompilerKlibArguments),
+        "JsArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
+    ).also(::add)
+
+    SyntheticArgumentInterface(
+        "JsCompilerLinkingArguments",
+        jsArguments,
+        listOf(jsCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
+        "JsArgumentsImpl",
+        KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
+
+    val wasmCompilerArguments = SyntheticArgumentInterface(
+        "WasmCompilerArguments",
+        wasmArguments,
+        listOf(commonJsAndWasmCompilerArguments),
+        "WasmArgumentsImpl",
+    ).also(::add)
+
+    SyntheticArgumentInterface(
+        "WasmCompilerKlibArguments",
+        wasmArguments,
+        listOf(wasmCompilerArguments, commonJsAndWasmCompilerKlibArguments),
+        "WasmArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
+    ).also(::add)
+
+    SyntheticArgumentInterface(
+        "WasmCompilerLinkingArguments",
+        wasmArguments,
+        listOf(wasmCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
+        "WasmArgumentsImpl",
+        KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
 }

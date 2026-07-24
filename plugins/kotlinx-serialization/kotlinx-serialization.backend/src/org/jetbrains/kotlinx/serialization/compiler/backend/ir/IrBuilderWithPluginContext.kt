@@ -399,17 +399,17 @@ interface IrBuilderWithPluginContext {
     context(irBuilder: IrBuilderWithScope) fun classReference(classSymbol: IrClassSymbol): IrClassReference =
         createClassReference(classSymbol.starProjectedType, irBuilder.startOffset, irBuilder.endOffset)
 
-    fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
+    fun collectSerialInfoAnnotations(irClass: IrClass): List<IrAnnotation> {
         if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
-        val annotationByFq: MutableMap<FqName, List<IrConstructorCall>> =
-            irClass.annotations.groupBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
+        val annotationByFq: MutableMap<FqName, List<IrAnnotation>> =
+            irClass.annotations.groupBy { it.classSymbol.owner.fqNameWhenAvailable!! }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
             val annotations = clazz.annotations
                 .mapNotNull {
-                    val parent = it.symbol.owner.parentAsClass
+                    val parent = it.classSymbol.owner
                     if (parent.isInheritableSerialInfoAnnotation) parent.fqNameWhenAvailable!! to it else null
                 }
-            annotations.forEach { (fqname, call) ->
+            annotations.forEach { [fqname, call] ->
                 if (fqname !in annotationByFq) {
                     annotationByFq[fqname] = listOf(call)
                 } else {
@@ -421,8 +421,8 @@ interface IrBuilderWithPluginContext {
         return annotationByFq.values.toList().flatten()
     }
 
-    fun copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
-        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
+    fun copyAnnotationsFrom(annotations: List<IrAnnotation>): List<IrExpression> =
+        annotations.filter { it.classSymbol.owner.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
     fun kSerializerType(serializableType: IrType): IrSimpleType {
         val kSerializerClass = compilerContext.kSerializerClass

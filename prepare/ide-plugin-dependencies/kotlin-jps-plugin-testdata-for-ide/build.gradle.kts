@@ -1,9 +1,15 @@
-idePluginDependency {
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
+idePluginPublishingLatch {
     apply<JavaPlugin>()
 
     publish()
 
-    val jar: Jar by tasks
+    val jar = tasks.getByName<Jar>("jar")
 
     jar.apply {
         listOf("jps/jps-plugin/testData").forEach {

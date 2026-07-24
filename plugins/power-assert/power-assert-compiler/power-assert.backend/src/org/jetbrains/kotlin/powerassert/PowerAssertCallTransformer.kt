@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -58,6 +61,20 @@ class PowerAssertCallTransformer(
     private val factory: PowerAssertFunctionFactory?,
     private val explanationFactory: ExplanationFactory?
 ) : IrElementTransformerVoidWithContext() {
+    companion object {
+        private val CALL_BUILDER_COMPARATOR = compareBy<CallBuilder> { builder ->
+            // First, prefer builders with a lambda-like message parameter.
+            when (builder) {
+                is LambdaCallBuilder -> 1
+                is SamConversionLambdaCallBuilder -> 2
+                is SimpleCallBuilder -> 3
+            }
+        }.thenByDescending { builder ->
+            // Second, prefer builders with more regular parameters.
+            builder.targetFunction.parameters.count { it.kind == IrParameterKind.Regular }
+        }
+    }
+
     private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -109,11 +126,8 @@ class PowerAssertCallTransformer(
 
     private fun buildForOverride(originalCall: IrCall, function: IrSimpleFunction): IrExpression {
         // Find a valid delegate function or do not translate
-        // TODO better way to determine which delegate to actually use
         val callBuilders = findCallBuilders(function, originalCall)
-        val callBuilder = callBuilders.maxByOrNull { builder ->
-            builder.targetFunction.parameters.count { it.kind == IrParameterKind.Regular }
-        }
+        val callBuilder = callBuilders.firstOrNull()
 
         if (callBuilder == null) {
             val regularParameters = function.parameters.filter { it.kind == IrParameterKind.Regular }
@@ -196,12 +210,12 @@ class PowerAssertCallTransformer(
                 val root = roots[index]
                 val child = root.children.singleOrNull()
                 if (child == null) {
-                    val newArguments = arguments.add(originalCall.arguments[index])
+                    val newArguments = arguments.adding(originalCall.arguments[index])
                     return recursive(index + 1, newArguments, argumentVariables)
                 } else {
                     return builder.buildDiagramNesting(sourceFile, child) { argument, newVariables ->
-                        val newArguments = arguments.add(argument)
-                        val newArgumentVariables = argumentVariables.put(root.parameter, newVariables)
+                        val newArguments = arguments.adding(argument)
+                        val newArgumentVariables = argumentVariables.putting(root.parameter, newVariables)
                         recursive(index + 1, newArguments, newArgumentVariables)
                     }
                 }
@@ -211,6 +225,10 @@ class PowerAssertCallTransformer(
         return recursive(0, persistentListOf(), persistentMapOf())
     }
 
+    /**
+     * Available [CallBuilder]s which can consume a diagram argument from the call site.
+     * CallBuilders are sorted from most preferred to least.
+     */
     private fun findCallBuilders(function: IrFunction, original: IrCall): List<CallBuilder> {
         val values = function.parameters
         if (values.isEmpty()) return emptyList()
@@ -227,7 +245,7 @@ class PowerAssertCallTransformer(
         val possible = (finder.findFunctions(function.callableId) + parentClassFunctions)
             .distinct()
 
-        return possible.mapNotNull { overload ->
+        val builders = possible.mapNotNull { overload ->
             // Type parameters must be compatible.
             if (function.typeParameters.size != overload.owner.typeParameters.size) {
                 return@mapNotNull null
@@ -242,18 +260,28 @@ class PowerAssertCallTransformer(
 
             fun IrType.remap(): IrType = remapTypeParameters(overload.owner, function)
 
-            // Value parameters must be compatible.
             val parameters = overload.owner.parameters
+            val messageParameter = parameters.lastOrNull()
+            if (messageParameter?.kind != IrParameterKind.Regular) return@mapNotNull null
+
+            // Value parameters must be compatible.
             if (parameters.size !in values.size..values.size + 1) return@mapNotNull null
             for (i in values.indices) {
                 val value = values[i]
                 val parameter = parameters[i]
+
+                // The signature shape (count of each type of parameter) must be the same.
                 if (value.kind != parameter.kind) return@mapNotNull null
 
                 when (value.kind) {
-                    // Regular parameters may only be assignable.
-                    IrParameterKind.Regular,
-                        -> if (!value.type.isAssignableTo(parameter.type.remap())) return@mapNotNull null
+                    IrParameterKind.Regular -> {
+                        // It is allowed for the message parameter to change type if it is not specified.
+                        // Otherwise, the parameter type must be assignable.
+                        if (
+                            !(parameter === messageParameter && original.arguments[value] == null) &&
+                            !value.type.isAssignableTo(parameter.type.remap())
+                        ) return@mapNotNull null
+                    }
 
                     // All other parameter kinds must match exactly.
                     IrParameterKind.DispatchReceiver,
@@ -263,8 +291,6 @@ class PowerAssertCallTransformer(
                 }
             }
 
-            val messageParameter = parameters.last()
-            if (messageParameter.kind != IrParameterKind.Regular) return@mapNotNull null
             val messageType = messageParameter.type
             return@mapNotNull when {
                 isStringSupertype(messageType) -> SimpleCallBuilder(overload, original)
@@ -273,6 +299,8 @@ class PowerAssertCallTransformer(
                 else -> null
             }
         }
+
+        return builders.sortedWith(CALL_BUILDER_COMPARATOR)
     }
 
     private fun isStringFunction(type: IrType): Boolean =

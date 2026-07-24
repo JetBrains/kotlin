@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.commonizer.cir.CirTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 
 class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
 
+    @Test
     fun `test simple function`() {
         val module = createCirTreeFromSourceCode("fun x() = Unit")
         val function = module.assertSingleFunction()
@@ -28,6 +30,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertNull(function.extensionReceiver, "Expected *no* extension receiver")
     }
 
+    @Test
     fun `test generic function`() {
         val module = createCirTreeFromSourceCode("""fun <T: Any> T.isHappy(): Boolean = true""")
         val function = module.assertSingleFunction()
@@ -49,6 +52,7 @@ class CirTreeFunctionDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertEquals("kotlin/Any", upperBound.toString())
     }
 
+    @Test
     fun `test function with outer object`() {
         val module = createCirTreeFromSourceCode(
             """

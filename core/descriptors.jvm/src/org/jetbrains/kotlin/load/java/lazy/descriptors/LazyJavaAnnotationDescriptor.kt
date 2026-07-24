@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isError
 
+@K1Deprecation
 class LazyJavaAnnotationDescriptor(
     private val c: LazyJavaResolverContext,
     private val javaAnnotation: JavaAnnotation,

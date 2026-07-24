@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import java.io.File
 import java.nio.file.Path
 
 internal class CompareAbiTextFilesOperationImpl private constructor(
@@ -35,7 +36,12 @@ internal class CompareAbiTextFilesOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
-    override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?) {
+    override fun executeImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>
+    ) {
         val diff = abiTools.filesDiff(
             expectedDumpFile.toFile(),
             actualDumpFile.toFile(),

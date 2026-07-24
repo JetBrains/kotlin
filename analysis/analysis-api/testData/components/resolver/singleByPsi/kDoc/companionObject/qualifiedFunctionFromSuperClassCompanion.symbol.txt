@@ -1,2 +1,5 @@
-KtClass(71,117): '/**'
-  null
+KDocName(79,87): 'Base.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.Companion.foo(<dispatch receiver>: Base.Companion): kotlin.Unit
+    ]

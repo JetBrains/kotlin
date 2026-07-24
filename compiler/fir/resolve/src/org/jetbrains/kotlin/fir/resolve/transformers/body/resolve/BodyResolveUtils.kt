@@ -65,7 +65,7 @@ internal fun remapArgumentsWithVararg(
         var firstVarargElementSource: KtSourceElement? = null
         var lastVarargElementSource: KtSourceElement? = null
 
-        for ((i, arg) in argumentList.withIndex()) {
+        for ([i, arg] in argumentList.withIndex()) {
             val valueParameter = argumentMapping[arg]
             if (valueParameter == null) {
                 newArgumentMapping[arg] = null

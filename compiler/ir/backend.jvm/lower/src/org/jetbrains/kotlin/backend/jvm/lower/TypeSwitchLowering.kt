@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.kClassReference
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.config.JvmWhenGenerationScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -26,16 +25,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isBoolean
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isElseBranch
-import org.jetbrains.kotlin.ir.util.isNullConst
-import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
-import org.jetbrains.kotlin.ir.util.isTrueConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Handle
@@ -160,9 +154,8 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
             return instanceOfSubject.symbol == equalsNullSubject.symbol
         }
 
-        fun isIneligibleTypeForTypeSwitch(type: IrType) =
-            type.isReifiedTypeParameter || TypeIntrinsics.isIntrinsicRequiredForInstanceOf(type.toIrBasedKotlinType())
-
+        fun isIneligibleTypeForTypeSwitch(type: IrType): Boolean =
+            type.isReifiedTypeParameter || TypeIntrinsics.isIntrinsicRequiredForInstanceOf(type)
 
         val nonElseBranches = whenExpression.branches.filterNot{ isElseBranch(it) }
 

@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import kotlin.contracts.ExperimentalContracts
+import org.junit.jupiter.api.Test
 
-@ExperimentalContracts
 class CallableMemberCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
 
+    @Test
     fun testVisibility() = doTestSuccessfulCommonization()
 
+    @Test
     fun testReturnTypes() = doTestSuccessfulCommonization()
 
+    @Test
     fun testExtensionReceivers() = doTestSuccessfulCommonization()
 
+    @Test
     fun testOpenCallableMemberInInterface() = doTestSuccessfulCommonization()
 }

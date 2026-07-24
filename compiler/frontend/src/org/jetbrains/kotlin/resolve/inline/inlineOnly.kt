@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.inline
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -12,14 +13,17 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
+@K1Deprecation
 val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
 /**
  * @return true if this member should be private in bytecode because it's effectively inline-only.
  */
+@K1Deprecation
 fun MemberDescriptor.isInlineOnlyPrivateInBytecode(): Boolean =
     isInlineOnly() || isPrivateInlineSuspend()
 
+@K1Deprecation
 fun MemberDescriptor.isInlineOnly(): Boolean =
     this is FunctionDescriptor && isInline &&
             (hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())
@@ -27,6 +31,7 @@ fun MemberDescriptor.isInlineOnly(): Boolean =
 private fun MemberDescriptor.isPrivateInlineSuspend(): Boolean =
     this is FunctionDescriptor && isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
+@K1Deprecation
 fun MemberDescriptor.isInlineWithReified(): Boolean =
     this is CallableMemberDescriptor && (hasReifiedParameters() || DescriptorUtils.getDirectMember(this).hasReifiedParameters())
 

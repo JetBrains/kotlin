@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
+internal typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
 /**
  * [LLKotlinStubBasedLibrarySymbolProvider] deserializes FIR symbols from existing stubs, retrieving them by [ClassId]/[CallableId] from a

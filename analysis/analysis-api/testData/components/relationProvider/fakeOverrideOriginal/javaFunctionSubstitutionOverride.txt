@@ -1,0 +1,37 @@
+IS_THE_SAME_SYMBOL: false
+FAKE_OVERRIDE_ORIGINAL:
+  KaNamedFunctionSymbol:
+    anchorPsi: PsiMethodImpl
+    annotations: []
+    callableId: test/JavaBase.get
+    contextParameters: []
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: false
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: false
+    isTailRec: false
+    location: CLASS
+    modality: OPEN
+    name: get
+    origin: JAVA_SOURCE
+    psi: PsiMethodImpl
+    realPsi: null
+    receiverParameter: null
+    returnType: KaFlexibleType:
+      annotations: []
+      type: T!
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/JavaBase

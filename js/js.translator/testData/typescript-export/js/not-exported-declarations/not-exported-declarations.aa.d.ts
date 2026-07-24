@@ -1,8 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
     namespace foo {
         interface ExportedInterface {
             readonly __doNotUseOrImplementIt: {
@@ -22,3 +20,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

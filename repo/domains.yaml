@@ -1,78 +1,93 @@
 $schema: domains.schema.json
 
 Compiler:
-  home: "compiler"
   include:
     - "compiler/**"
     - "core/**"
+    - "build-common/**"
+    - "compiler/psi/parser/**"
+    - "plugins/plugin-sandbox/**"
+    - "plugins/scripting/**"
+    - "jps/**"
+  exclude:
+    - "compiler/psi/**"
   fullyAffectedBy:
-    - Unknown
+    - CoreLibs
 
 Wasm:
-  home: "wasm"
   include:
     - "wasm/**"
+    - "js/js.translator/testData/**"
   fullyAffectedBy:
     - Compiler
+    - CoreLibs
 Js:
-  home: "js"
   include:
     - "js/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - Compiler
+    - CoreLibs
 
 Native:
-  home: "kotlin-native"
   include:
     - "native/**"
     - "kotlin-native/**"
+  exclude:
+    - "native/swift/**"
   fullyAffectedBy:
     - Compiler
+    - CoreLibs
+
+CoreLibs:
+  include:
+    - "libraries/stdlib/**"
+    - "libraries/reflect/**"
+    - "libraries/kotlin.test/**"
 
 AnalysisApi:
-  home: "analysis"
   include:
     - "analysis/**"
     - "compiler/psi/**"
+    - "prepare/analysis-api/**"
   exclude:
     - "compiler/psi/parser/**"
   fullyAffectedBy:
     - Compiler
+    - CoreLibs
 
 SwiftExport:
-  home: "native/swift"
   include:
     - "native/swift/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
+  fullyAffectedBy:
+    - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
-  home: "plugins"
   include:
     - "plugins/**"
   fullyAffectedBy:
     - Compiler
-    - Unknown
 
 Gradle:
-  home: "libraries/tools/kotlin-gradle-plugin"
   include:
     - "libraries/tools/*gradle*/**"
 
 Maven:
-  home: "libraries/tools/kotlin-maven-plugin"
   include:
     - "libraries/tools/*maven*/**"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
-  home: "idea"
-  include: []
+  include:
+    - "prepare/ide-plugin-dependencies/**"
   fullyAffectedBy:
     - Compiler
     - AnalysisApi
+    - CoreLibs
 
 BuildInfrastructure:
-  home: "repo"
   include:
     - "repo/**"
     - "gradle/**"
@@ -80,10 +95,11 @@ BuildInfrastructure:
     - "settings.gradle.kts"
     - "gradle.properties"
     - "scripts/**"
+    - ".space/**"
+    - ".idea/**"
 
 Unknown:
-  home: "."
-  include:
-    - "**/*"
+  # Files not matching other domains will be sorted into 'Unknown' by default.
+  include: [ ]
   fullyAffectedBy:
     - Compiler

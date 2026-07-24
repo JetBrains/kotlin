@@ -85,7 +85,7 @@ internal fun TestProject.resolveIdeDependenciesAsModel(
         ResolveIdeDependenciesModelImpl(deps)
     }
 
-    val deserializedDependencies = model.dependencies.mapValues { (sourceSet, serializedDependencies) ->
+    val deserializedDependencies = model.dependencies.mapValues { [sourceSet, serializedDependencies] ->
         serializedDependencies.map { bytes ->
             GradleIntegrationTestIdeaKotlinSerializationContext.IdeaKotlinDependency(bytes)
                 ?: fail("Failed to deserialize dependency on source set $sourceSet:")
@@ -118,7 +118,7 @@ class IdeaKotlinDependenciesContainer(
         ?: fail("SourceSet with name $sourceSetName not found. Found: ${dependencies.keys}")
 
     fun assertResolvedDependenciesOnly() {
-        dependencies.entries.forEach { (sourceSet, sourceSetDependencies) ->
+        dependencies.entries.forEach { [sourceSet, sourceSetDependencies] ->
             sourceSetDependencies.assertResolvedDependenciesOnly("Unexpected unresolved dependencies for $sourceSet:")
         }
     }

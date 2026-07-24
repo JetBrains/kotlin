@@ -134,12 +134,14 @@ KtNameReferenceExpression(246,247): 'x'
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -149,11 +151,14 @@ KtNameReferenceExpression(246,247): 'x'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Left
@@ -191,12 +196,14 @@ KtNameReferenceExpression(264,265): 'y'
       dispatchReceiver = KaSmartCastedReceiverValue:
         original = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtTypeReference
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -206,11 +213,14 @@ KtNameReferenceExpression(264,265): 'y'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+            psi: KtTypeReference
+            realPsi: KtTypeReference
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: MySealed
+            typeParameters: []
             visibility: PUBLIC
           type = MySealed
         type = MySealed.Right

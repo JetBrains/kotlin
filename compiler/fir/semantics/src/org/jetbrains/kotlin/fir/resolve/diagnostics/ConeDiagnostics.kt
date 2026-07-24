@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.contracts.description.KtErroneousContractElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
-import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -49,6 +48,10 @@ interface ConeDiagnosticWithSingleCandidate : ConeDiagnosticWithCandidates {
     val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
     override val candidates: Collection<AbstractCallCandidate<*>> get() = listOf(candidate)
     override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = listOf(candidateSymbol)
+}
+
+class ConeFallbackIsImpossible(val bound: ConeKotlinType, val containingCandidate: AbstractCallCandidate<*>) : ConeDiagnostic {
+    override val reason: String get() = "Not a superclass of 'List' expected"
 }
 
 class ConeUnresolvedReferenceError(val name: Name) : ConeUnresolvedError {
@@ -145,7 +148,7 @@ class ConeNoCompanionObject(
     override val candidate: AbstractCallCandidate<*>
 ) : ConeDiagnosticWithSingleCandidate {
     override val reason: String
-        get() = "Classifier ''$candidateSymbol'' does not have a companion object, and thus must be initialized here"
+        get() = "Absent or hidden companion object"
 }
 
 class ConeConstraintSystemHasContradiction(
@@ -400,14 +403,6 @@ class ConeUnresolvedParentInImport(val parentClassId: ClassId) : ConeDiagnostic 
         get() = "unresolved import"
 }
 
-class ConeDeprecated(
-    val source: KtSourceElement?,
-    override val symbol: FirBasedSymbol<*>,
-    val deprecationInfo: FirDeprecationInfo
-) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
-    override val reason: String get() = "Deprecated: ${deprecationInfo.deprecationLevel}"
-}
-
 class ConeLocalVariableNoTypeOrInitializer(override val symbol: FirVariableSymbol<*>) : ConeDiagnosticWithSymbol<FirVariableSymbol<*>> {
     override val reason: String get() = "Cannot infer variable type without initializer / getter / delegate"
 }
@@ -500,5 +495,15 @@ class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(
  */
 object ContextSensitiveResolutionMightBeUsed : ConeDiagnostic {
     override val reason: String
-        get() = "Context-sensitive resolution might be used"
+        get() = "Context-sensitive resolution might be used instead of full explicit qualifier"
+}
+
+object ContextSensitiveResolutionMightBeUsedInsteadOfImport : ConeDiagnostic {
+    override val reason: String
+        get() = "Resolved through import, but context-sensitive resolution might be used"
+}
+
+object ConeResolvedToCompanionObjectWasRecentlyFixed : ConeDiagnostic {
+    override val reason: String
+        get() = "resolvedToCompanionObject was incorrectly lost until recently"
 }

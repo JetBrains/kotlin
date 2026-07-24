@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsCodegenPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoweringPipelinePhase
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfigurations
 import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -51,8 +53,8 @@ class JsIrLoweringFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {
-        require(JsEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is DeserializedFromKlibBackendInput<*>) {
+        checkTestInfrastructure(JsEnvironmentConfigurator.isMainModule(module, testServices)) { "JsIrLoweringFacade expects main module" }
+        checkTestInfrastructure(inputArtifact is DeserializedFromKlibBackendInput<*>) {
             "JsIrLoweringFacade expects IrBackendInput.DeserializedFromKlibBackendInput as input"
         }
 
@@ -60,7 +62,7 @@ class JsIrLoweringFacade(
 
         if (skipRegularMode) return null
 
-        val (compilerResult, icCache) = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+        val [compilerResult, icCache] = if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             compileIncrementally(inputArtifact, module)
         } else {
             compileNonIncrementally(inputArtifact)
@@ -92,13 +94,13 @@ class JsIrLoweringFacade(
     }
 
     private fun compileNonIncrementally(inputArtifact: DeserializedFromKlibBackendInput<*>): Pair<CompilerResult, Map<String, ByteArray>?>? {
-        val (irModuleFragment, moduleDependencies, _, _, _) = inputArtifact.cliArtifact.moduleInfo
+        (val irModuleFragment = module, val moduleDependencies = dependencies, val _ = bultins, val _ = symbolTable, val _ = deserializer) = inputArtifact.cliArtifact.moduleInfo
 
         irModuleFragment.resolveTestPaths()
         moduleDependencies.all.forEach { it.resolveTestPaths() }
 
         val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
-            ?: error("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
+            ?: testInfraError("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
         val loweredIr = JsIrLoweringPipelinePhase.executePhase(cliInputArtifact)
             ?: return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
 
@@ -117,10 +119,8 @@ class JsIrLoweringFacade(
         firstTimeCompilation: Boolean = true
     ): JsIrArtifact {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val moduleId = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
-        val generateDts = JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives
         val sourceMapsEnabled = JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in module.directives
         val dontSkipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE !in module.directives
         val delegateTranspilationToExternalTool =
@@ -129,7 +129,7 @@ class JsIrLoweringFacade(
 
 
         if (dontSkipRegularMode) {
-            for ((mode, output) in compilerResult.entries) {
+            for ([mode, output] in compilerResult) {
                 val outputFile = File(
                     JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode, firstTimeCompilation)
                         .finalizePath(moduleKind)
@@ -141,16 +141,6 @@ class JsIrLoweringFacade(
                     SwcRunner.exec(output.rootDir, moduleKind, mode, sourceMapsEnabled)
                 }
             }
-        }
-
-        if (generateDts) {
-            val tsFiles = compilerResult.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
-            val tsDefinitions = tsFiles.entries.singleOrNull()?.key
-                ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
-
-            outputFile
-                .withReplacedExtensionOrNull("_v5${moduleKind.jsExtension}", ".d.ts")!!
-                .write(tsDefinitions)
         }
 
         return this
@@ -175,18 +165,38 @@ class JsIrLoweringFacade(
         get() = artifactConfiguration.outputDirectory.parentFile
 
     private fun CompilationOutputs.writeTo(outputFile: File) {
-        val allJsFiles = writeAll().filter {
-            it.extension == "js" || it.extension == "mjs"
+        val writtenFiles = writeAll()
+
+        forEachModule { artifactConfiguration, depModuleId ->
+            val builtJsFilePath = artifactConfiguration.outputJsFile()
+            if (builtJsFilePath in writtenFiles) {
+                val newFile = depModuleId?.let(outputFile::augmentWithModuleName) ?: outputFile
+                val moduleId = depModuleId?.let { "./$it.js" } ?: artifactConfiguration.moduleName
+                builtJsFilePath.fixJsFile(rootDir, newFile, moduleId, artifactConfiguration.moduleKind)
+            }
         }
 
-        val mainModuleFile = allJsFiles.last()
-        mainModuleFile.fixJsFile(rootDir, outputFile, artifactConfiguration.moduleName, artifactConfiguration.moduleKind)
+        val outputDtsFile = outputFile.withReplacedExtensionOrNull(".js", ".d.ts")
+            ?: outputFile.withReplacedExtensionOrNull(".mjs", ".d.mts")
+            ?: testInfraError("Output file $outputFile has unexpected extension")
 
-        dependencies.map { it.artifactConfiguration.moduleName }.zip(allJsFiles.dropLast(1)).forEach { (depModuleId, builtJsFilePath) ->
-            val newFile = outputFile.augmentWithModuleName(depModuleId)
-            builtJsFilePath.fixJsFile(rootDir, newFile, "./$depModuleId.js", artifactConfiguration.moduleKind)
+        forEachModule { artifactConfiguration, depModuleId ->
+            val builtDtsFilePath = artifactConfiguration.outputDtsFile()
+            if (builtDtsFilePath in writtenFiles) {
+                val newFile = depModuleId?.let(outputDtsFile::augmentWithModuleName) ?: outputDtsFile
+                builtDtsFilePath.copyTo(newFile)
+                builtDtsFilePath.delete()
+            }
         }
+
         artifactConfiguration.outputDirectory.deleteRecursively()
+    }
+
+    private fun CompilationOutputs.forEachModule(body: (WebArtifactConfiguration, String?) -> Unit) {
+        body(artifactConfiguration, null)
+        for (dependency in dependencies) {
+            body(dependency.artifactConfiguration, dependency.artifactConfiguration.moduleName)
+        }
     }
 
     private fun File.write(text: String) {
@@ -199,13 +209,15 @@ fun String.augmentWithModuleName(moduleName: String): String {
     val suffix = when {
         endsWith(ESM_EXTENSION) -> ESM_EXTENSION
         endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
-        else -> error("Unexpected file '$this' extension")
+        endsWith(".d.ts") -> ".d.ts"
+        endsWith(".d.mts") -> ".d.mts"
+        else -> testInfraError("Unexpected file '$this' extension")
     }
 
     return if (suffix == ESM_EXTENSION) {
         replaceAfterLast(File.separator, moduleName.minifyPathForWindowsIfNeeded().replace("./", "")).removeSuffix(suffix) + suffix
     } else {
-        return removeSuffix("_v5$suffix") + "-${moduleName}_v5$suffix"
+        removeSuffix("_v5$suffix") + "-${moduleName}_v5$suffix"
     }
 }
 

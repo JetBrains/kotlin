@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCBaseCallable
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -21,8 +23,9 @@ class IsObjCBaseCallableTest(
     fun `test - top level function`() {
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
-            val fooSymbol = getFunctionOrFail(file, "foo")
-            assertTrue(isObjCBaseCallable(fooSymbol))
+            val session = useSiteSession
+            val fooSymbol = session.getFunctionOrFail(file, "foo")
+            assertTrue(session.isObjCBaseCallable(fooSymbol))
         }
     }
 
@@ -42,9 +45,10 @@ class IsObjCBaseCallableTest(
         )
 
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertFalse(isObjCBaseCallable(xSymbol))
+            assertFalse(session.isObjCBaseCallable(xSymbol))
         }
     }
 
@@ -62,9 +66,10 @@ class IsObjCBaseCallableTest(
         )
 
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertTrue(isObjCBaseCallable(xSymbol))
+            assertTrue(session.isObjCBaseCallable(xSymbol))
         }
     }
 }

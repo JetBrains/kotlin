@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
+import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
@@ -91,11 +92,17 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     compilerArgument {
         name = "Xrepl"
         compilerName = "repl"
-        description = "Run Kotlin REPL (deprecated)".asReleaseDependent()
+        val introducedVersion = KotlinReleaseVersion.v2_2_0
+        description = ReleaseDependent(
+            "Run Kotlin REPL.",
+            introducedVersion..KotlinReleaseVersion.v2_4_20 to "Run Kotlin REPL (deprecated)"
+        )
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "REPL is deprecated."
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
         )
     }
 
@@ -112,6 +119,20 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
             stabilizedVersion = KotlinReleaseVersion.v1_6_0,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xescaping-functions"
+        description = ("Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. " +
+                "Callables are specified by their fully qualified name.").asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<+|-><fq.name>".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -261,10 +282,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
@@ -315,9 +332,17 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
 
     compilerArgument {
         name = "Xdetailed-perf"
-        description = ("Enable more detailed performance statistics (Experimental).\n" +
-                "For Native, the performance report includes execution time and lines processed per second for every individual lowering.\n" +
-                "For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.").asReleaseDependent()
+        val commonDescriptionPart = """
+            |Enable more detailed performance statistics (Experimental).
+            |For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+            |For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+        """.trimMargin()
+        description = ReleaseDependent(commonDescriptionPart + '\n' + """
+            |Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+            |  machines, so use this mode with caution.
+        """.trimMargin(),
+            KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_4_20 to commonDescriptionPart
+        )
         valueType = BooleanType.defaultFalse
         affectsCompilationOutcome = false
 
@@ -543,27 +568,30 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-
     compilerArgument {
-        name = "Xverify-ir-visibility"
-        description =
-            "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        name = "Xdisable-ir-checkers"
+        description = ("A list of IR checkers to disable, specified by a simple name of the checker class. " +
+                "A name of an annotation can also be used to match all tagged checkers.\n" +
+                "Only has effect if '-Xverify-ir' is not 'none'.").asReleaseDependent()
+        valueDescription = "<checker1>,<checker2>".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_20,
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
-
     compilerArgument {
-        name = "Xverify-ir-nested-offsets"
-        description =
-            "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        name = "Xenable-additional-ir-checkers"
+        description = ("A list of IR checkers to enable, specified by a simple name of the checker class.\n" +
+                "It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. " +
+                "Only has effect if '-Xverify-ir' is not 'none'."
+                ).asReleaseDependent()
+        valueDescription = "<checker1>,<checker2>".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_3_20,
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -595,10 +623,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("This flag is deprecated")
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
             deprecatedVersion = KotlinReleaseVersion.v2_2_20,
@@ -609,25 +633,34 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     compilerArgument {
         name = "Xuse-fir-ic"
         compilerName = "useFirIC"
-        description =
-            "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready.".asReleaseDependent()
+        val introducedVersion = KotlinReleaseVersion.v1_7_0
+        val deprecatedVersion = KotlinReleaseVersion.v2_5_0 // Preparation for KT-75879
+        val commonDescriptionPart = "Compile using frontend IR internal incremental compilation."
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            introducedVersion..deprecatedVersion.previous!! to "$commonDescriptionPart\nWarning: This feature is not yet production-ready.",
+        )
         valueType = BooleanType.defaultFalse
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
         )
     }
-
 
     compilerArgument {
         name = "Xuse-fir-lt"
         compilerName = "useFirLT"
         description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
+        deprecatedMessage =
+            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
 
@@ -725,19 +758,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         )
     }
 
-
-    compilerArgument {
-        name = "Xsuppress-api-version-greater-than-language-version-error"
-        description =
-            "Suppress error about API version greater than language version.\nWarning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_0,
-        )
-    }
-
-
     compilerArgument {
         name = "Xexpect-actual-classes"
         description =
@@ -780,19 +800,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
-        name = "Xcontext-receivers"
-        description = "Enable experimental context receivers.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ContextReceivers))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
-        )
-    }
-
-
-    compilerArgument {
         name = "Xcontext-parameters"
         description = "Enable experimental context parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -819,6 +826,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xcallable-references-to-contextual"
+        description = "Enable callable references to contextual declarations.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.CallableReferencesToContextual))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xcontext-sensitive-resolution"
         description = "Enable experimental context-sensitive resolution.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -840,6 +860,24 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
+    }
+
+
+    compilerArgument {
+        name = "Xeager-lambda-analysis"
+        description =
+            "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.EagerLambdaAnalysis),
+            Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound),
+            Enables(LanguageFeature.CallCompletionRefinementsFor25),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -937,10 +975,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Allow compiling scripts along with regular Kotlin sources.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_20,
         )
@@ -998,10 +1032,21 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         name = "Xfragment-dependency"
         compilerName = "fragmentDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib dependencies for the specific fragment.
+
+
+
+        description =ReleaseDependent(
+            current = """
+                Declare common klib dependencies for the specific fragment.
+                This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
+
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -1014,10 +1059,17 @@ The argument should be used only if the new compilation scheme is enabled with -
         name = "Xfragment-friend-dependency"
         compilerName = "fragmentFriendDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib friend dependencies for the specific fragment.
+        description = ReleaseDependent(
+            current = """
+                Declare common klib friend dependencies for the specific fragment.
+                This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -1047,6 +1099,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
 
@@ -1106,16 +1159,24 @@ The argument should be used only if the new compilation scheme is enabled with -
 
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
+        val introducedVersion = KotlinReleaseVersion.v2_1_0
+        val deprecatedVersion = KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
+        val commonDescriptionPart = "Suppress specified warning module-wide."
         name = "Xsuppress-warning"
         compilerName = "suppressedDiagnostics"
-        description =
-            "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag".asReleaseDependent()
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            deprecatedVersion..KotlinReleaseVersion.v2_4_20 to "$commonDescriptionPart This option is deprecated in favor of \"-Xwarning-level\" flag",
+            introducedVersion..deprecatedVersion.previous!! to commonDescriptionPart,
+        )
         valueDescription = "<WARNING_NAME>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         argumentType = StringListType.defaultEmpty
+        deprecatedMessage = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings)."
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
         )
     }
 
@@ -1336,6 +1397,17 @@ Warning: this flag is not intended for production use. If you want to configure 
     }
 
     compilerArgument {
+        name = "Xfir-aggressive-pruning"
+        compilerName = "firAggressivePruning"
+        description = "Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
         name = "Xdont-sort-source-files"
         description = """
             Disable automatic sorting of source files.
@@ -1367,11 +1439,27 @@ Warning: this flag is not intended for production use. If you want to configure 
         """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
         additionalAnnotations(
-            Enables(LanguageFeature.CompanionBlocksAndExtensions),
+            Enables(LanguageFeature.CompanionBlocks),
+            Enables(LanguageFeature.CompanionExtensions),
         )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xcompanion-blocks"
+        description = """
+            Enables companion blocks.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.CompanionBlocks),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
 

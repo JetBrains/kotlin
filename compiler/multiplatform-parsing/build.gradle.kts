@@ -2,6 +2,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.net.URI
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     id("generated-sources")
     id("binaryen-configuration")
@@ -20,7 +23,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 api(kotlinStdlib())
                 implementation(libs.org.jetbrains.syntax.api)
@@ -30,15 +33,15 @@ kotlin {
                 srcDir("common/src")
             }
         }
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             dependencies {
                 implementation(project(":compiler:psi:psi-api"))
-                implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementation(intellijCore())
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
                 implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
                 implementation(project(":compiler:cli"))
+                implementation(project(":compiler:psi:parser"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
@@ -62,8 +65,12 @@ tasks.withType<Test> {
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
 
-    dependsOn(":createIdeaHomeForTests")
-    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
+    val ideaHomeForTests = this.project.configurations.detachedConfiguration(this.project.dependencies.project(":", configuration = "ideaHomeForTests"))
+    jvmArgumentProviders.add(this.project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
+        property.set("idea.home.path")
+        classpath.from(ideaHomeForTests)
+        directory.value(ideaHomePathForTests())
+    })
 }
 
 val flexGeneratorDependencies = configurations.dependencyScope("flexGeneratorDependencies")
@@ -125,7 +132,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
                 "--nobak", // Prevent generating backup `.kt~` files
             )
         },
-        commonSourceSet = true,
+        generatedSourceSetKind = GeneratedSourceSetKind.KmpCommon,
         additionalInputsToTrack = { fileCollection ->
             fileCollection.from(lexerFile)
             fileCollection.from(skeletonDownloadTask)

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
+@K1Deprecation
 fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext?): Boolean = when {
     kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> overriddenDescriptors.any { it.hasBackingField(bindingContext) }
     extensionReceiverParameter != null -> false

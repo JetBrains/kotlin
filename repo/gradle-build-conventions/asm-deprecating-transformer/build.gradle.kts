@@ -6,18 +6,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    gradlePluginPortal()
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
-        content {
-            includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-            includeGroupByRegex("com.intellij.platform.*")
-            includeGroupByRegex("org.jetbrains.jps.*")
-        }
-    }
-}
-
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation

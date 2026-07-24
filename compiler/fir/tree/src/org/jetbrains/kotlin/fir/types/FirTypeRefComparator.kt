@@ -32,7 +32,7 @@ object FirTypeRefComparator : Comparator<FirTypeRef> {
                 if (qualifierSizeDiff != 0) {
                     return qualifierSizeDiff
                 }
-                for ((aQualifier, bQualifier) in a.qualifier.zip(b.qualifier)) {
+                for ([aQualifier, bQualifier] in a.qualifier.zip(b.qualifier)) {
                     val qualifierNameDiff = aQualifier.name.compareTo(bQualifier.name)
                     if (qualifierNameDiff != 0) {
                         return qualifierNameDiff
@@ -43,7 +43,7 @@ object FirTypeRefComparator : Comparator<FirTypeRef> {
                         return typeArgumentSizeDiff
                     }
                     val typeArguments = aQualifier.typeArgumentList.typeArguments.zip(bQualifier.typeArgumentList.typeArguments)
-                    for ((aTypeArgument, bTypeArgument) in typeArguments) {
+                    for ([aTypeArgument, bTypeArgument] in typeArguments) {
                         val typeArgumentDiff = FirTypeProjectionComparator.compare(aTypeArgument, bTypeArgument)
                         if (typeArgumentDiff != 0) {
                             return typeArgumentDiff

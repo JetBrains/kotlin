@@ -3,7 +3,7 @@ FILE: kt58717.kt
         public get(): R|kotlin/String|
         public set(value: R|kotlin/String|): R|kotlin/Unit|
     public final object O : R|kotlin/Any| {
-        private [ContainingClassKey=O] constructor(): R|O| {
+        private constructor(): R|O| {
             super<R|kotlin/Any|>()
         }
 

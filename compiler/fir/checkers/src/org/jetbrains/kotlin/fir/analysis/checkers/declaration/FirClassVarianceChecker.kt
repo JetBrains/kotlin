@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -159,7 +160,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 val classSymbol = fullyExpandedType.lookupTag.toSymbol()
                 if (classSymbol is FirClassSymbol<*>) {
                     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
-                    for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
+                    for ([index, typeArgument] in fullyExpandedType.typeArguments.withIndex()) {
                         val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
 
                         val argVariance = when (typeArgument.kind) {

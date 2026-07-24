@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -29,6 +30,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.BoxedAtomic
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuIrBuilder
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.hasStaticBackingField
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
 
 class JvmAtomicfuIrBuilder(
@@ -52,6 +54,7 @@ class JvmAtomicfuIrBuilder(
         }
         val irCall = irCall(symbol).apply {
             this.arguments.assignFrom(castedArgs)
+            if (symbol.owner.returnType.isTypeParameter()) this.type = valueType
         }
         return if (valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
@@ -74,14 +77,14 @@ class JvmAtomicfuIrBuilder(
     override fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer
     ): IrField {
         // On JVM a volatile Int field is generated to replace an AtomicBoolean property
         val castBooleanToInt = valueType.isBoolean()
         val volatileFieldType = if (castBooleanToInt) irBuiltIns.intType else valueType
-        return irVolatileField(name, volatileFieldType, annotations, parentContainer).apply {
+        return irVolatileField(name, volatileFieldType, originalField, parentContainer).apply {
             if (initExpr != null) {
                 this.initializer = irExprBody(if (castBooleanToInt) toInt(initExpr) else initExpr)
             }
@@ -94,7 +97,7 @@ class JvmAtomicfuIrBuilder(
             atomicArrayField,
             atomicfuProperty.visibility,
             isVar = false,
-            isStatic = parentContainer is IrFile,
+            isStatic = parentContainer is IrFile || atomicfuProperty.hasStaticBackingField,
             parentContainer
         )
         return BoxedAtomic(atomicArrayProperty)

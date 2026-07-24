@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingModifierInsideCompanionBlock.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=2 nested=0]] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun t(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <DANGLING MODIFIER: Top level declaration expected>
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] fun t2(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        @<ERROR TYPE REF: Symbol not found for Anno2>[Types]() public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] @<ERROR TYPE REF: Symbol not found for Anno4>[Types]() <DANGLING MODIFIER: Top level declaration expected>
+    }

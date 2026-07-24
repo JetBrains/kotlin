@@ -1,1 +1,5 @@
-
+KDocName(69,74): 'B.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(<extension receiver>: A<in kotlin.Nothing>): kotlin.Unit
+    ]

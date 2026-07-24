@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import org.jetbrains.kotlin.K1Deprecation
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.*
@@ -18,12 +19,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
+import kotlin.io.path.Path
+import kotlin.io.path.readLines
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -70,7 +72,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         if (config.omitFrameworkBinary && config.dumpObjcSelectorToSignatureMapping == null) {
             return
         }
-        val (linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
@@ -93,7 +95,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         // Note: `BuildCExports` is technically not a part of IR linking. Ideally, it should be attributed to `TranslationToIr`,
         // mirroring `ProduceObjCExportInterfacePhase` in `produceObjCFramework`,
         // or both should be moved to a separate dedicated phase type, e.g. `Export`.
-        val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+        val [linkKlibsOutput, cAdapterElements] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
@@ -130,7 +132,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val depsPath = config.readSerializedDependencies
             val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
                 config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
-            } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
+            } else DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
             engine.runBitcodeBackend(context, dependencies)
         } finally {
             llvmModule?.let { LLVMDisposeModule(it) }
@@ -158,12 +160,13 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
+    @OptIn(K1Deprecation::class)
     private fun createBackendContext(
             config: NativeSecondStageCompilationConfig,
             frontendOutput: FrontendPhaseOutput.Full,
             linkKlibsOutput: LinkKlibsOutput,
-            additionalDataSetter: (Context) -> Unit = {}
-    ) = Context(
+            additionalDataSetter: (NativeBackendContext) -> Unit = {}
+    ) = NativeBackendContext(
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,

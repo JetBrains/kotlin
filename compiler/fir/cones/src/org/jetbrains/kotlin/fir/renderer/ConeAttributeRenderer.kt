@@ -20,9 +20,9 @@ abstract class ConeAttributeRenderer {
     object ForReadability : ConeAttributeRenderer() {
         override fun render(attributes: Iterable<ConeAttribute<*>>): String {
             return attributes.mapNotNull { attribute -> attribute.renderForReadability()?.let { attribute to it } }
-                .sortedBy { (attribute, _) -> attribute.key.qualifiedName }
+                .sortedBy { [attribute, _] -> attribute.key.qualifiedName }
                 .ifNotEmpty {
-                    joinToString(separator = " ", postfix = " ") { (_, output) ->
+                    joinToString(separator = " ", postfix = " ") { [_, output] ->
                         output
                     }
                 } ?: ""

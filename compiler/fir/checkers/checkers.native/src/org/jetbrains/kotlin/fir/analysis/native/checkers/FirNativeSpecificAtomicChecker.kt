@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.forEachClassId
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -45,15 +48,16 @@ object FirNativeSpecificAtomicChecker : FirCallableDeclarationChecker(MppChecker
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkType(
-        typeRef: FirTypeRef,
-    ) {
-        val classId = typeRef.coneType.fullyExpandedClassId(context.session) ?: return
-        if (classId.packageFqName != CONCURRENT_PACKAGE) return
-        if (classId.outerClassId != null) return
-        val name = classId.shortClassName
-        if (name !in CONCURRENT_NAME_SET) return
-        reporter.reportOn(typeRef.source, FirNativeErrors.NATIVE_SPECIFIC_ATOMIC, name)
+    private fun checkType(typeRef: FirTypeRef) {
+        typeRef.coneType.fullyExpandedType().forEachType {
+            it.forEachClassId { classId ->
+                if (classId.packageFqName != CONCURRENT_PACKAGE) return@forEachClassId
+                if (classId.outerClassId != null) return@forEachClassId
+                val name = classId.shortClassName
+                if (name !in CONCURRENT_NAME_SET) return@forEachClassId
+                reporter.reportOn(typeRef.source, FirNativeErrors.NATIVE_SPECIFIC_ATOMIC, name)
+            }
+        }
     }
 
     private val CONCURRENT_PACKAGE = FqName("kotlin.concurrent")

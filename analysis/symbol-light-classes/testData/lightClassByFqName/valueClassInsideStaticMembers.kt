@@ -20,3 +20,6 @@ class MyClass {
         val staticPropertyWithInitializer: MyValueClass? = null
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: MyClass.class[staticFunction;staticProperty]
+// LIGHT_ELEMENTS_NO_DECLARATION: MyClass.class[getStaticProperty-BXGQg7w;getStaticProperty-BXGQg7w;getStaticPropertyWithInitializer-BXGQg7w;getStaticPropertyWithInitializer-BXGQg7w;staticFunction-rdfNfmQ;staticFunction-rdfNfmQ]

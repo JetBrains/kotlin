@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,22 +50,3 @@ public inline fun <R> KaLifetimeOwner.withValidityAssertion(action: () -> R): R 
     assertIsValidAndAccessible()
     return action()
 }
-
-/**
- * This is a helper function to properly expose parameters in [KaLifetimeOwner] implementations.
- *
- * #### Example
- *
- * ```kotlin
- * public class KaCall(symbol: KaSymbol) : KaLifetimeOwner {
- *     public val symbol: KaSymbol by validityAsserted(symbol)
- * }
- * ```
- *
- * @see KaLifetimeOwner
- * @see KaLifetimeOwnerField
- * @see withValidityAssertion
- */
-@Suppress("DEPRECATION")
-@Deprecated("Use a backing element + `withValidityAssertion` instead")
-public fun <T> KaLifetimeOwner.validityAsserted(value: T): KaLifetimeOwnerField<T> = KaLifetimeOwnerField(value)

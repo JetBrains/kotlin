@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.services.jvm
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
+import org.jetbrains.kotlin.test.impl.NonGroupingStageTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
@@ -37,7 +37,7 @@ class JdkKindBoxTestChecker(testServices: TestServices) : AfterAnalysisChecker(t
         if (jdkKind.none { it.requiresSeparateProcess }) return
 
         @OptIn(TestInfrastructureInternals::class)
-        val testDataPath = (testServices.testConfiguration as NonGroupingPhaseTestConfigurationImpl).originalBuilder.testDataPath
+        val testDataPath = (testServices.testConfiguration as NonGroupingStageTestConfigurationImpl).originalBuilder.testDataPath
         if (testDataPath.startsWith(CODEGEN_BOX) || testDataPath.startsWith(CODEGEN_BOX_JVM)) {
             testServices.assertions.fail {
                 "Using the JDK_KIND directive is not allowed in the '$CODEGEN_BOX' directory.\n" +

@@ -1,8 +1,9 @@
 CONSTRUCTOR:
   KaSamConstructorSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /IntPredicate
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -14,6 +15,8 @@ CONSTRUCTOR:
   modality: FINAL
   name: IntPredicate
   origin: SAM_CONSTRUCTOR
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -33,16 +36,17 @@ CONSTRUCTOR:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -54,6 +58,9 @@ CONSTRUCTOR:
       modality: FINAL
       name: function
       origin: SAM_CONSTRUCTOR
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaFunctionType:
         abbreviation: null
@@ -173,27 +180,28 @@ CONSTRUCTOR:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -206,6 +214,8 @@ FUNCTIONAL INTERFACE:
   modality: ABSTRACT
   name: IntPredicate
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -227,6 +237,6 @@ FUNCTIONAL INTERFACE:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: IntPredicate

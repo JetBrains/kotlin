@@ -22,3 +22,5 @@ class A {
         }
 }
 
+
+// LIGHT_ELEMENTS_NO_DECLARATION: A.class[_get_property_$localFunInPropertyAccessor;_init_$localFunInConstructor;_init_$localFunInInit;memberFun$localFunInMemberFun]

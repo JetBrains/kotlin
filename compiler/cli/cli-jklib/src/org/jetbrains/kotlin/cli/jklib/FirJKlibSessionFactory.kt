@@ -147,7 +147,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
         packagePartProvider: PackagePartProvider,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider)
@@ -156,26 +156,25 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             context = context,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule = isForLeafHmppModule,
+            kmpModuleKind = kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
-                val incrementalCompilationSymbolProviders = createIncrementalCompilationSymbolProviders(session)
-
                 val providers = listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
-                    *(incrementalCompilationSymbolProviders?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
-                    incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
                     javaSymbolProvider,
                     initializeForStdlibIfNeeded(projectEnvironment, session, kotlinScopeProvider),
                 )
+
+                val incrementalCompilationSymbolProviders = createIncrementalCompilationSymbolProviders(session)
                 SourceProviders(
                     providers,
-                    incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation
+                    incrementalProvider = incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
+                    additionalOptionalAnnotationsProvider = incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation
                 )
             }
         ).also {
@@ -306,7 +305,7 @@ internal fun <F> prepareJKlibSessions(
                 predefinedJavaComponents = predefinedJavaComponents,
             )
         },
-        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+        createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
             FirJKlibSessionFactory.createSourceSession(
                 moduleData = moduleData,
                 javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
@@ -318,7 +317,7 @@ internal fun <F> prepareJKlibSessions(
                 needRegisterJavaElementFinder = true,
                 packagePartProvider = packagePartProviderForLibraries,
                 init = sessionConfigurator,
-                isForLeafHmppModule = isForLeafHmppModule,
+                kmpModuleKind = kmpModuleKind,
             )
         },
         createMetadataSessionFactoryContextForHmppCommonLibrarySession = {

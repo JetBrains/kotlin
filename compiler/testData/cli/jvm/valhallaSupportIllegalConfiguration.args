@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/valhallaSupportIllegalConfiguration.kt
+-d
+$TEMP_DIR$
+-Xvalhalla-support=primitives
+-Xrender-internal-diagnostic-names

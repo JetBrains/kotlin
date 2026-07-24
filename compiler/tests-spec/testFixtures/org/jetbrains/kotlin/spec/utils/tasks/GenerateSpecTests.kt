@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.tasks
 
-import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.spec.parsing.AbstractParsingTestSpec
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.spec.utils.SectionsJsonMapGenerator
 import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator
 
 fun generateTests() {
-    generateTestGroupSuiteWithJUnit4 {
+    generateTestGroupSuiteWithJUnit5 {
         testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
             testClass<AbstractParsingTestSpec> {
                 model(

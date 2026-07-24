@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -29,7 +27,11 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.snapshots.ConfigurationInputsMap
+import org.jetbrains.kotlin.incremental.snapshots.librarySetAddedSentinel
+import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
@@ -91,23 +93,51 @@ abstract class IncrementalCompilerRunner<
         fileLocations: FileLocations?,
         transaction: CompilationTransaction,
         fragmentContext: FragmentContext? = null,
+        compilerGeneratedSyntheticSources: MutableSet<File> = mutableSetOf(),
     ) = IncrementalCompilationContext(
-        pathConverterForSourceFiles = fileLocations?.getRelocatablePathConverterForSourceFiles() ?: BasicFileToPathConverter,
-        pathConverterForOutputFiles = fileLocations?.getRelocatablePathConverterForOutputFiles() ?: BasicFileToPathConverter,
+        pathConverterForSourceFiles = fileLocations?.getRelocatablePathConverterForSourceFiles(compilerGeneratedSyntheticSources)
+            ?: BasicFileToPathConverter,
+        pathConverterForOutputFiles = fileLocations?.getRelocatablePathConverterForOutputFiles(compilerGeneratedSyntheticSources)
+            ?: BasicFileToPathConverter,
         transaction = transaction,
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
+        trackLibrarySetChanges = shouldTrackLibrarySetChanges,
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
         icFeatures = icFeatures,
         fragmentContext = fragmentContext,
+        compilerGeneratedSyntheticSources = compilerGeneratedSyntheticSources,
     )
 
     protected abstract val shouldTrackChangesInLookupCache: Boolean
+
+    /**
+     * Whether this runner needs the IC layer to maintain its own snapshot of the library set on the classpath.
+     * True for runners that use the build-history-files-based IC approach (JS/Wasm); false for runners using
+     * the classpath-snapshot-based approach (JVM), which has its own library change detection.
+     */
+    protected open val shouldTrackLibrarySetChanges: Boolean = false
 
     protected abstract val shouldStoreFullFqNamesInLookupCache: Boolean
 
     protected abstract fun createCacheManager(icContext: IncrementalCompilationContext, args: Args): CacheManager
     protected abstract fun destinationDir(args: Args): File
+
+    /**
+     * The set of library files (JARs, KLIBs, or class directories) the IC layer snapshots on its own,
+     * so that library changes are detected even when the build system passes [ChangedFiles.DeterminableFiles.ToBeComputed].
+     *
+     * Only called when [shouldTrackLibrarySetChanges] is true; subclasses that flip that flag must override this.
+     */
+    protected open fun classpathForLibrarySetSnapshot(args: Args): List<File> =
+        error("classpathForLibrarySetSnapshot must be overridden when shouldTrackLibrarySetChanges is true")
+
+    /**
+     * The multi-project module info corresponding to the libraries returned by [classpathForLibrarySetSnapshot].
+     * Used to derive stable, path-independent identities for local-module libraries; external libraries fall back
+     * to a content-hash identity.
+     */
+    protected open val modulesApiHistory: ModulesApiHistory get() = EmptyModulesApiHistory
 
     fun compile(
         allSourceFiles: List<File>,
@@ -214,7 +244,7 @@ abstract class IncrementalCompilerRunner<
             val icContext = createIncrementalCompilationContext(
                 fileLocations,
                 transaction,
-                fragmentContext
+                fragmentContext,
             )
             val caches = createCacheManager(icContext, args).also {
                 // this way we make the transaction to be responsible for closing the caches manager
@@ -234,7 +264,7 @@ abstract class IncrementalCompilerRunner<
             fun compile(): ICResult {
                 // Step 1: Get changed files
                 val knownChangedFiles: DeterminableFiles.Known = try {
-                    getChangedFiles(changedFiles, allSourceFiles, caches)
+                    getChangedFiles(changedFiles, allSourceFiles, args, caches)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
@@ -315,11 +345,20 @@ abstract class IncrementalCompilerRunner<
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
-        val icContext = createIncrementalCompilationContext(fileLocations, NonRecoverableCompilationTransaction())
+        val icContext = createIncrementalCompilationContext(
+            fileLocations,
+            NonRecoverableCompilationTransaction(),
+        )
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
+            // Refresh the library-set snapshot on rebuild too, so that the next incremental build sees
+            // an accurate baseline and doesn't treat all classpath entries as "new" again.
+            caches.inputsCache.librarySetSnapshotMap?.compareAndUpdate(
+                classpathForLibrarySetSnapshot(args),
+                modulesApiHistory.modulesInfo,
+            )
             val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
                 AbiSnapshotData(snapshot = AbiSnapshotImpl(mutableMapOf()), classpathAbiSnapshot = getClasspathAbiSnapshot(args))
             } else null
@@ -360,9 +399,10 @@ abstract class IncrementalCompilerRunner<
     private fun getChangedFiles(
         changedFiles: DeterminableFiles,
         allSourceFiles: List<File>,
+        args: Args,
         caches: CacheManager,
     ): DeterminableFiles.Known {
-        return when (changedFiles) {
+        val sourceLevelChanges: DeterminableFiles.Known = when (changedFiles) {
             is DeterminableFiles.ToBeComputed -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             is DeterminableFiles.Known -> {
                 if (changedFiles.forDependencies) {
@@ -376,6 +416,36 @@ abstract class IncrementalCompilerRunner<
                 }
             }
         }
+
+        // Library set snapshotting runs in both branches for runners that opted in via shouldTrackLibrarySetChanges.
+        // SourcesChanges only models source changes; library changes flow through this separate, path-independent
+        // snapshot map so that dirtyFiles/getClasspathChanges can pick up rebuilt local modules (via history files)
+        // and any change to an external library (which has no history file → full rebuild).
+        val librarySetSnapshotMap = caches.inputsCache.librarySetSnapshotMap ?: return sourceLevelChanges
+        val librarySetChanges = librarySetSnapshotMap.compareAndUpdate(
+            classpathForLibrarySetSnapshot(args),
+            modulesApiHistory.modulesInfo,
+        )
+        if (librarySetChanges.modifiedFiles.isEmpty() &&
+            librarySetChanges.addedKeys.isEmpty() &&
+            librarySetChanges.removedKeys.isEmpty()
+        ) {
+            return sourceLevelChanges
+        }
+        // Removed and added library identities can't be expressed as real Files (we store no path for them
+        // in the removed case, and we deliberately do not want the added case to flow through the normal
+        // modified-jar pipeline since the library's own history would only contain a partial delta).
+        // We carry both as sentinel Files; getClasspathChanges recognizes the sentinel prefixes and treats
+        // them as "the classpath set changed" → ChangesEither.Unknown → full rebuild, which is the only
+        // sound answer for any library add/remove in the history-files-based IC pipeline.
+        // Anyway, the history files-based approach does not have any solution for changes in dependencies
+        // with no history files other than rebuild.
+        val removedLibrarySentinels = librarySetChanges.removedKeys.map { librarySetRemovedSentinel(it) }
+        val addedLibrarySentinels = librarySetChanges.addedKeys.map { librarySetAddedSentinel(it) }
+        return DeterminableFiles.Known(
+            modified = sourceLevelChanges.modified + librarySetChanges.modifiedFiles + addedLibrarySentinels,
+            removed = sourceLevelChanges.removed + removedLibrarySentinels,
+        )
     }
 
     protected abstract fun calculateSourcesToCompile(
@@ -506,6 +576,7 @@ abstract class IncrementalCompilerRunner<
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
@@ -517,7 +588,7 @@ abstract class IncrementalCompilerRunner<
             val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
 
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
+            val [sourcesToCompile, removedKotlinSources] = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             icContext.fragmentContext?.let {
                 if (it.dirtySetTouchesNonLeafFragments(sourcesToCompile)) {
@@ -540,10 +611,12 @@ abstract class IncrementalCompilerRunner<
                     sourcesToCompile, args, caches, services, bufferingMessageCollector,
                     allKotlinSources, compilationMode is CompilationMode.Incremental
                 )
-            }.let { (ec, compiled) ->
+            }.let { [ec, compiled] ->
                 exitCode = ec
                 compiled
             }
+            icContext.compilerGeneratedSyntheticSources.clear()
+            icContext.compilerGeneratedSyntheticSources.addAll(outputItemsCollector.sourceFileGeneratedForPlugin)
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
@@ -583,10 +656,7 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-                caches.compilerPluginFilesCache.let {
-                    it.recordSourceFilesReferencedByPlugins(outputItemsCollector.sourcesReferencedByCompilerPlugin)
-                    it.recordOutputFilesGeneratedByPlugins(outputItemsCollector.outputsFileGeneratedForPlugin)
-                }
+                caches.recordCompilerPluginFilesCaches(outputItemsCollector)
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 
@@ -601,10 +671,13 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getChangedAndImpactedSymbols(
-                listOf(caches.platformCache),
-                reporter
-            )
+            (
+                val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile
+            ) =
+                changesCollector.getChangedAndImpactedSymbols(
+                    listOf(caches.platformCache),
+                    reporter
+                )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)

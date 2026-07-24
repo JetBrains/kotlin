@@ -17,11 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 public class InlineException extends RuntimeException {
-
-    public InlineException(String message) {
-        super(message);
-    }
-
     public InlineException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DeclaredSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.IntegrateLinkagePackageIntoXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.LocalSwiftPMDependencyForIde
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.RemoteSwiftPMDependencyForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportIdeModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -24,6 +28,7 @@ class SwiftPMImportIdeModelTests {
                 hasSwiftPMDependencies = false,
                 integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
                 magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                declaredSwiftPMDependencies = null,
             ),
             buildProjectWithMPP {
                 kotlin {
@@ -52,18 +57,64 @@ class SwiftPMImportIdeModelTests {
     // The rest of this suite has to be implemented as an integration test because interproject SwiftPM dependencies work by serializing using a task
     @Test
     fun `swiftPMImportIdeModel - project with direct SwiftPM dependency`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                iosArm64()
+                locateOrRegisterSwiftPMDependenciesExtension().swiftPackage(url = "foo", version = "1.0.0", products = listOf("bar"))
+            }
+        }
+
+        val fetchTask = project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
+
         assertEquals(
             SwiftPMImportIdeModel(
                 hasSwiftPMDependencies = true,
                 integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
                 magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                declaredSwiftPMDependencies = DeclaredSwiftPMDependencies(
+                    dependencies = listOf(
+                        RemoteSwiftPMDependencyForIde("foo")
+                    ),
+                    checkoutPath = fetchTask.swiftPMDependenciesCheckout.get().asFile,
+                    swiftPackageResolveTaskPath = ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                )
             ),
-            buildProjectWithMPP {
-                kotlin {
-                    iosArm64()
-                    locateOrRegisterSwiftPMDependenciesExtension().swiftPackage(url = "foo", version = "1.0.0", products = listOf("bar"))
-                }
-            }.multiplatformExtension.swiftPMImportIdeModel
+            project.multiplatformExtension.swiftPMImportIdeModel
+        )
+    }
+
+    @Test
+    fun `swiftPMImportIdeModel - project with direct local SwiftPM dependency`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                iosArm64()
+
+                val localPackage = layout.projectDirectory.dir("localPackage")
+
+                locateOrRegisterSwiftPMDependenciesExtension().localSwiftPackage(
+                    directory = localPackage,
+                    products = listOf("bar"),
+                )
+            }
+        }
+
+        val localPackage = project.layout.projectDirectory.dir("localPackage").asFile
+        val fetchTask = project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
+
+        assertEquals(
+            SwiftPMImportIdeModel(
+                hasSwiftPMDependencies = true,
+                integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
+                magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                declaredSwiftPMDependencies = DeclaredSwiftPMDependencies(
+                    dependencies = listOf(
+                        LocalSwiftPMDependencyForIde(localPackage)
+                    ),
+                    checkoutPath = fetchTask.swiftPMDependenciesCheckout.get().asFile,
+                    swiftPackageResolveTaskPath = ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                )
+            ),
+            project.multiplatformExtension.swiftPMImportIdeModel
         )
     }
 }

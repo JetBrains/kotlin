@@ -39,3 +39,6 @@ class UTypeDeclarationClass {
     @JvmName("_functionWithValueClassInReceiverWithJvmName")
     fun MyValueClass.functionWithValueClassInReceiverWithJvmName() {}
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: UTypeDeclarationClass.class[functionWithValueClassInReceiver;functionWithValueClassInReceiverWithJvmName;functionWithValueClassInReturn;methodWithValueClass]
+// LIGHT_ELEMENTS_NO_DECLARATION: UTypeDeclarationClass.class[_functionWithValueClassInReceiverWithJvmName;functionWithValueClassInReceiver-rdfNfmQ;functionWithValueClassInReturn-BXGQg7w;getNothing-KOFEOT0;getSetter-KOFEOT0;methodWithValueClass-rdfNfmQ;setGetter-rdfNfmQ;setNothing-rdfNfmQ]

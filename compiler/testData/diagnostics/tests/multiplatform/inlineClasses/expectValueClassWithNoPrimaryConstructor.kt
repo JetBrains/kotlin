@@ -2,10 +2,11 @@
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor
 // IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
+// LATEST_LV_DIFFERENCE
 // MODULE: common
 
 expect value class CommonSomething {
-    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY!>constructor(value: Int)<!>
+    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY("value")!>constructor(value: Int)<!>
 }
 
 // MODULE: platform()()(common)

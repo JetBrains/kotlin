@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
@@ -22,6 +23,7 @@ import javax.tools.JavaFileObject
 // This represents Java class for which we don't have resolved classifier.
 // The situation when it is useful is described in KT-33932.
 // Mostly it's a stub.
+@K1Deprecation
 class FakeSymbolBasedClass(
     element: TypeElement,
     javac: JavacWrapper,

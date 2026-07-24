@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 
+@K1Deprecation
 class JavaClassDataFinder(
     internal val kotlinClassFinder: KotlinClassFinder,
     private val deserializedDescriptorResolver: DeserializedDescriptorResolver

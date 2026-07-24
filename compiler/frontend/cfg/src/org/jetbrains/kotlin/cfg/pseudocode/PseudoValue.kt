@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
+@K1Deprecation
 interface PseudoValue {
     val debugName: String
     val element: KtElement?
     val createdAt: InstructionWithValue?
 }
 
+@K1Deprecation
 interface PseudoValueFactory {
     fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue
 }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequi
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -53,7 +53,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
     ): Boolean {
         if (LanguageFeature.ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs.isEnabled()) return true
         if (diagnostic.forObject && !diagnostic.dueToNullableMark) return true
-        return callableReference.toResolvedCallableSymbol()?.requiresCompanionBlockOrExtensionLf() == true
+        return callableReference.toResolvedCallableSymbol()?.requiresCompanionBlockLf() == true
     }
 
     /**
@@ -149,7 +149,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-        val correspondingDeclaration = lhs.symbol ?: return
+        val correspondingDeclaration = lhs.qualifierSymbol ?: return
         for (argument in lhs.typeArguments) {
             val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
 

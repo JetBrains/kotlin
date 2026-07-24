@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
@@ -34,20 +32,15 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.konan.file.unzipTo
+import org.jetbrains.kotlin.gradle.utils.unzipTarGz
+import org.jetbrains.kotlin.io.unzipTo
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.loadConfigurables
 import org.jetbrains.kotlin.konan.util.ArchiveExtractor
 import org.jetbrains.kotlin.konan.util.ArchiveType
-import java.io.BufferedInputStream
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.attribute.PosixFilePermission
-import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 
 internal interface UsesKotlinNativeBundleBuildService : Task {
@@ -176,73 +169,13 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     internal fun defaultCacheKindForTarget(konanTarget: KonanTarget) =
         parameters.konanPropertiesBuildService.map { it.defaultCacheKindForTarget(konanTarget) }
 
-    internal inner class DependencyExtractor : ArchiveExtractor {
+    internal class DependencyExtractor : ArchiveExtractor {
 
         override fun extract(archive: File, targetDirectory: File, archiveType: ArchiveType) {
             when (archiveType) {
                 ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
-                ArchiveType.TAR_GZ -> unzipTarGz(archive, targetDirectory)
-                else -> error("Unsupported format for unzipping $archive")
-            }
-        }
-
-        private fun unzipTarGz(archive: File, targetDir: File) {
-            GZIPInputStream(BufferedInputStream(archive.inputStream())).use { gzipInputStream ->
-                val hardLinks = HashMap<Path, Path>()
-
-                TarArchiveInputStream(gzipInputStream).use { tarInputStream ->
-                    generateSequence {
-                        tarInputStream.nextEntry
-                    }.forEach { entry: TarArchiveEntry ->
-                        val outputFile = File("$targetDir/${entry.name}")
-                        if (entry.isDirectory) {
-                            outputFile.mkdirs()
-                        } else {
-                            if (entry.isSymbolicLink) {
-                                Files.createSymbolicLink(outputFile.toPath(), Paths.get(entry.linkName))
-                            } else if (entry.isLink) {
-                                hardLinks.put(outputFile.toPath(), targetDir.resolve(entry.linkName).toPath())
-                            } else {
-                                outputFile.outputStream().use {
-                                    tarInputStream.copyTo(it)
-                                }
-                                Files.setPosixFilePermissions(outputFile.toPath(), getPosixFilePermissions(entry.mode))
-                            }
-                        }
-                    }
-                }
-                hardLinks.forEach {
-                    Files.createLink(it.key, it.value)
-                }
-            }
-        }
-
-        private fun getPosixFilePermissions(mode: Int): Set<PosixFilePermission> {
-            val permissions: MutableSet<PosixFilePermission> = mutableSetOf()
-
-            // adding owner permissions
-            permissions.addPermission(mode, 0b100_000_000, PosixFilePermission.OWNER_READ)
-            permissions.addPermission(mode, 0b010_000_000, PosixFilePermission.OWNER_WRITE)
-            permissions.addPermission(mode, 0b001_000_000, PosixFilePermission.OWNER_EXECUTE)
-
-            // adding group permissions
-            permissions.addPermission(mode, 0b000_100_000, PosixFilePermission.GROUP_READ)
-            permissions.addPermission(mode, 0b000_010_000, PosixFilePermission.GROUP_WRITE)
-            permissions.addPermission(mode, 0b000_001_000, PosixFilePermission.GROUP_EXECUTE)
-
-            // adding other permissions
-            permissions.addPermission(mode, 0b000_000_100, PosixFilePermission.OTHERS_READ)
-            permissions.addPermission(mode, 0b000_000_010, PosixFilePermission.OTHERS_WRITE)
-            permissions.addPermission(mode, 0b000_000_001, PosixFilePermission.OTHERS_EXECUTE)
-
-            return permissions
-        }
-
-        private fun MutableSet<PosixFilePermission>.addPermission(mode: Int, permissionBitMask: Int, permission: PosixFilePermission) {
-            if ((mode and permissionBitMask) > 0) {
-                add(permission)
+                ArchiveType.TAR_GZ -> archive.toPath().unzipTarGz(targetDirectory.toPath())
             }
         }
     }
-
 }

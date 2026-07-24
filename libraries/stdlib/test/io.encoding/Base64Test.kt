@@ -52,7 +52,7 @@ class Base64Test {
         val symbols = "BCDEFGHI"
 
         // encode
-        for ((base64, scheme) in codecs) {
+        for ([base64, scheme] in codecs) {
             testEncode(base64, bytes, symbols)
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.encode(bytes, startIndex = -1) }
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.encode(bytes, endIndex = bytes.size + 1) }
@@ -70,7 +70,7 @@ class Base64Test {
         }
 
         // encodeToByteArray
-        for ((base64, scheme) in codecs) {
+        for ([base64, scheme] in codecs) {
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.encodeToByteArray(bytes, startIndex = -1) }
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.encodeToByteArray(bytes, endIndex = bytes.size + 1) }
             assertFailsWith<IllegalArgumentException>(scheme) { base64.encodeToByteArray(bytes, startIndex = bytes.size + 1) }
@@ -93,7 +93,7 @@ class Base64Test {
         }
 
         // decode(CharSequence)
-        for ((base64, scheme) in codecs) {
+        for ([base64, scheme] in codecs) {
             testDecode(base64, symbols, bytes)
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.decode(symbols, startIndex = -1) }
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.decode(symbols, endIndex = symbols.length + 1) }
@@ -118,7 +118,7 @@ class Base64Test {
 
         // decode(ByteArray)
         val symbolBytes = symbols.encodeToByteArray()
-        for ((base64, scheme) in codecs) {
+        for ([base64, scheme] in codecs) {
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.decode(symbolBytes, startIndex = -1) }
             assertFailsWith<IndexOutOfBoundsException>(scheme) { base64.decode(symbolBytes, endIndex = symbolBytes.size + 1) }
             assertFailsWith<IllegalArgumentException>(scheme) { base64.decode(symbolBytes, startIndex = symbolBytes.size + 1) }
@@ -167,7 +167,7 @@ class Base64Test {
             testDecode(codec, symbols, bytes)
         }
 
-        for ((codec, scheme) in codecs) {
+        for ([codec, scheme] in codecs) {
             // By default, padding option is set to PRESENT
             assertSame(codec, codec.withPadding(Base64.PaddingOption.PRESENT))
 
@@ -342,7 +342,7 @@ class Base64Test {
 
     @Test
     fun mime() {
-        for ((codec, lineLength) in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
+        for ([codec, lineLength] in listOf(Base64.Mime to 76, Base64.Pem to 64)) {
             testCoding(codec, bytes(0b1111_1011, 0b1111_0000), "+/A=")
 
             // all symbols from alphabet
@@ -373,7 +373,7 @@ class Base64Test {
 
     @Test
     fun encodeSize() {
-        for ((codec, _) in codecs) {
+        for ([codec, _] in codecs) {
             val lineSeparatorChars = if (codec.isMimeScheme) 2 else 0
             val mimeSeparatedLineLength = codec.mimeLineLength + lineSeparatorChars
             val oneLineInputBytes = codec.mimeLineLength / Base64.symbolsPerGroup * Base64.bytesPerGroup
@@ -539,7 +539,7 @@ class Base64Test {
             )
         }
 
-        for ((codec, _) in codecs) {
+        for ([codec, _] in codecs) {
             assertFailsWith<IllegalArgumentException> {
                 codec.decode(ByteArray(1), 0, 1)
             }.also { exception ->

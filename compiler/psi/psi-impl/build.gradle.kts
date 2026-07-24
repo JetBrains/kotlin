@@ -1,16 +1,18 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
     api(project(":core:compiler.common"))
     api(project(":compiler:util"))
     api(project(":compiler:frontend.common"))
-    api(project(":kotlin-script-runtime"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
@@ -28,7 +30,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testFixturesCompileOnly(intellijCore())
     testCompileOnly(intellijCore())
 }
@@ -43,7 +44,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForPsiImplKt")
 

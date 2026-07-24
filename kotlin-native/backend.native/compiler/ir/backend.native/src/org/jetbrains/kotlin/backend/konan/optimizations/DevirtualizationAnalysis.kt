@@ -67,7 +67,7 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
+    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
         val entryPoint = context.symbols.entryPoint?.owner
         val exported = if (entryPoint != null)
             listOf(moduleDFG.symbolTable.mapFunction(entryPoint))
@@ -127,7 +127,7 @@ internal object DevirtualizationAnalysis {
 
     private val VIRTUAL_TYPE_ID = 0 // Id of [DataFlowIR.Type.Virtual].
 
-    internal class DevirtualizationAnalysisImpl(val context: Context,
+    internal class DevirtualizationAnalysisImpl(val context: NativeBackendContext,
                                                 val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG) {
 
@@ -876,7 +876,7 @@ internal object DevirtualizationAnalysis {
                 if (iterations >= maxNumberOfIterations) break
 
                 var end = true
-                for ((sourceNode, edge) in badEdges) {
+                for ([sourceNode, edge] in badEdges) {
                     val distNode = edge.node
                     if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes)) {
                         end = false
@@ -890,7 +890,7 @@ internal object DevirtualizationAnalysis {
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
-            for ((sourceNode, edge) in badEdges) {
+            for ([sourceNode, edge] in badEdges) {
                 val distNode = edge.node
                 if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)
@@ -914,7 +914,7 @@ internal object DevirtualizationAnalysis {
                         if (marked[distNode.id])
                             distNode.types.or(node.types)
                         else {
-                            if (distNode.types.orWithFilterHasChanged(node.types) && !marked[distNode.id]) {
+                            if (distNode.types.orHasChanged(node.types) && !marked[distNode.id]) {
                                 marked.set(distNode.id)
                                 front[frontSize++] = distNode.id
                             }
@@ -998,7 +998,7 @@ internal object DevirtualizationAnalysis {
 
             context.logMultiple {
                 +"Devirtualized from current module:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite != null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -1010,7 +1010,7 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 +"Devirtualized from external modules:"
-                result.forEach { (virtualCall, devirtualizedCallSite) ->
+                result.forEach { [virtualCall, devirtualizedCallSite] ->
                     if (virtualCall.irCallSite == null) {
                         +"DEVIRTUALIZED"
                         +"FUNCTION: ${devirtualizedCallSite.second}"
@@ -1587,7 +1587,7 @@ internal object DevirtualizationAnalysis {
 
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
-    fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
+    fun run(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,
@@ -1823,7 +1823,7 @@ internal object DevirtualizationAnalysis {
                             }
                             val branches = mutableListOf<IrBranchImpl>()
                             bestOrder!!.mapIndexedTo(branches) { index, target ->
-                                val (actualCallee, receiverTypes) = target
+                                (val actualCallee, val receiverTypes = possibleReceivers) = target
                                 val condition = when {
                                     optimize && index == possibleCallees.size - 1 -> {
                                         // Don't check the last type in optimize mode.

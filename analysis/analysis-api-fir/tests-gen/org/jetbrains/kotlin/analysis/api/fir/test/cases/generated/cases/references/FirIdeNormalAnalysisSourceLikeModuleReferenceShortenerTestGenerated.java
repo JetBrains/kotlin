@@ -859,76 +859,182 @@ public class FirIdeNormalAnalysisSourceLikeModuleReferenceShortenerTestGenerated
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
-    @Test
-    @TestMetadata("enumEntry.kt")
-    public void testEnumEntry() {
-      run("enumEntry.kt");
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Expressions {
+      private void run(String fileName) {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/expressions/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInExpressions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("enumEntry.kt")
+      public void testEnumEntry() {
+        run("enumEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryFeatureDisabled.kt")
+      public void testEnumEntryFeatureDisabled() {
+        run("enumEntryFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryInEquality.kt")
+      public void testEnumEntryInEquality() {
+        run("enumEntryInEquality.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryInVariable.kt")
+      public void testEnumEntryInVariable() {
+        run("enumEntryInVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryInWhen.kt")
+      public void testEnumEntryInWhen() {
+        run("enumEntryInWhen.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryNotApplicable.kt")
+      public void testEnumEntryNotApplicable() {
+        run("enumEntryNotApplicable.kt");
+      }
+
+      @Test
+      @TestMetadata("enumEntryPartialSelection.kt")
+      public void testEnumEntryPartialSelection() {
+        run("enumEntryPartialSelection.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedSubObject.kt")
+      public void testSealedSubObject() {
+        run("sealedSubObject.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedSubObjectFeatureDisabled.kt")
+      public void testSealedSubObjectFeatureDisabled() {
+        run("sealedSubObjectFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedSubObjectInVariable.kt")
+      public void testSealedSubObjectInVariable() {
+        run("sealedSubObjectInVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedSubObjectNotApplicable.kt")
+      public void testSealedSubObjectNotApplicable() {
+        run("sealedSubObjectNotApplicable.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedSubObjectPartialSelection.kt")
+      public void testSealedSubObjectPartialSelection() {
+        run("sealedSubObjectPartialSelection.kt");
+      }
     }
 
-    @Test
-    @TestMetadata("enumEntryFeatureDisabled.kt")
-    public void testEnumEntryFeatureDisabled() {
-      run("enumEntryFeatureDisabled.kt");
-    }
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/types")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Types {
+      private void run(String fileName) {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/types/" + fileName);
+      }
 
-    @Test
-    @TestMetadata("enumEntryInEquality.kt")
-    public void testEnumEntryInEquality() {
-      run("enumEntryInEquality.kt");
-    }
+      @Test
+      public void testAllFilesPresentInTypes() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/shortenRange/contextSensitiveResolution/types"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
 
-    @Test
-    @TestMetadata("enumEntryInVariable.kt")
-    public void testEnumEntryInVariable() {
-      run("enumEntryInVariable.kt");
-    }
+      @Test
+      @TestMetadata("asExpression.kt")
+      public void testAsExpression() {
+        run("asExpression.kt");
+      }
 
-    @Test
-    @TestMetadata("enumEntryInWhen.kt")
-    public void testEnumEntryInWhen() {
-      run("enumEntryInWhen.kt");
-    }
+      @Test
+      @TestMetadata("asSafeExpression.kt")
+      public void testAsSafeExpression() {
+        run("asSafeExpression.kt");
+      }
 
-    @Test
-    @TestMetadata("enumEntryNotApplicable.kt")
-    public void testEnumEntryNotApplicable() {
-      run("enumEntryNotApplicable.kt");
-    }
+      @Test
+      @TestMetadata("isExpression.kt")
+      public void testIsExpression() {
+        run("isExpression.kt");
+      }
 
-    @Test
-    @TestMetadata("enumEntryPartialSelection.kt")
-    public void testEnumEntryPartialSelection() {
-      run("enumEntryPartialSelection.kt");
-    }
+      @Test
+      @TestMetadata("isExpressionInWhen.kt")
+      public void testIsExpressionInWhen() {
+        run("isExpressionInWhen.kt");
+      }
 
-    @Test
-    @TestMetadata("sealedSubObject.kt")
-    public void testSealedSubObject() {
-      run("sealedSubObject.kt");
-    }
+      @Test
+      @TestMetadata("negatedIsExpression.kt")
+      public void testNegatedIsExpression() {
+        run("negatedIsExpression.kt");
+      }
 
-    @Test
-    @TestMetadata("sealedSubObjectFeatureDisabled.kt")
-    public void testSealedSubObjectFeatureDisabled() {
-      run("sealedSubObjectFeatureDisabled.kt");
-    }
+      @Test
+      @TestMetadata("nestedSealedHierarchy.kt")
+      public void testNestedSealedHierarchy() {
+        run("nestedSealedHierarchy.kt");
+      }
 
-    @Test
-    @TestMetadata("sealedSubObjectInVariable.kt")
-    public void testSealedSubObjectInVariable() {
-      run("sealedSubObjectInVariable.kt");
-    }
+      @Test
+      @TestMetadata("nullableType.kt")
+      public void testNullableType() {
+        run("nullableType.kt");
+      }
 
-    @Test
-    @TestMetadata("sealedSubObjectNotApplicable.kt")
-    public void testSealedSubObjectNotApplicable() {
-      run("sealedSubObjectNotApplicable.kt");
-    }
+      @Test
+      @TestMetadata("nullableTypeInnerRef.kt")
+      public void testNullableTypeInnerRef() {
+        run("nullableTypeInnerRef.kt");
+      }
 
-    @Test
-    @TestMetadata("sealedSubObjectPartialSelection.kt")
-    public void testSealedSubObjectPartialSelection() {
-      run("sealedSubObjectPartialSelection.kt");
+      @Test
+      @TestMetadata("typeArgumentPartialSelection.kt")
+      public void testTypeArgumentPartialSelection() {
+        run("typeArgumentPartialSelection.kt");
+      }
+
+      @Test
+      @TestMetadata("typeFeatureDisabled.kt")
+      public void testTypeFeatureDisabled() {
+        run("typeFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("typeNotApplicable.kt")
+      public void testTypeNotApplicable() {
+        run("typeNotApplicable.kt");
+      }
+
+      @Test
+      @TestMetadata("typeOutsideTypeOperator.kt")
+      public void testTypeOutsideTypeOperator() {
+        run("typeOutsideTypeOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("typePartialSelection.kt")
+      public void testTypePartialSelection() {
+        run("typePartialSelection.kt");
+      }
     }
   }
 

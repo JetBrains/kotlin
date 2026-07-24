@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.KaExplicitAnalysisRestriction
 
 /**
- * Forbids [analyze][org.jetbrains.kotlin.analysis.api.analyze] to be called in the given [action].
+ * Forbids [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] to be called in the given [action].
  *
  * @param description A human-readable description of the [action], which is used to generate error messages when
- *  [analyze][org.jetbrains.kotlin.analysis.api.analyze] is called.
+ *  [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] is called.
  */
 @OptIn(KaImplementationDetail::class)
 public inline fun <R> forbidAnalysis(description: String, action: () -> R): R {
@@ -31,7 +31,7 @@ public inline fun <R> forbidAnalysis(description: String, action: () -> R): R {
 public annotation class KaAllowAnalysisOnEdt
 
 /**
- * Allows [analyze][org.jetbrains.kotlin.analysis.api.analyze] to be called on the EDT in the given [action], which is normally not allowed.
+ * Allows [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] to be called on the EDT in the given [action], which is normally not allowed.
  *
  * Analysis is not supposed to be invoked from the EDT, as it may cause freezes. Use at your own risk!
  */
@@ -66,14 +66,14 @@ public annotation class KaAllowAnalysisFromWriteAction
 private annotation class KaAllowProhibitedAnalyzeFromWriteAction
 
 /**
- * Allows [analyze][org.jetbrains.kotlin.analysis.api.analyze] to be called from a write action in the given [action], which is normally
+ * Allows [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] to be called from a write action in the given [action], which is normally
  * not allowed.
  *
  * Analysis is not supposed to be called from a write action.
  * Such actions can lead to IDE freezes and incorrect behavior in some cases.
  *
  * There is no guarantee that PSI changes will be reflected in an Analysis API world inside
- * one [analyze][org.jetbrains.kotlin.analysis.api.analyze] session.
+ * one [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] session.
  * Example:
  * ```
  * // code to be analyzed

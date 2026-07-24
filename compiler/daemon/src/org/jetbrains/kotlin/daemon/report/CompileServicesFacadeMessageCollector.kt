@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
 import org.jetbrains.kotlin.daemon.common.*
 
 internal class CompileServicesFacadeMessageCollector(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        compilationOptions: CompilationOptions,
-        private val warningsAsErrors: Boolean
-) : MessageCollector {
+    private val servicesFacade: CompilerServicesFacadeBase,
+    compilationOptions: CompilationOptions,
+    private val warningsAsErrors: Boolean,
+) : MessageCollectorWithDiagnosticId {
     private val mySeverity = compilationOptions.reportSeverity
     private var hasErrors = false
 
@@ -35,7 +35,12 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
         log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
         when (severity) {
             CompilerMessageSeverity.OUTPUT -> {
@@ -52,7 +57,7 @@ internal class CompileServicesFacadeMessageCollector(
 
                     CompilerMessageSeverity.WARNING,
                     CompilerMessageSeverity.STRONG_WARNING,
-                    CompilerMessageSeverity.FIXED_WARNING
+                    CompilerMessageSeverity.FIXED_WARNING,
                         -> ReportSeverity.WARNING
 
                     CompilerMessageSeverity.INFO -> ReportSeverity.INFO
@@ -62,7 +67,11 @@ internal class CompileServicesFacadeMessageCollector(
                 }
 
                 if (reportSeverity.code <= mySeverity) {
-                    servicesFacade.report(ReportCategory.COMPILER_MESSAGE, reportSeverity, message, location)
+                    val attachment = if (location != null || diagnosticId != null)
+                        CompilerMessageAttachment(location, diagnosticId)
+                    else
+                        null
+                    servicesFacade.report(ReportCategory.COMPILER_MESSAGE, reportSeverity, message, attachment)
                 }
             }
         }

@@ -1,7 +1,0 @@
-KtNameReferenceExpression(64,68): 'this'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      extension receiver with type kotlin.String

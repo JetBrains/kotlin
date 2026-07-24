@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
@@ -36,13 +35,11 @@ internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(useSiteModule
  *
  * @param annotation The applied annotation value.
  * @param isDumb If `true`, the [annotation] only contains a [ClassId]. Both constructor pointer and arguments are not provided.
- * @param useSiteTarget Specifies a user-provided use-site annotation target if an annotation is applied on a declaration.
  * @param relativeIndex A relative index of the annotation with the same [ClassId] in an owner.
  */
 internal data class AnnotationApplication(
     val annotation: AnnotationValue.Annotation,
     val isDumb: Boolean,
-    val useSiteTarget: AnnotationUseSiteTarget?,
     val relativeIndex: Int,
 )
 
@@ -55,11 +52,11 @@ internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: I
         sourcePsi = psi,
     )
 
-    return AnnotationApplication(value, true, useSiteTarget, relativeIndex)
+    return AnnotationApplication(value, true, relativeIndex)
 }
 
 internal fun KaAnnotation.toLightClassAnnotationApplication(relativeIndex: Int, kaModule: KaModule): AnnotationApplication {
-    return AnnotationApplication(toLightClassAnnotationValue(kaModule), false, useSiteTarget, relativeIndex)
+    return AnnotationApplication(toLightClassAnnotationValue(kaModule), false, relativeIndex)
 }
 
 internal sealed class AnnotationValue {

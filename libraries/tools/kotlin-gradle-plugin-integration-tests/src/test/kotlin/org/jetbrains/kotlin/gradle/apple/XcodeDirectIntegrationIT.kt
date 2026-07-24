@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.io.File
 import java.util.stream.Stream
 import kotlin.io.path.isSymbolicLink
@@ -44,8 +45,8 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
     }
 
     internal class DirectIntegrationTestArgumentsProvider : GradleArgumentsProvider() {
-        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-            return super.provideArguments(context).flatMap { arguments ->
+        override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(parameters, context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
                 Stream.of(SchemePreAction, SchemePreActionSpm).flatMap { iosApp ->
                     Stream.of(true, false).map { isStatic ->
@@ -110,8 +111,8 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
     }
 
     internal class ArchivingTestArgumentsProvider : GradleArgumentsProvider() {
-        override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-            return super.provideArguments(context).flatMap { arguments ->
+        override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+            return super.provideArguments(parameters, context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
                 Stream.of(true, false).map { isStatic ->
                     Arguments.of(gradleVersion, isStatic)

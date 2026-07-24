@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -14,11 +13,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -103,7 +102,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
         backingPsi is PsiMember || otherBackingPsi is PsiMember -> {
             return backingPsi != null &&
                     otherBackingPsi != null &&
-                    PsiEquivalenceUtil.areElementsEquivalent(backingPsi, otherBackingPsi)
+                    backingPsi.manager.areElementsEquivalent(backingPsi, otherBackingPsi)
         }
 
         backingPsi !== otherBackingPsi -> return false
@@ -147,7 +146,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.cre
  * We cannot optimize super types by psi if at least one compiler plugin may generate additional types
  */
 private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
-    val declarationSiteModule = getModule(declaration)
+    val declarationSiteModule = declaration.kaModule
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
 }
@@ -156,7 +155,7 @@ private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrOb
  * We cannot optimize some declaration creations if at least one compiler plugin may generate additional declarations
  */
 internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
-    val declarationSiteModule = getModule(declaration)
+    val declarationSiteModule = declaration.kaModule
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
 }
@@ -165,7 +164,7 @@ internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtC
  * We cannot optimize the status by psi if at least one compiler plugin may transform it
  */
 internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDeclaration): Boolean {
-    val declarationSiteModule = getModule(declaration)
+    val declarationSiteModule = declaration.kaModule
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }
@@ -292,7 +291,7 @@ internal val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.i
 @OptIn(ExperimentalContracts::class)
 internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
     contract {
-        callsInPlace(action, kotlin.contracts.InvocationKind.AT_MOST_ONCE)
+        callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
 
     return if ((backingPsi as? KtElement)?.cameFromKotlinLibrary != false) null else action()
@@ -331,7 +330,7 @@ internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
 @OptIn(ExperimentalContracts::class)
 internal inline fun <R> KaFirPsiSymbol<*, *>.ifNotLibrarySource(action: () -> R): R? {
     contract {
-        callsInPlace(action, kotlin.contracts.InvocationKind.AT_MOST_ONCE)
+        callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
 
     return if (analysisSession.useSiteModule is KaLibrarySourceModule) null else action()

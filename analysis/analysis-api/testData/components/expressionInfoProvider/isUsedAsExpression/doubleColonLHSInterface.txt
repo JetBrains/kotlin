@@ -1,0 +1,4 @@
+expression: REFERENCE_EXPRESSION
+text: MyInterface
+isUsedAsExpression: false
+isUsedAsResultOfLambda: false

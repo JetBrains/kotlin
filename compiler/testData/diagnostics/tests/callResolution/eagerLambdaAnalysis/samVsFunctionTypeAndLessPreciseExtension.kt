@@ -1,6 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
+// This file doesn't contain LANGUAGE directive because it's expected
+// to work independently of language-version-settings configuration, so there should be no LATEST_LV_DIFFERENCE.
+
 import kotlin.reflect.KClass
 
 fun interface MyAction<F> {

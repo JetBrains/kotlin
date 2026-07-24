@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // ISSUE: KT-75977
 
 sealed interface Simple {

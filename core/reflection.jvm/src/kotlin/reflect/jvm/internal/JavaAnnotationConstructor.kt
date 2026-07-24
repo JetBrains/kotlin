@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
@@ -73,6 +74,11 @@ internal class JavaAnnotationConstructor(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> {
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return JavaAnnotationConstructor(klass)
+    }
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> {
+        require(boundReceiver === CallableReference.NO_RECEIVER) { "Annotation constructors cannot have bound receivers: $this" }
+        return this
     }
 
     override fun equals(other: Any?): Boolean {

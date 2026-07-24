@@ -1,6 +1,9 @@
 description = "Kotlin Power-Assert Compiler Plugin (Backend)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -15,6 +18,9 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
 
     implementation(project(":kotlin-power-assert-compiler-plugin.common"))
+    implementation(project(":compiler:psi:parser"))
+    implementation(project(":core:compiler.common.jvm"))
+    implementation(project(":core:descriptors"))
 
     compileOnly(intellijCore())
 }

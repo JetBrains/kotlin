@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,13 +11,13 @@ import kotlin.js.internal.boxedLong.BoxedLongApi
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public actual fun Double.isNaN(): Boolean = this != this
+public actual fun Double.isNaN(): Boolean = JsNumberObject.isNaN(this)
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public actual fun Float.isNaN(): Boolean = this != this
+public actual fun Float.isNaN(): Boolean = JsNumberObject.isNaN(this)
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
@@ -32,12 +32,12 @@ public actual fun Float.isInfinite(): Boolean = this == Float.POSITIVE_INFINITY 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Double.isFinite(): Boolean = JsNumberObject.isFinite(this)
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Float.isFinite(): Boolean = JsNumberObject.isFinite(this)
 
 
 /**

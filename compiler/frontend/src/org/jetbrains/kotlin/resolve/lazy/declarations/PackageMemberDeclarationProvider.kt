@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
+@K1Deprecation
 interface PackageMemberDeclarationProvider : DeclarationProvider {
     fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
 

@@ -363,7 +363,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                     + "\n. Change the caller accordingly"
             );
         }
-        final boolean isLocal = ReadAction.compute(() -> KtPsiUtil.isLocal(declaration));
+        final boolean isLocal = ReadAction.computeBlocking(() -> KtPsiUtil.isLocal(declaration));
         if (!isLocal){
             return lazyDeclarationResolver.resolveToDescriptor(declaration);
         }

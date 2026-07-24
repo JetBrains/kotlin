@@ -5,9 +5,9 @@ public class A {
     private final @org.jetbrains.annotations.NotNull field b: java.lang.String
     private final field c: float
     public method <init>(): void
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(p0: int): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=ERROR) method <init>(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public method <init>(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: float): void
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method <init>(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String): void
     public synthetic deprecated method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: int, p1: java.lang.String, p2: float, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic deprecated method <init>(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -19,10 +19,10 @@ public class A {
 @kotlin.Metadata
 public final class B {
     // source: 'super.kt'
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(): void
     public method <init>(@kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: boolean): void
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(p0: int): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int): void
     public method <init>(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public synthetic method <init>(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -31,10 +31,10 @@ public final class B {
 @kotlin.Metadata
 public final class C {
     // source: 'super.kt'
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(): void
     public method <init>(@kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: boolean): void
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(p0: int): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(p0: int): void
     public method <init>(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public synthetic method <init>(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void

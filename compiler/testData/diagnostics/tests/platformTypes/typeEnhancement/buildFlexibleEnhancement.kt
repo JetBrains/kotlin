@@ -3,7 +3,6 @@
 // FULL_JDK
 // WITH_STDLIB
 // WITH_REFLECT
-// SKIP_TXT
 
 // FILE: NonNullApi.java
 

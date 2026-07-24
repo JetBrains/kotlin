@@ -231,7 +231,7 @@ class UnsignedArraysTest {
             assertTrue(ulongArrayOf() contentEquals ULongArray(3) { it.toULong() }.copyOfRange(pos, pos))
         }
 
-        for ((start, end) in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
+        for ([start, end] in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
             val bounds = "start: $start, end: $end"
             val exClass = if (start > end) IllegalArgumentException::class else IndexOutOfBoundsException::class
             assertFailsWith(exClass, bounds) { uintArrayOf(1u).copyOfRange(start, end) }

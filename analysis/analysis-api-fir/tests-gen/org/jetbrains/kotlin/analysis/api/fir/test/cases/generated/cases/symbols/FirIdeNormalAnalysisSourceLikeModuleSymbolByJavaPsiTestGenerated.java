@@ -50,6 +50,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByJavaPsiTestGenerated ex
   }
 
   @Test
+  @TestMetadata("javaClassDeprecatedInJavaDoc.kt")
+  public void testJavaClassDeprecatedInJavaDoc() {
+    run("javaClassDeprecatedInJavaDoc.kt");
+  }
+
+  @Test
   @TestMetadata("javaConstructor.kt")
   public void testJavaConstructor() {
     run("javaConstructor.kt");

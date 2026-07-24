@@ -1,0 +1,11 @@
+--- a/for.ir.txt
++++ b/for.ir.jvm_ir.txt
+@@ -20,7 +20,7 @@
+               CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=kotlin.String origin=COMPONENT_N(index=2)
+                 ARG <this>: GET_VAR 'val tmp_1: kotlin.Pair<kotlin.Int, kotlin.String> declared in <root>.testDestructuring' type=kotlin.Pair<kotlin.Int, kotlin.String> origin=null
+             BLOCK type=kotlin.Unit origin=null
+-              CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
++              CALL 'public final fun println (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+                 ARG message: GET_VAR 'val i: kotlin.Int declared in <root>.testDestructuring' type=kotlin.Int origin=null
+               CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+                 ARG message: GET_VAR 'val s: kotlin.String declared in <root>.testDestructuring' type=kotlin.String origin=null

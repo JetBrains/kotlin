@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.PsiClassRenderer
@@ -24,11 +25,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal object JavaInteroperabilityComponentTestUtils {
-    fun KaType.render(analysisSession: KaSession): String {
-        with(analysisSession) {
-            return this@render.render(position = Variance.INVARIANT)
-        }
-    }
+    context(session: KaSession)
+    fun KaType.render(): String = render(position = Variance.INVARIANT)
 
     fun PsiType.render(): String = PsiClassRenderer.renderType(this)
 

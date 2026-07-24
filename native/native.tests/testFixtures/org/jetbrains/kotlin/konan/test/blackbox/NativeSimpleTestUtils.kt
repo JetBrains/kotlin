@@ -145,15 +145,18 @@ fun AbstractNativeSimpleTest.compileToLibrary(
 fun AbstractNativeSimpleTest.cinteropToLibrary(
     defFile: File,
     outputDir: File,
-    freeCompilerArgs: TestCompilerArgs
+    freeCompilerArgs: TestCompilerArgs,
+    noDefaultLibs: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
     val testCase: TestCase = generateCInteropTestCaseFromSingleDefFile(defFile, freeCompilerArgs)
+    val packed = "-nopack" !in freeCompilerArgs.cinteropArgs
     return CInteropCompilation(
         settings = testRunSettings,
         freeCompilerArgs = freeCompilerArgs,
         defFile = testCase.modules.single().files.single().location,
         dependencies = emptyList(),
-        expectedArtifact = getLibraryArtifact(testCase, outputDir)
+        expectedArtifact = getLibraryArtifact(testCase, outputDir, packed),
+        noDefaultLibs = noDefaultLibs,
     ).result
 }
 

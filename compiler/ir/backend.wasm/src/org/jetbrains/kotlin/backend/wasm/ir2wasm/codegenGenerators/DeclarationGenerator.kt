@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.WasmAnyRef
+import org.jetbrains.kotlin.wasm.ir.WasmContRefType
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilderWithOptimizer
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmExternRef
 import org.jetbrains.kotlin.wasm.ir.WasmF32
 import org.jetbrains.kotlin.wasm.ir.WasmF64
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
+import org.jetbrains.kotlin.wasm.ir.WasmFunctionAnnotation
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 import org.jetbrains.kotlin.wasm.ir.WasmHeapType
 import org.jetbrains.kotlin.wasm.ir.WasmI32
@@ -209,6 +211,10 @@ class DeclarationGenerator(
 
         val declarationBody = declaration.body
         require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
+
+        if (declaration.symbol in backendContext.jsCalledFunctions) {
+            function.functionAnnotations.add(WasmFunctionAnnotation.JsCalled)
+        }
 
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
@@ -520,7 +526,7 @@ class DeclarationGenerator(
 
         val specialSlotIFaces = backendContext.specialSlotITableTypes
 
-        val (forward, back) = supportedInterfaces.partition { it.symbol !in specialSlotIFaces && !it.symbol.isFunction() }
+        val [forward, back] = supportedInterfaces.partition { it.symbol !in specialSlotIFaces && !it.symbol.isFunction() }
         val supportedPushedBack = forward + back
 
         for (iFace in supportedPushedBack) {
@@ -587,6 +593,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            is WasmContRefType -> g.buildRefNull(WasmHeapType.Simple.Cont, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }

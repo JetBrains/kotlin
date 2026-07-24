@@ -3,13 +3,10 @@ org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue.displayText
 org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
-org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.arguments
-org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
 org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
 org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
-org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
 org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
 org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
@@ -44,7 +41,6 @@ org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
 org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
-org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
 org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
@@ -99,6 +95,8 @@ org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNul
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression.isNegated
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression.negated()
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractLogicalNotExpression.argument
+org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot
+org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic.diagnosticClass
 org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity.ERROR
 org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity.INFO
@@ -572,11 +570,13 @@ org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.provideExtensionsFor(KaModule)
 org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.Companion.getInstance(Project)
-org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, KaSession.() -> R)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, context(KaSession) () -> R)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KtElement, KaSession.() -> R)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(PsiElement, context(KaSession) () -> R)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.clearCaches()
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(KaModule)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(KtElement)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(PsiElement)
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.resolveKdocFqName(KaSession, FqName, KtElement)
 org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.isClass
@@ -588,10 +588,8 @@ org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderAnnotationApplic
 org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderForSubstitutionOverrideUnwrappingTest(KaSession, KaSymbol)
 org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderType(KaSession, KaType)
 org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol.compilerVisibility
-org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol.typeParameters
 org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer((KaSession) -> S?)
 org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerDelegator(KaSymbolPointer<T>, KaSession.(T) -> R?)
-org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier.name
 org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier.typeArguments
 org.jetbrains.kotlin.analysis.api.types.KaErrorType.errorMessage

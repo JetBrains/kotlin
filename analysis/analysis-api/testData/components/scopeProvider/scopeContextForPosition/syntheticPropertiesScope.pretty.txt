@@ -5,6 +5,8 @@ implicit values:
     type = JavaClass
     ownerSymbol = KaNamedFunctionSymbol:
       /test(<extension receiver>: JavaClass): kotlin.Unit
+    label = test
+
 
 scopes:
   LocalScope, index = 0
@@ -63,4 +65,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

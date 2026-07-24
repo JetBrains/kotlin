@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 
 import java.util.Collections
 
+@K1Deprecation
 abstract class BreakableBlockInfo(open val element: KtElement, val entryPoint: Label, val exitPoint: Label) : BlockInfo() {
     val referablePoints: MutableSet<Label> = hashSetOf()
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
     private val typePreparatorUnwrappingEnhancement: KotlinTypePreparator = object : KotlinTypePreparator() {
         override fun prepareType(type: KotlinTypeMarker): UnwrappedType =

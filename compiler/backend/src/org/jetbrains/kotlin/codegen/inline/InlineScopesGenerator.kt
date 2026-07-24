@@ -340,9 +340,6 @@ class InlineScopesGenerator {
     }
 }
 
-fun updateCallSiteLineNumber(name: String, newLineNumber: Int): String =
-    updateCallSiteLineNumber(name) { newLineNumber }
-
 fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
     if (callSiteLineNumber == null) {
@@ -368,7 +365,7 @@ fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
 internal fun MethodNode.getLabelToIndexMap(): Map<Label, Int> =
     instructions.filterIsInstance<LabelNode>()
         .withIndex()
-        .associate { (index, labelNode) ->
+        .associate { [index, labelNode] ->
             labelNode.label to index
         }
 

@@ -10,28 +10,28 @@ java {
 }
 
 android {
-    compileSdkVersion(34)
+    compileSdk = 34
     namespace = "io.sellmair.mpp"
     defaultConfig {
-        minSdkVersion(22)
-        targetSdkVersion(34)
+        minSdk = 22
+        targetSdk = 34
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    flavorDimensions("pricing", "releaseType")
+    flavorDimensions += listOf("pricing", "releaseType")
 
     productFlavors {
         create("beta") {
-            setDimension("releaseType")
+            dimension = "releaseType"
         }
         create("production") {
-            setDimension("releaseType")
+            dimension = "releaseType"
         }
         create("free") {
-            setDimension("pricing")
+            dimension = "pricing"
         }
         create("paid") {
-            setDimension("pricing")
+            dimension = "pricing"
         }
     }
 
@@ -69,7 +69,7 @@ kotlin {
     androidTarget {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
     }
-    macosX64("macos")
+    macosX64()
 
     sourceSets {
         getByName("commonMain").dependencies {

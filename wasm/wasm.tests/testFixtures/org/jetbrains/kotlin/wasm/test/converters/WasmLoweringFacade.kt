@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -52,6 +54,7 @@ internal fun CompilerConfiguration.configureWith(directives: RegisteredDirective
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmUseNewExceptionProposal =
         (USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in directives) && (USE_NEW_EXCEPTION_HANDLING_PROPOSAL in directives || wasmTarget == WasmTarget.WASI)
+    wasmUseStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in directives
     wasmForceDebugFriendlyCompilation = FORCE_DEBUG_FRIENDLY_COMPILATION in directives
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmGenerateWat = debugMode >= DebugMode.DEBUG || wasmGenerateWat
@@ -88,7 +91,6 @@ class WasmLoweringFacade(
             PhaseConfig()
         }
 
-        val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
         with(configuration) {
             phaseConfig = phaseConfigToConfigure
             outputName = WASM_BASE_FILE_NAME
@@ -97,7 +99,7 @@ class WasmLoweringFacade(
         }
 
         val testPackage = extractTestPackage(testServices)
-        val exportedBoxDeclaration = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
@@ -109,12 +111,16 @@ class WasmLoweringFacade(
             WholeWorldCompiler(configuration, irFactory)
         }
 
-        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration, mainModule)
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(moduleInfo, configuration)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, exportedBoxDeclaration, allModules, context)
+            compiler.lowerIr(moduleInfo, allModules, context)
+        }
+
+        if (configuration.diagnosticsCollector.hasErrors) {
+            return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
         }
 
         val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
@@ -169,7 +175,7 @@ class WasmLoweringFacade(
     }
 
     private fun WasmCompilerResult.runThirdPartyOptimizer(multiModule: Boolean): WasmCompilerResult {
-        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
+        (val newWasm = wasm, val newWat = wat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
         return WasmCompilerResult(
             wat = newWat,
             jsWrapper = jsWrapper,

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEqualsOverrideContractCalculator
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -32,7 +34,8 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
+abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase),
+    SessionAndScopeSessionHolder {
     abstract val context: BodyResolveContext
     abstract val components: BodyResolveTransformerComponents
     abstract val resolutionContext: ResolutionContext
@@ -42,6 +45,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         internal set
 
     final override val session: FirSession get() = components.session
+    final override val scopeSession: ScopeSession get() = components.scopeSession
 
     @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
@@ -97,7 +101,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val callResolver: FirCallResolver get() = components.callResolver
     protected inline val callCompleter: FirCallCompleter get() = components.callCompleter
     inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
-    protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
 
     /**
@@ -150,6 +153,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val syntheticCallGenerator: FirSyntheticCallGenerator by lazy(LazyThreadSafetyMode.NONE) { FirSyntheticCallGenerator(this) }
         override val callableReferenceLhsResolver: FirCallableReferenceLhsResolver by lazy(LazyThreadSafetyMode.NONE) {
             FirCallableReferenceLhsResolver(this, context)
+        }
+
+        override val equalsOverrideContractCalculator: FirEqualsOverrideContractCalculator by lazy(LazyThreadSafetyMode.NONE) {
+            FirEqualsOverrideContractCalculator(session, scopeSession)
         }
 
         override val outerClassManager: FirOuterClassManager by lazy(LazyThreadSafetyMode.NONE) {

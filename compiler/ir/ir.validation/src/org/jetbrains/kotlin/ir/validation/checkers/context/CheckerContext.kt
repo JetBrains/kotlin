@@ -37,22 +37,35 @@ class CheckerContext(
     context(checker: IrChecker)
     fun error(element: IrElement, message: String) = error(element, checker, message)
 
-    fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
-        typeParameterScopeStack.withNewScope(
-            outerScopesAreInvisible = container is IrClass && !container.isInner && container.visibility != DescriptorVisibilities.LOCAL,
+    fun enterNewScopeWithTypeParameters(container: IrTypeParametersContainer) {
+        typeParameterScopeStack.enterScope(
+            outerScopesAreInvisible = container.shouldHaveOuterScopesVisible(),
             populateScope = { container.typeParameters.forEach { add(it.symbol) } },
-            block = block,
         )
     }
 
-    fun withScopeOwner(owner: IrElement, block: () -> Unit, populateScope: MutableSet<IrValueSymbol>.() -> Unit = {}) {
-        valueSymbolScopeStack.withNewScope(
+    fun exitScopeWithTypeParameters(container: IrTypeParametersContainer) {
+        typeParameterScopeStack.exitScope(
+            outerScopesAreInvisible = container.shouldHaveOuterScopesVisible(),
+        )
+    }
+
+    fun enterNewScopeForOwner(owner: IrElement, populateScope: MutableSet<IrValueSymbol>.() -> Unit = {}) {
+        valueSymbolScopeStack.enterScope(
             isGlobalScope = owner is IrScript,
-            outerScopesAreInvisible = owner is IrClass && !owner.isInner && owner.visibility != DescriptorVisibilities.LOCAL,
-            block = block,
+            outerScopesAreInvisible = owner.shouldHaveOuterScopesVisible(),
             populateScope = populateScope
         )
     }
+
+    fun exitScopeForOwner(owner: IrElement) {
+        valueSymbolScopeStack.exitScope(
+            outerScopesAreInvisible = owner.shouldHaveOuterScopesVisible(),
+        )
+    }
+
+    private fun IrElement.shouldHaveOuterScopesVisible(): Boolean =
+        this is IrClass && !this.isInner && this.visibility != DescriptorVisibilities.LOCAL
 
     fun withinAnnotationUsageSubTree(block: () -> Unit) {
         if (withinAnnotationUsageSubTree) {

@@ -361,14 +361,14 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
 
         val actualToExpect = hashMapOf<File, MutableSet<File>>()
-        for ((expect, actuals) in expectActualTracker.expectToActualMap) {
+        for ([expect, actuals] in expectActualTracker.expectToActualMap) {
             for (actual in actuals) {
                 actualToExpect.getOrPut(actual) { hashSetOf() }.add(expect)
             }
             complementaryFilesMap[expect] = actuals.union(complementaryFilesMap[expect].orEmpty())
         }
 
-        for ((actual, expects) in actualToExpect) {
+        for ([actual, expects] in actualToExpect) {
             complementaryFilesMap[actual] = expects.union(complementaryFilesMap[actual].orEmpty())
         }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
+@K1Deprecation
 class MainFunctionDetector {
     private val languageVersionSettings: LanguageVersionSettings by lazy { getLanguageVersionSettings() }
     private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor?

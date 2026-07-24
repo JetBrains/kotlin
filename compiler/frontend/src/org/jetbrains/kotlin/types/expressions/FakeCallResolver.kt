@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -37,12 +38,14 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 enum class FakeCallKind {
     ITERATOR,
     COMPONENT,
     OTHER
 }
 
+@K1Deprecation
 class FakeCallResolver(
     private val project: Project,
     private val callResolver: CallResolver

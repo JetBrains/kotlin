@@ -12,17 +12,19 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
+import org.jetbrains.kotlin.fir.analysis.checkers.unwrapVarargValue
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.declarations.unwrapVarargValue
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -48,15 +50,15 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     override fun check(expression: FirAnnotationCall) {
         val annotationClassId = expression.toAnnotationClassId(context.session)
         val fqName = annotationClassId?.asSingleFqName()
-        for (arg in expression.argumentList.arguments) {
-            val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
+        for (arg in expression.arguments) {
+            val argExpression = ((arg as? FirErrorExpression)?.expression ?: arg).unwrapArgument()
             checkAnnotationArgumentWithSubElements(argExpression, context.session)
                 ?.let { reporter.reportOn(argExpression.source, it) }
         }
 
         checkAnnotationsWithVersion(fqName, expression)
         checkDeprecatedSinceKotlin(expression.source, fqName, expression.argumentMapping.mapping)
-        checkAnnotationsInsideAnnotationCall(expression)
+        checkArgumentsInsideAnnotationCall(expression.arguments, LanguageFeature.AllowAnnotationsOnArgumentsOfAnnotations.isDisabled())
         checkNotAClass(expression)
         checkErrorSuppression(annotationClassId, expression.argumentMapping.mapping)
         checkContextFunctionTypeParams(expression.source, annotationClassId)
@@ -71,7 +73,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
             var usedNonConst = false
 
-            for (arg in args.arguments) {
+            for (arg in args.arguments.map { it.unwrapArgument() }) {
                 val sourceForReport = arg.source
 
                 when (val err = checkAnnotationArgumentWithSubElements(arg, session)) {
@@ -85,8 +87,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
 
-            return if (usedNonConst) FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-            else null
+            return FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.takeIf { usedNonConst }
         }
 
         when (expression) {
@@ -99,17 +100,19 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
             else -> {
-                return when (computeConstantExpressionKind(expression, session, calledOnCheckerStage = true)) {
-                    ConstantArgumentKind.NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
-                    ConstantArgumentKind.ENUM_NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
-                    ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
-                    ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-                    ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR ->
+                @OptIn(PrivateConstantEvaluatorAPI::class)
+                val evaluationResult = FirExpressionEvaluator.evaluateExpression(expression, context.session)
+                return when (evaluationResult) {
+                    is FirEvaluatorResult.Evaluated -> null
+                    FirEvaluatorResult.EnumNotConst -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
+                    FirEvaluatorResult.NotKClassLiteral -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
+                    FirEvaluatorResult.KClassLiteralOfTypeParameterError -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+                    FirEvaluatorResult.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+                    FirEvaluatorResult.ResolutionError ->
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
-                        if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
-                        else null
+                        (expression as? FirFunctionCall)?.let { checkArgumentList(it.argumentList) }
+                    else -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
                 }
             }
         }
@@ -165,7 +168,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         var warningSince: ApiVersion? = null
         var errorSince: ApiVersion? = null
         var hiddenSince: ApiVersion? = null
-        for ((name, argument) in argumentMapping) {
+        for ([name, argument] in argumentMapping) {
             val identifier = name.identifier
             if (identifier == "warningSince" || identifier == "errorSince" || identifier == "hiddenSince") {
                 val version = parseVersionExpressionOrReport(argument)
@@ -200,26 +203,32 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAnnotationsInsideAnnotationCall(
-        expression: FirCall,
+    private fun checkArgumentsInsideAnnotationCall(
+        arguments: List<FirExpression>,
+        reportAnnotationsOnAnnotationArguments: Boolean,
     ) {
-        val args = expression.argumentList.arguments
-        for (arg in args) {
+        for (arg in arguments) {
             val unwrapped = arg.unwrapArgument()
             val unwrappedErrorExpression = unwrapped.unwrapErrorExpression()
+            if (unwrappedErrorExpression is FirVarargArgumentsExpression) {
+                checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments = false)
+                continue
+            }
             val errorFactory = if (unwrapped is FirErrorExpression && unwrapped.expression == null) {
                 // The error is reported if only a syntax error is reported as well (empty element) that leads to some duplication.
                 // However, the `ANNOTATION_USED_AS_ANNOTATION_ARGUMENT` allows applying the `RemoveAtFromAnnotationArgument` quick-fix.
                 // That's why it's useful to have it.
                 FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
             } else {
-                FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT
+                FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT.takeIf { reportAnnotationsOnAnnotationArguments }
             }
-            for (ann in unwrappedErrorExpression.annotations) {
-                reporter.reportOn(ann.source, errorFactory)
+            if (errorFactory != null) {
+                for (ann in unwrappedErrorExpression.annotations) {
+                    reporter.reportOn(ann.source, errorFactory)
+                }
             }
             if (unwrappedErrorExpression is FirCollectionLiteral) {
-                checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression)
+                checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments)
             }
         }
     }

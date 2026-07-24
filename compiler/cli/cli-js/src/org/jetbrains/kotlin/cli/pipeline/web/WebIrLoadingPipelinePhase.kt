@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.MainModule.Klib
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
@@ -44,10 +43,9 @@ abstract class WebIrLoadingPipelinePhase(
         val includesPath = File(includes).canonicalPath
         val mainLibPath = configuration.libraries.find { File(it).canonicalPath == includesPath }
             ?: error("No library with name $includes ($includesPath) found")
-        val kLib = Klib(mainLibPath)
         val klibs = loadWebKlibs(configuration, configuration.platformChecker)
         val module = ModulesStructure(
-            mainModule = kLib,
+            mainModulePath = mainLibPath,
             compilerConfiguration = configuration,
             klibs = klibs,
         )

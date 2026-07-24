@@ -173,7 +173,7 @@ open class SpecialGenericSignatures {
 
         // java/lang/Number.intValue()I, java/lang/ etc.
         val JVM_SIGNATURES_FOR_RENAMED_BUILT_INS: Set<String> =
-            NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapTo(mutableSetOf()) { (signatureAndName, jdkName) ->
+            NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapTo(mutableSetOf()) { [signatureAndName, jdkName] ->
                 signatureAndName.copy(name = jdkName).signature
             }
 

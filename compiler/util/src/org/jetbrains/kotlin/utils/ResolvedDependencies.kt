@@ -103,7 +103,7 @@ object ResolvedDependenciesSupport {
                 module.requestedVersionsByIncomingDependencies.entries.joinTo(
                     this,
                     separator = ""
-                ) { (incomingDependencyId, requestedVersion) ->
+                ) { [incomingDependencyId, requestedVersion] ->
                     val incomingDependencyIndex = moduleIdToIndex.getValue(incomingDependencyId)
                     " #$incomingDependencyIndex[$requestedVersion]"
                 }
@@ -175,7 +175,7 @@ object ResolvedDependenciesSupport {
 
         // Stamp incoming dependencies & requested versions.
         modules.forEach { module ->
-            requestedVersionsByIncomingDependenciesIndices[module.id]?.forEach { (incomingDependencyIndex, requestedVersion) ->
+            requestedVersionsByIncomingDependenciesIndices[module.id]?.forEach { [incomingDependencyIndex, requestedVersion] ->
                 val incomingDependencyId = if (incomingDependencyIndex == 0)
                     sourceCodeModuleId!!
                 else

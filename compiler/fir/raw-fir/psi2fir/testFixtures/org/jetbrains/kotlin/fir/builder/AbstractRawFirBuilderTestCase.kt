@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNonPublicApi
@@ -44,22 +43,15 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.File
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
 @OptIn(ObsoleteTestInfrastructure::class)
-abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
-    "",
-    "kt",
-    KotlinParserDefinition()
-) {
-    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory()
-
+abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {
         val psiFactory = KtPsiFactory(myProject)
         return when (fileType) {
@@ -72,7 +64,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    protected open fun doRawFirTest(filePath: String) {
+    protected open fun runTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)
@@ -90,7 +82,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val expectedFile = File(expectedPath)
         val annotations = firFile.collectAnnotations()
         if (annotations.isEmpty()) {
-            JUnit4Assertions.assertFileDoesntExist(expectedFile) {
+            JUnit5Assertions.assertFileDoesntExist(expectedFile) {
                 "No annotations found, but $expectedFile exists"
             }
 
@@ -99,7 +91,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
         val actual = annotations.groupBy(AnnotationWithContext::annotation)
             .entries
-            .joinToString(separator = "\n\n") { (annotation, contexts) ->
+            .joinToString(separator = "\n\n") { [annotation, contexts] ->
                 buildString {
                     appendLine(annotation.render().trim())
                     append("owner -> ")
@@ -136,8 +128,11 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return renderer.renderElementAsString(firFile)
     }
 
-    protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
-        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(this.text))
+    protected fun KtFile.toFirFile(
+        bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
+        features: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
+    ): FirFile {
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(this.text) + features)
         return toFirFile(session, bodyBuildingMode)
     }
 

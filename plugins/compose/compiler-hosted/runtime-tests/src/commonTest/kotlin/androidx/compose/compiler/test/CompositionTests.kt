@@ -26,16 +26,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.BeforeClass
-import org.junit.experimental.categories.Category
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Category(SmokeTest::class)
+@SmokeTest
 class CompositionTests {
     companion object {
         @OptIn(ExperimentalCoroutinesApi::class)
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setupMainDispatcher() {
             Dispatchers.setMain(StandardTestDispatcher())
@@ -516,6 +515,45 @@ class CompositionTests {
         counter += 10
         advance()
     }
+
+    /**
+     * This is a regression test against a bug that made it possible for a value of an unstable type
+     * to get passed into code that was generated to only expect to receive values of stable types.
+     * types. For more details, see https://issuetracker.google.com/issues/511102714.
+     */
+    @Test
+    fun subtypeStabilityNeglectedRegressionTest() = compositionTest {
+        val state = mutableStateOf<LoadingState<Unstable>>(LoadingState.Loading)
+        val result = mutableStateOf(false)
+
+        compose {
+            SubtypeStabilityNeglectedRegressionTestEntrypoint(state.value, result)
+        }
+
+        state.value = LoadingState.Content(Unstable())
+        advance()
+        assertEquals(true, result.value)
+    }
+
+    /**
+     * This is a regression test against a bug that made it possible for the `$changed` mask passed
+     * to [ConsumeChildState] to incorrectly say that the `state` parameter is of an unstable type,
+     * causing the function to skip too often. For more details, see
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun castTargetTypeStabilityNeglectedTest() = compositionTest {
+        val state = mutableStateOf<ParentState>(ChildState(0))
+        val result = mutableStateOf(false)
+
+        compose {
+            CastTargetTypeStabilityNeglectedTestEntrypoint(state.value, result)
+        }
+
+        state.value = ChildState(1)
+        advance()
+        assertEquals(true, result.value)
+    }
 }
 
 @Composable
@@ -672,4 +710,38 @@ private fun Modifier.clickable(f: () -> Unit): Modifier = this
 @Composable
 fun AnyParameter(any: Any = Any()) {
     use(any)
+}
+
+internal class Unstable {
+    @Suppress("unused")
+    var x: Int = 0
+}
+
+internal sealed class LoadingState<T> {
+    data object Loading : LoadingState<Unstable>()
+    data class Content<T : Any>(var data: T) : LoadingState<T>()
+}
+
+@Composable
+internal fun <T> LoadingContent(state: LoadingState<T>, result: MutableState<Boolean>) {
+    LaunchedEffect(state) {
+        if (state is LoadingState.Content<*>) {
+            result.value = true
+        }
+    }
+}
+
+internal open class ParentState
+
+internal class ChildState(val value: Int) : ParentState()
+
+// This function and [ChildState] need to be in the same file so that the stability of [ChildState]
+// is `Stability.Stable` from the perspective of this function.
+@Composable
+internal fun ConsumeChildState(state: ChildState, result: MutableState<Boolean>) {
+    LaunchedEffect(state) {
+        if (state.value > 0) {
+            result.value = true
+        }
+    }
 }

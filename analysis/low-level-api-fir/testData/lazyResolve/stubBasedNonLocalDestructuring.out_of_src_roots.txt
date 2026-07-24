@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(COMPANION_GENERATION)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+SUPER_TYPES:
+FILE: [ResolvedTo(SUPER_TYPES)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+TYPES:
+FILE: [ResolvedTo(TYPES)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+STATUS:
+FILE: [ResolvedTo(STATUS)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+CONTRACTS:
+FILE: [ResolvedTo(CONTRACTS)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(CONSTANT_EVALUATION)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))

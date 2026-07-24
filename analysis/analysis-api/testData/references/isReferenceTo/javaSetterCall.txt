@@ -1,2 +1,0 @@
-Resolved to:
-    (in DeclSite) (psi: public void setX(int value) )

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationWasmSymbolValidationHandler
-import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondStageSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
@@ -48,8 +48,8 @@ class WasmJsSymbolsTest : AbstractSymbolsValidationTest(
     }
 }
 
-class WasmJsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override val blackList: List<String> = listOf("createDynamicKType", "invokeOnExportedFunctionExit")
+class WasmJsSymbolValidationHandler(testServices: TestServices) : IrSecondStageSymbolValidationHandler(testServices) {
+    override val blackList: List<String> = listOf("createDynamicKType", "invokeOnExportedFunctionExit", "coroutineImpl")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         val configurationJs = CompilerConfiguration.create().apply { put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS) }
@@ -77,8 +77,8 @@ class WasmWasiSymbolsTest : AbstractSymbolsValidationTest(
     }
 }
 
-class WasmWasiSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override val blackList: List<String> = listOf("createDynamicKType", "jsRelatedSymbols")
+class WasmWasiSymbolValidationHandler(testServices: TestServices) : IrSecondStageSymbolValidationHandler(testServices) {
+    override val blackList: List<String> = listOf("createDynamicKType", "jsRelatedSymbols", "coroutineImpl")
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         val configurationWasi = CompilerConfiguration.create().apply { put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.WASI) }

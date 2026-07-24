@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
+@K1Deprecation
 object OptionalExpectationChecker {
     fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, trace: BindingTrace) {
         if (descriptor !is MemberDescriptor || !descriptor.isExpect) {

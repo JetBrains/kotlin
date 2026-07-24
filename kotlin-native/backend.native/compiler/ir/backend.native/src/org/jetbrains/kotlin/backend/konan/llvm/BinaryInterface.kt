@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
@@ -15,11 +16,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getConstArgument
+import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -74,7 +78,8 @@ object KonanBinaryInterface {
         }
 
         this.findManglingAnnotation()?.let {
-            val name = it.getAnnotationStringValue() ?: this.name.asString()
+            val name = it.getConstArgument<String>(it.classSymbol.owner.primaryConstructor!!.parameters.first().name.asString())
+                    ?: this.name.asString()
             return name // no wrapping currently required
         }
 
@@ -140,6 +145,33 @@ fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.repl
 fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
 
 fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
+
+/**
+ * Delegates to different naming strategies depending on whether the function is exported or not.
+ *
+ * When [forImplementation] is true, returns the symbol name under which the function's own body is emitted: for overridable methods
+ * a virtual trampoline takes over the public symbol name, so the body moves aside to `<name>-impl`. Callers reach the body either
+ * through the vtable/itable (via the trampoline) or directly for super calls and devirtualized calls.
+ */
+internal fun IrSimpleFunction.computeSymbolName(
+        context: NativeBackendContext,
+        forImplementation: Boolean,
+        internalSymbolNameBuilder: () -> String? = { -> null },
+): String = with(KonanBinaryInterface) {
+    val symbolName = if (isExported(this@computeSymbolName))
+        computeSymbolName()
+    else {
+        internalSymbolNameBuilder() ?: run {
+            val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
+                    ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this@computeSymbolName)
+            computePrivateSymbolName(containerName)
+        }
+    }
+    if (forImplementation && needsVirtualTrampoline)
+        "$symbolName-impl"
+    else
+        symbolName
+}
 
 private fun String.replaceSpecialSymbols() =
         // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.

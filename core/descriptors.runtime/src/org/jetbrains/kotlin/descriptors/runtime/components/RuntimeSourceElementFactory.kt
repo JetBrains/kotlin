@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaElement
 
+@K1Deprecation
 object RuntimeSourceElementFactory : JavaSourceElementFactory {
     class RuntimeSourceElement(override val javaElement: ReflectJavaElement) : JavaSourceElement {
         override fun toString() = this::class.java.name + ": " + javaElement.toString()

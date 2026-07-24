@@ -43,7 +43,7 @@ class ArgumentsTests {
         val debugMode by argParser.option(ArgType.Boolean, "debug", "d", "Debug mode")
         argParser.parse(arrayOf("2", "-d", "3", "out.txt"))
         assertEquals("out.txt", output)
-        val (first, second) = addendums
+        val [first, second] = addendums
         assertEquals(2, addendums.size)
         assertEquals(2, first)
         assertEquals(3, second)

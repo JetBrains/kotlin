@@ -30,6 +30,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval d: R|D|
+Expression Stability: STABLE_VALUE
 Smart Casts:
     FirValueParameterSymbol a: R|T|
     Stability: STABLE_VALUE

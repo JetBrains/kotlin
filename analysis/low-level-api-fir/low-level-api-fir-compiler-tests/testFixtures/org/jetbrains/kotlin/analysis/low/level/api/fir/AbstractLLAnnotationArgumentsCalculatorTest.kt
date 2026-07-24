@@ -151,7 +151,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
     private fun collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile: KtFile, testServices: TestServices): List<AnnotationResult> {
         // We analyze the stub-based file, so all failed annotations represent annotations which
         // weren't able to calculate arguments via stubs
-        val (stubBasedAnnotations, astBasedAnnotations) = collectAnnotations(stubBasedFile).partition {
+        val [stubBasedAnnotations, astBasedAnnotations] = collectAnnotations(stubBasedFile).partition {
             it.isCalculatedSuccessfully
         }
 

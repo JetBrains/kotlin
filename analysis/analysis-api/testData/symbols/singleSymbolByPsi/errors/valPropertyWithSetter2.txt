@@ -1,7 +1,8 @@
 KaPropertySetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -16,16 +17,17 @@ KaPropertySetterSymbol:
   modality: FINAL
   origin: SOURCE
   parameter: KaValueParameterSymbol:
+    anchorPsi: KtPropertyAccessor
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
-    generatedPrimaryConstructorProperty: null
     hasDeclaredDefaultValue: false
     hasDefaultValue: false
     isActual: false
     isCompanion: false
     isCrossinline: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -37,34 +39,42 @@ KaPropertySetterSymbol:
     modality: FINAL
     name: value
     origin: SOURCE
+    primaryConstructorProperty: null
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Unit
+  typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtPropertyAccessor
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -76,21 +86,25 @@ KaPropertySetterSymbol:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
   getContainingJvmClassName: ValPropertyWithSetter2Kt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

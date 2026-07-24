@@ -1,2 +1,2 @@
-KtNamedFunction(0,63): '/**'
+KDocName(8,47): 'kotlin.LazyThreadSafetyMode.PUBLICATION'
   NO_CANDIDATES

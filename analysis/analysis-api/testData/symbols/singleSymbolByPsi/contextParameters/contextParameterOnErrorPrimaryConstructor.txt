@@ -1,10 +1,12 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -13,14 +15,17 @@ KaContextParameterSymbol:
   modality: FINAL
   name: c
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: Clazz
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(contextParameterOnErrorPrimaryConstructor.kt)
   getContainingJvmClassName: Clazz
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

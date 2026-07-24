@@ -20,6 +20,4 @@
 
 /inDefaultValues.kt:33:25: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:35:19: error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'String' was expected.
-
-/inDefaultValues.kt:35:19: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+/inDefaultValues.kt:35:19: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.

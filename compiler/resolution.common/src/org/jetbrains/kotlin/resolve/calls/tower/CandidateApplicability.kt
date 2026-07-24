@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
+
 enum class CandidateApplicability {
     /**
      * Special applicability for migration warning up to 1.5.
@@ -98,6 +101,7 @@ enum class CandidateApplicability {
      * Candidate is successful but uses new features that change resolve.
      * Tower resolve proceeds to next levels.
      */
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.EnumEntries)
     RESOLVED_NEED_PRESERVE_COMPATIBILITY,
 
     // Everything below has shouldStopResolve = true

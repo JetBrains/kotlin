@@ -5,12 +5,16 @@ implicit values:
     type = Base
     ownerSymbol = KaNamedClassSymbol:
       /Base
+    label = Base
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 4
     type = Base.Companion
     ownerSymbol = KaNamedClassSymbol:
       /Base.Companion
+    label = null
+
 
 scopes:
   LocalScope, index = 0
@@ -87,4 +91,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
-

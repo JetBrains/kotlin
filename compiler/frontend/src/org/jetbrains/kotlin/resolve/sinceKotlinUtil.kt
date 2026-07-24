@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
+@K1Deprecation
 sealed class SinceKotlinAccessibility {
     object Accessible : SinceKotlinAccessibility()
 
@@ -28,6 +30,7 @@ sealed class SinceKotlinAccessibility {
     ) : SinceKotlinAccessibility()
 }
 
+@K1Deprecation
 fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings: LanguageVersionSettings): SinceKotlinAccessibility {
     val value =
         if (this is CallableMemberDescriptor && !kind.isReal) getSinceKotlinVersionByOverridden(this)

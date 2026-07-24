@@ -188,7 +188,6 @@ fun box() {
 // test.kt:18 foo
 // test.kt:37 mightThrow3
 // test.kt:37 mightThrow3
-// test.kt:19 foo
 // test.kt:20 foo
 // test.kt:45 box
 // test.kt:46 box
@@ -198,14 +197,12 @@ fun box() {
 // test.kt:12 foo
 // test.kt:33 mightThrow2
 // test.kt:33 mightThrow2
-// test.kt:13 foo
 // test.kt:14 foo
 // test.kt:47 box
 // test.kt:48 box
 // test.kt:6 foo
 // test.kt:29 mightThrow
 // test.kt:29 mightThrow
-// test.kt:7 foo
 // test.kt:7 foo
 // test.kt:8 foo
 // test.kt:49 box

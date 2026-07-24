@@ -3,12 +3,15 @@ import org.gradle.kotlin.dsl.support.serviceOf
 description = "Kotlin Compiler (embeddable)"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
 
-val testCompilationClasspath by configurations.creating
-val testCompilerClasspath by configurations.creating {
+val testCompilationClasspath = configurations.create("testCompilationClasspath")
+val testCompilerClasspath = configurations.create("testCompilerClasspath") {
     isCanBeConsumed = false
     extendsFrom(configurations["runtimeElements"])
     attributes {
@@ -24,9 +27,12 @@ dependencies {
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
     runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
-    testImplementation(libs.junit4)
-    testImplementation(kotlinTest("junit"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testCompilationClasspath(kotlinStdlib())
+    testImplementation(kotlinStdlib())
 }
 
 sourceSets {
@@ -37,7 +43,11 @@ sourceSets {
 val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
     exclude("org/jetbrains/annotations/**")
+    exclude("META-INF/native-image/**")
     mergeServiceFiles()
+    manifest {
+        attributes("Multi-Release" to true)
+    }
 }
 
 val sourcesJar = sourcesJar {
@@ -59,7 +69,7 @@ publish {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask {
         dependsOn(runtimeJar)
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
         val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
@@ -73,4 +83,3 @@ projectTests {
         }
     }
 }
-

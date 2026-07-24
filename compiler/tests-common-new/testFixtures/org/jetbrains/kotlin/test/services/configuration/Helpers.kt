@@ -93,7 +93,7 @@ fun extractTestPackage(testServices: TestServices, ignoreEsModules: Boolean = tr
             }
     }
 
-    val fileWithBoxFunction = ktFiles.find { (module, ktFile) ->
+    val fileWithBoxFunction = ktFiles.find { [module, ktFile] ->
         (!ignoreEsModules || JsEnvironmentConfigurator.getModuleKind(testServices, module) != ModuleKind.ES) &&
                 ktFile.declarations.find { it is KtNamedFunction && it.name == "box" } != null
     } ?: return FqName.ROOT

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -102,6 +103,12 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    @Override
+    @KtNonPublicApi
+    public void rawDelete() throws IncorrectOperationException {
+        super.delete();
     }
 
     @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins

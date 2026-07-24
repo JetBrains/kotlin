@@ -97,6 +97,7 @@ internal class GranularAnnotationsBox(
          */
         private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
             JvmStandardClassIds.Annotations.JvmRecord,
+            JvmStandardClassIds.Annotations.JvmInline,
         ).associateBy { it.asFqNameString() }
 
         /**
@@ -108,6 +109,7 @@ internal class GranularAnnotationsBox(
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.IntroducedAt,
+            StandardClassIds.Annotations.EqualityBound,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BidirectionalBridge
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.providers.impl.StandaloneSirTypeNamer
@@ -194,8 +193,11 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration? get() = null
     }
 
-    public data class RegularClass(public override val declaration: SirClass) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    public data class RegularClass(
+        public override val declaration: SirClass,
+        public val sealedType: SirScopeDefiningDeclaration?,
+    ) : TypeDeclaration {
+        override val allDeclarations: List<SirDeclaration> = listOfNotNull(declaration, sealedType)
     }
 
     public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
@@ -252,19 +254,27 @@ public sealed interface SirTranslationResult {
         public val declaration: SirProtocol,
         public val bridgedImplementation: SirExtension?,
         public val markerDeclaration: SirProtocol,
+        public val implementationMarkerDeclaration: SirProtocol,
+        public val penBoxMarkerConformance: SirExtension,
         public val existentialExtension: SirExtension,
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
+        public val sealedType: SirScopeDefiningDeclaration?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
+        // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirProtocol>()`
+        // to recover the public protocol. The markers are appended after it.
         override val allDeclarations: List<SirDeclaration> =
             listOfNotNull(
                 declaration,
                 bridgedImplementation,
                 markerDeclaration,
+                implementationMarkerDeclaration,
+                penBoxMarkerConformance,
                 existentialExtension,
                 auxExtension,
                 samConverter,
+                sealedType,
             )
     }
 

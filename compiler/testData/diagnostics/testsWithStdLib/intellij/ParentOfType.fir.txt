@@ -4,3 +4,7 @@ FILE: ParentOfType.kt
     }
     public final val some: R|kotlin/Number?| = String(123).R|/parentOfTypes|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(vararg(<getClass>(Q|kotlin/Int|), <getClass>(Q|kotlin/Double|)))
         public get(): R|kotlin/Number?|
+    public final val someBangBang: R|kotlin/Number| = String(123).R|/parentOfTypes|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(vararg(<getClass>(Q|kotlin/Int|), <getClass>(Q|kotlin/Double|)))!!
+        public get(): R|kotlin/Number|
+    public final val someFlexibleElvis: R|kotlin/Any?| = String(123).R|/parentOfTypes|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(vararg(<getClass>(Q|kotlin/Int|), <getClass>(Q|kotlin/Double|))) ?: String(123).R|/parentOfTypes|<R|it(kotlin/Number & kotlin/Comparable<*>)|>(vararg(<getClass>(Q|kotlin/Int|), <getClass>(Q|kotlin/Double|)))
+        public get(): R|kotlin/Any?|

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.types.replaceAnnotations
 
+@K1Deprecation
 object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
     override fun sanitizeReturnType(
         inferred: UnwrappedType,

@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.ir.declarations.IrField;
+import org.jetbrains.kotlin.ir.declarations.IrFunction;
 import org.jetbrains.org.objectweb.asm.*;
 
 public abstract class DelegatingClassBuilder implements ClassBuilder {
@@ -31,7 +30,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @NotNull
     @Override
     public FieldVisitor newField(
-            @NotNull JvmDeclarationOrigin origin,
+            @Nullable IrField origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
@@ -44,7 +43,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @NotNull
     @Override
     public MethodVisitor newMethod(
-            @NotNull JvmDeclarationOrigin origin,
+            @Nullable IrFunction origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
@@ -60,12 +59,6 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @NotNull String name, @NotNull String desc, @Nullable String signature
     ) {
         return getDelegate().newRecordComponent(name, desc, signature);
-    }
-
-    @NotNull
-    @Override
-    public JvmSerializationBindings getSerializationBindings() {
-        return getDelegate().getSerializationBindings();
     }
 
     @NotNull
@@ -87,7 +80,6 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
 
     @Override
     public void defineClass(
-            @Nullable PsiElement origin,
             int version,
             int access,
             @NotNull String name,
@@ -95,7 +87,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        getDelegate().defineClass(origin, version, access, name, signature, superName, interfaces);
+        getDelegate().defineClass(version, access, name, signature, superName, interfaces);
     }
 
     @Override

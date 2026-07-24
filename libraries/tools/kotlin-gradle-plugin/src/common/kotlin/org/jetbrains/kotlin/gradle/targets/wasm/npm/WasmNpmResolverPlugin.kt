@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.npm
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.CommonNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
+import org.jetbrains.kotlin.gradle.utils.withType
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 /**
  * Class for the WebAssembly NPM Resolver Plugin.
@@ -20,15 +23,36 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
  */
 abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverPlugin {
     override fun apply(project: Project) {
-        NpmResolverPluginApplier(
-            { WasmNodeJsRootPlugin.Companion.apply(project.rootProject) },
-            { WasmNodeJsPlugin.Companion.apply(project) },
+        val wasmNodeJsRootPlugin = WasmNodeJsRootPlugin.apply(project.rootProject)
+
+        val applier = NpmResolverPluginApplier(
+            { wasmNodeJsRootPlugin },
+            { WasmNodeJsPlugin.apply(project) },
             /**
              * For wasm we don't need to add NPM dependencies
              * We install all npm dependencies in [org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask]
              */
             { false },
-        ).apply(project)
+        )
+        applier.apply(project)
+
+        applier.configureNpmDependencyTaskInputs(project) { task ->
+            when (task.compilation.wasmTarget) {
+                WasmTarget.JS -> true
+                WasmTarget.WASI -> {
+                    // wasi doesn't use npm dependencies
+                    false
+                }
+                null -> {
+                    // Kotlin/JS targets are handled by NpmResolverPluginApplier
+                    false
+                }
+            }
+        }
+
+        project.tasks.withType<RequiresNpmDependenciesTask>().configureEach { task ->
+            task.mustRunAfter(wasmNodeJsRootPlugin.toolingInstallTaskProvider)
+        }
     }
 
     companion object {

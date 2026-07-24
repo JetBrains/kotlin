@@ -55,7 +55,7 @@ import kotlin.time.Duration.Companion.seconds
  * Also, there is a [minus] operator that returns the [Duration] representing the difference between two instants:
  *
  * ```
- * val kotlinRelease = Instant.parse("2016-02-15T02:00T12:00:00+03:00")
+ * val kotlinRelease = Instant.parse("2016-02-15T12:00:00+03:00")
  * val kotlinStableDuration = Clock.System.now() - kotlinRelease
  * ```
  *

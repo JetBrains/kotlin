@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
-import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
@@ -35,8 +34,6 @@ internal class NodeJsPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        MultiplePluginDeclarationDetector.detect(project)
-
         val nodeJs = project.createNodeJsEnvSpec(nodeJsEnvSpecKlass, nodeJsEnvSpecName) {
             nodeJsRootApply(project.rootProject)
         }

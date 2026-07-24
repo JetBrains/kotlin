@@ -70,6 +70,21 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     fun getQualifiedName(type: Type) = getQualifiedName(type.internalName)
 
+    fun convertAsmTypeToJavaText(type: Type): String = when (type.sort) {
+        VOID -> "void"
+        BOOLEAN -> "boolean"
+        CHAR -> "char"
+        BYTE -> "byte"
+        SHORT -> "short"
+        INT -> "int"
+        FLOAT -> "float"
+        LONG -> "long"
+        DOUBLE -> "double"
+        ARRAY -> convertAsmTypeToJavaText(type.elementType) + "[]".repeat(type.dimensions)
+        OBJECT -> getQualifiedName(type)
+        else -> kaptContext.get().textGenerationError("Unsupported ASM type: $type")
+    }
+
     fun getSimpleName(clazz: ClassNode) = getQualifiedName(clazz.name).substringAfterLast('.')
 
     fun getQualifiedName(internalName: String): String {

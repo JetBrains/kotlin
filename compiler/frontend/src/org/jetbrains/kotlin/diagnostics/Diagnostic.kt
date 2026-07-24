@@ -17,7 +17,9 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 interface Diagnostic : UnboundDiagnostic, DiagnosticMarker {
     override val psiElement: PsiElement
     val psiFile: PsiFile

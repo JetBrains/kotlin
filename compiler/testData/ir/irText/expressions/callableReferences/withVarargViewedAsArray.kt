@@ -8,6 +8,7 @@ fun sum(vararg args: Int): Int {
 fun nsum(vararg args: Number) = sum(*IntArray(args.size) { args[it].toInt() })
 
 fun zap(vararg b: String, k: Int = 42) {}
+fun <T> zapGeneric(vararg b: T, k: Int = 42) {}
 
 fun usePlainArgs(fn: (Int, Int) -> Int) {}
 fun usePrimitiveArray(fn: (IntArray) -> Int) {}
@@ -17,4 +18,7 @@ fun useStringArray(fn: (Array<String>) -> Unit) {}
 fun testPlainArgs() { usePlainArgs(::sum) }
 fun testPrimitiveArrayAsVararg() { usePrimitiveArray(::sum) }
 fun testArrayAsVararg() { useArray(::nsum) }
-fun testArrayAndDefaults() { useStringArray(::zap) }
+fun testArrayAndDefaults() {
+    useStringArray(::zap)
+    useStringArray(::zapGeneric)
+}

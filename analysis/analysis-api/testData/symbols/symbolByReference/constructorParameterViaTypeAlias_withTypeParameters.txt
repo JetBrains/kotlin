@@ -1,14 +1,15 @@
 KaValueParameterSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -20,13 +21,17 @@ KaValueParameterSymbol:
   modality: FINAL
   name: param
   origin: TYPEALIASED_CONSTRUCTOR
+  primaryConstructorProperty: null
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaTypeParameterType:
     annotations: []
     type: TT
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorParameterViaTypeAlias_withTypeParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

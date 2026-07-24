@@ -46,15 +46,20 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol {
      */
     public abstract val entries: List<KaVariableSymbol>
 
+    abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
+
+    //region Implementation details
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
+
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
 
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
+    //endregion
 }

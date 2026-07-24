@@ -50,6 +50,14 @@ suspend fun cancelSilentlyAfter(delay: Long, callback: () -> Int): Int {
     return callback()
 }
 
+suspend fun cancelAfterAndSuspend(delay: Long): Long {
+    delay(delay)
+    val reason = CancellationException("Cancelled after $delay")
+    currentCoroutineContext().cancel(reason)
+    delay(10_000)
+    return delay
+}
+
 suspend fun cancelImmediately(): Int {
     val reason = CancellationException("Cancelled")
     currentCoroutineContext().cancel(reason)
@@ -108,4 +116,9 @@ suspend fun cancelledWithThrowInFinally(delay: Long, message: String): Int {
     } finally {
         error(message)
     }
+}
+
+suspend fun timeout(timeMillis: Long): Long = withTimeout(timeMillis) {
+    delay(timeMillis * 1_000)
+    timeMillis
 }

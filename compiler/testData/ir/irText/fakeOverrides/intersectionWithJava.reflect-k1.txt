@@ -1,4 +1,6 @@
 KClass: abstract class C : Java1, KotlinInterface
+  constructors:
+    public final <R> fun `<init>`(): C<R>
   members:
     public open fun C<R>.bar(): kotlin.collections.ArrayList<kotlin.Int> /* = java.util.ArrayList<kotlin.Int> */
     public open operator fun C<R>.equals(kotlin.Any?): kotlin.Boolean
@@ -7,6 +9,8 @@ KClass: abstract class C : Java1, KotlinInterface
     public open fun C<R>.toString(): kotlin.String
   declaredMembers:
 KClass: class Java1 : Any
+  constructors:
+    public final <T> fun `<init>`(): Java1<T> where T : kotlin.Any!
   members:
     public open fun Java1<T>.bar(): java.util.ArrayList<kotlin.Int!>!
     public open operator fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean

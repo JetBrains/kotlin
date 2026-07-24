@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -20,6 +21,8 @@ interface KlibMetadataModuleDescriptorFactory {
 
     val descriptorFactory: KlibModuleDescriptorFactory
     val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
+
+    @OptIn(K1Deprecation::class)
     val flexibleTypeDeserializer: FlexibleTypeDeserializer
 
     fun createDescriptor(
@@ -27,7 +30,7 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
-    ) = createDescriptorOptionalBuiltIns(
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
         library,
         languageVersionSettings,
         storageManager,
@@ -39,7 +42,7 @@ interface KlibMetadataModuleDescriptorFactory {
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-    ) = createDescriptorOptionalBuiltIns(
+    ): ModuleDescriptorImpl = createDescriptorOptionalBuiltIns(
         library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
     )
 
@@ -67,7 +70,6 @@ interface KlibMetadataModuleDescriptorFactory {
 
     fun createPackageFragmentProvider(
         library: KotlinLibrary,
-        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         configuration: DeserializationConfiguration,

@@ -511,7 +511,7 @@ KtConstantExpression(178,179): '0'
   null
 
 KtOperationReferenceExpression(180,181): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

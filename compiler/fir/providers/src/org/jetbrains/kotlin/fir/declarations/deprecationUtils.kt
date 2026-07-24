@@ -66,7 +66,7 @@ class DeprecationAnnotationInfoPerUseSiteStorageBuilder {
     }
 
     fun add(other: DeprecationAnnotationInfoPerUseSiteStorage) {
-        other.storage.forEach { (useSite, info) ->
+        other.storage.forEach { [useSite, info] ->
             add(useSite, info)
         }
     }
@@ -168,14 +168,14 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(
         session, customAnnotations = setter.annotations, processPropertyIfAccessor = false
     )
-    setterDeprecations?.storage?.forEach { (useSite, infos) ->
+    setterDeprecations?.storage?.forEach { [useSite, infos] ->
         add(useSite ?: AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
     }
 
     val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(
         session, customAnnotations = getter.annotations, processPropertyIfAccessor = false
     )
-    getterDeprecations?.storage?.forEach { (useSite, infos) ->
+    getterDeprecations?.storage?.forEach { [useSite, infos] ->
         add(useSite ?: AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
     }
 }
@@ -266,7 +266,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     // See the commit message for an example.
 
     val annotations = session.annotationPlatformSupport.deprecationAnnotationsWithOverridesPropagation
-        .flatMap { (classId, shouldPropagateToOverrides) ->
+        .flatMap { [classId, shouldPropagateToOverrides] ->
             this.filter {
                 it.unexpandedClassId == classId
             }.map {
@@ -275,7 +275,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
         }
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        for ((deprecated, shouldPropagateToOverrides) in annotations) {
+        for ([deprecated, shouldPropagateToOverrides] in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirLiteralExpression)?.value as? String)

@@ -63,16 +63,16 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
 
     override fun elapsedFrom(timeMark: ValueTimeMark): Duration =
         process.hrtime((timeMark.reading as Reading).components)
-            .let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
+            .let { [seconds, nanos] -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
 
     override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
-        val (s1, n1) = one.reading as Reading
-        val (s2, n2) = another.reading as Reading
+        val [s1, n1] = one.reading as Reading
+        val [s2, n2] = another.reading as Reading
         return (if (s1 == s2 && n1 == n2) Duration.ZERO else (s1 - s2).toDuration(DurationUnit.SECONDS)) + (n1 - n2).toDuration(DurationUnit.NANOSECONDS)
     }
 
     override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
-        (timeMark.reading as Reading).let { (seconds, nanos) ->
+        (timeMark.reading as Reading).let { [seconds, nanos] ->
             duration.toComponents { _, addNanos ->
                 val resultSeconds = sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS)))
                 Reading(arrayOf(resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0))

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -21,12 +22,14 @@ internal constructor(
     nodeJsRoot: NodeJsRootExtension,
     yarnSpec: YarnRootEnvSpec,
     objects: ObjectFactory,
+    providers: ProviderFactory,
     execOps: ExecOperations,
 ) : BaseYarnRootExtension(
     project = project,
     nodeJsRoot = nodeJsRoot,
     yarnSpec = yarnSpec,
     objects = objects,
+    providers = providers,
     execOps = execOps,
 ) {
 

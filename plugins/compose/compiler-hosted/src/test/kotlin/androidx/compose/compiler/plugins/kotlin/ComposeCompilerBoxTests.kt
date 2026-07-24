@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_FIELD_VISIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -80,8 +81,10 @@ open class AbstractJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractJsTe
         builder.composeCompilerPluginConfiguration()
         builder.defaultDirectives {
             +WITH_STDLIB
-            // triggered by kotlinx.coroutines
+            // triggered by kotlinx.coroutines 1.8.0
             DISABLE_IR_VISIBILITY_CHECKS.with(TargetBackend.JS_IR)
+            // triggered by kotlinx.coroutines 1.8.0
+            DISABLE_IR_FIELD_VISIBILITY_CHECK.with(TargetBackend.JS_IR)
             +DUMP_KT_IR
         }
         builder.useCustomRuntimeClasspathProviders(::ComposeJsClasspathProvider)

@@ -93,7 +93,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                     isCheckExpressionValueIsNotNull()
 
         private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, StrictBasicValue>) {
-            for ((insn, value) in nullabilityMap) {
+            for ([insn, value] in nullabilityMap) {
                 val nullability = value.getNullability()
                 when (insn.opcode) {
                     Opcodes.IFNULL -> transformTrivialNullJump(insn as JumpInsnNode, nullability == Nullability.NULL)
@@ -256,7 +256,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
 
             private fun injectAssumptions(): NullabilityAssumptions {
                 val nullabilityAssumptions = NullabilityAssumptions()
-                for ((varIndex, dependentChecks) in checksDependingOnVariable) {
+                for ([varIndex, dependentChecks] in checksDependingOnVariable) {
                     for (checkInsn in dependentChecks) {
                         nullabilityAssumptions.injectAssumptionsForInsn(varIndex, checkInsn)
                     }
@@ -449,7 +449,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                 methodNode.instructions.run {
                     syntheticInstructions.forEach { remove(it) }
                 }
-                for ((jumpInsn, originalLabel) in originalLabels) {
+                for ([jumpInsn, originalLabel] in originalLabels) {
                     jumpInsn.label = originalLabel
                 }
             }

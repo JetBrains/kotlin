@@ -134,7 +134,7 @@ private fun resolveProjectDependencyVariantsFromArtifacts(
                 .filterNot { it.name in removeAttributesNamed }
                 .sortedBy { it.name }
             ResolvedVariant(
-                artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName,
+                artifact.variant.owner.projectPathOrNull ?: artifact.variant.owner.displayName.normalizeSnapshotVersion(),
                 attributes.associateBy({ it }) {
                     artifact.variant.attributes.getAttribute(it).toString()
                 }.mapKeys { it.key.name }
@@ -148,7 +148,7 @@ private fun resolveProjectDependencyComponents(
     return allComponentsProvider
         .map { component ->
             ResolvedComponent(
-                component.id.projectPathOrNull ?: component.id.displayName,
+                component.id.projectPathOrNull ?: component.id.displayName.normalizeSnapshotVersion(),
                 // Expect a single variant to always be selected?
                 component.variants.single().displayName
             )

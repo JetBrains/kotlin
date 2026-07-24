@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // WITH_STDLIB
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -24,7 +23,7 @@ fun <E> foo(m: MyList<E>, c: C) {
             myListOf(x)
         } // ok in K1 and K2
 
-        val y2: MyList<E> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.limitedFlatMap { x ->
+        val y2: MyList<E> = m.<!INITIALIZER_TYPE_MISMATCH!>limitedFlatMap<!> { x ->
             myListOf(x)
         } // error in K1 and K2
     }

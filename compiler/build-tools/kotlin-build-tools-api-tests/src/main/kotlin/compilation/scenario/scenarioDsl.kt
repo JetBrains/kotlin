@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LinkableModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
@@ -91,6 +92,18 @@ internal abstract class BaseScenarioModule<B : BaseCompilationOperation.Builder,
             assertions = {
                 assertions(this)
             })
+    }
+
+    override fun link(forceOutput: LogLevel?, assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit) {
+        if (module is LinkableModule<*, *>) {
+            module.link(
+                strategyConfig,
+                forceOutput,
+                assertions = {
+                    assertions(this)
+                }
+            )
+        }
     }
 
     override fun executeCompiledCode(

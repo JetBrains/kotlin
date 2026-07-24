@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions, -ForbidUselessTypeArgumentsIn25
+// LANGUAGE: +CompanionBlocks +CompanionExtensions, -ForbidUselessTypeArgumentsIn25
 // COMPARE_WITH_LIGHT_TREE
 // FILE: C.kt
 class C {

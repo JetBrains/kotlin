@@ -1,6 +1,9 @@
 import GeneratorInputKind.RuntimeClasspath
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
@@ -10,22 +13,22 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Configuration> {
+fun extraSourceSet(name: String, extendMain: Boolean = true): Triple<SourceSet, Configuration, Configuration> {
     val sourceSet = sourceSets.create(name) {
         java.srcDir(name)
     }
     val api = configurations[sourceSet.apiConfigurationName]
+    val implementation = configurations[sourceSet.implementationConfigurationName]
     if (extendMain) {
         dependencies { api(mainSourceSet.output) }
         configurations[sourceSet.runtimeOnlyConfigurationName]
             .extendsFrom(configurations.runtimeClasspath.get())
     }
-    return sourceSet to api
+    return Triple(sourceSet, api, implementation)
 }
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
-val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
-val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
+val (evaluateSourceSet, evaluateApi, evaluateImplementation) = extraSourceSet("evaluate")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
 val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare")
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
@@ -40,11 +43,11 @@ dependencies {
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
+    evaluateImplementation(project(":core:descriptors"))
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+    evaluateApi(project(":compiler:ir.tree"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
-    interpreterApi(project(":compiler:ir.tree"))
-    interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(testFixtures(project(":kotlin-build-common")))
     protobufCompareApi(testFixtures(project(":compiler:tests-common")))
@@ -52,7 +55,6 @@ dependencies {
 
     testImplementation(builtinsSourceSet.output)
     testImplementation(evaluateSourceSet.output)
-    testImplementation(interpreterSourceSet.output)
     testImplementation(protobufSourceSet.output)
     testImplementation(protobufCompareSourceSet.output)
 
@@ -91,7 +93,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask {
         workingDir = rootDir
     }
 }
@@ -160,12 +162,6 @@ val generateBuiltins by generator(
 val generateOperationsMap by generator(
     "org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt",
     evaluateSourceSet,
-    inputKind = RuntimeClasspath
-)
-
-val generateInterpreterMap by generator(
-    "org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt",
-    interpreterSourceSet,
     inputKind = RuntimeClasspath
 )
 

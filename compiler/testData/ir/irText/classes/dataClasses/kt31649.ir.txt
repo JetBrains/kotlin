@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/kt31649.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+    FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInline
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/kt31649.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+    FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInline
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/kt31649.kt
               then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                 ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
                   receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+    FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInline
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any

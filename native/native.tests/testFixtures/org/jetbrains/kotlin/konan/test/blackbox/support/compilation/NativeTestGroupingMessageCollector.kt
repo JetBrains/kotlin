@@ -34,7 +34,7 @@ internal class NativeTestGroupingMessageCollector(
         var includedLibraryName: String? = null
         var cachedLibraryName: String? = null
 
-        for ((index, arg) in compilerArgs.withIndex()) {
+        for ([index, arg] in compilerArgs.withIndex()) {
             if ((arg == "-p" || arg == "-produce")
                 && index < compilerArgs.size - 1
                 && compilerArgs[index + 1] == "static_cache"

@@ -111,7 +111,7 @@ private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, depende
         buildGradleKts.replaceText("End AGP */", "// End AGP */")
     }
 
-    val (commonMainDependencies, targetSpecificDependencies) = dependencies.partition { projectVariant.isCommonMainDependableOn(it.variant) }
+    val [commonMainDependencies, targetSpecificDependencies] = dependencies.partition { projectVariant.isCommonMainDependableOn(it.variant) }
 
     fun List<Scenario.Project>.asSourceSetDependenciesBlock(sourceSetName: String) = """
 
@@ -175,7 +175,7 @@ private abstract class ResolveDependenciesTask : DefaultTask() {
 
     @TaskAction
     fun action() {
-        configurations.forEach { (name, artifacts) ->
+        configurations.forEach { [name, artifacts] ->
             reportResolutionResult(name, artifacts)
         }
     }

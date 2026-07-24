@@ -30,7 +30,7 @@ private fun checkInlineClass() {
     if (sum2 != 106) error(sum2.toString())
 
     checkParameters("test.A", "f-impl")
-    checkParameters("test.A", "g-zj4m074", "g-3dzUp6c") // Android tests relocate package
+    checkParameters("test.A", "g-3dzUp6c", "g-138r1U4") // Android tests relocate package
 }
 
 private fun checkParameters(className: String, vararg expectedMethodNames: String) {

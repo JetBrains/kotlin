@@ -24,7 +24,7 @@ internal class KaFirEnumEntryInitializerSymbolPointer(
         val owner = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }
-        return owner?.enumEntryInitializer
+        return owner?.initializer as? KaFirEnumEntryInitializerSymbol
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

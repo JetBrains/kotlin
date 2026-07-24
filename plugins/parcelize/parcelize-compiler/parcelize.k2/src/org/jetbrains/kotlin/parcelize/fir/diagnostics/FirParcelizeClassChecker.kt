@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
@@ -77,7 +77,7 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
             reporter.reportOn(source, KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE, context)
         }
 
-        klass.delegateFieldsMap?.forEach { (index, _) ->
+        klass.delegateFieldsMap?.forEach { [index, _] ->
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
             val parcelableType = ConeClassLikeTypeImpl(

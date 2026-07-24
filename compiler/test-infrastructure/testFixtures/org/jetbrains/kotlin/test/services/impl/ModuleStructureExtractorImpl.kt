@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -124,6 +125,7 @@ class ModuleStructureExtractorImpl(
         private val mutableFilesListPerModule = mutableMapOf<TestModule, MutableList<TestFile>>()
 
         private var currentFileName: String? = null
+        private var skipFileNameValidation = false
         private var currentSnippetNumber: Int = 1
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
@@ -162,7 +164,7 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun sortModules(modules: List<TestModule>): List<TestModule> {
-            val moduleByName = modules.groupBy { it.name }.mapValues { (name, modules) ->
+            val moduleByName = modules.groupBy { it.name }.mapValues { [name, modules] ->
                 modules.singleOrNull() ?: error("Duplicated modules with name $name")
             }
             return DFS.topologicalOrder(modules) { module ->
@@ -190,8 +192,11 @@ class ModuleStructureExtractorImpl(
             }
         }
 
-        /*
-         * returns [true] means that passed directive was module directive and line is processed
+        /**
+         * Parses [rawDirective] to a [module structure directive][ModuleStructureDirectives] if applicable. Module structure directives are
+         * parsed with this special function, in contrast to the usual way of parsing directives.
+         *
+         * Returns `true` if [rawDirective] was a module structure directive and the line has been processed.
          */
         private fun tryParseStructureDirective(rawDirective: RegisteredDirectivesParser.RawDirective?, lineNumber: Int): Boolean {
             if (rawDirective == null) return false
@@ -209,9 +214,12 @@ class ModuleStructureExtractorImpl(
                         }
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(
-                        values.joinToString(separator = " ")
-                    )
+                    (
+                        val moduleName = name, val dependencies, val friends, val dependsOn
+                    ) =
+                        splitRawModuleStringToNameAndDependencies(
+                            values.joinToString(separator = " ")
+                        )
                     currentModuleName = moduleName
                     val kind = defaultsProvider.defaultDependencyKind
 
@@ -247,11 +255,16 @@ class ModuleStructureExtractorImpl(
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
+                        // We need to finish the previous file.
                         finishFile(lineNumber)
                     } else {
                         resetFileCaches()
                     }
-                    currentFileName = (values.first() as String).also(::validateFileName)
+                    currentFileName = values.first() as String
+                }
+                ModuleStructureDirectives.SKIP_FILE_NAME_VALIDATION -> {
+                    // The directive applies to the current file and is consumed in `finishFile`.
+                    skipFileNameValidation = true
                 }
                 else -> return false
             }
@@ -262,7 +275,7 @@ class ModuleStructureExtractorImpl(
         private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependencies {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
-            val (name, _, dependencies, _, friends, _, dependsOn) = matchResult.destructured
+            val [name, _, dependencies, _, friends, _, dependsOn] = matchResult.destructured
             val dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
             val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
             val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
@@ -272,7 +285,7 @@ class ModuleStructureExtractorImpl(
                 addAll(dependenciesNames intersect dependsOnNames)
                 addAll(friendsNames intersect dependsOnNames)
             }
-            require(intersection.isEmpty()) {
+            checkTestInfrastructure(intersection.isEmpty()) {
                 val m = if (intersection.size == 1) "module" else "modules"
                 val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
                 """Module `$name` depends on $m $names with different kinds simultaneously"""
@@ -344,7 +357,7 @@ class ModuleStructureExtractorImpl(
             if (filesOfCurrentModule.any { it.name.endsWith(".def")}) return name
             if (mutableFilesListPerModule.any { it.value.any { file -> file.name.endsWith(".def") } }) return name
 
-            val (className, methodName, _) = testServices.testInfo
+            (val className, val methodName, val _ = tags) = testServices.testInfo
             val classPart = className.substringAfter("$").replace("$", ".")
             return "$classPart.$methodName.$name"
         }
@@ -360,6 +373,13 @@ class ModuleStructureExtractorImpl(
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
             val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }
+
+            // The file name is validated here rather than when the `FILE` directive is parsed because the `SKIP_FILE_NAME_VALIDATION`
+            // directive is only known once the whole file block has been read.
+            if (currentFileName != null && !skipFileNameValidation) {
+                validateFileName(filename)
+            }
+
             val fileContent = buildString {
                 for (i in 0 until endLineNumberOfLastFile) {
                     appendLine()
@@ -403,6 +423,7 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
+            skipFileNameValidation = false
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }
@@ -426,14 +447,14 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun generateAdditionalFiles(testModuleStructure: TestModuleStructure) {
-            for ((module, files) in mutableFilesListPerModule) {
+            for ([module, files] in mutableFilesListPerModule) {
                 additionalSourceProviders.flatMapTo(files) { additionalSourceProvider ->
                     additionalSourceProvider.produceAdditionalFiles(
                         (globalDirectives ?: RegisteredDirectives.Empty) + testServices.defaultDirectives,
                         module,
                         testModuleStructure
                     ).also { additionalFiles ->
-                        require(additionalFiles.all { it.isAdditional }) {
+                        checkTestInfrastructure(additionalFiles.all { it.isAdditional }) {
                             "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
                         }
                     }
@@ -467,4 +488,3 @@ inline fun <reified T : Enum<T>> valueOfOrNull(value: String): T? {
     }
     return null
 }
-

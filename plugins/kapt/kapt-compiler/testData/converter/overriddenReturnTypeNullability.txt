@@ -48,6 +48,10 @@ public final class C implements I {
  *     public abstract get
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

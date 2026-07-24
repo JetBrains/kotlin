@@ -1,9 +1,16 @@
+@file:OptIn(kotlin.native.concurrent.ObsoleteWorkersApi::class)
 package org.jetbrains.ring
 
-import kotlin.native.concurrent.*
 import kotlin.concurrent.*
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.native.concurrent.*
+import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+private const val BENCHMARK_SIZE = 10000
+
+// Use the same seed for reproducibility
+val rnd = Random(6581)
 
 data class Pos(val i: Int, val j: Int)
 
@@ -62,7 +69,7 @@ class Generation(private val width: Int, private val height: Int) {
 
             for (i in 0 until height) {
                 for (j in 0 until width) {
-                    gen.cells[i][j] = Cell(Random.nextInt() % 2 == 0)
+                    gen.cells[i][j] = Cell(rnd.nextInt(100) % 2 == 0)
                 }
             }
 
@@ -79,27 +86,32 @@ class Universe(val width: Int, val height: Int) {
     }
 }
 
-fun run(space: Int, time: Int) {
-    val width = space
-    val height = space
-    val universe = Universe(width, height)
-    for (i in 0 until time) {
-        universe.evolve()
-    }
-    Blackhole.consume(universe)
-}
-
-open class LifeBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class LifeHideName : SkipWhenBaseOnly() {
     val spaceScale = BENCHMARK_SIZE / 40
     val timeScale = 5
+    private val universe = Universe(spaceScale, spaceScale)
 
-    fun bench() {
-        run(spaceScale, timeScale)
+    @Benchmark
+    fun Life(bh: Blackhole) {
+        skipWhenBaseOnly()
+        repeat(timeScale) {
+            universe.evolve()
+        }
+        bh.consume(universe)
     }
 }
 
-class LifeWithMarkHelpersBenchmark : LifeBenchmark() {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
+    val spaceScale = BENCHMARK_SIZE / 40
+    val timeScale = 5
     val numberOfMarkHelpers = 5;
+    private val universe = Universe(spaceScale, spaceScale)
 
     @Volatile
     var done = false
@@ -127,6 +139,16 @@ class LifeWithMarkHelpersBenchmark : LifeBenchmark() {
         }
     }
 
+    @Benchmark
+    fun LifeWithMarkHelpers(bh: Blackhole) {
+        skipWhenBaseOnly()
+        repeat(timeScale) {
+            universe.evolve()
+        }
+        bh.consume(universe)
+    }
+
+    @TearDown
     fun terminate() {
         done = true
         markHelperJobs.forEach { it.result }

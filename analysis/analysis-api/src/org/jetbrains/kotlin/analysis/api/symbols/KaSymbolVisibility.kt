@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 
 /**
- * The [visibility](https://kotlinlang.org/docs/visibility-modifiers.html) of a [KaSymbol]. As symbols can represent both Kotlin and Java
- * declarations, [KaSymbolVisibility] covers both visibility definitions.
+ * The [visibility](https://kotlinlang.org/docs/visibility-modifiers.html) of a [KaSymbol].
+ * As symbols can represent both Kotlin and Java declarations, [KaSymbolVisibility] covers both visibility definitions.
+ *
+ * The entry order does not carry any particular meaning.
+ * If you need to sort declarations based on their visibility, use a custom comparator.
  *
  * In addition, the following articles contain information about how visibility is affected by Kotlin and Java interoperability:
  *
@@ -118,6 +121,7 @@ public enum class KaSymbolVisibility {
 /**
  * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
  */
+@Deprecated("Use 'KaDeclarationSymbol.visibility' directly", level = DeprecationLevel.HIDDEN)
 @KaExperimentalApi
 public val Visibility.asKaSymbolVisibility: KaSymbolVisibility
     get() = when (this) {

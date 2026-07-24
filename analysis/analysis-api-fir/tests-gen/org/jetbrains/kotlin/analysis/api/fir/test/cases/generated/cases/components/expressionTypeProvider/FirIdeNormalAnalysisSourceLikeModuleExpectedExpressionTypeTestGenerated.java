@@ -86,6 +86,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpectedExpressionTypeTestGener
   }
 
   @Test
+  @TestMetadata("arrayOfInAnnotationArrayType.kt")
+  public void testArrayOfInAnnotationArrayType() {
+    run("arrayOfInAnnotationArrayType.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayOfInAnnotationJavaArray.kt")
+  public void testArrayOfInAnnotationJavaArray() {
+    run("arrayOfInAnnotationJavaArray.kt");
+  }
+
+  @Test
   @TestMetadata("callableReference_consumer.kt")
   public void testCallableReference_consumer() {
     run("callableReference_consumer.kt");
@@ -101,6 +113,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpectedExpressionTypeTestGener
   @TestMetadata("collectionLiteralInAnnotation.kt")
   public void testCollectionLiteralInAnnotation() {
     run("collectionLiteralInAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("collectionLiteralInAnnotationArrayType.kt")
+  public void testCollectionLiteralInAnnotationArrayType() {
+    run("collectionLiteralInAnnotationArrayType.kt");
+  }
+
+  @Test
+  @TestMetadata("collectionLiteralInAnnotationIntArray.kt")
+  public void testCollectionLiteralInAnnotationIntArray() {
+    run("collectionLiteralInAnnotationIntArray.kt");
+  }
+
+  @Test
+  @TestMetadata("collectionLiteralInAnnotationJavaArray.kt")
+  public void testCollectionLiteralInAnnotationJavaArray() {
+    run("collectionLiteralInAnnotationJavaArray.kt");
   }
 
   @Test
@@ -269,6 +299,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleExpectedExpressionTypeTestGener
   @TestMetadata("infixFunctionTypeParameter.kt")
   public void testInfixFunctionTypeParameter() {
     run("infixFunctionTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("intArrayOfInAnnotation.kt")
+  public void testIntArrayOfInAnnotation() {
+    run("intArrayOfInAnnotation.kt");
   }
 
   @Test

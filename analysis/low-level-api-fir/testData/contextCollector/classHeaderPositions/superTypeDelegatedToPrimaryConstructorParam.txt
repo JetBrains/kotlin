@@ -17,6 +17,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol param: R|test/MyInterface|
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedToPrimaryConstructorParam.kt
     public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {

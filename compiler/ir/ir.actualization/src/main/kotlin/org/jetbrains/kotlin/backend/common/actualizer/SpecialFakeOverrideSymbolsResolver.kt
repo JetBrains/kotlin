@@ -165,6 +165,20 @@ class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFak
         visitElement(expression)
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+        expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(resolver::getReferencedFunction)
+        visitElement(expression)
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        val reflectionTargetSymbol = expression.reflectionTargetSymbol
+        if (reflectionTargetSymbol is IrPropertySymbol) {
+            expression.reflectionTargetSymbol = reflectionTargetSymbol.let(resolver::getReferencedProperty)
+        }
+        visitElement(expression)
+    }
+
+
     override fun visitPropertyReference(expression: IrPropertyReference) {
         val remappedPropertySymbol = expression.symbol.let(resolver::getReferencedProperty)
         expression.symbol = remappedPropertySymbol

@@ -770,6 +770,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -793,6 +794,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -816,6 +818,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -839,6 +842,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeArm64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -862,6 +866,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX64Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -885,6 +890,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -908,6 +914,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX86Main: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -931,6 +938,7 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeX86Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -1492,52 +1500,6 @@ interface KotlinMultiplatformSourceSetConventions {
     val NamedDomainObjectContainer<KotlinSourceSet>.tvosX64Test: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
-     * Static accessor for the main Kotlin Source Set of watchosArm32 target.
-     * Declare watchosArm32 target to access this source set.
-     * If watchosArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    watchosArm32() // Target is declared, watchosArm32Main source set is created
-     *
-     *    sourceSets {
-     *      watchosArm32Main.dependencies {
-     *          // Add watchosArm32Main dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Main: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
-     * Static accessor for the test Kotlin Source Set of watchosArm32 target.
-     * Declare watchosArm32 target to access this source set.
-     * If watchosArm32 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    watchosArm32() // Target is declared, watchosArm32Test source set is created
-     *
-     *    sourceSets {
-     *      watchosArm32Test.dependencies {
-     *          // Add watchosArm32Test dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 2.0.20
-     */
-    val NamedDomainObjectContainer<KotlinSourceSet>.watchosArm32Test: NamedDomainObjectProvider<KotlinSourceSet>
-
-    /**
      * Static accessor for the main Kotlin Source Set of watchosArm64 target.
      * Declare watchosArm64 target to access this source set.
      * If watchosArm64 target wasn't declared, accessing this source set will cause a runtime error during configuration time.
@@ -1868,7 +1830,3 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
-
-
-
-

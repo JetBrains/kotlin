@@ -6,14 +6,14 @@
 import org.jetbrains.kotlin.benchmarkingTargets
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
     benchmarkingTargets()
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "Logging"
     compilerOpts = listOf("-Xruntime-logs=logging=debug")
 }

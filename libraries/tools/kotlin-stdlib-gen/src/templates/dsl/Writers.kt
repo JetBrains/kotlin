@@ -67,7 +67,7 @@ fun Sequence<MemberBuilder>.groupByFileAndWrite(
 ) {
     val groupedMembers = groupBy { TargetedSourceFile(it.target, it.sourceFile) }
 
-    for ((psf, members) in groupedMembers) {
+    for ([psf, members] in groupedMembers) {
         val file = fileNameBuilder(psf)
         members.writeTo(file, psf)
     }

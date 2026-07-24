@@ -1,5 +1,9 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("require-explicit-types")
 }
 
 dependencies {
@@ -15,4 +19,13 @@ sourceSets {
     "test" { none() }
 }
 
-optInTo("org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm")
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+            "org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm",
+        )
+    )
+}

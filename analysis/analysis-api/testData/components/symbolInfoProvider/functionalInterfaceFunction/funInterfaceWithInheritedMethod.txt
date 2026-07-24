@@ -1,10 +1,10 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: Derived
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -17,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: Derived
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -38,15 +40,15 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(funInterfaceWithInheritedMethod.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: Derived
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /Base.accept
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -68,6 +70,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: accept
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -87,16 +91,17 @@ FUNCTIONAL INTERFACE FUNCTION:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -108,6 +113,9 @@ FUNCTIONAL INTERFACE FUNCTION:
       modality: FINAL
       name: i
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         abbreviation: null
@@ -124,11 +132,12 @@ FUNCTIONAL INTERFACE FUNCTION:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithInheritedMethod.kt)
       getContainingJvmClassName: Base
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -151,6 +160,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: Base
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

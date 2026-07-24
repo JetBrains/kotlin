@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 open class BaseWithPrivate {
     private companion object {
         val X: Int = 1

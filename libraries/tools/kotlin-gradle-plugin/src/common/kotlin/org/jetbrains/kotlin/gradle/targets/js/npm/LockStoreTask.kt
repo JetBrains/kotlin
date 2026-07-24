@@ -10,7 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.utils.contentEquals
+import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 
 @DisableCachingByDefault
 abstract class LockStoreTask : LockCopyTask() {
@@ -37,7 +37,7 @@ abstract class LockStoreTask : LockCopyTask() {
         val shouldReportMismatch = if (!outputFile.exists()) {
             reportNewLockFile.get()
         } else {
-            lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEquals(value.asFile, outputFile)
+            lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEqualsIgnoringLineEndings(value.asFile, outputFile)
         }
 
         // outputFile is updated only with auto replace or not existed, but we need to delete all other files initially

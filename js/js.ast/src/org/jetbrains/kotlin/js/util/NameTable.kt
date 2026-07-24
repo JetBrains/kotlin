@@ -30,7 +30,7 @@ class NameTable<T>(private val parent: NameScope = EmptyScope) : NameScope() {
 
     fun dump(renderKey: (T) -> String): String = buildString {
         appendLine("Names:")
-        names.entries.joinToWithBuffer(this, separator = "\n") { (declaration, name) ->
+        names.entries.joinToWithBuffer(this, separator = "\n") { [declaration, name] ->
             append("--- ")
             append(renderKey(declaration))
             append(" => ")

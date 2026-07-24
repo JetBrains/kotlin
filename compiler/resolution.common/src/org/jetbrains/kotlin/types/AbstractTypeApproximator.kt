@@ -100,12 +100,10 @@ abstract class AbstractTypeApproximator(
         caches: TypeApproximatorCachesPerConfiguration?,
         approximateTo: context(TypeApproximatorConfiguration, Cache) (KotlinTypeMarker, Int) -> KotlinTypeMarker?,
     ): KotlinTypeMarker? {
-        return context(conf, caches?.getOrPut(conf, ::Cache) ?: Cache()) {
-            try {
-                approximateTo(type, -type.typeDepthForApproximation())
-            } catch (e: StackOverflowError) {
-                throw RuntimeException("StackOverflowError during type approximation for ${type.renderForDebugInfo()}", e)
-            }
+        return try {
+            approximateTo(conf, caches?.getOrPut(conf, ::Cache) ?: Cache(), type, -type.typeDepthForApproximation())
+        } catch (e: StackOverflowError) {
+            throw RuntimeException("StackOverflowError during type approximation for ${type.renderForDebugInfo()}", e)
         }
     }
 

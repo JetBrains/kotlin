@@ -5,22 +5,21 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
-    generateTestGroupSuiteWithJUnit4(args) {
+    generateTestGroupSuiteWithJUnit5(args) {
         testGroup("plugins/jvm-abi-gen/tests-gen", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+                model("compare", recursive = false, extension = null)
             }
 
             testClass<AbstractJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+                model("content", recursive = false, extension = null)
             }
 
             testClass<AbstractCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+                model("compile", recursive = false, extension = null)
             }
         }
     }

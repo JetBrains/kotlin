@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a JavaScript expression that references a name.
  */
-public final class JsNameRef extends JsExpression implements HasName {
+public final class JsNameRef extends JsAssignableExpression implements HasName {
     private String ident;
     private JsName name;
     private JsExpression qualifier;

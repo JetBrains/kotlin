@@ -314,7 +314,7 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
 @SessionConfiguration
 @OptIn(PluginServicesInitialization::class)
 fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegisteredExtensions) {
-    registeredExtensions.extensions.forEach { (extensionClass, extensionFactories) ->
+    registeredExtensions.extensions.forEach { [extensionClass, extensionFactories] ->
         registerExtensions(extensionClass, extensionFactories)
     }
     extensionSessionComponents.forEach {

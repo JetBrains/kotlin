@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.runProcess
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
-import java.nio.file.Path
 
 @DisplayName("Compiler plugin incremental compilation")
 @OtherGradlePluginTests
@@ -55,6 +53,67 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
                     classesDirectory, "library.SomeInterface",
                     "public abstract java.lang.String myNewMethod();"
                 )
+            }
+        }
+    }
+
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Kotlin compiler holds an open file descriptor to plugin jar file")
+    @DisplayName("KT-53644: Changes to lombok annotation parameters should be detected and used in incremental compilation")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // Gradle version is irrelevant
+    fun testLombokAnnotationParameterChange(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+                kotlin("plugin.lombok")
+                id("io.freefair.lombok")
+            }
+            javaSourcesDir().source("City.java") {
+                """
+                |import lombok.Builder;
+                |import lombok.Getter;
+                |import lombok.Singular;
+                |import lombok.ToString;
+                |
+                |import java.util.SortedMap;
+                |
+                |@Builder
+                |@Getter
+                |@ToString
+                |public class City {
+                |   @Singular("record")
+                |   private SortedMap<String, Integer> manual;
+                |}    
+                """.trimMargin()
+            }
+            kotlinSourcesDir().source("main.kt") {
+                """
+                |fun test() {
+                |   val a = City.builder().record("Fontanka", 76).build()
+                |}
+                """.trimMargin()
+            }
+            build("compileKotlin")
+            javaSourcesDir().source("City.java") {
+                """
+                |import lombok.Builder;
+                |import lombok.Getter;
+                |import lombok.Singular;
+                |import lombok.ToString;
+                |
+                |import java.util.SortedMap;
+                |
+                |@Builder
+                |@Getter
+                |@ToString
+                |public class City {
+                |   @Singular("re")
+                |   private SortedMap<String, Integer> manual;
+                |}    
+                """.trimMargin()
+            }
+            buildAndFail("compileKotlin") {
+                assertOutputContains("main.kt:2:27 Unresolved reference 'record' on receiver of type 'City.CityBuilder'.")
             }
         }
     }

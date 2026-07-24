@@ -1,6 +1,10 @@
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("require-explicit-types")
 }
 
 dependencies {
@@ -8,7 +12,6 @@ dependencies {
     implementation(project(":core:metadata.jvm"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
-    implementation(project(":compiler:resolution.common.jvm"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:fir:resolve"))
@@ -21,6 +24,15 @@ dependencies {
     compileOnly(libs.intellij.asm)
 }
 
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
 
 sourceSets {
     "main" { projectDefault() }

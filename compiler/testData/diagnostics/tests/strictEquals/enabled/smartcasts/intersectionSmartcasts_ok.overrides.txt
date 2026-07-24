@@ -1,0 +1,30 @@
+F:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=E] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /F [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=E] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /E [id: 1]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 2]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 2]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+
+G:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=E] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /G [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=E] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /E [id: 3]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 1]
+        [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+I:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /I [id: 0]
+    [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /H [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 3]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+J:
+  [IntersectionOverride]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /J [id: 0]
+    [Source]: public abstract override operator fun equals([EqualityBoundType=A] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /A [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+    [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /H [id: 3]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+

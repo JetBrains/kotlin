@@ -1,11 +1,17 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:fir-jvm"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:frontend.common.jvm",))

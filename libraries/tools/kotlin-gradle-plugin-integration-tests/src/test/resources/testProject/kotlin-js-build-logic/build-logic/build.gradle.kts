@@ -8,7 +8,7 @@ repositories {
     mavenLocal()
 }
 
-val kotlin_version by properties
+val kotlin_version = extra["kotlin_version"]
 
 dependencies {
     compileOnly(gradleApi())

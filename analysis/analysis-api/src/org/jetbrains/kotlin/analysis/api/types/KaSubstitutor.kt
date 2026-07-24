@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
  * A type substitutor which performs a substitution of type parameters inside a type to another type. The substitution can usually be
  * represented as a map from type parameters to their corresponding substitution types.
  *
- * A substitutor can be built using [buildSubstitutor][org.jetbrains.kotlin.analysis.api.components.buildSubstitutor] or retrieved via a
+ * A substitutor can be built using [buildSubstitutor] or retrieved via a
  * [KaCall][org.jetbrains.kotlin.analysis.api.resolution.KaCall].
  *
  * #### Example

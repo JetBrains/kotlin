@@ -183,7 +183,7 @@ public inline fun <T> MutableList(size: Int, init: (index: Int) -> T): MutableLi
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
-public inline fun <E> buildList(@BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+public inline fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(builderAction)
 }
@@ -211,7 +211,7 @@ internal expect inline fun <E> buildListInternal(builderAction: MutableList<E>.(
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
 @Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND", "DEPRECATION")
-public inline fun <E> buildList(capacity: Int, @BuilderInference builderAction: MutableList<E>.() -> Unit): List<E> {
+public inline fun <E> buildList(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildListInternal(capacity, builderAction)
 }

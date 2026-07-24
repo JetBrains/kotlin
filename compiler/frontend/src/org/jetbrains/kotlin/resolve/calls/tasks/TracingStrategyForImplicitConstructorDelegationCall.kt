@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 
+@K1Deprecation
 class TracingStrategyForImplicitConstructorDelegationCall(
     val delegationCall: KtConstructorDelegationCall, call: Call
 ) : AbstractTracingStrategy(delegationCall.calleeExpression!!, call) {

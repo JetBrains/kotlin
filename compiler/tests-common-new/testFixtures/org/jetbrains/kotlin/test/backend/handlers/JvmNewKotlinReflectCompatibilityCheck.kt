@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KOTLIN_REFLECT_DUMP_MISMATCH
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.getDefaultDumpFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.ref.SoftReference
@@ -39,37 +44,42 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     private val newReflectStringBuilder = StringBuilder()
     private var skipAsserts = false
 
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
         if (DISABLE_JAVA_FACADE in module.directives) return
         when (module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JDK_KIND)) {
             TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.FULL_JDK, TestJdkKind.FULL_JDK_8, null -> {}
             // Classes for newer JDK can't be loaded into the current old Java runtime (Java 8)
-            TestJdkKind.FULL_JDK_11, TestJdkKind.FULL_JDK_17, TestJdkKind.FULL_JDK_21 -> return
+            TestJdkKind.FULL_JDK_11, TestJdkKind.FULL_JDK_17, TestJdkKind.FULL_JDK_21, TestJdkKind.FULL_JDK_VALHALLA -> return
         }
         val classPathFiles = computeTestRuntimeClasspath(testServices, module)
+        val (k1ReflectDumpResult, newReflectDumpResult) = dumpK1AndNewReflect(
+            classPathFiles.flatMap { root ->
+                root.walk()
+                    .filter { it.isFile && it.extension == "class" }
+                    .map { it.relativeTo(root).path.replace(File.separator, ".").removeSuffix(".class") }
+            }.sorted(),
+            classPathFiles.map { it.toURI().toURL() }.toTypedArray(),
+            testServices.standardLibrariesPathProvider
+        )
+        runK1VsNewReflectCheck(k1ReflectDumpResult, newReflectDumpResult, module.directives)
+    }
 
-        val k1ReflectDumper = getK1KotlinReflectDumper(testServices)
-        val newReflectDumper = getNewKotlinReflectDumper(testServices)
-
-        val classPathUrls = classPathFiles.map { it.toURI().toURL() }.toTypedArray<URL>()
-        val k1ReflectClassLoader = URLClassLoader(classPathUrls, k1ReflectDumper.classLoader)
-        val newReflectClassLoader = URLClassLoader(classPathUrls, newReflectDumper.classLoader)
-
-        val fqNames = classPathFiles.flatMap { root ->
-            root.walk()
-                .filter { it.isFile && it.extension == "class" }
-                .map { it.relativeTo(root).path.replace(File.separator, ".").removeSuffix(".class") }
-        }.sorted()
-        val k1ReflectDumpResult = runCatching { k1ReflectDumper.dumpKClasses(k1ReflectClassLoader, fqNames) }
-        val newReflectDumpResult = runCatching { newReflectDumper.dumpKClasses(newReflectClassLoader, fqNames) }
+    private fun runK1VsNewReflectCheck(
+        k1ReflectDumpResult: Result<String>,
+        newReflectDumpResult: Result<String>,
+        directives: RegisteredDirectives,
+    ) {
         val exceptionK1Reflect = k1ReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during K1 kotlin-reflect dumping", it) }
         val exceptionNewReflect = newReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during New kotlin-reflect dumping", it) }
         when {
             exceptionK1Reflect == null && exceptionNewReflect == null -> {
-                assertions.assertTrue(SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK !in module.directives) {
+                assertions.assertTrue(SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK !in directives) {
                     "Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK. kotlin-reflect didn't throw any exceptions"
                 }
                 val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
@@ -79,7 +89,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             }
 
             // An exception occurred
-            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> skipAsserts = true
+            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in directives -> skipAsserts = true
             else -> {
                 val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
                     true -> "Exceptions during kotlin-reflect dumping in both implementations (K1 and New)\n"
@@ -104,9 +114,9 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         val kotlinReflectDumpMismatch =
             KOTLIN_REFLECT_DUMP_MISMATCH in testServices.moduleStructure.allDirectives
         val k1ReflectFile =
-            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+            testServices.moduleStructure.getDefaultDumpFile(".reflect-k1.txt")
         val newReflectFile =
-            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+            testServices.moduleStructure.getDefaultDumpFile(".reflect-new.txt")
         if (kotlinReflectDumpMismatch) {
             assertions.assertFalse(skipAsserts) {
                 "Cannot use both directives: " +
@@ -137,23 +147,40 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     }
 
     companion object {
+        data class ReflectDumpResult(val k1ReflectDumpResult: Result<String>, val newReflectDumpResult: Result<String>)
+
+        fun dumpK1AndNewReflect(
+            fqNames: List<String>, classPathUrls: Array<URL>, stdlibPathProvider: KotlinStandardLibrariesPathProvider,
+        ): ReflectDumpResult {
+            val k1ReflectDumper = getK1KotlinReflectDumper(stdlibPathProvider)
+            val newReflectDumper = getNewKotlinReflectDumper(stdlibPathProvider)
+
+            val k1ReflectClassLoader = URLClassLoader(classPathUrls, k1ReflectDumper.classLoader)
+            val newReflectClassLoader = URLClassLoader(classPathUrls, newReflectDumper.classLoader)
+
+            return ReflectDumpResult(
+                runCatching { k1ReflectDumper.dumpKClasses(k1ReflectClassLoader, fqNames) },
+                runCatching { newReflectDumper.dumpKClasses(newReflectClassLoader, fqNames) },
+            )
+        }
+
         // Use SoftReference because it's the way classloaders in KotlinStandardLibrariesPathProvider are implemented.
         // This variable, unfortunately, keeps a reference to those classloaders
         private var k1KotlinReflectDumper: SoftReference<AlienInstance?> = SoftReference(null)
-        private fun getK1KotlinReflectDumper(testServices: TestServices): AlienInstance {
+        private fun getK1KotlinReflectDumper(stdlibPathProvider: KotlinStandardLibrariesPathProvider): AlienInstance {
             k1KotlinReflectDumper.get()?.let { return it }
             return RunInAlienClassLoader::class.java
-                .newInstanceInNewClassloader(testServices.standardLibrariesPathProvider.getRuntimeAndK1ReflectJarClassLoader())
+                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndK1ReflectJarClassLoader())
                 .also { k1KotlinReflectDumper = SoftReference(it) }
         }
 
         // Use SoftReference because it's the way classloaders in KotlinStandardLibrariesPathProvider are implemented.
         // This variable, unfortunately, keeps a reference to those classloaders
         private var newKotlinReflectDumper: SoftReference<AlienInstance?> = SoftReference(null)
-        private fun getNewKotlinReflectDumper(testServices: TestServices): AlienInstance {
+        private fun getNewKotlinReflectDumper(stdlibPathProvider: KotlinStandardLibrariesPathProvider): AlienInstance {
             newKotlinReflectDumper.get()?.let { return it }
             return RunInAlienClassLoader::class.java
-                .newInstanceInNewClassloader(testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader())
+                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndReflectJarClassLoader())
                 .also { newKotlinReflectDumper = SoftReference(it) }
         }
     }
@@ -188,17 +215,26 @@ class RunInAlienClassLoader {
         for (fqn in fqNames) {
             val jClass = loader.loadClass(fqn)
             val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
-            when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
-                null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
-                2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
-                3 -> {} // Synthetic class
-                4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
-                5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
-                else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+            if (shouldSkipClass(jClass, metadata)) continue
+            try {
+                when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
+                    null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
+                    2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
+                    3 -> {} // Synthetic class
+                    4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
+                    5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
+                    else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+                }
+            } catch (e: Throwable) {
+                throw AssertionError("Exception when dumping contents of $jClass", e)
             }
         }
         return out.toString()
     }
+
+    private fun shouldSkipClass(klass: Class<*>, metadata: Metadata?): Boolean =
+        // Do not render anonymous classes for enum entries because they're currently incorrectly generated as top-level (KT-85319).
+        metadata?.kind == 1 && klass.superclass?.isEnum == true
 
     private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
         // Listing some class statuses and superclasses makes it easier to read dumps
@@ -209,9 +245,13 @@ class RunInAlienClassLoader {
             if (kClass.java.isInterface) "interface" else "class",
         ).joinToString(separator = " ")
         indented("KClass: $statuses ${kClass.qualifiedName ?: kClass.jvmName} : $superclasses") {
+            if (kClass.constructors.isNotEmpty()) {
+                indented("constructors:") {
+                    dumpKCallables(kClass.constructors)
+                }
+            }
             indented("members:") {
-                val kCallables = kClass.members
-                dumpKCallables(kCallables)
+                dumpKCallables(kClass.members)
             }
             indented("declaredMembers:") {
                 dumpKCallables(kClass.declaredMembers)

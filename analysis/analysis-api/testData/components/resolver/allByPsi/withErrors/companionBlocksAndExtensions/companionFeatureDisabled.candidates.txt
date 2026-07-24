@@ -1,0 +1,132 @@
+KtFile: 'companionFeatureDisabled.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(51,63): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,63): 'test'
+  NO_CANDIDATES
+
+KtImportList(63,63): ''
+  NO_CANDIDATES
+
+KtClass(65,119): 'class C {'
+  NO_CANDIDATES
+
+KtClassBody(73,119): '{'
+  NO_CANDIDATES
+
+KtCompanionBlock(79,117): 'companion {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(79,88): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(89,117): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(99,111): 'fun foo() {}'
+  NO_CANDIDATES
+
+KtParameterList(106,108): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(109,111): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(121,148): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(130,132): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(133,148): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(139,146): 'C.foo()'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(139,140): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(141,146): 'foo()'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(141,144): 'foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtValueArgumentList(144,146): '()'
+  NO_CANDIDATES

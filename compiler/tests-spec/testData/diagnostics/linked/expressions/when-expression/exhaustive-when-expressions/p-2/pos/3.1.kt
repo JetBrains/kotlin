@@ -1,4 +1,3 @@
-// SKIP_TXT
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 
 /*

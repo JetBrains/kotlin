@@ -1,24 +1,33 @@
+import org.gradle.jvm.toolchain.JavaLauncher
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
-    testImplementation(project(":core:descriptors"))
     testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:backend"))
-    testImplementation(project(":compiler:incremental-compilation-impl"))
-    testImplementation(project(":compiler:frontend.java"))
 
-    testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(libs.junit4)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
@@ -26,12 +35,9 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
-    testImplementation(jpsModel())
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-
-    testImplementation(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -45,45 +51,74 @@ val acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
     project.registerAcceptLicensesTask()
 }
 
+abstract class JdkHomeArgumentProvider : CommandLineArgumentProvider {
+    @get:Nested
+    abstract val javaLauncher: Property<JavaLauncher>
+
+    override fun asArguments(): Iterable<String> =
+        listOf("-Dorg.gradle.java.home=${javaLauncher.get().metadata.installationPath.asFile.absolutePath}")
+}
+
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
         develocity {
             testRetry.maxRetries.set(0)
         }
 
-        dependsOn(":dist")
-        dependsOn(acceptAndroidSdkLicenses)
-        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
-        doFirst {
-            environment("kotlin.tests.android.timeout", "45")
-            environment("JAVA_HOME", jdkHome.get())
+        testLogging {
+            showStandardStreams = true
         }
 
-        if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
+        dependsOn(acceptAndroidSdkLicenses)
+        environment("kotlin.tests.android.timeout", "45")
+
+        val jdkHomeProvider = objects.newInstance<JdkHomeArgumentProvider>()
+        jdkHomeProvider.javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+        jvmArgumentProviders.add(jdkHomeProvider)
+
+        if (project.kotlinBuildProperties.isTeamcityBuild.get() || project.providers.gradleProperty("kotlin.test.android.teamcity").isPresent) {
             systemProperty("kotlin.test.android.teamcity", true)
         }
 
-        project.findProperty("kotlin.test.android.path.filter")?.let {
-            systemProperty("kotlin.test.android.path.filter", it.toString())
+        for (propertyName in listOf(
+            "kotlin.test.android.path.filter",
+            "kotlin.test.android.compilation.parallelism",
+            "kotlin.test.android.avd.systemImage",
+        )) {
+            project.providers.gradleProperty(propertyName).orNull?.let {
+                systemProperty(propertyName, it)
+            }
         }
 
-        workingDir = rootDir
         androidSdkProvisioner {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
+
+        @OptIn(TemporaryTestFederationApi::class)
+        smokeTestConfig = SmokeTestConfig.Disabled
+
+
+        testData(project(":compiler").isolated, "testData/codegen/box")
+        testData(project(":compiler").isolated, "testData/codegen/boxJvm")
+        testData(project(":compiler").isolated, "testData/codegen/boxInline")
+
+        addDirectoryProperty(project.layout.projectDirectory.dir("android-module").asFile, "kotlin.test.android.androidModule")
+        addDirectoryProperty(rootProject.isolated.projectDirectory.dir("gradle/wrapper").asFile, "kotlin.test.android.gradleWrapper")
+        addFileProperty(rootProject.isolated.projectDirectory.file("gradlew"), "kotlin.test.android.gradlew")
+        addFileProperty(rootProject.isolated.projectDirectory.file("gradlew.bat"), "kotlin.test.android.gradlewBat")
     }
 
     withJvmStdlibAndReflect()
     withTestJar()
     withScriptRuntime()
     withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
 }
 
 val generateAndroidTests by generator(
     "org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator",
     testSourceSet,
     inputKind = GeneratorInputKind.RuntimeClasspath,
+    registerInAggregateGenerateSources = false,
 ) {
-    workingDir = rootDir
-    dependsOn(rootProject.tasks.named("dist"))
 }

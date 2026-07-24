@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.Name
 
 
+@K1Deprecation
 interface KotlinCall : ResolutionAtom {
     val callKind: KotlinCallKind
 
@@ -36,6 +38,7 @@ private fun SimpleKotlinCallArgument.checkReceiverInvariants() {
     }
 }
 
+@K1Deprecation
 fun KotlinCall.checkCallInvariants() {
     assert(explicitReceiver !is LambdaKotlinCallArgument && explicitReceiver !is CallableReferenceKotlinCallArgument) {
         "Lambda argument or callable reference is not allowed as explicit receiver: $explicitReceiver"

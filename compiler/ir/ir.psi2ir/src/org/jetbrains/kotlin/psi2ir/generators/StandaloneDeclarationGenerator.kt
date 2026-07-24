@@ -150,7 +150,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         }
 
         // Declare all the value parameters up first.
-        val (contextParameters, regularParameters) = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
+        val [contextParameters, regularParameters] = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             val kind = if (valueParameterDescriptor.index < functionDescriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
             declareParameter(valueParameterDescriptor, ktParameter, irFunction, kind).also {

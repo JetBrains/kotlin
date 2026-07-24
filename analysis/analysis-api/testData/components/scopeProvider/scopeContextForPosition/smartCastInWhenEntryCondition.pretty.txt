@@ -5,6 +5,8 @@ implicit values:
     type = A
     ownerSymbol = KaNamedFunctionSymbol:
       /test(<extension receiver>: kotlin.Any): kotlin.Int
+    label = test
+
 
 scopes:
   LocalScope, index = 0
@@ -61,4 +63,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

@@ -1,2 +1,5 @@
-KtNamedFunction(32,77): '/**'
-  null
+KDocName(44,50): 'Nested'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /C.Nested
+    ]

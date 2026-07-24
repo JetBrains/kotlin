@@ -1,7 +1,7 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
-// LANGUAGE: +JsStaticInInterface +JsAllowExportingSuspendFunctions +JsExportInterfacesInImplementableWay
+// LANGUAGE: +JsStaticInInterface +JsExportInterfacesInImplementableWay
 // OPT_IN: kotlin.js.ExperimentalJsNoRuntime
 // INFER_MAIN_MODULE
 // WITH_STDLIB
@@ -104,6 +104,25 @@ suspend fun justCallSuspendWithDefaultImplementation(foo: IFoo<*>): String =
     foo.suspendWithDefaultImplementation()
 
 @JsExport
+suspend fun callTypeScriptDefaultSuspend(value: TypeScriptDefaultSuspend): String =
+    value.suspendDefault()
+
+@JsExport
+interface TypeScriptDefaultSuspend {
+    fun marker(): String
+    suspend fun suspendDefault(): String = "DEFAULT ${marker()}"
+}
+
+@JsExport
+suspend fun callTsAbstractSuspend(value: TsSuspendDispatch): String =
+    value.abstractSuspend()
+
+@JsExport
+interface TsSuspendDispatch {
+    suspend fun abstractSuspend(): String
+}
+
+@JsExport
 fun callingWithDefaultsWithoutParameter(foo: IFoo<*>): String =
     foo.withDefaults()
 
@@ -189,6 +208,17 @@ interface ChildOfNoRuntime : NoRuntimeIface {
     fun child(): String
 }
 
+@JsExport
+@JsNoRuntime
+interface Listener {
+    val id: String
+    fun onStart(): String
+}
+
+@JsExport
+fun beginWork(listener: Listener): String =
+    "${listener.id}:${listener.onStart()}"
+
 // Implementation of @JsNoRuntime interfaces should be possible and must not introduce any brand properties
 @JsExport
 class KotlinNoRuntimeImpl(override val a: String) : NoRuntimeIface
@@ -243,9 +273,27 @@ interface NoRuntimeLeaf : MidNormal {
 
 @JsExport
 @JsNoRuntime
-interface ShouldBeNotImplementable {
+interface ShouldBeNotImplementableWithIgnoredProperty {
     fun leaf(): String
 
     @JsExport.Ignore
     val ignored: Boolean
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementableWithIgnoredFun {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    fun ignoredFun(): String
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementableWithIgnoredSuspend {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    suspend fun ignoredSuspend(): String
 }

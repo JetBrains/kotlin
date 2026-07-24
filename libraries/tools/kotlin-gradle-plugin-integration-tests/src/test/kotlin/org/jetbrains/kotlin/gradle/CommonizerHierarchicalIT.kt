@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.error
 import org.jetbrains.kotlin.ir.builders.irGetObject
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * These intrinsics must be lowered separately from the interop lowering
  * as their proper handling requires inlining phase to have been applied.
  */
-internal class SpecialInteropIntrinsicsLowering(val context: Context) : FileLoweringPass {
+internal class SpecialInteropIntrinsicsLowering(val context: NativeBackendContext) : FileLoweringPass {
     private val symbols = context.symbols
 
     override fun lower(irFile: IrFile) {

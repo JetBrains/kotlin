@@ -75,7 +75,7 @@ abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() 
             assertEquals(shouldReportMinorSignificance, hasDiagnostic(memberOfUnlinkedClassesDiagnosticRegex(severityForMinor)))
             assertEquals(shouldReportMinorSignificance, hasDiagnostic(unusableAnnotationConstructorDiagnosticRegex(severityForMinor)))
             // Due to early abortion of compilation, this diagnostic is not reported for error severity.
-            listOf("property" to "qux", "function" to "foo", "function" to "extensionFoo").forEach { (kind, name) ->
+            listOf("property" to "qux", "function" to "foo", "function" to "extensionFoo").forEach { [kind, name] ->
                 assertEquals(
                     shouldReportMinorSignificance && !shouldReportAsError,
                     hasDiagnostic(reflectionTargetSymbolDiagnosticRegex(severityForMinor, kind, name))

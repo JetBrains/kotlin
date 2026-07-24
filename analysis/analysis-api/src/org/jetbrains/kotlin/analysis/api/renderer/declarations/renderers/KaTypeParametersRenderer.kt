@@ -147,7 +147,7 @@ public interface KaTypeParametersRenderer {
                         declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.WHERE_KEYWORD, symbol, printer)
                     },
                     {
-                        printer.printCollection(allBounds) { (typeParameter, bound) ->
+                        printer.printCollection(allBounds) { [typeParameter, bound] ->
                             " : ".separated(
                                 { declarationRenderer.nameRenderer.renderName(analysisSession, typeParameter, declarationRenderer, printer) },
                                 {

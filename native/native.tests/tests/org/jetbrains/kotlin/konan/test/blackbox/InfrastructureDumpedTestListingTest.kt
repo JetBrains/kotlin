@@ -55,7 +55,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
         val barTestCase: TestCase = generateTestCaseWithSingleModule(rootDir.resolve("bar"))
 
-        val (executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>) =
+        val [executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>] =
             if (fromSources) {
                 // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
                 // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module

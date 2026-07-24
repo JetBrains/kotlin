@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DiagnosticsCallback
 import org.jetbrains.kotlin.diagnostics.GenericDiagnostics
 
+@K1Deprecation
 interface Diagnostics : GenericDiagnostics<Diagnostic> {
     //should not be called on readonly views
     //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property

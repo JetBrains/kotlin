@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.incremental;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,66 +17,77 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJsKlibWithPluginCompilerRunnerTestGenerated extends AbstractIncrementalJsKlibWithPluginCompilerRunnerTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+  private void run(String fileName) {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/" + fileName);
   }
 
+  @Test
   @TestMetadata("addMethodToGeneratedClass")
   public void testAddMethodToGeneratedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/addMethodToGeneratedClass/");
   }
 
+  @Test
   @TestMetadata("addMethodToGeneratedClassByAnnotatingNestedClass")
   public void testAddMethodToGeneratedClassByAnnotatingNestedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/addMethodToGeneratedClassByAnnotatingNestedClass/");
   }
 
+  @Test
   @TestMetadata("addMethodToGeneratedSupertype")
   public void testAddMethodToGeneratedSupertype() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/addMethodToGeneratedSupertype/");
   }
 
+  @Test
   @TestMetadata("addNewSerializableClass")
   public void testAddNewSerializableClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/addNewSerializableClass/");
   }
 
+  @Test
   public void testAllFilesPresentInPureKotlin() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @Test
   @TestMetadata("changeMethodOfGeneratedClass")
   public void testChangeMethodOfGeneratedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/changeMethodOfGeneratedClass/");
   }
 
+  @Test
   @TestMetadata("generateNewTopLevelFunction")
   public void testGenerateNewTopLevelFunction() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/generateNewTopLevelFunction/");
   }
 
+  @Test
   @TestMetadata("recompileAfterDependencyFailure")
   public void testRecompileAfterDependencyFailure() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/recompileAfterDependencyFailure/");
   }
 
+  @Test
   @TestMetadata("recompileOnAnnotationParameterChange")
   public void testRecompileOnAnnotationParameterChange() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/recompileOnAnnotationParameterChange/");
   }
 
+  @Test
   @TestMetadata("referenceFunctionFromIrPlugin")
   public void testReferenceFunctionFromIrPlugin() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/referenceFunctionFromIrPlugin/");
   }
 
+  @Test
   @TestMetadata("removeLookupToDeclaration")
   public void testRemoveLookupToDeclaration() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/removeLookupToDeclaration/");
   }
 
+  @Test
   @TestMetadata("removeMethodFromGeneratedClass")
   public void testRemoveMethodFromGeneratedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/removeMethodFromGeneratedClass/");

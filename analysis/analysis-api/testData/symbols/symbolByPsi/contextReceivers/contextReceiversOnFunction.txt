@@ -1,15 +1,17 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /y
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
+      anchorPsi: KtContextReceiver
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -18,24 +20,29 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: Int
       origin: SOURCE
+      psi: KtContextReceiver
+      realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
       getContainingJvmClassName: ContextReceiversOnFunctionKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
+      anchorPsi: KtContextReceiver
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -44,16 +51,19 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: s
       origin: SOURCE
+      psi: KtContextReceiver
+      realPsi: KtContextReceiver
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
       getContainingJvmClassName: ContextReceiversOnFunctionKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -89,6 +99,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: y
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -101,6 +113,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ContextReceiversOnFunctionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: y

@@ -59,7 +59,7 @@ class CompilerArgumentsSerializerV5<T : CommonToolArguments>(override val argume
         private fun saveStringArguments(element: Element, argumentsByName: Map<String, String>) {
             if (argumentsByName.isEmpty()) return
             saveElementConfigurable(element, STRING_ROOT_ELEMENTS_NAME) {
-                argumentsByName.entries.forEach { (name, arg) ->
+                argumentsByName.entries.forEach { [name, arg] ->
                     Element(STRING_ELEMENT_NAME).also {
                         it.setAttribute(NAME_ATTR_NAME, name)
                         if (name == "classpath") {
@@ -76,7 +76,7 @@ class CompilerArgumentsSerializerV5<T : CommonToolArguments>(override val argume
         private fun saveFlagArguments(element: Element, argumentsByName: Map<String, Boolean>) {
             if (argumentsByName.isEmpty()) return
             saveElementConfigurable(element, FLAG_ROOT_ELEMENTS_NAME) {
-                argumentsByName.entries.forEach { (name, arg) ->
+                argumentsByName.entries.forEach { [name, arg] ->
                     Element(FLAG_ELEMENT_NAME).also {
                         it.setAttribute(NAME_ATTR_NAME, name)
                         it.setAttribute(ARG_ATTR_NAME, arg.toString())
@@ -101,7 +101,7 @@ class CompilerArgumentsSerializerV5<T : CommonToolArguments>(override val argume
         private fun saveArrayArguments(element: Element, arrayArgumentsByName: Map<String, Array<String>>) {
             if (arrayArgumentsByName.isEmpty()) return
             saveElementConfigurable(element, ARRAY_ROOT_ELEMENTS_NAME) {
-                arrayArgumentsByName.entries.forEach { (name, arg) ->
+                arrayArgumentsByName.entries.forEach { [name, arg] ->
                     Element(ARRAY_ELEMENT_NAME).also {
                         it.setAttribute(NAME_ATTR_NAME, name)
                         saveElementsList(it, ARGS_ATTR_NAME, ARG_ATTR_NAME, arg.toList())

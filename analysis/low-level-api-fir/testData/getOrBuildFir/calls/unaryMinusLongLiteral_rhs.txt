@@ -1,0 +1,12 @@
+KT element: KtConstantExpression
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Long(1)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryMinusLongLiteral_rhs.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        Long(1).R|kotlin/Long.unaryMinus|()
+    }

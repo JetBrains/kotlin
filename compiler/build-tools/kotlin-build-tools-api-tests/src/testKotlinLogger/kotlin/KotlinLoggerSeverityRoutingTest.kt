@@ -49,7 +49,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun infoSeverityRoutesToInfoLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[VERBOSE] = true
             }) {
@@ -65,7 +65,7 @@ class KotlinLoggerSeverityRoutingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun debugSeverityRoutesToDebugLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile {
                 val debugLines = logLines[LogLevel.DEBUG].orEmpty()
                 assertTrue(debugLines.isNotEmpty()) {

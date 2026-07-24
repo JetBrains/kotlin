@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components.candidate
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.ErrorDescriptorResolutionPart
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.model.ResolutionPart
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 
+@K1Deprecation
 class SimpleErrorResolutionCandidate(
     callComponents: KotlinCallComponents,
     resolutionCallbacks: KotlinResolutionCallbacks,

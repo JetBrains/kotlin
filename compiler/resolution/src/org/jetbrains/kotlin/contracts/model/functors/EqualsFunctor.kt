@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
+@K1Deprecation
 class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
     /*
         Equals is a bit tricky case to produce clauses, because e.g. if we want to emit "Returns(true)"-clause,

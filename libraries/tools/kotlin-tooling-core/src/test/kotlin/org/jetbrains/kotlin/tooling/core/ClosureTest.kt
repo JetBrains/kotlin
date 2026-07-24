@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 

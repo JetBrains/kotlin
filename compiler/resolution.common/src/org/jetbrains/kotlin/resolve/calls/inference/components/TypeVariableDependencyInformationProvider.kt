@@ -103,7 +103,7 @@ class TypeVariableDependencyInformationProvider(
             val from = variableWithConstraints.typeVariable.freshTypeConstructor(typeSystemContext)
 
             for (constraint in variableWithConstraints.constraints) {
-                val constraintTypeConstructor = constraint.type.typeConstructor(typeSystemContext)
+                val constraintTypeConstructor = constraint.type.typeConstructor(c = typeSystemContext)
 
                 constraint.type.forAllMyTypeVariables {
                     if (isMyTypeVariable(it)) {
@@ -159,7 +159,7 @@ class TypeVariableDependencyInformationProvider(
         for (argument in postponedKtPrimitives) {
             if (argument.analyzed || argument !is CollectionLiteralAtomMarker) continue
             val expectedType = argument.expectedType ?: continue
-            val expectedTypeConstructor = expectedType.typeConstructor(typeSystemContext)
+            val expectedTypeConstructor = expectedType.typeConstructor(c = typeSystemContext)
             if (isMyTypeVariable(expectedTypeConstructor)) {
                 addAllRelatedNodes(relatedToCollectionLiteral, expectedTypeConstructor, includePostponedEdges = true)
             }

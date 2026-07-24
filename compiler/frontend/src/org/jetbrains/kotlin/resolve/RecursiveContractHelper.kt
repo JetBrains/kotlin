@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.LazyContractProvider
 import org.jetbrains.kotlin.contracts.parsing.isContractCallDescriptor
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 /*
  * See KT-26386 and KT-30410
  */
+@K1Deprecation
 fun disableContractsInsideContractsBlock(call: Call, descriptor: CallableDescriptor?, scope: LexicalScope, trace: BindingTrace) {
     (call.callElement as? KtExpression)?.let { callExpression ->
         if (callExpression.isFirstStatement() && callExpression.isContractDescriptionCallPsiCheck()) {

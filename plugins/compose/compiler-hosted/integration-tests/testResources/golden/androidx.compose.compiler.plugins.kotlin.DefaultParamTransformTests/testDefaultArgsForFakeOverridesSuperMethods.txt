@@ -1,0 +1,64 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+
+open class Foo {
+    @NonRestartableComposable @Composable fun foo(x: Int = 0) {}
+}
+class Bar: Foo() {
+    @NonRestartableComposable @Composable fun Example() {
+        foo()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+open class Foo {
+  @NonRestartableComposable
+  @Composable
+  @FunctionKeyMeta(key = -855967837, startOffset = 95, endOffset = 117)
+  fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(foo)N(x):Test.kt")
+    if (%default and 0b0001 != 0) {
+      x = 0
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class Bar : Foo {
+  @NonRestartableComposable
+  @Composable
+  @FunctionKeyMeta(key = -2055352125, startOffset = 181, endOffset = 216)
+  fun Example(%composer: Composer?, %changed: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(Example)<foo()>:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    foo(0, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}

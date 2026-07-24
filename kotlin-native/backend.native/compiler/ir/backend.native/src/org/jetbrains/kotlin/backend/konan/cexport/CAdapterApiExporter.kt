@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
 import java.io.File
+import org.jetbrains.kotlin.K1Deprecation
 
 /**
  * Third phase of C export:
@@ -35,12 +36,15 @@ internal class CAdapterApiExporter(
         private val target: KonanTarget,
 ) {
     private val typeTranslator = elements.typeTranslator
+
+    @OptIn(K1Deprecation::class)
     private val builtIns = elements.typeTranslator.builtIns
 
     private val prefix = elements.typeTranslator.prefix
     private lateinit var outputStreamWriter: PrintWriter
 
     // Primitive built-ins and unsigned types
+    @OptIn(K1Deprecation::class)
     private val predefinedTypes = listOf(
             builtIns.byteType, builtIns.shortType,
             builtIns.intType, builtIns.longType,
@@ -62,7 +66,7 @@ internal class CAdapterApiExporter(
             DefinitionKind.C_HEADER_DECLARATION -> {
                 when {
                     element.isTopLevelFunction -> {
-                        val (name, declaration) = element.makeTopLevelFunctionString()
+                        val [name, declaration] = element.makeTopLevelFunctionString()
                         exportedSymbols += name
                         output(declaration, 0)
                     }
@@ -347,7 +351,7 @@ internal class CAdapterApiExporter(
             assert(!it.isNothing())
             val nullableIt = it.makeNullable()
             val needArgument = !it.isUnit()
-            val (parameter, maybeComma) = if (needArgument)
+            val [parameter, maybeComma] = if (needArgument)
                 ("${typeTranslator.translateType(it)} value" to ",") else ("" to "")
             val argument = if (needArgument) "value, " else ""
             output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")

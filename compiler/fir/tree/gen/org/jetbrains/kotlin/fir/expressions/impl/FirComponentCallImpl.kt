@@ -40,6 +40,8 @@ internal class FirComponentCallImpl(
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
+    override val initializerName: Name,
+    override val isShortFormWithParentheses: Boolean,
 ) : FirComponentCall() {
     override var calleeReference: FirNamedReference = FirSimpleNamedReference(source, Name.identifier("component$componentIndex"))
     override val origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Operator

@@ -1,6 +1,9 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
     id("project-tests-convention")
 }
 
@@ -14,7 +17,6 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
     testCompileOnly(intellijCore())
 
-    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(libs.intellij.fastutil)
@@ -25,8 +27,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 testsJar {}
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }

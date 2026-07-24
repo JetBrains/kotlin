@@ -1,124 +1,15 @@
 KaValueParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
-  generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-    annotations: []
-    backingFieldSymbol: KaBackingFieldSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Private
-      contextReceivers: []
-      isActual: false
-      isCompanion: false
-      isExpect: false
-      isExtension: false
-      isExternal: false
-      isNotDefault: false
-      isVal: true
-      location: PROPERTY
-      modality: FINAL
-      name: field
-      origin: PROPERTY_BACKING_FIELD
-      owningProperty: KaKotlinPropertySymbol(/Test.ctx)
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/Boolean
-      visibility: PRIVATE
-      getDispatchReceiver(): KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: Test
-      getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
-      getContainingJvmClassName: Test
-      getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
-      importableFqName: null
-    callableId: /Test.ctx
-    compilerVisibility: Public
-    contextParameters: []
-    contextReceivers: []
-    getter: KaPropertyGetterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      hasStableParameterNames: true
-      isActual: false
-      isCompanion: false
-      isExpect: false
-      isExtension: false
-      isExternal: false
-      isInline: false
-      isNotDefault: false
-      isOverride: false
-      location: PROPERTY
-      modality: OPEN
-      origin: SOURCE
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: kotlin/Boolean
-      valueParameters: []
-      visibility: PUBLIC
-      getDispatchReceiver(): KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: Test
-      getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
-      getContainingJvmClassName: Test
-      getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
-      importableFqName: null
-    hasBackingField: true
-    hasGetter: true
-    hasSetter: false
-    initializer: KaNonConstantInitializerValue(open val ctx: Boolean)
-    isActual: false
-    isCompanion: false
-    isConst: false
-    isDelegatedProperty: false
-    isExpect: false
-    isExtension: false
-    isExternal: false
-    isFromPrimaryConstructor: true
-    isLateInit: false
-    isOverride: false
-    isStatic: false
-    isVal: true
-    location: CLASS
-    modality: OPEN
-    name: ctx
-    origin: SOURCE
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Boolean
-    setter: null
-    typeParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: Test
-    getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
-    getContainingJvmClassName: Test
-    getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    javaGetterName: getCtx
-    javaSetterName: null
-    isInline: false
-    importableFqName: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -130,14 +21,178 @@ KaValueParameterSymbol:
   modality: FINAL
   name: ctx
   origin: SOURCE
+  primaryConstructorProperty: KaKotlinPropertySymbol(/Test.ctx)
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Boolean
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
+  importableFqName: null
+
+KaKotlinPropertySymbol:
+  anchorPsi: KtParameter
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(/Test.ctx)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Boolean
+    typeParameters: []
+    visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Test
+    getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
+    getContainingJvmClassName: Test
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    importableFqName: null
+  callableId: /Test.ctx
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: OPEN
+    origin: SOURCE
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Boolean
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Test
+    getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
+    getContainingJvmClassName: Test
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    importableFqName: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KaNonConstantInitializerValue(open val ctx: Boolean)
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: OPEN
+  name: ctx
+  origin: SOURCE
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: false
+    hasDefaultValue: false
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: ctx
+    origin: SOURCE
+    primaryConstructorProperty: KaKotlinPropertySymbol(/Test.ctx)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Boolean
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
+    getContainingJvmClassName: Test
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: Test
+  getContainingFileSymbol: KaFileSymbol(openPrimaryConstructorParameterInFinalClass.kt)
+  getContainingJvmClassName: Test
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  javaGetterName: getCtx
+  javaSetterName: null
+  isInline: false
   importableFqName: null

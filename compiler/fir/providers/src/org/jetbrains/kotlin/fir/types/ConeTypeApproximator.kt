@@ -60,6 +60,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
         return !contains { mightNeedApproximation(it.asCone(), conf) }
     }
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     private fun mightNeedApproximation(
         type: ConeKotlinType,
         conf: TypeApproximatorConfiguration

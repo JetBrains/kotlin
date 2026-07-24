@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 @Suppress("UNUSED")
 class TypeParameterTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testRegularMakeNullable(): KaType {
         val symbol = getTypeParameterSymbolByCaret("type")
         return session.typeCreator.typeParameterType(symbol) {

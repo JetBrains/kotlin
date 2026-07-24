@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
-import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
@@ -125,7 +126,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
         if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.any { annotation ->
-                annotation.symbol.owner.constructedClass.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
+                annotation.classSymbol.owner.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
             }) {
             abiHazard = true
         }
@@ -302,7 +303,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
@@ -346,7 +347,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        for ([implParameter, methodParameter] in implParameters.zip(methodParameters)) {
             val parameterConstraint = constraints.parameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
                 makeLambdaParameterNullable(implFun, implParameter)
@@ -400,7 +401,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
-        for ((valueParameter, constraint) in constraints.parameters) {
+        for ([valueParameter, constraint] in constraints.parameters) {
             if (valueParameter.parent != fakeInstanceMethod)
                 throw AssertionError(
                     "Unexpected value parameter: ${valueParameter.render()}; fakeInstanceMethod:\n" +
@@ -456,7 +457,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                         "expected: ${expectedFun.render()}\n" +
                         "  ${expectedParameters.size} value parameters."
             )
-        for ((adapteeParameter, expectedParameter) in adapteeParameters.zip(expectedParameters)) {
+        for ([adapteeParameter, expectedParameter] in adapteeParameters.zip(expectedParameters)) {
             val parameterConstraint = computeParameterTypeAdaptationConstraint(adapteeParameter.type, expectedParameter.type)
                 ?: continue
             if (parameterConstraint == TypeAdaptationConstraint.CONFLICT)
@@ -498,7 +499,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // All Kotlin inline classes are final,
         // and their supertypes are trivially mapped to reference types.
         val erasedAdapteeClass = getErasedClassForSignatureAdaptation(adapteeType)
-        if (erasedAdapteeClass.isSingleFieldValueClass) {
+        if (erasedAdapteeClass.isInlineClass) {
             // Inline classes mapped to non-null reference types are a special case because they can't be boxed trivially.
             // TODO consider adding a special type annotation to force boxing on an inline class type regardless of its underlying type.
             val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass)
@@ -507,7 +508,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             }
 
             val erasedExpectedClass = getErasedClassForSignatureAdaptation(expectedType)
-            return if (erasedExpectedClass.isSingleFieldValueClass) {
+            return if (erasedExpectedClass.isInlineClass) {
                 // LambdaMetafactory doesn't know about method mangling.
                 TypeAdaptationConstraint.CONFLICT
             } else {
@@ -515,13 +516,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 // => box it
                 TypeAdaptationConstraint.FORCE_BOXING
             }
-        }
-
-        // ** Value classes **
-        // All Kotlin inline classes are final,
-        // and their supertypes are trivially mapped to reference types.
-        if (adapteeType.needsMfvcFlattening()) {
-            return TypeAdaptationConstraint.CONFLICT
         }
 
         // Other cases don't enforce type adaptation
@@ -569,7 +563,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 else -> {
                     val joined = HashMap<IrValueParameter, TypeAdaptationConstraint>()
                     joined.putAll(sig1.parameters)
-                    for ((vp2, t2) in sig2.parameters.entries) {
+                    for ([vp2, t2] in sig2.parameters.entries) {
                         val tx = composeTypeAdaptationConstraints(joined[vp2], t2) ?: continue
                         if (tx == TypeAdaptationConstraint.CONFLICT)
                             return null

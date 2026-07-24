@@ -73,7 +73,7 @@ object TestsJsonMapGenerator {
                     if (isImplementationTest && !LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
 
-                    val (specTest, _) = CommonParser.parseSpecTest(
+                    val [specTest, _] = CommonParser.parseSpecTest(
                         file.canonicalPath,
                         mapOf("main.kt" to file.readText()),
                         isImplementationTest

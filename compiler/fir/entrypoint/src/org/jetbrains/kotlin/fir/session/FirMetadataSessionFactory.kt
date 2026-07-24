@@ -26,20 +26,38 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JsPlatform
-import org.jetbrains.kotlin.platform.NativePlatform
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.WasmPlatform
-import org.jetbrains.kotlin.platform.has
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.subplatformsOfType
-import org.jetbrains.kotlin.platform.toTargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-typealias AdditionalProvidersSupplier = (FirSession, ModuleDataProvider, FirKotlinScopeProvider, List<KotlinLibrary>) -> List<FirSymbolProvider>
+fun interface AdditionalProvidersSupplier {
+    fun createProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        scopeProvider: FirKotlinScopeProvider,
+        libraries: List<KotlinLibrary>,
+    ): List<FirSymbolProvider>
+}
+
+fun interface AdditionalProvidersSupplierForHmpp {
+    fun createProviders(
+        session: FirSession,
+        moduleDataProvider: ModuleDataProvider,
+        scopeProvider: FirKotlinScopeProvider,
+        libraries: List<KotlinLibrary>,
+        rawRegularDependencies: Collection<String>,
+        rawFriendDependencies: Collection<String>,
+    ): List<FirSymbolProvider>
+
+    fun bind(rawRegularDependencies: Collection<String>, rawFriendDependencies: Collection<String>): AdditionalProvidersSupplier {
+        return { session, moduleDataProvider, scopeProvider, libraries ->
+            createProviders(session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies)
+        }
+    }
+}
 
 @OptIn(SessionConfiguration::class)
 abstract class AbstractFirMetadataSessionFactory(
@@ -116,7 +134,7 @@ abstract class AbstractFirMetadataSessionFactory(
                         )
                     }
 
-                    additionalProviders?.invoke(session, moduleDataProvider, kotlinScopeProvider, resolvedKLibs)
+                    additionalProviders?.createProviders(session, moduleDataProvider, kotlinScopeProvider, resolvedKLibs)
                         ?.let { this += it }
                 }
             }
@@ -157,7 +175,7 @@ abstract class AbstractFirMetadataSessionFactory(
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         context: Context,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createSourceSession(
@@ -165,33 +183,28 @@ abstract class AbstractFirMetadataSessionFactory(
             context,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule,
+            kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
-                incrementalCompilationContext?.let {
-                    val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
-                    if (precompiledBinariesPackagePartProvider != null && it.precompiledBinariesFileScope != null) {
+                val symbolProviderForBinariesFromIncrementalCompilation = incrementalCompilationContext?.let { (precompiledBinariesPackagePartProvider, precompiledBinariesFileScope) -> // ->
+                        if (precompiledBinariesFileScope == null) return@let null
                         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                        symbolProviderForBinariesFromIncrementalCompilation =
-                            MetadataSymbolProvider(
-                                session,
-                                moduleDataProvider,
-                                kotlinScopeProvider,
-                                precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
-                                projectEnvironment.getKotlinClassFinder(it.precompiledBinariesFileScope) as KotlinMetadataFinder,
-                                defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
-                            )
+                        MetadataSymbolProvider(
+                            session,
+                            moduleDataProvider,
+                            kotlinScopeProvider,
+                            precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
+                            projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope) as KotlinMetadataFinder,
+                            defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
+                        )
                     }
-                }
 
                 SourceProviders(
-                    listOfNotNull(
+                    sourceProviders = listOfNotNull(
                         symbolProvider,
-                        *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
-                        symbolProviderForBinariesFromIncrementalCompilation,
                         generatedSymbolsProvider,
-                    )
+                    ),
+                    incrementalProvider = symbolProviderForBinariesFromIncrementalCompilation,
                 )
             }
         )

@@ -1,4 +1,6 @@
 KClass: class A : Any
+  constructors:
+    public final fun `<init>`(): A
   members:
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
     public open fun A.foo(kotlin.String!): kotlin.Unit
@@ -23,6 +25,8 @@ KClass: abstract interface C : Any
   declaredMembers:
     public abstract fun C.foo(kotlin.String?): kotlin.Unit
 KClass: class D : C, B, A
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     public open fun D.foo(kotlin.String?): kotlin.Unit
@@ -30,6 +34,8 @@ KClass: class D : C, B, A
     public open fun D.toString(): kotlin.String
   declaredMembers:
 KClass: class E : C, A, B
+  constructors:
+    public final fun `<init>`(): E
   members:
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
     public open fun E.foo(kotlin.String?): kotlin.Unit

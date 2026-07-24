@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -12,13 +13,15 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
+@K1Deprecation
 object ExpectActualInTheSameModuleChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -29,8 +32,8 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
         val module = descriptor.module
         val actuals = ExpectedActualResolver.findActualForExpected(descriptor, module)
-            ?.filter { (compatibility, _) -> compatibility.isCompatibleOrWeaklyIncompatible }
-            ?.flatMap { (_, members) -> members }
+            ?.filter { [compatibility, _] -> compatibility.isCompatibleOrWeaklyIncompatible }
+            ?.flatMap { [_, members] -> members }
             ?.takeIf(List<MemberDescriptor>::isNotEmpty) ?: return
 
         // There are 4 cases:
@@ -54,6 +57,7 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
             // a single module
             if (actuals.all { it.module != module }) return
         } else { // backend specific compiler
+            @OptIn(KtImplementationDetail::class)
             if (declaration.containingKtFile.isCommonSource == true) return
         }
 

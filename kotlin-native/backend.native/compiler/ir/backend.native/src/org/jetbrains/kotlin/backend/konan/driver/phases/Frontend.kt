@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.K1Deprecation
 
 sealed class FrontendPhaseOutput {
     object ShouldNotGenerateCode : FrontendPhaseOutput()
@@ -41,6 +42,7 @@ internal class FrontendContextImpl(
     override lateinit var frontendServices: FrontendServices
 }
 
+@OptIn(K1Deprecation::class)
 internal val FrontendPhase = createSimpleNamedCompilerPhase(
         "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }

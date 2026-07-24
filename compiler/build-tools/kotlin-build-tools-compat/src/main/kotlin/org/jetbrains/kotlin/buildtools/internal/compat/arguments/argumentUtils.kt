@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.compat.arguments
 
+import com.intellij.util.containers.stream
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import java.nio.file.Path
@@ -38,6 +39,10 @@ internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
 
 internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()
+
+internal fun Array<String>.checkNoneContains(other: CharSequence) {
+    asList().checkNoneContains(other)
+}
 
 internal fun List<String>.checkNoneContains(other: CharSequence) {
     val invalidItem = firstOrNull { it.contains(other) }

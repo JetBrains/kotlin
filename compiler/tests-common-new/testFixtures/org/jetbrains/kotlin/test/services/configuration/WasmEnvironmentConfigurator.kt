@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
-import java.io.File
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
@@ -54,10 +53,10 @@ abstract class WasmEnvironmentConfigurator(
         fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
 
         fun kotlinTestPath(target: WasmTarget, testServices: TestServices): String =
-            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
+            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
 
         fun stdlibPath(target: WasmTarget, testServices: TestServices): String =
-            testServices.standardLibrariesPathProvider.kotlinTestWasmKLib(target).absolutePath
+            testServices.standardLibrariesPathProvider.fullWasmStdlib(target).absolutePath
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
@@ -155,8 +154,7 @@ open class WasmSecondStageEnvironmentConfigurator(
         val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
             .map { it.absolutePath }
         val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
-        val mainPath = File(mainModule.libPath).canonicalPath
+        val mainPath = klibArtifact.outputFile.canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
         configuration.includes = mainPath
@@ -193,6 +191,7 @@ open class WasmSecondStageEnvironmentConfigurator(
         }
 
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, USE_STACK_SWITCHING_PROPOSAL in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
             WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,

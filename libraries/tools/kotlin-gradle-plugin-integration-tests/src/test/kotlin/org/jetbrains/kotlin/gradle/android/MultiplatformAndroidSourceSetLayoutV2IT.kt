@@ -15,6 +15,7 @@ import kotlin.test.assertNull
 class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     @DisplayName("test Android project with flavors")
     fun testProjectWithFlavors(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
         project(

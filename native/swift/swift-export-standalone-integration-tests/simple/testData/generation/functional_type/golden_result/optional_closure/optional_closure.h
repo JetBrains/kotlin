@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(void * self, _Bool (^_Nullable arg)(void));
+
 _Bool __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___(_Bool (^_Nullable arg)(void * _Nullable ));
 
 _Bool __root___consume_opt_closure__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(_Bool (^_Nullable arg)(void));

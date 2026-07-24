@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class ResolutionStage {
@@ -103,7 +104,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         val resolvedQualifier = extensionReceiver.expression as? FirResolvedQualifier
             ?: error("Candidate for companion extension has non-qualifier extension receiver")
 
-        val receiverClassSymbol = resolvedQualifier.symbol?.fullyExpandedClass()
+        val receiverClassSymbol = resolvedQualifier.qualifierSymbol?.fullyExpandedClass()
 
         if (receiverClassSymbol == null) {
             sink.reportDiagnostic(ReceiverIsNotAClass)
@@ -163,6 +164,7 @@ private fun prepareImplicitArgument(
         session = session
     ).let { prepareCapturedType(it, session) }
         .let {
+            @Suppress("SuspiciousWhenOverConeKotlinType")
             when (it) {
                 is ConeIntegerConstantOperatorType -> it.possibleTypes.first()
                 else -> it
@@ -203,7 +205,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
-            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.coneType.canBeNull(candidate.callInfo.session)))
+            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.coneType.canBeNull()))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
                 context.session.typeApproximator.approximateToSuperType(
@@ -291,7 +293,7 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         val contextArgumentsByParameterSymbol = buildMap {
-            for ((key, value) in argumentMapping) {
+            for ([key, value] in argumentMapping) {
                 if (value.valueParameterKind != FirValueParameterKind.Regular) {
                     put(value.symbol, key)
                 }
@@ -621,7 +623,12 @@ private object CheckDslScopeViolation {
                     }
                 }
             }
-            else -> return
+            is ConeTypeParameterType -> originalType.lookupTag.typeParameterSymbol.resolvedBounds.forEach {
+                collectDslMarkerAnnotations(it.coneType)
+            }
+            is ConeIntegerConstantOperatorType, is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType,
+                -> return
         }
     }
 
@@ -840,7 +847,7 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
             if (atom is ConeResolvedCallableReferenceAtom) {
-                val (applicability, success) =
+                val [applicability, success] =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
                         candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )
@@ -852,8 +859,8 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) check(atom in candidate.postponedAtoms)
 
                     sink.yieldDiagnostic(UnsuccessfulCallableReferenceArgument)
-                } else when (applicability) {
-                    CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
+                } else @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) when (applicability) {
+                    CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY /* DisableCompatibilityModeForNewInference, PrioritizedEnumEntries */ ->
                         sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
                     else -> {
                     }
@@ -972,9 +979,6 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable.asCone(),
                         emptyIntersectionTypeInfo.kind,
-                        isError = context.session.languageVersionSettings.supportsFeature(
-                            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
-                        )
                     )
                 )
             }
@@ -989,9 +993,9 @@ internal object CheckCallModifiers : ResolutionStage() {
                 is FirNamedFunctionSymbol -> when {
                     candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Infix && !functionSymbol.fir.isInfix ->
                         sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
-                    candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !functionSymbol.fir.isOperator ->
+                    candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !isEligibleOperator(functionSymbol, candidate) ->
                         sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
-                    candidate.callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
+                    candidate.callInfo.isImplicitInvoke && !isEligibleOperator(functionSymbol, candidate) ->
                         sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
                 }
                 is FirConstructorSymbol -> {
@@ -1001,6 +1005,11 @@ internal object CheckCallModifiers : ResolutionStage() {
                 }
             }
         }
+    }
+
+    private fun isEligibleOperator(functionSymbol: FirNamedFunctionSymbol, candidate: Candidate): Boolean {
+        // we filter out imported aliased operators
+        return functionSymbol.fir.isOperator && candidate.callInfo.name == functionSymbol.name
     }
 }
 
@@ -1189,7 +1198,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
 
     context(context: ResolutionContext)
     private fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(csBuilder: NewConstraintSystemImpl): Boolean {
-        val typeConstructor = expectedType.typeConstructor(context.typeContext)
+        val typeConstructor = expectedType.typeConstructor(c = context.typeContext)
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[typeConstructor] ?: return false
         return variableWithConstraints.constraints.any { it.type.asCone().isSomeFunctionType(context.session) }
     }

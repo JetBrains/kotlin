@@ -5,7 +5,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.repositories
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
@@ -35,6 +35,19 @@ class GradlePluginTests {
         producerPluginDependency.version = "1.0"
         producerPluginDependency.beforeEvaluate {
             plugins.apply(GRADLE_PLUGIN_DEPENDENCY_CONFIGURATION_CONVENTION_PLUGIN)
+            project.repositories {
+                exclusiveContent {
+                    forRepository {
+                        maven {
+                            name = "gradle-releases"
+                            setUrl("https://repo.gradle.org/gradle/libs-releases")
+                        }
+                    }
+                    filter {
+                        includeGroup("org.gradle.experimental")
+                    }
+                }
+            }
         }
 
         val producerPlugin = createKotlinSubproject("producerPlugin", root)
@@ -46,6 +59,19 @@ class GradlePluginTests {
         val consumerPlugin = createKotlinSubproject("consumerPlugin", root)
         consumerPlugin.beforeEvaluate {
             plugins.apply(GRADLE_PLUGIN_COMMON_CONFIGURATION_CONVENTION_PLUGIN)
+            project.repositories {
+                exclusiveContent {
+                    forRepository {
+                        maven {
+                            name = "gradle-releases"
+                            setUrl("https://repo.gradle.org/gradle/libs-releases")
+                        }
+                    }
+                    filter {
+                        includeGroup("org.gradle.experimental")
+                    }
+                }
+            }
             dependencies.add("commonImplementation", dependencies.project(":producerPlugin"))
             dependencies.add("commonImplementation", dependencies.project(":producerPluginDependency"))
         }
@@ -108,7 +134,7 @@ class GradlePluginTests {
         }
     }
 
-    @Disabled("KTI-2926: kotlin-build-gradle-plugin does not support configuring the state via extra properties")
+    @Disabled("KTI-2926: kotlin-build-helpers does not support configuring the state via extra properties")
     @Test
     fun `gradle variant source sets - dokka generation doesn't see main source set in variant source sets`() {
         val root = createFakeKotlinRoot()
@@ -178,12 +204,16 @@ class GradlePluginTests {
         } as ProjectInternal
 
     private fun createFakeKotlinRoot(): Project {
+        workingDir.resolve("gradle.properties").writeText(
+            """
+            build.number=1.0
+            kotlinApiVersionForProjectsDependingOnStableStdlib=
+            """.trimIndent()
+        )
         val root = ProjectBuilder.builder().also {
             it.withProjectDir(workingDir)
         }.build()
-        root.extraProperties.set("buildNumber", "1.0")
-        root.extraProperties.set("projectsUsedInIntelliJKotlinPlugin", emptyArray<String>())
-        root.extraProperties.set("kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin", emptyArray<String>())
+        root.extraProperties.set("projectsDependingOnStableStdlib", emptyArray<String>())
         root.tasks.register("mvnInstall")
 
         createKotlinSubproject("kotlin-gradle-plugin-api", root).also {

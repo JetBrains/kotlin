@@ -1,0 +1,8 @@
+KtNameReferenceExpression(97,100): 'Bar'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Bar
+    ]
+  additional: [privateClass.kt]

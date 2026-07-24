@@ -537,6 +537,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       run("syntaxError.kt");
     }
 
+    @Test
+    @TestMetadata("valueClassWithAnnotatedUnderlyingType.kt")
+    public void testValueClassWithAnnotatedUnderlyingType() {
+      run("valueClassWithAnnotatedUnderlyingType.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing")
     @TestDataPath("$PROJECT_ROOT")

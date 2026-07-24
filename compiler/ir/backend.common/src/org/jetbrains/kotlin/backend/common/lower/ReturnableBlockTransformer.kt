@@ -145,7 +145,7 @@ class ReturnableBlockTransformer(
         val newStatements = expression.statements.mapIndexed { i, currentStatement ->
             if (expression.statements.size == 1 && currentStatement is IrInlinedFunctionBlock) {
                 val lastIndex = currentStatement.statements.lastIndex
-                for ((j, statement) in currentStatement.statements.withIndex()) {
+                for ([j, statement] in currentStatement.statements.withIndex()) {
                     val lastInList = j == lastIndex
                     val transformedStatement = transformSingleStatement(statement, lastInList)
                     currentStatement.statements[j] = transformedStatement

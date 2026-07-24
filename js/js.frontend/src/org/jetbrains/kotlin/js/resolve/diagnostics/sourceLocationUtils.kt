@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+@K1Deprecation
 fun DeclarationDescriptor.findPsi(): PsiElement? {
     val psi = (this as? DeclarationDescriptorWithSource)?.source?.getPsi()
     return if (psi == null && this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

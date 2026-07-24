@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analyzer
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
+@K1Deprecation
 val ModuleDescriptor.moduleInfo: ModuleInfo?
     get() = getCapability(ModuleInfo.Capability)
 

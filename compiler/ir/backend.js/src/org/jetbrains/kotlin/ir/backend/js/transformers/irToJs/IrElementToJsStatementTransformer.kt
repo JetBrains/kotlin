@@ -167,7 +167,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             val varRef = varName.makeRef()
             val transformer: (() -> JsStatement) -> JsStatement = {
                 val expr = (it() as JsExpressionStatement).expression
-                JsBinaryOperation(JsBinaryOperator.ASG, varRef, expr).makeStmt()
+                JsAssignmentOperation.Simple(varRef, expr).makeStmt()
             }
 
             SwitchOptimizer(context, isExpression = true, transformer).tryOptimize(value)?.let {
@@ -221,7 +221,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val jsCatch = aTry.catches.singleOrNull()?.let {
             val name = context.getNameForValueDeclaration(it.catchParameter)
             val jsCatchBlock = it.result.accept(this, context)
-            JsCatch(emptyScope, JsAssignable.Named(name), jsCatchBlock).withSource(it, context)
+            JsCatch(emptyScope, JsDeclarable.Named(name), jsCatchBlock).withSource(it, context)
         }
 
         val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()

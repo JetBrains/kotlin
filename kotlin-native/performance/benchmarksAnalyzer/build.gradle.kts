@@ -6,7 +6,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val benchmarksAnalyzerExecutable by configurations.creating {
+val benchmarksAnalyzerExecutable = configurations.create("benchmarksAnalyzerExecutable") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -38,8 +38,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib"))
                 implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+                implementation(project(":benchmarksReports"))
             }
-            kotlin.srcDir("../reports/src/main/kotlin")
         }
         commonTest {
             dependencies {

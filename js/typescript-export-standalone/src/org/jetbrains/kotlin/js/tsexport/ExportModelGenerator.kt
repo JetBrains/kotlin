@@ -3,19 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaContextParameterApi::class, KaExperimentalApi::class)
+@file:OptIn(KaExperimentalApi::class)
 
 package org.jetbrains.kotlin.js.tsexport
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
@@ -25,57 +29,92 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
-import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 public const val EXTENSION_RECEIVER_NAME: String = "_this_"
 
+private typealias WholeWorldExportModel = MutableMap<KaLibraryModule, MutableMap<FileArtifactKey, MutableList<ExportedDeclaration>>>
+
 internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
+    private var pendingTransitivelyExportedClasses = linkedSetOf<KaClassLikeSymbol>()
+    private val superTypeApproximator = SuperTypeApproximator(config)
+
     context(_: KaSession)
-    fun generateExport(library: KaLibraryModule, config: TypeScriptModuleConfig): ProcessedModule {
-        // TODO: Collect implicitly exported declarations, see ImplicitlyExportedDeclarationsMarkingLowering
-        val fileMap = buildMap {
-            for (declaration in library.getAllDeclarations()) {
-                val packageFqName = when (declaration) {
-                    is KaClassLikeSymbol -> declaration.classId!!.packageFqName
-                    is KaCallableSymbol -> declaration.callableId!!.packageName
-                    else -> error("Unexpected declaration kind: $declaration")
-                }
-
-                // TODO(KT-82224): Respect @JsFileName
-                @OptIn(KaNonPublicApi::class)
-                val fileName = declaration.klibSourceFileName ?: continue
-
-                val key = FileArtifactKey(packageFqName, fileName)
-                computeIfAbsent(key) { _ -> mutableListOf() }.addAll(exportTopLevelDeclaration(declaration))
-            }
+    private fun generateExport(topLevelDeclarations: Sequence<KaDeclarationSymbol>, output: WholeWorldExportModel) {
+        for (declaration in topLevelDeclarations) {
+            val [file, exported] = exportTopLevelDeclaration(declaration) ?: continue
+            val files = output.computeIfAbsent(declaration.containingModule as KaLibraryModule) { mutableMapOf() }
+            files.computeIfAbsent(file) { mutableListOf() }.addAll(exported)
         }
-
-        return ProcessedModule(
-            library,
-            fileMap.mapValues { (key, exports) ->
-                when {
-                    exports.isEmpty() -> emptyList()
-                    !this.config.generateNamespacesForPackages || key.packageFqName.isRoot -> exports.compactIfPossible()
-                    else -> listOf(ExportedNamespace(key.packageFqName.asString(), exports.compactIfPossible()))
-                }
-            },
-            jsOutputName = config.outputName ?: library.libraryName.safeModuleName,
-        )
     }
 
     context(_: KaSession)
-    private fun exportTopLevelDeclaration(declaration: KaDeclarationSymbol): List<ExportedDeclaration> {
-        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration)) return emptyList()
+    fun generateExport(modules: KaModules<TypeScriptModuleConfig>): List<ProcessedModule> {
+        // First, export all explicitly exported declarations, while simultaneously collecting all the referenced implicitly exported
+        // classes into `pendingTransitivelyExportedClasses`.
+        val exportModel: WholeWorldExportModel = mutableMapOf()
+        for (library in modules.mainModules) {
+            generateExport(library.getAllDeclarations().filter { it.isEffectivelyExported(config) }, exportModel)
+        }
 
-        return when (declaration) {
+        // Then, transitively export all the referenced implicitly exported classes until the process converges.
+        while (pendingTransitivelyExportedClasses.isNotEmpty()) {
+            val currentlyBeingProcessed = pendingTransitivelyExportedClasses
+            pendingTransitivelyExportedClasses = linkedSetOf()
+            generateExport(currentlyBeingProcessed.asSequence(), exportModel)
+            pendingTransitivelyExportedClasses.removeAll(currentlyBeingProcessed)
+        }
+
+        return modules.mainModules.mapNotNull { library ->
+            val fileMap = exportModel[library] ?: return@mapNotNull null
+            if (fileMap.isEmpty()) return@mapNotNull null
+            ProcessedModule(
+                library,
+                buildMap {
+                    for ([key, exports] in fileMap) {
+                        when {
+                            exports.isEmpty() -> continue
+                            !this@ExportModelGenerator.config.generateNamespacesForPackages || key.packageFqName.isRoot -> {
+                                this[key] = exports.compactIfPossible()
+                            }
+                            else -> {
+                                this[key] = listOf(ExportedNamespace(key.packageFqName.asString(), exports.compactIfPossible()))
+                            }
+                        }
+                    }
+                },
+                jsOutputName = modules.configFor(library).outputName ?: library.libraryName.safeModuleName,
+            )
+        }
+    }
+
+    context(_: KaSession)
+    private fun exportTopLevelDeclaration(declaration: KaDeclarationSymbol): Pair<FileArtifactKey, List<ExportedDeclaration>>? {
+        val packageFqName = when (declaration) {
+            is KaClassLikeSymbol -> declaration.classId!!.packageFqName
+            is KaCallableSymbol -> declaration.callableId!!.packageName
+            else -> error("Unexpected declaration kind: $declaration")
+        }
+
+        @OptIn(KaNonPublicApi::class)
+        val fileName = declaration.containingFileAnnotations?.getJsFileName()
+            ?: declaration.klibSourceFileName?.removeSuffix(".kt")
+            ?: return null
+
+        val key = FileArtifactKey(packageFqName, fileName)
+        val exportedDeclarations = when (declaration) {
             is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
             is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
             is KaNamedClassSymbol -> listOfNotNull(exportClass(declaration, parent = null, outerClassTypeParameterScope = emptyMap()))
-            is KaTypeAliasSymbol -> listOf(ErrorDeclaration("Type alias declarations are not implemented yet"))
-            else -> emptyList()
+            is KaTypeAliasSymbol -> listOf(exportTypeAlias(declaration))
+            else -> return null
         }
+
+        if (exportedDeclarations.isEmpty()) return null
+
+        return key to exportedDeclarations
     }
 
     context(_: KaSession)
@@ -84,18 +123,20 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         parent: KaDeclarationSymbol?,
         outerClassTypeParameterScope: TypeParameterScope,
     ): ExportedClass? {
-        val superTypes = klass.superTypes // TODO: Collect supertype transitive hierarchy
+        val superTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(klass.defaultType) + klass.superTypes
 
         when (val exportability = classExportability(klass, parent)) {
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             Exportability.NotNeeded -> return null
-            Exportability.Implicit -> return exportDeclarationImplicitly(klass, superTypes)
+            Exportability.Implicit -> error("Not applicable in Analysis API-based TypeScript export")
             Exportability.Allowed -> {}
         }
 
         val typeParameterScope = TypeParameterScope(
             container = klass,
             config = config,
+            transitivelyExportedClasses = pendingTransitivelyExportedClasses,
+            superTypeApproximator = superTypeApproximator,
             outerScope = if (klass.isInner) outerClassTypeParameterScope else emptyMap(),
             renameOuterTypeParameters = true,
         )
@@ -108,14 +149,13 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 expandedSymbol.classKind != KaClassKind.INTERFACE
                         && !it.isAnyType
                         && !it.isClassType(StandardClassIds.Enum)
-                        && !expandedSymbol.isJsImplicitExport()
             }
             .map { exportType(it, typeParameterScope, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
         val superInterfaces = superTypes
             .filter {
                 val expandedSymbol = it.expandedSymbol ?: return@filter false
-                expandedSymbol.classKind == KaClassKind.INTERFACE || expandedSymbol.isJsImplicitExport()
+                expandedSymbol.classKind == KaClassKind.INTERFACE
             }
             .map { exportType(it, typeParameterScope, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
@@ -152,6 +192,82 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
+    private fun exportTypeAlias(typeAlias: KaTypeAliasSymbol): ExportedTypeAlias {
+        // Kotlin type aliases cannot declare bounds on their own type parameters, but the aliased type may use them in positions that
+        // carry constraints (e.g. `typealias Foo<T> = X<T>` where `class X<T : Number>`). Inherit those constraints so the generated
+        // TypeScript type alias is valid.
+        val inheritedBounds = collectInheritedTypeParameterBounds(typeAlias)
+        val typeParameterScope = TypeParameterScope(
+            container = typeAlias,
+            config = config,
+            transitivelyExportedClasses = pendingTransitivelyExportedClasses,
+            superTypeApproximator = superTypeApproximator,
+            inheritedBounds = inheritedBounds,
+        )
+        return ExportedTypeAlias(
+            name = typeAlias.getExportedIdentifier(),
+            typeParameters = typeParameterScope.values.toList(),
+            aliasedType = exportType(typeAlias.expandedType, typeParameterScope),
+            originalClassId = typeAlias.classId,
+        ).withAttributes(typeAlias)
+    }
+
+    /**
+     * Computes the upper bounds each of [typeAlias]'s own type parameters must inherit from the positions where it is used.
+     *
+     * Since a Kotlin type alias cannot declare bounds itself, but its TypeScript counterpart must, we look at the *fully expanded* aliased
+     * type (so that constraints are inherited even through alias-to-alias chains) and, for every position where one of the alias's type
+     * parameters is used directly as a type argument of a class, collect that class type parameter's upper bounds.
+     *
+     * The bounds are rewritten via a substitutor mapping the used class's type parameters to the actual type arguments at that position, so
+     * that F-bounds like `class X<T : Comparable<T>>` correctly become `Comparable<T>` in terms of the alias's parameter.
+     */
+    context(_: KaSession)
+    private fun collectInheritedTypeParameterBounds(typeAlias: KaTypeAliasSymbol): Map<KaTypeParameterSymbol, List<KaType>> {
+        val aliasParameters = typeAlias.typeParameters.takeIfNotEmpty()?.toHashSet()
+            ?: return emptyMap()
+
+        // Guard against self-referential types (e.g. a type parameter whose bound references itself).
+        val visited = hashSetOf<KaType>()
+        val result = hashMapOf<KaTypeParameterSymbol, MutableList<KaType>>()
+
+        fun visit(type: KaType) {
+            if (type !is KaClassType || !visited.add(type)) return
+
+            // Collect (class type parameter -> actual type argument) pairs across all qualifier segments (to also cover inner classes),
+            // and build a substitutor from them so that inherited bounds are expressed in terms of the alias's type parameters.
+            val positions = mutableListOf<Pair<KaTypeParameterSymbol, KaType>>()
+            val substitutor = buildSubstitutor {
+                for (qualifier in type.qualifiers) {
+                    val classTypeParameters = qualifier.symbol.typeParameters
+                    for ([index, classTypeParameter] in classTypeParameters.withIndex()) {
+                        val argument = qualifier.typeArguments.getOrNull(index)?.type ?: continue
+                        substitution(classTypeParameter, argument)
+                        positions += classTypeParameter to argument
+                    }
+                }
+            }
+
+            for ([classTypeParameter, argument] in positions) {
+                if (argument is KaTypeParameterType && argument.symbol in aliasParameters) {
+                    val bounds = classTypeParameter.upperBounds.map(substitutor::substitute).takeIfNotEmpty() ?: continue
+
+                    val existingBounds = result.getOrPut(argument.symbol, ::mutableListOf)
+
+                    existingBounds += bounds
+                }
+
+                visit(argument)
+            }
+        }
+
+        // fullyExpandedType is used for skipping an alias-alias chain
+        visit(typeAlias.expandedType.fullyExpandedType)
+
+        return result
+    }
+
+    context(_: KaSession)
     private fun exportFunction(
         function: KaNamedFunctionSymbol,
         parent: KaDeclarationSymbol?,
@@ -166,7 +282,13 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 val isStatic = function.isStatic || function.isJsStatic()
                 val inlineClassesShouldBeUnboxed = function.isExternal
                 val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
-                val functionTypeParameterScope = TypeParameterScope(function, config, outerScope)
+                val functionTypeParameterScope = TypeParameterScope(
+                    function,
+                    config,
+                    pendingTransitivelyExportedClasses,
+                    superTypeApproximator,
+                    outerScope
+                )
                 val typeParameters = if (isExportedDefaultImplementation) {
                     (parent as KaNamedClassSymbol).typeParameters + function.typeParameters
                 } else {
@@ -315,20 +437,23 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 )
             }
             function.receiverParameter?.let {
-                add(
-                    ExportedParameter(
-                        EXTENSION_RECEIVER_NAME,
-                        exportType(
-                            it.returnType,
-                            functionTypeParameterScope,
-                            inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                if (!function.isCompanion) {
+                    add(
+                        ExportedParameter(
+                            EXTENSION_RECEIVER_NAME,
+                            exportType(
+                                it.returnType,
+                                functionTypeParameterScope,
+                                inlineClassesShouldBeUnboxed = inlineClassesShouldBeUnboxed
+                            )
                         )
                     )
-                )
+                }
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
-                    TypeExporter(config, functionTypeParameterScope).exportSpecializedArrayWithElementType(parameter.returnType)
+                    TypeExporter(config, functionTypeParameterScope, pendingTransitivelyExportedClasses, superTypeApproximator)
+                        .exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
                     exportType(
                         parameter.returnType,
@@ -568,110 +693,120 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             return Exportability.NotNeeded
         }
 
-        if (klass.isJsImplicitExport()) {
-            return Exportability.Implicit
-        }
-
         if (klass.isInline)
             return Exportability.Prohibited("Inline class ${klass.classId?.asSingleFqName()}")
 
         return Exportability.Allowed
     }
 
-
-    private fun exportDeclarationImplicitly(klass: KaNamedClassSymbol, superTypes: List<KaType>): ExportedClass? {
-        return null // TODO(KT-82266)
-    }
-
     context(_: KaSession)
     private fun exportClassMembers(
         klass: KaNamedClassSymbol,
-        superTypes: List<KaType>,
+        superTypes: Collection<KaType>,
         typeParameterScope: TypeParameterScope,
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
-        val nestedClasses = mutableListOf<ExportedClass>()
+        val nestedClasses = mutableListOf<ExportedClassLikeDeclaration>()
         val defaultImplementations = mutableListOf<ExportedDeclaration>()
-        val isImplicitlyExportedClass = klass.isJsImplicitExport()
         val isCompanionObject = klass.classKind == KaClassKind.COMPANION_OBJECT
 
         val memberScope = klass.combinedMemberScope
 
-        if (!isImplicitlyExportedClass) {
-            if (klass.classKind == KaClassKind.ENUM_CLASS) {
-                exportEnumSpecificMembers(klass, members)
+        if (klass.classKind == KaClassKind.ENUM_CLASS) {
+            exportEnumSpecificMembers(klass, members)
+        }
+
+        for (constructor in memberScope.constructors) {
+            if (!constructor.isEffectivelyExported(config, includingImplicitExport = true)) continue
+            members.addIfNotNull(exportConstructor(constructor, klass, typeParameterScope))
+        }
+        for (member in memberScope.callables) {
+            if (!member.isEffectivelyExported(config, includingImplicitExport = true)) continue
+            if (isCompanionObject && member.isJsStatic()) {
+                // @JsStatic companion members are exported below
+                continue
             }
 
-            for (constructor in memberScope.constructors) {
-                if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(constructor)) continue
-                members.addIfNotNull(exportConstructor(constructor, klass, typeParameterScope))
+            val implementationState by lazy { member.implementationState(klass) }
+
+            fun hasDefaultImplementationIn(klass: KaClassSymbol): Boolean {
+                if (klass.classKind != KaClassKind.INTERFACE || member.noDefaultImplementation()) return false
+                return when (val implementationState = implementationState) {
+                    is KaCallableImplementationState.Inherited -> !implementationState.isAmbiguous && implementationState.isOverridable
+                    else -> false
+                }
             }
-            for (member in memberScope.callables) {
-                if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(member)) continue
-                if (isCompanionObject && member.isJsStatic()) {
-                    // @JsStatic companion members are exported below
-                    continue
-                }
-                val implementationStatus by lazy { member.getImplementationStatus(klass) }
 
-                fun hasDefaultImplementationIn(klass: KaClassSymbol) =
-                    klass.classKind == KaClassKind.INTERFACE && implementationStatus == ImplementationStatus.INHERITED_OR_SYNTHESIZED
+            fun shouldExplicitlyExportFakeOverride(): Boolean {
+                if (klass.classKind == KaClassKind.INTERFACE) return false
+                for (symbol in sequenceOf(member) + member.allOverriddenSymbols) {
+                    if (symbol.fakeOverrideOriginal != symbol) {
+                        // Filter out fake overrides
+                        continue
+                    }
+                    val parentClass = symbol.containingDeclaration as KaClassSymbol
+                    if (parentClass.isEffectivelyExported(config, includingImplicitExport = true)) {
+                        return parentClass.classKind == KaClassKind.INTERFACE && !symbol.isJsExportIgnore()
+                    }
+                }
+                return false
+            }
 
-                val original = member.fakeOverrideOriginal
-                val actualParent = original.containingDeclaration as? KaClassSymbol ?: continue
-                // We include only declarations from the class itself, plus inherited interface members that have a default implementation.
-                val shouldInclude =
-                    actualParent == klass || (klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent))
-                if (!shouldInclude){
-                    continue
-                }
-                when (member) {
-                    is KaNamedFunctionSymbol -> {
-                        if (klass.classKind == KaClassKind.ENUM_CLASS
-                            && member.isStatic
-                            && (member.name == StandardNames.ENUM_VALUES || member.name == StandardNames.ENUM_VALUE_OF)
-                        ) {
-                            // We've already exported these above
-                            continue
-                        }
-                        if (klass.isData
-                            && DataClassResolver.isComponentLike(member.name)
-                            && member.allOverriddenSymbols.none { shouldDeclarationBeExported(it) }
-                        ) {
-                            // Synthetic `componentN` functions should not be exported unless they override user-defined exported functions.
-                            continue
-                        }
-                        members.addIfNotNull(exportFunction(member, klass, typeParameterScope))
-                        if (hasDefaultImplementationIn(klass)) {
-                            defaultImplementations.addIfNotNull(
-                                exportFunction(
-                                    member,
-                                    klass,
-                                    typeParameterScope,
-                                    isExportedDefaultImplementation = true,
-                                )
-                            )
-                        }
+            val original = member.fakeOverrideOriginal
+            val actualParent = original.containingDeclaration as? KaClassSymbol ?: continue
+            // We include only declarations from the class itself, plus inherited interface members that have a default implementation.
+            val shouldInclude = actualParent == klass
+                    || (klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent))
+                    || shouldExplicitlyExportFakeOverride()
+            if (!shouldInclude){
+                continue
+            }
+            when (member) {
+                is KaNamedFunctionSymbol -> {
+                    if (klass.classKind == KaClassKind.ENUM_CLASS
+                        && member.isStatic
+                        && (member.name == StandardNames.ENUM_VALUES || member.name == StandardNames.ENUM_VALUE_OF)
+                    ) {
+                        // We've already exported these above
+                        continue
                     }
-                    is KaPropertySymbol -> {
-                        if (klass.classKind == KaClassKind.ENUM_CLASS && member.isStatic && member.name == StandardNames.ENUM_ENTRIES) {
-                            // The `entries` static property should not be exported.
-                            continue
-                        }
-                        members.addAll(exportProperty(member, klass, typeParameterScope))
-                        if (hasDefaultImplementationIn(klass)) {
-                            defaultImplementations.addAll(
-                                exportProperty(
-                                    member,
-                                    klass,
-                                    typeParameterScope,
-                                    isExportedDefaultImplementation = true,
-                                )
-                            )
-                        }
+                    if (klass.isData
+                        && DataClassResolver.isComponentLike(member.name)
+                        && member.allOverriddenSymbols.none { it.isEffectivelyExported(config) }
+                    ) {
+                        // Synthetic `componentN` functions should not be exported unless they override user-defined exported functions.
+                        continue
                     }
-                    else -> continue
+                    members.addIfNotNull(exportFunction(member, klass, typeParameterScope))
+                    if (hasDefaultImplementationIn(klass)) {
+                        defaultImplementations.addIfNotNull(
+                            exportFunction(
+                                member,
+                                klass,
+                                typeParameterScope,
+                                isExportedDefaultImplementation = true,
+                            )
+                        )
+                    }
                 }
+                is KaPropertySymbol -> {
+                    if (klass.classKind == KaClassKind.ENUM_CLASS && member.isStatic && member.name == StandardNames.ENUM_ENTRIES) {
+                        // The `entries` static property should not be exported.
+                        continue
+                    }
+                    members.addAll(exportProperty(member, klass, typeParameterScope))
+                    if (hasDefaultImplementationIn(klass)) {
+                        defaultImplementations.addAll(
+                            exportProperty(
+                                member,
+                                klass,
+                                typeParameterScope,
+                                isExportedDefaultImplementation = true,
+                            )
+                        )
+                    }
+                }
+                else -> continue
             }
         }
 
@@ -694,16 +829,15 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             }
                         }
                     }
-                    if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(nested)) continue
+                    if (!nested.isEffectivelyExported(config, includingImplicitExport = true)) continue
                     if (nested.isInner && (nested.modality == KaSymbolModality.OPEN || nested.modality == KaSymbolModality.FINAL)) {
                         members.add(nested.toFactoryPropertyForInnerClass(typeParameterScope))
                     }
                     nestedClasses.addIfNotNull(exportClass(nested, klass, typeParameterScope))
                 }
                 is KaTypeAliasSymbol -> {
-                    if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(nested)) continue
-                    // TODO(KT-49795): Export type aliases
-                    continue
+                    if (!nested.isEffectivelyExported(config, includingImplicitExport = true)) continue
+                    nestedClasses.add(exportTypeAlias(nested))
                 }
                 else -> continue
             }
@@ -717,7 +851,14 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         if (!klass.isExternal) {
-            members.addSuperTypesSpecialProperties(klass, superTypes, typeParameterScope, config, classHasNonExportedAbstractMember)
+            members.addSuperTypesSpecialProperties(
+                klass,
+                superTypes,
+                superTypeApproximator,
+                typeParameterScope,
+                config,
+                classHasNonExportedAbstractMember,
+            )
         }
 
         if (defaultImplementations.isNotEmpty()) {
@@ -804,7 +945,13 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
      */
     context(_: KaSession)
     private fun KaNamedClassSymbol.toFactoryPropertyForInnerClass(outerClassTypeParameterScope: TypeParameterScope): ExportedPropertyGetter {
-        val typeParameterScope = TypeParameterScope(this, config, outerClassTypeParameterScope)
+        val typeParameterScope = TypeParameterScope(
+            this,
+            config,
+            pendingTransitivelyExportedClasses,
+            superTypeApproximator,
+            outerClassTypeParameterScope
+        )
         val typeMembers = declaredMemberScope.constructors.mapNotNull {
             exportConstructor(it, this, typeParameterScope, isFactoryPropertyForInnerClass = true)
         }.toList().compactIfPossible()
@@ -819,9 +966,14 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun exportType(
         type: KaType,
         scope: TypeParameterScope,
-        shouldCalculateExportedSupertypeForImplicit: Boolean = false,
+        shouldCalculateExportedSupertypeForImplicit: Boolean = true,
         inlineClassesShouldBeUnboxed: Boolean = false,
-    ): ExportedType = TypeExporter(config, scope).exportType(type, inlineClassesShouldBeUnboxed)
+    ): ExportedType = TypeExporter(
+        config,
+        scope,
+        pendingTransitivelyExportedClasses,
+        superTypeApproximator.takeIf { shouldCalculateExportedSupertypeForImplicit }
+    ).exportType(type, inlineClassesShouldBeUnboxed)
 
     context(_: KaSession)
     private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {
@@ -841,9 +993,9 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
     private data class ExportedClassDeclarationsInfo(
         val members: List<ExportedDeclaration>,
-        val nestedClasses: List<ExportedClass>,
+        val nestedClasses: List<ExportedClassLikeDeclaration>,
     )
 
     private fun KaNamedClassSymbol.shouldContainImplementableSymbolProperty(hasNotExportedAbstractMember: Boolean): Boolean =
-        !hasNotExportedAbstractMember && config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsImplicitExport() && !isJsNoRuntime()
+        !hasNotExportedAbstractMember && config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsNoRuntime()
 }

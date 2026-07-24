@@ -138,7 +138,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
                     }
                 }
                 task.doFirst {
-                    arguments.get().forEach { sourceSetName, (args, cp) ->
+                    arguments.get().forEach { sourceSetName, [args, cp] ->
                         println("$sourceSetName$argsMarker$args")
                         println("$sourceSetName$classpathMarker$cp")
                     }
@@ -182,7 +182,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
         val compilerPluginArgsRegex = "(\\w+)${Regex.escape(argsMarker)}(.*)".toRegex()
         val compilerPluginClasspathRegex = "(\\w+)${Regex.escape(classpathMarker)}(.*)".toRegex()
 
-        val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
+        val [compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet] =
             listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
                 .map { marker ->
                     marker.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }

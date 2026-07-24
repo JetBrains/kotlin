@@ -33,6 +33,7 @@ import  org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_DEVELOCITY_PLUGIN_VERSION
 import kotlin.test.assertContains
 
 @DisplayName("Build reports")
@@ -322,11 +323,11 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     val nativeBuildExpectedMetrics = arrayOf(
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrBeforeLowering"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("llvm-default.AlwaysInlinerPass"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing"),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing", IR_PRE_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrBeforeLowering", IR_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering", IR_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("llvm-default.AlwaysInlinerPass", BACKEND),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing", IR_PRE_LOWERING),
         RUN_COMPILATION_IN_WORKER,
         NATIVE_IN_PROCESS,
         IR_PRE_LOWERING,
@@ -779,6 +780,17 @@ class BuildReportsIT : KGPBaseTest() {
 
             val initScript = projectPath.resolve("init.gradle").createFile()
             initScript.modify {
+                val develocityClasspath = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
+                    "classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'"
+                } else {
+                    "classpath 'com.gradle:develocity-gradle-plugin:$GRADLE_DEVELOCITY_PLUGIN_VERSION'"
+                }
+                val applyPlugin = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
+                    "it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)"
+                } else {
+                    "it.pluginManager.apply(com.gradle.develocity.agent.gradle.DevelocityPlugin)"
+                }
+
                 """
                     initscript {
                         repositories {
@@ -786,12 +798,12 @@ class BuildReportsIT : KGPBaseTest() {
                         }
 
                         dependencies {
-                            classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'
+                            $develocityClasspath
                         }
                     }
 
                     beforeSettings {
-                        it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)
+                        $applyPlugin
                     }
                 """.trimIndent()
             }
@@ -803,28 +815,48 @@ class BuildReportsIT : KGPBaseTest() {
 
             build(
                 "compileKotlin",
-                "-I", "init.gradle",
+                "-I", "init.gradle", "-Dscan.dump",
                 enableBuildScan = true,
             )
         }
     }
 
-    @DisplayName("json validation")
+    @DisplayName("json report default directory")
     @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
-    fun testJsonBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+    fun testJsonReportDefaultDirectory(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            buildAndFail(
+            val defaultReportPath = "build/reports/kotlin-build"
+            build(
                 "compileKotlin",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON)
+                    buildReport = listOf(BuildReportType.JSON),
                 )
             ) {
-                assertOutputContains("Can't configure json report: 'kotlin.build.report.json.directory' property is mandatory")
+                val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
+                assertTrue(jsonReport.exists())
+                assertConfigurationCacheStored()
+                jsonReport.deleteExisting()
             }
+
+            build("clean")
+            projectPath.getSingleFileInDir(defaultReportPath).deleteExisting()
+
+            build(
+                "compileKotlin",
+                buildOptions = defaultBuildOptions.copy(
+                    buildReport = listOf(BuildReportType.JSON),
+                )
+            ) {
+                val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
+                assertTrue(jsonReport.exists())
+                assertConfigurationCacheReused()
+                jsonReport.deleteExisting()
+            }
+
         }
     }
 
@@ -842,7 +874,8 @@ class BuildReportsIT : KGPBaseTest() {
                 "compileKotlin",
                 "-Pkotlin.build.report.json.directory=$relativeJsonReportPath",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON)
+                    buildReport = listOf(BuildReportType.JSON),
+                    logLevel = LogLevel.DEBUG,
                 )
             ) {
                 val jsonReport = projectPath.getSingleFileInDir(relativeJsonReportPath)
@@ -851,6 +884,7 @@ class BuildReportsIT : KGPBaseTest() {
                     .forEach {
                         assertEquals(KotlinVersion.DEFAULT, it.kotlinLanguageVersion)
                     }
+                assertOutputDoesNotContain("Skipping duplicate message with")
                 jsonReport.deleteExisting()
             }
 
@@ -883,6 +917,7 @@ class BuildReportsIT : KGPBaseTest() {
                     .forEach {
                         assertContains(it.buildMetrics.buildTimes.buildTimesMapMs().keys, GRADLE_CONFIGURATION_TIME)
                     }
+                assertOutputDoesNotContain("Skipping duplicate message with")
             }
         }
     }
@@ -955,7 +990,7 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("for build scan with develocity plugin")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_4
+        minVersion = TestVersions.Gradle.G_8_14
     )
     @GradleTest
     fun testBuildScanReportWithDevelocityPlugin(gradleVersion: GradleVersion) {
@@ -983,21 +1018,22 @@ class BuildReportsIT : KGPBaseTest() {
                         
                 develocity {
                     buildScan {
-                        termsOfUseAgree = "yes"
-                        termsOfUseUrl = "https://gradle.com/terms-of-service"
+                        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+                        termsOfUseAgree.set("yes")
 
                         tag "test"
                     }
                 }
                 """.trimIndent()
             }
+            // -Dscan.dump disables build scan publishing and instead dumps it onto disk
             build(
-                "compileKotlin", "--scan"
+                "compileKotlin", "--scan", "-Dscan.dump"
             ) {
                 assertOutputDoesNotContain("The build scan was not published due to a configuration problem.")
                 assertOutputDoesNotContain("The following functionality has been deprecated and will be removed in the next major release of the Develocity Gradle plugin.")
                 assertOutputContains("Build metrics are stored into build scan for")
-                assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Publishing build scan...")
+                assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Build scan written to:")
             }
         }
     }
@@ -1098,7 +1134,7 @@ class BuildReportsIT : KGPBaseTest() {
                     taskName = null,
                     NATIVE_IN_PROCESS,
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("UpgradeCallableReferences", IR_PRE_LOWERING),
-                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AssertionWrapperLowering", IR_PRE_LOWERING),
+                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("NativeAssertionWrapperLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("LateinitLowering", IR_PRE_LOWERING)
                 ) { buildExecutionData ->

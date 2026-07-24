@@ -27,10 +27,10 @@ MODULE_FRAGMENT
             JvmField
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=8
-        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_MainActivity$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int
+        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_MainActivity$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int [companion]
           correspondingProperty: PROPERTY name:$stable visibility:public modality:FINAL [val]
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun home_MainActivity$stableprop_getter (): kotlin.Int declared in home.MainActivity'
+            RETURN type=kotlin.Nothing from='public final fun home_MainActivity$stableprop_getter (): kotlin.Int [companion] declared in home.MainActivity'
               GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in home.MainActivity' type=kotlin.Int origin=null
       CONSTRUCTOR visibility:public returnType:home.MainActivity [primary]
         BLOCK_BODY

@@ -1,15 +1,15 @@
-/suspensionPointInMonitorNewInf.kt:19:13: error: The 'suspensionPoint' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:18:13: error: The 'suspensionPoint' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:23:13: error: The 'suspensionPoint' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:22:13: error: The 'suspensionPoint' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:26:30: error: The 'suspensionPoint' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:25:30: error: The 'suspensionPoint' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:38:13: error: The 'suspensionPoint' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:37:13: error: The 'suspensionPoint' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:45:9: error: The 'suspensionPoint' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:44:9: error: The 'suspensionPoint' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:53:17: warning: Check for instance is always 'true'.
+/suspensionPointInMonitorNewInf.kt:52:17: warning: Check for instance is always 'true'.
 
-/suspensionPointInMonitorNewInf.kt:54:45: error: The 'returnsInt' suspension point is inside a critical section.
+/suspensionPointInMonitorNewInf.kt:53:45: error: The 'returnsInt' suspension point is inside a critical section.
 
-/suspensionPointInMonitorNewInf.kt:56:17: warning: 'when' is exhaustive so 'else' is redundant here.
+/suspensionPointInMonitorNewInf.kt:55:17: warning: 'when' is exhaustive so 'else' is redundant here.

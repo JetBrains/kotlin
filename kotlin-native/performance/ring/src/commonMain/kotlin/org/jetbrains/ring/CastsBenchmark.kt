@@ -5,9 +5,15 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
 private const val RUNS = 2_000_000
 
-class CastsBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class Casts {
     interface I0
     open class C0: I0
     interface I1
@@ -59,7 +65,8 @@ class CastsBenchmark {
         return x
     }
 
-    fun classCast(): Int {
+    @Benchmark
+    fun classCast(bh: Blackhole) {
         val c0: Any = C0()
         val c1: Any = C1()
         val c2: Any = C2()
@@ -84,10 +91,11 @@ class CastsBenchmark {
             x += foo_class(c8, x, i)
             x += foo_class(c9, x, i)
         }
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceCast(): Int {
+    @Benchmark
+    fun interfaceCast(bh: Blackhole) {
         val c0: Any = C0()
         val c1: Any = C1()
         val c2: Any = C2()
@@ -112,6 +120,6 @@ class CastsBenchmark {
             x += foo_iface(c8, x, i)
             x += foo_iface(c9, x, i)
         }
-        return x
+        bh.consume(x)
     }
 }

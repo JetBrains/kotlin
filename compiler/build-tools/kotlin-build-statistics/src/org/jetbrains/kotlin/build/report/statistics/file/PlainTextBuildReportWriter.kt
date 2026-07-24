@@ -18,7 +18,7 @@ internal fun printMap(p: Printer, name: String, mapping: Map<String, Int>) {
 
     p.withIndent("$name:") {
         val sortedEnumMap = mapping.toSortedMap()
-        for ((k, v) in sortedEnumMap) {
+        for ([k, v] in sortedEnumMap) {
             p.println("$k($v)")
         }
     }
@@ -37,14 +37,14 @@ internal class TextTable(vararg columnNames: String) {
         check(row.size == columnsCount) { "Row size ${row.size} differs from columns count $columnsCount" }
         rows.add(row.toList())
 
-        for ((i, col) in row.withIndex()) {
+        for ([i, col] in row.withIndex()) {
             maxLengths[i] = max(maxLengths[i], col.length)
         }
     }
 
     fun printTo(p: Printer) {
         for (row in rows) {
-            val rowStr = row.withIndex().joinToString("|") { (i, col) -> col.padEnd(maxLengths[i], ' ') }
+            val rowStr = row.withIndex().joinToString("|") { [i, col] -> col.padEnd(maxLengths[i], ' ') }
             p.println(rowStr)
         }
     }

@@ -1,6 +1,9 @@
 import kotlinx.validation.KotlinApiBuildTask
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
@@ -18,6 +21,7 @@ gradlePlugin {
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+    commonApi(project(":kotlin-gradle-plugin"))
 }
 
 tasks.named<KotlinApiBuildTask>("apiBuild") {

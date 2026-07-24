@@ -10,14 +10,16 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -34,8 +36,9 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.expressions.withNewTypeSince as coneWithNewTypeSince
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
-    val session: FirSession
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext,
+    SessionHolder {
+    override val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
         return this is ConeIntegerLiteralType
@@ -81,7 +84,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.asRigidType(): ConeRigidType? {
         require(this is ConeKotlinType)
         return when (this) {
-            is ConeClassLikeType -> fullyExpandedType(session)
+            is ConeClassLikeType -> fullyExpandedType()
             is ConeRigidType -> this
             is ConeFlexibleType -> null
         }
@@ -130,12 +133,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
         require(this is ConeKotlinType)
-        return fullyExpandedType(session).isMarkedNullable
+        return fullyExpandedType().isMarkedNullable
     }
 
     override fun RigidTypeMarker.withNullability(nullable: Boolean): ConeRigidType {
         require(this is ConeKotlinType)
-        return fullyExpandedType(session).withNullability(nullable, session.typeContext) as ConeRigidType
+        return fullyExpandedType().withNullability(nullable, session.typeContext) as ConeRigidType
     }
 
     override fun RigidTypeMarker.typeConstructor(): ConeTypeConstructorMarker {
@@ -354,7 +357,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun captureFromExpression(type: KotlinTypeMarker): ConeKotlinType? {
         require(type is ConeKotlinType)
-        return captureFromExpressionInternal(type)
+        return type.captureFromExpressionInternal()
     }
 
     override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): ConeRigidType? {
@@ -442,18 +445,18 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun intersectTypes(types: Collection<SimpleTypeMarker>): ConeSimpleKotlinType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(
-            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+            this, types as Collection<ConeSimpleKotlinType>
         ) as ConeSimpleKotlinType
     }
 
     override fun intersectTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
+        return ConeTypeIntersector.intersectTypes(this, types as Collection<ConeKotlinType>)
     }
 
     override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
         require(this is ConeKotlinType)
-        return canBeNull(session, considerTypeVariableBounds)
+        return canBeNull(considerTypeVariableBounds)
     }
 
     override fun KotlinTypeMarker.isNullableType(): Boolean {
@@ -501,7 +504,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             return ParameterNameTypeAttribute.KEY in attributes
         }
         return customAnnotations.any {
-            it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
+            it.resolvedType.fullyExpandedType().classId?.asSingleFqName() == fqName
         }
     }
 
@@ -509,7 +512,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeKotlinType)
         // We don't check for compiler attributes because all of them doesn't have parameters
         val annotationCall = customAnnotations.firstOrNull {
-            it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
+            it.resolvedType.fullyExpandedType().classId?.asSingleFqName() == fqName
         } ?: return null
 
         if (annotationCall is FirAnnotationCall) {
@@ -530,27 +533,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
-        val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
-    }
-
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
-        val fields = getValueClassProperties() ?: return false
-        return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
-    }
-
-    private fun TypeConstructorMarker.isMultiFieldValueClassRecursionAware(
-        fields: List<Pair<Name, RigidTypeMarker>>,
-        visited: MutableSet<TypeConstructorMarker>,
-    ): Boolean {
-        if (fields.size > 1) return true
-        val fieldType = fields.singleOrNull()?.second ?: return false
-        if (!visited.add(this)) return false
-
-        val typeConstructor = fieldType.typeConstructor()
-        return !fieldType.isNullableType() && typeConstructor.getValueClassProperties()?.let {
-            typeConstructor.isMultiFieldValueClassRecursionAware(it, visited)
-        } == true
+        val symbol = toClassLikeSymbol()?.fullyExpandedClass(session) ?: return false
+        return symbol.isInlineClass
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, ConeRigidType>>? {
@@ -575,9 +559,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     @Suppress("NOTHING_TO_INLINE")
     private inline fun ConeTypeParameterLookupTag.bounds(): List<FirTypeRef> = symbol.resolvedBounds
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): ConeKotlinType? {
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): ConeKotlinType? {
         require(this is ConeKotlinType)
-        return unsubstitutedUnderlyingTypeForInlineClass(session)
+        return unsubstitutedUnderlyingTypeForInlineClassInJvm(session)
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
@@ -620,7 +604,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         val substitutor = if (declaration is FirTypeParameterRefsOwner) {
             val substitution =
-                declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
+                declaration.typeParameters.zip(type.typeArguments).associate { [parameter, argument] ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.coneType)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }

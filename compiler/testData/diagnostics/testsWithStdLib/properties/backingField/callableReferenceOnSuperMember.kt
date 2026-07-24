@@ -6,10 +6,10 @@ open class Base {
 
 class Child: Base() {
     fun foo() {
-        val a: String <!INITIALIZER_TYPE_MISMATCH!>=<!> ::a.get()
-        val b: String <!INITIALIZER_TYPE_MISMATCH!>=<!> this::a.get()
-        val c: String <!INITIALIZER_TYPE_MISMATCH!>=<!> Child::a.get(this)
-        val d: String <!INITIALIZER_TYPE_MISMATCH!>=<!> Base::a.get(this)
+        val a: String = ::a.<!INITIALIZER_TYPE_MISMATCH!>get<!>()
+        val b: String = this::a.<!INITIALIZER_TYPE_MISMATCH!>get<!>()
+        val c: String = Child::a.<!INITIALIZER_TYPE_MISMATCH!>get<!>(this)
+        val d: String = Base::a.<!INITIALIZER_TYPE_MISMATCH!>get<!>(this)
     }
 }
 

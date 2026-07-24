@@ -18,6 +18,7 @@ Tower Data Context:
                 FirValueParameterSymbol y: R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
+Expression Stability: ALIEN_PUBLIC_PROPERTY
 Smart Casts:
     FirValueParameterSymbol y: R|kotlin/Any|
     Stability: STABLE_VALUE

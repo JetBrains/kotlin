@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 interface A
 interface B<X : A>
 interface C<E : A, F : B<E>>

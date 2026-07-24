@@ -3,30 +3,27 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("kotlin-build-helpers")
 }
-
-val compilerModules: Array<String> by rootProject.extra
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
     @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
-        .let { it as List<String> }
+    CompilerModules.kotlinJpsPluginEmbeddedDependencies
         .forEach { implementation(project(it)) }
 
     @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependencies"]
-        .let { it as List<String> }
+    CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
-    @Suppress("UNCHECKED_CAST")
-    rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"]
-        .let { it as List<String> }
-        .forEach { implementation(it) { isTransitive = false } }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     implementation(project(":jps:jps-common"))
     compileOnly(libs.intellij.fastutil)
@@ -63,6 +60,7 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:lang:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:lang-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
+    testRuntimeOnly("com.jetbrains.intellij.platform:locking-impl:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(libs.gson)
     testRuntimeOnly(intellijJDom())
     testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
@@ -72,11 +70,17 @@ dependencies {
     testImplementation(jpsBuild())
     testImplementation(jpsBuildJavacRt())
 
-    compilerModules.forEach {
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit4) // needed for `com.intellij.tests.JUnit5TestSessionListener` from intellij test framework
+
+    CompilerModules.compilerModules.forEach {
         testRuntimeOnly(project(it))
     }
 
-    testImplementation("org.projectlombok:lombok:${rootProject.extra["versions.lombok"]}")
+    testImplementation("org.projectlombok:lombok:${project.kotlinBuildProperties.versionsProperty("lombok").get()}")
     testImplementation(libs.kotlinx.serialization.json)
 }
 
@@ -89,9 +93,12 @@ sourceSets {
         Ide.IJ {
             java.srcDirs("jps-tests/test")
             java.srcDirs("jps-tests/tests-gen")
+            resources.srcDir("jps-tests/testResources")
         }
     }
 }
+
+optInToK1Deprecation()
 
 apply(plugin = "idea")
 idea {
@@ -100,21 +107,24 @@ idea {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 tasks.compileJava {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 tasks.compileKotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_1_8
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_21_0,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
         // do not replace with compile/runtime dependency,
         // because it forces Intellij reindexing after each compiler change
         dependsOn(":kotlin-compiler:dist")
@@ -140,15 +150,14 @@ projectTests {
             "--add-opens=java.base/java.lang=ALL-UNNAMED",
             "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
             "--add-opens=java.base/java.io=ALL-UNNAMED",
+            // additions for SDK 261
+            "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
         )
     }
 
     testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
-        javaLauncher.set(
-            javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(17))
-            }
-        )
+        javaLauncher = project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)
     }
 
     withJvmStdlibAndReflect()

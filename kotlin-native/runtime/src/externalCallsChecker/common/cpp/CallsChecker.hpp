@@ -21,4 +21,10 @@ public:
     ALWAYS_INLINE ~CallsCheckerIgnoreGuard();
 };
 
+class CallsChecker : private Pinned {
+public:
+    CallsChecker() noexcept;
+    ~CallsChecker();
+};
+
 } // namespace kotlin

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParameter>, List<CirTypeParameter>?>() {
 
@@ -44,8 +44,8 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize1() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize1() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParams(
             "T" to "kotlin/Any",
             "R" to "kotlin/CharSequence",
@@ -59,8 +59,8 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         emptyList()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize2() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize2() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParams(
             "T" to "kotlin/Any",
             "R" to "kotlin/CharSequence",
@@ -77,8 +77,8 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterListSize3() = doTestFailure(
+    @Test
+    fun mismatchedParameterListSize3() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParams(
             "T" to "kotlin/Any",
             "R" to "kotlin/CharSequence",
@@ -97,8 +97,8 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         )
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun mismatchedParameterNames() = doTestFailure(
+    @Test
+    fun mismatchedParameterNames() = doTestFailure<IllegalCommonizerStateException>(
         mockTypeParams(
             "T" to "kotlin/Any",
             "R" to "kotlin/CharSequence"
@@ -114,7 +114,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {
             check(params.isNotEmpty())
-            return params.map { (name, upperBounds) ->
+            return params.map { [name, upperBounds] ->
                 TypeParameterCommonizerTest.mockTypeParam(
                     name = name,
                     upperBounds = listOf(upperBounds)

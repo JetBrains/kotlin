@@ -1,10 +1,13 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -13,6 +16,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
@@ -25,36 +29,27 @@ dependencies {
     testRuntimeOnly(libs.intellij.fastutil)
 
     testRuntimeOnly(toolsJar())
-    testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(project(":compiler:cli-base"))
 }
 
 sourceSets {
-    "main" { none() }
-    "test" { generatedTestDir() }
-    "testFixtures" { projectDefault() }
+    main { none() }
+    test {
+        projectDefault()
+        generatedTestDir()
+    }
+    testFixtures { projectDefault() }
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
+    testTask(maxHeapSizeMb = 3072) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        with(wasmNodeJsKotlinBuild) {
+        wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)
         }
-        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-            property.set("kotlin.wasm.test.root.out.dir")
-            buildDirectory.set(layout.buildDirectory)
-        }
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
-                // The plugin-sandbox compiler plugin generates synthetic source files (like AllOpenGenerated.kt),
-                // and later on the compiler asserts that the synthetic file must not exist
-                add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
-            }
-        }
+        addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")

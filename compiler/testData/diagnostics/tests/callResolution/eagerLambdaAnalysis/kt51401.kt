@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FIR_DUMP
 // LANGUAGE: +EagerLambdaAnalysis
@@ -15,7 +15,7 @@ fun <K, L> K.debounce(cr: (L) -> K, cr2: () -> L, timeoutMillis: (K) -> Int): K 
 fun <K, L> K.debounce(cr: (L) -> K, cr2: () -> L, timeout: (K) -> String): K = TODO()
 
 fun main(x: Int) {
-    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>debounce<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>, ::bar) { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>value<!> -> 0 }
+    x.debounce(::foo, ::bar) { value -> 0 }
 }
 
 /* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,

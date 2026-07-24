@@ -1,9 +1,13 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
-import java.net.URI
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
@@ -11,40 +15,20 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 node {
     download.set(true)
     version.set(nodejsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
+    distBaseUrl.set(null as String?)
 }
 
-repositories {
-    ivy {
-        url = URI("https://archive.mozilla.org/pub/firefox/releases/")
-        patternLayout {
-            artifact("[revision]/jsshell/[artifact]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.mozilla", "jsshell") }
-    }
-    ivy {
-        url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
-        patternLayout {
-            artifact("[classifier]_[revision].zip")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.jsc", "jsc") }
-    }
-    githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
-    githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
-}
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
 enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
 data class OsType(val name: OsName, val arch: OsArch)
-
 
 abstract class CreateJscRunner : DefaultTask() {
     @get:InputDirectory
@@ -125,7 +109,7 @@ val jsShellSuffix = when (currentOsType) {
     else -> error("unsupported os type $currentOsType")
 }
 
-val jsShell by configurations.creating {
+val jsShell = configurations.create("jsShell") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -140,13 +124,13 @@ val wasmEdgeSuffix = when (currentOsType) {
     else -> error("unsupported os type $currentOsType")
 }
 
-val wasmEdge by configurations.creating {
+val wasmEdge = configurations.create("wasmEdge") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
 
 val jscOsDependentVersion = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
@@ -154,21 +138,20 @@ val jscOsDependentVersion = when (currentOsType.name) {
 
 //https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-instruction
 val jscOsDependentClassifier = when (currentOsType.name) {
-    OsName.MAC -> "sequoia"
+    OsName.MAC -> "tahoe"
     OsName.LINUX -> "linux64"
     OsName.WINDOWS -> "win64"
     else -> error("unsupported os type $currentOsType")
 }
 
 val jscOsDependentRevision = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
 }.get()
 
-
-val jsc by configurations.creating {
+val jsc = configurations.create("jsc") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -189,7 +172,7 @@ val wasmtimeSuffix = wasmtimePlatformSuffix + "@" + when (currentOsType.name) {
     else -> error("unsupported os type $currentOsType")
 }
 
-val wasmtime by configurations.creating {
+val wasmtime = configurations.create("wasmtime") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -200,8 +183,10 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesImplementation(intellijCore())
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
+    testImplementation(project(":wasm:wasm.frontend"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")
@@ -223,7 +208,7 @@ dependencies {
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
-    implicitDependencies("org.jsc:jsc:${libs.versions.jscSequoia.get()}:sequoia")
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscTahoe.get()}:tahoe")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 
@@ -242,14 +227,14 @@ val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
 val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
-val prepareNpmTestData by task<Copy> {
+val prepareNpmTestData = tasks.register<Copy>("prepareNpmTestData") {
     from(testJsFile)
     from(packageJsonFile)
     from(packageLockJsonFile)
     into(node.nodeProjectDir)
 }
 
-val npmInstall by tasks.getting(NpmTask::class) {
+val npmInstall = tasks.named("npmInstall", NpmTask::class) {
     val packageLockFile = testDataDir.resolve("package-lock.json")
 
     inputs.file(node.nodeProjectDir.file("package.json"))
@@ -273,6 +258,8 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 fun Test.setupGradlePropertiesForwarding() {
     val rootLocalProperties = Properties().apply {
         rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
@@ -295,7 +282,7 @@ val toolsDirectory = layout.buildDirectory.dir("tools")
 
 val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
 val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.get()}") }
-val unzipJsShell by task<Copy> {
+val unzipJsShell = tasks.register<Copy>("unzipJsShell") {
     dependsOn(jsShell)
     from {
         zipTree(jsShell.singleFile)
@@ -303,7 +290,7 @@ val unzipJsShell by task<Copy> {
     into(jsShellUnpackedDirectory)
 }
 
-val unzipWasmEdge by task<UnzipWasmEdge> {
+val unzipWasmEdge = tasks.register<UnzipWasmEdge>("unzipWasmEdge") {
     from.setFrom(wasmEdge)
 
     val currentOsTypeForConfigurationCache = currentOsType.name
@@ -314,9 +301,8 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
     getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
 }
 
-
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
-val unzipJsc by task<UnzipJsc> {
+val unzipJsc = tasks.register<UnzipJsc>("unzipJsc") {
     from.setFrom(jsc)
 
     into.fileProvider(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
@@ -325,7 +311,7 @@ val unzipJsc by task<UnzipJsc> {
     getIsLinux.set(isLinux)
 }
 
-val createJscRunner by task<CreateJscRunner> {
+val createJscRunner = tasks.register<CreateJscRunner>("createJscRunner") {
     osTypeName.set(currentOsType.name)
 
     val runnerFileName = if (currentOsType.name == OsName.WINDOWS) "runJsc.cmd" else "runJsc"
@@ -335,7 +321,7 @@ val createJscRunner by task<CreateJscRunner> {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
-val unzipWasmtime by task<UnzipWasmtime> {
+val unzipWasmtime = tasks.register<UnzipWasmtime>("unzipWasmtime") {
     from.setFrom(wasmtime)
 
     val currentOsTypeForConfigurationCache = currentOsType.name
@@ -406,7 +392,6 @@ projectTests {
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
             taskName = taskName,
-            jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
             maxHeapSizeMb = 6144
         ) {
@@ -414,6 +399,11 @@ projectTests {
                 setupV8()
             }
             with(wasmNodeJsKotlinBuild) {
+                setupNodeJs(nodejsVersion)
+                dependsOn(":js:js.tests:npmInstall")
+            }
+            // it is necessary for TypeScript tests
+            with(nodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
             }
@@ -426,14 +416,8 @@ projectTests {
             setupWasmtime()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.root.out.dir")
-                buildDirectory.set(layout.buildDirectory)
-            }
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.node.dir")
-                buildDirectory.set(node.nodeProjectDir)
-            }
+            addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+            addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
             dependsOn(npmInstall)
         }
@@ -444,6 +428,7 @@ projectTests {
         include("**/*.class")
         exclude("**/*SingleModule*TestGenerated.class")
         exclude("**/*MultiModule*TestGenerated.class")
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
@@ -457,7 +442,7 @@ projectTests {
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/debug")
     testData(project(":compiler").isolated, "testData/ir/irText")
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")
@@ -474,7 +459,7 @@ projectTests {
 
 tasks.processTestFixturesResources.configure {
     from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
-    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+    from(project(":compiler").isolated.projectDirectory.dir("testData/debug")) {
         into("debugTestHelpers")
         include("wasmTestHelpers/")
     }

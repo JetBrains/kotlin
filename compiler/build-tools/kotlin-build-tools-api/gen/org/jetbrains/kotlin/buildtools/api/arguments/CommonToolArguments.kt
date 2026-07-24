@@ -37,7 +37,7 @@ public interface CommonToolArguments {
    */
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-    level = DeprecationLevel.WARNING,
+    level = DeprecationLevel.ERROR,
   )
   public operator fun contains(key: CommonToolArgument<*>): Boolean
 
@@ -80,14 +80,22 @@ public interface CommonToolArguments {
      */
     @Deprecated(
       message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
-      level = DeprecationLevel.WARNING,
+      level = DeprecationLevel.ERROR,
     )
     public operator fun contains(key: CommonToolArgument<*>): Boolean
 
     /**
+     * Constructs a new immutable [CommonToolArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    public fun build(): CommonToolArguments
+
+    /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
-     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+     * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */

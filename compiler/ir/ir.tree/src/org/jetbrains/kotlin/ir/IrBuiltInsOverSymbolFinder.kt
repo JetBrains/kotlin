@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -171,7 +173,7 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
         ulongArray?.let { array -> put(array, ulongType) }
     }
 
-    override val booleanNotSymbol: IrSimpleFunctionSymbol = CallableId(StandardClassIds.Boolean, OperatorNameConventions.NOT).functionSymbol()
+    override val booleanNotSymbol: IrSimpleFunctionSymbol by CallableId(StandardClassIds.Boolean, OperatorNameConventions.NOT).functionSymbol()
 
     override val enumClass: IrClassSymbol = StandardClassIds.Enum.classSymbol()
 
@@ -184,8 +186,8 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
     override val intAndSymbol: IrSimpleFunctionSymbol by CallableId(StandardClassIds.Int, OperatorNameConventions.AND)
         .functionSymbol { it.parameters[1].type == intType }
 
-    override val arrayOf: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol()
-    override val arrayOfNulls: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol()
+    override val arrayOf: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol()
+    override val arrayOfNulls: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol()
 
     override val deprecatedSymbol: IrClassSymbol = StandardClassIds.Annotations.Deprecated.classSymbol()
     override val deprecationLevelSymbol: IrClassSymbol = StandardClassIds.DeprecationLevel.classSymbol()
@@ -222,5 +224,51 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
         1 -> if (mutable) kMutableProperty1Class else kProperty1Class
         2 -> if (mutable) kMutableProperty2Class else kProperty2Class
         else -> error("No KProperty for n=$n mutable=$mutable")
+    }
+
+    // ------------------------------------- synthetics -------------------------------------
+
+    override val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by IrSyntheticProvider.ieee754equals.functionSymbolAssociatedBy {
+        it.parameters.first().type.classifierOrFail
+    }
+
+    override val eqeqeqSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.eqeqeq.functionSymbol()
+
+    override val eqeqSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.eqeq.functionSymbol()
+
+    override val throwCceSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.throwCce.functionSymbol()
+
+    override val throwIseSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.throwIse.functionSymbol()
+
+    override val andandSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.andand.functionSymbol()
+
+    override val ororSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.oror.functionSymbol()
+
+    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.noWhenBranchMatchedException.functionSymbol()
+
+    override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.illegalArgumentException.functionSymbol()
+
+    override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.dataClassArrayMemberHashCode.functionSymbol()
+
+    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.dataClassArrayMemberToString.functionSymbol()
+
+    override val checkNotNullSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.checkNotNull.functionSymbol()
+
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.linkageError.functionSymbol()
+
+    override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by IrSyntheticProvider.less.functionSymbolAssociatedBy {
+        it.parameters.first().type.classifierOrFail
+    }
+
+    override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by IrSyntheticProvider.lessOrEqual.functionSymbolAssociatedBy {
+        it.parameters.first().type.classifierOrFail
+    }
+
+    override val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by IrSyntheticProvider.greaterOrEqual.functionSymbolAssociatedBy {
+        it.parameters.first().type.classifierOrFail
+    }
+
+    override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by IrSyntheticProvider.greater.functionSymbolAssociatedBy {
+        it.parameters.first().type.classifierOrFail
     }
 }

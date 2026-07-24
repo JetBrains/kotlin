@@ -8,8 +8,8 @@ KaDefinitelyNotNullType:
     annotations: []
     name: T1
     symbol: KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -18,6 +18,8 @@ KaDefinitelyNotNullType:
       modality: FINAL
       name: T1
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL

@@ -13,40 +13,65 @@ import org.gradle.api.tasks.testing.Test
  * The test federation is typically only enabled in CI environments.
  * Running tests locally will always execute all tests unless actively opted into the test federation.
  */
-internal val Project.testFederationEnabled: Provider<Boolean>
+internal val Project.testFederationEnabled: Boolean
     get() = providers.gradleProperty(TEST_FEDERATION_ENABLED_KEY).map { it.toBoolean() }
         .orElse(providers.environmentVariable(TEST_FEDERATION_ENABLED_ENV_KEY).map { it.toBoolean() })
+        .getOrElse(false)
 
 
 /**
  * Returns the [Domain] the current project belongs to
  */
-internal val Project.testFederationDomain: Provider<Domain>
-    get() = project.provider { repositoryPath(this.projectDir.toPath()).domain }
+internal val Project.testFederationDomain: Provider<List<Domain>>
+    get() = project.provider { repositoryPath(this.projectDir.toPath()).domains }
 
 internal val Project.testFederationMode: Provider<TestFederationMode>
-    get() = providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY).map(TestFederationMode::valueOf)
-        .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
-            if (domain in affectedTestSystems) TestFederationMode.Full
-            else TestFederationMode.Smoke
-        })
+    get() {
+        if (!project.testFederationEnabled) {
+            return provider { TestFederationMode.Full }
+        }
+
+        return (providers.gradleProperty(TEST_FEDERATION_MODE_KEY)
+            .orElse(providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY)))
+            .map(TestFederationMode::valueOf)
+            .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
+                if (domain.intersect(affectedTestSystems).isNotEmpty()) TestFederationMode.Full
+                else TestFederationMode.Smoke
+            })
+    }
 
 internal val Project.testFederationAffectedDomains: Provider<Set<Domain>>
     get() {
-        return providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-            .map { argumentString -> inferAffectedDomains(argumentString) }
+        if (!project.testFederationEnabled) {
+            return provider { Domain.entries.toSet() }
+        }
+
+        return (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY)
+            .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
+            .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
             .orElse(project.affectedDomainsService.map { it.affectedDomains })
     }
 
 
-private const val IS_SMOKE_TEST_KEY = "org.jetbrains.kotlin.testFederation.isSmokeTest"
+internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
+
+var Test.smokeTestConfig: SmokeTestConfig?
+    set(value) = extensions.extraProperties.set(SMOKE_TEST_CONFIG_KEY, value)
+    get() = if (extensions.extraProperties.has(SMOKE_TEST_CONFIG_KEY)) extensions.extraProperties.get(SMOKE_TEST_CONFIG_KEY) as SmokeTestConfig? else null
 
 /**
- * `true`: Marks the entire test task as 'smoke test'. All tests will always run
- * `false`: Marks the entire test task as 'not smoke test'; Never runs in smoke test mode
- * `null`: Default value; The test can be executed in regular (full) and smoke test modes
+ * Returns true if the current project is tested in 'Smoke Test Mode' according to the test federation.
+ * See 'repo/TEST-FEDERATION.md' for more details.
  */
-@TemporaryTestFederationApi
-var Test.isSmokeTest: Boolean?
-    set(value) = extensions.extraProperties.set(IS_SMOKE_TEST_KEY, value)
-    get() = if (extensions.extraProperties.has(IS_SMOKE_TEST_KEY)) extensions.extraProperties.get(IS_SMOKE_TEST_KEY) as Boolean else null
+val Project.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
+
+
+/**
+ * Returns true if the current build is part of a 'nightly' aggregate.
+ * Returns false if the current build is part of a master based remote run, aggregate, safe-merge, ...
+ * Returns true by default (local) to allow executing tests locally easily.
+ */
+val Project.areNightlyTestsEnabled: Provider<Boolean>
+    get() = project.providers.gradleProperty("nightly").map { it.toBooleanStrict() }
+        .orElse(providers.environmentVariable("NIGHTLY").map { it.toBooleanStrict() })
+        .orElse(true)

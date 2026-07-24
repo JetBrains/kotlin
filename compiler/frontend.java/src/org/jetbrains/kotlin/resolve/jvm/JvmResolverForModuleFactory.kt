@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class JvmPlatformParameters(
     val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
     val moduleByJavaClass: (JavaClass) -> ModuleInfo?,
@@ -52,6 +54,7 @@ class JvmPlatformParameters(
 ) : PlatformAnalysisParameters
 
 
+@K1Deprecation
 class JvmResolverForModuleFactory(
     private val platformParameters: JvmPlatformParameters,
     private val targetEnvironment: TargetEnvironment,

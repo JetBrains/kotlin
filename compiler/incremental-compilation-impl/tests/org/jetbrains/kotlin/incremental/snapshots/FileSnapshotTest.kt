@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.TestWithWorkingDir
-import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
-import org.junit.Assert.assertNotEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Test
 import java.io.*
 
 class FileSnapshotTest : TestWithWorkingDir() {

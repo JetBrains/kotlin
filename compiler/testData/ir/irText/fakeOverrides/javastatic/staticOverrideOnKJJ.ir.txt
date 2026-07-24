@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Int [fake_override,companion]
       overridden:
         public open fun bar (): kotlin.Int declared in <root>.Java3
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java3
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:kotlin.Int
       overridden:
         public open fun foo (t: kotlin.Int): kotlin.Unit declared in <root>.Java3
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Int [fake_override,companion]
       overridden:
         public open fun bar (): kotlin.Int declared in <root>.Java3
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java3
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override,companion]
       VALUE_PARAMETER kind:Regular name:t index:0 type:kotlin.Int
       overridden:
         public open fun foo (t: kotlin.Int): kotlin.Unit declared in <root>.Java3

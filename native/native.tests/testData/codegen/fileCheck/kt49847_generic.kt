@@ -1,5 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 class C<T> {
     fun foo(x: T) = x

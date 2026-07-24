@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
-// SKIP_TXT
 // FULL_JDK
 
 import java.util.stream.Collectors

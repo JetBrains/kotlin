@@ -2,14 +2,15 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Semaphore: KotlinRuntime.KotlinBase {
+public protocol Semaphore: KotlinRuntime.KotlinBase, main._Semaphore {
 }
 @objc(_Semaphore)
-package protocol _Semaphore {
+public protocol _Semaphore {
 }
-public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semaphore {
+public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main.__Semaphore {
     public init() {
-        if Self.self != main.ClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassA ") }
         let __kt = __root___ClassA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -23,7 +24,6 @@ public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semap
 }
 public final class ClassB: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ClassB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassB ") }
         let __kt = __root___ClassB_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -53,9 +53,11 @@ public func forwardingTarget(
 ) -> Swift.Void {
     return { __root___forwardingTarget__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(`for`.__externalRCRef()); return () }()
 }
-extension main.Semaphore where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Semaphore where Self : main.__Semaphore {
 }
 extension main.Semaphore {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Semaphore where Wrapped : main._Semaphore {
+extension KotlinRuntimeSupport._KotlinExistential: main.Semaphore, main.__Semaphore where Wrapped : main._Semaphore {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Semaphore {
 }

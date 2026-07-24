@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import javax.tools.JavaFileObject
 
+@K1Deprecation
 class TreeBasedPackage(val name: String, val javac: JavacWrapper, val unit: JCTree.JCCompilationUnit) : JavaPackage, MapBasedJavaAnnotationOwner {
 
     override val fqName: FqName

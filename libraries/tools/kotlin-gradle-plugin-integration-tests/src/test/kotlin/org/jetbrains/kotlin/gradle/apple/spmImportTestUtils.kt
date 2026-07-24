@@ -8,15 +8,27 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_XCODE_DUMP_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecutionHooks
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
+import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.boot
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
@@ -65,11 +77,12 @@ const val SYNTHETIC_IMPORT_DYLIB =
 fun createLocalSwiftPackage(
     localPackageDir: Path,
     packageName: String = "LocalSwiftPackage",
+    products: List<String> = listOf(packageName),
     sourceLanguage: SwiftPackageSourceLanguage = SwiftPackageSourceLanguage.SWIFT_WITH_OBJC,
 ) {
     localPackageDir.createDirectories()
     val sourcesDir = localPackageDir.resolve("Sources/$packageName")
-    writePackageManifest(localPackageDir, packageName, ".target(name: \"$packageName\")")
+    writePackageManifest(localPackageDir, packageName, products = products)
     writeLocalPackageSources(sourcesDir, packageName, sourceLanguage)
 }
 
@@ -88,15 +101,18 @@ fun createLocalSwiftPackageWithResources(
 
     // Write Package.swift with resource processing
     writePackageManifest(
-        localPackageDir, packageName,
-        """
+        localPackageDir = localPackageDir,
+        packageName = packageName,
+        targetDefinitions = listOf(
+            """
             .target(
                 name: "$packageName",
                 resources: [
                     .process("$resourceFileName"),
                 ]
-            ),
+            )
         """.trimIndent()
+        )
     )
 
     // Write Swift source that exposes a resource accessor
@@ -106,7 +122,11 @@ fun createLocalSwiftPackageWithResources(
 
             @objc public class ResourceAccessor: NSObject {
                 @objc public static func resourceContent() -> String {
-                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${resourceFileName.substringAfterLast(".")}") else {
+                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${
+            resourceFileName.substringAfterLast(
+                "."
+            )
+        }") else {
                         return "RESOURCE_NOT_FOUND"
                     }
                     return (try? String(contentsOf: url)) ?? "RESOURCE_READ_ERROR"
@@ -123,7 +143,8 @@ fun createLocalSwiftPackageWithResources(
 internal fun writePackageManifest(
     localPackageDir: Path,
     packageName: String,
-    targetDefinition: String,
+    products: List<String> = listOf(packageName),
+    targetDefinitions: List<String> = products.map { """.target(name: "$it")""" },
 ) {
     localPackageDir.resolve("Package.swift").writeText(
         """
@@ -134,10 +155,10 @@ internal fun writePackageManifest(
                 name: "$packageName",
                 platforms: [.iOS(.v15)],
                 products: [
-                    .library(name: "$packageName", targets: ["$packageName"]),
+                    ${products.joinToString(",\n") { """.library(name: "$it", targets: ["$it"])""" }}
                 ],
                 targets: [
-                    ${targetDefinition.prependIndent("            ")}
+                    ${targetDefinitions.joinToString(",\n") { it }}
                 ]
             )
         """.trimIndent()
@@ -266,18 +287,20 @@ internal fun swiftSourceContent(): String = """
 fun createLocalSwiftPackageWithBinaryTarget(
     localPackageDir: Path,
     packageName: String,
-    xcframeworkPath: Path
+    xcframeworkPath: Path,
 ) {
     localPackageDir.createDirectories()
     writePackageManifest(
         localPackageDir = localPackageDir,
         packageName = packageName,
-        targetDefinition = """
-            .binaryTarget(
-                name: "$packageName",
-                path: "${xcframeworkPath.fileName}"
-            ),
-        """.trimIndent(),
+        targetDefinitions = listOf(
+            """
+                .binaryTarget(
+                    name: "$packageName",
+                    path: "${xcframeworkPath.fileName}"
+                )
+            """.trimIndent()
+        ),
     )
 }
 
@@ -291,7 +314,9 @@ fun createLocalSwiftPackageWithBinaryTarget(
 internal fun createSwiftPmGitRepoWithTags(
     reposRoot: Path,
     packageName: String,
+    source: String? = null,
     tags: List<String>,
+    products: List<String> = listOf(packageName),
     fileByTag: Map<String, Map<String, String>> = emptyMap(),
 ): Path {
     val repoDir = reposRoot.resolve(packageName).createDirectories()
@@ -299,33 +324,56 @@ internal fun createSwiftPmGitRepoWithTags(
     runGit("init", "-q", repoDir = repoDir)
     runGit("config", "user.email", "spm@test", repoDir = repoDir)
     runGit("config", "user.name", "spm-test", repoDir = repoDir)
+
     val commandResult = runProcess(
         listOf("touch", "git-daemon-export-ok"),
         workingDir = repoDir.toFile(),
     )
 
-    if (!commandResult.isSuccessful) throw IllegalStateException("Failed to create git-daemon-export-ok file: ${commandResult.output}")
+    if (!commandResult.isSuccessful) {
+        error("Failed to create git-daemon-export-ok file: ${commandResult.output}")
+    }
 
-    writePackageManifest(repoDir, packageName, ".target(name: \"$packageName\")")
+    writePackageManifest(repoDir, packageName, products = products)
 
-    // Seed sources dir
-    repoDir.resolve("Sources/$packageName").createDirectories()
-    repoDir.resolve("Sources/$packageName/$packageName.swift").writeText(
-        "public struct $packageName { public static let v = \"seed\" }\n"
-    )
+    if (source != null) {
+        products.forEach { product ->
+            repoDir.resolve("Sources/$product").createDirectories()
+            repoDir.resolve("Sources/$product/$product.swift").writeText(
+                source
+            )
+        }
+    } else {
+        products.forEach { product ->
+            repoDir.resolve("Sources/$product").createDirectories()
+            repoDir.resolve("Sources/$product/$product.swift").writeText(
+                "public struct $product { public static let v = \"seed\" }\n"
+            )
+        }
+
+    }
+
+
+
 
     runGit("add", ".", repoDir = repoDir)
     runGit("commit", "--quiet", "-m", "init", repoDir = repoDir)
 
     tags.forEach { tag ->
-        // If caller provided per-tag content, apply it; otherwise just update a value.
-        val files = fileByTag[tag]
-            ?: mapOf("Sources/$packageName/$packageName.swift" to "public struct $packageName { public static let v = \"$tag\" }\n")
+        val files: Map<String, String> =
+            fileByTag[tag]
+                ?: products.associate { product ->
+                    "Sources/$product/$product.swift" to
+                            "public struct $product { public static let v = \"$tag\" }\n"
+                }
 
-        files.forEach { (rel, content) ->
-            val f = repoDir.resolve(rel)
-            f.parent.createDirectories()
-            f.writeText(content)
+        files.forEach { entry ->
+            val rel = entry.key
+            val content = entry.value
+            val file = repoDir.resolve(rel)
+            file.parent.createDirectories()
+            file.writeText(content)
+
         }
 
         runGit("add", ".", repoDir = repoDir)
@@ -344,7 +392,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { (filePath, fileContent) ->
+    files?.forEach { [filePath, fileContent] ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -355,16 +403,37 @@ internal fun addSwiftPmGitTag(
     runGit("tag", tag, repoDir = repoDir)
 }
 
-internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -> Unit = {}) {
+internal fun TestProject.initKmpPluginsOnly() {
     plugins {
         kotlin("multiplatform")
     }
+}
+
+internal fun TestProject.initJvmKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
     buildScriptInjection {
         project.applyMultiplatform {
-            listOf(
-                iosArm64(),
-                iosSimulatorArm64()
-            ).forEach {
+            jvm()
+            extra()
+        }
+    }
+}
+
+internal fun TestProject.initDefaultKmp(
+    nativeTargets: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = {
+        listOf(
+            iosArm64(),
+            iosSimulatorArm64()
+        )
+    },
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            nativeTargets().forEach {
                 it.binaries.framework {
                     baseName = "Shared"
                     isStatic = true
@@ -374,6 +443,186 @@ internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -
         }
     }
 }
+
+internal val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
+
+
+internal fun parseSwiftPMFingerprint(fingerprintFile: Path): String =
+    fingerprintFile.toFile().readText().trim().split("\n")[1]
+
+internal fun swiftPMXcodeBuildFingerprint(
+    projectDir: Path,
+    sdk: String,
+): Path =
+    projectDir.resolve("build").resolve(FingerprintXcodeBuild.xcodebuildFingerprintPathForSdk(sdk))
+
+internal fun swiftPMPackageFingerprint(
+    projectDir: Path,
+): Path =
+    projectDir.resolve("build").resolve(FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH)
+
+internal fun swiftPMFingerprintCheckoutDir(
+    projectDir: Path,
+    rootProject: Path,
+): Path {
+    val packageFingerprint = parseSwiftPMFingerprint(swiftPMSyntheticPackageFingerprint(projectDir))
+    return rootProject.resolve(SHARED_CHECKOUT_DIR).resolve(packageFingerprint)
+
+}
+
+internal fun swiftPMSyntheticPackageFingerprint(
+    projectDir: Path,
+): Path =
+    projectDir.resolve("build").resolve(FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH)
+
+private fun swiftPMXcodeDumpRoot(
+    rootDir: Path,
+    fingerprintFile: Path,
+): Path =
+    rootDir.resolve(SHARED_XCODE_DUMP_DIR).resolve(parseSwiftPMFingerprint(fingerprintFile))
+
+private fun swiftPMXcodeDumpPath(
+    rootDir: Path,
+    hashFile: Path,
+    relativePath: String,
+): Path =
+    swiftPMXcodeDumpRoot(rootDir, hashFile).resolve(relativePath)
+
+internal fun swiftPMXcodebuildClangDumpPath(
+    rootDir: Path,
+    hashFile: Path,
+    sdk: String,
+): Path =
+    swiftPMXcodeDumpPath(
+        rootDir,
+        hashFile,
+        "swiftImportClangDump/$sdk",
+    )
+
+internal fun swiftPMXcodebuildDerivedDataPath(
+    rootDir: Path,
+    hashFile: Path,
+    sdk: String,
+): Path =
+    swiftPMXcodeDumpPath(
+        rootDir,
+        hashFile,
+        "swiftImportDd/dd_$sdk",
+    )
+
+internal fun TestProject.localXcodebuildFingerprint(
+    projectName: String? = null,
+    sdk: String,
+): Path =
+    swiftPMXcodeBuildFingerprint(
+        projectDir = projectName?.let(projectPath::resolve) ?: projectPath,
+        sdk = sdk,
+    )
+
+internal fun TestProject.localPackageFingerprint(
+    projectName: String? = null,
+): Path =
+    swiftPMPackageFingerprint(
+        projectDir = projectName?.let(projectPath::resolve) ?: projectPath,
+    )
+
+internal fun TestProject.localDumpDir(
+    sdk: String,
+    projectName: String? = null,
+): Path =
+    swiftPMXcodebuildClangDumpPath(
+        rootDir = projectPath,
+        hashFile = localXcodebuildFingerprint(projectName, sdk),
+        sdk = sdk,
+    )
+
+internal fun TestProject.localDerivedDataDir(
+    sdk: String,
+    projectName: String? = null,
+): Path =
+    swiftPMXcodebuildDerivedDataPath(
+        rootDir = projectPath,
+        hashFile = localXcodebuildFingerprint(projectName, sdk),
+        sdk = sdk,
+    )
+
+internal fun TestProject.localIphoneosDumpFingerprintFile(
+    projectName: String? = null,
+): Path =
+    localXcodebuildFingerprint(projectName, "iphoneos")
+
+internal fun TestProject.localIphonesimulatorDumpFingerprintFile(
+    projectName: String? = null,
+): Path =
+    localXcodebuildFingerprint(projectName, "iphonesimulator")
+
+internal fun TestProject.localIphoneosDumpDir(
+    projectName: String? = null,
+): Path =
+    localDumpDir("iphoneos", projectName)
+
+internal fun TestProject.localIphonesimulatorDumpDir(
+    projectName: String? = null,
+): Path =
+    localDumpDir("iphonesimulator", projectName)
+
+internal fun TestProject.localIphoneosDerivedDataDir(
+    projectName: String? = null,
+): Path =
+    localDerivedDataDir("iphoneos", projectName)
+
+internal fun TestProject.localIphonesimulatorDerivedDataDir(
+    projectName: String? = null,
+): Path =
+    localDerivedDataDir("iphonesimulator", projectName)
+
+internal fun sharedRootBucketDir(dumpDir: Path): Path =
+    dumpDir.parent.parent
+
+internal fun xcodeDumpFingerprintStamp(dumpDir: Path): Path =
+    dumpDir.resolve("xcode-dump-fingerprint.json")
+
+internal fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: Path) {
+    assertDirectoryExists(dumpDir)
+    assertFileExists(dumpDir.resolve("clangDump.sh"))
+    assertFileExists(dumpDir.resolve("ldDump.sh"))
+    assertDirectoryExists(dumpDir.resolve("clang_args_dump"))
+    assertDirectoryExists(dumpDir.resolve("ld_args_dump"))
+}
+
+internal fun assertSharedDumpDirsHaveSameFiles(
+    referenceDumpDir: Path,
+    vararg dumpDirs: Path,
+) {
+    val referenceDumpFiles = materializedDumpFilesByRelativePath(referenceDumpDir)
+    assertTrue(referenceDumpFiles.isNotEmpty(), "Reference dump directory should contain dump files")
+
+    dumpDirs.forEach { dumpDir ->
+        assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir)
+        assertEquals(
+            referenceDumpFiles.keys,
+            materializedDumpFilesByRelativePath(dumpDir).keys,
+            "Shared dump directory should contain the same dump files"
+        )
+    }
+}
+
+internal fun assertLocalDerivedDataDirsExist(vararg localDerivedDataDirs: Path) {
+    localDerivedDataDirs.forEach { localDerivedDataDir ->
+        assertDirectoryExists(localDerivedDataDir)
+        assertDirectoryExists(localDerivedDataDir.resolve("Build"))
+    }
+}
+
+internal fun materializedDumpFilesByRelativePath(dumpDir: Path): Map<String, String> =
+    materializedDumpEntries.asSequence()
+        .map { dumpDir.resolve(it).toFile() }
+        .filter { it.exists() }
+        .flatMap { it.walkTopDown().asSequence() }
+        .filter { it.isFile }
+        .associate { file ->
+            file.relativeTo(dumpDir.toFile()).invariantSeparatorsPath to file.readText()
+        }
 
 internal class LockFileTestFixture(
     val project: TestProject,
@@ -389,6 +638,92 @@ internal data class RepoRef(
     val name: String,
     val url: String,
 ) : java.io.Serializable
+
+internal enum class SwiftImportTestExecutionRole {
+    OWNER,
+    JOINER,
+}
+
+internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
+    (extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
+}
+
+internal fun KotlinMultiplatformExtension.configureSwiftImportTestExecution(
+    serviceName: String,
+    kind: SwiftImportTestExecutionKind,
+    role: SwiftImportTestExecutionRole,
+) {
+    val service = swiftImportTestExecutionService(serviceName, kind)
+    swiftPMDependencies {
+        testExecutionService.set(service)
+        testExecutionHooks.set(swiftImportExecutionHooks(kind, role, service))
+    }
+}
+
+private fun swiftImportExecutionHooks(
+    kind: SwiftImportTestExecutionKind,
+    role: SwiftImportTestExecutionRole,
+    service: Provider<SwiftImportTestExecutionService>,
+): SwiftImportExecutionHooks {
+    if (kind == SwiftImportTestExecutionKind.SWIFT_RESOLVE && role == SwiftImportTestExecutionRole.OWNER) {
+        return SwiftResolveOwnerExecutionHooks(service)
+    }
+    if (kind == SwiftImportTestExecutionKind.SWIFT_RESOLVE) {
+        return SwiftResolveJoinerExecutionHooks(service)
+    }
+    if (role == SwiftImportTestExecutionRole.OWNER) {
+        return XcodebuildOwnerExecutionHooks(service)
+    }
+    return XcodebuildJoinerExecutionHooks(service)
+}
+
+private class SwiftResolveOwnerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        service.get().markOwnerClaimed()
+    }
+}
+
+private class SwiftResolveJoinerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeSwiftResolveClaim() {
+        service.get().awaitOwnerClaimed()
+    }
+
+    override fun beforeSwiftResolveOwnerWorkerSubmission() {
+        error("Expected this project to join Swift package resolve, but it owned the bucket")
+    }
+}
+
+private class XcodebuildOwnerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        service.get().markOwnerClaimed()
+    }
+}
+
+private class XcodebuildJoinerExecutionHooks(
+    private val service: Provider<SwiftImportTestExecutionService>,
+) : SwiftImportExecutionHooks {
+    override fun beforeXcodebuildClaim() {
+        service.get().awaitOwnerClaimed()
+    }
+
+    override fun beforeXcodebuildOwnerWorkerSubmission() {
+        error("Expected this project to join xcodebuild args dump, but it owned the bucket")
+    }
+}
+
+private fun KotlinMultiplatformExtension.swiftImportTestExecutionService(
+    serviceName: String,
+    kind: SwiftImportTestExecutionKind,
+): Provider<SwiftImportTestExecutionService> =
+    project.gradle.sharedServices.registerIfAbsent(serviceName, SwiftImportTestExecutionService::class.java) {
+        it.parameters.kind.set(kind)
+    }
 
 internal fun TestProject.withLockFileFixture(
     packageResolvedSynchronization: PackageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default"),
@@ -426,43 +761,108 @@ internal fun TestProject.selectedPersistedPackageResolvedPath(
 
 internal fun TestProject.initSwiftPmProject(
     cacheDirFile: File,
+    nativeTargets: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = {
+        listOf(
+            iosArm64(),
+            iosSimulatorArm64()
+        )
+    },
     extra: KotlinMultiplatformExtension.() -> Unit,
 ) {
-    initDefaultKmp {
-        project.tasks
-            .withType(FetchSyntheticImportProjectPackages::class.java)
-            .configureEach { task ->
-                task.additionalSwiftPackageResolveArgs.set(
-                    listOf(
-                        "--resolver-fingerprint-checking", "warn",
-                        "--cache-path", cacheDirFile.path,
-                    )
-                )
-            }
-
-        project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
-            .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
-            }
-
+    initDefaultKmp(
+        nativeTargets = nativeTargets
+    ) {
+        configureSwiftPmTestArgs(cacheDirFile)
         extra()
     }
+}
+
+internal fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
+    cacheDirFile: File,
+) {
+    project.tasks
+        .withType(FetchSyntheticImportProjectPackages::class.java)
+        .configureEach { task ->
+            task.additionalSwiftPackageResolveArgs.set(
+                listOf(
+                    "--resolver-fingerprint-checking", "warn",
+                    "--cache-path", cacheDirFile.path,
+                )
+            )
+        }
+
+    project.tasks
+        .withType(DumpXcodeBuildArgs::class.java)
+        .configureEach { task ->
+            task.additionalXcodeArgs.set(
+                listOf(
+                    "-packageFingerprintPolicy", "warn",
+                    "-packageCachePath", cacheDirFile.path,
+                )
+            )
+        }
+}
+
+internal fun TestProject.dumpTaskGraph(
+    taskName: String,
+    assertions: Set<String>.() -> Unit = {},
+): Set<String> {
+    lateinit var taskGraph: Set<String>
+
+    build(taskName, "--dry-run") {
+        taskGraph = output
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.endsWith(" SKIPPED") }
+            .map { it.removeSuffix(" SKIPPED") }
+            .filter { it.startsWith(":") }
+            .toSet()
+    }
+
+    assertions(taskGraph)
+    return taskGraph
+}
+
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks: String) {
+    val taskToExclude = setOf(
+        ":kmpPartiallyResolvedDependenciesChecker",
+        ":downloadKotlinNativeDistribution",
+        ":checkKotlinGradlePluginConfigurationErrors",
+    )
+    // we also need to exlcude "right:checkKotlinGradlePluginConfigurationErrors"
+    val filteredGraph = filterNot { taskPath ->
+        taskToExclude.any { suffix ->
+            taskPath.endsWith(suffix)
+        }
+    }.toSet()
+    filteredGraph.assertExactTaskGraph(*tasks)
+}
+
+internal fun Set<String>.assertExactTaskGraph(vararg tasks: String) {
+    val expected = tasks.toSet()
+
+    val difference = (this - expected + (expected - this)).toSet()
+    assertEquals(
+        expected, this, "Executed tasks should be exactly the expected ones \n" +
+                "Expected: ${expected}\n" +
+                "Actual: ${this} \n" +
+                "Difference: ${difference}\n"
+    )
 }
 
 internal fun LockFileTestFixture.createRepo(
     name: String,
     tags: List<String>,
+    @Language("Swift")
+    source: String = "public struct $name { public static let v = \"seed\" }\n",
+    products: List<String> = listOf(name),
 ): Path {
     return createSwiftPmGitRepoWithTags(
         reposRoot = reposRoot,
         packageName = name,
+        source = source,
         tags = tags,
+        products = products
     )
 }
 
@@ -498,7 +898,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { (repoRef, version) ->
+        pins = expectedPins.map { [repoRef, version] ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
@@ -533,7 +933,7 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
 
 internal fun assertGitIgnoreEquals(
     gitIgnorePath: Path,
-    expectedGitIgnoreContent: String
+    expectedGitIgnoreContent: String,
 ) {
     val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
 
@@ -594,10 +994,6 @@ internal data class SwiftPmPinState(
     val branch: String? = null,
 )
 
-private val swiftPmJson = Json {
-    ignoreUnknownKeys = true
-}
-
 
 internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
     copy(pins = pins.map { it.copy(state = it.state.copy(revision = "<ignored>")) })
@@ -605,7 +1001,7 @@ internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
 internal fun SwiftPmPackageResolved.ignoreTopLevelVersion(): SwiftPmPackageResolved =
     copy(version = -1)
 
-internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = swiftPmJson.decodeFromString(jsonString)
+internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = JsonHolder.json.decodeFromString(jsonString)
 
 // Package.resolved DTO
 
@@ -687,8 +1083,10 @@ data class SwiftPackageTarget(
 
 // endregion
 
-private val appleToolJson = Json {
-    ignoreUnknownKeys = true
+private object JsonHolder {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 }
 
 private inline fun <reified T> runAppleToolCommand(
@@ -704,7 +1102,7 @@ private inline fun <reified T> runAppleToolCommand(
         "Failed to run command ${command.joinToString(" ")} at $workingDir: ${result.output}"
     }
     val jsonContent = outputFile?.readText() ?: result.output
-    return appleToolJson.decodeFromString<T>(jsonContent)
+    return JsonHolder.json.decodeFromString<T>(jsonContent)
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
@@ -832,7 +1230,31 @@ internal fun runGit(vararg args: String, repoDir: Path): String {
 @Serializable
 data class SwiftPackageDump(
     val name: String,
+    val dependencies: List<SwiftPackageDumpDependency> = emptyList(),
     val targets: List<SwiftPackageDumpTarget> = emptyList(),
+)
+
+@Serializable
+data class SwiftPackageDumpDependency(
+    val fileSystem: List<SwiftPackageDumpFileSystemDependency>? = null,
+    val sourceControl: List<SwiftPackageDumpSourceControlDependency>? = null,
+)
+
+@Serializable
+data class SwiftPackageDumpFileSystemDependency(
+    val identity: String,
+    val path: String,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlDependency(
+    val identity: String,
+    val location: SwiftPackageDumpSourceControlLocation,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlLocation(
+    val remote: List<String>? = null,
 )
 
 
@@ -977,6 +1399,7 @@ fun runApplication(projectPath: Path, appPath: Path): ApplicationRun {
 
 fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
     appPath: Path,
+    checkForObjCRuntimeWarnings: Boolean = true,
 ) {
     val result = runApplication(projectPath = projectPath, appPath = appPath)
     try {
@@ -984,17 +1407,19 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
             result.exitCode,
             0,
         )
-        assertEquals(
-            "",
-            result.stderr.readLines().filter {
-                /**
-                 * Google Maps and some other libraries litter in stderr with logs we don't care about. We only need the objc message about
-                 * class duplication.
-                 * @see `org.jetbrains.kotlin.gradle.apple.SwiftPMImportDynamicLinkageTests.dynamic linkage with SwiftPM import - duplicates static binary during application linkage`
-                 */
-                "is implemented in both" in it
-            }.joinToString("\n"),
-        )
+        if (checkForObjCRuntimeWarnings) {
+            assertEquals(
+                "",
+                result.stderr.readLines().filter {
+                    /**
+                     * Google Maps and some other libraries litter in stderr with logs we don't care about. We only need the objc message about
+                     * class duplication.
+                     * @see `org.jetbrains.kotlin.gradle.apple.SwiftPMImportDynamicLinkageTests.dynamic linkage with SwiftPM import - duplicates static binary during application linkage`
+                     */
+                    "is implemented in both" in it
+                }.joinToString("\n"),
+            )
+        }
     } catch (e: Throwable) {
         throw AssertionError(
             listOf(
@@ -1009,7 +1434,7 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
 
 fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
     val gradleMetadata = rootComponent.gradleMetadata.readText().let {
-        swiftPmJson.decodeFromString<GradleMetadata>(it)
+        JsonHolder.json.decodeFromString<GradleMetadata>(it)
     }
 
     assertEquals(
@@ -1049,29 +1474,32 @@ fun TestProject.commonizeAndDumpCinteropSignatures(
 }
 
 private val CINTEROP_NOISE_SIGNATURE_LINES = setOf(
-    "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS.<get-SWIFT_TYPEDEFS>|<get-SWIFT_TYPEDEFS>(){}[0]",
-    "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS|{}SWIFT_TYPEDEFS[0]",
-    "swiftPMImport.emptyxcode/char16_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char16_t|null[0]",
-    "swiftPMImport.emptyxcode/char32_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char32_t|null[0]",
-    "swiftPMImport.emptyxcode/char8_tVar|null[0]",
-    "swiftPMImport.emptyxcode/char8_t|null[0]",
-    "swiftPMImport.emptyxcode/swift_double2Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_double2|null[0]",
-    "swiftPMImport.emptyxcode/swift_float3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_float3|null[0]",
-    "swiftPMImport.emptyxcode/swift_float4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_float4|null[0]",
-    "swiftPMImport.emptyxcode/swift_int3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_int3|null[0]",
-    "swiftPMImport.emptyxcode/swift_int4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_int4|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint3Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint3|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint4Var|null[0]",
-    "swiftPMImport.emptyxcode/swift_uint4|null[0]",
+    "val swiftPMImport/emptyxcode/SWIFT_TYPEDEFS: kotlin/Int",
+    "/* getter */ swiftPMImport/emptyxcode/SWIFT_TYPEDEFS.<get-SWIFT_TYPEDEFS>",
+    "typealias swiftPMImport/emptyxcode/char16_t",
+    "typealias swiftPMImport/emptyxcode/char16_tVar",
+    "typealias swiftPMImport/emptyxcode/char32_t",
+    "typealias swiftPMImport/emptyxcode/char32_tVar",
+    "typealias swiftPMImport/emptyxcode/char8_t",
+    "typealias swiftPMImport/emptyxcode/char8_tVar",
+    "typealias swiftPMImport/emptyxcode/swift_double2Var",
+    "typealias swiftPMImport/emptyxcode/swift_float3",
+    "typealias swiftPMImport/emptyxcode/swift_float3Var",
+    "typealias swiftPMImport/emptyxcode/swift_float4",
+    "typealias swiftPMImport/emptyxcode/swift_float4Var",
+    "typealias swiftPMImport/emptyxcode/swift_int3",
+    "typealias swiftPMImport/emptyxcode/swift_int3Var",
+    "typealias swiftPMImport/emptyxcode/swift_int4",
+    "typealias swiftPMImport/emptyxcode/swift_int4Var",
+    "typealias swiftPMImport/emptyxcode/swift_uint3",
+    "typealias swiftPMImport/emptyxcode/swift_uint3Var",
+    "typealias swiftPMImport/emptyxcode/swift_uint4",
+    "typealias swiftPMImport/emptyxcode/swift_uint4Var",
+    "typealias swiftPMImport/emptyxcode/swift_double2",
 )
 
-fun String.filterOutNoiseSignatures() =
-    lines().filter { it !in CINTEROP_NOISE_SIGNATURE_LINES }.joinToString("\n").trim()
+fun String.filterOutNoiseSignatures() = lineSequence().filter { line ->
+    CINTEROP_NOISE_SIGNATURE_LINES.none { it in line }
+}.joinToString("\n").trim()
+
+const val SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH = "build/${FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH}"

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: +NameBasedDestructuring
+// LANGUAGE: -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 
 typealias NBAliasString = String
 typealias NBAliasLong = Long

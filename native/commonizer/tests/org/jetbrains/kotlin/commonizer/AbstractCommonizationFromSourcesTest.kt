@@ -29,17 +29,28 @@ import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.lowercaseFirstLetter
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
-import kotlin.contracts.ExperimentalContracts
+import kotlin.jvm.optionals.getOrNull
 import kotlin.test.fail
 
-@ExperimentalContracts
-abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
+abstract class AbstractCommonizationFromSourcesTest {
     companion object {
         init {
             System.setProperty("java.awt.headless", "true")
         }
+    }
+
+    private lateinit var testInfo: TestInfo
+
+    @BeforeEach
+    fun setUp(info: TestInfo) {
+        testInfo = info
     }
 
     private fun getTestDataDir(): File {
@@ -47,7 +58,8 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             this::class.java.simpleName.substringBefore("FromSources").substringBefore("Test"),
             true
         )
-        val testDir = testDirectoryName
+        val testName = getTestName(testInfo.testMethod.getOrNull()!!.name, true)
+        val testDir = testName.replace("_.*".toRegex(), "")
 
         return ForTestCompileRuntime.transformTestDataPath("native/commonizer/testData")
             .resolve(testCaseDir)
@@ -55,7 +67,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             .also(::assertIsDirectory)
     }
 
-    protected fun doTestSuccessfulCommonization() {
+    protected fun doTestSuccessfulCommonization(): Unit = runWithDisposable { testRootDisposable ->
         val sourceModuleRoots: SourceModuleRoots = SourceModuleRoots.load(getTestDataDir())
         val analyzedModules: AnalyzedModules = AnalyzedModules.create(sourceModuleRoots, testRootDisposable)
 
@@ -193,7 +205,7 @@ private class AnalyzedModules(
         manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
         dependenciesProvider = TargetDependent(sharedTarget.withAllLeaves()) { target ->
             dependencyModules
-                .filter { (registeredTarget, _) -> target in registeredTarget.withAllLeaves() }
+                .filter { [registeredTarget, _] -> target in registeredTarget.withAllLeaves() }
                 .values.flatten()
                 .map { it.namedMetadata }
                 .plus(loadStdlibMetadata())
@@ -215,7 +227,7 @@ private class AnalyzedModules(
             parentDisposable: Disposable
         ): AnalyzedModules = with(sourceModuleRoots) {
             // phase 1: provide the modules that are the dependencies for "original" and "commonized" modules
-            val (dependencyModules: Map<CommonizerTarget, List<CompiledDependency>>, dependencies: AnalyzedModuleDependencies) =
+            val [dependencyModules: Map<CommonizerTarget, List<CompiledDependency>>, dependencies: AnalyzedModuleDependencies] =
                 createDependencyModules(sharedTarget, dependencyRoots, parentDisposable)
 
             // phase 2: build "original" and "commonized" modules
@@ -224,7 +236,7 @@ private class AnalyzedModules(
 
             val commonizedModules: Map<CommonizerTarget, SerializedMetadata> =
                 createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
-                    .mapValues { (_, dependency) -> dependency.namedMetadata.metadata }
+                    .mapValues { [_, dependency] -> dependency.namedMetadata.metadata }
 
             return AnalyzedModules(originalModules, commonizedModules, dependencyModules)
         }
@@ -266,7 +278,7 @@ private class AnalyzedModules(
             }
 
             // then, all platform modules
-            moduleRoots.filterKeys { it != sharedTarget }.forEach { (leafTarget, moduleRoot) ->
+            moduleRoots.filterKeys { it != sharedTarget }.forEach { [leafTarget, moduleRoot] ->
                 result[leafTarget] = createModule(
                     sharedTarget, leafTarget, moduleRoot,
                     dependenciesForOthers, parentDisposable, isDependencyModule
@@ -305,7 +317,7 @@ private class AnalyzedModules(
                 }.toSet()
             )
 
-            val (configuration, serializationArtifact) = serializeModuleToMetadata(
+            val [configuration, serializationArtifact] = serializeModuleToMetadata(
                 moduleName, moduleRoot.location,
                 targetPlatform = targetPlatform,
                 disposable = parentDisposable,
@@ -353,7 +365,7 @@ private object TestPatchingFirVisitor : FirVisitorVoid() {
     override fun visitNamedFunction(namedFunction: FirNamedFunction) {
         val comment = namedFunction.source.psi?.text?.lineSequence()?.firstOrNull()?.takeIf { it.startsWith("//") }
             ?: return
-        val (key, value) = comment.substringAfter("//").split('=', limit = 2).takeIf { it.size == 2 }?.map { it.trim() }
+        val [key, value] = comment.substringAfter("//").split('=', limit = 2).takeIf { it.size == 2 }?.map { it.trim() }
             ?: return
 
         when (key) {

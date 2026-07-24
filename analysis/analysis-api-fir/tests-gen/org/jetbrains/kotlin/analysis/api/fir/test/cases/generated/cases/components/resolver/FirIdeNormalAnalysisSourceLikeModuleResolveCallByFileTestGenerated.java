@@ -279,6 +279,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
   }
 
   @Test
+  @TestMetadata("primaryConstructorVsCompanionInvoke.kt")
+  public void testPrimaryConstructorVsCompanionInvoke() {
+    run("primaryConstructorVsCompanionInvoke.kt");
+  }
+
+  @Test
+  @TestMetadata("primaryConstructorVsCompanionInvokeOnNestedClass.kt")
+  public void testPrimaryConstructorVsCompanionInvokeOnNestedClass() {
+    run("primaryConstructorVsCompanionInvokeOnNestedClass.kt");
+  }
+
+  @Test
   @TestMetadata("providedDelegate.kt")
   public void testProvidedDelegate() {
     run("providedDelegate.kt");
@@ -351,6 +363,68 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocksAndExtensions {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocksAndExtensions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionBlock.kt")
+    public void testCompanionBlock() {
+      run("companionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockAndCompanionObject.kt")
+    public void testCompanionBlockAndCompanionObject() {
+      run("companionBlockAndCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockViaTypeAlias.kt")
+    public void testCompanionBlockViaTypeAlias() {
+      run("companionBlockViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtension.kt")
+    public void testCompanionExtension() {
+      run("companionExtension.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionInOtherFile.kt")
+    public void testCompanionExtensionInOtherFile() {
+      run("companionExtensionInOtherFile.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionOperatorInvoke.kt")
+    public void testCompanionExtensionOperatorInvoke() {
+      run("companionExtensionOperatorInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionViaTypeAlias.kt")
+    public void testCompanionExtensionViaTypeAlias() {
+      run("companionExtensionViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionWinsOverCompanionObjectMember.kt")
+    public void testCompanionExtensionWinsOverCompanionObjectMember() {
+      run("companionExtensionWinsOverCompanionObjectMember.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextSensitiveResolution {
@@ -361,6 +435,90 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
     @Test
     public void testAllFilesPresentInContextSensitiveResolution() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("contracts.kt")
+    public void testContracts() {
+      run("contracts.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifierInTypeArgumentNotRemovable.kt")
+    public void testQualifierInTypeArgumentNotRemovable() {
+      run("qualifierInTypeArgumentNotRemovable.kt");
+    }
+
+    @Test
+    @TestMetadata("removableAnnotations.kt")
+    public void testRemovableAnnotations() {
+      run("removableAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("removableFullyQualified.kt")
+    public void testRemovableFullyQualified() {
+      run("removableFullyQualified.kt");
+    }
+
+    @Test
+    @TestMetadata("removableFullyQualifiedWithImport.kt")
+    public void testRemovableFullyQualifiedWithImport() {
+      run("removableFullyQualifiedWithImport.kt");
+    }
+
+    @Test
+    @TestMetadata("removableImportEnumEntry.kt")
+    public void testRemovableImportEnumEntry() {
+      run("removableImportEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierDeeplyNested.kt")
+    public void testRemovableQualifierDeeplyNested() {
+      run("removableQualifierDeeplyNested.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierEnumEntry.kt")
+    public void testRemovableQualifierEnumEntry() {
+      run("removableQualifierEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierFeatureDisabled.kt")
+    public void testRemovableQualifierFeatureDisabled() {
+      run("removableQualifierFeatureDisabled.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierSealedSubclass.kt")
+    public void testRemovableQualifierSealedSubclass() {
+      run("removableQualifierSealedSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierWhenIsPattern.kt")
+    public void testRemovableQualifierWhenIsPattern() {
+      run("removableQualifierWhenIsPattern.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportEnumEntry.kt")
+    public void testRemovableStarImportEnumEntry() {
+      run("removableStarImportEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportSealedSubclass.kt")
+    public void testRemovableStarImportSealedSubclass() {
+      run("removableStarImportSealedSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportWhenIsPattern.kt")
+    public void testRemovableStarImportWhenIsPattern() {
+      run("removableStarImportWhenIsPattern.kt");
     }
 
     @Nested
@@ -1144,6 +1302,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
     }
 
     @Test
+    @TestMetadata("assignOnObject.kt")
+    public void testAssignOnObject() {
+      run("assignOnObject.kt");
+    }
+
+    @Test
     @TestMetadata("augmentedAssignment.kt")
     public void testAugmentedAssignment() {
       run("augmentedAssignment.kt");
@@ -1201,6 +1365,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
     @TestMetadata("unary.kt")
     public void testUnary() {
       run("unary.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexLiterals.kt")
+    public void testUnaryOnComplexLiterals() {
+      run("unaryOnComplexLiterals.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnLiterals.kt")
+    public void testUnaryOnLiterals() {
+      run("unaryOnLiterals.kt");
     }
 
     @Test
@@ -1313,6 +1489,74 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
     @TestMetadata("typeParameterAsSuperType.kt")
     public void testTypeParameterAsSuperType() {
       run("typeParameterAsSuperType.kt");
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CompanionBlocksAndExtensions {
+      private void run(String fileName) {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInCompanionBlocksAndExtensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("companionBlockNoCompanionQualifier.kt")
+      public void testCompanionBlockNoCompanionQualifier() {
+        run("companionBlockNoCompanionQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionAmbiguity.kt")
+      public void testCompanionExtensionAmbiguity() {
+        run("companionExtensionAmbiguity.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionInapplicableOperator.kt")
+      public void testCompanionExtensionInapplicableOperator() {
+        run("companionExtensionInapplicableOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionInvalidReceivers.kt")
+      public void testCompanionExtensionInvalidReceivers() {
+        run("companionExtensionInvalidReceivers.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionOperatorInvokeAmbiguity.kt")
+      public void testCompanionExtensionOperatorInvokeAmbiguity() {
+        run("companionExtensionOperatorInvokeAmbiguity.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionShadowedByMember.kt")
+      public void testCompanionExtensionShadowedByMember() {
+        run("companionExtensionShadowedByMember.kt");
+      }
+
+      @Test
+      @TestMetadata("companionFeatureDisabled.kt")
+      public void testCompanionFeatureDisabled() {
+        run("companionFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("illegalCompanionBlock.kt")
+      public void testIllegalCompanionBlock() {
+        run("illegalCompanionBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedCompanionBlock.kt")
+      public void testNestedCompanionBlock() {
+        run("nestedCompanionBlock.kt");
+      }
     }
 
     @Nested

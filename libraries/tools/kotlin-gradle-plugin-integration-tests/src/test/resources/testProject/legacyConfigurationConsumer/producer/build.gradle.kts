@@ -2,7 +2,7 @@ plugins {
     id("base")
 }
 
-val producerTask by tasks.registering {
+val producerTask = tasks.register("producerTask") {
     val projectName = project.name
     val publishedFile = layout.buildDirectory.file("publication/output.txt")
     outputs.file(publishedFile)

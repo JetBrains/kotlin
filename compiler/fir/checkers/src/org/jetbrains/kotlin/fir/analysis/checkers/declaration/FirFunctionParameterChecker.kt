@@ -84,7 +84,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             // in case it is a complex type that quantifies
             // over many other types.
             if (varargParameterType.leastUpperBound(context.session).fullyExpandedType().isNothingOrNullableNothing ||
-                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+                (varargParameterType.isInlineClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
@@ -98,7 +98,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkUninitializedParameter(function: FirFunction) {
-        for ((index, parameter) in function.valueParameters.withIndex()) {
+        for ([index, parameter] in function.valueParameters.withIndex()) {
             // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
             // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
             parameter.defaultValue?.accept(object : FirVisitorVoid() {

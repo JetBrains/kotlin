@@ -5,8 +5,8 @@
 
 package kotlin.script.experimental.test
 
-import junit.framework.TestCase
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptCompilationConfigurationKeys
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -14,7 +14,7 @@ import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.util.PropertiesCollection
 
-class ConfigurationsTest : TestCase() {
+class ConfigurationsTest {
 
     @Test
     fun testHostConfigWithDefaultsFrom() {

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 
+@K1Deprecation
 interface DiagnosticDiffCallbacks {
     fun missingDiagnostic(diagnostic: TextDiagnostic, expectedStart: Int, expectedEnd: Int)
 

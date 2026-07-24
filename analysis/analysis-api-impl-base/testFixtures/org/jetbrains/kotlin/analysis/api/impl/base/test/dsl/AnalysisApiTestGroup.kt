@@ -47,7 +47,7 @@ class AnalysisApiTestGroup(
 
             ALL_POSSIBLE_FACTORY_DATA_LIST.filter(groupFilter).filter(filter)
                 .groupBy { it.testPath }
-                .forEach { (testRoot, datas) ->
+                .forEach { [testRoot, datas] ->
                     testGroup(testRoot, fullTestPath) {
                         datas.forEach { data ->
                             analysisApiTestClass(data, testClass, init)

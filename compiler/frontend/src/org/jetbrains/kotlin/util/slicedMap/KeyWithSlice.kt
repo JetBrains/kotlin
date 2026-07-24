@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.util.slicedMap
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 abstract class KeyWithSlice<K, V, out Slice : ReadOnlySlice<K, V>>(debugName: String) : Key<V>(debugName) {
     abstract val slice: Slice
 }

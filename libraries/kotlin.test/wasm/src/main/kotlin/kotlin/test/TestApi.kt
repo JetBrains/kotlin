@@ -50,7 +50,7 @@ internal fun registerRootSuiteBlock(suiteName: String, block: () -> Unit) {
 
 @UsedFromCompilerGeneratedCode
 internal fun runRootSuites() {
-    rootSuiteBlocks.entries.forEach { (suiteName, block) ->
+    rootSuiteBlocks.entries.forEach { [suiteName, block] ->
         suite(name = suiteName, ignored = false) {
             block.forEach { it() }
         }

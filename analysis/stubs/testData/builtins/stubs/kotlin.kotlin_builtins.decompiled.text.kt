@@ -489,6 +489,10 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin public final annotation class EqualityBound public constructor(bound: kotlin.reflect.KClass<*>) : kotlin.Annotation {
+    public final val bound: kotlin.reflect.KClass<*> /* compiled code */
+}
+
 @kotlin.RequiresOptIn @kotlin.annotation.Retention @kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {
 }
 

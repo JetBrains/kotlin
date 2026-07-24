@@ -34,7 +34,7 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
         val elementsToStructureElementMap = allStructureElements.associateBy { it.declaration.psi }
         val elementToComments = elementsToStructureElementMap.entries.fold(
             initial = listMultimapOf<PsiElement, String>()
-        ) { map, (anchorElement, structureElement) ->
+        ) { map, [anchorElement, structureElement] ->
             val specialKey: PsiElement? = when (anchorElement) {
                 is KtClassOrObject -> anchorElement.body?.lBrace
                 is KtFunction -> anchorElement.bodyBlockExpression?.lBrace

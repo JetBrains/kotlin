@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.daemon.testfixtures.FakeCompilationResults
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLL
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractAlternativeKtFileIdenticalChecker
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -45,6 +46,9 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
 
             useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
             useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
+            defaultDirectives {
+                TestDumpDirectives.DUMP_CLASSIFIER with "reversed"
+            }
         }
     }
 }

@@ -6,8 +6,8 @@
 package org.jetbrains.abi.tools.test
 
 import org.jetbrains.abi.tools.test.api.*
-import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class PublicMarkersTest : BaseKotlinGradleTest() {

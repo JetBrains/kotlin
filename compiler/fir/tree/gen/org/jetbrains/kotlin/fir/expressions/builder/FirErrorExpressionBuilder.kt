@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 @FirBuilderDsl
 class FirErrorExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var diagnostic: ConeDiagnostic
     var expression: FirExpression? = null
     var nonExpressionElement: FirElement? = null

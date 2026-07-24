@@ -1,14 +1,15 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   backingFieldSymbol: null
   callableId: /c
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -22,17 +23,20 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(entryInScriptDestructuringDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -41,11 +45,10 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -54,6 +57,9 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: c
   origin: SOURCE
+  primaryConstructorParameter: null
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -65,16 +71,17 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(entryInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getC
   javaSetterName: null
   isInline: false
   importableFqName: c
 
 KaPropertyGetterSymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -88,15 +95,18 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: null
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
     type: kotlin/Int
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(entryInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

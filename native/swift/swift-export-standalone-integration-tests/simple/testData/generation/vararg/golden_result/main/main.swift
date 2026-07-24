@@ -29,7 +29,6 @@ public final class Accessor: KotlinRuntime.KotlinBase {
             z: Swift.Bool...,
             outer__: main.Accessor
         ) {
-            if Self.self != main.Accessor.Inner.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Accessor.Inner ") }
             let __kt = Accessor_Inner_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__Vararg__main_Accessor__(__kt, y, z.map { it in NSNumber(value: it) }, outer__.__externalRCRef()); return () }()
@@ -43,7 +42,6 @@ public final class Accessor: KotlinRuntime.KotlinBase {
     public init(
         x: Swift.Int32...
     ) {
-        if Self.self != main.Accessor.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Accessor ") }
         let __kt = __root___Accessor_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___(__kt, x.map { it in NSNumber(value: it) }); return () }()

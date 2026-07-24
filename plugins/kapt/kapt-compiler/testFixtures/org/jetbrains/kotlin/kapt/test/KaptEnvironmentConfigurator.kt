@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.kapt.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt.base.AptMode
 import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt.base.KaptFlag
+import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -49,7 +50,7 @@ class KaptEnvironmentConfigurator(
             incrementalDataOutputDir = sourcesOutputDir
 
             for (option in module.directives[CodegenTestDirectives.JAVAC_OPTIONS]) {
-                val (key, value) = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                val [key, value] = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
                 javacOptions[key] = value
             }
 
@@ -57,6 +58,10 @@ class KaptEnvironmentConfigurator(
                 if (directive in module.directives) {
                     flags.add(KaptFlag.valueOf(directive.name))
                 }
+            }
+            module.directives[KaptTestDirectives.STUB_GENERATION_SCHEME].lastOrNull()?.let { value ->
+                stubGenerationScheme = StubGenerationScheme.entries.firstOrNull { it.stringValue == value }
+                    ?: error("Unknown stub generation scheme: $value")
             }
 
             processingOptions.putAll(processorOptions)

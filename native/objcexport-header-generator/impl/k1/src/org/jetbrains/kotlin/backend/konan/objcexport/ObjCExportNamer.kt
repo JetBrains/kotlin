@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -130,6 +131,7 @@ fun createNamer(
 ): ObjCExportNamer =
     createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
 
+@OptIn(K1Deprecation::class)
 fun createNamer(
     moduleDescriptor: ModuleDescriptor,
     exportedDependencies: List<ModuleDescriptor>,
@@ -565,9 +567,9 @@ class ObjCExportNamerImpl(
         val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
 
         StringBuilder().apply {
-            append(method.getMangledName(forSwift = false))
+            val methodName = method.getMangledName(forSwift = false)
 
-            parameters.forEachIndexed { index, (bridge, it) ->
+            parameters.forEachIndexed { index, [bridge, it] ->
                 val name = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> when {
                         it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(false) { "" }
@@ -582,20 +584,27 @@ class ObjCExportNamerImpl(
                 }
 
                 if (index == 0) {
-                    append(
+                    val firstParam = (
                         when {
                             bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
                             bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
                             method is ConstructorDescriptor -> "With"
                             else -> ""
                         }
-                    )
-                    append(name.replaceFirstChar(Char::uppercaseChar))
+                        ) + name.replaceFirstChar(Char::uppercaseChar)
+
+                    // First parameter, when combined with the method name may require mangling. E.g.: fun N(ULL: Int)
+                    append((methodName + firstParam).mangleIfStdMacro())
                 } else {
-                    append(name)
+                    append(name.mangleIfStdMacro())
                 }
 
                 append(':')
+            }
+
+            // No parameters to add to the method name. Mangle and append the method name.
+            if (parameters.isEmpty()) {
+                append(methodName.mangleIfStdMacro())
             }
         }.mangledSequence {
             if (parameters.isNotEmpty()) {
@@ -619,7 +628,7 @@ class ObjCExportNamerImpl(
             append(method.getMangledName(forSwift = true))
             append("(")
 
-            parameters@ for ((bridge, it) in parameters) {
+            parameters@ for ([bridge, it] in parameters) {
                 val label = when (bridge) {
                     is MethodBridgeValueParameter.Mapped -> when {
                         it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }
@@ -659,7 +668,12 @@ class ObjCExportNamerImpl(
         val objCName = property.getObjCName()
         fun PropertyNameMapping.getOrPut(forSwift: Boolean) = getOrPut(property) {
             StringBuilder().apply {
-                append(objCName.asIdentifier(forSwift))
+                val identifier = objCName.asIdentifier(forSwift)
+                if (!forSwift) {
+                    append(identifier.mangleIfStdMacro())
+                } else {
+                    append(identifier)
+                }
             }.mangledSequence {
                 append('_')
             }
@@ -757,7 +771,7 @@ class ObjCExportNamerImpl(
             builtIns.mutableMap to mutableMapName
         )
 
-        predefinedClassNames.forEach { (descriptor, name) ->
+        predefinedClassNames.forEach { [descriptor, name] ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -768,11 +782,11 @@ class ObjCExportNamerImpl(
                 NoLookupLocation.FROM_BACKEND
             ).single()
 
-        Predefined.anyMethodSelectors.forEach { (name, selector) ->
+        Predefined.anyMethodSelectors.forEach { [name, selector] ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
+        Predefined.anyMethodSwiftNames.forEach { [name, swiftName] ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }
@@ -1168,6 +1182,7 @@ private fun KtClassOrObject.getObjCName(): ObjCName {
     return ObjCName(name!!, objCName, swiftName, isExact)
 }
 
+@OptIn(K1Deprecation::class)
 internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String
     get() {
         if (this.isNativeStdlib()) return "Kotlin"

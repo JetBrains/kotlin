@@ -40,3 +40,7 @@ fun Domain.Companion.fromArgumentString(value: String): Set<Domain>? {
         }
     }
 }
+
+fun Domain.Companion.fromArgumentStringOrThrow(value: String): Set<Domain> {
+    return fromArgumentString(value) ?: error("Failed parsing affected domains: '$value'")
+}

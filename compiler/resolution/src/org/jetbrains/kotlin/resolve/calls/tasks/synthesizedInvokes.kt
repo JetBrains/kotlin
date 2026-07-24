@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.getFunctionTypeKind
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -33,6 +34,7 @@ import java.util.*
 
 // Creates a descriptor denoting an extension function for a collection of non-extension "invoke"s from function types.
 // For example, `fun invoke(param: P): R` becomes `fun P.invoke(): R`
+@K1Deprecation
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(1)
 
@@ -80,6 +82,7 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
         )
     }.build()!!
 
+@K1Deprecation
 fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     if (descriptor.name != OperatorNameConventions.INVOKE || descriptor !is FunctionDescriptor) return false
 

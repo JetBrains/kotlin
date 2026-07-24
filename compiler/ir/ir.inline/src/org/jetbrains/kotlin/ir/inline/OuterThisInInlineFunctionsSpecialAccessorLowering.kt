@@ -59,7 +59,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
     }
 
     private fun addAccessorsToParents(accessors: Collection<IrSimpleFunction>) {
-        for ((innerClass, accessorsInInnerClass) in accessors.groupBy { it.parent as IrClass }) {
+        for ([innerClass, accessorsInInnerClass] in accessors.groupBy { it.parent as IrClass }) {
             if (accessorsInInnerClass.size == 1) {
                 innerClass.declarations += accessorsInInnerClass[0]
             } else {

@@ -227,6 +227,16 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
+        value = "-Xjava-direct",
+        description = "Experimental direct java support.",
+    )
+    var javaDirect: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xjava-package-prefix",
         description = "Package prefix for Java files.",
     )
@@ -251,7 +261,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
     )
     var jdkRelease: String? = null
@@ -291,7 +301,7 @@ Modes:
             field = value
         }
 
-    @Deprecated("This flag is deprecated. Use `-jvm-default` instead")
+    @all:Deprecated("Use `-jvm-default` instead.")
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
@@ -299,6 +309,7 @@ Modes:
 -Xjvm-default=disable            -> -jvm-default=disable
 -Xjvm-default=all-compatibility  -> -jvm-default=enable
 -Xjvm-default=all                -> -jvm-default=no-compatibility""",
+        deprecatedVersion = "2.2.0",
     )
     var jvmDefault: String? = null
         set(value) {
@@ -328,18 +339,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         }
 
     @Argument(
-        value = "-Xklib",
-        valueDescription = "<path>",
-        description = "Paths to cross-platform libraries in the .klib format.",
-        delimiter = Argument.Delimiters.pathSeparator,
-    )
-    var klibLibraries: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xlambdas",
         valueDescription = "{class|indy}",
         description = """Select the code generation scheme for lambdas.
@@ -352,20 +351,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Deprecated("This flag is deprecated")
-    @Argument(
-        value = "-Xlink-via-signatures",
-        description = """Link JVM IR symbols via signatures instead of descriptors.
-This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
-This option is deprecated and will be deleted in future versions.
-It has no effect when -language-version is 2.0 or higher.""",
-    )
-    var linkViaSignatures: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(
@@ -576,17 +561,6 @@ The default value is 'enable'.""",
         }
 
     @Argument(
-        value = "-Xsuppress-deprecated-jvm-target-warning",
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""",
-    )
-    var suppressDeprecatedJvmTargetWarning: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with '-no-stdlib').",
     )
@@ -640,6 +614,17 @@ See KT-45671 for more details.""",
         }
 
     @Argument(
+        value = "-Xuse-metadata-on-incremental-classpath",
+        description = """Use fragment metadata found on the compilation classpath to perform incremental compilation.
+This flag is intended for incremental compilation only and should not be used directly.""",
+    )
+    var useMetadataOnIncrementalClasspath: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xuse-old-class-files-reading",
         description = """Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
 This can be used in the event of problems with the new implementation.""",
@@ -661,21 +646,21 @@ This can be used in the event of problems with the new implementation.""",
         }
 
     @Argument(
+        value = "-Xvalhalla-support",
+        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}",
+        description = "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+    )
+    var valhallaSupport: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xvalidate-bytecode",
         description = "Validate generated JVM bytecode before and after optimizations.",
     )
     var validateBytecode: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xvalue-classes",
-        description = "Enable experimental value classes.",
-    )
-    @Enables(LanguageFeature.JvmInlineMultiFieldValueClasses)
-    var valueClasses: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -688,7 +673,7 @@ This can be used in the event of problems with the new implementation.""",
 -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-The default value is 'inline'.""",
+The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.""",
     )
     var whenExpressionsGeneration: String? = null
         set(value) {
@@ -781,7 +766,7 @@ The default value is 'inline'.""",
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
+        description = "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
     )
     var jvmTarget: String? = null
         set(value) {

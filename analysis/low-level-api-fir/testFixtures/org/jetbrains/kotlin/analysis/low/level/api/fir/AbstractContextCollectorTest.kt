@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithSpecificAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.scopes.*
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -70,7 +71,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
 
         val firRenderer = FirRenderer(
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
-            declarationRenderer = FirDeclarationRendererWithPartialBodyResolveState()
+            declarationRenderer = FirDeclarationRendererWithSpecificAttributes(["PartialBodyAnalysisStateKey"]),
         )
 
         val actualText = buildString {
@@ -83,21 +84,16 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     }
 }
 
-private class FirDeclarationRendererWithPartialBodyResolveState : FirDeclarationRendererWithAttributes() {
-    override fun attributeTypesToIds(): List<Pair<String, Int>> {
-        return super.attributeTypesToIds().filter { it.first == "PartialBodyAnalysisStateKey" }
-    }
-}
-
 internal object ElementContextRenderer {
     fun render(context: ContextCollector.Context, builder: StringBuilder) = with(builder) {
         renderTowerDataContext(context.towerDataContext)
+        renderExpressionStability(context.expressionStability)
         renderSmartCasts(context.smartCasts)
     }
 
     private fun StringBuilder.renderTowerDataContext(towerDataContext: FirTowerDataContext) {
         appendBlock("Tower Data Context:") {
-            for ((index, towerDataElement) in towerDataContext.towerDataElements.withIndex()) {
+            for ([index, towerDataElement] in towerDataContext.towerDataElements.withIndex()) {
                 appendBlock("Element $index") {
                     for (scope in towerDataElement.scope?.flatten().orEmpty()) {
                         appendBlock("Scope: " + scope.javaClass.simpleName) {
@@ -217,6 +213,14 @@ internal object ElementContextRenderer {
         }
     }
 
+    private fun StringBuilder.renderExpressionStability(stability: SmartcastStability?) {
+        if (stability == null) {
+            return
+        }
+
+        append("Expression Stability: ").append(stability).appendLine()
+    }
+
     private fun StringBuilder.appendBlock(title: String? = null, block: StringBuilder.() -> Unit): StringBuilder {
         if (title != null) {
             appendLine(title)
@@ -272,4 +276,3 @@ abstract class AbstractContextCollectorScriptTest : AbstractContextCollectorTest
     override val configurator: AnalysisApiTestConfigurator =
         AnalysisApiFirCustomScriptDefinitionTestConfigurator(analyseInDependentSession = false)
 }
-

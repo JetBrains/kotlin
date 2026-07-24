@@ -12,35 +12,38 @@ import org.jetbrains.kotlin.gradle.idea.test.tcs.ReflectionTestUtils.kotlinRefle
 import org.jetbrains.kotlin.tooling.core.AbstractExtras
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameters
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.Serializable
 import java.lang.reflect.Modifier
+import java.util.stream.Stream
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.test.*
 
-@RunWith(Parameterized::class)
-class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val clazzName: String) {
+class IdeaKotlinModelObjectGraphTest {
 
-    @Test
-    fun `test - node is sealed`() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("findClasses")
+    fun `test - node is sealed`(node: KClass<*>, @Suppress("UNUSED_PARAMETER") clazzName: String) {
         if (node.java.isInterface || node.isAbstract) {
             assertTrue(node.isSealed, "Expected $clazzName to be sealed")
         }
     }
 
-    @Test
-    fun `test - node implements Serializable`() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("findClasses")
+    fun `test - node implements Serializable`(node: KClass<*>, clazzName: String) {
         assertTrue(
             Serializable::class.java.isAssignableFrom(node.java),
             "Expected clazz $clazzName to implement ${Serializable::class.qualifiedName}`"
         )
     }
 
-    @Test
-    fun `test - node implementations contain serialVersionUID`() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("findClasses")
+    fun `test - node implementations contain serialVersionUID`(node: KClass<*>, @Suppress("UNUSED_PARAMETER") clazzName: String) {
         if (!node.java.isInterface && !Modifier.isAbstract(node.java.modifiers)) {
             assertNodeContainsSerialVersionUID(node)
         }
@@ -56,8 +59,7 @@ class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val cl
         )
 
         @JvmStatic
-        @Parameters(name = "{1}")
-        fun findClasses(): List<Array<Any>> {
+        fun findClasses(): Stream<Arguments> {
             val classes = mutableSetOf<KClass<*>>()
 
             val resolveQueue = ArrayDeque<KClass<*>>()
@@ -71,7 +73,7 @@ class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val cl
 
                 next.resolveReachableClasses().forEach { child ->
                     resolveQueue.add(child)
-                    if (child.java.isInterface || Modifier.isAbstract(child.java.modifiers)) {
+                    if (child !in ignoredNodes && (child.java.isInterface || Modifier.isAbstract(child.java.modifiers))) {
                         val subtypes = kotlinReflections.getSubTypesOf(child.java).map { it.kotlin }
                         assertTrue(subtypes.isNotEmpty(), "Missing implementations for $child")
                         resolveQueue.addAll(subtypes)
@@ -81,8 +83,8 @@ class IdeaKotlinModelObjectGraphTest(private val node: KClass<*>, private val cl
 
             return classes
                 .filter { it !in ignoredNodes }
-                .map { clazz -> arrayOf(clazz, checkNotNull(clazz.displayName())) }
-
+                .map { clazz -> Arguments.of(clazz, checkNotNull(clazz.displayName())) }
+                .stream()
         }
 
         private fun KClass<*>.resolveReachableClasses(): Set<KClass<*>> {

@@ -242,9 +242,7 @@ class PostponedArgumentsAnalyzer(
 
         val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
 
-        context(resolutionContext, outerCallsContext) {
-            runCollectionLiteralResolution(atom, precalculatedBounds)
-        }
+        runCollectionLiteralResolution(atom, precalculatedBounds, context = resolutionContext, outerCandidateContext = outerCallsContext)
     }
 
     fun analyzeLambda(
@@ -336,7 +334,7 @@ class PostponedArgumentsAnalyzer(
         forEagerLambdaAnalysis: Boolean,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType,
     ) {
-        val (returnAtoms, additionalConstraintStorage) = results
+        (val returnAtoms = returnArguments, val additionalConstraintStorage = additionalConstraints) = results
         val returnArguments = returnAtoms.map { it.expression }
 
         if (additionalConstraintStorage != null) {

@@ -1,2 +1,5 @@
-KtNamedFunction(46,94): '/**'
-  null
+KDocName(54,75): 'JavaClass.staticField'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val staticField: kotlin.Int
+    ]

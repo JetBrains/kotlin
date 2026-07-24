@@ -7,8 +7,4 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object SerializationPluginKey : GeneratedDeclarationKey() {
-    override fun toString(): String {
-        return "KotlinxSerializationPlugin"
-    }
-}
+data object SerializationPluginKey : GeneratedDeclarationKey()

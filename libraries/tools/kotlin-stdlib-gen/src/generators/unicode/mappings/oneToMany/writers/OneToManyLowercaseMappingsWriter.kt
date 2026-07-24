@@ -14,7 +14,7 @@ internal class OneToManyLowercaseMappingsWriter(private val strategy: RangesWrit
     override fun write(mappings: Map<Int, List<String>>, writer: FileWriter) {
         check(mappings.size == 1) { "Number of multi-char lowercase mappings has changed." }
 
-        val (key, value) = mappings.entries.single()
+        val [key, value] = mappings.entries.single()
         val char = key.toHexCharLiteral()
         val result = value.hexCharsToStringLiteral()
 

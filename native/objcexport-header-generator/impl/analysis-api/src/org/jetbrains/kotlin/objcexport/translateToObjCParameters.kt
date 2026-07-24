@@ -19,7 +19,7 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
     val parameters = mutableListOf<ObjCParameter>()
     val usedNames = mutableSetOf<String>()
 
-    valueParametersAssociated.forEach { (bridge: MethodBridgeValueParameter, parameter: KtObjCParameterData?) ->
+    valueParametersAssociated.forEach { [bridge: MethodBridgeValueParameter, parameter: KtObjCParameterData?] ->
         val candidateName = when (bridge) {
             is MethodBridgeValueParameter.Mapped -> {
                 if (parameter == null) return@forEach

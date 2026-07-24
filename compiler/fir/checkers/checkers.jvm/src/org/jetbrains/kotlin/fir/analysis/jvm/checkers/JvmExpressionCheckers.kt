@@ -38,6 +38,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirUnsupportedSyntheticCallableReferenceChecker,
             FirFieldReferenceShadowedByInvisibleKotlinProperty,
             FirJavaSamInterfaceConstructorReferenceChecker,
+            FirJavaClassPropertyReferenceChecker,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: kotlin/Nothing
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,11 +16,13 @@ KaNamedClassSymbol:
   modality: FINAL
   name: Nothing
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: []
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: kotlin.Nothing

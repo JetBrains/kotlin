@@ -196,15 +196,6 @@ val FirWhenSubjectExpression.whenSubjectVariable: FirProperty?
 val FirWhenSubjectExpression.whenSubject: FirExpression?
     get() = whenSubjectVariable?.initializer
 
-/**
- * A callable reference is bound iff
- * - one of [dispatchReceiver] or [extensionReceiver] is **not** null and
- * - it's not referring to a static member.
- */
-val FirCallableReferenceAccess.isBound: Boolean
-    get() = (dispatchReceiver != null || extensionReceiver != null) &&
-            calleeReference.toResolvedCallableSymbol()?.isStatic != true
-
 val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
     get() = buildList {
         addIfNotNull(dispatchReceiver)
@@ -215,7 +206,7 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
 inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {
     val functionSymbol = calleeReference.toResolvedNamedFunctionSymbol() ?: return
 
-    for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
+    for ([typeParameterSymbol, typeArgument] in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
         if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
             val type = typeArgument.typeRef.coneTypeOrNull ?: continue
             block(type, typeArgument)
@@ -233,3 +224,6 @@ tailrec fun FirResolvedQualifier.firstQualifierPart(): FirResolvedQualifier {
     val parent = explicitParent ?: return this
     return parent.firstQualifierPart()
 }
+
+val FirResolvedQualifier.classId: ClassId?
+    get() = relativeClassFqName?.let { ClassId(packageFqName, it, isLocal = false) }

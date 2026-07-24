@@ -35,6 +35,7 @@ public data class SwiftExportConfig(
     val runtimeModuleName: String = "KotlinRuntime"
 
     val stdlibInputModule: InputModule by lazy { createInputModuleForStdlib(distribution) }
+
     val platformLibsInputModule: Set<InputModule> by lazy { createInputModuleForPlatformLibs(Path(distribution.platformLibs(konanTarget)).toFile()) }
 
     val targetPlatform: TargetPlatform by lazy { NativePlatforms.nativePlatformBySingleTarget(konanTarget) }

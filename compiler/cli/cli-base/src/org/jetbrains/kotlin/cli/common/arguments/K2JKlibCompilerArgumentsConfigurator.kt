@@ -37,9 +37,6 @@ class K2JKlibCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator
         if (enhanceTypeParameterTypesToDefNotNull) {
             result[LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated] = LanguageFeature.State.ENABLED
         }
-        if (valueClasses) {
-            result[LanguageFeature.JvmInlineMultiFieldValueClasses] = LanguageFeature.State.ENABLED
-        }
         if (configureJvmDefaultMode(null)?.isEnabled == true) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] =
                 LanguageFeature.State.ENABLED

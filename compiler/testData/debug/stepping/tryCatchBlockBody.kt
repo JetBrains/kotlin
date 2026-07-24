@@ -34,10 +34,8 @@ fun box(): String =
 // test.kt:21 box
 
 // EXPECTATIONS NATIVE
-// test.kt:1 box
 // test.kt:21 box
 // test.kt:6 foo
-// test.kt:1 foo
 // test.kt:7 foo
 // test.kt:9 foo
 // test.kt:9 foo
@@ -45,13 +43,9 @@ fun box(): String =
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:11 foo$nested
-// test.kt:1 foo$nested
-// test.kt:11 foo$nested
 // test.kt:11 foo$nested
 // test.kt:13 foo
 // test.kt:14 foo
-// test.kt:4 <set-global>
-// test.kt:1 <set-global>
 // test.kt:4 <set-global>
 // test.kt:15 foo
 // test.kt:18 foo
@@ -61,7 +55,6 @@ fun box(): String =
 // test.kt:21 box
 // test.kt:7 foo
 // test.kt:9 foo
-// test.kt:10 foo
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:11 foo$nested

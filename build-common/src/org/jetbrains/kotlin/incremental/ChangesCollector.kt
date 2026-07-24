@@ -41,23 +41,23 @@ class ChangesCollector {
     fun changes(): List<ChangeInfo> {
         val changes = arrayListOf<ChangeInfo>()
 
-        for ((fqName, members) in removedMembers) {
+        for ([fqName, members] in removedMembers) {
             if (members.isNotEmpty()) {
                 changes.add(ChangeInfo.Removed(fqName, members))
             }
         }
 
-        for ((fqName, members) in changedMembers) {
+        for ([fqName, members] in changedMembers) {
             if (members.isNotEmpty()) {
                 changes.add(ChangeInfo.MembersChanged(fqName, members))
             }
         }
 
-        for ((fqName, areSubclassesAffected) in areSubclassesAffected) {
+        for ([fqName, areSubclassesAffected] in areSubclassesAffected) {
             changes.add(ChangeInfo.SignatureChanged(fqName, areSubclassesAffected))
         }
 
-        for ((fqName, changedParents) in changedParents) {
+        for ([fqName, changedParents] in changedParents) {
             changes.add(ChangeInfo.ParentsChanged(fqName, changedParents))
         }
 
@@ -140,12 +140,14 @@ class ChangesCollector {
                     }
                     is PackagePartProtoData -> {
                         collectSignature(oldData, areSubclassesAffected = true)
+                        newData.collectAll(isRemoved = false, isAdded = true)
                     }
                 }
             }
             is PackagePartProtoData -> {
                 when (newData) {
                     is ClassProtoData -> {
+                        oldData.collectAll(isRemoved = true, isAdded = false)
                         collectSignature(newData, areSubclassesAffected = false)
                     }
                     is PackagePartProtoData -> {

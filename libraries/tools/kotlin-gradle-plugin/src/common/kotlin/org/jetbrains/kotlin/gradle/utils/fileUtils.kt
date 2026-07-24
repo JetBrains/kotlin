@@ -15,9 +15,11 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.PosixFilePermission
 import java.util.*
 import java.util.function.Consumer
-import kotlin.collections.map
+import kotlin.io.path.getPosixFilePermissions
+import kotlin.io.path.setPosixFilePermissions
 
 /**
  * Create all possible case-sensitive permutations for given [String].
@@ -90,24 +92,26 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
 
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7.")
 fun contentEquals(file1: File, file2: File): Boolean {
-    if (file1.readLines().size != file2.readLines().size) return false
+    return contentEqualsIgnoringLineEndings(file1, file2)
+}
 
+internal fun contentEqualsIgnoringLineEndings(file1: File, file2: File): Boolean {
     file1.useLines { seq1 ->
         file2.useLines { seq2 ->
             val iterator1 = seq1.iterator()
             val iterator2 = seq2.iterator()
 
-            while (iterator1.hasNext() == iterator2.hasNext()) {
-
-                if (!iterator1.hasNext()) return true
-
-                if (iterator1.next() != iterator2.next()) {
-                    return false
-                }
+            while (iterator1.hasNext() && iterator2.hasNext()) {
+                if (iterator1.next() != iterator2.next()) return false
             }
 
-            return true
+            return when {
+                iterator1.hasNext() -> false
+                iterator2.hasNext() -> false
+                else -> true
+            }
         }
     }
 }
@@ -216,7 +220,8 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
                     .findFirst()
                     .ifPresent(Consumer { e -> rootFiles.add(e) })
             }
-        } catch (_: IOException) {}
+        } catch (_: IOException) {
+        }
     }
 
     val classesZip = home.resolve("lib/classes.zip")
@@ -245,7 +250,8 @@ internal inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
         closed = true
         try {
             this?.close()
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
         throw e
     } finally {
         if (!closed) {
@@ -260,3 +266,10 @@ internal val Path.invariantSeparatorsPathString: String
         val separator = fileSystem.separator
         return if (separator != "/") toString().replace(separator, "/") else toString()
     }
+
+// replacement for File.setExecutable
+internal fun Path.setExecutable() {
+    setPosixFilePermissions(
+        getPosixFilePermissions() + PosixFilePermission.OWNER_EXECUTE
+    )
+}

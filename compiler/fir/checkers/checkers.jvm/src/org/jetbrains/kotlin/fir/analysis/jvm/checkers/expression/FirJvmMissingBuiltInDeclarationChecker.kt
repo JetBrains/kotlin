@@ -37,7 +37,7 @@ object FirJvmMissingBuiltInDeclarationChecker : FirBasicExpressionChecker(MppChe
         }
 
         if (expression is FirResolvedQualifier) {
-            if (reportIfNeeded(expression.symbol)) return
+            if (reportIfNeeded(expression.qualifierSymbol)) return
         }
 
         val resolvedReferenceSymbol = expression.toReference(context.session)?.resolved?.symbol

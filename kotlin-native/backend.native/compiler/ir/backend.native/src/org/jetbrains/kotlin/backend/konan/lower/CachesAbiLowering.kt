@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
@@ -176,7 +176,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
 /**
  * Adds accessors to private entities.
  */
-internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass {
+internal class ExportCachesAbiVisitor(val context: NativeBackendContext) : FileLoweringPass {
     private val cachesAbiSupport = context.cachesAbiSupport
 
     override fun lower(irFile: IrFile) {

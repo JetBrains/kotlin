@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -24,8 +23,7 @@ fun FieldInsnNode.isCheckAssertionsStatus() =
 
 fun generateAssertionsDisabledFieldInitialization(classBuilder: ClassBuilder, clInitBuilder: MethodVisitor, className: String) {
     classBuilder.newField(
-        JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC, ASSERTIONS_DISABLED_FIELD_NAME,
-        "Z", null, null
+        null, Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC, ASSERTIONS_DISABLED_FIELD_NAME, "Z", null, null,
     )
     val thenLabel = Label()
     val elseLabel = Label()

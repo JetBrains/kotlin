@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 /**
  * The main purpose of the lookup tag is to provide a reference to concrete classifier that
@@ -35,3 +36,5 @@ abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
     override val name: Name
         get() = classId.shortClassName
 }
+
+abstract class ConeTypeParameterLookupTag : ConeClassifierLookupTag(), TypeParameterMarker

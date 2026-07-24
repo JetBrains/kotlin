@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.storage
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException
 import org.jetbrains.kotlin.utils.isProcessCanceledException
 import org.jetbrains.kotlin.utils.rethrow
 import java.util.concurrent.atomic.AtomicLong
 
+@K1Deprecation
 open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
     private val cancelledTracker: AtomicLong = AtomicLong()
 
@@ -38,6 +40,7 @@ open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.Excep
     }
 }
 
+@K1Deprecation
 object CacheResetOnProcessCanceled {
     private const val PROPERTY = "kotlin.internal.cacheResetOnProcessCanceled"
     private const val DEFAULT_VALUE = false

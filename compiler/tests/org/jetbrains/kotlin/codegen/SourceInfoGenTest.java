@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SourceInfoGenTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
-
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
@@ -26,12 +26,12 @@ public class SourceInfoGenTest extends CodegenTestCase {
 
     private static final String TEST_FOLDER = "sourceInfo/";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    void setUp() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @Test
     public void testSingleClass() {
         String producer = "singleClass.kt";
         loadFiles(TEST_FOLDER + producer);

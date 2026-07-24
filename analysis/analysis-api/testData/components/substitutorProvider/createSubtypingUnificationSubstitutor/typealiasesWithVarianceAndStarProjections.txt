@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: null
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {I = kotlin/String, T = BaseIn<BaseIn<*>>}>
+Substituted pairs:
+{ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<BaseIn<BaseIn<*>>> (Original: {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<T>)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {I = kotlin/String, T = BaseIn<BaseIn<*>>}>
+Substituted pairs:
+{ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<BaseIn<BaseIn<*>>> (Original: {ChildGenericAliasAny=} ChildGenericAny<*, *, *> <: BaseIn<T>)

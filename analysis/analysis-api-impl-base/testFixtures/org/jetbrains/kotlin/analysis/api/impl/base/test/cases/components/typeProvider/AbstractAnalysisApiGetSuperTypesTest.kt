@@ -1,12 +1,16 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
+import org.jetbrains.kotlin.analysis.api.expressions.expressionType
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.allSupertypes
+import org.jetbrains.kotlin.analysis.api.types.directSupertypes
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -24,20 +28,24 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiBasedTe
 
         val actual = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(expression) { expression ->
-                val expectedType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
-                val directSuperTypes = expectedType.directSupertypes.toList()
-                val approximatedDirectSuperTypes = expectedType.directSupertypes(shouldApproximate = true).toList()
-                val allSuperTypes = expectedType.allSupertypes.toList()
-                val approximatedAllSuperTypes = expectedType.allSupertypes(shouldApproximate = true).toList()
+                val expressionType = expression.expressionType ?: error("expect to get type of expression '${expression.text}'")
+                val directSuperTypes = expressionType.directSupertypes.toList()
+                val approximatedDirectSuperTypes = expressionType.directSupertypes(shouldApproximate = true).toList()
+                val allSuperTypes = expressionType.allSupertypes.toList()
+                val approximatedAllSuperTypes = expressionType.allSupertypes(shouldApproximate = true).toList()
+                val renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES
 
                 buildString {
                     fun List<KaType>.print(name: String) {
                         appendLine(name)
                         for (type in this) {
-                            appendLine(type.render(KaTypeRendererForDebug.WITH_QUALIFIED_NAMES, position = Variance.INVARIANT))
+                            appendLine(type.render(renderer, position = Variance.INVARIANT))
                         }
                         appendLine()
                     }
+                    appendLine("[type]")
+                    appendLine(expressionType.render(renderer, position = Variance.INVARIANT))
+                    appendLine()
                     directSuperTypes.print("[direct super types]")
                     approximatedDirectSuperTypes.print("[approximated direct super types]")
                     allSuperTypes.print("[all super types]")

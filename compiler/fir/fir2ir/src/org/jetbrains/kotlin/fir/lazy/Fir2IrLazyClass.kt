@@ -235,7 +235,7 @@ class Fir2IrLazyClass(
                 this.fir.symbol,
                 fir
             )
-            else -> !Visibilities.isPrivate(fir.visibility)
+            else -> !Visibilities.isPrivate(fir.visibility) || configuration.propagateLazyIrPrivateMembers
         }
     }
 

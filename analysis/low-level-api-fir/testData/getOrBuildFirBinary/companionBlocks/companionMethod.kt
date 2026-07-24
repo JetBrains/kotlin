@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtNamedFunction
 // MAIN_FILE_NAME: CompanionMethodKt
 

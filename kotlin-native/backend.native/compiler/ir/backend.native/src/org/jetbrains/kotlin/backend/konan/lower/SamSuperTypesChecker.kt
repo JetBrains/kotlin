@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.Variance
 
-internal class SamSuperTypesChecker(private val context: Context,
+internal class SamSuperTypesChecker(private val context: NativeBackendContext,
                                     private val irFile: IrFile,
                                     private val mode: Mode,
                                     private val recurse: Boolean) {

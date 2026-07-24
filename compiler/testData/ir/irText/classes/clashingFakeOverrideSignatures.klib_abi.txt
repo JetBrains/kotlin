@@ -1,0 +1,45 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class <#A: kotlin/Any?> /Base { // /Base|null[0]
+    final val bar // /Base.bar|@1:0{}bar[0]
+        final fun (#A).<get-bar>(): kotlin/Int // /Base.bar.<get-bar>|<get-bar>@1:0(){}[0]
+    final val bar // /Base.bar|@kotlin.String{}bar[0]
+        final fun (kotlin/String).<get-bar>(): kotlin/Int // /Base.bar.<get-bar>|<get-bar>@kotlin.String(){}[0]
+    constructor <init>() // /Base.<init>|<init>(){}[0]
+    final fun foo(#A) // /Base.foo|foo(1:0){}[0]
+    final fun foo(kotlin/String) // /Base.foo|foo(kotlin.String){}[0]
+}
+open class <#A: kotlin/Any?, #B: kotlin/Any?> /BaseXY { // /BaseXY|null[0]
+    constructor <init>() // /BaseXY.<init>|<init>(){}[0]
+    final fun foo(#A, kotlin/String) // /BaseXY.foo|foo(1:0;kotlin.String){}[0]
+    final fun foo(kotlin/String, #B) // /BaseXY.foo|foo(kotlin.String;1:1){}[0]
+}
+open class /Derived : /Base<kotlin/String> { // /Derived|null[0]
+    constructor <init>() // /Derived.<init>|<init>(){}[0]
+}
+final class /Derived2 : /Derived { // /Derived2|null[0]
+    constructor <init>() // /Derived2.<init>|<init>(){}[0]
+}
+final class /DerivedXY : /BaseXY<kotlin/String, kotlin/String> { // /DerivedXY|null[0]
+    constructor <init>() // /DerivedXY.<init>|<init>(){}[0]
+}
+open class <#A: kotlin/Any?> /Outer { // /Outer|null[0]
+    constructor <init>() // /Outer.<init>|<init>(){}[0]
+    open inner class Inner { // /Outer.Inner|null[0]
+        constructor <init>() // /Outer.Inner.<init>|<init>(){}[0]
+        final fun foo(#A) // /Outer.Inner.foo|foo(2:0){}[0]
+        final fun foo(kotlin/String) // /Outer.Inner.foo|foo(kotlin.String){}[0]
+    }
+}
+final class /OuterDerived : /Outer<kotlin/String> { // /OuterDerived|null[0]
+    constructor <init>() // /OuterDerived.<init>|<init>(){}[0]
+    final inner class InnerDerived : /Outer.Inner<kotlin/String> { // /OuterDerived.InnerDerived|null[0]
+        constructor <init>() // /OuterDerived.InnerDerived.<init>|<init>(){}[0]
+    }
+}
+final fun /outerFun() // /outerFun|outerFun(){}[0]
+final fun /test(/Base<kotlin/String>, /Derived, /Derived2) // /test|test(Base<kotlin.String>;Derived;Derived2){}[0]

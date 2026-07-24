@@ -236,7 +236,7 @@ KtNameReferenceExpression(240,241): 'x'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(242,243): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

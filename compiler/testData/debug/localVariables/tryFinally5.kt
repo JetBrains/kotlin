@@ -35,8 +35,8 @@ fun box() {
 // test.kt:14 compute:
 // test.kt:15 compute: a:java.lang.String="a":java.lang.String
 // test.kt:7 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int
-// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int
-// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int, b\2:java.lang.String="b":java.lang.String
+// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\83\0:int=0:int
+// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\83\0:int=0:int, b\2:java.lang.String="b":java.lang.String
 // test.kt:22 compute:
 // test.kt:28 box:
 // test.kt:29 box: result:java.lang.String="b":java.lang.String
@@ -67,3 +67,15 @@ fun box() {
 // test.kt:16 compute: a="a":kotlin.String
 // test.kt:17 compute: a="a":kotlin.String, b="b":kotlin.String
 // test.kt:22 compute: a="a":kotlin.String, b="b":kotlin.String
+
+// EXPECTATIONS WASM
+// test.kt:28 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:14 $compute: $a:(ref null $kotlin.String)=null, $b:(ref null $kotlin.String)=null (25, 25, 25, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18)
+// test.kt:15 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $b:(ref null $kotlin.String)=null (12)
+// test.kt:7 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $b:(ref null $kotlin.String)=null (4)
+// test.kt:16 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $b:(ref null $kotlin.String)=null (33, 33, 33, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26)
+// test.kt:17 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $b:(ref $kotlin.String)=(ref $kotlin.String) (27, 20)
+// test.kt:22 $compute: $a:(ref $kotlin.String)=(ref $kotlin.String), $b:(ref $kotlin.String)=(ref $kotlin.String) (8, 12, 12, 12, 8, 8, 8)
+// test.kt:28 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:29 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref null $kotlin.String)=null (17, 17)
+// test.kt:30 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref $kotlin.String)=(ref $kotlin.String) (1, 1)

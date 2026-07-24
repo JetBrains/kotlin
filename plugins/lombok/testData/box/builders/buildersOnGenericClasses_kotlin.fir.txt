@@ -1,0 +1,99 @@
+FILE: buildersOnGenericClasses_kotlin.kt
+    @R|lombok/Builder|() public final class GenericBuilder<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|, list: R|kotlin/collections/List<T>|): R|GenericBuilder<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+        public final val list: R|kotlin/collections/List<T>| = R|<local>/list|
+            public get(): R|kotlin/collections/List<T>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|GenericBuilder.GenericBuilderBuilder<T>|
+
+            private constructor(): R|GenericBuilder.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class GenericBuilderBuilder<T> : R|kotlin/Any| {
+            public open fun build(): R|GenericBuilder<T>|
+
+            public open fun value(value: R|T|): R|GenericBuilder.GenericBuilderBuilder<T>|
+
+            private final var value: R|T|
+                private get(): R|T|
+                private set(value: R|T|): R|kotlin/Unit|
+
+            public open fun list(list: R|kotlin/collections/List<T>|): R|GenericBuilder.GenericBuilderBuilder<T>|
+
+            private final var list: R|kotlin/collections/List<T>|
+                private get(): R|kotlin/collections/List<T>|
+                private set(value: R|kotlin/collections/List<T>|): R|kotlin/Unit|
+
+            private constructor<T>(): R|GenericBuilder.GenericBuilderBuilder<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Outer<K> : R|kotlin/Any| {
+        public constructor<K>(): R|Outer<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Builder|() public final class Nested<T> : R|kotlin/Any| {
+            public constructor<T>(value: R|T|): R|Outer.Nested<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val value: R|T| = R|<local>/value|
+                public get(): R|T|
+
+            public final companion object Companion : R|kotlin/Any| {
+                @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|Outer.Nested.NestedBuilder<T>|
+
+                private constructor(): R|Outer.Nested.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public open class NestedBuilder<T> : R|kotlin/Any| {
+                public open fun build(): R|Outer.Nested<T>|
+
+                public open fun value(value: R|T|): R|Outer.Nested.NestedBuilder<T>|
+
+                private final var value: R|T|
+                    private get(): R|T|
+                    private set(value: R|T|): R|kotlin/Unit|
+
+                private constructor<T>(): R|Outer.Nested.NestedBuilder<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun testBuilder(): R|kotlin/Unit| {
+        lval builderObj1: R|GenericBuilder<kotlin/String>| = Q|GenericBuilder|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>().R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.value: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(String(x)).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.list: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(s1), String(s2), String(s3)))).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.build: R|GenericBuilder<kotlin/String>|>|()
+        lval builder: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>| = Q|GenericBuilder|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>()
+        lval builder2: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>| = R|<local>/builder|.R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.value: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(String(y)).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.list: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(s11), String(s22), String(s33))))
+        lval builderObj2: R|GenericBuilder<kotlin/String>| = R|<local>/builder2|.R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.build: R|GenericBuilder<kotlin/String>|>|()
+    }
+    public final fun testNested(): R|kotlin/Unit| {
+        lval builder: R|Outer.Nested.NestedBuilder<kotlin/String>| = Q|Outer.Nested|.R|/Outer.Nested.Companion.builder|<R|kotlin/String|>()
+        lval builder2: R|Outer.Nested.NestedBuilder<kotlin/String>| = R|<local>/builder|.R|SubstitutionOverride</Outer.Nested.NestedBuilder.value: R|Outer.Nested.NestedBuilder<kotlin/String>|>|(String(x))
+        lval obj: R|Outer.Nested<kotlin/String>| = R|<local>/builder2|.R|SubstitutionOverride</Outer.Nested.NestedBuilder.build: R|Outer.Nested<kotlin/String>|>|()
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/testBuilder|()
+        R|/testNested|()
+        ^box String(OK)
+    }

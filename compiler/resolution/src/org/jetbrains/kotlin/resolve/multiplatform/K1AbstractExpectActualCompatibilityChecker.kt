@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
+@K1Deprecation
 object K1AbstractExpectActualCompatibilityChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
@@ -246,7 +248,7 @@ object K1AbstractExpectActualCompatibilityChecker {
         }
 
         val incompatibilityMap = mutableMapOf<Incompatible<*>, MutableList<DeclarationSymbolMarker>>()
-        for ((actualMember, compatibility) in mapping) {
+        for ([actualMember, compatibility] in mapping) {
             when (compatibility) {
                 K1ExpectActualCompatibility.Compatible -> {
                     onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)

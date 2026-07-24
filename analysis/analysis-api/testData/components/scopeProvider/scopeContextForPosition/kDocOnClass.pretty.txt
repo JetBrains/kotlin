@@ -5,6 +5,8 @@ implicit values:
     type = test.MyClass<TypeParam>
     ownerSymbol = KaNamedClassSymbol:
       test/MyClass
+    label = MyClass
+
 
 scopes:
   TypeScope, index = 0

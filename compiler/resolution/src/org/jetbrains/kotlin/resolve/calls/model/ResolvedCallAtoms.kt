@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.SmartList
 
 
+@K1Deprecation
 abstract class ResolutionPart {
     abstract fun ResolutionCandidate.process(workIndex: Int)
 
@@ -43,6 +45,7 @@ abstract class ResolutionPart {
     protected inline val ResolutionCandidate.kotlinCall get() = resolvedCall.atom
 }
 
+@K1Deprecation
 interface KotlinDiagnosticsHolder {
     fun addDiagnostic(diagnostic: KotlinCallDiagnostic)
 
@@ -57,14 +60,17 @@ interface KotlinDiagnosticsHolder {
     }
 }
 
+@K1Deprecation
 fun KotlinDiagnosticsHolder.addDiagnosticIfNotNull(diagnostic: KotlinCallDiagnostic?) {
     diagnostic?.let { addDiagnostic(it) }
 }
 
+@K1Deprecation
 fun KotlinDiagnosticsHolder.addError(error: ConstraintSystemError) {
     addDiagnostic(error.asDiagnostic())
 }
 
+@K1Deprecation
 class ResolvedCallableReferenceCallAtom(
     atom: KotlinCall,
     candidateDescriptor: CallableDescriptor,
@@ -77,6 +83,7 @@ class ResolvedCallableReferenceCallAtom(
     atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument, emptyList(), reflectionCandidateType, candidate
 ), ResolvedCallableReferenceAtom
 
+@K1Deprecation
 open class MutableResolvedCallAtom(
     override val atom: KotlinCall,
     originalCandidateDescriptor: CallableDescriptor, // original candidate descriptor
@@ -161,11 +168,13 @@ open class MutableResolvedCallAtom(
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
 
+@K1Deprecation
 fun ResolutionCandidate.markCandidateForCompatibilityResolve(needToReportWarning: Boolean = true) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
     addDiagnostic(LowerPriorityToPreserveCompatibility(needToReportWarning).asDiagnostic())
 }
 
+@K1Deprecation
 fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(
     diagnostics: SmartList<KotlinCallDiagnostic>,
     needToReportWarning: Boolean = true,

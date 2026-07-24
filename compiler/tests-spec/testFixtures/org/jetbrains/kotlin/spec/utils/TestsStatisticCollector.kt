@@ -32,7 +32,7 @@ object TestsStatisticCollector {
 
         baseStatElement.increment()
 
-        for ((elementType, value) in elementTypes) {
+        for ([elementType, value] in elementTypes) {
             currentStatElement = currentStatElement.run {
                 elements.computeIfAbsent(value) { SpecTestsStatElement(elementType) }.apply { increment() }
             }
@@ -51,7 +51,7 @@ object TestsStatisticCollector {
             File(specTestsPath).walkTopDown().forEach areaTests@{
                 if (!it.isFile || it.extension != "kt") return@areaTests
 
-                val (specTest, _) = CommonParser.parseSpecTest(it.canonicalPath, mapOf("main.kt" to it.readText()))
+                val [specTest, _] = CommonParser.parseSpecTest(it.canonicalPath, mapOf("main.kt" to it.readText()))
 
                 incrementStatCounters(
                     statistic[specTestArea]!!,

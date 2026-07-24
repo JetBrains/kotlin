@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -21,13 +22,11 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -79,9 +78,9 @@ class ScriptingCompilerPluginTest {
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destDir)
             confBody()
         }
-        configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
         configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ScriptingK2CompilerPluginRegistrar())
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
@@ -216,7 +215,7 @@ class ScriptingCompilerPluginTest {
                     K2JVMCompilerArguments::destination.cliArgument,
                     scriptsOut2.canonicalPath,
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
-                    K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                    @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     CommonCompilerArguments::languageVersion.cliArgument,
                     if (isK2) "2.0" else "1.9",
                     CommonCompilerArguments::suppressVersionWarnings.cliArgument,

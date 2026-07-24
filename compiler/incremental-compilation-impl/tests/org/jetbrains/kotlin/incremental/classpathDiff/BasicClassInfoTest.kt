@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.BasicClassInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.compileJavaFiles
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import kotlin.test.assertEquals
 
 class BasicClassInfoTest {
 
-    @get:Rule
-    val tmpDir = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpDir: File
 
     @Test
     fun `compute BasicClassInfo`() {
@@ -47,11 +46,11 @@ class BasicClassInfoTest {
 
     @Suppress("SameParameterValue")
     private fun compileJava(className: String, sourceCode: String): List<ByteArray> {
-        val sourceFile = File(tmpDir.newFolder(), "$className.java").apply {
+        val sourceFile = File(Files.createTempDirectory(tmpDir.toPath(), null).toFile(), "$className.java").apply {
             parentFile.mkdirs()
             writeText(sourceCode)
         }
-        val classesDir = tmpDir.newFolder()
+        val classesDir = Files.createTempDirectory(tmpDir.toPath(), null).toFile()
 
         compileJavaFiles(listOf(sourceFile), listOf("-d", classesDir.path)).assertSuccessful()
 

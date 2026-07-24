@@ -1,0 +1,30 @@
+[type]
+CapturedType(*)
+
+[direct super types]
+kotlin.CharSequence
+kotlin.Number
+C<CapturedType(*)>
+
+[approximated direct super types]
+kotlin.CharSequence
+kotlin.Number
+C<out kotlin.Any?>
+
+[all super types]
+kotlin.CharSequence
+kotlin.Number
+C<CapturedType(*)>
+kotlin.Any
+java.io.Serializable
+A
+B
+
+[approximated all super types]
+kotlin.CharSequence
+kotlin.Number
+C<out kotlin.Any?>
+kotlin.Any
+java.io.Serializable
+A
+B

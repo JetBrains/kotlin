@@ -287,9 +287,6 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             }
 
             includeOtherProjectAsSubmodule("empty", newSubmoduleName = "androidxCollectionWrapper") {
-                plugins {
-                    kotlin("multiplatform")
-                }
                 buildScriptInjection {
                     project.applyMultiplatform {
                         applyKmpTargets()

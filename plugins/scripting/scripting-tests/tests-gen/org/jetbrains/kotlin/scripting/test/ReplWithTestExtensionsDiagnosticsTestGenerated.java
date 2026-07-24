@@ -24,7 +24,7 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
 
   @Test
   public void testAllFilesPresentInRepl() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)(\\.repl)?\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
   }
 
   @Test

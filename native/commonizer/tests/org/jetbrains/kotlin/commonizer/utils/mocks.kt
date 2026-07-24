@@ -115,8 +115,8 @@ internal class MockModulesProvider private constructor(
         @JvmName("createByModulesWithNames")
         fun create(modules: List<NamedMetadata>) = MockModulesProvider(
             modules.associateBy(
-                keySelector = { (name, _) -> name.strip() },
-                valueTransform = { (_, module) -> module }
+                keySelector = { (val name, val _ = metadata) -> name.strip() },
+                valueTransform = { (val _ = name, val module = metadata) -> module }
             )
         )
 

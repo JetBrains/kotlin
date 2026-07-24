@@ -131,7 +131,7 @@ class RestPropMapper<C, out P : KMutableProperty1<C, MutableCollection<String>>>
 // found value; mappingPredicate should return the pair of boolean compare predicate result and transformation value, we want to get along with found value
 inline fun <T, R : Any> Iterable<T>.findWithTransform(mappingPredicate: (T) -> Pair<Boolean, R?>): R? {
     for (element in this) {
-        val (found, mapped) = mappingPredicate(element)
+        val [found, mapped] = mappingPredicate(element)
         if (found) return mapped
     }
     return null
@@ -152,7 +152,7 @@ fun Iterable<String>.filterExtractProps(
 
     while (iter.hasNext()) {
         val param = iter.next()
-        val (propMapper, matchingOption) = propMappers.findWithTransform { mapper ->
+        val [propMapper, matchingOption] = propMappers.findWithTransform { mapper ->
             mapper.names.firstOrNull { param.startsWith(prefix + it) }.let { Pair(it != null, Pair(mapper, it)) }
         } ?: Pair(null, null)
 

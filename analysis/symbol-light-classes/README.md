@@ -103,9 +103,3 @@ For instance, type annotations are [not supported](https://youtrack.jetbrains.co
 The entry point is [DecompiledLightClassesFactory](https://github.com/JetBrains/kotlin/blob/c9bffea9fab1805e3a6d6a535637264a6ee0281e/analysis/decompiled/light-classes-for-decompiled/src/org/jetbrains/kotlin/analysis/decompiled/light/classes/DecompiledLightClassesFactory.kt#L29)
 
 The next evolution step: [KT-77787](https://youtrack.jetbrains.com/issue/KT-77787) Replace DLC with SLC
-
-### Ultra Light Classes (a.k.a. ULC)
-
-The K1 implementation of light classes which is built on top of Kotlin PSI.
-
-Location: [compiler/light-classes](https://github.com/JetBrains/kotlin/tree/f5596b29eebb1a1e45df9db96957952e4cd69d2f/compiler/light-classes)

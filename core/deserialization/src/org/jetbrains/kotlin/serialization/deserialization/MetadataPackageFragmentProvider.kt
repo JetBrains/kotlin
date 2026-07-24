@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
+@K1Deprecation
 class MetadataPackageFragmentProvider(
     storageManager: StorageManager,
     finder: KotlinMetadataFinder,
@@ -76,6 +78,7 @@ class MetadataPackageFragmentProvider(
         else null
 }
 
+@K1Deprecation
 class MetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,
@@ -100,7 +103,7 @@ class MetadataPackageFragment(
         val scopes = arrayListOf<DeserializedPackageMemberScope>()
         for (partName in packageParts) {
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
-            val (proto, nameResolver, version) = readProto(stream)
+            val [proto, nameResolver, version] = readProto(stream)
 
             scopes.add(
                 DeserializedPackageMemberScope(

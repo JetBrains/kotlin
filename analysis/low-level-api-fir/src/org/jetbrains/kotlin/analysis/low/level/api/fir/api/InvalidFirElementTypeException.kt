@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import java.util.Locale
 import kotlin.reflect.KClass
 
+@KaImplementationDetail
 class InvalidFirElementTypeException(
     actualFirElement: Any?,
     ktElement: KtElement?,
@@ -60,6 +62,7 @@ class InvalidFirElementTypeException(
 }
 
 
+@KaImplementationDetail
 fun throwUnexpectedFirElementError(
     firElement: Any?,
     ktElement: KtElement? = null,

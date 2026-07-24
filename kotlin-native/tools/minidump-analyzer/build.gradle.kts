@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("native")
 }
 
@@ -84,7 +87,7 @@ val sourcesToBuildExecutable = listOf(
         "src/third_party/libdisasm/x86_operand_list.c",
 )
 
-val breakpadRoot by configurations.creating {
+val breakpadRoot = configurations.create("breakpadRoot") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -139,7 +142,7 @@ native {
     }
 }
 
-val nativeExecutable by configurations.creating {
+val nativeExecutable = configurations.create("nativeExecutable") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {

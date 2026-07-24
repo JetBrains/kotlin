@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
-import org.jetbrains.kotlin.ir.util.copyValueParametersToStatic
 import org.jetbrains.kotlin.ir.util.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.util.isOriginallyLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -28,6 +27,5 @@ fun transformMemberToStaticFunction(function: IrSimpleFunction, origin: IrDeclar
         origin = origin,
         visibility = newVisibility,
         typeParametersFromContext = typeParametersFromContext,
-        remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
     ).also { it.body = function.moveBodyTo(it) }
 }

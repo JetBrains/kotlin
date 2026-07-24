@@ -1,10 +1,14 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-
 export declare class WithIgnoredCompanion {
     constructor();
     static bar(): string;
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
+    static staticSuspendWithSeveralDefaults(prefix?: string, count?: number, suffix?: string): Promise<string>;
+    static staticSuspendWithRequiredAndDefault(required: string, optional?: string): Promise<string>;
+    static staticSuspendWithDependentDefault(prefix?: string, suffix?: string): Promise<string>;
+    static staticSuspendWithReceiverDefault(value?: string): Promise<string>;
     static get foo(): string;
     static get baz(): string;
     static get mutable(): string;
@@ -20,6 +24,8 @@ export declare class WithoutIgnoredCompanion {
     constructor();
     static bar(): string;
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
+    static renamedStaticSuspendDefault(value?: string): Promise<string>;
     static get foo(): string;
     static get baz(): string;
     static get mutable(): string;
@@ -39,6 +45,7 @@ export declare namespace WithoutIgnoredCompanion {
             abstract class constructor {
                 hidden(): string;
                 companionSuspend(): Promise<string>;
+                companionSuspendWithDefault(value?: string): Promise<string>;
                 get delegated(): string;
                 private constructor();
             }
@@ -50,6 +57,7 @@ export declare abstract class ObjectWithJsStatic {
     private constructor();
     static bar(): string;
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
     static get foo(): string;
     static get baz(): string;
     static get mutable(): string;
@@ -64,8 +72,10 @@ export declare namespace ObjectWithJsStatic {
         abstract class constructor {
             hidden(): string;
             companionSuspend(): Promise<string>;
+            companionSuspendWithDefault(value?: string): Promise<string>;
             get delegated(): string;
             private constructor();
         }
     }
 }
+

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -143,7 +144,7 @@ private fun ConeKotlinType.contradictsWith(requiredVariance: Variance, session: 
                 // And variance can not be changed after raw fir stage
                 @OptIn(SymbolInternals::class)
                 val classLike = this.lookupTag.toSymbol(session)?.fir ?: return false
-                for ((index, argument) in this.typeArguments.withIndex()) {
+                for ([index, argument] in this.typeArguments.withIndex()) {
                     val typeParameterRef = classLike.typeParameters.getOrNull(index)
                     if (typeParameterRef !is FirTypeParameter) continue
                     val requiredVarianceForArgument = when (

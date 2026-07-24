@@ -6,6 +6,6 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 warning: no target platform specified, using default
-compiler/tests-integration/testData/multiplatform/innerGenericClass/common2.kt:8:15: error: unresolved reference 'unresolved'.
+compiler/tests-integration/testData/multiplatform/innerGenericClass/common2.kt:8:15: error: unresolved reference 'unresolved' on receiver of type 'String?'.
     b.getAE().unresolved()
               ^^^^^^^^^^

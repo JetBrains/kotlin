@@ -44,7 +44,7 @@ fun box() {
 // test.kt:12 box
 // test.kt:4 <init>
 // test.kt:12 box
-// test.kt:7 foo$default
+// test.kt:7 foo
 // test.kt:5 computeParam
 // test.kt:8 foo
 // test.kt:13 box

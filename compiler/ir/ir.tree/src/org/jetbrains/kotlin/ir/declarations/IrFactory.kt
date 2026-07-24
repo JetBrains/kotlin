@@ -85,6 +85,35 @@ open class IrFactory(
             this.hasEnumEntries = hasEnumEntries
         }
 
+    fun createConstructorWithLateBinding(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        visibility: DescriptorVisibility,
+        isInline: Boolean,
+        isExpect: Boolean,
+        returnType: IrType?,
+        isPrimary: Boolean,
+        isExternal: Boolean = false,
+    ): IrConstructor =
+        IrConstructorWithLateBindingImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            isInline = isInline,
+            isExternal = isExternal,
+            isPrimary = isPrimary,
+            isExpect = isExpect,
+            factory = this
+        ).declarationCreated().apply {
+            if (returnType != null) {
+                this.returnType = returnType
+            }
+        }
+
     fun createConstructor(
         startOffset: Int,
         endOffset: Int,

@@ -19,7 +19,7 @@ object SectionsJsonMapGenerator {
 
     fun writeSectionsMapJsons() {
         val gson = GsonBuilder().setPrettyPrinting().create()
-        sectionsMapsByTestArea.forEach { (testArea, json) ->
+        sectionsMapsByTestArea.forEach { [testArea, json] ->
             val sectionsMapFolder = "$SPEC_TESTDATA_PATH/${testArea.testDataPath}/$LINKED_TESTS_PATH"
             File(sectionsMapFolder).mkdirs()
             val sectionsMapFile = File("$sectionsMapFolder/$SECTIONS_TESTS_MAP_FILENAME")

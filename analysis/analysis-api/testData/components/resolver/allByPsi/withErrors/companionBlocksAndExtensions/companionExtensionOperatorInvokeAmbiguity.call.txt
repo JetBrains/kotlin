@@ -1,0 +1,446 @@
+KtFile: 'companionExtensionOperatorInvokeAmbiguity.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  null
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,139): 'class C {'
+  null
+
+KtClassBody(73,139): '{'
+  null
+
+KtSecondaryConstructor(79,92): 'constructor()'
+  null
+
+KtParameterList(90,92): '()'
+  null
+
+KtConstructorDelegationCall(92,92): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorDelegationReferenceExpression(92,92): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtSecondaryConstructor(97,110): 'constructor()'
+  null
+
+KtParameterList(108,110): '()'
+  null
+
+KtConstructorDelegationCall(110,110): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorDelegationReferenceExpression(110,110): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtSecondaryConstructor(115,137): 'constructor(s: String)'
+  null
+
+KtParameterList(126,137): '(s: String)'
+  null
+
+KtParameter(127,136): 's: String'
+  null
+
+KtTypeReference(130,136): 'String'
+  null
+
+KtUserType(130,136): 'String'
+  null
+
+KtNameReferenceExpression(130,136): 'String'
+  null
+
+KtConstructorDelegationCall(137,137): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorDelegationReferenceExpression(137,137): ''
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = <constructor>(): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNamedFunction(141,177): 'companion operator fun C.invoke() {}'
+  null
+
+KtDeclarationModifierList(141,159): 'companion operator'
+  null
+
+KtTypeReference(164,165): 'C'
+  null
+
+KtUserType(164,165): 'C'
+  null
+
+KtNameReferenceExpression(164,165): 'C'
+  null
+
+KtParameterList(172,174): '()'
+  null
+
+KtBlockExpression(175,177): '{}'
+  null
+
+KtNamedFunction(178,214): 'companion operator fun C.invoke() {}'
+  null
+
+KtDeclarationModifierList(178,196): 'companion operator'
+  null
+
+KtTypeReference(201,202): 'C'
+  null
+
+KtUserType(201,202): 'C'
+  null
+
+KtNameReferenceExpression(201,202): 'C'
+  null
+
+KtParameterList(209,211): '()'
+  null
+
+KtBlockExpression(212,214): '{}'
+  null
+
+KtNamedFunction(215,265): 'companion operator fun C.invoke(withParam: Int) {}'
+  null
+
+KtDeclarationModifierList(215,233): 'companion operator'
+  null
+
+KtTypeReference(238,239): 'C'
+  null
+
+KtUserType(238,239): 'C'
+  null
+
+KtNameReferenceExpression(238,239): 'C'
+  null
+
+KtParameterList(246,262): '(withParam: Int)'
+  null
+
+KtParameter(247,261): 'withParam: Int'
+  null
+
+KtTypeReference(258,261): 'Int'
+  null
+
+KtUserType(258,261): 'Int'
+  null
+
+KtNameReferenceExpression(258,261): 'Int'
+  null
+
+KtBlockExpression(263,265): '{}'
+  null
+
+KtNamedFunction(267,305): 'fun usage() {'
+  null
+
+KtParameterList(276,278): '()'
+  null
+
+KtBlockExpression(279,305): '{'
+  null
+
+KtCallExpression(285,288): 'C()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.C
+          symbol = <constructor>(): test.C
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.C
+          symbol = <constructor>(): test.C
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    constructor(): C
+    constructor(): C>
+
+KtNameReferenceExpression(285,286): 'C'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.C
+          symbol = <constructor>(): test.C
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.C
+          symbol = <constructor>(): test.C
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    constructor(): C
+    constructor(): C>
+
+KtValueArgumentList(286,288): '()'
+  null
+
+KtDotQualifiedExpression(293,303): 'C.invoke()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.invoke(): Unit
+    companion fun C.invoke(): Unit>
+
+KtNameReferenceExpression(293,294): 'C'
+  null
+
+KtCallExpression(295,303): 'invoke()'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.invoke(): Unit
+    companion fun C.invoke(): Unit>
+
+KtNameReferenceExpression(295,301): 'invoke'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = C
+          isSafeNavigation = false
+          type = kotlin.Unit
+        signature = KaFunctionSignature:
+          receiverType = test.C
+          returnType = kotlin.Unit
+          symbol = test/invoke(<extension receiver>: test.C): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = test/invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.invoke(): Unit
+    companion fun C.invoke(): Unit>
+
+KtValueArgumentList(301,303): '()'
+  null

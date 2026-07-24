@@ -1,3 +1,9 @@
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'

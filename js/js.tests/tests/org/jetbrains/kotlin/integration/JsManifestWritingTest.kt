@@ -14,24 +14,29 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_ST
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_FLAGS
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
 import kotlin.test.assertContains
 
 private val foo = TestKtFile("foo.kt", "fun foo() = 42")
 
+@SmokeTest
 class JsManifestWritingTest : TestCaseWithTmpdir() {
     private val jsStdlib: String?
         get() = System.getProperty(KOTLIN_JS_STDLIB_KLIB_PATH)
     private val outKlibDir: String
         get() = tmpdir.resolve("out").absolutePath
 
+    @Test
     fun testEnableAndDisableLanguageFeatures() {
         jsStdlib?.let { lib ->
             val poisoningFeature =
@@ -56,6 +61,26 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
                 enabledLanguageFeature.name
             )
             checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, poisoningFeature.name, null)
+
+            JUnit5Assertions.assertEquals(
+                "2",
+                manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+            ) { "Enabling a poisoning feature must set the PRE_RELEASE bit (0x2) in `$KLIB_PROPERTY_METADATA_FLAGS`" }
+        }
+    }
+
+    @Test
+    fun testMetadataFlags() {
+        jsStdlib?.let { lib ->
+            runCompiler(K2JSCompiler(), foo, lib, outKlibDir)
+
+            val manifestFile = File(outKlibDir, "default/manifest")
+            val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
+
+            JUnit5Assertions.assertEquals(
+                "0",
+                manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)
+            ) { "Default compilation must write `$KLIB_PROPERTY_METADATA_FLAGS` with no flags set" }
         }
     }
 
@@ -88,7 +113,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
             expectedNegativeValue: String?,
         ) {
             val propertyValues = properties.propertyList(propertyName)
-            val (positiveValues, negativeValues) = propertyValues.partition { it.startsWith("+") }
+            val [positiveValues, negativeValues] = propertyValues.partition { it.startsWith("+") }
             // The assert checks for conclusion rather than equality due to the presence of an extra feature in testing environment:
             // JsAllowValueClassesInExternals
             assertContains(

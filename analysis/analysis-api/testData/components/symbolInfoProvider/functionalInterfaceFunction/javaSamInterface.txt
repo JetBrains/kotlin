@@ -1,10 +1,10 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: PsiClassImpl
   annotations: []
   classId: JavaRunnable
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -17,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: JavaRunnable
   origin: JAVA_SOURCE
+  psi: PsiClassImpl
+  realPsi: PsiClassImpl
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -38,15 +40,15 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: JavaRunnable
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: PsiMethodImpl
   annotations: []
   callableId: /JavaRunnable.run
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -68,6 +70,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: run
   origin: JAVA_SOURCE
+  psi: PsiMethodImpl
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -106,6 +110,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: JavaRunnable
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

@@ -132,7 +132,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
                         in allRegularDependencies -> 3
                         else -> 4
                     }
-                }.associate { (key, value) -> key to value }
+                }.associate { [key, value] -> key to value }
                 .toMutableMap()
 
             fun Collection<FirBinaryDependenciesModuleData>.filterUsedModules(): MutableList<FirBinaryDependenciesModuleData> =

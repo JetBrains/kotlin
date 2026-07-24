@@ -84,7 +84,7 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
             val library = modules.iterator().next().project.addLibrary(libraryName, JpsJavaLibraryType.INSTANCE)
 
             for (fileRoot in file) {
-                library.addRoot(fileRoot, JpsOrderRootType.COMPILED)
+                library.addRoot(fileRoot.toPath(), JpsOrderRootType.COMPILED)
             }
 
             for (module in modules) {

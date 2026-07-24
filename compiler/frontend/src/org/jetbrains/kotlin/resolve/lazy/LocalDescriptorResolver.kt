@@ -16,16 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
+@K1Deprecation
 interface LocalDescriptorResolver {
     fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor
 }
 
+@K1Deprecation
 class CompilerLocalDescriptorResolver(
     private val lazyDeclarationResolver: LazyDeclarationResolver
 ) : LocalDescriptorResolver {

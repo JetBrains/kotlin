@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_UNTIL
 
+@K1Deprecation
 object UnsupportedUntilRangeDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val isRangeUntilOperatorSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.RangeUntilOperator)

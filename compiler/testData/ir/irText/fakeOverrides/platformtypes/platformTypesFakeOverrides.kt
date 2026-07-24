@@ -4,6 +4,9 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
+// KT-85833 Reflection: flexibility is incorrectly removed when inheriting both primitive and wrapper types in new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: main.kt
 open class Base {
     open fun integer(a: Int) = Unit

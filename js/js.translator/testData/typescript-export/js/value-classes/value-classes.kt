@@ -4,7 +4,6 @@
 // WITH_STDLIB
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// LANGUAGE: +JsAllowExportingValueClasses
 // MODULE: JS_TESTS
 // FILE: value-classes.kt
 
@@ -92,6 +91,9 @@ fun createValueArray(): Array<IntValueClass> = arrayOf(
 // Nullable value class parameter
 @JsExport
 fun acceptNullableValueClass(v: IntValueClass?): Int? = v?.value
+
+@JsExport
+fun echoNullableValueClass(v: IntValueClass?): IntValueClass? = v
 
 // Value class equality
 @JsExport

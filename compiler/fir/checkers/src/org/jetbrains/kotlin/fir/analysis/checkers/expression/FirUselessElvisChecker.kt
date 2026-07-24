@@ -36,7 +36,7 @@ object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common)
 
         val lhsType = expression.lhs.resolvedType
         if (lhsType is ConeErrorType) return
-        if (!lhsType.canBeNull(context.session)) {
+        if (!lhsType.canBeNull()) {
             if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                 reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS, lhsType)
             }

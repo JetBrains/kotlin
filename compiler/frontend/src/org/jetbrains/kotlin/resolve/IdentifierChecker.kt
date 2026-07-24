@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 @DefaultImplementation(impl = IdentifierChecker.Default::class)
+@K1Deprecation
 interface IdentifierChecker : PlatformSpecificExtension<IdentifierChecker> {
     fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)
@@ -34,11 +36,13 @@ interface IdentifierChecker : PlatformSpecificExtension<IdentifierChecker> {
     }
 }
 
+@K1Deprecation
 class IdentifierCheckerClashesResolver : PlatformExtensionsClashResolver<IdentifierChecker>(IdentifierChecker::class.java) {
     override fun resolveExtensionsClash(extensions: List<IdentifierChecker>): IdentifierChecker = CompositeIdentifierChecker(extensions)
 }
 
 // Launches every underlying checker
+@K1Deprecation
 class CompositeIdentifierChecker(private val identifierCheckers: List<IdentifierChecker>) : IdentifierChecker {
     override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
         identifierCheckers.forEach { it.checkIdentifier(simpleNameExpression, diagnosticHolder) }

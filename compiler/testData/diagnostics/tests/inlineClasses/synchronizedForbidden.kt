@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// SKIP_TXT
 // KT-49339
 // LANGUAGE: +ProhibitSynchronizationByValueClassesAndPrimitives
 

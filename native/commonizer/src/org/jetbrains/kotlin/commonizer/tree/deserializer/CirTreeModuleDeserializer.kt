@@ -29,7 +29,7 @@ internal class CirTreeModuleDeserializer(
                 ?: error("A fragment without FQ name in module ${module.name}: $fragment")
         }
 
-        val packages = fragmentsByPackage.map { (packageName, fragments) ->
+        val packages = fragmentsByPackage.map { [packageName, fragments] ->
             packageDeserializer(packageName, fragments, typeResolver)
         }
 

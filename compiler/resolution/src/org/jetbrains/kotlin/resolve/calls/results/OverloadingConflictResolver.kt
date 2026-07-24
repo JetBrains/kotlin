@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.results
 
 import it.unimi.dsi.fastutil.Hash
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.types.model.requireOrDescribe
 import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
+@K1Deprecation
 open class OverloadingConflictResolver<C : Any>(
     private val builtIns: KotlinBuiltIns,
     private val module: ModuleDescriptor,

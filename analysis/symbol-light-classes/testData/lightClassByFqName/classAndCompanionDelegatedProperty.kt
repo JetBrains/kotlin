@@ -9,3 +9,5 @@ class KotlinClass {
         val foo: Int by lazy { 0 }
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: KotlinClass.class[foo_delegate$lambda$0;foo_delegate$lambda$1]

@@ -1,2 +1,3 @@
 expression: fun(it: String) {}
+expression PSI: KtNamedFunction
 type: (kotlin.String) -> kotlin.Unit

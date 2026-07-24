@@ -51,8 +51,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         kotlinLibraryComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
 
         pluginManager.withPlugin("java-base") {
-            val runtimeElements by configurations
-            val apiElements by configurations
+            val runtimeElements = configurations.getByName("runtimeElements")
+            val apiElements = configurations.getByName("apiElements")
 
             publishedRuntime.extendsFrom(runtimeElements)
             publishedCompile.extendsFrom(apiElements)
@@ -158,24 +158,19 @@ fun Project.configureDefaultPublishing(
             maven {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
 
-                val repo: String? = project.findProperty("kotlin.build.deploy-repo")?.toString()
-                    ?: project.findProperty("deploy-repo")?.toString()
+                val repo: String? = project.providers.gradleProperty("deploy-repo").orNull
 
-                val deployRepoUrl: String? = (project.findProperty("kotlin.build.deploy-url")
-                    ?: project.findProperty("deploy-url"))?.toString()?.takeIf { it.isNotBlank() }
-                    ?: project.findProperty("kotlin.build.deploy-path")?.toString()?.takeIf { it.isNotBlank() }
+                val deployRepoUrl: String? = project.providers.gradleProperty("deploy-url").orNull?.takeIf { it.isNotBlank() }
+                    ?: project.providers.gradleProperty("kotlin.build.deploy-path").orNull?.takeIf { it.isNotBlank() }
                         ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
 
-                val repoUrl: String by extra(
-                    (deployRepoUrl ?: "${project.rootProject.layout.buildDirectory.dir("repo").get().asFile.toURI()}")
-                )
+                val repoUrl: String = deployRepoUrl ?: "${project.isolated.rootProject.projectDirectory.dir("build/repo").asFile.toURI()}"
 
-                val username: String? by extra(
-                    project.findProperty("kotlin.build.deploy-username")?.toString() ?: project.findProperty("kotlin.${repo}.user")?.toString()
-                )
-                val password: String? by extra(
-                    project.findProperty("kotlin.build.deploy-password")?.toString() ?: project.findProperty("kotlin.${repo}.password")?.toString()
-                )
+                val username: String? =
+                    project.providers.systemProperty("kotlin.${repo}.user").orNull
+
+                val password: String? =
+                    project.providers.systemProperty("kotlin.${repo}.password").orNull
 
                 setUrl(repoUrl)
                 if (url.scheme != "file" && username != null && password != null) {
@@ -193,14 +188,32 @@ fun Project.configureDefaultPublishing(
         configureSigning()
     }
 
-
     tasks.register("install") {
         group = "publishing"
         dependsOn(tasks.named("publishToMavenLocal"))
-    }.also {
-        rootProject.tasks.named("mvnInstall").configure {
-            dependsOn(it)
+    }
+
+    tasks.register("writePublishedMark") {
+        dependsOn(tasks.named("publish"))
+        val publishedMarkFile = layout.buildDirectory.file("published.txt")
+        outputs.file(publishedMarkFile)
+        doLast {
+            publishedMarkFile.get().asFile.writeText("")
         }
+    }
+    tasks.register("writeLocalPublishedMark") {
+        dependsOn(tasks.named("publishToMavenLocal"))
+        val publishedMarkFile = layout.buildDirectory.file("localPublished.txt")
+        outputs.file(publishedMarkFile)
+        doLast {
+            publishedMarkFile.get().asFile.writeText("")
+        }
+    }
+    val publishedMark = configurations.consumable("publishedMark")
+    val localPublishedMark = configurations.consumable("localPublishedMark")
+    artifacts {
+        add(publishedMark.name, tasks.named("writePublishedMark"))
+        add(localPublishedMark.name, tasks.named("writeLocalPublishedMark"))
     }
 }
 

@@ -1,0 +1,15 @@
+FILE: test.kt
+    public final val d: R|kotlin/Double?| = Null(null)
+        public get(): R|kotlin/Double?|
+    public final val l: R|kotlin/Long?| = Null(null)
+        public get(): R|kotlin/Long?|
+    public final val x: R|kotlin/Any?| = Q|J|.R|/J.makeFlexible*s|<R|it(kotlin/Number? & kotlin/Comparable<*>?)|>(when () {
+        Boolean(true) ->  {
+            R|/d|
+        }
+        else ->  {
+            R|/l|
+        }
+    }
+    )
+        public get(): R|kotlin/Any?|

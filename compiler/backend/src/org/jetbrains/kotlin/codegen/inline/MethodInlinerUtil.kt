@@ -77,7 +77,7 @@ fun getAnonymousObjectCapturedFieldsByConstructorArgumentFromBytecode(
     val constructorSlotToArgumentIndex = mutableMapOf<Int, Int>()
     val argumentTypes = Type.getArgumentTypes(constructor.desc)
     var constructorSlot = 1
-    for ((argumentIndex, type) in argumentTypes.withIndex()) {
+    for ([argumentIndex, type] in argumentTypes.withIndex()) {
         constructorSlotToArgumentIndex[constructorSlot] = argumentIndex
         constructorSlot += type.size
     }
@@ -186,7 +186,7 @@ internal class FunctionalArgumentInterpreter(private val inliner: MethodInliner)
                 val anonymousObjectCapturedFieldsByConstructorArgument =
                     inliner.resolveAnonymousObjectCapturedFieldsByConstructorArgument(methodInsn.owner)
                 receiver.capturedFieldValues = buildMap {
-                    for ((argumentIndex, fieldName) in anonymousObjectCapturedFieldsByConstructorArgument.withIndex()) {
+                    for ([argumentIndex, fieldName] in anonymousObjectCapturedFieldsByConstructorArgument.withIndex()) {
                         if (fieldName == null) continue
                         val argumentValue = values.getOrNull(argumentIndex + 1) ?: continue
                         put(fieldName, argumentValue)

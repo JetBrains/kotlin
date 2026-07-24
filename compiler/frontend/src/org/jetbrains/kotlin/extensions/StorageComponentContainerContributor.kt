@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.extensions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 @JvmDefaultWithCompatibility
+@K1Deprecation
 interface StorageComponentContainerContributor {
     companion object : ProjectExtensionDescriptor<StorageComponentContainerContributor>(
         "org.jetbrains.kotlin.storageComponentContainerContributor", StorageComponentContainerContributor::class.java

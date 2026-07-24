@@ -1,8 +1,8 @@
 FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /B.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -24,6 +24,8 @@ FUNCTION:
   modality: OPEN
   name: plus
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -43,16 +45,17 @@ FUNCTION:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -64,6 +67,9 @@ FUNCTION:
       modality: FINAL
       name: a
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         abbreviation: null
@@ -80,11 +86,12 @@ FUNCTION:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(overrideOperator.kt)
       getContainingJvmClassName: B
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -107,7 +114,7 @@ FUNCTION:
   getContainingJvmClassName: B
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 CAN_BE_OPERATOR:

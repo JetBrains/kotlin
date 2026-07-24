@@ -19,19 +19,18 @@ package org.jetbrains.kotlin.cli
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -47,7 +46,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
+        assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
 
         // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
         // So, use ProcessBuilder instead.
@@ -100,10 +99,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         get() = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/launcher").absolutePath
 
     private fun kotlincInProcess(vararg args: String) {
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
         if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
     }
 
+    @Test
     fun testKotlincSimple() {
         runProcess(
             "kotlinc",
@@ -112,6 +112,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincJvmSimple() {
         runProcess(
             "kotlinc-jvm",
@@ -120,6 +121,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincJvmScriptWithClassPathFromSysProp() {
         runProcess(
             "kotlinc-jvm",
@@ -129,9 +131,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinJvmContextClassLoader() {
         val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
-        assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
+        assertTrue(kotlinTestJar.exists()) { "kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}" }
         kotlincInProcess(
             K2JVMCompilerArguments::classpath.cliArgument, kotlinTestJar.path,
             "$testDataDirectory/contextClassLoaderTester.kt",
@@ -139,13 +142,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
 
         runProcess(
-            "kotlin",
+            "kotlinr",
             K2JVMCompilerArguments::classpath.cliArgument, listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
             "ContextClassLoaderTester",
             expectedStdout = "${kotlinTestJar.name}\n"
         )
     }
 
+    @Test
     fun testKotlincJsSimple() {
         runProcess(
             "kotlinc-js",
@@ -162,27 +166,26 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincWasmSimple() {
         runProcess(
             "kotlinc-wasm",
             "$testDataDirectory/emptyMain.kt",
             KotlinWasmCompilerArguments::suppressWarnings.cliArgument,
-            KotlinWasmCompilerArguments::libraries.cliArgument,
-            PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath,
+            KotlinWasmCompilerArguments::libraries.cliArgument(PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath),
             KotlinWasmCompilerArguments::nopack.cliArgument,
-            KotlinWasmCompilerArguments::outputDir.cliArgument,
-            tmpdir.path,
-            KotlinWasmCompilerArguments::moduleName.cliArgument,
-            "out",
+            KotlinWasmCompilerArguments::outputDir.cliArgument(tmpdir.path),
+            KotlinWasmCompilerArguments::moduleName.cliArgument("out"),
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
     }
 
+    @Test
     fun testKotlinNoReflect() {
         kotlincInProcess("$testDataDirectory/reflectionUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
-            "kotlin",
+            "kotlinr",
             K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path,
             K2JVMCompilerArguments::noReflect.cliArgument,
             "ReflectionUsageKt",
@@ -190,14 +193,15 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
         kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
-        runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess("kotlinr", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
-        val emptyDir = KotlinTestUtils.tmpDirForTest(this)
+        val emptyDir = KotlinTestUtils.tmpDirForTest(testInfo)
         runProcess(
-            "kotlin",
+            "kotlinr",
             K2JVMCompilerArguments::classpath.cliArgument, emptyDir.path,
             "test.HelloWorldKt",
             expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
@@ -206,9 +210,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testRunnerExpression() {
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-e",
             "val x = 2; (args + listOf(2,1).map { (it * x).toString() }).joinToString()",
             "--",
@@ -218,9 +223,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testRunnerExpressionK2() {
         runProcess(
-            "kotlin",
+            "kotlinr",
             CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.FIRST_NON_DEPRECATED.versionString, "-e",
             "println(args.joinToString())",
             "-a",
@@ -229,9 +235,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testCommandlineProcessing() {
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-e",
             "println(args.joinToString())",
             "-a",
@@ -239,7 +246,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedStdout = "-a, b\n"
         )
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-e",
             "println(args.joinToString())",
             "--",
@@ -248,14 +255,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedStdout = "-e, b\n"
         )
         runProcess(
-            "kotlin",
+            "kotlinr",
             "$testDataDirectory/printargs.kts",
             "-a",
             "b",
             expectedStdout = "-a, b\n"
         )
         runProcess(
-            "kotlin",
+            "kotlinr",
             "$testDataDirectory/printargs.kts",
             "--",
             "-a",
@@ -264,6 +271,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testLegacyAssert() {
         kotlincInProcess(
             "$testDataDirectory/legacyAssertDisabled.kt",
@@ -272,7 +280,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             tmpdir.path
         )
 
-        runProcess("kotlin", "LegacyAssertDisabledKt", "-J-da:kotlin._Assertions", workDirectory = tmpdir)
+        runProcess("kotlinr", "LegacyAssertDisabledKt", "-J-da:kotlin._Assertions", workDirectory = tmpdir)
 
         kotlincInProcess(
             "$testDataDirectory/legacyAssertEnabled.kt",
@@ -281,24 +289,26 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             tmpdir.path
         )
 
-        runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
+        runProcess("kotlinr", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
     }
 
+    @Test
     fun testScriptWithXArguments() {
         runProcess(
-            "kotlin", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
+            "kotlinr", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
             expectedExitCode = 3,
             expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
 	at NoInline.<init>(noInline.kts:1)
 """
         )
-        runProcess("kotlin", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
+        runProcess("kotlinr", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
 
+    @Test
     fun testNoStdLib() {
-        runProcess("kotlin", "-e", "println(42)", expectedStdout = "42\n")
+        runProcess("kotlinr", "-e", "println(42)", expectedStdout = "42\n")
         runProcess(
-            "kotlin", "-no-stdlib", "-e", "println(42)",
+            "kotlinr", "-no-stdlib", "-e", "println(42)",
             expectedExitCode = 1,
             expectedStderr = """
                 script.kts:1:1: error: unresolved reference 'println'.
@@ -308,49 +318,53 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testProperty() {
         kotlincInProcess("$testDataDirectory/property.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
-            "kotlin", "PropertyKt", "-Dresult=OK",
+            "kotlinr", "PropertyKt", "-Dresult=OK",
             workDirectory = tmpdir, expectedStdout = "OK\n"
         )
     }
 
+    @Test
     fun testHowToRunExpression() {
         runProcess(
-            "kotlin", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
+            "kotlinr", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
             expectedExitCode = 1, expectedStderr = "error: expression evaluation is not compatible with -howtorun argument jar\n"
         )
         runProcess(
-            "kotlin", "-howtorun", "script", "-e", "println(args.joinToString())", "-a", "b",
+            "kotlinr", "-howtorun", "script", "-e", "println(args.joinToString())", "-a", "b",
             expectedStdout = "-a, b\n"
         )
     }
 
+    @Test
     fun testHowToRunScript() {
         runProcess(
-            "kotlin", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
+            "kotlinr", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
             expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/printargs.kts\n"
         )
         runProcess(
-            "kotlin", "-howtorun", "script", "$testDataDirectory/printargs.kts", "--", "-a", "b",
+            "kotlinr", "-howtorun", "script", "$testDataDirectory/printargs.kts", "--", "-a", "b",
             expectedStdout = "-a, b\n"
         )
     }
 
+    @Test
     fun testHowToRunCustomScript() {
         runProcess(
-            "kotlin", "$testDataDirectory/noInline.myscript",
+            "kotlinr", "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/noInline.myscript\n"
         )
         runProcess(
-            "kotlin", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
+            "kotlinr", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1,
             expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
-            "kotlin",
+            "kotlinr",
             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
             "-howtorun",
             ".kts",
@@ -362,7 +376,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 """
         )
         runProcess(
-            "kotlin", "-howtorun", ".main.kts",
+            "kotlinr", "-howtorun", ".main.kts",
             "-P", "plugin:kotlin.scripting:disable-script-compilation-cache=true",
             "$testDataDirectory/noInline.myscript",
             expectedExitCode = 3,
@@ -372,17 +386,19 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testHowToRunClassFile() {
         kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
-            "kotlin", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
+            "kotlinr", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
             expectedExitCode = 1,
             expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
         )
-        runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess("kotlinr", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
 
+    @Test
     fun testKotlincJdk17() {
         val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
@@ -391,11 +407,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
 
         runProcess(
-            "kotlin", "-e", "listOf('O'.toString() + 'K')",
+            "kotlinr", "-e", "listOf('O'.toString() + 'K')",
             expectedStdout = "[OK]\n", environment = jdk17,
         )
     }
 
+    @Test
     fun testEmptyJArgument() {
         runProcess(
             "kotlinc",
@@ -406,6 +423,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testNoClassDefFoundErrorWhenClassInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
@@ -413,7 +431,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
-            "kotlin", "test.DefaultPackageKt", workDirectory = tmpdir, expectedExitCode = 1,
+            "kotlinr", "test.DefaultPackageKt", workDirectory = tmpdir, expectedExitCode = 1,
             expectedStderr = """
             error: could not find or load main class test.DefaultPackageKt
             Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
@@ -422,6 +440,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testNoClassDefFoundErrorWhenClassNotInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
@@ -429,7 +448,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
         runProcess(
-            "kotlin", "HelloWorldKt", workDirectory = testDir, expectedExitCode = 1,
+            "kotlinr", "HelloWorldKt", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
             error: could not find or load main class HelloWorldKt
             Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
@@ -441,6 +460,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     /**
      * A class whose full qualified name is `DefaultPackageKt` and is located in path `$tmpdir/test/DefaultPackageKt.class`
      */
+    @Test
     fun testRunClassFileWithExtensionInDefaultPackage() {
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
@@ -449,7 +469,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
-            "kotlin", "test/DefaultPackageKt.class", workDirectory = tmpdir, expectedExitCode = 1,
+            "kotlinr", "test/DefaultPackageKt.class", workDirectory = tmpdir, expectedExitCode = 1,
             expectedStderr = """
             error: could not find or load main class test.DefaultPackageKt
             Caused by: java.lang.NoClassDefFoundError: test/DefaultPackageKt (wrong name: DefaultPackageKt)
@@ -457,10 +477,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         """.trimIndent()
         )
 
-        runProcess("kotlin", "DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
-        runProcess("kotlin", "./sub/../DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
+        runProcess("kotlinr", "DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
+        runProcess("kotlinr", "./sub/../DefaultPackageKt.class", expectedStdout = "ok", workDirectory = testDir)
         runProcess(
-            "kotlin", "../DefaultPackageKt.class", expectedExitCode = 1,
+            "kotlinr", "../DefaultPackageKt.class", expectedExitCode = 1,
             expectedStderr = "error: could not find or load main class ../DefaultPackageKt.class\n",
             workDirectory = subDir
         )
@@ -469,6 +489,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     /**
      * A class whose full qualified name is `test.HelloWorldKt` and is located in path `$tmpdir/test/HelloWorldKt.class`
      */
+    @Test
     fun testRunClassFileWithExtensionNotInDefaultPackage() {
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
@@ -476,15 +497,15 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
-        runProcess("kotlin", "test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess("kotlinr", "test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
         runProcess(
-            "kotlin", "test.HelloWorldKt.class", expectedExitCode = 1,
+            "kotlinr", "test.HelloWorldKt.class", expectedExitCode = 1,
             expectedStderr = "error: could not find or load main class test.HelloWorldKt.class\n",
             workDirectory = tmpdir
         )
-        runProcess("kotlin", "test/sub/../../test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+        runProcess("kotlinr", "test/sub/../../test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
         runProcess(
-            "kotlin", "./HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
+            "kotlinr", "./HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
             error: could not find or load main class HelloWorldKt
             Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
@@ -492,7 +513,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         """.trimIndent()
         )
         runProcess(
-            "kotlin", "HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
+            "kotlinr", "HelloWorldKt.class", workDirectory = testDir, expectedExitCode = 1,
             expectedStderr = """
             error: could not find or load main class HelloWorldKt
             Caused by: java.lang.NoClassDefFoundError: HelloWorldKt (wrong name: test/HelloWorldKt)
@@ -500,12 +521,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         """.trimIndent()
         )
         runProcess(
-            "kotlin", "../HelloWorldKt.class", expectedExitCode = 1,
+            "kotlinr", "../HelloWorldKt.class", expectedExitCode = 1,
             expectedStderr = "error: could not find or load main class ../HelloWorldKt.class\n",
             workDirectory = subDir
         )
     }
 
+    @Test
     fun testKotlinUseJdkModuleFromMainClass() {
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         runProcess(
@@ -513,12 +535,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             environment = jdk11,
         )
         runProcess(
-            "kotlin", K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path, "test.JdkModuleUsageKt",
+            "kotlinr", K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path, "test.JdkModuleUsageKt",
             expectedStdout = "interface java.sql.Driver\n",
             environment = jdk11,
         )
     }
 
+    @Test
     fun testKotlinUseJdkModuleFromJar() {
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         val output = tmpdir.resolve("out.jar")
@@ -527,18 +550,20 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             environment = jdk11,
         )
         runProcess(
-            "kotlin", output.path,
+            "kotlinr", output.path,
             expectedStdout = "interface java.sql.Driver\n",
             environment = jdk11,
         )
     }
 
+    @Test
     fun testInterpreterClassLoader() {
         runProcess(
             "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
     }
 
+    @Test
     fun testImplicitModularJdk() {
         // see KT-54337
         val moduleInfo = tmpdir.resolve("module-info.java").apply {
@@ -563,6 +588,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testK2ClassPathWithRelativeDir() {
         val file1kt = tmpdir.resolve("file1.kt").apply {
             writeText("class C")
@@ -594,31 +620,46 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinSimple() {
         runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-cp", tmpdir.path,
             "test.HelloWorldKt",
             expectedStdout = "Hello!\n"
         )
     }
 
+    @Test
+    fun testKotlinExecutableIsdeprecated() {
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "-cp", tmpdir.path,
+            "test.HelloWorldKt",
+            expectedStdout = "Hello!\n",
+            expectedStderr = "warning: the 'kotlin' executable is deprecated; use 'kotlinr' instead to avoid ambiguity with the Kotlin toolchain's 'kotlin' command.\n"
+        )
+    }
+
+    @Test
     fun testKotlinFromJar() {
         val jarFile = File(tmpdir, "out.jar").path
         runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", jarFile)
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-cp", jarFile,
             "test.HelloWorldKt",
             expectedStdout = "Hello!\n"
         )
     }
 
+    @Test
     fun testPassSystemProperties() {
         runProcess("kotlinc", "$testDataDirectory/systemProperties.kt", "-d", tmpdir.path)
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-cp", tmpdir.path,
             "-Dfoo.name=foo.value",
             "-J-Dbar.name=bar.value",
@@ -627,10 +668,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testSanitizedStackTrace() {
         runProcess("kotlinc", "$testDataDirectory/throwException.kt", "-d", tmpdir.path)
         runProcess(
-            "kotlin",
+            "kotlinr",
             "-cp", tmpdir.path,
             "test.ThrowExceptionKt",
             expectedExitCode = 1,
@@ -656,6 +698,7 @@ Caused by: java.lang.AssertionError: assert
         )
     }
 
+    @Test
     fun testColorAlwaysProperty() {
         val testKt = tmpdir.resolve("test.kt").apply {
             writeText("val result: String = 42")
@@ -673,8 +716,10 @@ Caused by: java.lang.AssertionError: assert
         )
     }
 
+    @Test
     fun testKaptVersion() {
         val info = $$"info: kotlinc-jvm $VERSION$ (JRE $JVM_VERSION$)\n"
         runProcess("kapt", "-version", expectedStderr = info)
     }
+
 }

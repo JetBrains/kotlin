@@ -179,6 +179,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
      *
      * For unsigned types, the results of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.floorDivUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -187,6 +188,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
      *
      * For unsigned types, the results of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.floorDivUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -195,6 +197,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
      *
      * For unsigned types, the results of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.floorDivUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -203,6 +206,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
      *
      * For unsigned types, the results of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.floorDivUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -214,6 +218,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * The result is always less than the divisor.
      *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.modUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -224,6 +229,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * The result is always less than the divisor.
      *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.modUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -234,6 +240,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * The result is always less than the divisor.
      *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.modUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation
@@ -244,6 +251,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      * The result is always less than the divisor.
      *
      * For unsigned types, the remainders of flooring division and truncating division are the same.
+     * @sample samples.misc.Builtins.modUnsigned
      */
     @kotlin.internal.InlineOnly
     @kotlin.internal.IntrinsicConstEvaluation

@@ -117,6 +117,6 @@ abstract class IrSignatureWithUnboundIrTest {
         packageFqName: FqName = FqName("org.sample"),
     ): IrFile {
         val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
-        return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also { module.files += it }
+        return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName, module).also { module.files += it }
     }
 }

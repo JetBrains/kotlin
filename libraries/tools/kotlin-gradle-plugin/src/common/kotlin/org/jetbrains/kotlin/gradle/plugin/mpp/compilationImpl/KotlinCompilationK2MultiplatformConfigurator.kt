@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
+import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
@@ -105,7 +109,8 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                                 compilation.project.retrieveFragmentDependencies(
                                     sourceSets,
                                     fragmentName,
-                                    mostCommonFragmentPerNativePlatforms
+                                    mostCommonFragmentPerNativePlatforms,
+                                    compilation.kotlinSourceSets,
                                 )
                             } else project.files(),
                             friends = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
@@ -123,12 +128,14 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
         sourceSets: List<KotlinSourceSet>,
         fragmentName: String,
         mostCommonFragmentPerNativePlatformsFuture: Future<Map<Set<String>, String>>,
+        directlyCompiledSourceSets: Set<KotlinSourceSet>,
     ): FileCollection = filesProvider {
         future {
             buildSet {
                 for (sourceSet in sourceSets) {
+                    // Skip leaf source-set
+                    if (sourceSet in directlyCompiledSourceSets) continue
                     val internalSourceSet = sourceSet.internal
-                    if (!internalSourceSet.isSharedSourceSet()) continue
                     if (internalSourceSet.isNativeSourceSet.await()) {
                         val mostCommonFragmentPerNativePlatforms = mostCommonFragmentPerNativePlatformsFuture.await()
                         val mostCommonNativeFragment = mostCommonFragmentPerNativePlatforms.maxBy { it.key.size }.value
@@ -136,13 +143,18 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                             add(project.konanDistribution.stdlib)
                         }
                         val metadataCompilation = internalSourceSet.compilations.filterIsInstance<KotlinSharedNativeCompilation>()
-                            .find { it.name == sourceSet.name }
+                            .find { it.defaultSourceSet.name == sourceSet.name }
                         if (metadataCompilation != null) {
                             val nativePlatforms = internalSourceSet.awaitPlatformCompilations()
                                 .filterIsInstance<AbstractKotlinNativeCompilation>()
                                 .map { compilation -> compilation.konanTarget.name }.toSet()
                             if (mostCommonFragmentPerNativePlatforms[nativePlatforms] == fragmentName) {
                                 add(metadataCompilation.retrievePlatformDependenciesWithNativeDistribution())
+                            }
+
+                            commonizeCInteropTask()?.let { task ->
+                                val cinteropCommonizerDependent = CInteropCommonizerDependent.from(metadataCompilation) ?: return@let
+                                add(task.map { it.commonizedOutputLibraries(cinteropCommonizerDependent) })
                             }
                         }
                     }

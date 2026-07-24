@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-{FooAlias=} Foo <: Foo (Original: {FooAlias=} Foo <: Foo)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-{FooAlias=} Foo <: Foo (Original: {FooAlias=} Foo <: Foo)

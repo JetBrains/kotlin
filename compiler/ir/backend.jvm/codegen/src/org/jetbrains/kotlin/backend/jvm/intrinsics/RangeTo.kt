@@ -17,7 +17,7 @@ object RangeTo : IntrinsicMethod() {
         val v = codegen.mv
         v.anew(signature.returnType)
         v.dup()
-        val (arg0, arg1) = expression.arguments
+        val [arg0, arg1] = expression.arguments
         arg0!!.accept(codegen, data).materializeAt(argType, arg0.type)
         arg1!!.accept(codegen, data).materializeAt(argType, arg1.type)
         v.invokespecial(signature.returnType.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)

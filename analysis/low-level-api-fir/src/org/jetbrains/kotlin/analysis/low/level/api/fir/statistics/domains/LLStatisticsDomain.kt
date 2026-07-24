@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+
 /**
  * An [LLStatisticsDomain] encapsulates the meters, update logic, and any additional internal state required to support statistics
  * collection and reporting in a specific area of concern.
  */
+@KaImplementationDetail
 interface LLStatisticsDomain {
     /**
      * Performs an update on a fixed schedule which cannot be covered by eager or asynchronous meters.

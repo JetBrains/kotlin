@@ -88,7 +88,7 @@ open class IncrementalJsCache(
     }
 
     fun compare(translatedFiles: Map<File, TranslationResultValue>, changesCollector: ChangesCollector) {
-        for ((srcFile, data) in translatedFiles) {
+        for ([srcFile, data] in translatedFiles) {
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
             val newProtoMap = protoData(srcFile, data.metadata)
 
@@ -105,14 +105,14 @@ open class IncrementalJsCache(
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         val translatedFiles = incrementalResults.packageParts
 
-        for ((srcFile, data) in translatedFiles) {
+        for ([srcFile, data] in translatedFiles) {
             dirtySources.remove(srcFile)
-            val (binaryMetadata, binaryAst, inlineData) = data
+            (val binaryMetadata = metadata, val binaryAst, val inlineData) = data
 
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
             val newProtoMap = protoData(srcFile, binaryMetadata)
 
-            for ((classId, protoData) in newProtoMap) {
+            for ([classId, protoData] in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
 
                 if (protoData is ClassProtoData) {
@@ -127,12 +127,12 @@ open class IncrementalJsCache(
             translationResults.put(srcFile, binaryMetadata, binaryAst, inlineData)
         }
 
-        for ((packageName, metadata) in incrementalResults.packageMetadata) {
+        for ([packageName, metadata] in incrementalResults.packageMetadata) {
             packageMetadata[packageName] = metadata
         }
 
-        for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries) = irData
+        for ([srcFile, irData] in incrementalResults.irFileData) {
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
             irTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
             )
@@ -247,7 +247,7 @@ private class TranslationResultMap(
         val protoBytes = this[sourceFile]!!.metadata
         val protoMap = protoData(sourceFile, protoBytes)
 
-        for ((_, protoData) in protoMap) {
+        for ([_, protoData] in protoMap) {
             changesCollector.collectProtoChanges(oldData = protoData, newData = null)
         }
         remove(sourceFile)

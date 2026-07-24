@@ -50,8 +50,7 @@ import java.nio.file.Path
 import java.rmi.RemoteException
 
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
-    val compilerArguments: BtaCompilerArgs,
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    override val compilerArguments: BtaCompilerArgs,
 ) : CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
 
     @UseFromImplModuleRestricted
@@ -72,7 +71,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
-    override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
+    override fun executeCancellableImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>
+    ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
         compilerArguments.reportRestrictedViolations(kotlinLogger)
@@ -87,7 +91,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 compileInProcess(loggerAdapter)
             }
             is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(projectId, executionPolicy, loggerAdapter)
+                compileWithDaemon(executionPolicy, loggerAdapter, sessionIsAliveFlagFile)
             }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
@@ -142,15 +146,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     private fun compileWithDaemon(
-        projectId: ProjectId,
         executionPolicy: DaemonExecutionPolicyImpl,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        sessionIsAliveFlagFile: Lazy<File>,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
-        val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
-            createSessionIsAliveFlagFile()
-        }
 
         val daemonLogOptions = DaemonLogOptions(
             logsPath = executionPolicy[LOGS_PATH].absolutePathStringOrThrow(),
@@ -181,16 +182,19 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             }
         }
 
-        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId,
-            clientIsAliveFile,
-            sessionIsAliveFlagFile,
-            loggerAdapter,
-            loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
-            daemonJVMOptions = jvmOptions,
-            daemonOptions = daemonOptions,
-            daemonLogOptions = daemonLogOptions,
-        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
+        (
+            val daemon = compileService, val sessionId
+        ) =
+            KotlinCompilerRunnerUtils.newDaemonConnection(
+                compilerId,
+                clientIsAliveFile,
+                sessionIsAliveFlagFile.value,
+                loggerAdapter,
+                loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
+                daemonJVMOptions = jvmOptions,
+                daemonOptions = daemonOptions,
+                daemonLogOptions = daemonLogOptions,
+            ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         onCancel {
             daemon.cancelCompilation(sessionId, compilationId)
         }
@@ -211,7 +215,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val metricsReporter = getMetricsReporter()
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toArgumentStrings().toTypedArray(),
+            arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
             daemonCompileOptions,
             BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
             DaemonCompilationResults(

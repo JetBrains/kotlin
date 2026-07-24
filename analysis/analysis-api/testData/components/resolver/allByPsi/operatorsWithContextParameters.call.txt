@@ -927,12 +927,14 @@ KtPrefixExpression(890,899): '+thisProp'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -942,11 +944,14 @@ KtPrefixExpression(890,899): '+thisProp'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -974,18 +979,20 @@ KtPrefixExpression(890,899): '+thisProp'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(890,891): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -995,11 +1002,14 @@ KtOperationReferenceExpression(890,891): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1050,12 +1060,14 @@ KtPrefixExpression(908,910): '+a'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1065,11 +1077,14 @@ KtPrefixExpression(908,910): '+a'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1097,18 +1112,20 @@ KtPrefixExpression(908,910): '+a'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(908,909): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1118,11 +1135,14 @@ KtOperationReferenceExpression(908,909): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1173,12 +1193,14 @@ KtBinaryExpression(919,931): 'thisProp + 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1188,11 +1210,14 @@ KtBinaryExpression(919,931): 'thisProp + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1253,18 +1278,20 @@ KtNameReferenceExpression(919,927): 'thisProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(928,929): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1274,11 +1301,14 @@ KtOperationReferenceExpression(928,929): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1331,12 +1361,14 @@ KtBinaryExpression(940,945): 'a + 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1346,11 +1378,14 @@ KtBinaryExpression(940,945): 'a + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1411,18 +1446,20 @@ KtNameReferenceExpression(940,941): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(942,943): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1432,11 +1469,14 @@ KtOperationReferenceExpression(942,943): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1489,12 +1529,14 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1504,11 +1546,14 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1581,12 +1626,14 @@ KtArrayAccessExpression(974,978): 'a[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1596,11 +1643,14 @@ KtArrayAccessExpression(974,978): 'a[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1673,12 +1723,14 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1688,11 +1740,14 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1756,12 +1811,14 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1771,11 +1828,14 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1856,18 +1916,20 @@ KtConstantExpression(996,997): '1'
   null
 
 KtOperationReferenceExpression(999,1000): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1877,11 +1939,14 @@ KtOperationReferenceExpression(999,1000): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -1982,12 +2047,14 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1997,11 +2064,14 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2065,12 +2135,14 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2080,11 +2152,14 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2165,18 +2240,20 @@ KtConstantExpression(1015,1016): '1'
   null
 
 KtOperationReferenceExpression(1018,1019): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2186,11 +2263,14 @@ KtOperationReferenceExpression(1018,1019): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2291,12 +2371,14 @@ KtCallExpression(1032,1042): 'thisProp()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2306,11 +2388,14 @@ KtCallExpression(1032,1042): 'thisProp()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2364,12 +2449,14 @@ KtCallExpression(1051,1054): 'a()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2379,11 +2466,14 @@ KtCallExpression(1051,1054): 'a()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2437,12 +2527,14 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2452,11 +2544,14 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2517,18 +2612,20 @@ KtNameReferenceExpression(1063,1071): 'thisProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1072,1074): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2538,11 +2635,14 @@ KtOperationReferenceExpression(1072,1074): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2595,12 +2695,14 @@ KtBinaryExpression(1085,1091): 'a += 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2610,11 +2712,14 @@ KtBinaryExpression(1085,1091): 'a += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2675,18 +2780,20 @@ KtNameReferenceExpression(1085,1086): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1087,1089): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2696,11 +2803,14 @@ KtOperationReferenceExpression(1087,1089): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -2756,12 +2866,14 @@ KtPostfixExpression(1100,1110): 'thisProp++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -2771,11 +2883,14 @@ KtPostfixExpression(1100,1110): 'thisProp++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -2835,7 +2950,7 @@ KtNameReferenceExpression(1100,1108): 'thisProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1108,1110): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -2844,12 +2959,14 @@ KtOperationReferenceExpression(1108,1110): '++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -2859,11 +2976,14 @@ KtOperationReferenceExpression(1108,1110): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -2942,7 +3062,7 @@ KtNameReferenceExpression(1119,1120): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1121,1122): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2969,12 +3089,14 @@ KtPostfixExpression(1123,1126): 'a++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -2984,11 +3106,14 @@ KtPostfixExpression(1123,1126): 'a++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -3048,7 +3173,7 @@ KtNameReferenceExpression(1123,1124): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1124,1126): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -3057,12 +3182,14 @@ KtOperationReferenceExpression(1124,1126): '++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -3072,11 +3199,14 @@ KtOperationReferenceExpression(1124,1126): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -3125,12 +3255,14 @@ KtBinaryExpression(1136,1141): 'b + 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3140,11 +3272,14 @@ KtBinaryExpression(1136,1141): 'b + 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3205,18 +3340,20 @@ KtNameReferenceExpression(1136,1137): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1138,1139): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3226,11 +3363,14 @@ KtOperationReferenceExpression(1138,1139): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3283,12 +3423,14 @@ KtPrefixExpression(1150,1152): '+b'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3298,11 +3440,14 @@ KtPrefixExpression(1150,1152): '+b'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3330,18 +3475,20 @@ KtPrefixExpression(1150,1152): '+b'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(1150,1151): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3351,11 +3498,14 @@ KtOperationReferenceExpression(1150,1151): '+'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3406,12 +3556,14 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3421,11 +3573,14 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3498,12 +3653,14 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3513,11 +3670,14 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3581,12 +3741,14 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3596,11 +3758,14 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3681,18 +3846,20 @@ KtConstantExpression(1176,1177): '1'
   null
 
 KtOperationReferenceExpression(1179,1180): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3702,11 +3869,14 @@ KtOperationReferenceExpression(1179,1180): '='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3807,12 +3977,14 @@ KtCallExpression(1193,1196): 'b()'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3822,11 +3994,14 @@ KtCallExpression(1193,1196): 'b()'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3880,12 +4055,14 @@ KtBinaryExpression(1205,1211): 'b += 1'
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3895,11 +4072,14 @@ KtBinaryExpression(1205,1211): 'b += 1'
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -3960,18 +4140,20 @@ KtNameReferenceExpression(1205,1206): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1207,1209): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
+            anchorPsi: KtFunctionLiteral
             annotations: []
             callableId: null
-            compilerVisibility: Public
+            contextParameters: []
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3981,11 +4163,14 @@ KtOperationReferenceExpression(1207,1209): '+='
             name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            psi: KtFunctionLiteral
+            realPsi: KtFunctionLiteral
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            typeParameters: []
             visibility: PUBLIC
           type = A
       ]
@@ -4041,12 +4226,14 @@ KtPostfixExpression(1220,1223): 'b++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -4056,11 +4243,14 @@ KtPostfixExpression(1220,1223): 'b++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -4120,7 +4310,7 @@ KtNameReferenceExpression(1220,1221): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1221,1223): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -4129,12 +4319,14 @@ KtOperationReferenceExpression(1221,1223): '++'
           contextArguments = [
             KaImplicitReceiverValue:
               symbol = KaReceiverParameterSymbol:
+                anchorPsi: KtFunctionLiteral
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
+                contextParameters: []
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -4144,11 +4336,14 @@ KtOperationReferenceExpression(1221,1223): '++'
                 name: <receiver>
                 origin: SOURCE
                 owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                psi: KtFunctionLiteral
+                realPsi: KtFunctionLiteral
                 receiverParameter: null
                 returnType: KaUsualClassType:
                   annotations: []
                   typeArguments: []
                   type: A
+                typeParameters: []
                 visibility: PUBLIC
               type = A
           ]
@@ -4311,7 +4506,7 @@ KtPrefixExpression(1307,1309): '+a'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1307,1308): '+'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4423,7 +4618,7 @@ KtNameReferenceExpression(1314,1315): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1316,1317): '+'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4688,7 +4883,7 @@ KtConstantExpression(1335,1336): '1'
   null
 
 KtOperationReferenceExpression(1338,1339): '='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4901,7 +5096,7 @@ KtNameReferenceExpression(1356,1357): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1358,1360): '+='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5015,35 +5210,51 @@ KtNameReferenceExpression(1367,1368): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1368,1370): '++'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
+  KaCompoundVariableAccessCallResolutionAttempt:
+    operationCallAttempt = KaCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = a++
+            isSafeNavigation = false
+            type = A
+          signature = KaFunctionSignature:
+            receiverType = A
+            returnType = A
+            symbol = /inc(<extension receiver>: A): A
+            valueParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
+            callableId = /inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    variableCallAttempt = KaCallResolutionSuccess:
+      call = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = a++
-          isSafeNavigation = false
-          type = A
-        signature = KaFunctionSignature:
-          receiverType = A
+        extensionReceiver = null
+        isContextSensitive = false
+        kind = Read
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
           returnType = A
-          symbol = /inc(<extension receiver>: A): A
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = A
-              symbol = a: A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = /inc
+          symbol = var a: A
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    ]
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtBinaryExpression(1376,1381): 'b + 1'
   KaCallResolutionError:
@@ -5110,7 +5321,7 @@ KtNameReferenceExpression(1376,1377): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1378,1379): '+'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5191,7 +5402,7 @@ KtPrefixExpression(1386,1388): '+b'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1386,1387): '+'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5454,7 +5665,7 @@ KtConstantExpression(1404,1405): '1'
   null
 
 KtOperationReferenceExpression(1407,1408): '='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5667,7 +5878,7 @@ KtNameReferenceExpression(1425,1426): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1427,1429): '+='
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5781,32 +5992,48 @@ KtNameReferenceExpression(1436,1437): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1437,1439): '++'
-  KaErrorCallInfo:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
+  KaCompoundVariableAccessCallResolutionAttempt:
+    operationCallAttempt = KaCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b++
+            isSafeNavigation = false
+            type = SimpleOperators
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = SimpleOperators
+            symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+            valueParameters = []
+            contextParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = A
+                symbol = a: A
+                contextParameters = []
+                callableId = null
+            ]
+            callableId = /SimpleOperators.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
+    variableCallAttempt = KaCallResolutionSuccess:
+      call = KaSimpleVariableAccessCall:
         contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = b++
-          isSafeNavigation = false
-          type = SimpleOperators
+        dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionSignature:
+        isContextSensitive = false
+        kind = Read
+        signature = KaVariableSignature:
+          name = b
           receiverType = null
           returnType = SimpleOperators
-          symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = A
-              symbol = a: A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = /SimpleOperators.inc
+          symbol = var b: SimpleOperators
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    ]
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>

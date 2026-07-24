@@ -211,7 +211,7 @@ private fun Fir2IrComponents.toIrSymbol(
 }
 
 private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLikeLookupTag? {
-    return when (val symbol = symbol) {
+    return when (val symbol = qualifierSymbol) {
         is FirClassSymbol -> symbol.toLookupTag()
         is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.toLookupTag()
         else -> null

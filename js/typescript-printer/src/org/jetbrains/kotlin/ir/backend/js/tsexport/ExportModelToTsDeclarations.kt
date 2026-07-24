@@ -96,6 +96,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): String =
         attributes.toTypeScript(indent) + indent + when (this) {
             is ErrorDeclaration -> generateTypeScriptString()
+            is ExportedTypeAlias -> generateTypeScriptString(indent, prefix)
             is ExportedConstructor -> generateTypeScriptString(indent)
             is ExportedConstructSignature -> generateTypeScriptString(indent)
             is ExportedNamespace -> generateTypeScriptString(indent, prefix)
@@ -107,7 +108,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
 
     private fun Iterable<ExportedAttribute>.toTypeScript(indent: String): String {
-        val (deprecatedAttributes, other) = partitionIsInstance<_, ExportedAttribute.DeprecatedAttribute>()
+        val [deprecatedAttributes, other] = partitionIsInstance<_, ExportedAttribute.DeprecatedAttribute>()
         val documentationAttribute = other.firstIsInstanceOrNull<ExportedAttribute.Documentation>()
             ?.also { docs -> docs.sections.addAll(deprecatedAttributes.map { tsDeprecated(it.message) }) }
 
@@ -302,7 +303,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     to ExportedType.ClassType(FqName(MetadataConstructor), emptyList())
         )
 
-        val (staticMembers, instanceMembers) = if (shouldGenerateObjectWithGetInstance) {
+        val [staticMembers, instanceMembers] = if (shouldGenerateObjectWithGetInstance) {
             members.partition { it is ExportedMember && it.isStatic }
         } else emptyList<ExportedDeclaration>() to members
 
@@ -373,6 +374,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return "$objectClass\n$objectMetadata${generateDefaultExportIfNeed(name, indent)}"
     }
 
+    private fun ExportedTypeAlias.generateTypeScriptString(indent: String, prefix: String): String {
+        val renderedTypeParameters = renderTypeParameters(typeParameters, includeVariance = true)
+        return "${prefix}type $name$renderedTypeParameters = ${aliasedType.toTypeScript(indent)};"
+    }
+
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
@@ -380,7 +386,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val (membersForNamespace, classMembers) = members.partition {
+        val [membersForNamespace, classMembers] = members.partition {
             it is ExportedNamespace || isInterface && it is ExportedMember && it.isStatic
         }
 
@@ -465,7 +471,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun List<ExportedType>.toImplementsClause(superInterfacesKeyword: String, indent: String): String {
-        val (exportedInterfaces, nonExportedInterfaces) = partition { it !is ExportedType.ImplicitlyExportedType }
+        val [exportedInterfaces, nonExportedInterfaces] = partition { it !is ExportedType.ImplicitlyExportedType }
         val listOfNonExportedInterfaces = nonExportedInterfaces.joinToString(", ") {
             (it as ExportedType.ImplicitlyExportedType).type.toTypeScript(indent, true)
         }

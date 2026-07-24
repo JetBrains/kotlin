@@ -6,6 +6,9 @@
 description = "Shaded test jars from compiler for Gradle integration tests"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     `java-library`
 }
 

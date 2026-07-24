@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_PLATFORM_LIBS
+
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import platform.posix.*
 
 fun main() {

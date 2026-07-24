@@ -17,21 +17,10 @@ kotlin {
     }
 }
 
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
-    gradlePluginPortal()
-
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
-}
-
 dependencies {
     api(project(":gradle-plugins-common"))
 
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
+    implementation(kotlinBuildHelpers())
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.downloadTask.gradlePlugin)
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin-api")

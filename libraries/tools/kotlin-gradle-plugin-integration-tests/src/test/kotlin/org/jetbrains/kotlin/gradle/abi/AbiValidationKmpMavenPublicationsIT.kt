@@ -20,6 +20,27 @@ import kotlin.test.assertEquals
 @MppGradlePluginTests
 class AbiValidationKmpMavenPublicationsIT : KGPBaseTest() {
     @GradleTest
+    fun testNoPublishPluginInKmp(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "base-kotlin-multiplatform-library",
+            gradleVersion,
+        ) {
+            buildScriptInjection {
+                with(kotlinMultiplatform) {
+                    jvm()
+                    linuxX64()
+                }
+            }
+            abiValidation {
+                binariesSource.set(BinariesSource.MAVEN_PUBLICATIONS)
+            }
+            buildAndFail("updateKotlinAbi")
+        }
+    }
+
+    @GradleTest
     fun testSame(
         gradleVersion: GradleVersion,
     ) {

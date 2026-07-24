@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import java.io.File
 
@@ -17,12 +21,15 @@ internal class GradleCompilerEnvironment(
     val outputFiles: List<File>,
     val reportingSettings: ReportingSettings,
     val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
+    override val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>,
+    override val toolingDiagnosticsContext: Property<ToolingDiagnosticsContext>,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment? = null,
     val kotlinScriptExtensions: Array<String> = emptyArray(),
-) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
+) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector), UsesKotlinToolingDiagnosticsParameters {
 
     fun compilerFullClasspath(
         toolsJar: File?
     ): List<File> = if (toolsJar != null) compilerClasspath + toolsJar else compilerClasspath.toList()
+
 }
 

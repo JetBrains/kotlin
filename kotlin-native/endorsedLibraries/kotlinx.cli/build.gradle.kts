@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.*
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
 }
 
@@ -11,13 +14,20 @@ kotlin {
                 implementation(project(":kotlin-stdlib-common"))
             }
             kotlin.srcDir("src/main/kotlin")
+            compilerOptions {
+                freeCompilerArgs.add("-Xname-based-destructuring=complete")
+                freeCompilerArgs.add("-Xcollection-literals")
+            }
         }
         commonTest {
             dependencies {
-                // projectOrFiles is required for the performance project that includes kotlinx.cli compositely
-                projectOrFiles(project, ":kotlin-test")?.let { implementation(it) }
+                implementation(project(":kotlin-test"))
             }
             kotlin.srcDir("src/tests")
+            compilerOptions {
+                freeCompilerArgs.add("-Xname-based-destructuring=complete")
+                freeCompilerArgs.add("-Xcollection-literals")
+            }
         }
         jvm {
             compilations["main"].defaultSourceSet {

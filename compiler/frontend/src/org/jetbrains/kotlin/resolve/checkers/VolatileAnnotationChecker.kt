@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
+@K1Deprecation
 object VolatileAnnotationChecker : DeclarationChecker {
     private val JVM_VOLATILE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Volatile")
     private val CONCURRENT_VOLATILE_ANNOTATION_FQ_NAME = FqName("kotlin.concurrent.Volatile")

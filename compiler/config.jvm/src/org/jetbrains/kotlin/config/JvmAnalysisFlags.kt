@@ -19,6 +19,9 @@ object JvmAnalysisFlags {
     val jvmDefaultMode by Delegates.JvmDefaultModeNullByDefault
 
     @JvmStatic
+    val valhallaSupport by Delegates.ValhallaSupportModeNullByDefault
+
+    @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
@@ -44,6 +47,11 @@ object JvmAnalysisFlags {
 
         object JvmDefaultModeNullByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JvmDefaultMode?> =
+                AnalysisFlag.Delegate(property.name, null)
+        }
+
+        object ValhallaSupportModeNullByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<ValhallaSupportMode?> =
                 AnalysisFlag.Delegate(property.name, null)
         }
     }

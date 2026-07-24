@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -50,6 +51,7 @@ internal val ReceiverValueWithSmartCastInfo.unstableType: UnwrappedType?
     }
 
 // with all smart casts if stable
+@K1Deprecation
 val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     get() {
         if (!isStable || !hasTypesFromSmartCasts())
@@ -92,13 +94,16 @@ internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, 
         (parameter as? ValueParameterDescriptor)?.varargElementType?.unwrap() ?: parameter.type.unwrap()
     }
 
+@K1Deprecation
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
+@K1Deprecation
 val ParameterDescriptor.isVararg: Boolean get() = (this as? ValueParameterDescriptor)?.isVararg ?: false
 
 /**
  * @return `true` iff the parameter has a default value, i.e. declares it, inherits it by overriding a parameter which has a default value,
  * or is a parameter of an 'actual' declaration, such that the corresponding 'expect' parameter has a default value.
  */
+@K1Deprecation
 fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
         listOf(this),
@@ -132,12 +137,14 @@ private fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParam
  * `isActualParameterWithCorrespondingExpectedDefault` returns `true` for actual A, but `false` for actual B because expect B declaration
  *     doesn't have a default value
  */
+@K1Deprecation
 val ValueParameterDescriptor.isActualParameterWithAnyExpectedDefault: Boolean
     get() = checkExpectedParameter { it.hasDefaultValue() }
 
 /**
  * @see isActualParameterWithAnyExpectedDefault
  */
+@K1Deprecation
 val ValueParameterDescriptor.isActualParameterWithCorrespondingExpectedDefault: Boolean
     get() = checkExpectedParameter { it.declaresDefaultValue() }
 
@@ -169,6 +176,7 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
     return this.argumentName != null && parameter.isVararg
 }
 
+@K1Deprecation
 fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {
     if (this is CollectionLiteralKotlinCallArgument) return true
     if (this !is SimpleKotlinCallArgument) return false

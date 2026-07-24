@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 object NativeConfigurationKeys {
-    // Bundle ID to be set in Info.plist of a produced framework.
-    @JvmField
-    val BUNDLE_ID = CompilerConfigurationKey.create<String>("BUNDLE_ID")
-
     // Check dependencies and download the missing ones.
     @JvmField
     val CHECK_DEPENDENCIES = CompilerConfigurationKey.create<Boolean>("CHECK_DEPENDENCIES")
@@ -71,6 +67,10 @@ object NativeConfigurationKeys {
     @JvmField
     val INCREMENTAL_CACHE_DIR = CompilerConfigurationKey.create<String>("INCREMENTAL_CACHE_DIR")
 
+    // Path to a file where the list of all cache archives produced by this build should be written.
+    @JvmField
+    val DUMP_BUILT_CACHES_TO = CompilerConfigurationKey.create<String>("DUMP_BUILT_CACHES_TO")
+
     // Mapping from library paths to cache paths.
     @JvmField
     val CACHED_LIBRARIES = CompilerConfigurationKey.create<Map<String, String>>("CACHED_LIBRARIES")
@@ -81,6 +81,10 @@ object NativeConfigurationKeys {
 
     @JvmField
     val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
+
+    // Combined fingerprint of external cached dependencies of the library being cached.
+    @JvmField
+    val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT = CompilerConfigurationKey.create<String>("CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT")
 
     @JvmField
     val FRAMEWORK_IMPORT_HEADERS = CompilerConfigurationKey.create<List<String>>("FRAMEWORK_IMPORT_HEADERS")
@@ -129,10 +133,6 @@ object NativeConfigurationKeys {
     // Don't link with the default libraries.
     @JvmField
     val KONAN_NO_DEFAULT_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_NO_DEFAULT_LIBS")
-
-    // Don't link with the endorsed libraries.
-    @JvmField
-    val KONAN_NO_ENDORSED_LIBS = CompilerConfigurationKey.create<Boolean>("KONAN_NO_ENDORSED_LIBS")
 
     // Assume 'main' entry point to be provided by external libraries.
     @JvmField
@@ -280,10 +280,6 @@ object NativeConfigurationKeys {
 
 }
 
-var CompilerConfiguration.bundleId: String?
-    get() = get(NativeConfigurationKeys.BUNDLE_ID)
-    set(value) { put(NativeConfigurationKeys.BUNDLE_ID, requireNotNull(value) { "nullable values are not allowed" }) }
-
 var CompilerConfiguration.checkDependencies: Boolean
     get() = getBoolean(NativeConfigurationKeys.CHECK_DEPENDENCIES)
     set(value) { put(NativeConfigurationKeys.CHECK_DEPENDENCIES, value) }
@@ -336,6 +332,10 @@ var CompilerConfiguration.incrementalCacheDir: String?
     get() = get(NativeConfigurationKeys.INCREMENTAL_CACHE_DIR)
     set(value) { put(NativeConfigurationKeys.INCREMENTAL_CACHE_DIR, requireNotNull(value) { "nullable values are not allowed" }) }
 
+var CompilerConfiguration.dumpBuiltCachesTo: String?
+    get() = get(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO)
+    set(value) { put(NativeConfigurationKeys.DUMP_BUILT_CACHES_TO, requireNotNull(value) { "nullable values are not allowed" }) }
+
 var CompilerConfiguration.cachedLibraries: Map<String, String>
     get() = getMap(NativeConfigurationKeys.CACHED_LIBRARIES)
     set(value) { put(NativeConfigurationKeys.CACHED_LIBRARIES, value) }
@@ -347,6 +347,10 @@ var CompilerConfiguration.filesToCache: List<String>
 var CompilerConfiguration.makePerFileCache: Boolean
     get() = getBoolean(NativeConfigurationKeys.MAKE_PER_FILE_CACHE)
     set(value) { put(NativeConfigurationKeys.MAKE_PER_FILE_CACHE, value) }
+
+var CompilerConfiguration.cachedLibraryDependenciesFingerprint: String?
+    get() = get(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT)
+    set(value) { put(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.frameworkImportHeaders: List<String>
     get() = getList(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
@@ -407,10 +411,6 @@ var CompilerConfiguration.konanNativeLibraries: List<String>
 var CompilerConfiguration.konanNoDefaultLibs: Boolean
     get() = getBoolean(NativeConfigurationKeys.KONAN_NO_DEFAULT_LIBS)
     set(value) { put(NativeConfigurationKeys.KONAN_NO_DEFAULT_LIBS, value) }
-
-var CompilerConfiguration.konanNoEndorsedLibs: Boolean
-    get() = getBoolean(NativeConfigurationKeys.KONAN_NO_ENDORSED_LIBS)
-    set(value) { put(NativeConfigurationKeys.KONAN_NO_ENDORSED_LIBS, value) }
 
 var CompilerConfiguration.nomain: Boolean
     get() = getBoolean(NativeConfigurationKeys.NOMAIN)

@@ -55,7 +55,7 @@ internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestService
                 }
             }.sortedBy { it.second.range.first }
 
-            val (processor, match) = matches.firstOrNull() ?: break
+            val [processor, match] = matches.firstOrNull() ?: break
             val qualifier = match.groupValues[2]
 
             val startOffset = match.range.first
@@ -125,7 +125,7 @@ class ExpressionMarkerProvider : TestService {
      */
     fun getAllCarets(file: PsiFile): List<FileMarker<Int>> {
         return carets.getAll(file.name)
-            .map { (qualifier, offset) -> FileMarker(qualifier, getCaretTagText(qualifier), offset) }
+            .map { [qualifier, offset] -> FileMarker(qualifier, getCaretTagText(qualifier), offset) }
     }
 
     /**
@@ -149,7 +149,7 @@ class ExpressionMarkerProvider : TestService {
      */
     fun getAllSelections(file: PsiFile): List<FileMarker<TextRange>> {
         return selections.getAll(file.name)
-            .map { (qualifier, range) -> FileMarker(qualifier, getSelectionTagText(qualifier), range) }
+            .map { [qualifier, range] -> FileMarker(qualifier, getSelectionTagText(qualifier), range) }
     }
 
     /**
@@ -318,11 +318,16 @@ class ExpressionMarkerProvider : TestService {
             ?: throw NoSuchElementException("Found no element of type ${type.simpleName} inside ${getSelectionTagText(qualifier)}")
     }
 
+    @Throws(NoSuchElementException::class)
+    inline fun <reified T : PsiElement> getBottommostSelectedElementOfType(file: KtFile, qualifier: String = ""): T {
+        return getBottommostSelectedElementOfType(file, T::class, qualifier)
+    }
+
     /**
      * Returns the bottommost element of the type [T] enclosed in a selection tag with the given [qualifier],
      * or `null` if there is no selection tag with the given [qualifier].
      */
-    private fun <T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
+    fun <T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
         val element = getTopmostSelectedElements(file, qualifier).singleOrNull() ?: return null
 
         val result = generateSequence(element) { it.children.singleOrNull() }
@@ -331,6 +336,10 @@ class ExpressionMarkerProvider : TestService {
 
         @Suppress("UNCHECKED_CAST")
         return result as T
+    }
+
+    inline fun <reified T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, qualifier: String = ""): T? {
+        return getBottommostSelectedElementOfTypeOrNull(file, T::class, qualifier)
     }
 
     /**

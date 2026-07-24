@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsSyn
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
+@K1Deprecation
 class JavaSyntheticScopes(
     private val project: Project,
     private val moduleDescriptor: ModuleDescriptor,
@@ -100,6 +102,7 @@ class JavaSyntheticScopes(
     }
 }
 
+@K1Deprecation
 interface SyntheticScopeProviderExtension {
     companion object : ProjectExtensionDescriptor<SyntheticScopeProviderExtension>(
         "org.jetbrains.kotlin.syntheticScopeProviderExtension", SyntheticScopeProviderExtension::class.java

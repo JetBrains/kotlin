@@ -17,6 +17,7 @@ internal sealed class KFunctionDescription {
     class Correct(
             val flags: Int,
             val arity: Int,
+            val boundValueCount: Int,
             val fqName: String,
             override val name: String,
             val returnType: KType,
@@ -32,28 +33,33 @@ internal sealed class KFunctionDescription {
 internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription) : KFunction<R> {
     final override val name get() = description.name
     final override val returnType get() = description.checkCorrect().returnType
-    val receiver get() = computeReceiver()
 
-    open fun computeReceiver(): Any? = null
+    open fun boundValueAt(index: Int): Any? = null
 
     override fun equals(other: Any?): Boolean {
         val desc = description.checkCorrect()
         if (other !is KFunctionImpl<*>) return false
         val otherDesc = other.description.checkCorrect()
-        return desc.fqName == otherDesc.fqName && receiver == other.receiver
-                && desc.arity == otherDesc.arity && desc.flags == otherDesc.flags
-    }
+        if (desc.fqName != otherDesc.fqName || desc.arity != otherDesc.arity ||
+                desc.flags != otherDesc.flags || desc.boundValueCount != otherDesc.boundValueCount) return false
 
-    private fun evalutePolynom(x: Int, vararg coeffs: Int): Int {
-        var res = 0
-        for (coeff in coeffs)
-            res = res * x + coeff
-        return res
+        repeat(desc.boundValueCount) { index ->
+            if (boundValueAt(index) != other.boundValueAt(index)) return false
+        }
+
+        return true
     }
 
     override fun hashCode(): Int {
         val desc = description.checkCorrect()
-        return evalutePolynom(31, desc.fqName.hashCode(), receiver.hashCode(), desc.arity, desc.flags)
+        var res = desc.fqName.hashCode()
+        res = res * 31 + desc.arity
+        res = res * 31 + desc.flags
+
+        repeat(desc.boundValueCount) { index ->
+            res = res * 31 + boundValueAt(index).hashCode()
+        }
+        return res
     }
 
     // Although this function uses only the name property (which is unconditionally available), the linkage error is checked for consistency between backends.

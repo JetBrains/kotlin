@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
@@ -44,9 +43,9 @@ class IrInlineCodegen(
     private val state: GenerationState,
     private val function: IrFunction,
     private val jvmSignature: JvmMethodSignature,
-    private val typeParameterMappings: TypeParameterMappings<IrType>,
+    private val typeParameterMappings: TypeParameterMappings,
     private val sourceCompiler: SourceCompilerForInline,
-    private val reifiedTypeInliner: ReifiedTypeInliner<IrType>,
+    private val reifiedTypeInliner: ReifiedTypeInliner,
     private val markInlinedSuspensionPointAsUnitReturning: Boolean,
 ) : IrInlineCallGenerator {
 

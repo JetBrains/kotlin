@@ -19,6 +19,7 @@ public abstract @interface Anno {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.CLASS])
  * public final annotation class Anno2 : kotlin/Annotation {
  *
  *   // signature: <init>()V
@@ -43,6 +44,8 @@ public abstract @interface Anno2 {
  *   // field: prop:Ljava/lang/String;
  *   // getter: getProp()Ljava/lang/String;
  *   // synthetic method for annotations: getProp$annotations()V
+ *   @Anno
+ *   @Anno2
  *   public final val prop: kotlin/String
  *     public final get
  *

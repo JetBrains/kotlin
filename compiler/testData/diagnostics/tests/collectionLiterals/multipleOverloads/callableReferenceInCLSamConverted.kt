@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals, +CompanionBlocksAndExtensions
+// LANGUAGE: +CollectionLiterals, +CompanionBlocks +CompanionExtensions
 // WITH_STDLIB
 
 class A {
@@ -28,17 +28,17 @@ class C {
     }
 }
 
-fun ab(a: A) { }
-fun ab(b: B) { }
+fun ab(a: A) = 1
+fun ab(b: B) = "A"
 
-fun bc(b: B) { }
-fun bc(c: C) { }
+fun bc(b: B) = 1
+fun bc(c: C) = "A"
 
-fun ac(a: A) { }
-fun ac(c: C) { }
+fun ac(a: A) = 1
+fun ac(c: C) = "A"
 
-fun acList(a: List<A.Sam>) { }
-fun acList(a: List<() -> String>) { }
+fun acList(a: List<A.Sam>) = 1
+fun acList(a: List<() -> String>) = "A"
 
 fun makeString(): String = ""
 fun <T: Number> materializeNumber(): T = null!!
@@ -49,23 +49,23 @@ fun ms(): Int = 42
 fun test(t: Any) {
     fun ms(): Set<*> = ["!"]
 
-    ab([::makeString])
-    ab([::ms])
-    ab([::materializeNumber])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ab<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
+    val a1: Int = ab([::makeString])
+    val a2: String = ab([::ms])
+    val a3: String = ab([::materializeNumber])
+    val a4: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ab<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
 
-    bc([::makeString])
-    bc([::ms])
-    bc([::materializeNumber])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bc<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
+    val a5: String = bc([::makeString])
+    val a6: Int = bc([::ms])
+    val a7: Int = bc([::materializeNumber])
+    val a8: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>bc<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
 
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>([::makeString])
-    <!NONE_APPLICABLE!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
+    val a9: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>([::makeString])
+    val a10: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
+    val a11: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ac<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>]<!>)
 
-    acList([::makeString])
-    <!NONE_APPLICABLE!>acList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>]<!>)
-    acList([::materialize])
+    val a12: String = acList([::makeString])
+    val a13: String = acList([::<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>materializeNumber<!>])
+    val a14: String = acList([::materialize])
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funInterface, functionDeclaration,

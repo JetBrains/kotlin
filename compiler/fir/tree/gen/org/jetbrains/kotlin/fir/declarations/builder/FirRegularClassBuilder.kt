@@ -32,18 +32,18 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = []
     override lateinit var status: FirDeclarationStatus
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override lateinit var scopeProvider: FirScopeProvider
     override lateinit var classKind: ClassKind
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val declarations: MutableList<FirDeclaration> = []
+    override val annotations: MutableList<FirAnnotation> = []
     open lateinit var name: Name
     open lateinit var symbol: FirRegularClassSymbol
     open var companionObjectSymbol: FirRegularClassSymbol? = null
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    open val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val superTypeRefs: MutableList<FirTypeRef> = []
+    open val contextParameters: MutableList<FirValueParameter> = []
 
     override fun build(): FirRegularClass {
         return FirRegularClassImpl(

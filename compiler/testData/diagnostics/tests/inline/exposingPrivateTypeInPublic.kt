@@ -1,23 +1,23 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE, -UNREACHABLE_CODE
-// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
+// LANGUAGE_FEATURE_TOGGLED: ForbidExposingLessVisibleTypesInInline
 
 private interface Private
 
-inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!> // should be an error
+inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!> // should be an error
 
 open class C {
     protected class Protected
 
-    inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Protected<!> // should be an error
+    inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Protected<!> // should be an error
     inline fun public2(): Any = <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>Protected<!>() // should be an error
 }
 
 fun <T> ignore() {}
 
 inline fun public() {
-    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
-    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>::class
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!>>() // should be an error
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private<!>::class
 }
 
 private class Private2 {
@@ -25,7 +25,7 @@ private class Private2 {
 }
 
 inline fun public2() {
-    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private2.Obj<!>>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Private2.Obj<!>>() // should be an error
 }
 
 private fun <T : Private> private1(arg: () -> T) {}
@@ -81,9 +81,9 @@ class C3 {
 
     inline fun public() {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>() // already an error, should be an error
-        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
-        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3<!>
-        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3TA<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3TA<!>
     }
 }
 
@@ -92,7 +92,7 @@ private object O {
 }
 
 inline fun public5() {
-    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C<!>()
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>O<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C<!>()
 }
 
 private fun interface I {

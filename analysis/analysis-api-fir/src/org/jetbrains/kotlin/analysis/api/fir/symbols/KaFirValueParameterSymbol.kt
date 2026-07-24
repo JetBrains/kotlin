@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
@@ -22,11 +20,9 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -52,9 +48,6 @@ internal class KaFirValueParameterSymbol private constructor(
         analysisSession = session,
     )
 
-    override val psi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: findPsi() }
-
     override val name: Name
         get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
 
@@ -71,9 +64,6 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override val isCrossinline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
-
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
     override val isNoinline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.NOINLINE_KEYWORD) ?: firSymbol.isNoinline }
@@ -96,13 +86,24 @@ internal class KaFirValueParameterSymbol private constructor(
                 }
 
                 val parameterIndex = index
-                val ownerFunction = containingDeclaration as? KaNamedFunctionSymbol ?: return false
+                val ownerFunction = containingDeclaration as? KaFunctionSymbol ?: return false
 
-                fun KaDeclarationSymbol.hasMatchingParameterWithDefaultValue(): Boolean =
-                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDeclaredDefaultValue == true
+                // Checks the effective (possibly inherited) default value of the matching parameter, not just the declared one. The
+                // recursion into `hasDefaultValue` lets a default propagate across several hops at once, e.g., from the `expect`
+                // counterpart of the base an `actual` override inherits from.
+                fun KaDeclarationSymbol.hasMatchingDefaultParameter(): Boolean =
+                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDefaultValue == true
 
-                ownerFunction.isOverride && ownerFunction.allOverriddenSymbols.any { it.hasMatchingParameterWithDefaultValue() } ||
-                        ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingParameterWithDefaultValue() }
+                // An implicit default value can only be inherited from an overridden declaration (for a named function) or from the
+                // matched `expect` declaration (for a named function or a constructor). Other function kinds cannot have one.
+                when (ownerFunction) {
+                    is KaNamedFunctionSymbol ->
+                        ownerFunction.isOverride && ownerFunction.directlyOverriddenSymbols.any { it.hasMatchingDefaultParameter() } ||
+                                ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
+                    is KaConstructorSymbol ->
+                        ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
+                    else -> false
+                }
             }
         }
 
@@ -121,7 +122,7 @@ internal class KaFirValueParameterSymbol private constructor(
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol?
+    override val primaryConstructorProperty: KaKotlinPropertySymbol?
         get() = withValidityAssertion {
             if (backingPsi != null) {
                 return if (backingPsi.hasValOrVar() && backingPsi.ownerFunction is KtPrimaryConstructor) {
@@ -138,7 +139,7 @@ internal class KaFirValueParameterSymbol private constructor(
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
         return KaFirValueParameterSymbolPointer(
-            ownerPointer = analysisSession.createOwnerPointer(this),
+            ownerPointer = createOwnerPointer(),
             name = name,
             index = index,
             originalSymbol = this

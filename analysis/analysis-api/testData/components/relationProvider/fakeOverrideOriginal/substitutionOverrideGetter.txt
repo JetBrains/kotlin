@@ -1,0 +1,30 @@
+IS_THE_SAME_SYMBOL: false
+FAKE_OVERRIDE_ORIGINAL:
+  KaPropertyGetterSymbol:
+    anchorPsi: KtPropertyAccessor
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: true
+    isOverride: false
+    location: PROPERTY
+    modality: OPEN
+    origin: SOURCE
+    psi: KtPropertyAccessor
+    realPsi: KtPropertyAccessor
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: T
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    containingDeclaration: test/Base.value

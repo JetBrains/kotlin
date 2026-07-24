@@ -1,0 +1,1 @@
+<expr>object MyClass</expr>

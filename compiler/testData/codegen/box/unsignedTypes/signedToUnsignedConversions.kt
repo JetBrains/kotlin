@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // IGNORE_BACKEND: ANDROID
+// ALLOW_KOTLIN_PACKAGE
 // Android tests relocate kotlin package.
 // FILE: signedToUnsignedConversions_annotation.kt
 

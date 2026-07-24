@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.validation.temporarilyPushing
 
 object ParentChainUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
-        context.parentChain.temporarilyPushing(element) {
-            block()
-        }
+    override fun enterContext(context: CheckerContext, element: IrElement) {
+        context.parentChain.add(element)
+    }
+
+    override fun exitContext(context: CheckerContext, element: IrElement) {
+        context.parentChain.removeLast()
     }
 }

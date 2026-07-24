@@ -12,7 +12,7 @@ import java.io.File
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTestCase() {
-    override fun doRawFirTest(filePath: String) {
+    override fun runTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.LAZY_BODIES)
         val firFileDump = dumpFirFile(firFile)

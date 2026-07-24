@@ -18,9 +18,9 @@ fun linkedSpecTestsPrint() {
 
     val statistic = TestsStatisticCollector.collect(SpecTestLinkedType.LINKED)
 
-    for ((areaName, areaElement) in statistic) {
+    for ([areaName, areaElement] in statistic) {
         println("$areaName: ${areaElement.number} tests")
-        for ((sectionName, sectionElement) in areaElement.elements) {
+        for ([sectionName, sectionElement] in areaElement.elements) {
             print("  $sectionName: ${sectionElement.number} tests")
             notLinkedSpecTestsCategoriesPrint(sectionElement.elements)
             println()
@@ -29,7 +29,7 @@ fun linkedSpecTestsPrint() {
 }
 
 fun notLinkedSpecTestsCategoriesPrint(elements: Map<Any, SpecTestsStatElement>, level: Int = 1) {
-    for ((name, element) in elements) {
+    for ([name, element] in elements) {
         if (element.type == SpecTestsStatElementType.TYPE) {
             print(" [ $name: ${element.number} ]")
             continue
@@ -48,9 +48,9 @@ fun notLinkedSpecTestsPrint() {
 
     val statistic = TestsStatisticCollector.collect(SpecTestLinkedType.NOT_LINKED)
 
-    for ((areaName, areaElement) in statistic) {
+    for ([areaName, areaElement] in statistic) {
         println("$areaName: ${areaElement.number} tests")
-        for ((sectionName, sectionElement) in areaElement.elements) {
+        for ([sectionName, sectionElement] in areaElement.elements) {
             print("  $sectionName: ${sectionElement.number} tests")
             notLinkedSpecTestsCategoriesPrint(sectionElement.elements)
             println()

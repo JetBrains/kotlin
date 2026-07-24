@@ -191,7 +191,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
     private fun FixationLogRecord.isSimilarTo(record: FixationLogRecord): Boolean {
         if (record.chosen !== chosen) return false
         if (record.map.size != map.size) return false
-        for ((variable, info) in record.map) {
+        for ([variable, info] in record.map) {
             if (!info.isSimilarTo(map[variable])) return false
         }
         return true
@@ -258,6 +258,22 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
             }
         }
     }
+
+    private inner class SnapshotImpl : Snapshot() {
+        private val savedTopLevelElementsCount = topLevelElements.size
+        private val savedCurrentBlockItemElementsCount = currentBlockItemElements.size
+
+        override fun rollback() {
+            while (topLevelElements.size > savedTopLevelElementsCount) {
+                topLevelElements.removeLast()
+            }
+            while (currentBlockItemElements.size > savedCurrentBlockItemElementsCount) {
+                currentBlockItemElements.removeLast()
+            }
+        }
+    }
+
+    override fun getSnapshot(): Snapshot = SnapshotImpl()
 
     companion object {
         @JvmStatic

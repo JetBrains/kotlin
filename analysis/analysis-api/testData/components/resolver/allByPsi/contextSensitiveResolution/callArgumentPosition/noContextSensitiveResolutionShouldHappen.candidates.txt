@@ -533,12 +533,14 @@ KtCallExpression(350,356): 'foo(X)'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -548,11 +550,14 @@ KtCallExpression(350,356): 'foo(X)'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       signature = KaFunctionSignature:
@@ -609,12 +614,14 @@ KtNameReferenceExpression(350,353): 'foo'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -624,11 +631,14 @@ KtNameReferenceExpression(350,353): 'foo'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       signature = KaFunctionSignature:
@@ -690,12 +700,14 @@ KtNameReferenceExpression(354,355): 'X'
       dispatchReceiver = null
       extensionReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -705,11 +717,14 @@ KtNameReferenceExpression(354,355): 'X'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(<local>/bar)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: B
+          typeParameters: []
           visibility: PUBLIC
         type = B
       isContextSensitive = false

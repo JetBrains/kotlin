@@ -1,8 +1,9 @@
 KaConstructorSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: test/MyAlias
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -14,6 +15,8 @@ KaConstructorSymbol:
   location: CLASS
   modality: FINAL
   origin: TYPEALIASED_CONSTRUCTOR
+  psi: KtTypeAlias
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -30,8 +33,8 @@ KaConstructorSymbol:
     type: {test/MyAlias<TT>=} test/MyClass<test/Cell<TT>>
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -40,26 +43,29 @@ KaConstructorSymbol:
       modality: FINAL
       name: TT
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtClass
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -71,6 +77,9 @@ KaConstructorSymbol:
       modality: FINAL
       name: t
       origin: TYPEALIASED_CONSTRUCTOR
+      primaryConstructorProperty: null
+      psi: KtClass
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -80,16 +89,17 @@ KaConstructorSymbol:
             type: TT
         ]
         type: test/Cell<TT>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.MyAlias

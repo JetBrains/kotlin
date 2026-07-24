@@ -1,2 +1,3 @@
 expression: x
+expression PSI: KtNameReferenceExpression
 type: Foo

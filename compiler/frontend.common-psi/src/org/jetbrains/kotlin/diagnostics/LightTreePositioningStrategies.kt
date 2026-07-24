@@ -137,7 +137,7 @@ object LightTreePositioningStrategies {
             super.isValid(getElementToMark(node, tree), tree)
 
         private fun getElementToMark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode {
-            val (returnTypeRef, nameIdentifierOrPlaceHolder) = when {
+            val [returnTypeRef, nameIdentifierOrPlaceHolder] = when {
                 node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR ->
                     tree.typeReference(node) to tree.accessorNamePlaceholder(node)
                 node.isDeclaration || node.tokenType == KtNodeTypes.VALUE_PARAMETER ->
@@ -388,6 +388,21 @@ object LightTreePositioningStrategies {
             }
     }
 
+    private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceIfShort(node: LighterASTNode): LighterASTNode? {
+        return when (node.tokenType) {
+            KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION -> selector(node)?.let { referenceIfShort(it) }
+            KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+            KtNodeTypes.SAFE_ACCESS_EXPRESSION,
+                -> lastChildExpression(node)?.let { referenceIfShort(it) }
+            KtNodeTypes.CALL_EXPRESSION -> referenceExpression(node, locateReferencedName = true)
+            KtNodeTypes.ARRAY_ACCESS_EXPRESSION -> null
+            KtNodeTypes.REFERENCE_EXPRESSION -> node
+            KtNodeTypes.COLLECTION_LITERAL_EXPRESSION -> node
+            KtNodeTypes.THIS_EXPRESSION -> node
+            else -> null
+        }
+    }
+
     val VARIABLE_INITIALIZER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -395,6 +410,10 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            val last = tree.lastChildExpression(node)
+            if (last != null) {
+                tree.referenceIfShort(last)?.let { return markElement(it, startOffset, endOffset, tree, node) }
+            }
             val eqToken = tree.findChildByType(node, EQ)
             return if (eqToken != null) {
                 markElement(eqToken, startOffset, endOffset, tree, node)
@@ -599,6 +618,25 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val REFERENCE_OR_OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
+                val lastChild = tree.lastChildExpression(node)
+                if (lastChild != null) {
+                    tree.referenceIfShort(lastChild)?.let {
+                        return markElement(it, startOffset, endOffset, tree, node)
+                    }
+                }
+            }
+            return OPERATOR.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
     val PARAMETER_DEFAULT_VALUE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -798,6 +836,9 @@ object LightTreePositioningStrategies {
             }
 
             when {
+                node.tokenType == KtNodeTypes.OBJECT_LITERAL -> {
+                    return DEFAULT.mark(node, startOffset, endOffset, tree)
+                }
                 node.tokenType == KtNodeTypes.BINARY_EXPRESSION && tree.findDescendantByType(node, EQ, followFunctions = false) != null -> {
                     // Look for reference in LHS of variable assignment.
                     tree.findExpressionDeep(node)?.let {
@@ -809,6 +850,12 @@ object LightTreePositioningStrategies {
                 }
                 node.tokenType == KtNodeTypes.PROPERTY_DELEGATE -> {
                     return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
+                }
+                node.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE && node.textLength == 0 -> {
+                    val ggParent = tree.getParent(node)?.let { tree.getParent(it) }?.let { tree.getParent(it) }
+                    if (ggParent?.tokenType == KtNodeTypes.ENUM_ENTRY) {
+                        return mark(ggParent, ggParent.startOffset, ggParent.endOffset, tree)
+                    }
                 }
                 node.tokenType == KtNodeTypes.ANNOTATION_ENTRY || node.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY -> {
                     val constructorCallee = tree.findDescendantByType(node, KtNodeTypes.CONSTRUCTOR_CALLEE)

@@ -8,8 +8,8 @@ class WithTypeParameter<T> {
 
     fun callableReference() {
         val x = WithTypeParameter<String>()
-        val y: String <!INITIALIZER_TYPE_MISMATCH!>=<!> x::value.get()
-        val z: KProperty1<WithTypeParameter<String>, String> <!INITIALIZER_TYPE_MISMATCH!>=<!> WithTypeParameter<String>::value
+        val y: String = x::value.<!INITIALIZER_TYPE_MISMATCH!>get<!>()
+        val z: KProperty1<WithTypeParameter<String>, String> = WithTypeParameter<String>::<!INITIALIZER_TYPE_MISMATCH!>value<!>
     }
 }
 

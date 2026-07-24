@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class RedundantStatementEliminationTest() : BasicOptimizerTest("redundant-statement-elimination") {
     @Test fun binary() = box()

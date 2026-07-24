@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.NativeRuntimeNames.Annotations.EscapesNothing
 
@@ -47,5 +48,5 @@ value class Escapes private constructor(private val mask: Int) {
  */
 val IrFunction.escapes: Escapes?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.Escapes.asSingleFqName())?.run {
-        Escapes((arguments[0]!! as IrConst).value as Int, allParameters.size + 1)
+        Escapes(getConstArgument<Int>("who")!!, allParameters.size + 1)
     } ?: annotations.findAnnotation(EscapesNothing.asSingleFqName())?.let { Escapes(0, allParameters.size + 1) }

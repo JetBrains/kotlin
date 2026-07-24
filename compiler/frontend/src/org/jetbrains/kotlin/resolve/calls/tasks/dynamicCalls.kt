@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
+@K1Deprecation
 class DynamicCallableDescriptors(private val storageManager: StorageManager, builtIns: KotlinBuiltIns) {
 
     val dynamicType by storageManager.createLazyValue {
@@ -236,6 +238,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
     }
 }
 
+@K1Deprecation
 fun DeclarationDescriptor.isDynamic(): Boolean {
     if (this !is CallableDescriptor) return false
     val dispatchReceiverParameter = dispatchReceiverParameter

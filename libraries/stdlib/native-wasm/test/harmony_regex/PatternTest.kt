@@ -1355,7 +1355,7 @@ class PatternTest {
             "\\p{Space}" to " ",
             "\\p{Blank}" to " ",
             "\\p{Sc}" to "$"
-        ).flatMap { (expression, match) ->
+        ).flatMap { [expression, match] ->
             listOf(
                 expression to match,
                 "$expression+" to match.repeat(2),
@@ -1363,7 +1363,7 @@ class PatternTest {
             )
         }
 
-        neighbors.forEach { (neighbor, match) ->
+        neighbors.forEach { [neighbor, match] ->
             // \v
             assertMatch(Regex("$neighbor\\v"), "$match\n")
             assertMatch(Regex("$neighbor\\v$neighbor"), "$match\n$match")
@@ -1473,7 +1473,7 @@ class PatternTest {
             "\\p{Space}" to " ",
             "\\p{Blank}" to " ",
             "\\p{Sc}" to "$"
-        ).flatMap { (expression, match) ->
+        ).flatMap { [expression, match] ->
             listOf(
                 expression to match,
                 "$expression+" to match.repeat(2),
@@ -1481,7 +1481,7 @@ class PatternTest {
             )
         }
 
-        neighbors.forEach { (neighbor, match) ->
+        neighbors.forEach { [neighbor, match] ->
             // \h
             assertMatch(Regex("$neighbor\\h"), "$match ")
             assertMatch(Regex("$neighbor\\h$neighbor"), "$match $match")
@@ -1586,7 +1586,7 @@ class PatternTest {
             "\\p{Space}" to " ",
             "\\p{Blank}" to " ",
             "\\p{Sc}" to "$"
-        ).flatMap { (expression, match) ->
+        ).flatMap { [expression, match] ->
             listOf(
                 expression to match,
                 "$expression+" to match.repeat(2),
@@ -1594,7 +1594,7 @@ class PatternTest {
             )
         }
 
-        neighbors.forEach { (neighbor, match) ->
+        neighbors.forEach { [neighbor, match] ->
             assertMatch(Regex("$neighbor\\R"), "$match\n")
             assertMatch(Regex("$neighbor\\R$neighbor"), "$match\n$match")
             assertMatch(Regex("\\R$neighbor"), "\n$match")

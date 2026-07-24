@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import kotlinx.cinterop.toKString
 import llvm.LLVMLinkage
-import llvm.LLVMPrintTypeToString
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
@@ -17,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.replaceExternalWeakOrCommonGlobal
+import org.jetbrains.kotlin.backend.konan.llvm.toTypeString
 import org.jetbrains.kotlin.backend.konan.llvm.writableTypeInfoSymbolName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -137,8 +136,8 @@ private fun CodeGenerator.buildWritableTypeInfoValue(
     if (convertToRetained != null) {
         val expectedType = llvm.pointerType
         assert(convertToRetained.llvmType == expectedType) {
-            "Expected: ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
-                    "found: ${LLVMPrintTypeToString(convertToRetained.llvmType)!!.toKString()}"
+            "Expected: ${expectedType.toTypeString()} " +
+                    "found: ${convertToRetained.llvmType.toTypeString()}"
         }
     }
 

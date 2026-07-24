@@ -7,6 +7,7 @@ package test.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class HashCodeTest {
     @Test
@@ -23,5 +24,21 @@ class HashCodeTest {
         val nullableValue: String? = value
 
         assertEquals(value.hashCode(), nullableValue.hashCode())
+    }
+
+    // KT-86954: all NaN bit patterns must produce the same hash code, matching equals() semantics.
+    @Test
+    fun hashCodeOfNaN() {
+        val canonicalDoubleNaN = Double.NaN
+        val otherDoubleNaN = Double.fromBits(canonicalDoubleNaN.toBits() or 1L)
+        assertTrue(otherDoubleNaN.isNaN())
+        assertTrue(canonicalDoubleNaN.equals(otherDoubleNaN))
+        assertEquals(canonicalDoubleNaN.hashCode(), otherDoubleNaN.hashCode())
+
+        val canonicalFloatNaN = Float.NaN
+        val otherFloatNaN = Float.fromBits(0xFFFC0000.toInt())
+        assertTrue(otherFloatNaN.isNaN())
+        assertTrue(canonicalFloatNaN.equals(otherFloatNaN))
+        assertEquals(canonicalFloatNaN.hashCode(), otherFloatNaN.hashCode())
     }
 }

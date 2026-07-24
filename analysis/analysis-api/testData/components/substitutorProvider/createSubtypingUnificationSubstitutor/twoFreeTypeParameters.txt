@@ -1,0 +1,14 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {PARAM = T}>
+Substituted pairs:
+T <: T (Original: PARAM <: T)
+
+ASSIGN_RIGHT:
+Substitutor: <map substitutor: {T = PARAM}>
+Substituted pairs:
+PARAM <: PARAM (Original: PARAM <: T)
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {T = kotlin/Any?, PARAM = kotlin/Any?}>
+Substituted pairs:
+kotlin/Any? <: kotlin/Any? (Original: PARAM <: T)

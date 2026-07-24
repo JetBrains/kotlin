@@ -43,14 +43,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
-    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    gradlePluginPortal()
-}
-
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
@@ -91,7 +83,7 @@ dependencies {
     api(project(":gradle-plugins-common"))
 
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
+    implementation(kotlinBuildHelpers())
     implementation(libs.gradle.pluginPublish.gradlePlugin)
     implementation(libs.dokka.gradlePlugin)
     implementation(libs.spdx.gradlePlugin)
@@ -120,6 +112,7 @@ dependencies {
     }
     implementation(libs.gson)
     implementation(project(":d8-configuration"))
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
 tasks.register("checkBuild") {

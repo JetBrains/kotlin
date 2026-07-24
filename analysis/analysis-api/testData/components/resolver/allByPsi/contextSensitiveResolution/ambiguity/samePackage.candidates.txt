@@ -1555,7 +1555,7 @@ KtNameReferenceExpression(1183,1184): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1185,1187): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1693,7 +1693,7 @@ KtNameReferenceExpression(1232,1233): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1234,1236): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1869,7 +1869,7 @@ KtNameReferenceExpression(1290,1291): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1292,1294): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2029,7 +2029,7 @@ KtNameReferenceExpression(1339,1340): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1341,1343): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

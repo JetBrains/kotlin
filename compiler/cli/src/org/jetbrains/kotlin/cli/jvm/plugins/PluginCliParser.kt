@@ -23,9 +23,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.plugins.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportException
+import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.jetbrains.kotlin.utils.graalvm.BundledCompilerPlugins
+import org.jetbrains.kotlin.utils.graalvm.BundledPluginInfo
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import java.lang.ref.WeakReference
@@ -96,16 +99,69 @@ object PluginCliParser {
         pluginOrderConstraints: Collection<String>,
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
-    ): ExitCode {
-        try {
-            // Parse order constraints before creating class loaders and loading services.
-            val orderConstraints = pluginOrderConstraints.map { rawConstraint ->
-                extractPluginOrderConstraint(rawConstraint)
-                    ?: throw PluginProcessingException("Could not parse plugin order constraint: $rawConstraint")
-            }
+    ): ExitCode = loadPluginsSafe(configuration) {
+        // Parse order constraints before creating class loaders and loading services.
+        val orderConstraints = pluginOrderConstraints.map { rawConstraint ->
+            extractPluginOrderConstraint(rawConstraint)
+                ?: throw PluginProcessingException("Could not parse plugin order constraint: $rawConstraint")
+        }
 
-            loadPluginsLegacyStyle(pluginClasspaths, orderConstraints, pluginOptions, configuration, parentDisposable)
-            loadPluginsModernStyle(pluginConfigurations, orderConstraints, configuration, parentDisposable)
+        loadPluginsLegacyStyle(pluginClasspaths, orderConstraints, pluginOptions, configuration, parentDisposable)
+        loadPluginsModernStyle(pluginConfigurations, orderConstraints, configuration, parentDisposable)
+    }
+
+    /**
+     * Loads native image-bundled compiler plugins from the given configurations/classpaths
+     */
+    internal fun loadBundledCompilerPlugins(
+        pluginConfigurations: List<String>,
+        pluginOptions: List<String>,
+        pluginClasspaths: List<String>,
+        pluginOrderConstraints: List<String>,
+        configuration: CompilerConfiguration,
+    ): ExitCode = loadPluginsSafe(configuration) {
+        val [requestedBundledPlugins, nonBundledPlugins] = findRequestedBundledPlugins(
+            pluginConfigurations,
+            pluginClasspaths,
+            pluginOptions
+        )
+
+        if (nonBundledPlugins.isNotEmpty()) {
+            configuration.report(
+                COMPILER_ARGUMENTS_ERROR,
+                "Compiler plugin(s) cannot be loaded by the native-image compiler: ${nonBundledPlugins.joinToString("\n")}. " +
+                        "Only bundled plugins are supported. " +
+                        "Bundled plugins: ${BundledCompilerPlugins.pluginInfos.joinToString { it.pluginId }}."
+            )
+        }
+
+        val pluginsById = requestedBundledPlugins.associateBy { it.id }
+        val orderConstraints = pluginOrderConstraints.map { rawConstraint ->
+            extractPluginOrderConstraint(rawConstraint)
+                ?: throw PluginProcessingException("Could not parse plugin order constraint: $rawConstraint")
+        }
+        val dependenciesById = orderConstraints
+            .filter { it.before in pluginsById && it.after in pluginsById }
+            .groupBy(keySelector = { it.after }, valueTransform = { it.before })
+
+        val orderedPluginIds = topologicalSort(
+            nodes = pluginsById.keys,
+            reportCycle = {
+                throw PluginProcessingException(
+                    "Compiler plugin '${it}' is part of an constraint cycle: ${orderConstraints.joinToString(", ")}"
+                )
+            },
+            dependencies = { dependenciesById[this].orEmpty() }
+        ).asReversed()
+
+        for (plugin in orderedPluginIds) {
+            loadBundledPlugin(pluginsById[plugin]!!.info, pluginsById[plugin]!!.options, configuration)
+        }
+    }
+
+    private fun loadPluginsSafe(configuration: CompilerConfiguration, action: () -> Unit): ExitCode {
+        try {
+            action()
             return ExitCode.OK
         } catch (e: PluginProcessingException) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, e.message!!)
@@ -121,7 +177,6 @@ object PluginCliParser {
     }
 
     class RegisteredPluginInfo(
-        @Suppress("DEPRECATION_ERROR") val componentRegistrar: ComponentRegistrar?,
         val compilerPluginRegistrar: CompilerPluginRegistrar?,
         val commandLineProcessor: CommandLineProcessor?,
         val pluginOptions: List<CliOptionValue>,
@@ -137,7 +192,6 @@ object PluginCliParser {
 
         val pluginInfos = pluginConfigurations.map { pluginConfiguration ->
             val classLoader = createClassLoader(pluginConfiguration.classpath, parentDisposable)
-            val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
             val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
 
             fun multiplePluginsErrorMessage(pluginObjects: List<Any>): String {
@@ -149,10 +203,10 @@ object PluginCliParser {
                 }
             }
 
-            when (componentRegistrars.size + compilerPluginRegistrars.size) {
+            when (compilerPluginRegistrars.size) {
                 0 -> throw PluginProcessingException("No plugins found in given classpath: ${pluginConfiguration.classpath.joinToString(",")}")
                 1 -> {}
-                else -> throw PluginProcessingException(multiplePluginsErrorMessage(componentRegistrars + compilerPluginRegistrars))
+                else -> throw PluginProcessingException(multiplePluginsErrorMessage(compilerPluginRegistrars))
             }
 
             val commandLineProcessors = ServiceLoaderLite.loadImplementations(CommandLineProcessor::class.java, classLoader)
@@ -171,7 +225,6 @@ object PluginCliParser {
             }
 
             RegisteredPluginInfo(
-                componentRegistrars.firstOrNull(),
                 compilerPluginRegistrar,
                 commandLineProcessor,
                 pluginConfiguration.options
@@ -208,16 +261,81 @@ object PluginCliParser {
     ) {
         val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations, orderConstraints, parentDisposable)
         for (pluginInfo in pluginInfos) {
-            pluginInfo.componentRegistrar?.let {
-                @Suppress("DEPRECATION_ERROR")
-                configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, it)
-            }
             pluginInfo.compilerPluginRegistrar?.let { configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, it) }
 
             if (pluginInfo.pluginOptions.isEmpty()) continue
             val commandLineProcessor = pluginInfo.commandLineProcessor ?: throw RuntimeException() // TODO: proper exception
             processCompilerPluginOptions(commandLineProcessor, pluginInfo.pluginOptions, configuration)
         }
+    }
+
+    private class RequestedBundledPluginInfo(
+        val id: String,
+        val info: BundledPluginInfo,
+        val options: List<CliOptionValue>,
+    )
+
+    /**
+     * Parses the [pluginConfigurations] and [pluginClasspaths] and returns a list of
+     * bundled plugins that are requested in them correspondingly. As a second parameter
+     * returns a list of non-bundled plugins that were requested to register.
+     */
+    private fun findRequestedBundledPlugins(
+        pluginConfigurations: List<String>,
+        pluginClasspaths: List<String>,
+        pluginOptions: List<String>,
+    ): Pair<List<RequestedBundledPluginInfo>, List<String>> {
+        val bundledPlugins = mutableListOf<RequestedBundledPluginInfo>()
+        val nonBundledPlugins = mutableListOf<String>()
+
+        fun register(info: BundledPluginInfo?, configuration: String, options: List<CliOptionValue>) {
+            if (info == null) {
+                nonBundledPlugins += configuration
+                return
+            }
+            bundledPlugins += RequestedBundledPluginInfo(info.pluginId, info, options)
+        }
+
+        for (pluginConfiguration in pluginConfigurations) {
+            val [_, classpath, options] = extractPluginClasspathAndOptions(pluginConfiguration)
+            val info = classpath.firstNotNullOfOrNull { BundledCompilerPlugins.lookupByClasspathEntry(it) }
+            register(info, pluginConfiguration, options)
+        }
+
+        for (classpath in pluginClasspaths) {
+            val info = BundledCompilerPlugins.lookupByClasspathEntry(classpath)
+            val options = pluginOptions.mapNotNull { parseLegacyPluginOption(it) }.filter { it.pluginId == info?.pluginId }
+            register(info, classpath, options)
+        }
+
+        return bundledPlugins to nonBundledPlugins
+    }
+
+    /**
+     * Loads the bundled plugin's registrar from the current classloader and
+     * provides the user-provided options if there are any
+     */
+    private fun loadBundledPlugin(
+        info: BundledPluginInfo,
+        options: List<CliOptionValue>,
+        configuration: CompilerConfiguration,
+    ) {
+        val classLoader = PluginCliParser::class.java.classLoader
+        val registrar = try {
+            classLoader.loadClass(info.pluginRegistrarFqName).getDeclaredConstructor().newInstance() as CompilerPluginRegistrar
+        } catch (e: Throwable) {
+            throw PluginProcessingException("Could not create '${info.pluginRegistrarFqName}' plugin registrar.", e)
+        }
+
+        configuration.reportInfo("Loading bundled compiler plugin '${info.pluginId}'.")
+        configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, registrar)
+
+        if (options.isEmpty()) return
+        val commandLineProcessor = info.commandLineProcessorFqName?.let {
+            classLoader.loadClass(it).getDeclaredConstructor().newInstance() as? CommandLineProcessor
+                ?: throw IllegalStateException("Could not instantiate $it")
+        } ?: return
+        processCompilerPluginOptions(commandLineProcessor, options, configuration)
     }
 
     @JvmStatic
@@ -230,9 +348,6 @@ object PluginCliParser {
         parentDisposable: Disposable,
     ) {
         val classLoader = createClassLoader(pluginClasspaths ?: emptyList(), parentDisposable)
-        val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
-        configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
-
         val compilerPluginRegistrars = ServiceLoaderLite.loadImplementations(CompilerPluginRegistrar::class.java, classLoader)
 
         val registrarsById = compilerPluginRegistrars

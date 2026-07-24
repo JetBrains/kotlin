@@ -89,6 +89,12 @@ public class FirSourceLikeContextCollectionTestGenerated extends AbstractFirSour
   }
 
   @Test
+  @TestMetadata("companionBlockDanglingModifier.kt")
+  public void testCompanionBlockDanglingModifier() {
+    run("companionBlockDanglingModifier.kt");
+  }
+
+  @Test
   @TestMetadata("constructorParameter.kt")
   public void testConstructorParameter() {
     run("constructorParameter.kt");

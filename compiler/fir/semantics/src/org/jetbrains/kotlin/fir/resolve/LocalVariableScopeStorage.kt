@@ -33,7 +33,7 @@ class LocalVariableScopeStorage private constructor(
     constructor() : this(persistentMapOf())
 
     fun addLocalVariable(symbol: FirVariableSymbol<*>): LocalVariableScopeStorage {
-        return LocalVariableScopeStorage(map.put(symbol, mutableMapOf()))
+        return LocalVariableScopeStorage(map.putting(symbol, mutableMapOf()))
     }
 
     context(c: SessionAndScopeSessionHolder)

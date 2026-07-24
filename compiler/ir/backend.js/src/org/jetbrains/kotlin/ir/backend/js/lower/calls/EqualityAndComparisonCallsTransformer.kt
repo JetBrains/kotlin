@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -233,7 +234,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         isBuiltin() && this != PrimitiveType.FLOATING_POINT_NUMBER
 
     private fun IrType.isDefaultEqualsMethod() =
-        isChar() || findEqualsMethod()?.origin === IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+        isChar() || findEqualsMethod()?.origin === IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
 
     private fun IrExpression.isBoxIntrinsic() =
         this is IrCall && symbol == icUtils.boxIntrinsic
@@ -247,8 +248,8 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun optimizeInlineClassEquality(call: IrFunctionAccessExpression, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val (lhsUnboxed, lhsClassType) = lhs.unboxParamWithInlinedClass()
-        val (rhsUnboxed, rhsClassType) = rhs.unboxParamWithInlinedClass()
+        val [lhsUnboxed, lhsClassType] = lhs.unboxParamWithInlinedClass()
+        val [rhsUnboxed, rhsClassType] = rhs.unboxParamWithInlinedClass()
         if (lhsClassType !== null && lhsClassType === rhsClassType && lhsUnboxed.type.isDefaultEqualsMethod()) {
             call.arguments[0] = lhsUnboxed
             call.arguments[1] = rhsUnboxed

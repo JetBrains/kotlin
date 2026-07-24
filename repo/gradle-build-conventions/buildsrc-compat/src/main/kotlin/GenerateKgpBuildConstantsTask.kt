@@ -72,6 +72,8 @@ abstract class GenerateKgpBuildConstantsTask internal constructor() : DefaultTas
                 )
 
                 configure.execute(this)
+            }.also {
+                registerInAggregateGenerateSources(TASK_NAME)
             }
     }
 }

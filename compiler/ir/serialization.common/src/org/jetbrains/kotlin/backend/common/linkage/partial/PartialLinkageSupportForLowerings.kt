@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierExplorer.Companion.classifierLinkageStatusCache
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -44,6 +45,7 @@ interface PartialLinkageSupportForLowerings {
         significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
     ): String
 
+    context(irBuiltIns: IrBuiltIns)
     fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
@@ -61,6 +63,7 @@ interface PartialLinkageSupportForLowerings {
                 significance: PartialLinkageIssueSignificance,
             ): String = error("Should not be called")
 
+            context(irBuiltIns: IrBuiltIns)
             override fun throwLinkageError(
                 partialLinkageCase: PartialLinkageCase,
                 element: IrElement,

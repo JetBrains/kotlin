@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // FULL_JDK
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import java.lang.reflect.Modifier
 

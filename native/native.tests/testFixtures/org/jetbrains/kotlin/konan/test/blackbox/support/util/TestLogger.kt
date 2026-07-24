@@ -21,7 +21,10 @@ internal object TestLogger {
 
     fun initialize() {
         synchronized(mutex) {
-            check(wrappedLogger == null) { "An attempt to re-initialize ${TestLogger::class.java}" }
+            // Tolerate double initialization: the JUnit Platform's NamespacedHierarchicalStore.getOrComputeIfAbsent
+            // does not always invoke its factory exactly once under the project's parallel custom grouping engine
+            // (see junit-team/junit-framework#5171), so this method may be called more than once per JVM.
+            if (wrappedLogger != null) return
 
             val logManager: LogManager = LogManager.getLogManager()
             TestLogger::class.java.getResourceAsStream(CONFIG_FILE)?.let(logManager::readConfiguration)

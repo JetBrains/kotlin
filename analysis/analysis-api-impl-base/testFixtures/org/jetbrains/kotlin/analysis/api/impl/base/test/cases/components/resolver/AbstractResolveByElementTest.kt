@@ -1,23 +1,41 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.psi.KtDeclarationModifierList
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFileAnnotationList
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.apply {
+            useDirectives(Directives)
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
+                defaultDirectives {
+                    +Directives.BOTTOMMOST_ELEMENT
+                    +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
+                }
+            }
+
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/stdlib/*") {
+                defaultDirectives {
+                    +ConfigurationDirectives.WITH_STDLIB
+                }
+            }
+        }
+    }
+
     final override fun generateResolveOutput(
         context: ResolveTestCaseContext<KtElement>,
         file: KtFile,
@@ -33,7 +51,7 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         testServices: TestServices,
     ): Collection<ResolveTestCaseContext<KtElement>> {
         val carets = testServices.expressionMarkerProvider.getAllCarets(file)
-        if (carets.size > 1) {
+        if (carets.size > 1 || carets.isNotEmpty() && Directives.BOTTOMMOST_ELEMENT in module.testModule.directives) {
             return carets.map {
                 val element = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(file, it.qualifier)
                 ResolveKtElementTestCaseContext(element = element, marker = it.tagText)
@@ -74,5 +92,11 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
                 add(ResolveKtElementTestCaseContext(element = element, marker = null))
             }
         }
+    }
+
+    protected object Directives : SimpleDirectivesContainer() {
+        val BOTTOMMOST_ELEMENT by directive(
+            "Forces the test to search for the bottommost element at the caret position"
+        )
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.DebugInfoDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 
+@K1Deprecation
 class CheckerDebugInfoReporter(
     private val dynamicCallDescriptors: MutableList<DeclarationDescriptor>,
     private val markDynamicCalls: Boolean,

@@ -1,0 +1,19 @@
+/test.kt:18:11: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:19:11: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:26:7: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:28:7: warning: '!=' on arrays compares only references. Replace '!=' with '!contentEquals' to compare the arrays' contents or use '!==' to remove the warning.
+
+/test.kt:33:43: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:36:43: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:39:43: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:42:43: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:45:7: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.
+
+/test.kt:51:14: warning: '==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use '===' to remove the warning.

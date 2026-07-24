@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 
-internal sealed class ReportedDiagnostic(val severity: ToolingDiagnostic.Severity) {
+internal sealed class ReportedDiagnostic(val severity: KotlinToolingDiagnosticsSeverity) {
     class Message(
-        severity: ToolingDiagnostic.Severity
+        severity: KotlinToolingDiagnosticsSeverity,
     ) : ReportedDiagnostic(severity)
 
     class Throwable(
-        severity: ToolingDiagnostic.Severity,
+        severity: KotlinToolingDiagnosticsSeverity,
         val throwable: KotlinDiagnosticsException,
     ) : ReportedDiagnostic(severity)
 }
@@ -75,7 +75,7 @@ private fun ToolingDiagnostic.render(
     renderingOptions: ToolingDiagnosticRenderingOptions,
     showStacktrace: Boolean = renderingOptions.showStacktrace,
     coloredOutput: Boolean = renderingOptions.coloredOutput,
-    effectiveSeverity: ToolingDiagnostic.Severity = severity
+    effectiveSeverity: KotlinToolingDiagnosticsSeverity = severity,
 ): String = buildString {
     with(renderingOptions) {
         val diagnosticOutput = if (coloredOutput)

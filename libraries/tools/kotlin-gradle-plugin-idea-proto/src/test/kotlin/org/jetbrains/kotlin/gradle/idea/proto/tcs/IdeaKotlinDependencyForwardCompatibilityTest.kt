@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinDependencySerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.reflect.KProperty0
 import kotlin.test.assertEquals
 import kotlin.test.fail

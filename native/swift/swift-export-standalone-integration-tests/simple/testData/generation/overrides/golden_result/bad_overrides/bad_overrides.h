@@ -3,13 +3,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int32_t weird_A_bar_get__reverse_swift(void * self);
+
+_Bool weird_A_throws__reverse_swift(void * self);
+
 int32_t weird_A_bar_get(void * self);
+
+int32_t weird_A_bar_get_direct(void * self);
 
 void * weird_A_init_allocate();
 
 _Bool weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt, void *_Nullable * _Nonnull __error);
 
 _Bool weird_A_throws(void * self, void *_Nullable * _Nonnull _out_error);
+
+_Bool weird_A_throws_direct(void * self, void *_Nullable * _Nonnull _out_error);
 
 _Bool weird_B_bar_get(void * self) __attribute((noreturn));
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifierListOwner
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -66,7 +65,7 @@ private class ExternalAnnotationsManagerForTests(
     externalAnnotationsRootPath: String,
     manager: PsiManager,
 ) : BaseExternalAnnotationsManager(manager) {
-    private val externalAnnotationsRoots: List<VirtualFile> by lazyPub {
+    private val externalAnnotationsRoots: List<VirtualFile> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         VirtualFileManager.getInstance()
             .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
             .findFileByPath(externalAnnotationsRootPath)

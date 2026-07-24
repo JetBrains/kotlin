@@ -62,6 +62,7 @@ internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerE
     val compilerContext: SharedScriptCompilationContext
     val packagePartProvider: PackagePartProvider
     val sessionFactoryContext: FirJvmSessionFactory.Context
+    fun updateContext(configuration: CompilerConfiguration)
 }
 
 internal open class K2ScriptingCompilerEnvironmentImpl(
@@ -76,8 +77,18 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
     override val extensionRegistrars: List<FirExtensionRegistrar>,
     override val sharedLibrarySession: FirSession,
     override var dummySessionForAnnotationResolution: FirSession?,
-    override val sessionFactoryContext: FirJvmSessionFactory.Context
-) : K2ScriptingCompilerEnvironmentInternal
+    override var sessionFactoryContext: FirJvmSessionFactory.Context
+) : K2ScriptingCompilerEnvironmentInternal {
+
+    override fun updateContext(configuration: CompilerConfiguration) {
+        val previous = sessionFactoryContext
+        sessionFactoryContext = FirJvmSessionFactory.Context(
+            configuration = configuration,
+            projectEnvironment = previous.projectEnvironment,
+            librariesScope = previous.librariesScope,
+        )
+    }
+}
 
 open class ScriptingModuleDataProvider(private val baseName: String, baseLibraryPaths: List<Path>) : ModuleDataProvider() {
 
@@ -101,7 +112,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
 
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.normalize()
-        for ((moduleData, filter) in moduleDataWithFilters.entries) {
+        for ([moduleData, filter] in moduleDataWithFilters.entries) {
             if (filter.accepts(normalizedPath)) {
                 return moduleData
             }
@@ -118,14 +129,17 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         return newDependenciesModuleData to newLibraryPaths
     }
 
-    fun addNewScriptModuleData(name: Name): FirModuleData =
+    /**
+     * [isDummy] should be set to true for the module data that should be excluded from the history, e.g. in the session for annotation resolution
+     */
+    fun addNewScriptModuleData(name: Name, isDummy: Boolean = false): FirModuleData =
         FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() }.asReversed(),
             dependsOnDependencies = emptyList(),
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
-        ).also { moduleDataHistory.add(it) }
+        ).also { if (!isDummy) moduleDataHistory.add(it) }
 }
 
 fun createIsolatedCompilerState(

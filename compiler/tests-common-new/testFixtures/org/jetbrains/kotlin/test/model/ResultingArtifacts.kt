@@ -22,10 +22,7 @@ class JvmClassFileArtifact(val classFileFactory: ClassFileFactory, val fileInfos
 
 class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : BinaryArtifacts.Js()
 
-class JsTypeScriptArtifact(override val outputFile: File) : BinaryArtifacts.Js() {
-    override val dtsFile: File
-        get() = outputFile
-}
+class JsTypeScriptArtifact(override val outputFile: File) : BinaryArtifacts.Js()
 
 data class IncrementalJsArtifact(val originalArtifact: BinaryArtifacts.Js, val recompiledArtifact: BinaryArtifacts.Js) : BinaryArtifacts.Js() {
     override val outputFile: File

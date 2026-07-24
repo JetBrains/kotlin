@@ -460,8 +460,6 @@ abstract class TypeCheckerStateForConstraintSystem(
 
             if (!subType.typeConstructor().isIntersection()) return null
 
-            assert(!subType.isMarkedNullable()) { "Intersection type should not be marked nullable!: $subType" }
-
             // TODO: may be we lose flexibility here
             val subIntersectionTypes = (subType.typeConstructor().supertypes()).map { it.lowerBoundIfFlexible() }
 

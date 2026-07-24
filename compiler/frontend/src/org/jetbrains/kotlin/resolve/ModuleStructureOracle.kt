@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 @DefaultImplementation(ModuleStructureOracle.SingleModule::class)
+@K1Deprecation
 interface ModuleStructureOracle {
     // May be faster than `findAllReversedDependsOnPaths(module).isNotEmpty()`
     fun hasImplementingModules(module: ModuleDescriptor): Boolean
@@ -31,6 +33,7 @@ interface ModuleStructureOracle {
     }
 }
 
+@K1Deprecation
 class ModulePath(val nodes: List<ModuleDescriptor>) {
     constructor(vararg nodes: ModuleDescriptor) : this(nodes.toList())
 }

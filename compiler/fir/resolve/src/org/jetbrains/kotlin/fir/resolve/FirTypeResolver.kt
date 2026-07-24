@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -34,6 +35,11 @@ abstract class FirTypeResolver : FirSessionComponent {
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
     ): CallableReferenceLhsAsType?
+
+    abstract fun resolveEqualityBoundTypeOrNull(
+        getClassLhs: FirExpression,
+        configuration: TypeResolutionConfiguration,
+    ): ConeKotlinType?
 }
 
 class TypeResolutionConfiguration private constructor(

@@ -14,6 +14,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
@@ -133,7 +134,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     @get:Internal
     internal abstract val runViaBuildToolsApi: Property<Boolean>
 
-    @get:Internal
+    @get:Input
     internal abstract val generateCompilerRefIndex: Property<Boolean>
 
     protected fun validateCompilerClasspath() {

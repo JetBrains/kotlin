@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.serialization.deserialization.builtins
 
 import java.io.InputStream
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 class BuiltInsResourceLoader {
     fun loadResource(path: String): InputStream? {
         val classLoader = this::class.java.classLoader ?: return ClassLoader.getSystemResourceAsStream(path)

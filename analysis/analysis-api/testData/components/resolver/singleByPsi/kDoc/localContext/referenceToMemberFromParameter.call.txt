@@ -1,2 +1,2 @@
-KtParameter(13,58): '/**'
+KDocName(24,27): 'foo'
   null

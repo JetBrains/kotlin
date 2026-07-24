@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.name;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import java.util.List;
 public class FqNameTest {
     @Test
     public void pathSegments() {
-        Assert.assertEquals(new ArrayList<Name>(), new FqName("").pathSegments());
+        Assertions.assertEquals(new ArrayList<Name>(), new FqName("").pathSegments());
 
         for (String name : new String[] {"org", "org.jetbrains", "org.jetbrains.kotlin"}) {
             List<Name> segments = new FqName(name).pathSegments();
@@ -34,48 +34,48 @@ public class FqNameTest {
             for (Name segment : segments) {
                 segmentsStrings.add(segment.asString());
             }
-            Assert.assertEquals(Arrays.asList(name.split("\\.")), segmentsStrings);
+            Assertions.assertEquals(Arrays.asList(name.split("\\.")), segmentsStrings);
         }
     }
 
     @Test
     public void safeUnsafe() {
         FqName fqName = new FqName("com.yandex");
-        Assert.assertSame(fqName, fqName.toUnsafe().toSafe());
+        Assertions.assertSame(fqName, fqName.toUnsafe().toSafe());
     }
 
     @Test
     public void unsafeSafe() {
         FqNameUnsafe fqName = new FqNameUnsafe("ru.yandex");
-        Assert.assertSame(fqName, fqName.toSafe().toUnsafe());
+        Assertions.assertSame(fqName, fqName.toSafe().toUnsafe());
     }
 
     @Test
     public void isValidJavaFqName() {
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName(""));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a1"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a.a"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.jetbrains"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("$"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("_"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.A$B"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("晴れの日"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName(""));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("a"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("a1"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("a.a"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.jetbrains"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("$"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("_"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.A$B"));
+        Assertions.assertTrue(FqNamesUtilKt.isValidJavaFqName("晴れの日"));
 
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(" "));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(" a"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a "));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("1"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("1a"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("."));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(".."));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a."));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(".a"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a..b"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b.."));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b."));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b...)"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b.<special>"));
-        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("😀"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName(" "));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName(" a"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a "));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("1"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("1a"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("."));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName(".."));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a."));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName(".a"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a..b"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b.."));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b."));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b...)"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b.<special>"));
+        Assertions.assertFalse(FqNamesUtilKt.isValidJavaFqName("😀"));
     }
 }

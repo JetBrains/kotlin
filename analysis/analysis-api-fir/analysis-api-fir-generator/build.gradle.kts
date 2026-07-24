@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
 }
@@ -25,6 +28,23 @@ dependencies {
 
 application {
     mainClass.set("org.jetbrains.kotlin.analysis.api.fir.generator.MainKt")
+}
+
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+            "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
+            "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
+        )
+    )
 }
 
 sourceSets {

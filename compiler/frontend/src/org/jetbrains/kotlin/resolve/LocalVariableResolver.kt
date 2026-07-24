@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
+@K1Deprecation
 class LocalVariableResolver(
     private val modifiersChecker: ModifiersChecker,
     private val identifierChecker: IdentifierChecker,

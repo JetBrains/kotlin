@@ -10,6 +10,8 @@ bin/kotlinc-jvm.bat
 bin/kotlinc-wasm
 bin/kotlinc-wasm.bat
 bin/kotlinc.bat
+bin/kotlinr
+bin/kotlinr.bat
 build.txt
 lib/allopen-compiler-plugin.jar
 lib/annotations-13.0.jar
@@ -47,6 +49,7 @@ lib/kotlin-stdlib-js-sources.jar
 lib/kotlin-stdlib-js.klib
 lib/kotlin-stdlib-sources.jar
 lib/kotlin-stdlib-wasm-js.klib
+lib/kotlin-stdlib-wasm-wasi.klib
 lib/kotlin-stdlib.jar
 lib/kotlin-test-js-sources.jar
 lib/kotlin-test-js.klib
@@ -103,6 +106,7 @@ license/third_party/maven_LICENSE.txt
 license/third_party/mocha-teamcity-reporter_LICENSE.txt
 license/third_party/okhttp_license.txt
 license/third_party/opentelemetry_license.txt
+license/third_party/playwright_license.txt
 license/third_party/power_assert_license.txt
 license/third_party/protobuf_license.txt
 license/third_party/prototype_license.txt

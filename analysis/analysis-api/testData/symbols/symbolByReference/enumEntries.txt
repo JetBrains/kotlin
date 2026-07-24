@@ -1,14 +1,15 @@
 KaKotlinPropertySymbol:
+  anchorPsi: KtClass
   annotations: []
   backingFieldSymbol: null
   callableId: /MyKotlinEnum.entries
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: KtClass
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -22,6 +23,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
+    psi: KtClass
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -32,12 +35,13 @@ KaKotlinPropertySymbol:
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(enumEntries.kt)
     getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -46,11 +50,10 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: true
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: true
@@ -59,6 +62,9 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: entries
   origin: SOURCE_MEMBER_GENERATED
+  primaryConstructorParameter: null
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -75,7 +81,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(enumEntries.kt)
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getEntries
   javaSetterName: null
   isInline: false

@@ -1,0 +1,12 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirErrorNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<Unresolved name: unaryPlus (+)>#
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryPlusStringLiteral_lhs.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        String(str).<Unresolved name: unaryPlus (+)>#()
+    }

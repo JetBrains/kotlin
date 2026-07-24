@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental.testingUtils
@@ -23,25 +12,19 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
-import org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.protobuf.ExtensionRegistry
-import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
-import org.junit.Assert
-import org.junit.Assert.assertNotNull
-import org.junit.ComparisonFailure
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.opentest4j.AssertionFailedError
 import java.io.*
 import java.util.*
 import java.util.zip.CRC32
-import java.util.zip.GZIPInputStream
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -76,7 +59,7 @@ fun assertEqualDirectories(
     val actualString = getDirectoryString(actual, changedPaths, filter)
 
     if (DUMP_ALL) {
-        Assert.assertEquals(expectedString, actualString + " ")
+        Assertions.assertEquals(expectedString, actualString + " ")
     }
 
     if (forgiveExtraFiles) {
@@ -92,7 +75,7 @@ fun assertEqualDirectories(
 
     if (expectedString != actualString) {
         val message: String? = null
-        throw ComparisonFailure(
+        throw AssertionFailedError(
             message,
             expectedString.replaceFirst(DIR_ROOT_PLACEHOLDER, expected.absolutePath),
             actualString.replaceFirst(DIR_ROOT_PLACEHOLDER, actual.absolutePath)
@@ -122,7 +105,7 @@ private fun getDirectoryString(
         p.pushIndent()
 
         val listFiles = dir.listFiles()?.filter(predicate)
-        assertNotNull("$dir does not exist", listFiles)
+        assertNotNull(listFiles, "$dir does not exist")
 
         val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))
         for (child in children) {
@@ -207,41 +190,6 @@ private fun classFileToString(classFile: File): String {
     return out.toString()
 }
 
-private fun metaJsToString(metaJsFile: File): String {
-    val out = StringWriter()
-
-    val metadataList = arrayListOf<KotlinJavascriptMetadata>()
-    KotlinJavascriptMetadataUtils.parseMetadata(metaJsFile.readText(), metadataList)
-
-    for (metadata in metadataList) {
-        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata.body)).use { stream ->
-            DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
-                    DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
-        }
-        out.write("\n------ header -----\n$header")
-        out.write("\n------ library -----\n$content")
-    }
-
-    return out.toString()
-}
-
-private fun kjsmToString(kjsmFile: File): String {
-    val out = StringWriter()
-
-    val stream = DataInputStream(kjsmFile.inputStream())
-    // Read and skip the metadata version
-    repeat(stream.readInt()) { stream.readInt() }
-
-    val (header, content) =
-            DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
-                    DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
-
-    out.write("\n------ header -----\n$header")
-    out.write("\n------ library -----\n$content")
-
-    return out.toString()
-}
-
 private fun sourceMapFileToString(sourceMapFile: File, generatedJsFile: File): String {
     val sourceMapParseResult = SourceMapParser.parse(sourceMapFile.readText())
     return when (sourceMapParseResult) {
@@ -268,12 +216,6 @@ private fun fileToStringRepresentation(file: File): String {
     return when {
         file.name.endsWith(".class") -> {
             classFileToString(file)
-        }
-        file.name.endsWith(KotlinJavascriptMetadataUtils.META_JS_SUFFIX) -> {
-            metaJsToString(file)
-        }
-        file.name.endsWith(KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION) -> {
-            kjsmToString(file)
         }
         file.name.endsWith(".js.map") -> {
             val generatedJsPath = file.absolutePath.removeSuffix(".map")

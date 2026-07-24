@@ -4,6 +4,9 @@ import org.gradle.internal.jvm.Jvm
 description = "Kotlin \"main\" script definition"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -14,7 +17,7 @@ val localPackagesToRelocate =
         "kotlinx.coroutines"
     )
 
-val proguardLibraryJars by configurations.creating {
+val proguardLibraryJars = configurations.create("proguardLibraryJars") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
@@ -47,7 +50,10 @@ dependencies {
     proguardLibraryJars(project(":kotlin-compiler"))
 
     testImplementation(project(":kotlin-scripting-dependencies"))
-    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -57,10 +63,8 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
 val embeddedConfiguration = configurations.named("embedded")
-val relocatedJar by task<ShadowJar> {
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
     configurations.set(setOf(embeddedConfiguration.get()))
     from(mainSourceSet.output)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -77,7 +81,7 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val proguard = tasks.register<CacheableProguardTask>("proguard") {
     dependsOn(relocatedJar)
     configuration("main-kts.pro")
 
@@ -111,7 +115,7 @@ val proguard by task<CacheableProguardTask> {
     )
 }
 
-val resultJar by task<Jar> {
+val resultJar = tasks.register<Jar>("resultJar") {
     val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
@@ -123,3 +127,7 @@ val resultJar by task<Jar> {
 setPublishableArtifact(resultJar)
 sourcesJar()
 javadocJar()
+
+tasks.test {
+    useJUnitPlatform()
+}

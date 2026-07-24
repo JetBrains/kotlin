@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.file.File
+import java.io.File
 
 internal object Android {
     const val API = "21"
@@ -133,14 +133,6 @@ sealed class ClangArgs(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
 
-       KonanTarget.WATCHOS_ARM32 -> listOf(
-                // Force generation of ARM instruction set instead of Thumb-2.
-                // It allows LLVM ARM backend to encode bigger offsets in BL instruction,
-                // thus allowing to generate a slightly bigger binaries.
-                // See KT-37368.
-                "-marm"
-        )
-
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
             val clangTarget = targetTriple.withoutVendor()
@@ -238,14 +230,18 @@ sealed class ClangArgs(
     /**
      * Should be used when compiling library for JNI.
      * For example, it is used for Kotlin/Native's Clang and LLVM libraries.
+     *
+     * Keep in sync with NativePlugin.kt
      */
     class Jni(configurables: Configurables) : ClangArgs(configurables, forJni = true) {
         private val jdkDir by lazy {
-            val home = File.javaHome.absoluteFile
-            if (home.child("include").exists)
-                home.absolutePath
-            else
-                home.parentFile.absolutePath
+            val home = File(System.getProperty("java.home")).canonicalFile
+            val parent = home.parentFile
+            val javaHome = System.getenv("JAVA_HOME")?.let(::File)
+
+            listOfNotNull(home, parent, javaHome)
+                .firstOrNull { it.resolve("include").exists() }?.absolutePath
+                ?: error("JNI headers not found")
         }
 
         val hostCompilerArgsForJni: Array<String> by lazy {

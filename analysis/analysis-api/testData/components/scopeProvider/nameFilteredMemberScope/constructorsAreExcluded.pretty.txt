@@ -1,0 +1,10 @@
+declarations:
+  fun foo()
+  val C: kotlin.Int
+
+callables:
+  fun foo()
+  val C: kotlin.Int
+
+classifiers:
+  NO_SYMBOLS

@@ -1,11 +1,14 @@
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
 
-val scriptingTestDefinition by configurations.creating
+val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
 
 dependencies {
     testFixturesApi(project(":kotlin-scripting-jvm"))
@@ -15,6 +18,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:fir:tree"))
+    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(platform(libs.junit.bom))
@@ -50,7 +54,7 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
         workingDir = rootDir
     }
 

@@ -1,0 +1,12 @@
+MODULES: externalLib, userLib, main
+
+STEP 0:
+    libs: externalLib, userLib, main
+    dirty js modules: externalLib, userLib, main
+    dirty js files: externalLib/file1, externalLib/file2, userLib/file1, userLib/file2, main/m, main/m.export, main
+STEP 1:
+    libs: externalLib, userLib, main
+    dirty js modules <js>: externalLib
+    dirty js files <js>: externalLib/file2
+    dirty js modules <wasm>: externalLib, userLib, main
+    dirty js files <wasm>: externalLib/file2, userLib/file2, main/m

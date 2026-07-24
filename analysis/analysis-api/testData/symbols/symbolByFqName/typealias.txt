@@ -1,7 +1,7 @@
 KaTypeAliasSymbol:
+  anchorPsi: KtTypeAlias
   annotations: []
   classId: kotlin/DeepRecursiveFunctionBlock
-  compilerVisibility: Private
   expandedType: KaFunctionType:
     annotations: []
     typeArguments: [
@@ -29,9 +29,11 @@ KaTypeAliasSymbol:
   modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
+  psi: KtTypeAlias
+  realPsi: KtTypeAlias
   typeParameters: []
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: kotlin.DeepRecursiveFunctionBlock

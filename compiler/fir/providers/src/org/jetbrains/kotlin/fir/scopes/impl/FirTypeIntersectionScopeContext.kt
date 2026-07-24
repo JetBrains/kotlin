@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -82,7 +83,7 @@ class FirTypeIntersectionScopeContext(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
-        for ((symbol, substitution) in collectClassifiers(name)) {
+        for ([symbol, substitution] in collectClassifiers(name)) {
             processor(symbol, substitution)
         }
     }
@@ -140,12 +141,12 @@ class FirTypeIntersectionScopeContext(
             return emptyList()
         }
 
-        membersByScope.singleOrNull()?.let { (scope, members) ->
+        membersByScope.singleOrNull()?.let { [scope, members] ->
             return members.map { ResultOfIntersection.SingleMember(it, MemberWithBaseScope(it, scope)) }
         }
 
         val allMembersWithScope = membersByScope
-            .flatMap { (scope, members) -> members.map { MemberWithBaseScope(it, scope) } }
+            .flatMap { [scope, members] -> members.map { MemberWithBaseScope(it, scope) } }
             .distinctBy { it.member }
             .toMutableList()
 
@@ -182,13 +183,13 @@ class FirTypeIntersectionScopeContext(
                     },
                 )
             } else {
-                val (member, containingScope) = mostSpecific.first()
+                (val member, val containingScope = baseScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
         if (allMembersWithScope.isNotEmpty()) {
-            val (single, containingScope) = allMembersWithScope.single()
+            (val single = member, val containingScope = baseScope) = allMembersWithScope.single()
             result += ResultOfIntersection.SingleMember(single, allMembersWithScope.toList(), containingScope)
         }
 
@@ -362,6 +363,9 @@ class FirTypeIntersectionScopeContext(
             markAsOverride = true
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals)) {
+                setEqualityBoundTypeFromOverridden(mostSpecific, session)
+            }
         }
         return newSymbol
     }

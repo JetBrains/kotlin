@@ -18,15 +18,15 @@ fun intBinEq() {
 fun shortBinEq() {
     var x = 0.toShort()
     x <!NONE_APPLICABLE!>+=<!> 'a'
-    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.toByte()
-    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.toShort()
+    x += 1.<!ASSIGNMENT_TYPE_MISMATCH!>toByte<!>()
+    x += 1.<!ASSIGNMENT_TYPE_MISMATCH!>toShort<!>()
     x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1L
     x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1f
     x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.0
 
     x <!NONE_APPLICABLE!>*=<!> 'a'
-    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.toByte()
-    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.toShort()
+    x *= 1.<!ASSIGNMENT_TYPE_MISMATCH!>toByte<!>()
+    x *= 1.<!ASSIGNMENT_TYPE_MISMATCH!>toShort<!>()
     x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1L
     x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1f
     x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.0
@@ -45,7 +45,7 @@ fun overloading() {
     var y = A()
     x += y
     var z = B()
-    z <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> x
+    z += <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,

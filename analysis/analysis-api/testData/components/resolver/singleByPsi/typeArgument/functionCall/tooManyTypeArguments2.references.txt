@@ -1,7 +1,0 @@
-KtNameReferenceExpression(91,92): 'X'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in ROOT) interface X

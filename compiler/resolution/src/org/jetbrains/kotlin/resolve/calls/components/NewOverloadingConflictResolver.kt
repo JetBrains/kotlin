@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
+@K1Deprecation
 class NewOverloadingConflictResolver(
     builtIns: KotlinBuiltIns,
     module: ModuleDescriptor,
@@ -71,7 +73,7 @@ class NewOverloadingConflictResolver(
 
             var numDefaults = 0
             val valueArgumentToParameterType = HashMap<KotlinCallArgument, TypeWithConversion>()
-            for ((valueParameter, resolvedValueArgument) in resolvedCall.argumentMappingByOriginal) {
+            for ([valueParameter, resolvedValueArgument] in resolvedCall.argumentMappingByOriginal) {
                 if (resolvedValueArgument is ResolvedCallArgument.DefaultArgument) {
                     numDefaults++
                 } else {

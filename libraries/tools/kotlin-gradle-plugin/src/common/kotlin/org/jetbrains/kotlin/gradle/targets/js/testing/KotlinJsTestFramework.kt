@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.file.Directory
+import org.gradle.api.internal.tasks.testing.TestExecuter
+import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
@@ -23,7 +24,14 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
         launchOpts: ProcessLaunchOptions,
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
-    ): TCServiceMessagesTestExecutionSpec
+    ): TestExecutionSpec
+
+    /** Will be assigned to task property with @[org.gradle.api.tasks.Nested] annotation. So it must comply with its requirements */
+    val frameworkTaskInputs: Any?
+        get() = null
+
+    /**  */
+    fun createTestExecuter(): TestExecuter<*>? = null
 
     companion object
 }

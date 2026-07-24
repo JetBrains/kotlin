@@ -20,7 +20,7 @@ import java.io.File
 class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: Js) {
         if (info !is IncrementalJsArtifact) return
-        val (originalArtifact, incrementalArtifact) = info
+        (val originalArtifact, val incrementalArtifact = recompiledArtifact) = info
         when {
             originalArtifact is JsIrArtifact && incrementalArtifact is JsIrArtifact -> {
                 compareIrArtifacts(originalArtifact, incrementalArtifact)
@@ -56,7 +56,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 
         testServices.assertions.assertEquals(originalFilesToCheck.size, recompiledFilesToCheck.size)
 
-        for ((originalFile, recompiledFile) in originalFilesToCheck.zip(recompiledFilesToCheck)) {
+        for ([originalFile, recompiledFile] in originalFilesToCheck.zip(recompiledFilesToCheck)) {
             testServices.assertions.assertEquals(originalFile.name, recompiledFile.name)
 
             val originalOutput = FileUtil.loadFile(originalFile)

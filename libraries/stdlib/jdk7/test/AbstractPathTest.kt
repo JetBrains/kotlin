@@ -26,7 +26,7 @@ abstract class AbstractPathTest {
 
     @AfterTest
     fun cleanUp() {
-        for ((path, action) in cleanUpActions) {
+        for ([path, action] in cleanUpActions) {
             try {
                 action(path)
             } catch (e: Throwable) {

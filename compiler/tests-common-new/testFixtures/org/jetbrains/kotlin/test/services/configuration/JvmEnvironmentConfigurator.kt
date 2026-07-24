@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
+import com.intellij.util.currentJavaVersion
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -13,8 +14,8 @@ import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_P
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_NEW_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
@@ -146,8 +146,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+            TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
             TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
-                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+                runIf(currentJavaVersion() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
             }
         }
 
@@ -169,6 +170,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
+            TestJdkKind.FULL_JDK_VALHALLA -> null
             TestJdkKind.FULL_JDK -> null
         }
     }
@@ -197,7 +199,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
         register(ENHANCED_COROUTINES_DEBUGGING, JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
-        register(LINK_VIA_SIGNATURES_K1, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         register(USE_INLINE_SCOPES_NUMBERS, JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
@@ -227,6 +228,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
             TestJdkKind.FULL_JDK_21 -> {}
+            TestJdkKind.FULL_JDK_VALHALLA -> {}
             TestJdkKind.FULL_JDK -> {}
         }
 
@@ -322,7 +324,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             )
         )
         configuration.outputDirectory = outputDir
-        configuration.put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, ClassBuilderFactories.TEST)
+        configuration.put(JvmBackendPipelinePhase.customClassBuilderFactory, ClassBuilderFactories.TEST)
 
         configuration.addSourcesForDependsOnClosure(module, testServices)
     }

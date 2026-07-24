@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.test.frontend.fir
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.contentRoots
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -59,8 +58,10 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import kotlin.io.path.absolutePathString
 
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
@@ -85,7 +86,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
 
-        val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
+        val [moduleDataMap, moduleDataProvider] = initializeModuleData(sortedModules)
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -168,7 +169,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         moduleDataProvider: ModuleDataProvider,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        jvmSessionFactoryContext: FirJvmSessionFactory.Context?
+        jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         val targetPlatform = module.targetPlatform(testServices)
@@ -221,6 +222,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars,
                         languageVersionSettings,
                         jvmSessionFactoryContext,
+                        createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     ).also(::registerExtraComponents)
                 }
             }
@@ -252,7 +254,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     extensionRegistrars,
                 ).also(::registerExtraComponents)
             }
-            else -> error("Unsupported")
+            else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
         }
     }
 
@@ -268,12 +270,10 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         val project = compilerConfigurationProvider.getProject(module)
 
-        PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
-
         val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
         val keepNonKtFiles = FirDiagnosticsDirectives.HAS_CUSTOM_EXTENSION_FILES in module.directives
-        val (ktFiles, lightTreeFiles) = when (parser) {
+        val [ktFiles, lightTreeFiles] = when (parser) {
             FirParser.LightTree -> {
                 emptyMap<TestFile, KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(
                     module.files, keepNonKtFiles
@@ -305,7 +305,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             sessionConfigurator,
             jvmSessionFactoryContext,
             project,
-            ktFiles.values
+            ktFiles.values,
         )
 
         val firAnalyzerFacade = FirAnalyzerFacade(
@@ -360,20 +360,21 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         createJvmContext = { jvmSessionFactoryContext },
                         createJsContext = { FirJsSessionFactory.Context(configuration) }
                     ),
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
             targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
+                    PsiBasedProjectFileSearchScope(newModuleSearchScope(project, ktFiles)),
                     createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     configuration,
                     jvmSessionFactoryContext!!,
                     needRegisterJavaElementFinder = true,
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
+                    createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -390,7 +391,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleData,
                     extensionRegistrars,
                     configuration,
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator
                 ).also(::registerExtraComponents)
             }
@@ -402,7 +403,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
-            else -> error("Unsupported")
+            else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
         }
     }
 
@@ -424,7 +425,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         }
                         targetPlatform.isJs() -> {
                             val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             dependencies(runtimeKlibsPaths)
                             dependencies(transitiveLibraries.map { it.path })
                             friendDependencies(friendLibraries.map { it.path })
@@ -433,14 +434,14 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
                             val runtimeLibraryProviders = nativeEnvironmentConfigurator.getRuntimeLibraryProviders(mainModule)
 
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             val allPaths = (runtimeLibraryProviders.flatMap { it.getLibraryPaths() } + transitiveLibraries.map { it.path }).distinct()
                             val friendPaths = friendLibraries.map { it.path }
 
                             val loadedKlibs = KlibLoader { libraryPaths(allPaths) }.load().librariesStdlibFirst
-                            val (interopLibs, regularLibs) = loadedKlibs.partition { it.isCInteropLibrary() }
+                            val [interopLibs, regularLibs] = loadedKlibs.partition { it.isCInteropLibrary() }
 
-                            dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                            dependencies(regularLibs.map { it.path.absolutePathString() })
                             friendDependencies(friendPaths)
 
                             if (interopLibs.isNotEmpty()) {
@@ -448,7 +449,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                                     Name.special("<regular interop dependencies of $mainModuleName>"),
                                     FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                                 )
-                                this@build.dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                                this@build.dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
                             }
                         }
                         targetPlatform.isWasm() -> {
@@ -456,12 +457,12 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                                 configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS),
                                 testServices
                             )
-                            val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
+                            val [transitiveLibraries, friendLibraries] = getTransitivesAndFriends(mainModule, testServices)
                             dependencies(runtimeKlibsPaths)
                             dependencies(transitiveLibraries.map { it.path })
                             friendDependencies(friendLibraries.map { it.path })
                         }
-                        else -> error("Unsupported")
+                        else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
                     }
                 }
             }
@@ -484,5 +485,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             }
         }
 
+        fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
+            // In case of separate modules, the source module scope generally consists of the following scopes:
+            // 1) scope which only contains passed Kotlin source files (.kt and .kts)
+            // 2) scope which contains all Java source files (.java) in the project
+            return GlobalSearchScope.filesScope(project, files.map { it.virtualFile }.toSet()).uniteWith(AllJavaSourcesInProjectScope(project))
+        }
     }
 }

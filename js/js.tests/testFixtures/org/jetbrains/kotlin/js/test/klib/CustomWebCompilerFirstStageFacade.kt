@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.platform.wasm.isWasmJs
+import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatformProvider
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -40,6 +44,7 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
         outputKlibPath: String,
     ): BinaryArtifacts.KLib {
         val outputKlibFile = File(outputKlibPath).absoluteFile
+        val targetPlatform = testServices.targetPlatformProvider.getTargetPlatform(module)
 
         val compilerXmlOutput = ByteArrayOutputStream()
 
@@ -64,6 +69,12 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
                 },
                 runIf(friendDependencies.isNotEmpty()) {
                     listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                },
+                runIf(targetPlatform.isWasmJs()) {
+                    listOf(K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.JS.alias))
+                },
+                runIf(targetPlatform.isWasmWasi()) {
+                    listOf(K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.WASI.alias))
                 },
                 customArgs,
                 sources,

@@ -38,7 +38,7 @@ KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
       diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): myPack/provideDelegate>
     valueGetterCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>
     valueSetterCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>

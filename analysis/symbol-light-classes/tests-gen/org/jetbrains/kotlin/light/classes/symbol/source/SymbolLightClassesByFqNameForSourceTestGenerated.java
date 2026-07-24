@@ -467,12 +467,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Test
-  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
-  public void testSuperTypeWithBoundKotlinCollection() {
-    run("SuperTypeWithBoundKotlinCollection.kt");
-  }
-
-  @Test
   @TestMetadata("SuspendFunctionTypeAsAnnotationArgument.kt")
   public void testSuspendFunctionTypeAsAnnotationArgument() {
     run("SuspendFunctionTypeAsAnnotationArgument.kt");
@@ -637,6 +631,98 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByFqName/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByFqName/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByFqName/companionBlocks"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("CompanionBlock.kt")
+    public void testCompanionBlock() {
+      run("CompanionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockDelegatedProperty.kt")
+    public void testCompanionBlockDelegatedProperty() {
+      run("CompanionBlockDelegatedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockDeprecated.kt")
+    public void testCompanionBlockDeprecated() {
+      run("CompanionBlockDeprecated.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInsideValueClass.kt")
+    public void testCompanionBlockInsideValueClass() {
+      run("CompanionBlockInsideValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockJvmName.kt")
+    public void testCompanionBlockJvmName() {
+      run("CompanionBlockJvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockMultiple.kt")
+    public void testCompanionBlockMultiple() {
+      run("CompanionBlockMultiple.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockOperatorInvokeAndOf.kt")
+    public void testCompanionBlockOperatorInvokeAndOf() {
+      run("CompanionBlockOperatorInvokeAndOf.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockOverloads.kt")
+    public void testCompanionBlockOverloads() {
+      run("CompanionBlockOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockVisibility.kt")
+    public void testCompanionBlockVisibility() {
+      run("CompanionBlockVisibility.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockWithCompanionObject.kt")
+    public void testCompanionBlockWithCompanionObject() {
+      run("CompanionBlockWithCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockWithConstAndJvmField.kt")
+    public void testCompanionBlockWithConstAndJvmField() {
+      run("CompanionBlockWithConstAndJvmField.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockWithLateinit.kt")
+    public void testCompanionBlockWithLateinit() {
+      run("CompanionBlockWithLateinit.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockWithReceiver.kt")
+    public void testCompanionBlockWithReceiver() {
+      run("CompanionBlockWithReceiver.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/symbol-light-classes/testData/lightClassByFqName/compilationErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class CompilationErrors {
@@ -648,6 +734,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("ActualClass.kt")
     public void testActualClass() {
       run("ActualClass.kt");
+    }
+
+    @Test
+    @TestMetadata("ActualConstructorAllDefaultsNoArgOverload.kt")
+    public void testActualConstructorAllDefaultsNoArgOverload() {
+      run("ActualConstructorAllDefaultsNoArgOverload.kt");
     }
 
     @Test
@@ -758,6 +850,24 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("JvmOverloadsActualConstructorWithInheritedDefaults.kt")
+    public void testJvmOverloadsActualConstructorWithInheritedDefaults() {
+      run("JvmOverloadsActualConstructorWithInheritedDefaults.kt");
+    }
+
+    @Test
+    @TestMetadata("JvmOverloadsActualOverrideWithInheritedDefaults.kt")
+    public void testJvmOverloadsActualOverrideWithInheritedDefaults() {
+      run("JvmOverloadsActualOverrideWithInheritedDefaults.kt");
+    }
+
+    @Test
+    @TestMetadata("JvmOverloadsActualWithInheritedDefaults.kt")
+    public void testJvmOverloadsActualWithInheritedDefaults() {
+      run("JvmOverloadsActualWithInheritedDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("JvmPackageName.kt")
     public void testJvmPackageName() {
       run("JvmPackageName.kt");
@@ -833,12 +943,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("TraitClassObjectField.kt")
     public void testTraitClassObjectField() {
       run("TraitClassObjectField.kt");
-    }
-
-    @Test
-    @TestMetadata("TwoOverrides.kt")
-    public void testTwoOverrides() {
-      run("TwoOverrides.kt");
     }
 
     @Test
@@ -1025,18 +1129,6 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("ImplementingCharSequenceAndNumber.kt")
     public void testImplementingCharSequenceAndNumber() {
       run("ImplementingCharSequenceAndNumber.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMap.kt")
-    public void testImplementingMap() {
-      run("ImplementingMap.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMutableSet.kt")
-    public void testImplementingMutableSet() {
-      run("ImplementingMutableSet.kt");
     }
 
     @Test

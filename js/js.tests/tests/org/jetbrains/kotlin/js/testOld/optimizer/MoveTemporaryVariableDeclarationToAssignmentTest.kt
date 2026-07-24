@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MoveTemporaryVariableDeclarationToAssignmentTest : BasicOptimizerTest("move-temporary-variable-declaration") {
     @Test

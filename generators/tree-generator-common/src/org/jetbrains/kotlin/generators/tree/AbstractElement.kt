@@ -124,7 +124,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
             }
         }
 
-        for ((fieldName, inheritedFieldsByParent) in allInheritedFieldsByParent) {
+        for ([fieldName, inheritedFieldsByParent] in allInheritedFieldsByParent) {
             var field = result[fieldName]
             if (field == null) {
                 val inheritFrom = inheritedFieldsByParent.distinctBy { it.second.typeRef }.singleOrNull() ?: error(

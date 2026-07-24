@@ -1,0 +1,9 @@
+STEP 0:
+    modifications:
+        U : state.0.kt -> state.kt
+        U : eagerA.0.kt -> eagerA.kt
+    added file: state.kt, eagerA.kt
+STEP 1:
+    modifications:
+        U : eagerA.1.kt -> eagerA.kt
+    modified ir: eagerA.kt

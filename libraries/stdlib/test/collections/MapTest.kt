@@ -243,7 +243,7 @@ class MapTest {
     @Test fun iterateWithExtraction() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
-        for ((key, value) in map) {
+        for ([key, value] in map) {
             list.add(key)
             list.add(value)
         }
@@ -574,7 +574,7 @@ class MapTest {
             null to null,
         )
 
-        for ((key, value) in combinations) {
+        for ([key, value] in combinations) {
             doTest("default mutable", mapLetterToIndex.toMutableMap(), key, value)
             doTest("HashMap", mapLetterToIndex.toMap(HashMap()), key, value)
             doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), key, value)
@@ -613,7 +613,7 @@ class MapTest {
                 "LinkedStringMap" to linkedStringMapOf(*entries),
             )
 
-            for ((label, map) in maps) {
+            for ([label, map] in maps) {
                 val entry = map.entries.first { it.key == "b" }
 
                 // Non-structural modifications
@@ -650,15 +650,15 @@ class MapTest {
     fun firstNotNullOf() {
         val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
 
-        val firstAdult = map.firstNotNullOf { (name, age) -> name.takeIf { age >= 18 } }
-        val firstAdultOrNull = map.firstNotNullOfOrNull { (name, age) -> name.takeIf { age >= 18 } }
+        val firstAdult = map.firstNotNullOf { [name, age] -> name.takeIf { age >= 18 } }
+        val firstAdultOrNull = map.firstNotNullOfOrNull { [name, age] -> name.takeIf { age >= 18 } }
 
         assertEquals("Alice", firstAdult)
         assertEquals("Alice", firstAdultOrNull)
 
         @Suppress("UNUSED_VARIABLE")
-        assertFailsWith<NoSuchElementException> { val firstChild = map.firstNotNullOf { (name, age) -> name.takeIf { age <= 11 } } }
-        val firstChildOrNull = map.firstNotNullOfOrNull { (name, age) -> name.takeIf { age <= 11 } }
+        assertFailsWith<NoSuchElementException> { val firstChild = map.firstNotNullOf { [name, age] -> name.takeIf { age <= 11 } } }
+        val firstChildOrNull = map.firstNotNullOfOrNull { [name, age] -> name.takeIf { age <= 11 } }
 
         assertNull(firstChildOrNull)
     }

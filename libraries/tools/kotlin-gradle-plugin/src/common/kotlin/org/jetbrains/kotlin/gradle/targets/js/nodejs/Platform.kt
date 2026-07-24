@@ -2,7 +2,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.provider.Provider
-import java.io.File
+import java.nio.file.Path
 
 internal data class Platform(
     val name: String,
@@ -92,18 +92,19 @@ internal fun parseWindowsArch(arch: String, uname: Provider<String>): String {
 }
 
 internal fun computeNpmScriptFile(
-    nodeDirProvider: File,
+    nodeDir: Path,
     command: String,
-    isWindows: Boolean
-): String {
-    return nodeDirProvider.let { nodeDir ->
-        if (isWindows) nodeDir.resolve("node_modules/npm/bin/$command-cli.js").path
-        else nodeDir.resolve("lib/node_modules/npm/bin/$command-cli.js").path
+    isWindows: Boolean,
+): Path {
+    return if (isWindows) {
+        nodeDir.resolve("node_modules/npm/bin/$command-cli.js")
+    } else {
+        nodeDir.resolve("lib/node_modules/npm/bin/$command-cli.js")
     }
 }
 
 internal fun computeNodeBinDir(
-    nodeDirProvider: File,
-    isWindows: Boolean
-) =
-    if (isWindows) nodeDirProvider else nodeDirProvider.resolve("bin")
+    nodeDir: Path,
+    isWindows: Boolean,
+): Path =
+    if (isWindows) nodeDir else nodeDir.resolve("bin")

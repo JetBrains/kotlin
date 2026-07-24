@@ -80,7 +80,7 @@ abstract class Printer : Appendable {
     }
 
     fun appendFlags(vararg modifiers: Pair<Boolean, String>) {
-        for ((condition, token) in modifiers) {
+        for ([condition, token] in modifiers) {
             if (condition) {
                 append(token, " ")
             }

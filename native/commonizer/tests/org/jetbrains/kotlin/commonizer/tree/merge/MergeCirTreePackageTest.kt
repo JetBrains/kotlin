@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.commonizer.tree.merge
 
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.junit.jupiter.api.Test
 
 
 class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
 
+    @Test
     fun `test simple package`() {
         val aTree = createCirTreeFromSourceCode("package test.pkg")
         val bTree = createCirTreeFromSourceCode("package test.pkg")
@@ -25,6 +27,7 @@ class MergeCirTreePackageTest : AbstractMergeCirTreeTest() {
         }
     }
 
+    @Test
     fun `test missing target declarations`() {
         val aTree = createCirTreeFromSourceCode("package a")
         val bTree = createCirTreeFromSourceCode("package b")

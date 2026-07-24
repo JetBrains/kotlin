@@ -78,7 +78,7 @@ abstract class KotlinCompileDaemonBase {
 
     private fun setupLogging(options: DaemonLogOptions) {
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
-        val (logPath: String, fileIsGiven: Boolean) =
+        val [logPath: String, fileIsGiven: Boolean] =
             CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.value?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair(
                 options.logsPath,
                 false
@@ -168,7 +168,7 @@ abstract class KotlinCompileDaemonBase {
                 }
                 // timer with a daemon thread, meaning it should not prevent JVM to exit normally
                 val timer = Timer(true)
-                val (compilerService, port) = getCompileServiceAndPort(
+                val [compilerService, port] = getCompileServiceAndPort(
                     compilerSelector,
                     compilerId,
                     javaLanguageVersion,
@@ -226,7 +226,7 @@ object KotlinCompileDaemon : KotlinCompileDaemonBase() {
         daemonJVMOptions: DaemonJVMOptions,
         timer: Timer,
     ) = run {
-        val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
+        val [registry, port] = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
         val compilerService = CompileServiceImpl(registry = registry,
                                                  compiler = compilerSelector,
                                                  compilerId = compilerId,

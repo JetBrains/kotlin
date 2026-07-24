@@ -1,0 +1,41 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(value: kotlin/Array<kotlin/String>)
+ *
+ *   // getter: value()[Ljava/lang/String;
+ *   public final val value: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+
+    public abstract java.lang.String[] value();
+}
+
+////////////////////
+
+
+@A(value = {"ok"})
+/**
+ * @A(value = ["ok"])
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Test {
+
+    public Test() {
+        super();
+    }
+}

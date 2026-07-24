@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
-internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
+internal class PostInlineLowering(val context: NativeBackendContext) : BodyLoweringPass {
 
     private val symbols get() = context.symbols
 

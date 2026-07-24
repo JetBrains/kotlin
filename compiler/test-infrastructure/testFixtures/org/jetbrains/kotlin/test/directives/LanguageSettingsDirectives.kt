@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.testInfraError
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
@@ -51,11 +52,30 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
        """.trimIndent()
     )
 
+    val LANGUAGE_FEATURE_TOGGLED_IDENTICAL by directive(
+        description = "Diagnostics are the same with the given language feature enabled/disabled."
+    )
+
+    val LANGUAGE_FEATURE_TOGGLED by enumDirective<LanguageFeature>(
+        description = """
+            If diagnostics differ when the given LanguageFeature is enabled/disabled,
+            a separate file with the extension `disabled.kt` is created.
+            Otherwise, $LANGUAGE_FEATURE_TOGGLED_IDENTICAL must be declared.
+            """.trimIndent()
+    )
+
+    val TESTED_LANGUAGE_FEATURE_DISABLED by directive(
+        description = "The LF specified by $LANGUAGE_FEATURE_TOGGLED is disabled."
+    )
 
     // --------------------- Analysis Flags ---------------------
 
     val OPT_IN by stringDirective(
         description = "List of opted in annotations (AnalysisFlags.optIn)"
+    )
+
+    val UNSTABLE_CAPTURE by stringDirective(
+        description = "Fully-qualified names of functions that count as escaping (use + to add, - to remove)"
     )
 
     val IGNORE_DATA_FLOW_IN_ASSERT by directive(
@@ -121,6 +141,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
+    val VALHALLA_SUPPORT by enumDirective(
+        description = "Configures corresponding analysis flag (JvmAnalysisFlags.valhallaSupport)",
+        additionalParser = ValhallaSupportMode.Companion::fromStringOrNull
+    )
+
     val JDK_RELEASE by valueDirective(
         description = "Configures corresponding release flag",
         parser = Integer::valueOf
@@ -143,10 +168,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val PARAMETERS_METADATA by directive("Add parameters metadata for 1.8 reflection")
     val USE_TYPE_TABLE by directive("Use type table in metadata serialization")
     val NO_NEW_JAVA_ANNOTATION_TARGETS by directive("Do not generate Java annotation targets TYPE_USE/TYPE_PARAMETER for Kotlin annotation classes with Kotlin targets TYPE/TYPE_PARAMETER")
-    val LINK_VIA_SIGNATURES_K1 by directive("Use linkage via signatures instead of descriptors on the K1 frontend")
     val USE_INLINE_SCOPES_NUMBERS by directive("Use inline scopes numbers for inline marker variables")
     val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
     val HEADER_MODE by directive("Enable header mode")
+    val FIR_AGGRESSIVE_PRUNING by valueDirective("Enable/disable FIR aggressive pruning: 'true' or 'false'", parser = String::toBoolean)
     val IDE_MODE by directive("Enable ide mode")
 
 
@@ -155,11 +180,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     fun parseApiVersion(versionString: String): ApiVersion = when (versionString) {
         "LATEST" -> ApiVersion.LATEST
         "LATEST_STABLE" -> ApiVersion.LATEST_STABLE
-        else -> ApiVersion.parse(versionString) ?: error("Unknown API version: $versionString")
+        else -> ApiVersion.parse(versionString) ?: testInfraError("Unknown API version: $versionString")
     }
 
     fun parseLanguageVersion(versionString: String): LanguageVersion = when (versionString) {
         "LATEST_STABLE" -> LanguageVersion.LATEST_STABLE
-        else -> LanguageVersion.fromVersionString(versionString) ?: error("Unknown language version: $versionString")
+        else -> LanguageVersion.fromVersionString(versionString) ?: testInfraError("Unknown language version: $versionString")
     }
 }

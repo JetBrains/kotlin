@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.lang.java.lexer.JavaLexer
+import com.intellij.java.syntax.JavaSyntaxDefinition
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.java.syntax.parser.JavaKeywords
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.pom.java.LanguageLevel
-import com.intellij.psi.PsiKeyword
 import com.intellij.psi.PsiPackage
-import com.intellij.psi.impl.source.tree.ElementType
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -61,48 +62,49 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     /**
      * Given a .java file, [readClassIds] uses lexer to determine which classes are declared in that file
      */
+    @Suppress("UnstableApiUsage")
     private class JavaSourceClassIdReader(file: VirtualFile) {
         private val isPackageInfo = (file.nameWithoutExtension == PsiPackage.PACKAGE_INFO_CLASS)
-        private val lexer = JavaLexer(LanguageLevel.HIGHEST).apply {
+        private val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST).apply {
             start(String(file.contentsToByteArray()))
         }
         private var braceBalance = 0
         private var parenthesisBalance = 0
 
-        private fun at(type: IElementType): Boolean = lexer.tokenType == type
+        private fun at(type: SyntaxElementType): Boolean = lexer.getTokenType() == type
 
-        private fun end(): Boolean = lexer.tokenType == null
+        private fun end(): Boolean = lexer.getTokenType() == null
 
         private fun advance() {
             when {
-                at(ElementType.LBRACE) -> braceBalance++
-                at(ElementType.RBRACE) -> braceBalance--
-                at(ElementType.LPARENTH) -> parenthesisBalance++
-                at(ElementType.RPARENTH) -> parenthesisBalance--
+                at(JavaSyntaxTokenType.LBRACE) -> braceBalance++
+                at(JavaSyntaxTokenType.RBRACE) -> braceBalance--
+                at(JavaSyntaxTokenType.LPARENTH) -> parenthesisBalance++
+                at(JavaSyntaxTokenType.RPARENTH) -> parenthesisBalance--
             }
             lexer.advance()
         }
 
-        private fun tokenText(): String = lexer.tokenText
+        private fun tokenText(): String = lexer.getTokenText()
 
         private fun atClass(): Boolean =
-            braceBalance == 0 && parenthesisBalance == 0 && (lexer.tokenType in CLASS_KEYWORDS || atRecord())
+            braceBalance == 0 && parenthesisBalance == 0 && (lexer.getTokenType() in CLASS_KEYWORDS || atRecord())
 
         private fun atRecord(): Boolean {
             // Note that the soft keyword "record" is lexed as IDENTIFIER instead of RECORD_KEYWORD.
             // This is kind of a sloppy way to parse a soft keyword, but we only do it at the top level, where it seems to work fine.
-            return at(ElementType.IDENTIFIER) && tokenText() == PsiKeyword.RECORD
+            return at(JavaSyntaxTokenType.IDENTIFIER) && tokenText() == JavaKeywords.RECORD
         }
 
         fun readClassIds(): List<ClassId> {
             var packageFqName = FqName.ROOT
-            while (!end() && !at(ElementType.PACKAGE_KEYWORD) && !atClass()) {
+            while (!end() && !at(JavaSyntaxTokenType.PACKAGE_KEYWORD) && !atClass()) {
                 advance()
             }
-            if (at(ElementType.PACKAGE_KEYWORD)) {
+            if (at(JavaSyntaxTokenType.PACKAGE_KEYWORD)) {
                 val packageName = StringBuilder()
-                while (!end() && !at(ElementType.SEMICOLON)) {
-                    if (at(ElementType.IDENTIFIER) || at(ElementType.DOT)) {
+                while (!end() && !at(JavaSyntaxTokenType.SEMICOLON)) {
+                    if (at(JavaSyntaxTokenType.IDENTIFIER) || at(JavaSyntaxTokenType.DOT)) {
                         packageName.append(tokenText())
                     }
                     advance()
@@ -118,7 +120,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
                 }
                 if (end()) break
                 advance()
-                while (!end() && !at(ElementType.IDENTIFIER)) {
+                while (!end() && !at(JavaSyntaxTokenType.IDENTIFIER)) {
                     advance()
                 }
                 if (end()) break
@@ -133,7 +135,9 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         }
 
         companion object {
-            private val CLASS_KEYWORDS = setOf(ElementType.CLASS_KEYWORD, ElementType.INTERFACE_KEYWORD, ElementType.ENUM_KEYWORD)
+            private val CLASS_KEYWORDS = syntaxElementTypeSetOf(
+                JavaSyntaxTokenType.CLASS_KEYWORD, JavaSyntaxTokenType.INTERFACE_KEYWORD, JavaSyntaxTokenType.ENUM_KEYWORD
+            )
         }
     }
 

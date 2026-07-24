@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.konan.test.services.FileCheckTestTotalSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
@@ -28,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirect
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironm
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.utils.bind
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-stage")
@@ -50,13 +50,9 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         )
         defaultDirectives {
             +DISABLE_FIR_DUMP_HANDLER
-            if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
-                // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
-                // the language features that are not supported in the given custom LV.
-                setupCustomLanguageVersionForKlibCompatibilityTest(customNativeCompilerSettings.defaultLanguageVersion)
 
-                LANGUAGE with "+ExportKlibToOlderAbiVersion"
-            }
+            setupCustomLVForKlibForwardCompatibilityTest(customNativeCompilerSettings.defaultLanguageVersion)
+
             OPT_IN with listOf(
                 "kotlin.native.internal.InternalForKotlinNative",
                 "kotlin.native.internal.InternalForKotlinNativeTests",
@@ -87,12 +83,12 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
         }
-        configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
 
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives)
-        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(customNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(
+                customNativeCompilerSettings,
+                /*isCompatibilityTesting*/ true,
+            ))
 
         nativeArtifactsHandlersStep {
             useHandlers(::NativeBoxRunner)

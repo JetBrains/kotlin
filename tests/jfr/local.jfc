@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration label="Custom" version="2.0">
+
+  <event name="jetbrains.UndeclaredInput">
+    <setting name="stackTrace">true</setting>
+  </event>
+
+  <!-- without this event, IDEA won't be able to open the JFR snapshot -->
+  <event name="jdk.ExecutionSample">
+    <setting name="enabled" control="method-sampling-enabled">true</setting>
+    <setting name="period" control="method-sampling-java-interval">20 ms</setting> <!-- from default.jfc -->
+  </event>
+
+</configuration>

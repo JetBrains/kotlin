@@ -124,10 +124,10 @@ Set via `-Dkotlin.test.data.manager.mode=check|update` (managed by Gradle tasks 
 Run across all modules with the test-data-manager plugin:
 
 ```bash
-# Check mode (default) - fails if test data doesn't match
-./gradlew manageTestDataGlobally
+# Check mode - fails if test data doesn't match, writes nothing
+./gradlew checkTestData
 
-# Update mode — use the dedicated updateTestData task (CC-friendly, preserves configuration cache across -P option changes)
+# Update mode - rewrites mismatched test data files
 ./gradlew updateTestData
 
 # Run only golden tests (skip all variant-specific tests)
@@ -137,7 +137,7 @@ Run across all modules with the test-data-manager plugin:
 ./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.incremental=true
 ```
 
-`updateTestData` is preferred over `manageTestDataGlobally --mode=update` for any iterative workflow: its options are passed via `-P` properties read at execution time, so the configuration cache stays valid when option values change between runs (~1 s reuse vs. ~1–2 min reconfiguration).
+`checkTestData` verifies test data without writing; `updateTestData` rewrites mismatched files. Both take their options as `-P` properties — see the [test-data-manager convention README](../../repo/gradle-build-conventions/test-data-manager-convention/README.md) for the option list and details.
 
 ### Per-Module Execution
 

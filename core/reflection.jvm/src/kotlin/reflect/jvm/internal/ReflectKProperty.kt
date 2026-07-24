@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KParameter
@@ -20,6 +21,25 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, 
     val javaField: Field?
 
     override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<V> =
+        when {
+            this.rawBoundReceiver === boundReceiver -> this
+            this.rawBoundReceiver !== CallableReference.NO_RECEIVER -> when {
+                boundReceiver !== CallableReference.NO_RECEIVER -> rebindSameArity(boundReceiver)
+                else -> unbindToHigherArity()
+            }
+            else -> when {
+                boundReceiver !== CallableReference.NO_RECEIVER -> bindToLowerArity(boundReceiver)
+                else -> this
+            }
+        }
+
+    fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V>
+
+    fun unbindToHigherArity(): ReflectKProperty<V>
+
+    fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V>
 }
 
 internal val ReflectKProperty<*>.isLocalDelegated: Boolean

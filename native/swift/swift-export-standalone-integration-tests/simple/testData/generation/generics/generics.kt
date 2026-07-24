@@ -64,6 +64,10 @@ interface B <T> {
     val foo: T
 }
 
+interface AFactory<T : A<Unit>> {
+    fun create(): T
+}
+
 class Demo: A<Int>, B<Int?> {
     override val foo = 5
 }
@@ -113,6 +117,8 @@ fun produceExtBox(box: Box<String>.() -> Unit): Unit = TODO() // unsupported inp
 fun produceCtxBox(box: context(Box<String>) () -> Unit): Unit = TODO() // unsupported input generic
 
 fun produceBoxUpperBound(box: (Box<Any?>) -> Unit): Unit = TODO()
+
+fun produceBoxStar(box: (Box<*>) -> Unit): Unit = TODO()
 
 typealias BFun = (B<*>) -> Unit
 

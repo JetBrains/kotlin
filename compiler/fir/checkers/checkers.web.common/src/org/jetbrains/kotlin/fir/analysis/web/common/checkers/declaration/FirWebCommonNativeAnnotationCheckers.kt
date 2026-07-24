@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId,
     private val error: KtDiagnosticFactory1<ConeKotlinType>,
-) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+) : FirNamedFunctionChecker(MppCheckerKind.Platform) {
 
     context(context: CheckerContext)
     protected fun hasRequiredAnnotation(declaration: FirFunction): Boolean =

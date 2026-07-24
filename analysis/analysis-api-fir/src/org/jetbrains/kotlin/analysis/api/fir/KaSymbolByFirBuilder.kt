@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
@@ -47,14 +49,15 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -136,6 +139,14 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildNamedClassSymbol(symbol: FirRegularClassSymbol): KaNamedClassSymbol {
+            // Redirect all Java classes (not Enhanced) into the same class to have proper equals
+            if (symbol.origin is FirDeclarationOrigin.Java) {
+                val psi = symbol.fir.psi as? PsiClass
+                if (psi != null) {
+                    return KaFirPsiJavaClassSymbol(psi, analysisSession, symbol)
+                }
+            }
+
             return KaFirNamedClassSymbol(symbol, analysisSession)
         }
 
@@ -663,6 +674,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
             namedFunction.typeParameters.forEach { it.accept(this) }
 
             namedFunction.receiverParameter?.accept(this)
+            namedFunction.contextParameters.forEach { it.returnTypeRef.accept(this) }
             namedFunction.valueParameters.forEach { it.returnTypeRef.accept(this) }
             namedFunction.returnTypeRef.accept(this)
         }
@@ -671,6 +683,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
             property.typeParameters.forEach { it.accept(this) }
 
             property.receiverParameter?.accept(this)
+            property.contextParameters.forEach { it.returnTypeRef.accept(this) }
             property.returnTypeRef.accept(this)
         }
 

@@ -7,20 +7,19 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.utils.konanHome
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-public class CommonizeLibcurlTest {
+class CommonizeLibcurlTest {
 
-    @get:Rule
-    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    lateinit var temporaryOutputDirectory: File
 
     @Test
-    public fun commonizeSuccessfully() {
+    fun commonizeSuccessfully() {
         val libraries = File("testData/libcurl").walkTopDown().filter { it.isFile && it.extension == "klib" }.toSet()
         val commonizer = CliCommonizer(this::class.java.classLoader)
 
@@ -35,11 +34,11 @@ public class CommonizeLibcurlTest {
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
             outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64)),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
 
-        val commonOutputDirectory = temporaryOutputDirectory.root.resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString)
+        val commonOutputDirectory = temporaryOutputDirectory.resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64).identityString)
 
         assertTrue(
             commonOutputDirectory.exists(),
@@ -63,7 +62,7 @@ public class CommonizeLibcurlTest {
 
 
     @Test
-    public fun `commonizeSuccessfully with unsupported targets`() {
+    fun `commonizeSuccessfully with unsupported targets`() {
         val libraries = File("testData/libcurl").walkTopDown().filter { it.isFile && it.extension == "klib" }.toSet()
         val commonizer = CliCommonizer(this::class.java.classLoader)
 
@@ -78,10 +77,10 @@ public class CommonizeLibcurlTest {
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
             outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)),
-            outputDirectory = temporaryOutputDirectory.root
+            outputDirectory = temporaryOutputDirectory
         )
 
-        val commonOutputDirectory = temporaryOutputDirectory.root
+        val commonOutputDirectory = temporaryOutputDirectory
             .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString)
 
         assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")

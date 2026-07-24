@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.impl
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
+import kotlin.io.path.exists
 
 /**
  * The default implementation of [KlibIrComponent].
@@ -21,7 +22,7 @@ internal class KlibIrComponentImpl(
     }
 
     private val irFileEntries: IrMultiArrayReader? by lazy {
-        if (layoutReader.readInPlace { it.irFileEntriesFile.exists })
+        if (layoutReader.readInPlace { it.irFileEntriesFile.exists() })
             IrMultiArrayReader(layoutReader, KlibIrComponentLayout::irFileEntriesFile)
         else
             null
@@ -44,7 +45,7 @@ internal class KlibIrComponentImpl(
     }
 
     private val signatureDebugInfos: IrMultiArrayReader? by lazy {
-        if (layoutReader.readInPlace { it.signaturesDebugInfoFile.exists })
+        if (layoutReader.readInPlace { it.signaturesDebugInfoFile.exists() })
             IrMultiArrayReader(layoutReader, KlibIrComponentLayout::signaturesDebugInfoFile)
         else
             null

@@ -5,6 +5,8 @@ implicit values:
     type = test.Child
     ownerSymbol = KaNamedClassSymbol:
       test/Child
+    label = Child
+
 
 scopes:
   LocalScope, index = 0

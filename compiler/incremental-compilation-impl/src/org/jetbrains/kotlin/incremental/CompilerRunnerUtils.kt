@@ -7,17 +7,10 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.DoNothingICReporter
-import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import java.io.File
 
 var K2JVMCompilerArguments.destinationAsFile: File
@@ -37,41 +30,6 @@ fun K2JVMCompilerArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTracking
     //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
     val languageVersion = LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
     return !languageVersion.usesK2 && usePreciseJavaTrackingByDefault
-}
-
-@Suppress("unused") // used in Maven compile runner
-fun makeJvmIncrementally(
-    cachesDir: File,
-    sourceRoots: Iterable<File>,
-    args: K2JVMCompilerArguments,
-    messageCollector: MessageCollector = MessageCollector.NONE,
-    reporter: ICReporter = DoNothingICReporter
-) {
-    val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-    val allExtensions = kotlinExtensions + "java"
-    val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
-    val files = rootsWalk.filter(File::isFile)
-    val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
-    val buildHistoryFile = File(cachesDir, IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME)
-    args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
-    val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
-
-    withIncrementalCompilation(args) {
-        val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
-
-        val compiler = BuildHistoryJvmICRunner(
-            cachesDir,
-            buildReporter,
-            buildHistoryFile = buildHistoryFile,
-            outputDirs = null,
-            modulesApiHistory = EmptyModulesApiHistory,
-            kotlinSourceFilesExtensions = kotlinExtensions,
-            icFeatures = IncrementalCompilationFeatures(
-                usePreciseJavaTracking = verifiedPreciseJavaTracking
-            ),
-        )
-        compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
-    }
 }
 
 @Suppress("DEPRECATION")

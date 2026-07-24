@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.js.testOld.optimizer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IfStatementReductionTest : BasicOptimizerTest("if-reduction") {
     @Test fun assignment() = box()

@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.AbstractTestDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.PositionalTextDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 
+@K1Deprecation
 abstract class AbstractDiagnosticDescriptor internal constructor(val start: Int, val end: Int) {
     val textRange: TextRange
         get() = TextRange(start, end)
 }
 
+@K1Deprecation
 class ActualDiagnosticDescriptor internal constructor(start: Int, end: Int, val diagnostics: List<AbstractTestDiagnostic>) :
     AbstractDiagnosticDescriptor(start, end) {
 
@@ -29,6 +32,7 @@ class ActualDiagnosticDescriptor internal constructor(start: Int, end: Int, val 
         }
 }
 
+@K1Deprecation
 class TextDiagnosticDescriptor internal constructor(private val positionalTextDiagnostic: PositionalTextDiagnostic) :
     AbstractDiagnosticDescriptor(positionalTextDiagnostic.start, positionalTextDiagnostic.end) {
 

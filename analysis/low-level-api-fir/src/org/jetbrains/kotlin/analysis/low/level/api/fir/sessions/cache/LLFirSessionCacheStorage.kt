@@ -45,7 +45,6 @@ class LLFirSessionCacheStorage(
     val unstableDanglingFileSessionCache: SessionStorage,
     val getCleaner: (LLFirSession) -> ValueReferenceCleaner<LLFirSession>,
 ) {
-
     fun createCopy(): LLFirSessionCacheStorage {
         return LLFirSessionCacheStorage(
             sourceCache = sourceCache.createCopy(),
@@ -57,6 +56,7 @@ class LLFirSessionCacheStorage(
         )
     }
 
+    @LLFirInternals
     companion object {
         fun createEmpty(
             getCleaner: (LLFirSession) -> ValueReferenceCleaner<LLFirSession>,

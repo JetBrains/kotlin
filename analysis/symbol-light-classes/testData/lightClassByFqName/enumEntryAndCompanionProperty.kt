@@ -9,3 +9,5 @@ enum class Foo {
         val entry: Int = 1
     }
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: Foo.class[entry;entry$1;getEntries;valueOf;values]

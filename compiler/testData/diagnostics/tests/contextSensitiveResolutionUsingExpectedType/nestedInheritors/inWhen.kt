@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // ISSUE: KT-77823
 // RENDER_DIAGNOSTICS_FULL_TEXT
 

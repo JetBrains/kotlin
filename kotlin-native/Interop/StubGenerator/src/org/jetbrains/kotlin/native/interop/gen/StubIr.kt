@@ -195,6 +195,11 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
         class ExternalClass(val protocolGetter: String = "", val binaryName: String = "") :
                 ObjC(Classifier.topLevel(cinteropPackage, "ExternalObjCClass"))
+
+        object Unavailable : ObjC(Classifier.topLevel(cinteropPackage, "ObjCUnavailable"))
+
+        class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false) :
+                ObjC(Classifier.topLevel("kotlin.native", "ObjCName"))
     }
 
     sealed class CCall(classifier: Classifier) : AnnotationStub(classifier) {
@@ -262,6 +267,9 @@ sealed class AnnotationStub(val classifier: Classifier) {
             AnnotationStub(Classifier.topLevel(cinteropInternalPackage, "CEnumVarTypeSize"))
 
     object ExperimentalForeignApi : AnnotationStub(KotlinTypes.experimentalForeignApi)
+
+    object LowPriorityInOverloadResolution :
+            AnnotationStub(Classifier.topLevel("kotlin.internal", "LowPriorityInOverloadResolution"))
 
     private companion object {
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")

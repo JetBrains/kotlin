@@ -83,7 +83,6 @@ internal class RedundantBoxingInterpreter(
 
     override fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {
         value.descriptor.run {
-            val unboxedType = getUnboxTypeOrOtherwiseMethodReturnType(insn as? MethodInsnNode)
             if (unboxedType == resultType)
                 addAssociatedInsn(value, insn)
             else
@@ -147,8 +146,8 @@ internal class RedundantBoxingInterpreter(
                     if (value.descriptor.isValueClassValue && avoidWrongOptimization) {
                         false
                     } else {
-                        val unboxedType = value.descriptor.unboxedTypes.singleOrNull()
-                        unboxedType != null && PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(unboxedType.sort)
+                        val unboxedType = value.descriptor.unboxedType
+                        PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(unboxedType.sort)
                     }
                 }
                 "java/lang/Comparable" -> !(value.descriptor.isValueClassValue && avoidWrongOptimization)

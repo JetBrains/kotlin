@@ -13,6 +13,7 @@ import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -61,7 +62,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         private val lock = Any()
 
         fun computePackage(testInfo: KotlinTestInfo): String {
-            val (className, methodName, _) = testInfo
+            (val className, val methodName) = testInfo
             val classPart = className.substringAfter("$")
                 .split("$")
                 .map { it.decapitalizeSmart() }
@@ -93,7 +94,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
         val psiFactory = createPsiFactory()
         val additionalBasePackage = FqName(computePackage(testServices.testInfo))
         val ktFiles = filesContent.filter { it.key.isKtFile }
-            .mapValues { (file, content) -> psiFactory.createFile(file.name, content) }
+            .mapValues { [file, content] -> psiFactory.createFile(file.name, content) }
         ktFiles.values.map { it.packageFqName }.associateWithTo(packageMapping) { packageFqName ->
             additionalBasePackage.child(packageFqName)
         }
@@ -104,7 +105,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             transformHelpersPackage = true
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
-        for ((testFile, ktFile) in ktFiles) {
+        for ([testFile, ktFile] in ktFiles) {
             filesContent[testFile] = ktFile.text
         }
     }
@@ -131,6 +132,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     private fun createPsiFactory(): KtPsiFactory {
         val configuration = CompilerConfiguration.create()
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             projectDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
             configuration = configuration,
@@ -257,7 +259,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             declarationWithBody: KtDeclarationWithBody,
             parentAccessibleDeclarationNames: Set<Name>,
         ) {
-            val (expressions, nonExpressions) = declarationWithBody.getChildrenOfType<KtElement>().partition { it is KtExpression }
+            val [expressions, nonExpressions] = declarationWithBody.getChildrenOfType<KtElement>().partition { it is KtExpression }
 
             val accessibleDeclarationNames =
                 parentAccessibleDeclarationNames + declarationWithBody.collectAccessibleDeclarationNames()
@@ -373,7 +375,7 @@ internal fun PsiElement.ensureSurroundedByNewLines(): PsiElement =
     ensureHasNewLineBefore().ensureHasNewLineAfter()
 
 private fun PsiElement.ensureHasNewLineBefore(): PsiElement {
-    val (fileBoundaryReached, whiteSpaceBefore) = whiteSpaceBefore()
+    val [fileBoundaryReached, whiteSpaceBefore] = whiteSpaceBefore()
     if (!fileBoundaryReached and !whiteSpaceBefore.endsWith("\n")) {
         parent.addBefore(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }
@@ -381,7 +383,7 @@ private fun PsiElement.ensureHasNewLineBefore(): PsiElement {
 }
 
 private fun PsiElement.ensureHasNewLineAfter(): PsiElement {
-    val (fileBoundaryReached, whiteSpaceAfter) = whiteSpaceAfter()
+    val [fileBoundaryReached, whiteSpaceAfter] = whiteSpaceAfter()
     if (!fileBoundaryReached and !whiteSpaceAfter.startsWith("\n")) {
         parent.addAfter(KtPsiFactory(project).createWhiteSpace("\n"), this)
     }

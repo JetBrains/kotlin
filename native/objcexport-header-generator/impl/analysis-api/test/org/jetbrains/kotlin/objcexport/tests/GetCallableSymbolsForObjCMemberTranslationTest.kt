@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.getCallableSymbolsForObjCMemberTranslation
 import org.jetbrains.kotlin.objcexport.getStableCallableOrder
-import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -33,10 +34,11 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val fooSymbol = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val fooSymbol = session.getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("bar", "abstractFun"),
-                getCallableSymbolsForObjCMemberTranslation(fooSymbol)
+                session.getCallableSymbolsForObjCMemberTranslation(fooSymbol)
                     .map { it as KaNamedFunctionSymbol }
                     .map { it.name.asString() }
             )
@@ -51,11 +53,12 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("component1", "copy", "equals", "hashCode", "toString", "a"),
-                getCallableSymbolsForObjCMemberTranslation(foo)
-                    .sortedWith(getStableCallableOrder())
+                session.getCallableSymbolsForObjCMemberTranslation(foo)
+                    .sortedWith(session.getStableCallableOrder())
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
@@ -72,11 +75,12 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
             assertEquals(
                 emptyList(),
-                getCallableSymbolsForObjCMemberTranslation(foo)
-                    .sortedWith(getStableCallableOrder())
+                session.getCallableSymbolsForObjCMemberTranslation(foo)
+                    .sortedWith(session.getStableCallableOrder())
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )
@@ -94,11 +98,12 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = getClassOrFail(file, "Foo")
+            val session = useSiteSession
+            val foo = session.getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("a", "b"),
-                getCallableSymbolsForObjCMemberTranslation(foo)
-                    .sortedWith(getStableCallableOrder())
+                session.getCallableSymbolsForObjCMemberTranslation(foo)
+                    .sortedWith(session.getStableCallableOrder())
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
             )

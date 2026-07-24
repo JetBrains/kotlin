@@ -4,18 +4,18 @@ FILE: main.kt
     }
 FILE: lib.kt
     public final enum class Base1 : R|kotlin/Enum<Base1>| {
-        private [ContainingClassKey=Base1] constructor(): R|Base1| {
+        private constructor(): R|Base1| {
             super<R|kotlin/Enum<Base1>|>()
         }
 
-        public final static [ContainingClassKey=Base1] enum entry OK: R|Base1|
-        public final static [ContainingClassKey=Base1] fun values(): R|kotlin/Array<Base1>| {
+        public final static enum entry OK: R|Base1|
+        public final static fun values(): R|kotlin/Array<Base1>| {
         }
 
-        public final static [ContainingClassKey=Base1] fun valueOf(value: R|kotlin/String|): R|Base1| {
+        public final static fun valueOf(value: R|kotlin/String|): R|Base1| {
         }
 
-        public final static [ContainingClassKey=Base1, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Base1>|
+        public final static val entries: R|kotlin/enums/EnumEntries<Base1>|
             public static get(): R|kotlin/enums/EnumEntries<Base1>|
 
     }

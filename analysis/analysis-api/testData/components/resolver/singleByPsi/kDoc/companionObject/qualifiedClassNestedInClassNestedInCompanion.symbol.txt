@@ -1,2 +1,5 @@
-KtNamedFunction(138,187): '/**'
-  null
+KDocName(150,157): 'X.YY.ZZ'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /C.X.Companion.YY.ZZ
+    ]

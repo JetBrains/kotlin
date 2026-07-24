@@ -1,10 +1,10 @@
 CLASS:
   KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: GenericPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -17,6 +17,8 @@ CLASS:
   modality: ABSTRACT
   name: GenericPredicate
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       abbreviation: null
@@ -36,8 +38,8 @@ CLASS:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -46,26 +48,28 @@ CLASS:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: GenericPredicate
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: /GenericPredicate.test
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -87,6 +91,8 @@ FUNCTIONAL INTERFACE FUNCTION:
   modality: ABSTRACT
   name: test
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     abbreviation: null
@@ -106,16 +112,17 @@ FUNCTIONAL INTERFACE FUNCTION:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -127,14 +134,17 @@ FUNCTIONAL INTERFACE FUNCTION:
       modality: FINAL
       name: value
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaTypeParameterType:
         abbreviation: null
         annotations: []
         name: T
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
-          compilerVisibility: Local
           isActual: false
           isExpect: false
           isExternal: false
@@ -143,21 +153,24 @@ FUNCTIONAL INTERFACE FUNCTION:
           modality: FINAL
           name: T
           origin: SOURCE
+          psi: KtTypeParameter
+          realPsi: KtTypeParameter
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
           getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: false
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
       getContainingJvmClassName: GenericPredicate
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -175,8 +188,8 @@ FUNCTIONAL INTERFACE FUNCTION:
             annotations: []
             name: T
             symbol: KaTypeParameterSymbol:
+              anchorPsi: KtTypeParameter
               annotations: []
-              compilerVisibility: Local
               isActual: false
               isExpect: false
               isExternal: false
@@ -185,12 +198,14 @@ FUNCTIONAL INTERFACE FUNCTION:
               modality: FINAL
               name: T
               origin: SOURCE
+              psi: KtTypeParameter
+              realPsi: KtTypeParameter
               upperBounds: []
               variance: INVARIANT
               visibility: LOCAL
               getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
             isMarkedNullable: false
             isNullable: true
@@ -204,8 +219,8 @@ FUNCTIONAL INTERFACE FUNCTION:
         annotations: []
         name: T
         symbol: KaTypeParameterSymbol:
+          anchorPsi: KtTypeParameter
           annotations: []
-          compilerVisibility: Local
           isActual: false
           isExpect: false
           isExternal: false
@@ -214,12 +229,14 @@ FUNCTIONAL INTERFACE FUNCTION:
           modality: FINAL
           name: T
           origin: SOURCE
+          psi: KtTypeParameter
+          realPsi: KtTypeParameter
           upperBounds: []
           variance: INVARIANT
           visibility: LOCAL
           getContainingFileSymbol: KaFileSymbol(funInterfaceWithTypeParameters.kt)
           getContainingModule: KaSourceModule "Sources of main"
-          deprecationStatus: null
+          deprecation: null
           importableFqName: null
         isMarkedNullable: false
         isNullable: true
@@ -232,6 +249,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: GenericPredicate
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

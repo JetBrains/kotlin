@@ -16,15 +16,9 @@
 
 package org.jetbrains.kotlin.js.testOld
 
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonArray
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonBoolean
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonNode
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonNull
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonNumber
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonObject
-import org.jetbrains.kotlin.js.parser.sourcemaps.JsonString
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class JsonTest {
     @Test

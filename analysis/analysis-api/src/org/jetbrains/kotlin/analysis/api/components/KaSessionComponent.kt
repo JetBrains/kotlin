@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 /**
  * A component of a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession].
  *
- * Session components mix functions and properties into the session, which allows using them directly from an [analyze][org.jetbrains.kotlin.analysis.api.analyze]
+ * Session components mix functions and properties into the session, which allows using them directly from an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze]
  * block where a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] is available as a receiver. As such, functions from session
  * components define a large part of the Analysis API's surface, in addition to other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner]
  * like [KaSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaSymbol].

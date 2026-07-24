@@ -40,10 +40,11 @@ where advanced options include:
   -Xindy-allow-annotated-lambdas Allow using 'invokedynamic' for lambda expressions with annotations
   -Xir-do-not-clear-binding-context
                              When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
+  -Xjava-direct              Experimental direct java support.
   -Xjava-package-prefix      Package prefix for Java files.
   -Xjava-source-roots=<path> Paths to directories with Java source files.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
+                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
                              This also sets the value of '-jvm-target' to be equal to the selected JDK version.
   -Xjspecify-annotations=ignore|strict|warn
                              Specify the behavior of 'jspecify' annotations.
@@ -62,19 +63,15 @@ where advanced options include:
                              -Xjvm-default=disable            -> -jvm-default=disable
                              -Xjvm-default=all-compatibility  -> -jvm-default=enable
                              -Xjvm-default=all                -> -jvm-default=no-compatibility
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use `-jvm-default` instead.
   -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
                              This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xjvm-expose-boxed         Expose inline classes and functions, accepting and returning them, to Java.
-  -Xklib=<path>              Paths to cross-platform libraries in the .klib format.
   -Xlambdas={class|indy}     Select the code generation scheme for lambdas.
                              -Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
                                                              A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
                              -Xlambdas=class                 Generate lambdas as explicit classes.
                              The default value is 'indy' if language version is 2.0+, and 'class' otherwise.
-  -Xlink-via-signatures      Link JVM IR symbols via signatures instead of descriptors.
-                             This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
-                             This option is deprecated and will be deleted in future versions.
-                             It has no effect when -language-version is 2.0 or higher.
   -Xmodule-path=<path>       Paths to Java 9+ modules.
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and a facade.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
@@ -118,9 +115,6 @@ where advanced options include:
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
                              The default value is 'enable'.
-  -Xsuppress-deprecated-jvm-target-warning
-                             Suppress warnings about deprecated JVM target versions.
-                             This option has no effect and will be deleted in a future version.
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib').
   -Xtype-enhancement-improvements-strict-mode
@@ -131,17 +125,21 @@ where advanced options include:
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
+  -Xuse-metadata-on-incremental-classpath
+                             Use fragment metadata found on the compilation classpath to perform incremental compilation.
+                             This flag is intended for incremental compilation only and should not be used directly.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.
+  -Xvalhalla-support={none|primitives|primitivesAndFullValueClasses|allValues}
+                             Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations.
-  -Xvalue-classes            Enable experimental value classes.
   -Xwhen-expressions={indy|inline}
                              Select the code generation scheme for type-checking 'when' expressions:
                              -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and
                                                              following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
                              -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-                             The default value is 'inline'.
+                             The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-condition-implies-returns-contracts
@@ -159,10 +157,13 @@ where advanced options include:
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xcallable-references-to-contextual
+                             Enable callable references to contextual declarations.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcollection-literals      Enable experimental language support for collection literals.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
+  -Xcompanion-blocks         Enables companion blocks.
   -Xcompanion-blocks-and-extensions
                              Enables companion blocks and extensions.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
@@ -175,16 +176,20 @@ where advanced options include:
   -Xconsistent-data-class-copy-visibility
                              The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
   -Xcontext-parameters       Enable experimental context parameters.
-  -Xcontext-receivers        Enable experimental context receivers.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xdata-flow-based-exhaustiveness
                              Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
                              For Native, the performance report includes execution time and lines processed per second for every individual lowering.
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+                             Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+                               machines, so use this mode with caution.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
+  -Xdisable-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+                             Only has effect if '-Xverify-ir' is not 'none'.
   -Xdisable-phases           Disable backend phases.
   -Xdont-sort-source-files   Disable automatic sorting of source files.
   -Xdont-warn-on-error-suppression
@@ -194,8 +199,14 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
                              Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
                              Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
+  -Xeager-lambda-analysis    Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+  -Xenable-additional-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to enable, specified by a simple name of the checker class.
+                             It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
   -Xenable-incremental-compilation
                              Enable incremental compilation.
+  -Xescaping-functions=<+|-><fq.name>
+                             Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
   -Xexplicit-api={strict|warning|disable}
@@ -203,16 +214,15 @@ where advanced options include:
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
   -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
+  -Xfir-aggressive-pruning   Enable or disable FirAggressivePruningProcessor, which prunes unreachable private members during body resolve.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
   -Xfragment-friend-dependency=<fragment name>:<path>
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -232,6 +242,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
@@ -260,7 +271,8 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xrepl                     Run Kotlin REPL.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
@@ -270,24 +282,22 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+                             Suppress specified warning module-wide.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
+                             The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
+                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
-  -Xverify-ir-nested-offsets Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
                              Set the severity of the given warning.
                              - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)

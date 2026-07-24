@@ -110,7 +110,7 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
     override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
         val expression = dispatchReceiver?.unwrapSmartcastExpression()
         return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == data.receiver ||
-                (expression as? FirResolvedQualifier)?.symbol == data.receiver
+                (expression as? FirResolvedQualifier)?.qualifierSymbol == data.receiver
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)

@@ -10,16 +10,18 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:cleanJvmTest" />
-          <option value=":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:jvmTest" />
+          <option value=":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:test" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>true</RunAsTest>
+    <GradleProfilingDisabled>false</GradleProfilingDisabled>
+    <GradleCoverageDisabled>false</GradleCoverageDisabled>
     <method v="2" />
   </configuration>
 </component>

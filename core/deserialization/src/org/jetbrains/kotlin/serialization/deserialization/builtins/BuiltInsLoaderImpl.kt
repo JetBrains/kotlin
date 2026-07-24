@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.builtins
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsLoader
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
+@K1Deprecation
 class BuiltInsLoaderImpl : BuiltInsLoader {
     private val resourceLoader = BuiltInsResourceLoader()
 

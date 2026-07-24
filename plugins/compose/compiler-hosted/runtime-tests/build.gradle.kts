@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
 }
 
@@ -18,8 +21,6 @@ repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
-    composeGoogleMaven(libs.versions.compose.stable.get())
 }
 
 kotlin {
@@ -30,15 +31,14 @@ kotlin {
     sourceSets {
         commonTest.dependencies {
             implementation(project(":kotlin-stdlib-common"))
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
 
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             dependsOn(commonTest.get())
 
             dependencies {
                 // junit
-                implementation(libs.junit4)
                 implementation(project.dependencies.platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
@@ -51,7 +51,7 @@ kotlin {
 
                 // external deps
                 implementation(composeRuntime()) { isTransitive = false }
-                implementation(composeRuntimeTestUtils()) { isTransitive = false }
+                implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
                 implementation(libs.androidx.collections)
             }
         }

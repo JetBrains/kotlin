@@ -14,12 +14,6 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.modification.KaFirSourceModificationService"
     />
 
-
-    <projectService
-        serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl"
-    />
-
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.imports.KaFirDefaultImportsProvider"
@@ -93,17 +87,6 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
-
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirForLoopInReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirInvokeFunctionReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirPropertyDelegationMethodsReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirDestructuringDeclarationReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirArrayAccessReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirConstructorDelegationReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirCollectionLiteralReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirKDocReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirSimpleNameReference$Provider"/>
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirDefaultAnnotationArgumentReference$Provider"/>
 
     <kaAdditionalKDocResolutionProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaAdditionalKDocResolutionProviderAdapter"/>
   </extensions>

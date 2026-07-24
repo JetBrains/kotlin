@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.K1Deprecation
 
+@OptIn(K1Deprecation::class)
 internal fun StorageComponentContainer.initContainer(config: NativeSecondStageCompilationConfig) {
     useImpl<FrontendServices>()
 
@@ -61,6 +63,7 @@ internal fun StorageComponentContainer.initContainer(config: NativeSecondStageCo
     }
 }
 
+@OptIn(K1Deprecation::class)
 internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
     context.frontendServices = this.get<FrontendServices>()
 
@@ -69,4 +72,5 @@ internal fun ComponentProvider.postprocessComponents(context: FrontendContext, f
     }
 }
 
+@OptIn(K1Deprecation::class)
 class FrontendServices(val deprecationResolver: DeprecationResolver)

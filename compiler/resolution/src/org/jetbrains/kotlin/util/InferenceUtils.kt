@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.model.typeForTypeVariable
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
+@K1Deprecation
 fun NewConstraintSystem.buildNotFixedVariablesToPossibleResultType(resolutionCallbacks: KotlinResolutionCallbacks): TypeSubstitutorMarker =
     asConstraintSystemCompleterContext().typeSubstitutorByTypeConstructor(
         getBuilder().currentStorage().notFixedTypeVariables.mapValues {

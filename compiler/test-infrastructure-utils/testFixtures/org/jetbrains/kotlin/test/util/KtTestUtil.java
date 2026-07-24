@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.TargetBackend;
+import org.jetbrains.kotlin.test.TestInfrastructureException;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -146,7 +147,7 @@ public class KtTestUtil {
             jdkPath = getStringProperty(propertyVariant2);
         }
         if (jdkPath == null) {
-            throw new AssertionError("Environment variable " + mainProperty + " is not set!");
+            throw new TestInfrastructureException("Environment variable " + mainProperty + " is not set!", null);
         }
 
         return new File(jdkPath);
@@ -178,6 +179,15 @@ public class KtTestUtil {
     @NotNull
     public static File getJdk21Home() {
         return getJdkHome("JDK_21_0", "JDK_21");
+    }
+
+    @NotNull
+    public static File getJdkValhallaHome() {
+        return getJdkHome("JDK_VALHALLA");
+    }
+
+    public static boolean isJdkValhallaAvailable() {
+        return getStringProperty("JDK_VALHALLA") != null;
     }
 
     @NotNull

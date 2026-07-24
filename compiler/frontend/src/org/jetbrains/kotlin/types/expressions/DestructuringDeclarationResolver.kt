@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
+@K1Deprecation
 class DestructuringDeclarationResolver(
     private val fakeCallResolver: FakeCallResolver,
     private val localVariableResolver: LocalVariableResolver,
@@ -50,7 +52,7 @@ class DestructuringDeclarationResolver(
         context: ExpressionTypingContext
     ): List<VariableDescriptor> {
         val result = arrayListOf<VariableDescriptor>()
-        for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
+        for ([componentIndex, entry] in destructuringDeclaration.entries.withIndex()) {
             val componentType = resolveInitializer(entry, receiver, initializer, context, componentIndex)
             val variableDescriptor =
                 localVariableResolver.resolveLocalVariableDescriptorWithType(scope, entry, componentType, context.trace)

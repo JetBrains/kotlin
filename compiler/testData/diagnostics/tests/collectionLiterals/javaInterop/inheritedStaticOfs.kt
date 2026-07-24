@@ -67,19 +67,19 @@ public class D extends SuperD {
 fun <T> accept(t: T) {}
 
 fun test() {
-    accept<A>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<A>(<!UNRESOLVED_REFERENCE!>[1]<!>)
-    accept<A>(<!UNRESOLVED_REFERENCE!>[1, 2]<!>)
+    accept<A>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<A>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+    accept<A>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>)
 
-    accept<B>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<B>(<!UNRESOLVED_REFERENCE!>[1]<!>)
-    accept<B>(<!UNRESOLVED_REFERENCE!>[1, 2]<!>)
+    accept<B>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<B>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+    accept<B>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>)
 
-    accept<C>(<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>)
+    accept<C>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
 
-    accept<D>(<!UNRESOLVED_REFERENCE!>[42.toLong()]<!>)
-    accept<D>(<!UNRESOLVED_REFERENCE!>[42.toInt()]<!>)
-    accept<D>(<!UNRESOLVED_REFERENCE!>[42]<!>)
+    accept<D>(<!UNRESOLVED_COLLECTION_LITERAL!>[42.toLong()]<!>)
+    accept<D>(<!UNRESOLVED_COLLECTION_LITERAL!>[42.toInt()]<!>)
+    accept<D>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, javaType, nullableType, typeParameter */

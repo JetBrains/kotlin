@@ -1,11 +1,14 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
-val dataframeRuntimeClasspath by configurations.creating
+val dataframeRuntimeClasspath = configurations.create("dataframeRuntimeClasspath")
 
 dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.common")) { isTransitive = false }
@@ -34,6 +37,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -44,10 +48,7 @@ projectTests {
     withTestJar()
     withMockJdkAnnotationsJar()
 
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
         addClasspathProperty(dataframeRuntimeClasspath, "kotlin.dataframe.plugin.test.classpath")
     }
 

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
-// SKIP_TXT
 
 // FILE: test.kt
 package test

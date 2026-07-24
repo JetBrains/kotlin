@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
-    if (arguments.allowAnyScriptsInSourceRoots) {
-        put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
-    }
-
     if (arguments.allowConditionImpliesReturnsContracts) {
         put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
     }
@@ -49,12 +45,21 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.callableReferencesToContextual) {
+        put(LanguageFeature.CallableReferencesToContextual, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.collectionLiterals) {
         put(LanguageFeature.CollectionLiterals, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.companionBlocks) {
+        put(LanguageFeature.CompanionBlocks, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.companionBlocksAndExtensions) {
-        put(LanguageFeature.CompanionBlocksAndExtensions, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CompanionBlocks, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CompanionExtensions, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.consistentDataClassCopyVisibility) {
@@ -63,10 +68,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.contextParameters) {
         put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.contextReceivers) {
-        put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.contextSensitiveResolution) {
@@ -79,6 +80,12 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.directJavaActualization) {
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.eagerLambdaAnalysis) {
+        put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CallCompletionRefinementsFor25, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.explicitBackingFields) {

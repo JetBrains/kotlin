@@ -1,0 +1,217 @@
+KtFile: 'removableQualifierWhenIsPattern.kt'
+  null
+
+KtPackageDirective(70,82): 'package test'
+  null
+
+KtNameReferenceExpression(78,82): 'test'
+  null
+
+KtImportList(82,82): ''
+  null
+
+KtClass(84,130): 'sealed class Base {'
+  null
+
+KtDeclarationModifierList(84,90): 'sealed'
+  null
+
+KtClassBody(102,130): '{'
+  null
+
+KtClass(108,128): 'class Child : Base()'
+  null
+
+KtSuperTypeList(122,128): 'Base()'
+  null
+
+KtSuperTypeCallEntry(122,128): 'Base()'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstructorCalleeExpression(122,126): 'Base'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtTypeReference(122,126): 'Base'
+  null
+
+KtUserType(122,126): 'Base'
+  null
+
+KtNameReferenceExpression(122,126): 'Base'
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base
+        symbol = <constructor>(): test.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(126,128): '()'
+  null
+
+KtNamedFunction(132,214): 'fun usage(b: Base) {'
+  null
+
+KtParameterList(141,150): '(b: Base)'
+  null
+
+KtParameter(142,149): 'b: Base'
+  null
+
+KtTypeReference(145,149): 'Base'
+  null
+
+KtUserType(145,149): 'Base'
+  null
+
+KtNameReferenceExpression(145,149): 'Base'
+  null
+
+KtBlockExpression(151,214): '{'
+  null
+
+KtWhenExpression(157,212): 'when (b) {'
+  null
+
+KtNameReferenceExpression(163,164): 'b'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base
+        symbol = b: test.Base
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtWhenEntry(176,206): 'is Base.Child -> "".hashCode()'
+  null
+
+KtWhenConditionIsPattern(176,189): 'is Base.Child'
+  null
+
+KtTypeReference(179,189): 'Base.Child'
+  null
+
+KtUserType(179,189): 'Base.Child'
+  null
+
+KtUserType(179,183): 'Base'
+  null
+
+KtNameReferenceExpression(179,183): 'Base'
+  null
+
+KtNameReferenceExpression(184,189): 'Child'
+  null
+
+KtDotQualifiedExpression(193,206): '"".hashCode()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtStringTemplateExpression(193,195): '""'
+  null
+
+KtCallExpression(196,206): 'hashCode()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(196,204): 'hashCode'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(204,206): '()'
+  null

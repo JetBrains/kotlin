@@ -1,0 +1,1 @@
+fun commonProduceInt(): Int = produceInt()

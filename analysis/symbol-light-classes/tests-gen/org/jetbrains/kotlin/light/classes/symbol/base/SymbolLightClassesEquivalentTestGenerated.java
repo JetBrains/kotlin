@@ -46,6 +46,18 @@ public class SymbolLightClassesEquivalentTestGenerated extends AbstractSymbolLig
   }
 
   @Test
+  @TestMetadata("CompanionBlockMember.kt")
+  public void testCompanionBlockMember() {
+    run("CompanionBlockMember.kt");
+  }
+
+  @Test
+  @TestMetadata("CompanionExtensionFunction.kt")
+  public void testCompanionExtensionFunction() {
+    run("CompanionExtensionFunction.kt");
+  }
+
+  @Test
   @TestMetadata("CompanionProperty.kt")
   public void testCompanionProperty() {
     run("CompanionProperty.kt");

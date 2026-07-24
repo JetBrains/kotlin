@@ -1,0 +1,35 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'lateinit.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'lateinit.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class LateinitKt {
+    // source: 'lateinit.kt'
+    public static field a0: A
+    public static field b0: B
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getA0(): A
+    public final static @org.jetbrains.annotations.NotNull method getB0(): B
+    public final static method setA0(@org.jetbrains.annotations.NotNull p0: A): void
+    public final static method setB0(@org.jetbrains.annotations.NotNull p0: B): void
+}

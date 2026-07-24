@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameter
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 
+@K1Deprecation
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (InlineUtil.isInline(descriptor) &&
@@ -56,6 +58,7 @@ class LocalFunInlineChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class JvmStaticChecker(languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
     private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
 
@@ -125,6 +128,7 @@ class JvmStaticChecker(languageVersionSettings: LanguageVersionSettings) : Decla
     }
 }
 
+@K1Deprecation
 class JvmNameAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val jvmNameAnnotation = DescriptorUtils.findJvmNameAnnotation(descriptor)
@@ -161,6 +165,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class SynchronizedAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val synchronizedAnnotation = descriptor.annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
@@ -186,6 +191,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
                         (descriptor.hasJvmStaticAnnotation() || descriptor.propertyIfAccessor.hasJvmStaticAnnotation()))
 }
 
+@K1Deprecation
 class OverloadsAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         descriptor.annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)?.let { annotation ->
@@ -235,6 +241,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val typeParameters = (descriptor as? CallableDescriptor)?.typeParameters

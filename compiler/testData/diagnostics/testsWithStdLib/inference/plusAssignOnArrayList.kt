@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 import java.util.*
 
 val a = ArrayList<String>()

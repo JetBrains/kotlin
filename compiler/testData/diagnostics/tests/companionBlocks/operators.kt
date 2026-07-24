@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // WITH_STDLIB
 // RENDER_DIAGNOSTIC_ARGUMENTS
 

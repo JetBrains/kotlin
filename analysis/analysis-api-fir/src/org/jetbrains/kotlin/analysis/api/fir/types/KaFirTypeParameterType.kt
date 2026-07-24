@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 import org.jetbrains.kotlin.name.Name
@@ -38,12 +40,13 @@ internal class KaFirTypeParameterType(
 
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable")
+        replaceWith = ReplaceWith("this.isMarkedNullable"),
+        level = DeprecationLevel.ERROR
     )
-    @Suppress("Deprecation")
-    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+    @Suppress("DEPRECATION_ERROR")
+    override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.create(
+            KaTypeNullability.create(
                 coneType.isMarkedNullable
             )
         }

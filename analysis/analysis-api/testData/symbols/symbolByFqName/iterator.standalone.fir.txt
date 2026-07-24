@@ -1,9 +1,9 @@
 KaNamedClassSymbol:
+  anchorPsi: null
   annotations: []
   classId: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -16,6 +16,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
+  psi: null
+  realPsi: null
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -24,8 +26,8 @@ KaNamedClassSymbol:
   ]
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: null
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -34,17 +36,19 @@ KaNamedClassSymbol:
       modality: FINAL
       name: T
       origin: LIBRARY
+      psi: null
+      realPsi: null
       upperBounds: []
       variance: OUT_VARIANCE
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: kotlin.collections.Iterator

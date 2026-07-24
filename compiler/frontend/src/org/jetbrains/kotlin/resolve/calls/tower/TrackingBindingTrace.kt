@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.resolve.BindingTrace
 
+@K1Deprecation
 class TrackingBindingTrace(val trace: BindingTrace) : BindingTrace by trace {
     var reported: Boolean = false
 

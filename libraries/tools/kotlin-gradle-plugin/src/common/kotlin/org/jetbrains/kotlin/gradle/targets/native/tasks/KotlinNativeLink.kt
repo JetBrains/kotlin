@@ -290,13 +290,15 @@ constructor(
         val threads: Int,
         val gradleUserHomeDir: File,
         val gradleBuildDir: File,
+        val enabledWithOptimizations: Boolean,
     )
 
     private val cacheSettings = CacheSettings(
         project.isKonanIncrementalCompilationEnabled(),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
-        project.layout.buildDirectory.get().asFile
+        project.layout.buildDirectory.get().asFile,
+        PropertiesProvider(project).nativeEnableReleaseBinaryCache,
     )
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
@@ -313,8 +315,6 @@ constructor(
             args.target = konanTarget.name
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.multiPlatform = true
-            @Suppress("DEPRECATION")
-            args.noendorsedlibs = true
             args.nostdlib = true
             args.exportKDoc = exportKdoc.get()
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
@@ -519,12 +519,12 @@ constructor(
             val additionalOptions = mutableListOf<String>().apply {
                 addAll(externalDependenciesBuildCompilerArgs.get())
                 if (konanCacheKind.get() != NativeCacheKind.NONE
-                    && !optimized
+                    && (!optimized || cacheSettings.enabledWithOptimizations)
                     && konanPropertiesService.get().cacheWorksFor(konanTarget)
                 ) {
                     add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                     add("-Xbackend-threads=${cacheSettings.threads}")
-                    if (cacheSettings.icEnabled) {
+                    if (cacheSettings.icEnabled && !optimized) {
                         val icCacheDir = cacheSettings.gradleBuildDir
                             .resolve("kotlin-native-ic-cache")
                             .resolve(binaryName.get())

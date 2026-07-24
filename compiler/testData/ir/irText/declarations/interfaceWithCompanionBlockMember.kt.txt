@@ -1,0 +1,7 @@
+interface MyInterface {
+  final companion fun interfaceFun(): String {
+    return "InterfaceFun"
+  }
+
+}
+

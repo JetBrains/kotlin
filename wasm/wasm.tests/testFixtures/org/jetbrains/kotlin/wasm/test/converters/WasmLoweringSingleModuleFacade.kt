@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
@@ -26,8 +25,10 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
 import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
+import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
 import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -60,10 +61,9 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = inputArtifact.moduleInfo
-        val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
 
         val testPackage = extractTestPackage(testServices)
-        val exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
         with(configuration) {
             configureWith(testServices.moduleStructure.allDirectives)
@@ -75,6 +75,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val currentSetup = when {
             configuration.wasmForceDebugFriendlyCompilation -> PrecompileSetup.DEBUG_FRIENDLY
             configuration.wasmUseNewExceptionProposal -> PrecompileSetup.NEW_EXCEPTION_PROPOSAL
+            configuration.wasmUseStackSwitchingProposal -> PrecompileSetup.STACK_SWITCHING_PROPOSAL
             else -> PrecompileSetup.REGULAR
         }
         configureModuleResolutionMap(configuration, currentSetup)
@@ -86,12 +87,12 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
         val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
 
-        val (allModules, context) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration, mainModule)
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(moduleInfo, configuration)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, exportedDeclarations, allModules, context)
+            compiler.lowerIr(moduleInfo, allModules, context)
         }
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

@@ -84,7 +84,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see samConstructor
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
 
     /**
@@ -130,7 +129,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see functionalInterface
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
 
     /**
@@ -158,7 +156,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * - [KaPropertySymbol], including [KaSyntheticJavaPropertySymbol]: overridden property symbols.
      * - [KaPropertyGetterSymbol]: overridden properties of the containing property, not getter symbols.
      * - [KaPropertySetterSymbol]: overridden mutable properties whose setters are overridden by this setter.
-     * - [KaValueParameterSymbol] with [KaValueParameterSymbol.generatedPrimaryConstructorProperty]: overridden symbols of that generated
+     * - [KaValueParameterSymbol] with [KaValueParameterSymbol.primaryConstructorProperty]: overridden symbols of that generated
      *   property.
      * - Other callable kinds: an empty sequence.
      *
@@ -263,7 +261,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
-    @KaK1Unsupported
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
     /**
@@ -271,8 +268,25 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * a member.
      */
     @KaExperimentalApi
-    @KaK1Unsupported
+    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
+
+    /**
+     * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].
+     *
+     * Returns `null` if:
+     * - The symbol is a top-level callable;
+     * - The symbol is declared in a class or interface that is not a supertype of [implementerClassSymbol];
+     * - If the symbol is non-implementable (for example, it is a [KaConstructorSymbol], or a [KaValueParameterSymbol]).
+     *
+     * The implementation state describes whether a callable is already implemented, has an inherited
+     * implementation, can be overridden, or must be explicitly overridden in the given class.
+     *
+     * @see KaCallableImplementationState
+     */
+    @KaExperimentalApi
+    public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState?
 
     /**
      * The original declared symbol for this callable symbol, after unwrapping fake override [KaCallableSymbol]s if needed.
@@ -351,6 +365,84 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState] instead.**
+ *
+ * Describes the implementation state of a [KaCallableSymbol] in the context of a specific [KaClassSymbol].
+ *
+ * An implementation state captures whether a callable is explicitly implemented in the class, has an inherited
+ * implementation, can be overridden, or must be explicitly overridden.
+ *
+ * @see KaSymbolRelationProvider.implementationState
+ */
+@KaObsoleteComponentApi
+@KaExperimentalApi
+public sealed interface KaCallableImplementationState {
+    /**
+     * The declaration is directly implemented or explicitly overridden in the target class.
+     */
+    @KaExperimentalApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Explicit : KaCallableImplementationState {
+        /**
+         * Whether the implementation is complete. E.g., for a `var` property implemented by `val`, [isComplete] will be `false`.
+         */
+        public val isComplete: Boolean
+    }
+
+    /**
+     * The declaration has the implementation provided by a supertype or multiple supertypes, and **does not** have explicit implementation
+     * in the target class.
+     */
+    @KaExperimentalApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Inherited : KaCallableImplementationState {
+        /**
+         * Whether multiple supertypes provide implementations.
+         * As the compiler cannot decide which implementation to choose, the declaration must be overridden explicitly. E.g.:
+         *
+         * ```kotlin
+         * interface ColoredEntity {
+         *     val color: String
+         * }
+         *
+         * interface GreenEntity : ColoredEntity {
+         *     override val color get() = "green"
+         * }
+         *
+         * interface BlueEntity : ColoredEntity {
+         *     override val color get() = "blue"
+         * }
+         *
+         * // Interface 'SeaColorEntity' must override 'color' because it inherits multiple interface methods for it
+         * interface SeaColorEntity : GreenEntity, BlueEntity
+         * ```
+         */
+        public val isAmbiguous: Boolean
+
+        /**
+         * Whether the declaration can be overridden in the target class (e.g., it is not marked as `final` in a supertype).
+         */
+        public val isOverridable: Boolean
+    }
+
+    /**
+     * The declaration is neither implemented in the target class, nor it has inherited implementations.
+     *
+     * Note that it does not necessarily mean it is a compilation error – if the target class is `abstract`, the implementation
+     * can legitimately be absent.
+     */
+    @KaExperimentalApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Missing : KaCallableImplementationState
+
+    @Suppress("unused")
+    @KaExperimentalApi
+    private object Unknown : KaCallableImplementationState {
+        override fun toString(): String = "Unknown"
+    }
+}
+
+/**
  * The [KaSymbol] which contains this symbol, or `null` if there is no containing declaration:
  *
  *  - For top-level declarations, a [KaFileSymbol], or a [KaScriptSymbol] if the file is a script file.
@@ -358,7 +450,13 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  *  - For class members, the containing class symbol.
  *  - For local declarations, the symbol of the containing declaration.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.containingSymbol",
+        "org.jetbrains.kotlin.analysis.api.symbols.containingSymbol",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.containingSymbol: KaSymbol?
@@ -371,7 +469,13 @@ public val KaSymbol.containingSymbol: KaSymbol?
  *  - For class members, the containing class symbol.
  *  - For local declarations, the symbol of the containing declaration.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.containingDeclaration",
+        "org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
@@ -381,7 +485,13 @@ public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
  * The [KaFileSymbol] which contains this symbol, or `null` if this symbol is already a [KaFileSymbol], since it has no containing file.
  * Also `null` for Java and library declarations.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.containingFile",
+        "org.jetbrains.kotlin.analysis.api.symbols.containingFile",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.containingFile: KaFileSymbol?
@@ -390,8 +500,13 @@ public val KaSymbol.containingFile: KaFileSymbol?
 /**
  * The [KaModule] which contains this symbol.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.containingModule",
+        "org.jetbrains.kotlin.analysis.api.symbols.containingModule",
+    ),
+)
 context(session: KaSession)
 public val KaSymbol.containingModule: KaModule
     get() = with(session) { containingModule }
@@ -413,7 +528,13 @@ public val KaSymbol.containingModule: KaModule
  * For `MyPredicate`, [samConstructor] is the symbol for the synthetic SAM constructor
  * that enables the `MyPredicate { ... }` lambda syntax.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.samConstructor",
+        "org.jetbrains.kotlin.analysis.api.symbols.samConstructor",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
@@ -439,9 +560,14 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
  * @see KaNamedClassSymbol.isFun
  * @see samConstructor
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.functionalInterfaceFunction",
+        "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
@@ -462,7 +588,13 @@ public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
  *
  * For the `MyPredicate` SAM constructor symbol, [functionalInterface] is the symbol for the `MyPredicate` interface.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.functionalInterface",
+        "org.jetbrains.kotlin.analysis.api.symbols.functionalInterface",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
@@ -471,7 +603,6 @@ public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
 /**
  * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"))
 @KaContextParameterApi
 context(session: KaSession)
@@ -497,9 +628,14 @@ public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
  * @see KaClassLikeSymbol.functionalInterfaceFunction
  * @see functionalInterface
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.functionalInterfaceFunction",
+        "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
@@ -510,8 +646,14 @@ public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSy
  *
  * Currently, this property is marked as experimental because it might be joined with [fakeOverrideOriginal] in the future.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.originalConstructorIfTypeAliased",
+        "org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
@@ -534,7 +676,7 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * - [KaPropertySymbol], including [KaSyntheticJavaPropertySymbol]: overridden property symbols.
  * - [KaPropertyGetterSymbol]: overridden properties of the containing property, not getter symbols.
  * - [KaPropertySetterSymbol]: overridden mutable properties whose setters are overridden by this setter.
- * - [KaValueParameterSymbol] with [KaValueParameterSymbol.generatedPrimaryConstructorProperty]: overridden symbols of that generated
+ * - [KaValueParameterSymbol] with [KaValueParameterSymbol.primaryConstructorProperty]: overridden symbols of that generated
  *   property.
  * - Other callable kinds: an empty sequence.
  *
@@ -561,7 +703,13 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * @see directlyOverriddenSymbols
  * @see fakeOverrideOriginal
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.allOverriddenSymbols",
+        "org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
@@ -601,7 +749,13 @@ public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
  * @see allOverriddenSymbols
  * @see fakeOverrideOriginal
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.directlyOverriddenSymbols",
+        "org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
@@ -612,7 +766,13 @@ public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol
  *
  * The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isSubClassOf(superClass)",
+        "org.jetbrains.kotlin.analysis.api.symbols.isSubClassOf",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
@@ -628,7 +788,13 @@ public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
  *
  * The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isDirectSubClassOf(superClass)",
+        "org.jetbrains.kotlin.analysis.api.symbols.isDirectSubClassOf",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean {
@@ -665,26 +831,45 @@ public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean 
  *
  * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaK1Unsupported
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.intersectionOverriddenSymbols",
+        "org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
     get() = with(session) { intersectionOverriddenSymbols }
 
 /**
- * Returns the [ImplementationStatus] of the given [KaCallableSymbol] in the given [parentClassSymbol], or `null` if this symbol is not
- * a member.
+ * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].
+ *
+ * Returns `null` if:
+ * - The symbol is a top-level callable;
+ * - The symbol is declared in a class or interface that is not a supertype of [implementerClassSymbol];
+ * - If the symbol is non-implementable (for example, it is a [KaConstructorSymbol], or a [KaValueParameterSymbol]).
+ *
+ * The implementation state describes whether a callable is already implemented, has an inherited
+ * implementation, can be overridden, or must be explicitly overridden in the given class.
+ *
+ * @see KaCallableImplementationState
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.implementationState(implementerClassSymbol)",
+        "org.jetbrains.kotlin.analysis.api.symbols.implementationState",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
+public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? {
     return with(session) {
-        getImplementationStatus(
-            parentClassSymbol = parentClassSymbol,
+        implementationState(
+            implementerClassSymbol = implementerClassSymbol,
         )
     }
 }
@@ -714,7 +899,13 @@ public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSy
  * @see KaSymbolOrigin.SUBSTITUTION_OVERRIDE
  * @see KaSymbolOrigin.DELEGATED
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.fakeOverrideOriginal",
+        "org.jetbrains.kotlin.analysis.api.symbols.fakeOverrideOriginal",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
@@ -724,8 +915,14 @@ public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
  * Returns an `expect` symbol for the given `actual` symbol, if it is available. The function may return multiple `expect` symbols in
  * case of ambiguity errors.
  **/
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.getExpectsForActual()",
+        "org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> {
@@ -744,7 +941,13 @@ public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> 
  *
  * @throws IllegalArgumentException if the given class is not a sealed class.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.sealedClassInheritors",
+        "org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
@@ -776,8 +979,14 @@ public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
  *
  * These two functions `foo` and `bar` have signatures, which are conflicting on every platform.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.hasConflictingSignatureWith(other, targetPlatform)",
+        "org.jetbrains.kotlin.analysis.api.symbols.hasConflictingSignatureWith",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean {

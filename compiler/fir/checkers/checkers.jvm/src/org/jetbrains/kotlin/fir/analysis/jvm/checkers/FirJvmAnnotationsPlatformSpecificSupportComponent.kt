@@ -20,9 +20,14 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.JvmName,
     )
 
+    override val requiredArguments: Set<ClassId> = setOf(
+        JvmStandardClassIds.Annotations.Java.ElementType,
+    )
+
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
         JvmStandardClassIds.Annotations.Java.Deprecated,
         JvmStandardClassIds.Annotations.JvmRecord,
+        JvmStandardClassIds.Annotations.JvmInline,
     )
 
     override val volatileAnnotations: Set<ClassId> = setOf(
@@ -33,6 +38,8 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.Java.Repeatable,
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
+
+    override val jvmInlineAnnotationClassId: ClassId = JvmStandardClassIds.Annotations.JvmInline
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         JvmStandardClassIds.Annotations.Java.Deprecated to false,
@@ -46,7 +53,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
     ): AnnotationsPosition? {
         if (propertyAnnotations.isEmpty() || property.backingField == null) return null
 
-        val (newBackingFieldAnnotations, newPropertyAnnotations) = propertyAnnotations.partition {
+        val [newBackingFieldAnnotations, newPropertyAnnotations] = propertyAnnotations.partition {
             it.toAnnotationClassIdSafe(session) == JvmStandardClassIds.Annotations.Java.Deprecated
         }
 

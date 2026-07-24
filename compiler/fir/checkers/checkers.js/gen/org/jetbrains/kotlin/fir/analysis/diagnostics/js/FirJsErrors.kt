@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
@@ -80,6 +82,8 @@ object FirJsErrors : KtDiagnosticsContainer() {
     // Export
     val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXPORTED_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_EXPORTABLE_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> = KtDiagnosticFactory2("NON_EXPORTABLE_TYPE", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_CONSUMABLE_EXPORTED_IDENTIFIER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NON_CONSUMABLE_EXPORTED_IDENTIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NAMED_COMPANION_IN_EXPORTED_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXPORTED_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
@@ -95,6 +99,9 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val JS_STATIC_NOT_IN_OBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_NOT_IN_OBJECT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
     val JS_STATIC_ON_NON_PUBLIC_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_NON_PUBLIC_MEMBER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
     val JS_STATIC_ON_CONST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_STATIC_ON_CONST", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
+
+    // Constructor problems
+    val DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED", ErrorAboutDataClassCopyVisibilityChange, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // NoRuntime
     val JS_NO_RUNTIME_WRONG_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_NO_RUNTIME_WRONG_TARGET", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

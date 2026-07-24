@@ -1,0 +1,20 @@
+FILE: allOpenOnJvmRecord.kt
+    public final annotation class AllOpen : R|kotlin/Annotation| {
+        public constructor(): R|AllOpen| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|AllOpen|() @R|kotlin/jvm/JvmRecord|() public final data class Some : R|java/lang/Record| {
+        public constructor(x: R|kotlin/Int|): R|Some| {
+            super<R|java/lang/Record|>()
+        }
+
+        public open val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Some|.R|/Some.x|): R|Some|
+
+    }

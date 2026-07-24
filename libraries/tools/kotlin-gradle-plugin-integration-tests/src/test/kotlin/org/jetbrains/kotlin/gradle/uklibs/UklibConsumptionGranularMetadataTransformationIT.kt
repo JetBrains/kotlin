@@ -402,10 +402,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             }.buildAndReturn()
 
             assertEquals(
-                """
-                /consume|consume(ProducerCommon){}[0]
-
-                """.trimIndent(),
+                "public final fun consume(param: ProducerCommon): kotlin/Unit",
                 dumpKlibMetadataSignatures(linuxMainMetadata),
             )
         }

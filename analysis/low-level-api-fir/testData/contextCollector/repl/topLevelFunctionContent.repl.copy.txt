@@ -28,6 +28,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 11
         Scope: FirLocalScope
+Expression Stability: PROPERTY_WITH_GETTER
 
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionContent.repl.kts
     REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-topLevelFunctionContent.repl.kts>

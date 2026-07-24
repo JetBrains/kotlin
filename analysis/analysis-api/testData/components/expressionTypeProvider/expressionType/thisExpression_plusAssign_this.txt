@@ -1,2 +1,3 @@
 expression: this
+expression PSI: KtThisExpression
 type: A

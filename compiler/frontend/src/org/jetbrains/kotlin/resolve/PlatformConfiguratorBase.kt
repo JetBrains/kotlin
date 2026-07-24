@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
@@ -32,7 +33,6 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     KClassWithIncorrectTypeArgumentChecker,
     SuspendLimitationsChecker,
     ValueClassDeclarationChecker,
-    MultiFieldValueClassAnnotationsChecker,
     PropertiesWithBackingFieldsInsideValueClass(),
     InnerClassInsideValueClass(),
     AnnotationClassTargetAndRetentionChecker(),
@@ -108,6 +108,7 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     PlatformDiagnosticSuppressorClashesResolver()
 )
 
+@K1Deprecation
 fun StorageComponentContainer.configureDefaultCheckers() {
     DEFAULT_DECLARATION_CHECKERS.forEach { useInstance(it) }
     DEFAULT_CALL_CHECKERS.forEach { useInstance(it) }
@@ -118,6 +119,7 @@ fun StorageComponentContainer.configureDefaultCheckers() {
 }
 
 
+@K1Deprecation
 abstract class PlatformConfiguratorBase(
     private val dynamicTypesSettings: DynamicTypesSettings? = null,
     private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
@@ -165,5 +167,6 @@ abstract class PlatformConfiguratorBase(
     }
 }
 
+@K1Deprecation
 fun createContainer(id: String, analyzerServices: PlatformDependentAnalyzerServices, init: StorageComponentContainer.() -> Unit) =
     composeContainer(id, analyzerServices.platformConfigurator.platformSpecificContainer, init)

@@ -16,9 +16,14 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-open class IntStreamBenchmark {
+private const val BENCHMARK_SIZE = 10000
+
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class IntStream : SkipWhenBaseOnly() {
     private var _data: Iterable<Int>? = null
     val data: Iterable<Int>
         get() = _data!!
@@ -26,78 +31,96 @@ open class IntStreamBenchmark {
     init {
         _data = intValues(BENCHMARK_SIZE)
     }
-    
-    //Benchmark
-    fun copy(): List<Int> {
-        return data.asSequence().toList()
+
+    @Benchmark
+    fun copy(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(data.asSequence().toList())
     }
-    
-    //Benchmark
-    fun copyManual(): List<Int> {
+
+    @Benchmark
+    fun copyManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Int>()
         for (item in data.asSequence()) {
             list.add(item)
         }
-        return list
+        bh.consume(list)
     }
-    
-    //Benchmark
-    fun filterAndCount(): Int {
-        return data.asSequence().filter { filterLoad(it) }.count()
+
+    @Benchmark
+    fun filterAndCount(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(data.asSequence().filter { filterLoad(it) }.count())
     }
-    
-    //Benchmark
-    fun filterAndMap() {
+
+    @Benchmark
+    fun filterAndMap(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var result = 0
         for (item in data.asSequence().filter { filterLoad(it) }.map { mapLoad(it) })
-            Blackhole.consume(item)
+            result += item.length
+        bh.consume(result)
     }
-    
-    //Benchmark
-    fun filterAndMapManual() {
+
+    @Benchmark
+    fun filterAndMapManual(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var result = 0
         for (it in data.asSequence()) {
             if (filterLoad(it)) {
-                val item = mapLoad(it)
-                Blackhole.consume(item)
+                result += mapLoad(it).length
             }
         }
+        bh.consume(result)
     }
-    
-    //Benchmark
-    fun filter() {
+
+    @Benchmark
+    fun filter(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var result = 0
         for (item in data.asSequence().filter { filterLoad(it) })
-            Blackhole.consume(item)
+            result += item
+        bh.consume(result)
     }
-    
-    //Benchmark
-    fun filterManual(){
+
+    @Benchmark
+    fun filterManual(bh: Blackhole){
+        skipWhenBaseOnly()
+        var result = 0
         for (it in data.asSequence()) {
             if (filterLoad(it))
-                Blackhole.consume(it)
+                result += it
         }
+        bh.consume(result)
     }
-    
-    //Benchmark
-    fun countFilteredManual(): Int {
+
+    @Benchmark
+    fun countFilteredManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (it in data.asSequence()) {
             if (filterLoad(it))
                 count++
         }
-        return count
+        bh.consume(count)
     }
-    
-    //Benchmark
-    fun countFiltered(): Int {
-        return data.asSequence().count { filterLoad(it) }
+
+    @Benchmark
+    fun countFiltered(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(data.asSequence().count { filterLoad(it) })
     }
-    
-    //Benchmark
-    fun countFilteredLocal(): Int {
-        return data.asSequence().cnt { filterLoad(it) }
+
+    @Benchmark
+    fun countFilteredLocal(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(data.asSequence().cnt { filterLoad(it) })
     }
-    
-    //Benchmark
-    fun reduce(): Int {
-        return data.asSequence().fold(0) {acc, it -> if (filterLoad(it)) acc + 1 else acc }
+
+    @Benchmark
+    fun reduce(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(data.asSequence().fold(0) {acc, it -> if (filterLoad(it)) acc + 1 else acc })
     }
 }

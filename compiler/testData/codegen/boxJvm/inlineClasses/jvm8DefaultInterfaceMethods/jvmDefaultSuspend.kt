@@ -3,7 +3,6 @@
 // WITH_STDLIB
 // JVM_TARGET: 1.8
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.coroutines.*
 

@@ -58,7 +58,7 @@ private fun IrDeclaration.isPlacedInsideInternalPackage() =
 
 private fun isIntrinsic(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction && declaration.isPlacedInsideInternalPackage() &&
-            declaration.annotations.any { it.symbol.owner.constructedClass.fqNameWhenAvailable == JsIntrinsicFqName }
+            declaration.annotations.any { it.isAnnotationWithEqualFqName(JsIntrinsicFqName) }
 
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
     MoveBodilessDeclarationsToSeparatePlaceLowering(context).let { moveBodiless ->
@@ -81,7 +81,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
         val externalPackageFragment by lazy(LazyThreadSafetyMode.NONE) {
             context.externalPackageFragment.getOrPut(irFile.symbol) {
-                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.packageFqName, symbol = IrFileSymbolImpl(), module = irFile.module).also {
+                IrFileImpl(irFile.fileEntry, IrFileSymbolImpl(), irFile.packageFqName, irFile.module).also {
                     it.annotations = it.annotations memoryOptimizedPlus irFile.annotations
                 }
             }

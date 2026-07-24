@@ -2,6 +2,7 @@ Kotlin to JVM compiler performance report
                 INIT        $UINT>>$ ms
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
+        KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
          IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
              BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
 Binary class from Kotlin file performed $UINT$ times, total time $UINT$ ms

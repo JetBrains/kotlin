@@ -23,8 +23,7 @@ internal fun Type.isStret(target: KonanTarget): Boolean {
         Architecture.X64 -> DarwinX64AbiInfo()
 
         Architecture.X86 -> DarwinX86AbiInfo()
-
-        Architecture.ARM32 -> DarwinArm32AbiInfo(target)
+        Architecture.ARM32 -> error("There is no support for Darwin ARM32 in Kotlin/Native")
     }
     return abiInfo.shouldUseStret(unwrappedType)
 }
@@ -56,24 +55,6 @@ class DarwinX86AbiInfo : ObjCAbiInfo {
             }
             else -> false
         }
-    }
-}
-
-class DarwinArm32AbiInfo(private val target: KonanTarget) : ObjCAbiInfo {
-    override fun shouldUseStret(returnType: Type): Boolean = when (target) {
-        // 32-bit watchOS uses armv7k which is effectively Cortex-A7 and
-        // uses AAPCS16 VPF.
-        KonanTarget.WATCHOS_ARM32 -> when (returnType) {
-            is RecordType -> {
-                // https://github.com/llvm/llvm-project/blob/6c8a34ed9b49704bdd60838143047c62ba9f2502/clang/lib/CodeGen/TargetInfo.cpp#L6165
-                when {
-                    returnType.decl.def!!.size <= 16 -> false
-                    else -> true
-                }
-            }
-            else -> false
-        }
-        else -> error("Unexpected target")
     }
 }
 

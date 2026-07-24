@@ -1,6 +1,10 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {
@@ -10,10 +14,7 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.web.common"))
 
     implementation(project(":compiler:fir:diagnostic-renderers"))
-
-    // FE checks for modules use ModuleKind
-    // This dependency can be removed when we stop supporting PLAIN and UMD module systems
-    implementation(project(":js:js.serializer"))
+    implementation(project(":js:js.config"))
 
     /*
      * We can't remove this dependency until we use

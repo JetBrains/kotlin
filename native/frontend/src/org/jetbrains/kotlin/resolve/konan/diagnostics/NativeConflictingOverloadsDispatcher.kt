@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,6 +27,7 @@ private fun FunctionDescriptor.hasDifferentParameterNames(other: FunctionDescrip
     return valueParameters.drop(1).map { it.name } != other.valueParameters.drop(1).map { it.name }
 }
 
+@K1Deprecation
 object NativeConflictingOverloadsDispatcher : ConflictingOverloadsDispatcher {
     override fun getDiagnostic(
         languageVersionSettings: LanguageVersionSettings,

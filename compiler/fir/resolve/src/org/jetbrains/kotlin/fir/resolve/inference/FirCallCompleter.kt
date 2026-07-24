@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
@@ -105,15 +105,7 @@ class FirCallCompleter(
 
         if (skipEvenPartialCompletion) return call
 
-        val completionMode = candidate.computeCompletionMode(
-            session.inferenceComponents, resolutionMode, initialType
-        ).let {
-            when {
-                it == ConstraintSystemCompletionMode.FULL ->
-                    inferenceSession.customCompletionModeInsteadOfFull(call) ?: ConstraintSystemCompletionMode.FULL
-                else -> it
-            }
-        }
+        val completionMode = candidate.computeCompletionMode(resolutionMode, initialType, call)
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
@@ -155,10 +147,26 @@ class FirCallCompleter(
         }
     }
 
+    private fun Candidate.computeCompletionMode(
+        resolutionMode: ResolutionMode,
+        initialType: ConeKotlinType,
+        call: FirResolvable,
+    ): ConstraintSystemCompletionMode = computeCompletionMode(
+        session.inferenceComponents, resolutionMode, initialType
+    ).let {
+        when {
+            it == ConstraintSystemCompletionMode.FULL ->
+                inferenceSession.customCompletionModeInsteadOfFull(call) ?: ConstraintSystemCompletionMode.FULL
+            else -> it
+        }
+    }
+
     /**
      * Sometimes we need to run [FirCallCompletionResultsWriterTransformer] for [completionMode] != [ConstraintSystemCompletionMode.FULL].
-     * Currently, only applies for synthetic calls created for lambda or collection literals and only in
-     * [ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL] mode.
+     * Currently, applies only for [ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL] and only for:
+     *  - Top-level lambdas
+     *  - Top-level collection literals
+     *  - Annotation calls
      *
      * See also [FirCallCompletionResultsWriterTransformer.Mode.TopLevelSyntheticCallInPclaCompletion].
      */
@@ -167,6 +175,22 @@ class FirCallCompleter(
         completionMode: ConstraintSystemCompletionMode,
     ): T where T : FirResolvable, T : FirExpression {
         return when {
+            this is FirAnnotationCall -> {
+                assert(completionMode == ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL && !useArrayLiteralResolution()) {
+                    "Annotation call completion is non-FULL mode should only be possible with (new) collection literal resolution of annotations" +
+                            " and only in PCLA lambda"
+                }
+                val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
+
+                val finalSubstitutor = readOnlyConstraintStorage.buildAbstractResultingSubstitutor(
+                    session.typeContext,
+                    transformTypeVariablesToErrorTypes = true,
+                ).asCone()
+                transformSingle(
+                    createCompletionResultsWriter(finalSubstitutor),
+                    null
+                )
+            }
             !candidate.isSyntheticCallForTopLevelLambda() && !candidate.isSyntheticCallForTopLevelCollectionLiteral() -> {
                 this
             }
@@ -222,7 +246,11 @@ class FirCallCompleter(
         initialType: ConeKotlinType,
         resolutionMode: ResolutionMode,
     ) {
-        if (resolutionMode !is ResolutionMode.WithExpectedType || resolutionMode.arrayLiteralPosition == ArrayLiteralPosition.AnnotationArgument) return
+        if (resolutionMode !is ResolutionMode.WithExpectedType) return
+        @OptIn(ArrayLiteralResolution::class)
+        if (resolutionMode.arrayLiteralPosition == ArrayLiteralPosition.AnnotationArgument) {
+            return
+        }
         val expectedType = resolutionMode.expectedType.fullyExpandedType()
 
         val system = candidate.system
@@ -292,7 +320,7 @@ class FirCallCompleter(
             expectedType.isUnitOrAnyWithArbitraryNullability() ||
             // We don't want to add an equality constraint to a nullable type to a !! call.
             // See compiler/testData/diagnostics/tests/inference/checkNotNullWithNullableExpectedType.kt
-            (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull(session))
+            (symbol.callableId == SyntheticCallableId.CHECK_NOT_NULL && expectedType.canBeNull())
         ) {
             return false
         }
@@ -322,12 +350,31 @@ class FirCallCompleter(
         return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS
     }
 
+
+    fun runCompletionUntilFirstLambdaIsReady(
+        candidate: Candidate,
+        call: FirFunctionCall,
+    ) {
+        val resolutionMode = candidate.callInfo.resolutionMode
+        val initialType = components.initialTypeOfCandidate(candidate)
+        val completionMode = candidate.computeCompletionMode(resolutionMode, initialType, call)
+        val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+
+        runCompletionForCall(
+            candidate,
+            completionMode,
+            call, initialType, analyzer,
+            isUntilFirstLambda = true,
+        )
+    }
+
     fun runCompletionForCall(
         candidate: Candidate,
         completionMode: ConstraintSystemCompletionMode,
         call: FirExpression,
         initialType: ConeKotlinType,
         analyzer: PostponedArgumentsAnalyzer? = null,
+        isUntilFirstLambda: Boolean = false,
     ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
@@ -348,6 +395,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext,
             postponedAtomAnalyzer,
+            isUntilFirstLambda,
         )
     }
 
@@ -387,7 +435,6 @@ class FirCallCompleter(
             components.samResolver,
             components.context,
             mode,
-            insideAnnotationContext = components.context.isInsideAnnotationContext,
         )
     }
 
@@ -696,7 +743,7 @@ class FirCallCompleter(
         if (eventOccurencesRangeByParameter.isEmpty() && !isInline) return
 
         val session = transformer.session
-        for ((argument, parameter) in argumentMapping) {
+        for ([argument, parameter] in argumentMapping) {
             val lambda = argument.expression.unwrapAnonymousFunctionExpression() ?: continue
             lambda.transformInlineStatus(parameter, isInline, session)
             val kind = eventOccurencesRangeByParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {

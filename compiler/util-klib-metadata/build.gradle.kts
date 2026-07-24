@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-published-compiler-dependency-configuration")
 }
@@ -6,6 +9,8 @@ plugins {
 description = "Common klib metadata reader and writer"
 
 dependencies {
+    compileOnly(project(":core:descriptors"))
+
     compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:deserialization"))

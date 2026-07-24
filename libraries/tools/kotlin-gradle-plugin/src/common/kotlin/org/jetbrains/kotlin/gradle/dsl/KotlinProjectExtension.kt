@@ -177,19 +177,19 @@ abstract class KotlinProjectExtension @Inject constructor(
     @ExperimentalAbiValidation
     override val abiValidation: AbiValidationExtension
         get() {
-            abiValidationInternal.activate()
+            abiValidationInternal.activate(compilerVersion)
             return abiValidationInternal
         }
 
     @ExperimentalAbiValidation
     override fun abiValidation(action: Action<AbiValidationExtension>) {
-        abiValidationInternal.activate()
+        abiValidationInternal.activate(compilerVersion)
         action.execute(abiValidationInternal)
     }
 
     @ExperimentalAbiValidation
     override fun abiValidation() {
-        abiValidationInternal.activate()
+        abiValidationInternal.activate(compilerVersion)
     }
 }
 

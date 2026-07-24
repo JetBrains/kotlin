@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.isRegularFile
 
 /**
  * The format of a Klib library.
@@ -18,8 +19,8 @@ sealed interface KlibFormat {
         /**
          * This function is made internal because it's semantics can be changed in the future.
          */
-        internal fun guessBy(file: KlibFile): KlibFormat {
-            return if (file.isFile) ZipArchive else Directory
+        internal fun guessBy(path: Path): KlibFormat {
+            return if (path.isRegularFile()) ZipArchive else Directory
         }
     }
 }

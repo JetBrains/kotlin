@@ -86,7 +86,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         val modifiers = list.modifiers
-        for ((secondIndex, secondModifier) in modifiers.withIndex()) {
+        for ([secondIndex, secondModifier] in modifiers.withIndex()) {
             for (firstIndex in 0 until secondIndex) {
                 checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, owner)
             }
@@ -165,6 +165,21 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         if (modifierToken == KtTokens.COMPANION_KEYWORD &&
             owner is FirRegularClass &&
             KotlinTarget.FILE in actualParents
+        ) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
+                modifierToken,
+                actualParents.firstOrThis()
+            )
+            return true
+        }
+
+        // possibleParentTargetPredicateMap contains INTERFACE for protected and internal keyword,
+        // but it's only allowed for companion block members
+        if (modifierToken == KtTokens.INTERNAL_KEYWORD &&
+            !(owner is FirCallableDeclaration && owner.isCompanionBlockMember) &&
+            KotlinTarget.INTERFACE in actualParents
         ) {
             reporter.reportOn(
                 modifierSource,

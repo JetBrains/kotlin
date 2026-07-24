@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNSEnumTypeName
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNSEnum
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCNSClosedEnum
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCRawType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
@@ -21,7 +21,7 @@ internal fun ObjCExportContext.translateNSEnum(
     auxiliaryDeclarations: MutableList<ObjCTopLevel>
 ): ObjCProperty {
     auxiliaryDeclarations.add(
-        ObjCNSEnum(nsEnumTypeName.objCName, nsEnumTypeName.swiftName, origin, getNSEnumEntries(symbol, nsEnumTypeName.objCName)))
+        ObjCNSClosedEnum(nsEnumTypeName.objCName, nsEnumTypeName.swiftName, origin, getNSEnumEntries(symbol, nsEnumTypeName.objCName)))
     return ObjCProperty(
         ObjCPropertyNames.nsEnumPropertyName,
         null,
@@ -32,11 +32,11 @@ internal fun ObjCExportContext.translateNSEnum(
 }
 
 
-private fun ObjCExportContext.getNSEnumEntries(symbol: KaClassSymbol, objCTypeName: String): List<ObjCNSEnum.Entry> {
+private fun ObjCExportContext.getNSEnumEntries(symbol: KaClassSymbol, objCTypeName: String): List<ObjCNSClosedEnum.Entry> {
     val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
     // Map the enum entries in declaration order, preserving the ordinal
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().mapIndexed { ordinal, entry ->
-        ObjCNSEnum.Entry(
+        ObjCNSClosedEnum.Entry(
             getNSEnumEntryName(entry, true),
             objCTypeName + getNSEnumEntryName(entry, false).replaceFirstChar { it.uppercaseChar() },
             ordinal

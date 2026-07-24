@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExportedToJs
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
@@ -43,14 +44,17 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     )
                 }
 
-                val isPrimaryConstructorVisibilityPublic = run {
-                    val primaryConstructorVisibility = declaration.primaryConstructorIfAny(context.session)?.visibility
-                    primaryConstructorVisibility == Visibilities.Public
-                }
+                val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
+                val isPrimaryConstructorVisibilityPublic = primaryConstructor?.visibility == Visibilities.Public
+
+                val isConstructorExcludedFromExport =
+                    declaration.symbol.isExportedToJs() &&
+                            primaryConstructor?.getAnnotationByClassId(StandardClassIds.Annotations.jsExportIgnore, context.session) != null
+
                 val isConstructorVisibilityRespected =
                     LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled()
 
-                if (consistentCopy != null && (isPrimaryConstructorVisibilityPublic || isConstructorVisibilityRespected)) {
+                if (consistentCopy != null && ((!isConstructorExcludedFromExport && isPrimaryConstructorVisibilityPublic) || isConstructorVisibilityRespected)) {
                     reporter.reportOn(
                         consistentCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,
@@ -58,7 +62,7 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     )
                 }
 
-                if (exposedCopy != null && isPrimaryConstructorVisibilityPublic) {
+                if (exposedCopy != null && !isConstructorExcludedFromExport && isPrimaryConstructorVisibilityPublic) {
                     reporter.reportOn(
                         exposedCopy.source,
                         FirErrors.REDUNDANT_ANNOTATION,

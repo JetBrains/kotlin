@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.util.NullableArrayMapAccessor
 import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
-interface TestService
-
 data class ServiceRegistrationData(
     val kClass: KClass<out TestService>,
     val serviceConstructor: (TestServices) -> TestService

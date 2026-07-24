@@ -1,4 +1,5 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: [
     Anno()
       psi: KtAnnotationEntry
@@ -6,10 +7,11 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -18,6 +20,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -26,9 +30,10 @@ KaContextParameterSymbol:
     ]
     typeArguments: []
     type: @R|Anno|()  kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnProperty2.kt)
   getContainingJvmClassName: AnnotatedContextParameterOnProperty2Kt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

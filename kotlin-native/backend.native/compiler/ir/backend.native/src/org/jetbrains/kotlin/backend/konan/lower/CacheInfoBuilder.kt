@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedFileReference
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.backend.konan.serialization.buildSerializedClassFields
 import org.jetbrains.kotlin.ir.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.impl.javaFile
 
 internal class CacheInfoBuilder(
         private val generationState: NativeGenerationState,
@@ -35,7 +35,7 @@ internal class CacheInfoBuilder(
 ) {
     fun build() {
         if (!generationState.config.producePerFileCache)
-            generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.libraryFile.javaFile()).klibFingerprint
+            generationState.klibHash = SerializedKlibFingerprint(moduleDeserializer.klib.path.toFile()).klibFingerprint
         irModule.files.forEach { irFile ->
             var hasEagerlyInitializedProperties = false
 
@@ -73,6 +73,24 @@ internal class CacheInfoBuilder(
                             && declaration.hasAnnotation(KonanFqNames.eagerInitialization)
                     ) {
                         hasEagerlyInitializedProperties = true
+                    }
+
+                    // Record trivial getters of val properties so dependent compilations can rely on this fact
+                    // without re-inspecting our IR (which may be bodiless for cached dependencies).
+                    if (!declaration.isVar) {
+                        val getter = declaration.getter
+                        if (getter != null
+                                && !getter.isFakeOverride
+                                && getter.isExported
+                                && getter.isTrivialGetter
+                        ) {
+                            val signature = getter.symbol.signature
+                            if (signature != null) {
+                                generationState.trivialGetters.add(
+                                        SerializedTrivialGetter(SerializedFileReference(irFile), signature)
+                                )
+                            }
+                        }
                     }
                 }
             })

@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.jvm.abi;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -20,146 +17,173 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/jvm-abi-gen/testData/compile")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  private void run(String fileName) {
+    runTest("plugins/jvm-abi-gen/testData/compile/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInCompile() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
+  @Test
   @TestMetadata("anonymousObject")
   public void testAnonymousObject() {
     runTest("plugins/jvm-abi-gen/testData/compile/anonymousObject/");
   }
 
+  @Test
   @TestMetadata("classes")
   public void testClasses() {
     runTest("plugins/jvm-abi-gen/testData/compile/classes/");
   }
 
+  @Test
   @TestMetadata("clinit")
   public void testClinit() {
     runTest("plugins/jvm-abi-gen/testData/compile/clinit/");
   }
 
+  @Test
   @TestMetadata("conflictingClasses")
   public void testConflictingClasses() {
     runTest("plugins/jvm-abi-gen/testData/compile/conflictingClasses/");
   }
 
+  @Test
   @TestMetadata("inlineAnnotationInstantiation")
   public void testInlineAnnotationInstantiation() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");
   }
 
+  @Test
   @TestMetadata("inlineAnonymousObject")
   public void testInlineAnonymousObject() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineAnonymousObject/");
   }
 
+  @Test
   @TestMetadata("inlineCapture")
   public void testInlineCapture() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
   }
 
+  @Test
   @TestMetadata("inlineClassWithPrivateConstructor")
   public void testInlineClassWithPrivateConstructor() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
   }
 
+  @Test
   @TestMetadata("inlineNoRegeneration")
   public void testInlineNoRegeneration() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration/");
   }
 
+  @Test
   @TestMetadata("inlineReifiedFunction")
   public void testInlineReifiedFunction() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
   }
 
+  @Test
   @TestMetadata("inlineWhenMappings")
   public void testInlineWhenMappings() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineWhenMappings/");
   }
 
+  @Test
   @TestMetadata("innerObjectRegeneration")
   public void testInnerObjectRegeneration() {
     runTest("plugins/jvm-abi-gen/testData/compile/innerObjectRegeneration/");
   }
 
+  @Test
   @TestMetadata("kt-40133")
   public void testKt_40133() {
     runTest("plugins/jvm-abi-gen/testData/compile/kt-40133/");
   }
 
+  @Test
   @TestMetadata("kt-40340")
   public void testKt_40340() {
     runTest("plugins/jvm-abi-gen/testData/compile/kt-40340/");
   }
 
+  @Test
   @TestMetadata("multifileClass")
   public void testMultifileClass() {
     runTest("plugins/jvm-abi-gen/testData/compile/multifileClass/");
   }
 
+  @Test
   @TestMetadata("multifileClassOptimized")
   public void testMultifileClassOptimized() {
     runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimized/");
   }
 
+  @Test
   @TestMetadata("multifileClassOptimizedWithRemovePrivateOption")
   public void testMultifileClassOptimizedWithRemovePrivateOption() {
     runTest("plugins/jvm-abi-gen/testData/compile/multifileClassOptimizedWithRemovePrivateOption/");
   }
 
+  @Test
   @TestMetadata("multifileClassWithRemovePrivateOption")
   public void testMultifileClassWithRemovePrivateOption() {
     runTest("plugins/jvm-abi-gen/testData/compile/multifileClassWithRemovePrivateOption/");
   }
 
+  @Test
   @TestMetadata("nestedClassWithDollar")
   public void testNestedClassWithDollar() {
     runTest("plugins/jvm-abi-gen/testData/compile/nestedClassWithDollar/");
   }
 
+  @Test
   @TestMetadata("privateAnnotationsFromJavaApp")
   public void testPrivateAnnotationsFromJavaApp() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");
   }
 
+  @Test
   @TestMetadata("privateAnnotationsFromJavaLib")
   public void testPrivateAnnotationsFromJavaLib() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaLib/");
   }
 
+  @Test
   @TestMetadata("privateClassesFromJavaApp")
   public void testPrivateClassesFromJavaApp() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaApp/");
   }
 
+  @Test
   @TestMetadata("privateClassesFromJavaLib")
   public void testPrivateClassesFromJavaLib() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateClassesFromJavaLib/");
   }
 
+  @Test
   @TestMetadata("privateInterfaceImplementedByPublicClass")
   public void testPrivateInterfaceImplementedByPublicClass() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateInterfaceImplementedByPublicClass/");
   }
 
+  @Test
   @TestMetadata("privateOnlyConstructors")
   public void testPrivateOnlyConstructors() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
   }
 
+  @Test
   @TestMetadata("privateValueClassConstructor")
   public void testPrivateValueClassConstructor() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateValueClassConstructor/");
   }
 
+  @Test
   @TestMetadata("topLevel")
   public void testTopLevel() {
     runTest("plugins/jvm-abi-gen/testData/compile/topLevel/");

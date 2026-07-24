@@ -52,8 +52,8 @@ fun test(
 
     val _: Set<Int> = a ?: []
     val _: Collection<Int> = a ?: []
-    val _: MutableCollection<Int> = a ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
-    val _: MutableCollection<*> = a ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+    val _: MutableCollection<Int> = a ?: <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val _: MutableCollection<*> = a ?: <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
 
     val _: Set<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> c ?: []
     val _: Collection<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> c ?: []
@@ -72,8 +72,8 @@ fun test(
     val _ = nid(sa) ?: [1, 2, 3]
     val _: Set<Int>? = nid(a) ?: nid([])
     val _: Collection<Int>? = nid(a) ?: nid([])
-    val _: MutableCollection<Int>? = nid(a) ?: nid(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    val _: MutableCollection<*>? = nid(sa) ?: nid(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    val _: MutableCollection<Int>? = nid(a) ?: nid(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    val _: MutableCollection<*>? = nid(sa) ?: nid(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
     val _ = <!CANNOT_INFER_PARAMETER_TYPE!>nullableSet<!>() ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
     val _ = nullableSet() ?: [1, 2, 3]
@@ -88,8 +88,8 @@ fun test(
     val _: Set<Int> = [] <!USELESS_ELVIS!>?: []<!>
     val _: Set<*> = <!CANNOT_INFER_PARAMETER_TYPE!>[]<!> ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
     val _: Collection<Int> = [] <!USELESS_ELVIS!>?: []<!>
-    val _: MutableCollection<Int> = <!CANNOT_INFER_PARAMETER_TYPE!>[]<!> ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
-    val _: MutableCollection<Int> = <!CANNOT_INFER_PARAMETER_TYPE!>[]<!> ?: mutableSetOf()
+    val _: MutableCollection<Int> = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!> ?: <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val _: MutableCollection<Int> = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!> ?: mutableSetOf()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nullableType,

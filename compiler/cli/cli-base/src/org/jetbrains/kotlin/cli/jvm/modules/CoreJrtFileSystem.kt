@@ -38,7 +38,7 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
     override fun getProtocol(): String = StandardFileSystems.JRT_PROTOCOL
 
     override fun findFileByPath(path: String): VirtualFile? {
-        val (jdkHomePath, pathInImage) = splitPath(path)
+        val [jdkHomePath, pathInImage] = splitPath(path)
         val root = roots[jdkHomePath] ?: return null
 
         if (pathInImage.isEmpty()) return root

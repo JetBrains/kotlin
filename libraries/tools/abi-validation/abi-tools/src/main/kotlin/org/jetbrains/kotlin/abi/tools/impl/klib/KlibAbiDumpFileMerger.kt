@@ -584,7 +584,7 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
     fun merge(other: DeclarationContainer) {
         targets.addAll(other.targets)
         val parent = this
-        other.children.forEach { (line, decl) ->
+        other.children.forEach { [line, decl] ->
             children.compute(line) { _, thisDecl ->
                 if (thisDecl == null) {
                     decl.deepCopy(parent)
@@ -619,7 +619,7 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
     private inline fun mutateChildrenAndRemoveTargetless(blockAction: (DeclarationContainer) -> Unit) {
         val iterator = children.iterator()
         while (iterator.hasNext()) {
-            val (_, child) = iterator.next()
+            val [_, child] = iterator.next()
             blockAction(child)
             if (child.targets.isEmpty()) {
                 iterator.remove()

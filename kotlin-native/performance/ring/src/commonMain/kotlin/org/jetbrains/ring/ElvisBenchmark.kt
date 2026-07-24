@@ -16,10 +16,17 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-open class ElvisBenchmark {
+private const val BENCHMARK_SIZE = 10000
+
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Elvis : SkipWhenBaseOnly() {
+    // Use the same seed for reproducibility
+    private val rnd = Random(785)
 
     class Value(var value: Int)
 
@@ -27,27 +34,36 @@ open class ElvisBenchmark {
 
     init {
         array = Array(BENCHMARK_SIZE) {
-            if (Random.nextInt(BENCHMARK_SIZE) < BENCHMARK_SIZE / 10) null else Value(Random.nextInt())
+            if (rnd.nextInt(BENCHMARK_SIZE) < BENCHMARK_SIZE / 10) null else Value(rnd.nextInt(100))
         }
     }
 
-    //Benchmark
-    fun testElvis() {
+    @Benchmark
+    fun testElvis(bh: Blackhole) {
+        var result = 0
         for (obj in array) {
-            Blackhole.consume(obj?.value ?: 0)
+            result += obj?.value ?: 0
         }
+        bh.consume(result)
     }
 
     class Composite(val x : Int, val y : Composite?)
+
+    private val composites = Array(BENCHMARK_SIZE) {
+        Composite(rnd.nextInt(100), Composite(rnd.nextInt(100), null))
+    }
 
     fun check(a : Composite?) : Int {
         return a?.y?.x ?: (a?.x ?: 3)
     }
 
-    fun testCompositeElvis(): Int {
+    @Benchmark
+    fun testCompositeElvis(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
-        for (i in 0..BENCHMARK_SIZE)
-            result += check(Composite(Random.nextInt(), Composite(Random.nextInt(), null)))
-        return result
+        for (composite in composites) {
+            result += check(composite)
+        }
+        bh.consume(result)
     }
 }

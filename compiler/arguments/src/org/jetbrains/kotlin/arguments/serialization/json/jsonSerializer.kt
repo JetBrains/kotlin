@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.serialization.json
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.types.allKotlinTypeSerializersModule
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -22,5 +22,5 @@ fun main(args: Array<String>) {
 
     val jsonArguments = format.encodeToString(kotlinCompilerArguments)
 
-    destinationFile.writeText(jsonArguments)
+    GeneratorsFileUtil.writeFileIfContentChanged(destinationFile, jsonArguments)
 }

@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 sealed class LocalVariableAccessorDescriptor(
     final override val correspondingVariable: LocalVariableDescriptor,
     isGetter: Boolean

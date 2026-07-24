@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.utils
 
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsDtsHandler
@@ -45,7 +46,7 @@ fun TestConfigurationBuilder.configureSteppingTests() {
 
 fun TestConfigurationBuilder.configureJsTypeScriptExportTest(isWholeFileJsExport: Boolean, expectedDtsSuffix: String? = null) {
     defaultDirectives {
-        +JsEnvironmentConfigurationDirectives.GENERATE_DTS
+        JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY with TsCompilationStrategy.MERGED
     }
     useSourcePreprocessor(::JsExportSourcePreprocessor.bind(isWholeFileJsExport))
     configureJsArtifactsHandlersStep {

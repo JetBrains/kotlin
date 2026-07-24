@@ -1,18 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
 
 project.updateJvmTarget("1.8")
 
-val allTestsRuntime by configurations.creating
+val allTestsRuntime = configurations.create("allTestsRuntime")
 
-val testApi by configurations
-testApi.extendsFrom(allTestsRuntime)
+configurations.testApi.get().extendsFrom(allTestsRuntime)
 
-val embeddableTestRuntime by configurations.creating {
+val embeddableTestRuntime = configurations.create("embeddableTestRuntime") {
     extendsFrom(allTestsRuntime)
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -21,7 +23,6 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(libs.junit4)
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(project(":kotlin-scripting-ide-services-unshaded"))
     testImplementation(project(":kotlin-scripting-compiler"))
@@ -38,7 +39,6 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
-    embeddableTestRuntime(project(":compiler:tests-mutes:mutes-junit4"))
     embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
     embeddableTestRuntime(project(":kotlin-scripting-compiler-impl-embeddable"))
     embeddableTestRuntime(project(":kotlin-scripting-dependencies"))
@@ -59,7 +59,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask {
         dependsOn(":kotlin-compiler:distKotlinc")
         workingDir = rootDir
         doFirst {
@@ -69,7 +69,7 @@ projectTests {
 
     // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
     // To make it work, the dependencies to the intellij sdk should be eliminated
-    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+    testTask("embeddableTest", skipInLocalBuild = false) {
         workingDir = rootDir
         dependsOn(embeddableTestRuntime)
         classpath = embeddableTestRuntime

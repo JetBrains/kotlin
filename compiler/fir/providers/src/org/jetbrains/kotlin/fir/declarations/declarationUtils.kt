@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.isClass
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
@@ -26,6 +28,8 @@ import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Returns all constructors of a given class, including generated ones. Resolve phase is not guaranteed.
@@ -213,7 +217,7 @@ fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = re
     ?.filter { it != this }
 
 context(holder: SessionHolder)
-fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>? {
+fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol> {
     val superTypes = getSuperTypes(holder.session)
         .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol() }
 
@@ -222,9 +226,17 @@ fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>
 
         superType.fir.getSealedClassInheritors(holder.session)
             .mapNotNull { it.toSymbol() as? FirRegularClassSymbol }
-            .filter { it != this@getComplementarySymbols && it !in superTypes }
+            .filter { (isFinal || it.isFinal || isClass && it.isClass) && areUnrelated(this, it) }
     }
 }
+
+context(holder: SessionHolder)
+private fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
+    isSubclassOf(other.toLookupTag(), holder.session, isStrict = false, lookupInterfaces = true)
+
+context(holder: SessionHolder)
+private fun areUnrelated(a: FirClassSymbol<*>, b: FirClassSymbol<*>): Boolean =
+    !a.isSubclassOf(b) && !b.isSubclassOf(a)
 
 /**
  * Returns the FirClassLikeDeclaration that the
@@ -255,21 +267,18 @@ fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
     return getConstructedClass(session)?.classKind == ClassKind.ANNOTATION_CLASS
 }
 
+@OptIn(ExperimentalContracts::class)
 fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
+    contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
     if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
+    val constructedClass = getConstructedClass(session) ?: return false
+    return constructedClass.isInlineOrValue && this.isPrimary
 }
 
 fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {
     return resolvedReturnTypeRef.coneType
         .fullyExpandedType(session)
         .toRegularClassSymbol(session)
-}
-
-fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInlineOrValue
 }
 
 @PrivateForInline
@@ -311,15 +320,6 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
  */
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
     containsDefaultValue(index) || symbol.getSingleMatchedExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
-
-fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
-    if (name != OperatorNameConventions.EQUALS) return false
-    if (valueParameterSymbols.size != 1) return false
-    if (contextParameterSymbols.isNotEmpty()) return false
-    if (receiverParameterSymbol != null) return false
-    val parameter = valueParameterSymbols.first()
-    return parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isNullableAny
-}
 
 /**
  * An intersection override is trivial if one of the overridden symbols subsumes all others.
@@ -398,7 +398,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
 @ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
-    for ((member, scope) in this) {
+    for ((val member, val scope = baseScope) in this) {
         val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
         val addIfDifferent = { it: FirCallableSymbol<*> ->
             val symbol = it.unwrapSubstitutionOverrides()
@@ -413,7 +413,7 @@ fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<Me
             scope.processOverriddenProperties(member, addIfDifferent)
         }
     }
-    return filter { (member, _) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
+    return filter { (val member, val _ = baseScope) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
 }
 
 fun FirValueParameter.isInlinable(session: FirSession): Boolean {

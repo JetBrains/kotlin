@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.generators.model.methods.RunTestMethodModel
 import org.jetbrains.kotlin.generators.model.methods.RunTestWithDirectoryPrefixMethodModel
 import org.jetbrains.kotlin.generators.model.methods.SimpleTestMethodModel
 import org.jetbrains.kotlin.generators.model.methods.TestAllFilesPresentMethodModel
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIden
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
 import org.jetbrains.kotlin.generators.util.getFilePath
-import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
@@ -30,7 +28,6 @@ import java.util.regex.Pattern
  * @property recursive if false then subdirectories wouldn't be traversed
  */
 class SimpleTestClassModel(
-    val testInfraRevision: TestInfraRevision,
     val testDataRoot: File,
     val rootFile: File,
     val recursive: Boolean,
@@ -39,7 +36,6 @@ class SimpleTestClassModel(
     val excludePattern: Pattern?,
     private val doTestMethodName: String,
     val testClassName: String,
-    val targetBackend: TargetBackend?,
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
     private val testRunnerMethodName: String,
@@ -48,6 +44,8 @@ class SimpleTestClassModel(
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
     override val testKClass: Class<*>,
+    override val isSmokeTest: Boolean,
+    override val smokeTestLimit: Int,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -64,7 +62,6 @@ class SimpleTestClassModel(
             if (allExcludedDirs.contains(file.name)) return@l null
 
             SimpleTestClassModel(
-                testInfraRevision,
                 testDataRoot,
                 rootFile = file,
                 recursive = true,
@@ -73,7 +70,6 @@ class SimpleTestClassModel(
                 excludePattern,
                 doTestMethodName,
                 testClassName = fileNameToJavaIdentifier(file),
-                targetBackend,
                 excludesStripOneDirectory(excludeDirs, file.name),
                 excludeDirsRecursively,
                 testRunnerMethodName,
@@ -82,6 +78,8 @@ class SimpleTestClassModel(
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
                 testKClass,
+                isSmokeTest,
+                smokeTestLimit
             )
         }.sortedWith(BY_NAME)
     }
@@ -101,25 +99,22 @@ class SimpleTestClassModel(
     override val methods: Collection<MethodModel<*>> by lazy {
         if (!rootFile.isDirectory) {
             val methodModel = SimpleTestMethodModel(
-                testInfraRevision,
                 rootDir = rootFile,
                 file = rootFile,
                 filenamePattern,
-                extractTagsFromTestFile(rootFile)
+                extractTagsFromTestFile(rootFile),
             )
             return@lazy listOf(methodModel)
         }
 
         buildList {
-            when (testInfraRevision) {
-                TestInfraRevision.LegacyJUnit4 -> add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
-                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath(), testKClass))
-            }
+            add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath(), testKClass, customMethodName = doTestMethodName.takeIf { it != "doTest" }))
             if (!skipTestAllFilesCheck) {
                 add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))
             }
             addAll(additionalMethods)
-            rootFile.listFiles().orEmpty().mapNotNullTo(this) l@{ file ->
+
+            val simpleTestMethods = rootFile.listFiles().orEmpty().mapNotNull l@{ file ->
                 val fileName = file.name
                 // doesn't match testdata pattern
                 if (!filenamePattern.matcher(fileName).matches()) return@l null
@@ -140,13 +135,18 @@ class SimpleTestClassModel(
                     )
                 }
                 SimpleTestMethodModel(
-                    testInfraRevision,
                     rootFile,
                     file,
                     filenamePattern,
-                    extractTagsFromTestFile(file)
+                    extractTagsFromTestFile(file),
                 )
+            }.sortedWith(BY_NAME).mapIndexed { index, model ->
+                if (isSmokeTest && index < smokeTestLimit) model.copy(isSmokeTest = true)
+                else model
             }
+
+            addAll(simpleTestMethods)
+
         }.sortedWith(BY_NAME)
     }
 

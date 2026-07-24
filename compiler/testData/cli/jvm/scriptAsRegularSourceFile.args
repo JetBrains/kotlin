@@ -1,0 +1,2 @@
+-Xuse-fir-lt=false
+$TESTDATA_DIR$/hello.kts

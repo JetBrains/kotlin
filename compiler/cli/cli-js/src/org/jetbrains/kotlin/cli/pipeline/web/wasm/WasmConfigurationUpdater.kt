@@ -59,6 +59,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES, arguments.regenerateUnchangedModules)
 
         val wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
 
@@ -67,6 +68,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
             (arguments.wasmUseNewExceptionProposal ?: (wasmTarget == WasmTarget.WASI))
         )
 
+        configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, arguments.wasmUseStackSwitchingProposal)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)

@@ -8,10 +8,11 @@ import org.gradle.kotlin.dsl.project
  */
 
 val Project.intellijVersion
-    get() = rootProject.extra["versions.intellijSdk"]
+    get() = kotlinBuildProperties.versionsProperty("intellijSdk").get()
 
 fun Project.intellijCore() = dependencies.project(":dependencies:intellij-core")
 fun Project.intellijUtilRt() = "com.jetbrains.intellij.platform:util-rt:$intellijVersion"
+fun Project.intellijUtilRtJava8() = "com.jetbrains.intellij.platform:util-rt-java8:$intellijVersion"
 
 fun Project.jpsModel() = "com.jetbrains.intellij.platform:jps-model:$intellijVersion"
 fun Project.jpsModelSerialization() = "com.jetbrains.intellij.platform:jps-model-serialization:$intellijVersion"
@@ -37,4 +38,4 @@ fun Project.intellijJDom() = "com.jetbrains.intellij.platform:util-jdom:$intelli
  *
  * https://youtrack.jetbrains.com/issue/KT-25047/#focus=Comments-27-6974910.0-0
  */
-fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${rootProject.extra["versions.annotations"]}"
+fun Project.intellijRuntimeAnnotations() = "org.jetbrains:annotations:${project.kotlinBuildProperties.versionsProperty("annotations").get()}"

@@ -1,4 +1,3 @@
-// SKIP_TXT
 // ISSUE: KT-54521
 // LANGUAGE: +EnhanceNullabilityOfPrimitiveArrays
 // FILE: J.java

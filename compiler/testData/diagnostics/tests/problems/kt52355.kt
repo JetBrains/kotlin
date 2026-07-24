@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-52355
 // WITH_STDLIB
 
@@ -19,7 +19,7 @@ fun <T> ItemHolder<T>.addAllItems(xs: List<T>) {
 }
 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-fun <T> itemHolderBuilder(@<!DEPRECATION!>BuilderInference<!> builder: ItemHolder<T>.() -> Unit): ItemHolder<T> =
+fun <T> itemHolderBuilder(@<!DEPRECATION_ERROR!>BuilderInference<!> builder: ItemHolder<T>.() -> Unit): ItemHolder<T> =
     ItemHolder<T>().apply(builder)
 
 fun test(s: Int) {

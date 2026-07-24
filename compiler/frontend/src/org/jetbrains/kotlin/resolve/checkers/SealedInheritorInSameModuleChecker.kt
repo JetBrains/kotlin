@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -13,11 +14,13 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
+@K1Deprecation
 object SealedInheritorInSameModuleChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject) return
@@ -72,5 +75,6 @@ object SealedInheritorInSameModuleChecker : DeclarationChecker {
     }
 
     private val ClassifierDescriptor.isFromCommonSource: Boolean
+        @OptIn(KtImplementationDetail::class)
         get() = ((this.source.containingFile as? PsiSourceFile)?.psiFile as? KtFile)?.isCommonSource ?: false
 }

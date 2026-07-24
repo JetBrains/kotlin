@@ -1,0 +1,8 @@
+interface A<T>
+
+class B: A<Int>
+
+fun usage(xx: B, yy: A<in Nothing>) {
+    x<caret_1_left>x
+    y<caret_1_right>y
+}

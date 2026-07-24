@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.FirParser;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -35,13 +37,9 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_FQ_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
-
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
@@ -49,9 +47,8 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
 
     private static final FqName PACKAGE_NAME = new FqName("test");
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
@@ -62,6 +59,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         super.updateConfiguration(configuration);
     }
 
+    @Test
     public void testTraitImpl() {
         doTestKotlinSyntheticClass(
                 "interface A { fun foo() = 42 }",
@@ -69,6 +67,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testSamWrapper() {
         doTestKotlinSyntheticClass(
                 "val f = {}\nval foo = Thread(f)",
@@ -76,6 +75,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testSamLambda() {
         doTestKotlinSyntheticClass(
                 "val foo = Thread { }",
@@ -83,6 +83,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testCallableReferenceWrapper() {
         doTestKotlinSyntheticClass(
                 "val f = String::get",
@@ -90,6 +91,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testAnonymousFunction() {
         doTestKotlinSyntheticClass(
                 "val f = {}",
@@ -97,6 +99,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testLocalClass() {
         doTestKotlinClass(
                 "fun foo() { class Local }",
@@ -104,6 +107,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testInnerClassOfLocalClass() {
         doTestKotlinClass(
                 "fun foo() { class Local { inner class Inner } }",
@@ -111,6 +115,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testAnonymousObject() {
         doTestKotlinClass(
                 "val o = object {}",
@@ -118,6 +123,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
+    @Test
     public void testWhenMappings() {
         doTestKotlinSyntheticClass(
                 "enum class E { A }\n" +
@@ -138,8 +144,8 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = CollectionsKt.filter(output, file -> file.getRelativePath().contains(classFilePart));
-        assertFalse("No files with \"" + classFilePart + "\" in the name are found: " + output, files.isEmpty());
-        assertEquals("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, 1, files.size());
+        assertFalse(files.isEmpty(), "No files with \"" + classFilePart + "\" in the name are found: " + output);
+        assertEquals(1, files.size(), "Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files);
 
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
@@ -150,14 +156,14 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     private void assertAnnotatedWithMetadata(@NotNull Class<?> aClass) {
         String annotationFqName = METADATA_FQ_NAME.asString();
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(annotationFqName);
-        assertTrue("No annotation " + annotationFqName + " found in " + aClass, aClass.isAnnotationPresent(annotationClass));
+        assertTrue(aClass.isAnnotationPresent(annotationClass), "No annotation " + annotationFqName + " found in " + aClass);
 
         Annotation annotation = aClass.getAnnotation(annotationClass);
 
         int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, METADATA_VERSION_FIELD_NAME);
         assertNotNull(version);
-        assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
-                   new MetadataVersion(version).isCompatibleWithCurrentCompilerVersion());
+        assertTrue(new MetadataVersion(version).isCompatibleWithCurrentCompilerVersion(),
+                              "Annotation " + annotationFqName + " is written with an unsupported format");
     }
 
     @NotNull

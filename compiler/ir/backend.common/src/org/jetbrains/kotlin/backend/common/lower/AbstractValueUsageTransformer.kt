@@ -257,7 +257,7 @@ abstract class AbstractValueUsageTransformer(
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
         expression.transformChildrenVoid()
         if (expression is IrStringConcatenationImpl) {
-            for ((i, arg) in expression.arguments.withIndex()) {
+            for ([i, arg] in expression.arguments.withIndex()) {
                 expression.arguments[i] = arg.useAs(irBuiltIns.anyNType)
             }
         }

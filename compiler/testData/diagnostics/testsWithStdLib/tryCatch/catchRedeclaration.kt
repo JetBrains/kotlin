@@ -1,6 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// WITH_NEW_INFERENCE
-// SKIP_TXT
 
 class MyException : Exception() {
     val myField = "field"

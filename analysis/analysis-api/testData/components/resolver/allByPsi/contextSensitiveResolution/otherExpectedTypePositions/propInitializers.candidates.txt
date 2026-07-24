@@ -445,7 +445,7 @@ KtNameReferenceExpression(546,547): 'm'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(548,549): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -523,7 +523,7 @@ KtNameReferenceExpression(562,563): 'm'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(564,565): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -598,7 +598,7 @@ KtNameReferenceExpression(582,583): 'm'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(584,585): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

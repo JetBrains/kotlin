@@ -208,7 +208,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
     }
 
     protected fun initTypeParameterBounds(allParameters: List<FirTypeParameterRef>, ownTypeParameters: List<FirTypeParameter>) {
-        for ((typeParameter, data) in ownTypeParameters.zip(typeParameters)) {
+        for ([typeParameter, data] in ownTypeParameters.zip(typeParameters)) {
             val coneBounds = data.boundProviders.map { it.invoke(allParameters) }
             val bounds = if (coneBounds.isEmpty()) {
                 listOf(session.builtinTypes.nullableAnyType)

@@ -110,7 +110,7 @@ private fun IrBlockBuilder.add(
 
     val temporary = irTemporary(copy, nameHint = "Explain", origin = POWER_ASSERT_TEMPORARY)
     val variable = IrDiagramVariable.Displayable(temporary, expression, sourceRangeInfo, text, literal = true)
-    return call(irGet(temporary), variables.add(variable))
+    return call(irGet(temporary), variables.adding(variable))
 }
 
 /**
@@ -137,7 +137,7 @@ private fun IrBlockBuilder.add(
 
     val temporary = irTemporary(copy, nameHint = "Explain", origin = POWER_ASSERT_TEMPORARY)
     val variable = IrDiagramVariable.Hidden(temporary, expression)
-    return call(irGet(temporary), variables.add(variable))
+    return call(irGet(temporary), variables.adding(variable))
 }
 
 /**
@@ -167,7 +167,7 @@ private fun IrBlockBuilder.add(
 
     val temporary = irTemporary(copy, nameHint = "Explain", origin = POWER_ASSERT_TEMPORARY)
     val variable = IrDiagramVariable.Displayable(temporary, expression, sourceRangeInfo, text, literal = false)
-    return call(irGet(temporary), variables.add(variable))
+    return call(irGet(temporary), variables.adding(variable))
 }
 
 /**

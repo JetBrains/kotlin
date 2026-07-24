@@ -1,10 +1,12 @@
 KaBackingFieldSymbol:
+  anchorPsi: KtBackingField
   annotations: []
   callableId: null
-  compilerVisibility: Private
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -15,6 +17,8 @@ KaBackingFieldSymbol:
   name: field
   origin: PROPERTY_BACKING_FIELD
   owningProperty: KaKotlinPropertySymbol(one/Test.foo)
+  psi: KtBackingField
+  realPsi: KtBackingField
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -25,6 +29,7 @@ KaBackingFieldSymbol:
         type: kotlin/String
     ]
     type: kotlin/collections/MutableList<kotlin/String>
+  typeParameters: []
   visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -33,5 +38,5 @@ KaBackingFieldSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingField.kt)
   getContainingJvmClassName: one.Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

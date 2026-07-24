@@ -1,0 +1,31 @@
+FILE: simple.kt
+    public open class Simple : R|kotlin/Any| {
+        public constructor(): R|Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Simple] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Simple|) [evaluated = <getClass>(Q|Simple|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class SimpleChild : R|Simple| {
+        public constructor(): R|SimpleChild| {
+            super<R|Simple|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Simple] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Simple|) [evaluated = <getClass>(Q|Simple|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class FullName : R|Simple| {
+        public constructor(): R|FullName| {
+            super<R|Simple|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=Simple] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Simple|) [evaluated = <getClass>(Q|Simple|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }

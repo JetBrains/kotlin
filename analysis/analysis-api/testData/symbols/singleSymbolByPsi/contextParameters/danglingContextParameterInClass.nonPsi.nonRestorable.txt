@@ -1,10 +1,12 @@
 KaContextParameterSymbol:
+  anchorPsi: KtParameter
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -13,6 +15,8 @@ KaContextParameterSymbol:
   modality: FINAL
   name: parameter1
   origin: SOURCE
+  psi: KtParameter
+  realPsi: KtParameter
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -21,9 +25,10 @@ KaContextParameterSymbol:
     ]
     typeArguments: []
     type: @R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String
+  typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(danglingContextParameterInClass.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

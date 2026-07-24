@@ -5,16 +5,14 @@
 
 package org.jetbrains.abi.tools.test.api
 
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 public open class BaseKotlinGradleTest {
-    @Rule
-    @JvmField
-    internal val testProjectDir: TemporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var testProjectDir: File
 
-    internal val rootProjectDir: File get() = testProjectDir.root
+    internal val rootProjectDir: File get() = testProjectDir
 
     internal val rootProjectApiDump: File get() = rootProjectDir.resolve("$API_DIR/${rootProjectDir.name}.api")
 

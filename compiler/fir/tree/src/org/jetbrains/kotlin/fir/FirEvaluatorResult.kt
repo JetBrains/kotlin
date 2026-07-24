@@ -5,31 +5,29 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.FirEvaluatorResult.CompileTimeException
-import org.jetbrains.kotlin.fir.FirEvaluatorResult.Evaluated
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-
 sealed class FirEvaluatorResult {
     class Evaluated(val result: FirElement) : FirEvaluatorResult() {
         override fun toString(): String = result.render()
     }
 
-    data object NotEvaluated : FirEvaluatorResult()
-    data object DuringEvaluation : FirEvaluatorResult()
+    sealed class NotEvaluated : FirEvaluatorResult()
 
-    sealed class CompileTimeException : FirEvaluatorResult()
+    sealed class DiagnosticError : NotEvaluated()
+    data object NotConst : DiagnosticError()
+    data object ResolutionError : DiagnosticError()
+    data object EnumNotConst : DiagnosticError()
+    data object NotKClassLiteral : DiagnosticError()
+    data object NotConstValInConstExpression : DiagnosticError()
+    data object KClassLiteralOfTypeParameterError : DiagnosticError()
+
+    sealed class CompileTimeException : NotEvaluated()
     data object DivisionByZero : CompileTimeException()
     data object TrimMarginBlankPrefix : CompileTimeException()
     data object RecursionInInitializer : CompileTimeException()
 }
 
-
-inline fun <reified T : FirElement> FirEvaluatorResult.unwrapOr(action: (CompileTimeException) -> Unit): T? {
-    when (this) {
-        is CompileTimeException -> action(this)
-        is Evaluated -> return this.result as? T
-        else -> return null
-    }
-    return null
+inline fun <reified T : FirElement> FirEvaluatorResult.resultOrNull(): T? {
+    if (this !is FirEvaluatorResult.Evaluated) return null
+    if (this.result !is T) return null
+    return this.result
 }

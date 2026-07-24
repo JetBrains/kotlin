@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -28,17 +29,17 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.junit.runner.RunWith
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.system.measureNanoTime
 
 @TestDataPath("\$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners::class)
 @ObsoleteTestInfrastructure
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
+    @Test
     fun testTotalKotlinWithExpressionTrees() {
         val root = File(testDataPath)
         var counter = 0
@@ -159,10 +160,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("KT EXPRESSIONS: $ktExpressions")
         println("KT DECLARATIONS: $ktDeclarations")
         println("KT REFERENCES: $ktReferences")
-        assertEquals("# of expression stubs", 0, expressionStubs)
-        assertEquals("# of error expressions", 0, errorExpressions)
-        assertEquals("# of error declarations", 0, errorDeclarations)
-        assertEquals("# of error references", 0, errorReferences)
+        assertEquals(0, expressionStubs) { "# of expression stubs" }
+        assertEquals(0, errorExpressions) { "# of error expressions" }
+        assertEquals(0, errorDeclarations) { "# of error declarations" }
+        assertEquals(0, errorReferences) { "# of error references" }
     }
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
@@ -179,20 +180,25 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         }
     }
 
+    @Test
     fun testVisitConsistency() {
         testConsistency { checkChildren() }
     }
 
+    @Test
     fun testTransformConsistency() {
         testConsistency { checkTransformedChildren() }
     }
 
+    @Test
     fun testPsiConsistency() {
         val root = File(testDataPath)
         var counter = 0
         testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val ktFile = createKtFile(file.toRelativeString(root))
-            val firFile: FirFile = ktFile.toFirFile()
+            val firFile: FirFile = ktFile.toFirFile(
+                features = mapOf(LanguageFeature.EnableNameBasedDestructuringShortForm to LanguageFeature.State.ENABLED)
+            )
             val psiSetViaFir = mutableSetOf<KtElement>()
             val psiSetDirect = mutableSetOf<KtElement>()
             firFile.accept(object : FirVisitorVoid() {

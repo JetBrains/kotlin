@@ -220,7 +220,7 @@ KtNameReferenceExpression(196,203): 'current'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(204,206): '<='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -385,7 +385,7 @@ KtNameReferenceExpression(256,263): 'current'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(263,265): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

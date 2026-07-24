@@ -602,7 +602,7 @@ private fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: Reso
             ExtensionInvokeCallReceiver(call, functionReceiverValue, extensionInvokeReceiverValue)
 
     call.irValueArgumentsByIndex[0] = null
-    for ((valueParameter, valueArgument) in resolvedCall.valueArguments) {
+    for ([valueParameter, valueArgument] in resolvedCall.valueArguments) {
         call.irValueArgumentsByIndex[valueParameter.index + 1] =
             generateValueArgument(valueArgument, valueParameter, resolvedCall)
     }
@@ -647,7 +647,7 @@ internal fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired
                 "${resolvedCallArguments?.size} != ${underlyingValueParameters.size}"
     }
 
-    val substitutionContext = call.original.typeArguments.entries.associate { (typeParameterDescriptor, typeArgument) ->
+    val substitutionContext = call.original.typeArguments.entries.associate { [typeParameterDescriptor, typeArgument] ->
         underlyingDescriptor.typeParameters[typeParameterDescriptor.index].typeConstructor to TypeProjectionImpl(typeArgument)
     }
     val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
@@ -887,7 +887,7 @@ internal inline fun IrMemberAccessExpression<*>.putTypeArguments(
     toIrType: (KotlinType) -> IrType
 ) {
     if (typeArguments == null) return
-    for ((typeParameter, typeArgument) in typeArguments) {
+    for ([typeParameter, typeArgument] in typeArguments) {
         this.typeArguments[typeParameter.index] = toIrType(typeArgument)
     }
 }

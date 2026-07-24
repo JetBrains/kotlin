@@ -352,7 +352,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     @GradleTest
     internal fun kaptGenerateStubsValidateCorrect(gradleVersion: GradleVersion) {
         project(
-            projectName = "kapt2/simple",
+            projectName = "kapt/simple",
             gradleVersion = gradleVersion,
         ) {
             val toolchainJavaVersion = 17

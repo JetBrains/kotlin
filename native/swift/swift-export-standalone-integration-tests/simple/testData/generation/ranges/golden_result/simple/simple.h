@@ -13,6 +13,8 @@ void * __root___baz();
 
 void * __root___foo();
 
+void * _Nullable __root___foo_opt();
+
 void * __root___unsupported();
 
 void * kotlin_ranges_closedRange_create_int_simple(int32_t start, int32_t end);

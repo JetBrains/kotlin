@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.samWithReceiver
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -51,7 +50,6 @@ class SamWithReceiverEnvironmentConfigurator(testServices: TestServices) : Envir
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(TEST_ANNOTATIONS))
         FirExtensionRegistrar.registerExtension(FirSamWithReceiverExtensionRegistrar(TEST_ANNOTATIONS))
     }
 }

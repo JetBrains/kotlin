@@ -7,22 +7,22 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.common.prepareJsSessions
+import org.jetbrains.kotlin.cli.common.prepareWasmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRenderer
-import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithSpecificAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -37,10 +37,9 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -50,8 +49,9 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import java.io.File
 
 class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.Jvm>(
@@ -60,12 +60,10 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
 ) {
     override val targetPlatform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = JvmPlatformAnalyzerServices
+
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
-    @OptIn(LegacyK2CliPipeline::class)
     override fun prepareSessions(
         module: TestModule,
         configuration: CompilerConfiguration,
@@ -76,25 +74,25 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
         return prepareJvmSessionsWithoutFiles(configuration, environment, moduleName, libraryList)
     }
 
-    @LegacyK2CliPipeline
     private fun prepareJvmSessionsWithoutFiles(
         configuration: CompilerConfiguration,
         environment: VfsBasedProjectEnvironment,
         moduleName: Name,
         libraryList: DependencyListForCliModule
     ): List<SessionWithSources<KtFile>> {
-        return MinimizedFrontendContext(environment, MessageCollector.NONE, emptyList(), configuration).prepareJvmSessions(
+        return JvmFrontendPipelinePhase.prepareJvmSessions(
             files = emptyList(),
-            moduleName,
-            environment.getSearchScopeForProjectLibraries(),
-            libraryList,
+            rootModuleName = moduleName,
+            configuration = configuration,
+            projectEnvironment = environment,
+            librariesScope = environment.getSearchScopeForProjectLibraries(),
+            libraryList = libraryList,
             isCommonSource = { false },
             isScript = { false },
             fileBelongsToModule = { _, _ -> false },
-            createProviderAndScopeForIncrementalCompilation = { null }
+            incrementalCompilationContext = null,
         )
     }
-
 }
 
 class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.KLib>(
@@ -103,8 +101,6 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
 ) {
     override val targetPlatform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = JsPlatformAnalyzerServices
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
@@ -140,8 +136,6 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
 ) {
     override val targetPlatform: TargetPlatform
         get() = WasmPlatforms.wasmJs
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = WasmPlatformAnalyzerServices
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
@@ -218,13 +212,14 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         ).single().session
 
         val packageFqName = FqName("test")
-        val printAttributes = FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES in module.directives
+        val printedAttributes = runIf(RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES in module.directives) {
+            module.directives[RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES].ifNotEmpty { toSet() }
+        }
         dumper.builderForModule(module)
-            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName), printAttributes))
+            .append(collectPackageContent(session, packageFqName, extractNames(module, packageFqName), printedAttributes))
     }
 
     protected abstract val targetPlatform: TargetPlatform
-    protected abstract val platformAnalyzerServices: PlatformDependentAnalyzerServices
     protected abstract val dependencyKind: DependencyKind
 
     protected abstract fun prepareSessions(
@@ -242,7 +237,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val frontendKind = testServices.defaultsProvider.frontendKind
 
         val commonExtension = ".fir.txt"
-        val (specificExtension, otherSpecificExtension) = when (frontendKind) {
+        val [specificExtension, otherSpecificExtension] = when (frontendKind) {
             FrontendKinds.FIR -> ".fir.k2.txt" to ".fir.k1.txt"
             else -> shouldNotBeCalled()
         }
@@ -343,14 +338,14 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
     }
 
-    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>, printAttributes: Boolean): String {
+    private fun collectPackageContent(session: FirSession, packageFqName: FqName, declarationNames: Collection<Name>, printedAttributes: Set<String>?): String {
         val provider = session.symbolProvider
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(
             builder,
-            declarationRenderer = if (printAttributes) {
-                FirDeclarationRendererWithFilteredAttributes()
+            declarationRenderer = if (printedAttributes != null) {
+                FirDeclarationRendererWithSpecificAttributes(printedAttributes)
             } else {
                 FirDeclarationRenderer()
             }

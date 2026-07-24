@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: TaskProvider.java
 public interface TaskProvider<T extends CharSequence> {
     void configure(Action<? super T> a);

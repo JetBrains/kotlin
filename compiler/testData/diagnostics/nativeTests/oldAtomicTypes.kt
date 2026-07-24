@@ -1,8 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-73909
 // WITH_EXTRA_CHECKERS
 // LANGUAGE: +ContextParameters
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// IGNORE_FIR_DIAGNOSTICS
 
 import kotlin.concurrent.*
 
@@ -34,3 +35,5 @@ fun withContext() {
 
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicLongArray<!>)
 val some: Int get() = 0
+
+fun list(l: <!NATIVE_SPECIFIC_ATOMIC!>List<AtomicInt><!>) {}

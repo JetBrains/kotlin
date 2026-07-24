@@ -18,16 +18,15 @@ private val jvmModulePhases1 = createModulePhases(
     ::JvmUpgradeCallableReferences,
     ::ExternalPackageParentPatcherLowering,
     ::FragmentSharedVariablesLowering,
-    ::JvmK1IrValidationBeforeLoweringPhase,
     ::ProcessOptionalAnnotations,
-    ::JvmExpectDeclarationRemover,
-    ::ConstEvaluationLowering,
+    ::ExpectDeclarationsRemoveLowering,
     ::FileClassLowering,
     ::JvmStaticInObjectLowering,
     ::RepeatedAnnotationLowering,
 )
 
 private val jvmFilePhases = createFilePhases(
+    ::ConstEvaluationLowering,
     ::TypeAliasAnnotationMethodsLowering,
 
     ::PatchLambdaOffsetsLowering,
@@ -67,7 +66,6 @@ private val jvmFilePhases = createFilePhases(
     ::ForLoopsLowering,
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
-    ::JvmInlineMultiFieldValueClassLowering,
     ::JvmInlineClassLowering,
     ::JvmTailrecLowering,
 

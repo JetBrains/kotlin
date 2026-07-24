@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.typeBinding
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.*
 
+@K1Deprecation
 interface TypeBinding<out P : PsiElement> {
     val psiElement: P
     val type: KotlinType
@@ -34,12 +36,14 @@ interface TypeBinding<out P : PsiElement> {
     val isArgumentFromQualifier: Boolean get() = false
 }
 
+@K1Deprecation
 interface TypeArgumentBinding<out P : PsiElement> {
     val projection: TypeProjection
     val typeParameter: TypeParameterDescriptor?
     val binding: TypeBinding<P>
 }
 
+@K1Deprecation
 fun KtTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<KtTypeElement>? {
     val type = trace[BindingContext.TYPE, this]
     val psiElement = typeElement
@@ -62,6 +66,7 @@ private fun createTypeBindingFromPsi(
         ExplicitTypeBinding(trace, psiElement, type, isArgumentFromQualifier)
 }
 
+@K1Deprecation
 fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext): TypeBinding<PsiElement>? {
     val ktTypeReference = typeReference
     if (ktTypeReference != null) return ktTypeReference.createTypeBinding(trace)

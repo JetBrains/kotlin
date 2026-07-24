@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
+import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.pathString
 
 class NativeKlibLoaderWithPropertySubstitutionTest {
     @TempDir
-    lateinit var tmpDir: File
+    lateinit var tmpDir: Path
 
     @Test
     fun `Library is loaded without property substitution`() {
@@ -62,7 +63,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
                 this += CUSTOM_MANIFEST_PROPERTIES
             }
         )
-    }.path
+    }.pathString
 
     private fun loadManifestOfNativeKlib(klibPath: String, target: KonanTarget?): Properties {
         val result = KlibLoader {
@@ -76,7 +77,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
 
     companion object {
         private fun Properties.assertContainsAllProperties(properties: Map<String, String>) {
-            properties.forEach { (key, expectedValue) ->
+            properties.forEach { [key, expectedValue] ->
                 val actualValue = getProperty(key)
                 assertNotNull(actualValue, "Missing property: $key")
                 assertEquals(expectedValue, actualValue, "Unexpected value for property $key")

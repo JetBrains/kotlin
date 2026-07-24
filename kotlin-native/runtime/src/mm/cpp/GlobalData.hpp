@@ -8,6 +8,7 @@
 
 #include "Allocator.hpp"
 #include "AppStateTracking.hpp"
+#include "CallsChecker.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
 #include "GlobalsRegistry.hpp"
@@ -43,6 +44,7 @@ private:
     GlobalData() noexcept;
     ~GlobalData() = delete;
 
+    [[no_unique_address]] CallsChecker callsChecker_;
     ThreadRegistry threadRegistry_;
     AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;

@@ -23,14 +23,18 @@ import org.jetbrains.kotlin.descriptors.Visibility
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaScriptSymbol : KaDeclarationSymbol, KaNamedSymbol, KaDeclarationContainerSymbol {
+    abstract override fun createPointer(): KaSymbolPointer<KaScriptSymbol>
+
+    //region Implementation details
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaScriptSymbol>
+    //endregion
 }

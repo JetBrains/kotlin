@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
+@K1Deprecation
 abstract class LazyJavaScope(
     protected val c: LazyJavaResolverContext,
     protected val mainScope: LazyJavaScope? = null
@@ -210,11 +212,11 @@ abstract class LazyJavaScope(
         jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndex().map { (index, javaParameter) ->
+        val descriptors = jValueParameters.withIndex().map { [index, javaParameter] ->
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage = TypeUsage.COMMON.toAttributes()
 
-            val (outType, varargElementType) =
+            val [outType, varargElementType] =
                 if (javaParameter.isVararg) {
                     val paramType = javaParameter.type as? JavaArrayType
                         ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")

@@ -1,6 +1,9 @@
 description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -14,10 +17,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val embedded by configurations
+optInToK1Deprecation()
+
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
-configurations.getByName("compileOnly").extendsFrom(embedded)
-configurations.getByName("testApi").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
+configurations.testApi.get().extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
@@ -26,17 +31,21 @@ dependencies {
     embedded(project(":core:names"))
     embedded(project(":core:deserialization"))
     embedded(project(":core:deserialization.common"))
+    embedded(project(":compiler:serialization.common"))
     embedded(project(":compiler:serialization"))
     embedded(project(":kotlin-util-klib-metadata"))
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit5"))
 }
 
 if (deployVersion != null) {
     publish()
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 runtimeJarWithRelocation {

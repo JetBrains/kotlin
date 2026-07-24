@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayInputStream
+import java.net.URI
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.util.jar.Attributes
 import java.util.jar.JarEntry
@@ -41,10 +43,12 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     protected abstract fun libraryOutputPath(inputPath: Path, libraryName: String): Path
 
     override fun compile(
-        tmpDir: Path,
+        sourcesTempDirectory: Path,
+        commonSourcesTempDirectory: Path?,
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices,
     ): Path {
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
@@ -52,10 +56,10 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
                 || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform(testServices) !in allowedLibraryPlatforms)
 
         val library = try {
-            val outputPath = libraryOutputPath(tmpDir, libraryName)
+            val outputPath = libraryOutputPath(sourcesTempDirectory, libraryName)
             doCompile(
-                tmpDir,
-                buildCompilerOptions(module, testServices),
+                sourcesTempDirectory,
+                buildCompilerOptions(module, testServices, commonSourcesTempDirectory),
                 outputPath,
                 buildExtraClasspath(module, dependencyBinaryRoots, testServices)
             )
@@ -72,7 +76,18 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         if (library == null || library.notExists()) {
             throw LibraryWasNotCompiledDueToExpectedCompilationError()
         }
+        embedResourceFiles(library, resourceFiles, testServices)
         return library
+    }
+
+    /**
+     * Embeds [resourceFiles] (marked with [TestModuleCompiler.Directives.LIBRARY_RESOURCE]) into the compiled [library]. The default
+     * implementation does not support resource files. Compilers that produce a suitable archive should override this function.
+     */
+    protected open fun embedResourceFiles(library: Path, resourceFiles: List<TestFile>, testServices: TestServices) {
+        require(resourceFiles.isEmpty()) {
+            "${this::class.simpleName} does not support `LIBRARY_RESOURCE` files: ${resourceFiles.map { it.name }}"
+        }
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
@@ -100,9 +115,14 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
     protected open fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = emptyList()
 
-    private fun buildCompilerOptions(module: TestModule, testServices: TestServices): List<String> = buildList {
+    private fun buildCompilerOptions(
+        module: TestModule,
+        testServices: TestServices,
+        commonSourcesTempDirectory: Path?,
+    ): List<String> = buildList {
         addAll(buildCommonCompilerOptions(module))
         addAll(buildPlatformCompilerOptions(module, testServices))
+        addAll(buildCommonSourcesCompilerOptions(commonSourcesTempDirectory))
     }
 
     private fun buildCommonCompilerOptions(module: TestModule): List<String> = buildList {
@@ -125,6 +145,19 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         addAll(module.directives[Directives.COMPILER_ARGUMENTS])
     }
 
+    private fun buildCommonSourcesCompilerOptions(commonSourcesTempDirectory: Path?): List<String> {
+        if (commonSourcesTempDirectory == null) {
+            return emptyList()
+        }
+
+        val commonSourcesPathString = commonSourcesTempDirectory.absolutePathString()
+
+        return listOf(
+            "-Xcommon-sources=$commonSourcesPathString",
+            commonSourcesPathString // Also add common sources directly, as a free parameter
+        )
+    }
+
     private fun addFileToJar(path: String, text: String, jarOutputStream: JarOutputStream) {
         jarOutputStream.putNextEntry(JarEntry(path))
         ByteArrayInputStream(text.toByteArray()).copyTo(jarOutputStream)
@@ -133,6 +166,20 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 }
 
 object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
+    override fun embedResourceFiles(library: Path, resourceFiles: List<TestFile>, testServices: TestServices) {
+        if (resourceFiles.isEmpty()) return
+
+        // `JarOutputStream` cannot append to an existing archive, so the produced JAR is reopened as a zip file system instead.
+        FileSystems.newFileSystem(URI.create("jar:${library.toUri()}"), emptyMap<String, Any>()).use { jarFileSystem ->
+            for (testFile in resourceFiles) {
+                val content = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
+                val target = jarFileSystem.getPath("/").resolve(testFile.relativePath)
+                target.parent?.createDirectories()
+                target.writeText(content)
+            }
+        }
+    }
+
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
         inputPath / "$libraryName.jar"
 
@@ -212,6 +259,19 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
 }
 
 object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
+    override fun compile(
+        sourcesTempDirectory: Path,
+        commonSourcesTempDirectory: Path?,
+        module: TestModule,
+        libraryName: String,
+        dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
+        testServices: TestServices
+    ): Path {
+        check(commonSourcesTempDirectory == null) { "Dependent common sources aren't empty for a common module" }
+        return super.compile(sourcesTempDirectory, null, module, libraryName, dependencyBinaryRoots, resourceFiles, testServices)
+    }
+
     override fun buildPlatformCompilerOptions(
         module: TestModule,
         testServices: TestServices,
@@ -252,13 +312,23 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
  */
 object DispatchingTestModuleCompiler : TestModuleCompiler() {
     override fun compile(
-        tmpDir: Path,
+        sourcesTempDirectory: Path,
+        commonSourcesTempDirectory: Path?,
         module: TestModule,
         libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
+        resourceFiles: List<TestFile>,
         testServices: TestServices
     ): Path {
-        return getCompiler(module, testServices).compile(tmpDir, module, libraryName, dependencyBinaryRoots, testServices)
+        return getCompiler(module, testServices).compile(
+            sourcesTempDirectory,
+            commonSourcesTempDirectory,
+            module,
+            libraryName,
+            dependencyBinaryRoots,
+            resourceFiles,
+            testServices
+        )
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {

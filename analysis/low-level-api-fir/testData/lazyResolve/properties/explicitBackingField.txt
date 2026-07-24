@@ -6,7 +6,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val foo: R|IFoo|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|Foo| = R|/Foo.Foo|()
+            private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] backing field field: R|Foo| = R|/Foo.Foo|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|IFoo|
 
     }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingField.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val foo: R|IFoo|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|Foo| = R|/Foo.Foo|()
+            private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] backing field field: R|Foo| = R|/Foo.Foo|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|IFoo|
 
     }

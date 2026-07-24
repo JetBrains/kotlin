@@ -1,13 +1,15 @@
 KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
   annotations: [
     Anno1()
       psi: null
   ]
   callableId: /JavaClass.field
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -17,6 +19,8 @@ KaJavaFieldSymbol:
   modality: FINAL
   name: field
   origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: [
@@ -24,6 +28,7 @@ KaJavaFieldSymbol:
         psi: null
     ]
     type: @R|Anno1|()  kotlin/String!
+  typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
@@ -32,5 +37,5 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

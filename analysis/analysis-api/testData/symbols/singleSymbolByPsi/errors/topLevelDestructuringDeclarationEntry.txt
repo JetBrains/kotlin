@@ -1,10 +1,12 @@
 KaLocalVariableSymbol:
+  anchorPsi: KtDestructuringDeclaration
   annotations: []
   callableId: null
-  compilerVisibility: Local
+  contextParameters: []
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -14,13 +16,16 @@ KaLocalVariableSymbol:
   modality: FINAL
   name: <error property>
   origin: SOURCE
+  psi: KtDestructuringDeclaration
+  realPsi: null
   receiverParameter: null
   returnType: KaErrorType:
     annotations: []
     type: ERROR_TYPE
+  typeParameters: []
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntry.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -4,6 +4,7 @@
  */
 
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.apple
 
@@ -12,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.konan.target.Xcode
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -81,17 +83,17 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/OriginalClass.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/OriginalClass.Companion|null[1]
-                    swiftPMImport.emptyxcode/OriginalClass.init|objc:init[1]
-                    swiftPMImport.emptyxcode/OriginalClass.methodToBeRemoved|objc:methodToBeRemoved[1]
-                    swiftPMImport.emptyxcode/OriginalClass.originalMethod|objc:originalMethod[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta|null[1]
-                    swiftPMImport.emptyxcode/OriginalClass|null[1]
+                    public open expect class swiftPMImport/emptyxcode/OriginalClass : platform/darwin/NSObject
+                    public /* secondary */ constructor swiftPMImport/emptyxcode/OriginalClass.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClass.init(): swiftPMImport/emptyxcode/OriginalClass
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClass.methodToBeRemoved(): kotlin/String
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClass.originalMethod(): kotlin/String
+                    public final expect companion object swiftPMImport/emptyxcode/OriginalClass.Companion : swiftPMImport/emptyxcode/OriginalClassMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/OriginalClass>
+                    public open expect class swiftPMImport/emptyxcode/OriginalClassMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/OriginalClassMeta.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.alloc(): swiftPMImport/emptyxcode/OriginalClass?
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/OriginalClass?
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.new(): swiftPMImport/emptyxcode/OriginalClass?
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "Initial cinterop signatures should match expected output"
@@ -117,26 +119,26 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/AddedClass.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/AddedClass.Companion|null[1]
-                    swiftPMImport.emptyxcode/AddedClass.addedMethod|objc:addedMethod[1]
-                    swiftPMImport.emptyxcode/AddedClass.init|objc:init[1]
-                    swiftPMImport.emptyxcode/AddedClassMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/AddedClassMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/AddedClassMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/AddedClassMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/AddedClassMeta|null[1]
-                    swiftPMImport.emptyxcode/AddedClass|null[1]
-                    swiftPMImport.emptyxcode/OriginalClass.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/OriginalClass.Companion|null[1]
-                    swiftPMImport.emptyxcode/OriginalClass.init|objc:init[1]
-                    swiftPMImport.emptyxcode/OriginalClass.originalMethod|objc:originalMethod[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/OriginalClassMeta|null[1]
-                    swiftPMImport.emptyxcode/OriginalClass|null[1]
+                    public open expect class swiftPMImport/emptyxcode/AddedClass : platform/darwin/NSObject
+                    public /* secondary */ constructor swiftPMImport/emptyxcode/AddedClass.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/AddedClass.addedMethod(): kotlin/String
+                    public open expect fun swiftPMImport/emptyxcode/AddedClass.init(): swiftPMImport/emptyxcode/AddedClass
+                    public final expect companion object swiftPMImport/emptyxcode/AddedClass.Companion : swiftPMImport/emptyxcode/AddedClassMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/AddedClass>
+                    public open expect class swiftPMImport/emptyxcode/AddedClassMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/AddedClassMeta.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/AddedClassMeta.alloc(): swiftPMImport/emptyxcode/AddedClass?
+                    public open expect fun swiftPMImport/emptyxcode/AddedClassMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/AddedClass?
+                    public open expect fun swiftPMImport/emptyxcode/AddedClassMeta.new(): swiftPMImport/emptyxcode/AddedClass?
+                    public open expect class swiftPMImport/emptyxcode/OriginalClass : platform/darwin/NSObject
+                    public /* secondary */ constructor swiftPMImport/emptyxcode/OriginalClass.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClass.init(): swiftPMImport/emptyxcode/OriginalClass
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClass.originalMethod(): kotlin/String
+                    public final expect companion object swiftPMImport/emptyxcode/OriginalClass.Companion : swiftPMImport/emptyxcode/OriginalClassMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/OriginalClass>
+                    public open expect class swiftPMImport/emptyxcode/OriginalClassMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/OriginalClassMeta.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.alloc(): swiftPMImport/emptyxcode/OriginalClass?
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/OriginalClass?
+                    public open expect fun swiftPMImport/emptyxcode/OriginalClassMeta.new(): swiftPMImport/emptyxcode/OriginalClass?
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "Updated cinterop signatures should match expected output"
@@ -179,16 +181,16 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/LocalHelper.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/LocalHelper.Companion|null[1]
-                    swiftPMImport.emptyxcode/LocalHelper.init|objc:init[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.greeting|objc:greeting[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta|null[1]
-                    swiftPMImport.emptyxcode/LocalHelper|null[1]
+                    public open expect class swiftPMImport/emptyxcode/LocalHelper : platform/darwin/NSObject
+                    public /* secondary */ constructor swiftPMImport/emptyxcode/LocalHelper.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelper.init(): swiftPMImport/emptyxcode/LocalHelper?
+                    public final expect companion object swiftPMImport/emptyxcode/LocalHelper.Companion : swiftPMImport/emptyxcode/LocalHelperMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/LocalHelper>
+                    public open expect class swiftPMImport/emptyxcode/LocalHelperMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/LocalHelperMeta.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.alloc(): swiftPMImport/emptyxcode/LocalHelper?
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/LocalHelper?
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.greeting(): kotlin/String?
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.new(): swiftPMImport/emptyxcode/LocalHelper?
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "Cinterop signatures should match expected output for local package with ObjC sources"
@@ -239,7 +241,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                 .writeText("class IosMain")
 
             assertEquals(
-                "swiftPMImport.emptyxcode/cxx_greeting|cxx_greeting(){}[1]",
+                "public final expect fun swiftPMImport/emptyxcode/cxx_greeting(): kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte>>?",
                 commonizeAndDumpCinteropSignatures().trim(),
                 message = "Cinterop signatures should be empty for local package with C++ sources"
             )
@@ -371,16 +373,16 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
             val signatures = commonizeAndDumpCinteropSignatures()
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/LocalHelper.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/LocalHelper.Companion|null[1]
-                    swiftPMImport.emptyxcode/LocalHelper.init|objc:init[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.greeting|objc:greeting[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/LocalHelperMeta|null[1]
-                    swiftPMImport.emptyxcode/LocalHelper|null[1]
+                    public open expect class swiftPMImport/emptyxcode/LocalHelper : platform/darwin/NSObject
+                    public /* secondary */ constructor swiftPMImport/emptyxcode/LocalHelper.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelper.init(): swiftPMImport/emptyxcode/LocalHelper
+                    public final expect companion object swiftPMImport/emptyxcode/LocalHelper.Companion : swiftPMImport/emptyxcode/LocalHelperMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/LocalHelper>
+                    public open expect class swiftPMImport/emptyxcode/LocalHelperMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/LocalHelperMeta.<init>()
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.alloc(): swiftPMImport/emptyxcode/LocalHelper?
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/LocalHelper?
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.greeting(): kotlin/String
+                    public open expect fun swiftPMImport/emptyxcode/LocalHelperMeta.new(): swiftPMImport/emptyxcode/LocalHelper?
                 """.trimIndent(),
                 signatures.filterOutNoiseSignatures(),
                 message = "Cinterop signatures should have signatures from the valid package"
@@ -734,6 +736,113 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
             build(
                 "linkDebugFrameworkMacosArm64",
             )
+
+            buildXcodeProject(
+                xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
+            )
+        }
+    }
+
+    @GradleTest
+    fun `local swift package with valid slices for all apple targets`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath).createDirectories()
+            val targetName = "LocalSwiftPackage"
+
+            localPackageDir.resolve("Package.swift").writeText(
+                """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+
+                    let package = Package(
+                        name: "$targetName",
+                        products: [
+                            .library(name: "$targetName", targets: ["$targetName"]),
+                        ],
+                        targets: [
+                            .target(name: "$targetName"),
+                        ]
+                    )
+                """.trimIndent()
+            )
+            writeLocalPackageSources(
+                sourcesDir = localPackageDir.resolve("Sources/$targetName"),
+                packageName = targetName,
+                sourceLanguage = SwiftPackageSourceLanguage.SWIFT_WITH_OBJC,
+            )
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            val isXcodeLessThan27 = Xcode.findCurrent().version.major < 27
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    val targets = mutableListOf(
+                        iosArm64(),
+                        iosX64(),
+                        iosSimulatorArm64(),
+                        macosArm64(),
+                        tvosArm64(),
+                        tvosSimulatorArm64(),
+                        watchosArm64(),
+                        watchosSimulatorArm64(),
+                        watchosDeviceArm64(),
+                    )
+                    targets.forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = false
+                        }
+                    }
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            kotlinSourcesDir("appleMain")
+                .createDirectories().resolve("temp.kt")
+                .createFile()
+                .writeText(
+                    """
+                        class AppleMain
+                        
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun localGreeting(): String {
+                            return swiftPMImport.emptyxcode.LocalHelper.greeting()
+                        }
+                    """.trimIndent()
+                )
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj"
+                )
+            )
+
+            val linkTasks = mutableListOf(
+                "linkDebugFrameworkIosArm64",
+                "linkDebugFrameworkIosX64",
+                "linkDebugFrameworkIosSimulatorArm64",
+                "linkDebugFrameworkMacosArm64",
+                "linkDebugFrameworkTvosArm64",
+                "linkDebugFrameworkTvosSimulatorArm64",
+                "linkDebugFrameworkWatchosArm64",
+                "linkDebugFrameworkWatchosSimulatorArm64",
+                "linkDebugFrameworkWatchosDeviceArm64",
+            )
+            if (isXcodeLessThan27) {
+                linkTasks.add("linkDebugFrameworkWatchosArm32")
+            }
+
+            build(*linkTasks.toTypedArray())
 
             buildXcodeProject(
                 xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),

@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.incremental.storage.AbstractBasicMap
+import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.IntExternalizer
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.toDescriptor
-import java.io.DataInput
-import java.io.DataOutput
 import java.io.File
 
 class CompilerPluginFilesCache(
@@ -23,6 +22,7 @@ class CompilerPluginFilesCache(
     companion object {
         private const val SOURCES_REFERENCED_BY_PLUGINS = "sources-referenced-by-plugins"
         private const val OUTPUTS_GENERATED_FOR_PLUGINS = "outputs-generated-for-plugins"
+        private const val SOURCES_GENERATED_FOR_PLUGINS = "sources-generated-for-plugins"
     }
 
     private val sourceFilesReferencedByPlugins: ListLikeMap = registerMap(
@@ -41,8 +41,20 @@ class CompilerPluginFilesCache(
         )
     )
 
+    private val sourceFilesGeneratedForPlugins: ListLikeMap = registerMap(
+        ListLikeMap(
+            storageFile = SOURCES_GENERATED_FOR_PLUGINS.storageFile,
+            fileDescriptor = BasicFileToPathConverter.getFileDescriptor(),
+            icContext = icContext
+        )
+    )
+
     fun getSourceFilesReferencedByPlugins(): List<File> {
         return sourceFilesReferencedByPlugins.getValue()
+    }
+
+    fun getSourceFilesGeneratedByPlugins(): List<File> {
+        return sourceFilesGeneratedForPlugins.getValue()
     }
 
     fun recordSourceFilesReferencedByPlugins(files: List<File>) {
@@ -51,6 +63,10 @@ class CompilerPluginFilesCache(
 
     fun recordOutputFilesGeneratedByPlugins(files: List<File>) {
         outputFilesGeneratedForPlugins.setValue(files)
+    }
+
+    fun recordSourceFilesGeneratedByPlugins(files: List<File>) {
+        sourceFilesGeneratedForPlugins.setValue(files)
     }
 
     fun removeOutputsGeneratedByPlugins() {

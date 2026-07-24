@@ -611,7 +611,7 @@ class ScriptingHostTest {
     @Test
     fun testKotlinPackage() {
         val greeting = "Hello from script!"
-        val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package"
+        val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package."
         val script = "package kotlin\nprintln(\"$greeting\")"
         val res0 = evalScript(script)
         assertTrue(res0.reports.any { it.message == error })

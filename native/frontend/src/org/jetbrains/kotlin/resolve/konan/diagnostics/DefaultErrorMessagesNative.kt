@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.rendering.*
 
 private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
@@ -102,6 +103,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     }
 }
 
+@K1Deprecation
 class DefaultErrorMessagesNative : DefaultErrorMessages.Extension {
     override fun getMap(): DiagnosticFactoryToRendererMap = DIAGNOSTIC_FACTORY_TO_RENDERER
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.*
+import org.junit.jupiter.params.support.ParameterDeclarations
 import java.nio.file.Path
 import java.util.*
 import java.util.stream.Stream
@@ -371,6 +372,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in unit tests")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kotlinTestSingleDependencyAndroidUnitTests(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -673,8 +675,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 "\ndependencies { \"$configuration\"(\"$kotlinTestMultiplatformDependency\") }"
             }
         )
-        classpathElementsExpectedByTask.forEach { (task, expected) ->
-            val (notInClasspath, inClasspath) = expected.partition { it.startsWith("!") }
+        classpathElementsExpectedByTask.forEach { [task, expected] ->
+            val [notInClasspath, inClasspath] = expected.partition { it.startsWith("!") }
             checkTaskCompileClasspath(
                 task,
                 inClasspath,
@@ -682,8 +684,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 isBuildGradleKts = isBuildGradleKts
             )
         }
-        filesExpectedByConfiguration.forEach { (configuration, expected) ->
-            val (notInItems, inItems) = expected.partition { it.startsWith("!") }
+        filesExpectedByConfiguration.forEach { [configuration, expected] ->
+            val [notInItems, inItems] = expected.partition { it.startsWith("!") }
             checkConfigurationContent(
                 configuration,
                 inItems,
@@ -785,9 +787,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     internal class GradleAndTestFrameworksArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(
+            parameters: ParameterDeclarations,
             context: ExtensionContext,
         ): Stream<out Arguments> {
-            val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
+            val gradleVersions = super.provideArguments(parameters, context).map { it.get().first() as GradleVersion }.toList()
             return testFrameworks
                 .flatMap { testFramework ->
                     gradleVersions.map { it to testFramework }

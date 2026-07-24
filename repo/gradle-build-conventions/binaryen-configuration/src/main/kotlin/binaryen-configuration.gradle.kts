@@ -6,7 +6,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
 
 project.plugins.apply(BinaryenPlugin::class.java)
-val binaryenEnvSpec = project.the<BinaryenEnvSpec>()
+val binaryenEnvSpec = project.the<BinaryenEnvSpec>().apply {
+    downloadBaseUrl.set(null as String?)
+}
 
 val binaryenKotlinBuild = extensions.create<BinaryenExtension>(
     "binaryenKotlinBuild",

@@ -50,7 +50,7 @@ object OrOr : IntrinsicMethod() {
     }
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val (left, right) = expression.receiverAndArgs()
+        val [left, right] = expression.receiverAndArgs()
         return BooleanDisjunction(left, right, codegen, data)
     }
 }

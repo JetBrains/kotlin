@@ -9,30 +9,22 @@ public func testSuspendFunction() async throws -> Swift.Int32 {
 }
 extension ExportedKotlinPackages.flattened {
     public static func testSuspendFunction() async throws -> Swift.Int32 {
-        try await {
-            try Task.checkCancellation()
-            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { nativeContinuation in
-                    withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Int32) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
-
-                        let _: Bool = flattened_testSuspendFunction({
-                            let originalBlock = continuation
-                            return { (arg0: Swift.Int32) in return { originalBlock(arg0); return true }() }
-                        }(), {
-                            let originalBlock = exception
-                            return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
-                        }(), cancellation.__externalRCRef())
-                    }
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = flattened_testSuspendFunction({
+                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
+                return { (arg0: Swift.Int32) in
+                    let _arg0: Swift.Int32 = arg0
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
                 }
-            } onCancel: {
-                cancellation?.cancelExternally()
-            }
-        }()
+            }(), {
+                let originalBlock: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in
+                    let _arg0: Swift.Optional<KotlinRuntime.KotlinBase> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), cancellation.__externalRCRef())
+        }
     }
 }

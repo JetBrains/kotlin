@@ -651,6 +651,38 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/codeFragments/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("blockCodeFragment.kt")
+    public void testBlockCodeFragment() {
+      run("blockCodeFragment.kt");
+    }
+
+    @Test
+    @TestMetadata("expressionCodeFragment.kt")
+    public void testExpressionCodeFragment() {
+      run("expressionCodeFragment.kt");
+    }
+
+    @Test
+    @TestMetadata("typeCodeFragment.kt")
+    public void testTypeCodeFragment() {
+      run("typeCodeFragment.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/contextParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextParameters {
@@ -966,6 +998,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("companionBlockLevel.kt")
+    public void testCompanionBlockLevel() {
+      run("companionBlockLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockLevel2.kt")
+    public void testCompanionBlockLevel2() {
+      run("companionBlockLevel2.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockLevel3.kt")
+    public void testCompanionBlockLevel3() {
+      run("companionBlockLevel3.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameterInClass.kt")
     public void testDanglingContextParameterInClass() {
       run("danglingContextParameterInClass.kt");
@@ -1061,6 +1111,80 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("InvalidInitializer.kt")
     public void testInvalidInitializer() {
       run("InvalidInitializer.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/expressionStability")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ExpressionStability {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/expressionStability/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInExpressionStability() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/expressionStability"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("stableBoundLocalValSmartCast.kt")
+    public void testStableBoundLocalValSmartCast() {
+      run("stableBoundLocalValSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("stableLocalVal.kt")
+    public void testStableLocalVal() {
+      run("stableLocalVal.kt");
+    }
+
+    @Test
+    @TestMetadata("stablePublicVal.kt")
+    public void testStablePublicVal() {
+      run("stablePublicVal.kt");
+    }
+
+    @Test
+    @TestMetadata("stableQualifiedPropertySmartCast.kt")
+    public void testStableQualifiedPropertySmartCast() {
+      run("stableQualifiedPropertySmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("stableSmartCast.kt")
+    public void testStableSmartCast() {
+      run("stableSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("unstableCapturedLocalVar.kt")
+    public void testUnstableCapturedLocalVar() {
+      run("unstableCapturedLocalVar.kt");
+    }
+
+    @Test
+    @TestMetadata("unstableCustomGetter.kt")
+    public void testUnstableCustomGetter() {
+      run("unstableCustomGetter.kt");
+    }
+
+    @Test
+    @TestMetadata("unstableDelegatedVal.kt")
+    public void testUnstableDelegatedVal() {
+      run("unstableDelegatedVal.kt");
+    }
+
+    @Test
+    @TestMetadata("unstableOpenVal.kt")
+    public void testUnstableOpenVal() {
+      run("unstableOpenVal.kt");
+    }
+
+    @Test
+    @TestMetadata("unstablePublicVar.kt")
+    public void testUnstablePublicVar() {
+      run("unstablePublicVar.kt");
     }
   }
 
@@ -1184,6 +1308,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("directSinkBad_callsInPlace.kt")
+    public void testDirectSinkBad_callsInPlace() {
+      run("directSinkBad_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("directSink_callsInPlace.kt")
+    public void testDirectSink_callsInPlace() {
+      run("directSink_callsInPlace.kt");
+    }
+
+    @Test
     @TestMetadata("dispatchReceiver.kt")
     public void testDispatchReceiver() {
       run("dispatchReceiver.kt");
@@ -1250,15 +1386,33 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("nestedSink2.kt")
-    public void testNestedSink2() {
-      run("nestedSink2.kt");
+    @TestMetadata("nestedSinkBad.kt")
+    public void testNestedSinkBad() {
+      run("nestedSinkBad.kt");
     }
 
     @Test
     @TestMetadata("nestedSinkBad2.kt")
     public void testNestedSinkBad2() {
       run("nestedSinkBad2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad2_callsInPlace.kt")
+    public void testNestedSinkBad2_callsInPlace() {
+      run("nestedSinkBad2_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad_callsInPlace.kt")
+    public void testNestedSinkBad_callsInPlace() {
+      run("nestedSinkBad_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink_callsInPlace.kt")
+    public void testNestedSink_callsInPlace() {
+      run("nestedSink_callsInPlace.kt");
     }
 
     @Test

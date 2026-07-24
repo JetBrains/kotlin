@@ -19,8 +19,8 @@ class SirFunctionBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
+    val bridges: MutableList<SirBridge> = []
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
     var isAsync: Boolean = false
@@ -30,7 +30,7 @@ class SirFunctionBuilder {
     lateinit var name: String
     var contextParameter: SirParameter? = null
     var extensionReceiverParameter: SirParameter? = null
-    val parameters: MutableList<SirParameter> = mutableListOf()
+    val parameters: MutableList<SirParameter> = []
     lateinit var returnType: SirType
     var fixity: SirFixity? = null
 

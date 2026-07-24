@@ -110,8 +110,8 @@ data class FirTowerDataContext private constructor(
         val newLastScope = oldLastScope.storeVariable(variable, session)
 
         return copy(
-            towerDataElements = towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
-            localScopes = localScopes.set(localScopes.lastIndex, newLastScope),
+            towerDataElements = towerDataElements.replacingAt(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.replacingAt(localScopes.lastIndex, newLastScope),
             localVariableScopeStorage = localVariableScopeStorage.addLocalVariable(variable.symbol)
         )
     }
@@ -121,36 +121,36 @@ data class FirTowerDataContext private constructor(
         val indexOfLastLocalScope = towerDataElements.indexOfLast { it.scope === oldLastScope }
 
         return copy(
-            towerDataElements = towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
-            localScopes = localScopes.set(localScopes.lastIndex, newLastScope),
+            towerDataElements = towerDataElements.replacingAt(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.replacingAt(localScopes.lastIndex, newLastScope),
         )
     }
 
     fun addNonLocalTowerDataElements(newElements: List<FirTowerDataElement>): FirTowerDataContext {
         return copy(
-            towerDataElements = towerDataElements.addAll(newElements),
+            towerDataElements = towerDataElements.addingAll(newElements),
             implicitValueStorage = implicitValueStorage
                 .addAllImplicitReceivers(newElements.mapNotNull { it.implicitReceiver })
                 .addAllContexts(
                     newElements.flatMap { it.contextParameterGroup.orEmpty() }
                 ),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.addAll(newElements)
+            nonLocalTowerDataElements = nonLocalTowerDataElements.addingAll(newElements)
         )
     }
 
     fun addLocalScope(localScope: FirLocalScope): FirTowerDataContext {
         return copy(
-            towerDataElements = towerDataElements.add(localScope.asTowerDataElement(isLocal = true)),
-            localScopes = localScopes.add(localScope),
+            towerDataElements = towerDataElements.adding(localScope.asTowerDataElement(isLocal = true)),
+            localScopes = localScopes.adding(localScope),
         )
     }
 
     fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>): FirTowerDataContext {
         val element = implicitReceiverValue.asTowerDataElement()
         return copy(
-            towerDataElements = towerDataElements.add(element),
+            towerDataElements = towerDataElements.adding(element),
             implicitValueStorage = implicitValueStorage.addImplicitReceiver(name, implicitReceiverValue),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
+            nonLocalTowerDataElements = nonLocalTowerDataElements.adding(element)
         )
     }
 
@@ -171,16 +171,16 @@ data class FirTowerDataContext private constructor(
         )
 
         return copy(
-            towerDataElements = towerDataElements.add(element),
+            towerDataElements = towerDataElements.adding(element),
             implicitValueStorage = implicitValueStorage.addAllContexts(contextParameterGroup),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
+            nonLocalTowerDataElements = nonLocalTowerDataElements.adding(element)
         )
     }
 
     fun addAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): FirTowerDataContext {
         val correspondingClass = anonymousInitializer.containingDeclarationSymbol as? FirClassSymbol<*> ?: return this
         return copy(
-            classesUnderInitialization = classesUnderInitialization.add(correspondingClass),
+            classesUnderInitialization = classesUnderInitialization.adding(correspondingClass),
         )
     }
 
@@ -220,22 +220,22 @@ data class FirTowerDataContext private constructor(
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
         return copy(
-            towerDataElements = towerDataElements.add(element),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
+            towerDataElements = towerDataElements.adding(element),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.adding(element)
         )
     }
 
     private fun addNonLocalScopeElement(element: FirTowerDataElement): FirTowerDataContext {
         return copy(
-            towerDataElements = towerDataElements.add(element),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
+            towerDataElements = towerDataElements.adding(element),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.adding(element)
         )
     }
 
     private fun addNonLocalScopeElements(elements: List<FirTowerDataElement>): FirTowerDataContext {
         return copy(
-            towerDataElements = towerDataElements.addAll(elements),
-            nonLocalTowerDataElements = nonLocalTowerDataElements.addAll(elements)
+            towerDataElements = towerDataElements.addingAll(elements),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.addingAll(elements)
         )
     }
 

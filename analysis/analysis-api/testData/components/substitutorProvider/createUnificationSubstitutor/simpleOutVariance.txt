@@ -1,9 +1,0 @@
-UNIVERSAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-SomeClassOut <: GenericFooOut<A> (Original: SomeClassOut <: GenericFooOut<A>)
-
-EXISTENTIAL:
-Substitutor: <empty substitutor>
-Substituted pairs:
-SomeClassOut <: GenericFooOut<A> (Original: SomeClassOut <: GenericFooOut<A>)

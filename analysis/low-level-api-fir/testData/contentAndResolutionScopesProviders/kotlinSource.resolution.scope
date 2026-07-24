@@ -1,0 +1,9 @@
+Resulting Resolution Scope:
+Module LIBRARY:
+    - Bar.kt
+    + Foo.class
+    - main.kt
+Module MAIN:
+    - Bar.kt
+    + Foo.class
+    + main.kt

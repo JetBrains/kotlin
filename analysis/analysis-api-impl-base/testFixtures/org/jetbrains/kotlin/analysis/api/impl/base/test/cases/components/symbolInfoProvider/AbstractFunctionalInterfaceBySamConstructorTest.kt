@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.functionalInterface
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -30,10 +32,10 @@ abstract class AbstractFunctionalInterfaceBySamConstructorTest : AbstractAnalysi
 
                 buildString {
                     appendLine("CONSTRUCTOR:")
-                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
+                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(useSiteSession, it) }}")
                     appendLine()
                     appendLine("FUNCTIONAL INTERFACE:")
-                    appendLine("  ${functionalInterface?.let { symbolRenderer.render(this@copyAwareAnalyzeForTest, it) }}")
+                    appendLine("  ${functionalInterface?.let { symbolRenderer.render(useSiteSession, it) }}")
                 }
             }
         }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -66,7 +66,7 @@ internal class GenerateMultifileFacades(private val context: JvmBackendContext) 
 
         context.multifileFacadesToAdd.clear()
 
-        for ((member, newMember) in functionDelegates) {
+        for ([member, newMember] in functionDelegates) {
             newMember.multifileFacadePartMember = member
         }
     }
@@ -78,7 +78,7 @@ private fun generateMultifileFacades(
     shouldGeneratePartHierarchy: Boolean,
     functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
 ): List<IrFile> =
-    context.multifileFacadesToAdd.map { (jvmClassName, unsortedPartClasses) ->
+    context.multifileFacadesToAdd.map { [jvmClassName, unsortedPartClasses] ->
         val partClasses = unsortedPartClasses.sortedBy(IrClass::name)
         val kotlinPackageFqName = partClasses.first().fqNameWhenAvailable!!.parent()
         if (!partClasses.all { it.fqNameWhenAvailable!!.parent() == kotlinPackageFqName }) {
@@ -150,8 +150,8 @@ private fun generateMultifileFacades(
                 if (member.isExternal) continue
 
                 val correspondingProperty = member.correspondingPropertySymbol?.owner
-                if (member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) ||
-                    correspondingProperty?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true
+                if (member.hasAnnotation(StandardClassIds.Annotations.InlineOnly) ||
+                    correspondingProperty?.hasAnnotation(StandardClassIds.Annotations.InlineOnly) == true
                 ) continue
 
                 val newMember =
@@ -172,7 +172,7 @@ private fun generateMultifileFacades(
 private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: List<IrClass>): IrClass {
     val superClasses = listOf(context.irBuiltIns.anyClass.owner) + parts.subList(0, parts.size - 1)
 
-    for ((klass, superClass) in parts.zip(superClasses)) {
+    for ([klass, superClass] in parts.zip(superClasses)) {
         klass.modality = Modality.OPEN
         klass.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 

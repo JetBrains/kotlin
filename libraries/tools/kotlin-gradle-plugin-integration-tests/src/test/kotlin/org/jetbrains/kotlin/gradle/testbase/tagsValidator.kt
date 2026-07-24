@@ -55,6 +55,7 @@ class TagsCountValidatorInterceptor : InvocationInterceptor {
         it is JvmGradlePluginTests ||
                 it is DaemonsGradlePluginTests ||
                 it is JsGradlePluginTests ||
+                it is JsBrowserGradlePluginTests ||
                 it is NativeGradlePluginTests ||
                 it is MppGradlePluginTests ||
                 it is AndroidGradlePluginTests ||

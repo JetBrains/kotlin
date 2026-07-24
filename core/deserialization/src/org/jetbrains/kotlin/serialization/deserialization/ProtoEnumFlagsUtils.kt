@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
 @Suppress("unused")
+@K1Deprecation
 fun ProtoEnumFlags.memberKind(memberKind: ProtoBuf.MemberKind?): CallableMemberDescriptor.Kind = when (memberKind) {
     ProtoBuf.MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
     ProtoBuf.MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -20,6 +22,7 @@ fun ProtoEnumFlags.memberKind(memberKind: ProtoBuf.MemberKind?): CallableMemberD
 }
 
 @Suppress("unused")
+@K1Deprecation
 fun ProtoEnumFlags.memberKind(kind: CallableMemberDescriptor.Kind): ProtoBuf.MemberKind = when (kind) {
     CallableMemberDescriptor.Kind.DECLARATION -> ProtoBuf.MemberKind.DECLARATION
     CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> ProtoBuf.MemberKind.FAKE_OVERRIDE
@@ -28,6 +31,7 @@ fun ProtoEnumFlags.memberKind(kind: CallableMemberDescriptor.Kind): ProtoBuf.Mem
 }
 
 @Suppress("unused")
+@K1Deprecation
 fun ProtoEnumFlags.descriptorVisibility(visibility: ProtoBuf.Visibility?): DescriptorVisibility = when (visibility) {
     ProtoBuf.Visibility.INTERNAL -> DescriptorVisibilities.INTERNAL
     ProtoBuf.Visibility.PRIVATE -> DescriptorVisibilities.PRIVATE
@@ -39,6 +43,7 @@ fun ProtoEnumFlags.descriptorVisibility(visibility: ProtoBuf.Visibility?): Descr
 }
 
 @Suppress("unused")
+@K1Deprecation
 fun ProtoEnumFlags.descriptorVisibility(visibility: DescriptorVisibility): ProtoBuf.Visibility = when (visibility) {
     DescriptorVisibilities.INTERNAL -> ProtoBuf.Visibility.INTERNAL
     DescriptorVisibilities.PUBLIC -> ProtoBuf.Visibility.PUBLIC

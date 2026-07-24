@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import java.io.File
 import kotlin.test.assertFails
 
 abstract class AbstractCompareJvmAbiTest : BaseJvmAbiTest() {
-    fun doTest(path: String) {
-        val testDir = File(path)
+    fun runTest(path: String) {
+        val testDir = ForTestCompileRuntime.transformTestDataPath(path)
         val base = Compilation(testDir, "base").also { make(it) }
         val sameAbiDir = testDir.resolve("sameAbi")
         val differentAbiDir = testDir.resolve("differentAbi")

@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test inlined underscored typealias - single platform`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -37,6 +39,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
         )
     }
 
+    @Test
     fun `test inlined underscored typealias - both platforms`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -67,6 +70,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
         )
     }
 
+    @Test
     fun `test inlined underscored typealias - both platforms - not used in signature`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -97,6 +101,7 @@ class UnderscoredTypeAliasTypeSubstitutonTest : AbstractInlineSourcesCommonizati
     }
 
 
+    @Test
     fun `test inlined underscored typealias - both platforms - underscore used in both signatures`() {
         val result = commonize {
             outputTarget("(a, b)")

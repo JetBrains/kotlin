@@ -1,0 +1,4 @@
+{
+  "include": [ "./*.whole_program.d.ts", "./granularities__main.ts" ],
+  "extends": "../../common.tsconfig.json"
+}

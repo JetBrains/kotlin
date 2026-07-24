@@ -4,8 +4,8 @@ KaTypeParameterType:
   annotations: []
   name: T
   symbol: KaTypeParameterSymbol:
+    anchorPsi: KtTypeParameter
     annotations: []
-    compilerVisibility: Local
     isActual: false
     isExpect: false
     isExternal: false
@@ -14,6 +14,8 @@ KaTypeParameterType:
     modality: FINAL
     name: T
     origin: SOURCE
+    psi: KtTypeParameter
+    realPsi: KtTypeParameter
     upperBounds: [
       KaUsualClassType:
         abbreviation: null

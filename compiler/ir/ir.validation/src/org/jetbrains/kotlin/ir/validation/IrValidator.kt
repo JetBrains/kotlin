@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -79,7 +81,9 @@ private class IrFileValidator(
     private val checkersPerElementCache = hashMapOf<Class<out IrElement>, List<IrElementChecker<*>>>()
 
     private fun List<ContextUpdater>.runWithContextUpdaters(element: IrElement, block: () -> Unit) {
-        this.fold(block) { currentBlock, updater -> { updater.runInNewContext(context, element, currentBlock) } }.invoke()
+        for (updater in this) updater.enterContext(context, element)
+        block()
+        for (updater in this.asReversed()) updater.exitContext(context, element)
     }
 
     private fun getCheckersFor(type: Class<out IrElement>) = checkersPerElementCache.computeIfAbsent(type) {
@@ -97,7 +101,7 @@ private class IrFileValidator(
         }
     }
 
-    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+    override fun visitAnnotationUsage(annotationUsage: IrAnnotation) {
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
         }
@@ -172,21 +176,14 @@ fun validateIr(
     customMessagePrefix: String? = null,
 ): Boolean {
     var hasAnyViolations = false
-    var hasAnyErrors = false
     validateIr(element, irBuiltIns, validatorConfig) { error ->
         val severity = getSeverity(error)
         if (severity != null) {
             diagnosticReporter.report(error, severity, phaseName, customMessagePrefix)
             hasAnyViolations = true
         }
-        if (severity == IrValidationSeverity.ERROR) {
-            hasAnyErrors = true
-        }
     }
 
-    if (hasAnyErrors) {
-        throw IrValidationException()
-    }
     return hasAnyViolations
 }
 
@@ -246,7 +243,7 @@ fun IrValidationError.render(phaseName: String?, customMessagePrefix: String?): 
     }
     appendLine(message)
     append(element.render())
-    for ((i, parent) in parentChain.asReversed().withIndex()) {
+    for ([i, parent] in parentChain.asReversed().withIndex()) {
         appendLine()
         append("  ".repeat(i + 1))
         append("inside ")

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.projectStructure
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -77,13 +78,49 @@ private class KaFirCommonLibraryRestrictionScope(project: Project) : GlobalSearc
     override fun hashCode(): Int = project.hashCode()
 }
 
+/**
+ * The JVM restriction scope excludes source files and certain binary file types.
+ *
+ * ### Binary files
+ *
+ * For binary files, the scope is formulated as a *denylist* rather than an allowlist of permitted extensions. An allowlist would have to
+ * enumerate every binary file type that can legitimately carry JVM declarations, which is not practical: other JVM languages contribute
+ * their own binary metadata file types that the Analysis API knows nothing about. For example, the Scala plugin loads its declarations from
+ * `.tasty` files. It loads the PSI for `scala.Product` from `Product.tasty`, while the sibling `Product.class` is intentionally ignored. An
+ * allowlist would filter `.tasty` out, leading to missing symbols in Kotlin/Scala interop (see KT-86402).
+ *
+ * On the other hand, the set of *Kotlin-specific* binary file types that should not be visible on the JVM platform is small. It is known to
+ * the Analysis API and free of custom types, so a denylist captures it precisely while admitting `.tasty` and any other language's JVM
+ * binary files for free.
+ *
+ * Note that `.kotlin_builtins` files are intentionally *not* excluded, as the JVM platform loads built-in declarations (such as `Any`) from
+ * them.
+ *
+ * ### Source files
+ *
+ * For source files, the restriction scope has to exclude them explicitly. While a JVM library's binary content should not contain source
+ * files, a malformed JAR may bundle sources next to classes (inside the *classes* root). Such source files must not be visible, as the
+ * binary symbol providers would otherwise try to load declarations from sources instead of binaries.
+ *
+ * Rather than enumerating source extensions in a denylist (`.kt`, `.kts`, `.java`, and other JVM languages), the scope requires file types
+ * to be binary. This ensures that source files from third-party JVM languages are excluded, which might otherwise be loaded via the Java
+ * symbol provider.
+ */
 private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchScope(project), KotlinIntersectionScopeMergeTarget {
     override fun contains(file: VirtualFile): Boolean {
         if (file.isDirectory) return true
 
-        val extension = file.extension
-        return extension == JavaClassFileType.INSTANCE.defaultExtension ||
-                extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+        val extension = file.extension ?: return false
+
+        // Fast path: Class files and Kotlin builtins.
+        if (extension == JavaClassFileType.DEFAULT_EXTENSION || extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            return true
+        }
+
+        // `getFileTypeByExtension` classifies by extension only and never reads file content, unlike `VirtualFile.getFileType`.
+        val fileType = FileTypeRegistry.getInstance().getFileTypeByExtension(extension)
+
+        return fileType.isBinary && extension != METADATA_FILE_EXTENSION && extension != KLIB_METADATA_FILE_EXTENSION
     }
 
     override fun isSearchInModuleContent(module: Module): Boolean = false

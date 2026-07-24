@@ -35,7 +35,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
  */
 class TestRunProvider(
     val testCaseGroupProvider: TestCaseGroupProvider
-) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource, TestService {
+) : BaseTestRunProvider(), AutoCloseable, TestService {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
     private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()

@@ -269,7 +269,7 @@ public abstract class Random {
     /**
      * The default random number generator.
      *
-     * On JVM this generator is thread-safe, its methods can be invoked from multiple threads.
+     * This generator is thread-safe, its methods can be invoked from multiple threads.
      *
      * @sample samples.random.Randoms.defaultRandom
      */

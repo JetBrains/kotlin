@@ -8,3 +8,7 @@ fun test() {
     if (x != null)
         <expr>x.inc()</expr>
 }
+
+fun <R> run(block: () -> R) {
+    block()
+}

@@ -47,7 +47,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
         ) {
             buildGradleKts.addCocoapodsBlock(
                 """
-                ios.deploymentTarget = "15"
+                ios.deploymentTarget = "17.6"
                 pod("SSZipArchive")
                 pod("Base64", "~> 1.1.0")
                 pod("Alamofire") {
@@ -63,7 +63,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
                 val podfile = "build/cocoapods/synthetic/ios/Podfile"
                 assertFileInProjectContains(
                     podfile,
-                    "platform :ios, '15'",
+                    "platform :ios, '17.6'",
                     "pod 'SSZipArchive'",
                     "pod 'Base64', '~> 1.1.0'",
                     "pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '5.6.1'",

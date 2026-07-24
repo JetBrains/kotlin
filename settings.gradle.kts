@@ -1,9 +1,8 @@
-import java.io.File
-import java.util.Properties
+import java.util.*
 
 pluginManagement {
+    includeBuild("repo/kotlin-build-helpers")
     includeBuild("repo/gradle-settings-conventions")
-    includeBuild("repo/gradle-build-conventions")
 
     repositories {
         maven {
@@ -29,6 +28,7 @@ pluginManagement {
                 includeGroup("com.android.tools")
             }
         }
+
         mavenCentral {
             url = uri("https://cache-redirector.jetbrains.com/maven-central")
         }
@@ -37,11 +37,13 @@ pluginManagement {
 
     plugins {
         id("de.undercouch.download") version "5.1.0"
+        id("com.autonomousapps.dependency-analysis") version "3.6.1"
     }
 }
 
 plugins {
     id("internal-gradle-setup") // it's recommended to apply this plugin at first, as it changes the local.properties file
+    id("kotlin-build-helpers")
     id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")
@@ -49,19 +51,22 @@ plugins {
     id("cache-redirector")
 }
 
-val versionPropertiesFile = File(rootProject.projectDir, "gradle/versions.properties")
-val versionProperties = Properties()
-versionPropertiesFile.inputStream().use {
-    versionProperties.load(it)
+gradle.lifecycle.afterProject {
+    if (plugins.hasPlugin("java-base") && !plugins.hasPlugin("common-configuration")) {
+        throw GradleException("common-configuration plugin should be applied to all projects")
+    }
 }
+
 dependencyResolutionManagement {
+    val buildProperties = getKotlinBuildPropertiesForSettings(settings)
+
     components {
         withModule("com.google.code.gson:gson") {
             allVariants {
                 withDependencies {
                     add("com.google.code.gson:gson") {
                         version {
-                            require(versionProperties["versions.gson"] as String)
+                            require(buildProperties.versionsProperty("gson").get())
                         }
                     }
                 }
@@ -73,7 +78,7 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("org.apache.commons:commons-compress") {
                         version {
-                            require(versionProperties["versions.commons-compress"] as String)
+                            require(buildProperties.versionsProperty("commons-compress").get())
                         }
                     }
                 }
@@ -85,7 +90,7 @@ dependencyResolutionManagement {
                 withDependencies {
                     add("commons-io:commons-io") {
                         version {
-                            require(versionProperties["versions.commons-io"] as String)
+                            require(buildProperties.versionsProperty("commons-io").get())
                         }
                     }
                 }
@@ -98,9 +103,40 @@ dependencyResolutionManagement {
             from(files("plugins/compose/compose-runtime-snapshot-versions.toml"))
         }
     }
+    repositories {
+        intellijRepository(buildProperties.versionsProperty("intellijSdk").get())
+        intellijDependencies()
+        kotlinDependencies()
+        teamcityRepository()
+        googleAndroidRepository()
+        gradleLibsReleases()
+        gradlePluginPortalRepository()
+        litmuskt()
+        kotlinIdePluginDependencies()
+        mozillaReleases()
+        kotlinFileDependenciesJsc()
+        githubRelease("WasmEdge", "WasmEdge", revisionPrefix = "", groupAlias = "org.wasmedge")
+        githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
+        githubCommit("webassembly", "testsuite")
+        githubRelease("webassembly", "wabt", revisionPrefix = "")
+        githubTag("google", "breakpad")
+        githubCommit("google", "googletest")
+        nodeJs()
+        yarnDistributions()
+        binaryenDistributions()
+        d8Distributions()
+        androidRepository()
+        androidSystemImages()
+        val mirrorRepo: String? = settings.providers.systemProperty("maven.repository.mirror").orNull
+        mirrorRepo?.let(::maven)
+        mavenCentral()
+    }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
 
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
+
+includeBuild("repo/gradle-build-conventions")
 
 // modules
 include(
@@ -126,6 +162,7 @@ include(
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":compiler:resolution",
+    ":compiler:serialization.common",
     ":compiler:serialization",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
@@ -152,7 +189,6 @@ include(
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.native",
     ":compiler:ir.serialization.jklib",
-    ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
     ":compiler:backend.js",
@@ -163,7 +199,7 @@ include(
     ":compiler:backend.jvm.entrypoint",
     ":compiler:backend",
     ":compiler:plugin-api",
-    ":compiler:light-classes",
+    ":compiler:java-direct",
     ":compiler:javac-wrapper",
     ":compiler:cli:cli-arguments-generator",
     ":compiler:cli-base",
@@ -179,13 +215,10 @@ include(
     ":compiler:tests-common",
     ":compiler:tests-integration",
     ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit4",
     ":compiler:tests-mutes:mutes-junit5",
-    ":compiler:tests-against-klib",
     ":compiler:jklib.tests",
     ":js:js.ast",
     ":js:js.sourcemap",
-    ":js:js.serializer",
     ":js:js.parser",
     ":js:js.config",
     ":js:js.frontend.common",
@@ -214,6 +247,7 @@ include(
     ":native:external-projects-test-utils:testLibraryC",
     ":native:external-projects-test-utils:testInternalLibrary",
     ":native:external-projects-test-utils:testExtensionsLibrary",
+    ":native:cinterop.deserialization",
     ":core:names",
     ":core:language.model",
     ":core:language.targets",
@@ -230,6 +264,7 @@ include(
     ":core:descriptors.jvm",
     ":core:deserialization",
     ":core:descriptors.runtime",
+    ":core:reflection.common.jvm",
     ":core:metadata",
     ":core:metadata.jvm",
     ":core:deserialization.common",
@@ -240,6 +275,8 @@ include(
     ":dependencies:android-sdk",
     ":dependencies:tools-jar-api",
     ":dependencies:intellij-core",
+    ":dependencies:intellij-java-psi-api",
+    ":dependencies:intellij-core-implementation",
     ":dependencies:bootstrap:kotlin-stdlib-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
@@ -259,7 +296,6 @@ include(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-allopen-compiler-plugin.embeddable",
     ":kotlin-allopen-compiler-plugin.common",
-    ":kotlin-allopen-compiler-plugin.k1",
     ":kotlin-allopen-compiler-plugin.k2",
     ":kotlin-allopen-compiler-plugin.cli"
 )
@@ -268,7 +304,6 @@ include(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-noarg-compiler-plugin.embeddable",
     ":kotlin-noarg-compiler-plugin.common",
-    ":kotlin-noarg-compiler-plugin.k1",
     ":kotlin-noarg-compiler-plugin.k2",
     ":kotlin-noarg-compiler-plugin.backend",
     ":kotlin-noarg-compiler-plugin.cli"
@@ -288,7 +323,6 @@ include(
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
     ":kotlin-sam-with-receiver-compiler-plugin.common",
-    ":kotlin-sam-with-receiver-compiler-plugin.k1",
     ":kotlin-sam-with-receiver-compiler-plugin.k2",
     ":kotlin-sam-with-receiver-compiler-plugin.cli"
 )
@@ -296,7 +330,6 @@ include(
 include(
     ":kotlin-assignment-compiler-plugin",
     ":kotlin-assignment-compiler-plugin.common",
-    ":kotlin-assignment-compiler-plugin.k1",
     ":kotlin-assignment-compiler-plugin.k2",
     ":kotlin-assignment-compiler-plugin.cli",
     ":kotlin-assignment-compiler-plugin.embeddable"
@@ -329,13 +362,13 @@ include(
     ":kotlin-compiler",
     ":kotlin-compiler-embeddable",
     ":kotlin-compiler-client-embeddable",
+    ":kotlin-compiler-native-image",
     ":kotlin-klib-abi-reader",
     ":kotlin-reflect",
     ":compiler:tests-java8",
     ":compiler:tests-different-jdk",
     ":compiler:tests-spec",
     ":generators",
-    ":generators:ide-iml-to-gradle-generator",
     ":generators:test-generator",
     ":generators:tree-generator-common",
     ":tools:kotlinp",
@@ -424,6 +457,7 @@ include(
     ":wasm:wasm.debug.browsers",
     ":repo:test-federation-runtime",
     ":repo:codebase-tests",
+    ":repo:auto-code-review",
     ":repo:artifacts-tests"
 )
 
@@ -515,7 +549,6 @@ include(
 include(
     ":plugins:parcelize:parcelize-compiler",
     ":plugins:parcelize:parcelize-compiler:parcelize.common",
-    ":plugins:parcelize:parcelize-compiler:parcelize.k1",
     ":plugins:parcelize:parcelize-compiler:parcelize.k2",
     ":plugins:parcelize:parcelize-compiler:parcelize.backend",
     ":plugins:parcelize:parcelize-compiler:parcelize.cli",
@@ -526,8 +559,6 @@ include(
 include(
     ":kotlin-lombok-compiler-plugin",
     ":kotlin-lombok-compiler-plugin.embeddable",
-    ":kotlin-lombok-compiler-plugin.common",
-    ":kotlin-lombok-compiler-plugin.k1",
     ":kotlin-lombok-compiler-plugin.k2",
     ":kotlin-lombok-compiler-plugin.cli",
     ":kotlin-lombok"
@@ -537,7 +568,6 @@ include(
     ":kotlinx-serialization-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlinx-serialization-compiler-plugin.common",
-    ":kotlinx-serialization-compiler-plugin.k1",
     ":kotlinx-serialization-compiler-plugin.k2",
     ":kotlinx-serialization-compiler-plugin.backend",
     ":kotlinx-serialization-compiler-plugin.cli",
@@ -558,7 +588,6 @@ include(
 include(
     ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
-    ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
     ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
@@ -585,7 +614,6 @@ include(
     ":prepare:ide-plugin-dependencies:analysis-api-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-impl-base-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-k2-for-ide",
-    ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
     ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
@@ -596,15 +624,36 @@ include(
 )
 
 include(
+    ":prepare:analysis-api:kotlin-analysis-api",
+    ":prepare:analysis-api:kotlin-analysis-api-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
+    ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-assignment-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-compose-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-dataframe-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-js-plain-objects-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-kotlinx-serialization-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-lombok-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-noarg-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-parcelize-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-sam-with-receiver-compiler-plugin-support",
+)
+
+include(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",
     ":compiler:build-tools:kotlin-build-tools-api-tests",
-    ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests",
+    ":compiler:build-tools:kotlin-build-tools-api-forward-tests",
+    ":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared",
     ":compiler:build-tools:kotlin-build-tools-jdk-utils",
     ":compiler:build-tools:kotlin-build-tools-generator",
     ":compiler:build-tools:util-kotlinpoet",
-    ":compiler:build-tools:kotlin-build-tools-cri-impl"
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
+    ":compiler:build-tools:kotlin-build-tools-version-coverage-check"
 )
 
 include(
@@ -613,7 +662,8 @@ include(
     ":plugins:compose-compiler-plugin:compiler-hosted",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-    ":plugins:compose-compiler-plugin:group-mapping"
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils",
+    ":plugins:compose-compiler-plugin:group-mapping",
 )
 
 if (buildProperties.isInIdeaSync.get()) {
@@ -633,7 +683,6 @@ include(
     ":native:swift:swift-export-standalone-integration-tests:simple",
     ":native:swift:swift-export-standalone-integration-tests:external",
     ":native:swift:swift-export-standalone-integration-tests:coroutines",
-    ":generators:sir-tests-generator"
 )
 
 include(":native:swift:swift-export-embeddable")
@@ -655,7 +704,6 @@ include(
 include(
     ":analysis",
     ":analysis:low-level-api-fir",
-    ":analysis:low-level-api-fir:tests-jdk11",
     ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
     ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
     ":analysis:analysis-api-fir:analysis-api-fir-generator",
@@ -666,21 +714,18 @@ include(
     ":analysis:analysis-internal-utils",
     ":analysis:analysis-test-framework",
     ":analysis:test-data-manager",
-    ":analysis:kt-references",
     ":analysis:stubs",
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-api-standalone:analysis-api-standalone-base",
     ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
-    ":analysis:analysis-api-fe10",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":prepare:analysis-api-test-framework",
     ":tools:ide-plugin-dependencies-validator"
 )
 
@@ -748,6 +793,7 @@ project(":kotlin-compiler").projectDir = File("$rootDir/prepare/compiler")
 project(":kotlin-jklib-compiler").projectDir = File("$rootDir/prepare/jklib-compiler")
 project(":kotlin-compiler-embeddable").projectDir = File("$rootDir/prepare/compiler-embeddable")
 project(":kotlin-compiler-client-embeddable").projectDir = File("$rootDir/prepare/compiler-client-embeddable")
+project(":kotlin-compiler-native-image").projectDir = File("$rootDir/prepare/compiler-native-image")
 project(":kotlin-klib-abi-reader").projectDir = File("$rootDir/libraries/tools/klib-abi-reader")
 project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")
@@ -784,7 +830,6 @@ project(":compiler:ir.serialization.jvm").projectDir = File("$rootDir/compiler/i
 project(":compiler:ir.serialization.js").projectDir = File("$rootDir/compiler/ir/serialization.js")
 project(":compiler:ir.serialization.native").projectDir = File("$rootDir/compiler/ir/serialization.native")
 project(":compiler:ir.serialization.jklib").projectDir = File("$rootDir/compiler/ir/serialization.jklib")
-project(":compiler:ir.interpreter").projectDir = File("$rootDir/compiler/ir/ir.interpreter")
 project(":kotlin-util-io").projectDir = File("$rootDir/compiler/util-io")
 project(":kotlin-util-klib").projectDir = File("$rootDir/compiler/util-klib")
 project(":kotlin-util-klib-metadata").projectDir = File("$rootDir/compiler/util-klib-metadata")
@@ -812,21 +857,17 @@ project(":kotlin-parcelize-compiler").projectDir = File("$rootDir/prepare/parcel
 project(":kotlin-allopen-compiler-plugin").projectDir = File("$rootDir/plugins/allopen")
 project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/allopen/allopen.embeddable")
 project(":kotlin-allopen-compiler-plugin.common").projectDir = File("$rootDir/plugins/allopen/allopen.common")
-project(":kotlin-allopen-compiler-plugin.k1").projectDir = File("$rootDir/plugins/allopen/allopen.k1")
 project(":kotlin-allopen-compiler-plugin.k2").projectDir = File("$rootDir/plugins/allopen/allopen.k2")
 project(":kotlin-allopen-compiler-plugin.cli").projectDir = File("$rootDir/plugins/allopen/allopen.cli")
 
 project(":kotlin-lombok-compiler-plugin").projectDir = File("$rootDir/plugins/lombok")
 project(":kotlin-lombok-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/lombok/lombok.embeddable")
 project(":kotlin-lombok-compiler-plugin.cli").projectDir = File("$rootDir/plugins/lombok/lombok.cli")
-project(":kotlin-lombok-compiler-plugin.k1").projectDir = File("$rootDir/plugins/lombok/lombok.k1")
 project(":kotlin-lombok-compiler-plugin.k2").projectDir = File("$rootDir/plugins/lombok/lombok.k2")
-project(":kotlin-lombok-compiler-plugin.common").projectDir = File("$rootDir/plugins/lombok/lombok.common")
 
 project(":kotlin-noarg-compiler-plugin").projectDir = File("$rootDir/plugins/noarg")
 project(":kotlin-noarg-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/noarg/noarg.embeddable")
 project(":kotlin-noarg-compiler-plugin.common").projectDir = File("$rootDir/plugins/noarg/noarg.common")
-project(":kotlin-noarg-compiler-plugin.k1").projectDir = File("$rootDir/plugins/noarg/noarg.k1")
 project(":kotlin-noarg-compiler-plugin.k2").projectDir = File("$rootDir/plugins/noarg/noarg.k2")
 project(":kotlin-noarg-compiler-plugin.backend").projectDir = File("$rootDir/plugins/noarg/noarg.backend")
 project(":kotlin-noarg-compiler-plugin.cli").projectDir = File("$rootDir/plugins/noarg/noarg.cli")
@@ -848,13 +889,11 @@ project(":kotlin-sam-with-receiver-compiler-plugin").projectDir = File("$rootDir
 project(":kotlin-sam-with-receiver-compiler-plugin.embeddable").projectDir =
     File("$rootDir/plugins/sam-with-receiver/sam-with-receiver.embeddable")
 project(":kotlin-sam-with-receiver-compiler-plugin.common").projectDir = File("$rootDir/plugins/sam-with-receiver/sam-with-receiver.common")
-project(":kotlin-sam-with-receiver-compiler-plugin.k1").projectDir = File("$rootDir/plugins/sam-with-receiver/sam-with-receiver.k1")
 project(":kotlin-sam-with-receiver-compiler-plugin.k2").projectDir = File("$rootDir/plugins/sam-with-receiver/sam-with-receiver.k2")
 project(":kotlin-sam-with-receiver-compiler-plugin.cli").projectDir = File("$rootDir/plugins/sam-with-receiver/sam-with-receiver.cli")
 
 project(":kotlin-assignment-compiler-plugin").projectDir = File("$rootDir/plugins/assign-plugin")
 project(":kotlin-assignment-compiler-plugin.common").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.common")
-project(":kotlin-assignment-compiler-plugin.k1").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.k1")
 project(":kotlin-assignment-compiler-plugin.k2").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.k2")
 project(":kotlin-assignment-compiler-plugin.cli").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.cli")
 project(":kotlin-assignment-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.embeddable")
@@ -943,7 +982,6 @@ project(":kotlinx-serialization-compiler-plugin.embeddable").projectDir =
 project(":kotlinx-serialization-compiler-plugin.cli").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.cli")
 project(":kotlinx-serialization-compiler-plugin.backend").projectDir =
     File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.backend")
-project(":kotlinx-serialization-compiler-plugin.k1").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k1")
 project(":kotlinx-serialization-compiler-plugin.k2").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k2")
 project(":kotlinx-serialization-compiler-plugin.common").projectDir =
     File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.common")
@@ -970,6 +1008,8 @@ project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests").pr
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
 project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes").projectDir =
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
+project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils").projectDir =
+    file("$rootDir/plugins/compose/compiler-hosted/runtime-test-utils")
 project(":plugins:compose-compiler-plugin:group-mapping").projectDir = file("$rootDir/plugins/compose/group-mapping")
 
 if (buildProperties.isInIdeaSync.get()) {
@@ -986,10 +1026,12 @@ project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/s
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
+
+includeBuild("kotlin-native/build-tools") {
+    name = "native-build-tools"
+}
+
 if (buildProperties.isKotlinNativeEnabled.get()) {
-    includeBuild("kotlin-native/build-tools") {
-        name = "native-build-tools"
-    }
     include(":kotlin-native:dependencies")
     include(":kotlin-native:endorsedLibraries:kotlinx.cli")
     include(":kotlin-native:Interop:StubGenerator")

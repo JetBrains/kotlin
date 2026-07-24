@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
-class WasmBoxRunnerWithPrecompiled(
-    testServices: TestServices
-) : WasmBoxRunnerBase(testServices) {
+open class WasmBoxRunnerWithPrecompiled(
+    testServices: TestServices,
+    executeWithV8Only: Boolean = false,
+) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
         super.processModule(module, info)
@@ -31,7 +32,6 @@ class WasmBoxRunnerWithPrecompiled(
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDirBase,
                 mark = "",
-                failsIn = emptyList(),
                 filesToIgnoreInSizeChecks = mutableSetOf()
             )
             processExceptions(exceptions)

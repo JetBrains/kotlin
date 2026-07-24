@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
 }
@@ -12,8 +15,7 @@ publish()
 standardPublicJars()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        useJUnit()
+    testTask {
         jvmArgs("-ea")
     }
 }
@@ -30,8 +32,11 @@ dependencies {
 
     implementation(libs.diff.utils)
 
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(kotlinTest("junit5"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(kotlinStdlib())
     testImplementation(libs.intellij.asm)
     // using `KonanTarget` class

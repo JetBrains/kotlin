@@ -41,6 +41,13 @@ interface Person2 {
     val isHappy: Boolean
 }
 
+// name:
+//   firstName: String
+//   lastName: String
+// age: Int
+// city: String?
+// weight: Int?
+// isHappy: Boolean
 val df = dataFrameOf("firstName", "lastName", "age", "city", "weight", "isHappy")(
     "Alice", "Cooper", 15, "London", 54, true,
     "Bob", "Dylan", 45, "Dubai", 87, true,
@@ -51,6 +58,15 @@ val df = dataFrameOf("firstName", "lastName", "age", "city", "weight", "isHappy"
     "Charlie", "Byrd", 30, "Moscow", 90, true,
 ).group("firstName", "lastName").into("name").cast<Person>(verify = false)
 
+// name:
+//   firstName:
+//     firstName: String
+//     secondName: String?
+//     thirdName: String?
+//   lastName: String
+// age: Int
+// city: String?
+// weight: Int
 val dfGroup = run {
     df.add {
         "secondName" from { "".takeIf { false } }

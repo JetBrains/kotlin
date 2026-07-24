@@ -1,7 +1,0 @@
-KtNameReferenceExpression(16,19): 'bar'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in ROOT) fun bar(a: kotlin.Int, b: (kotlin.Int) -> kotlin.Int)

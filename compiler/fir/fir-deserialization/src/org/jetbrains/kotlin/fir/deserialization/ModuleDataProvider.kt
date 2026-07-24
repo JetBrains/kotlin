@@ -43,7 +43,7 @@ class MultipleModuleDataProvider(
 
     override fun getModuleData(path: Path?): FirModuleData? {
         val normalizedPath = path?.normalize()
-        for ((session, filter) in moduleDataWithFilters.entries) {
+        for ([session, filter] in moduleDataWithFilters.entries) {
             if (filter.accepts(normalizedPath)) {
                 return session
             }

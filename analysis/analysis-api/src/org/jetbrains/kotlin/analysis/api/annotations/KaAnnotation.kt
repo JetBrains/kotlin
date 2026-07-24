@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,7 +50,10 @@ public interface KaAnnotation : KaLifetimeOwner {
     /**
      * The [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) to which the annotation
      * was applied. It only exists for annotations applied to declarations.
+     *
+     * **Note**: in most cases it is `null` since the compiler drops it during transformations. Use [psi] instead if needed.
      */
+    @Deprecated("Use the underlying `(psi as? KtAnnotationEntry)?.useSiteTarget` instead if needed")
     public val useSiteTarget: AnnotationUseSiteTarget?
 
     /**

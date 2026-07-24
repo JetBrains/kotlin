@@ -30,7 +30,7 @@ FILE: log.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExample.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() public final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExample|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 public get(): R|java/util/logging/Logger|
 
             private constructor(): R|LogExample.Companion| {
@@ -50,7 +50,7 @@ FILE: log.kt
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExampleWithExistingCompanion.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExampleWithExistingCompanion|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }
@@ -117,7 +117,7 @@ FILE: log.kt
                 this@R|/LogOnCompanion.Companion|.R|/LogOnCompanion.Companion.log|.R|java/util/logging/Logger.info|(String(Check @Log on companion object))
             }
 
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnCompanion.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnCompanion.Companion|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }
@@ -139,7 +139,7 @@ FILE: log.kt
             }
 
             public final companion object Companion : R|kotlin/Any| {
-                @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnNestedClass.Nested.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+                @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnNestedClass.Nested|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                     private get(): R|java/util/logging/Logger|
 
                 private constructor(): R|LogOnNestedClass.Nested.Companion| {
@@ -167,7 +167,7 @@ FILE: log.kt
             }
 
             public final companion object Companion : R|kotlin/Any| {
-                @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnInnerClass.Inner.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+                @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnInnerClass.Inner|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                     private get(): R|java/util/logging/Logger|
 
                 private constructor(): R|LogOnInnerClass.Inner.Companion| {
@@ -189,7 +189,7 @@ FILE: log.kt
             this@R|/LogOnObject|.R|/LogOnObject.log|.R|java/util/logging/Logger.info|(String(Check @Log on object))
         }
 
-        @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnObject|).R|kotlin/reflect/KClass.qualifiedName|)
+        @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnObject|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             private get(): R|java/util/logging/Logger|
 
     }
@@ -214,7 +214,7 @@ FILE: log.kt
             public static get(): R|kotlin/enums/EnumEntries<LogOnEnum>|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnEnum.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnEnum|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
             private constructor(): R|LogOnEnum.Companion| {
@@ -244,7 +244,7 @@ FILE: log.kt
                 this@R|/LogWhenNonConflictingExtensionProperty.Companion|.R|/LogWhenNonConflictingExtensionProperty.Companion.log|.R|java/util/logging/Logger.info|(String(Check LogWhenNonConflictingExtensionProperty))
             }
 
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingExtensionProperty.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingExtensionProperty|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }
@@ -271,7 +271,7 @@ FILE: log.kt
                 this@R|/LogWhenNonConflictingContextualProperty.Companion|.R|/LogWhenNonConflictingContextualProperty.Companion.log|.R|java/util/logging/Logger.info|(String(Check LogWhenNonConflictingContextualProperty))
             }
 
-            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingContextualProperty.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingContextualProperty|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }

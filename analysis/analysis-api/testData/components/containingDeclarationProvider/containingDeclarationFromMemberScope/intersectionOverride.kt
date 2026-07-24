@@ -1,9 +1,11 @@
 interface A {
-    fun <T>foo()
+    context(c: T)
+    fun <T> Int.foo(x: T)
 }
 
 interface B {
-    fun <T>foo() {}
+    context(c: T)
+    fun <T> Int.foo(x: T)
 }
 
->class Y<caret> : A, B
+class Y<caret> : A, B

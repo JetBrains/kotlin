@@ -14,12 +14,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependenc
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -42,7 +46,8 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
 
         when {
             containingDeclaration is FirAnonymousFunctionSymbol -> {
-                checkLambdaParameter(declaration)
+                val inlineStatus = containingDeclaration.inlineStatus
+                checkLambdaParameter(declaration, inlineStatus == InlineStatus.Inline || inlineStatus == InlineStatus.CrossInline)
             }
             declaration.correspondingProperty != null && containingDeclaration.getContainingClassSymbol()?.isData == true -> {
                 checkDataClassParameter(declaration)
@@ -51,7 +56,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkLambdaParameter(parameter: FirValueParameter) {
+    private fun checkLambdaParameter(parameter: FirValueParameter, isInline: Boolean) {
         if (parameter.returnTypeRef.source?.kind is KtRealSourceElementKind) return
 
         val missingTypes = mutableSetOf<ConeClassLikeType>()
@@ -63,7 +68,9 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
             )
         )
 
-        FirImplicitReturnTypeAnnotationMissingDependencyChecker.check(parameter.returnTypeRef, parameter.returnTypeRef.source)
+        if (!isInline) {
+            FirImplicitReturnTypeAnnotationMissingDependencyChecker.check(parameter.returnTypeRef, parameter.returnTypeRef.source)
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

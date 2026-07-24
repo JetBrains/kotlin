@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 internal class KaFirEnumEntryInitializerSymbol(
     firSymbol: FirAnonymousObjectSymbol,
     analysisSession: KaFirSession,
-) : KaFirAnonymousObjectSymbol(firSymbol, analysisSession), KaEnumEntryInitializerSymbol {
+) : KaFirAnonymousObjectSymbol(firSymbol, analysisSession), @Suppress("DEPRECATION") KaEnumEntryInitializerSymbol {
     init {
         check(firSymbol.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
             "Expected the `firSymbol` of ${KaFirEnumEntryInitializerSymbol::class.simpleName} to have an enum initializer fake source kind."
@@ -33,6 +33,6 @@ internal class KaFirEnumEntryInitializerSymbol(
      */
     override fun createPointer(): KaSymbolPointer<KaFirEnumEntryInitializerSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromSource<KaFirEnumEntryInitializerSymbol>(this)
-            ?: KaFirEnumEntryInitializerSymbolPointer(analysisSession.createOwnerPointer(this), this)
+            ?: KaFirEnumEntryInitializerSymbolPointer(createOwnerPointer(), this)
     }
 }

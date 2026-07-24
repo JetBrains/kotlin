@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
+@LLFirInternals
 interface LLFirSessionConfigurator {
+    @LLFirInternals
     companion object : ProjectExtensionDescriptor<LLFirSessionConfigurator>(
         "org.jetbrains.kotlin.llFirSessionConfigurator",
         LLFirSessionConfigurator::class.java

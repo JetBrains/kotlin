@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.tree.merge
 
+import org.junit.jupiter.api.Test
+
 class MergeCirTreeFunctionTest : AbstractMergeCirTreeTest() {
 
+    @Test
     fun `test simple function`() {
         val aTree = createCirTreeFromSourceCode("fun x(): Int = 42")
         val bTree = createCirTreeFromSourceCode("fun x(): Int = 42")
@@ -21,6 +24,7 @@ class MergeCirTreeFunctionTest : AbstractMergeCirTreeTest() {
         }
     }
 
+    @Test
     fun `test missing target declarations`() {
         val aTree = createCirTreeFromSourceCode("fun a(): Int = 42")
         val bTree = createCirTreeFromSourceCode("fun b(): Int = 42")

@@ -276,7 +276,7 @@ KtNameReferenceExpression(267,268): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(269,271): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -382,7 +382,7 @@ KtNameReferenceExpression(278,279): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(280,282): '-='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -488,7 +488,7 @@ KtNameReferenceExpression(289,290): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(291,293): '*='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -594,7 +594,7 @@ KtNameReferenceExpression(300,301): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(302,304): '/='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -700,7 +700,7 @@ KtNameReferenceExpression(311,312): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(313,315): '%='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

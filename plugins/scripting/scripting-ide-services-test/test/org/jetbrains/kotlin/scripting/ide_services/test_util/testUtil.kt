@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.scripting.ide_services.test_util
 
-import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.scripting.ide_services.compiler.KJvmReplCompilerWithIdeServices
+import org.junit.jupiter.api.Assertions
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
+import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.get
 
 internal class JvmTestRepl (
@@ -78,7 +78,7 @@ internal fun assertCompileFails(
     val compiledSnippet =
         checkCompile(repl, line)
 
-    TestCase.assertNull(compiledSnippet)
+    Assertions.assertNull(compiledSnippet)
 }
 
 internal fun assertEvalUnit(
@@ -92,8 +92,8 @@ internal fun assertEvalUnit(
     val evalResult = repl.eval(compiledSnippet!!)
     val valueResult = evalResult.valueOrNull().get()
 
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Unit)
+    Assertions.assertNotNull(valueResult, "Unexpected eval result: $evalResult")
+    Assertions.assertTrue(valueResult!!.result is ResultValue.Unit)
 }
 
 internal fun <R> assertEvalResult(repl: JvmTestRepl, line: String, expectedResult: R) {
@@ -103,9 +103,9 @@ internal fun <R> assertEvalResult(repl: JvmTestRepl, line: String, expectedResul
     val evalResult = repl.eval(compiledSnippet!!)
     val valueResult = evalResult.valueOrNull().get()
 
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertEquals(expectedResult, (valueResult.result as ResultValue.Value).value)
+    Assertions.assertNotNull(valueResult, "Unexpected eval result: $evalResult")
+    Assertions.assertTrue(valueResult!!.result is ResultValue.Value)
+    Assertions.assertEquals(expectedResult, (valueResult.result as ResultValue.Value).value)
 }
 
 internal inline fun <reified R> assertEvalResultIs(repl: JvmTestRepl, line: String) {
@@ -115,9 +115,9 @@ internal inline fun <reified R> assertEvalResultIs(repl: JvmTestRepl, line: Stri
     val evalResult = repl.eval(compiledSnippet!!)
     val valueResult = evalResult.valueOrNull().get()
 
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertTrue((valueResult.result as ResultValue.Value).value is R)
+    Assertions.assertNotNull(valueResult, "Unexpected eval result: $evalResult")
+    Assertions.assertTrue(valueResult!!.result is ResultValue.Value)
+    Assertions.assertTrue((valueResult.result as ResultValue.Value).value is R)
 }
 
 internal fun checkCompile(repl: JvmTestRepl, line: String): LinkedSnippet<KJvmCompiledScript>? {
@@ -165,4 +165,3 @@ internal fun <T> ResultWithDiagnostics<T>.getErrors(): CompilationErrors =
             )
         }
     )
-

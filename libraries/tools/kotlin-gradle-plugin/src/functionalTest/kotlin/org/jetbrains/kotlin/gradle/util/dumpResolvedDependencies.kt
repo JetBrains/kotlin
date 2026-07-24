@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.UnresolvedDependencyResult
+import org.jetbrains.kotlin.gradle.testing.normalizeSnapshotVersion
 
 fun Configuration.dumpResolvedDependencies(): String {
     val resolutionResult = incoming.resolutionResult
     val rootComponent = resolutionResult.root
     val dependencies = resolutionResult.allComponents
         .minus(rootComponent)
-        .map { it.id.displayName }
+        .map { it.id.displayName.normalizeSnapshotVersion() }
         .sorted()
     val unresolved = resolutionResult
         .allDependencies

@@ -20,6 +20,7 @@ import com.google.common.collect.HashMultimap
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.util.AstLoadingFilter
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
+@K1Deprecation
 class FunctionDescriptorResolver(
     private val typeResolver: TypeResolver,
     private val descriptorResolver: DescriptorResolver,
@@ -259,7 +261,7 @@ class FunctionDescriptorResolver(
                 }
             }
             contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
-                .forEach { (contextReceiverDescriptor, i) ->
+                .forEach { [contextReceiverDescriptor, i] ->
                     contextReceivers[i].name()?.let {
                         labelNameToReceiverMap.put(it, contextReceiverDescriptor)
                     }

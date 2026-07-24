@@ -1,12 +1,15 @@
 KaKotlinPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -17,11 +20,14 @@ KaKotlinPropertySymbol:
     name: field
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(<local>/column)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -30,16 +36,16 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: null
-  compilerVisibility: Local
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
-    compilerVisibility: Local
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -53,13 +59,17 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: PLUGIN
+    psi: null
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: null
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -69,6 +79,8 @@ KaKotlinPropertySymbol:
       name: <receiver>
       origin: PLUGIN
       owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+      psi: null
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -79,16 +91,18 @@ KaKotlinPropertySymbol:
             type: <local>/Schema1
         ]
         type: DataFrame<<local>/Schema1>
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: LOCAL
     getDispatchReceiver(): KaUsualClassType:
@@ -98,7 +112,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -107,11 +121,10 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: true
   isExternal: false
-  isFromPrimaryConstructor: false
   isLateInit: false
   isOverride: false
   isStatic: false
@@ -120,13 +133,18 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: column
   origin: PLUGIN
+  primaryConstructorParameter: null
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: null
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -136,6 +154,8 @@ KaKotlinPropertySymbol:
     name: <receiver>
     origin: PLUGIN
     owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -146,11 +166,12 @@ KaKotlinPropertySymbol:
           type: <local>/Schema1
       ]
       type: DataFrame<<local>/Schema1>
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -166,7 +187,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getColumn
   javaSetterName: null
   isInline: false

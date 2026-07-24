@@ -93,7 +93,7 @@ open class BasicMapsOwner(val cachesDir: File) : Closeable {
             val desc = "Could not $actionName incremental caches in $cachesDir: ${actionExceptions.keys.joinToString(", ")}"
             val allIOExceptions = actionExceptions.all { it is IOException }
             val ex = if (allIOExceptions) IOException(desc) else Exception(desc)
-            actionExceptions.forEach { (_, e) -> ex.addSuppressed(e) }
+            actionExceptions.forEach { [_, e] -> ex.addSuppressed(e) }
             throw ex
         }
     }

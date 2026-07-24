@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 
 class AbiValidationKonanTargetsTest {
     @Test
-    fun test() {
+    fun testAllKonanTargetsAreMappedInKlibTargetType() {
         val unknowKonanTargets = KonanTarget.predefinedTargets.keys.mapNotNull {
             try {
                 KlibTargetType.fromKonanTargetName(it)

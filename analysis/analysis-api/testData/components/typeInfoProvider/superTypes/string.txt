@@ -1,3 +1,6 @@
+[type]
+kotlin.String
+
 [direct super types]
 kotlin.Comparable<kotlin.String>
 kotlin.CharSequence

@@ -1,9 +1,4 @@
-// LANGUAGE: +MultiPlatformProjects, +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: WASM_WASI, WASM_JS, JS_IR, JS_IR_ES6
-// IGNORE_HMPP: JS_IR
-// Notes:
-// JS: "NOT OK: undefinedundefined1ObjObj2"
-// WASM: "RuntimeError: dereferencing a null pointer"
+// LANGUAGE: +MultiPlatformProjects +CompanionBlocks +CompanionExtensions
 
 // MODULE: common
 // FILE: common.kt

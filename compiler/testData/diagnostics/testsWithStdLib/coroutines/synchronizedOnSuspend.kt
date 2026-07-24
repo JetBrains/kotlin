@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ParseLambdaWithSuspendModifier
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// SKIP_TXT
 
 <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!>
 suspend fun foo(f: () -> Unit): Unit = f()

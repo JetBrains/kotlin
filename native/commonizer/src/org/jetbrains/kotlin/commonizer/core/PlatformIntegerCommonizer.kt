@@ -54,7 +54,7 @@ private sealed class PlatformDependentTypeCommonizer(
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         val typesToCommonizeWithTargets = values.zip(classifiers.classifierIndices.targets)
-        if (typesToCommonizeWithTargets.any { (type, target) -> !inputTypeIsKnownAndMatchesPlatformBitWidth(type, target) }) return null
+        if (typesToCommonizeWithTargets.any { [type, target] -> !inputTypeIsKnownAndMatchesPlatformBitWidth(type, target) }) return null
 
         return doCommonize(values)
     }

@@ -69,6 +69,36 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("cloneableJsJvm.kt")
+  public void testCloneableJsJvm() {
+    run("cloneableJsJvm.kt");
+  }
+
+  @Test
+  @TestMetadata("cloneableJsWasm.kt")
+  public void testCloneableJsWasm() {
+    run("cloneableJsWasm.kt");
+  }
+
+  @Test
+  @TestMetadata("cloneableJsWasmWasi.kt")
+  public void testCloneableJsWasmWasi() {
+    run("cloneableJsWasmWasi.kt");
+  }
+
+  @Test
+  @TestMetadata("cloneableJvm.kt")
+  public void testCloneableJvm() {
+    run("cloneableJvm.kt");
+  }
+
+  @Test
+  @TestMetadata("cloneableWasmJvm.kt")
+  public void testCloneableWasmJvm() {
+    run("cloneableWasmJvm.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     run("contextParameters.kt");

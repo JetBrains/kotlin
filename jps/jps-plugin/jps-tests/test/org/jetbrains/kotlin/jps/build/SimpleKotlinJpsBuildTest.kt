@@ -22,14 +22,19 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 
 class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
-    override fun setUp() {
-        super.setUp()
-        workDir = KotlinTestUtils.tmpDirForTest(this)
+    @BeforeEach
+    override fun setUp(testInfo: TestInfo) {
+        super.setUp(testInfo)
+        workDir = KotlinTestUtils.tmpDirForTest(testInfo)
     }
 
+    @Test
     fun testLoadingKotlinFromDifferentModules() {
         val aFile = createFile("m1/K.kt",
                                """
@@ -67,6 +72,7 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     // TODO: add JS tests
+    @Test
     fun testDaemon() {
         withDaemon {
             withSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.property, "true") {

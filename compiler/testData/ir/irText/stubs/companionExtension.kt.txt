@@ -1,0 +1,8 @@
+// MODULE: lib
+// MODULE: test
+// FILE: companionExtension.kt
+
+fun test() {
+  exampleFun()
+  val value: Int = <get-exampleVal>()
+}

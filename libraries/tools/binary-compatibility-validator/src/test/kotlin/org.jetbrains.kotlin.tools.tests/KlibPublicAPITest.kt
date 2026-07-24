@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.ExperimentalBCVApi
 import kotlinx.validation.api.klib.*
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.io.path.*
 import kotlin.test.Test
@@ -38,7 +38,7 @@ class KlibPublicAPITest {
 
     @Test
     fun nativeStdlib() {
-        Assume.assumeTrue("Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).", NATIVE_ENABLED)
+        Assumptions.assumeTrue(NATIVE_ENABLED, "Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).")
         val dump = nativeDump("kotlin-stdlib-native", "../../../kotlin-native/runtime/build/nativeStdlib")
         mergeAndCompare("kotlin-stdlib", dump)
     }

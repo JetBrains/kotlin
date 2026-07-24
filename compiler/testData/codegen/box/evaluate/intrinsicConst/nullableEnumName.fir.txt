@@ -3,18 +3,18 @@ FILE: nullableEnumName.kt
         ^id this@R|/id|
     }
     public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+        private constructor(): R|EnumClass| {
             super<R|kotlin/Enum<EnumClass>|>()
         }
 
-        public final static [ContainingClassKey=EnumClass] enum entry OK: R|EnumClass|
-        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final static enum entry OK: R|EnumClass|
+        public final static fun values(): R|kotlin/Array<EnumClass>| {
         }
 
-        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        public final static fun valueOf(value: R|kotlin/String|): R|EnumClass| {
         }
 
-        public final static [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+        public final static val entries: R|kotlin/enums/EnumEntries<EnumClass>|
             public static get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }

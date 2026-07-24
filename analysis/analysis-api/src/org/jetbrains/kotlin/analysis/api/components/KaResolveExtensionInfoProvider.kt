@@ -61,8 +61,14 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "resolveExtensionScopeWithTopLevelDeclarations",
+        "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScopeWithTopLevelDeclarations",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
@@ -73,8 +79,14 @@ public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isResolveExtensionFile",
+        "org.jetbrains.kotlin.analysis.api.resolve.extensions.isResolveExtensionFile",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val VirtualFile.isResolveExtensionFile: Boolean
@@ -85,8 +97,14 @@ public val VirtualFile.isResolveExtensionFile: Boolean
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isFromResolveExtension",
+        "org.jetbrains.kotlin.analysis.api.resolve.extensions.isFromResolveExtension",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtElement.isFromResolveExtension: Boolean
@@ -102,8 +120,14 @@ public val KtElement.isFromResolveExtension: Boolean
  * @see KaResolveExtension
  * @see org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.resolveExtensionNavigationElements",
+        "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionNavigationElements",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>

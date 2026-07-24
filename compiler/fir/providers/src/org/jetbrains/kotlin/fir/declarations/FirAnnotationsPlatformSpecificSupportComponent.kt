@@ -17,11 +17,19 @@ import org.jetbrains.kotlin.name.StandardClassIds
 /**
  * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
  */
-abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
+abstract class FirAnnotationsPlatformSpecificSupportComponent :
+    FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
     abstract val requiredAnnotationsWithArguments: Set<ClassId>
+
+    /**
+     * Set of enum [ClassId]s that are resolved as part of [requiredAnnotationsWithArguments].
+     */
+    abstract val requiredArguments: Set<ClassId>
+
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
     protected abstract val repeatableAnnotations: Set<ClassId>
+    abstract val jvmInlineAnnotationClassId: ClassId?
 
     val requiredAnnotationsShortClassNames: Set<Name> by lazy {
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
@@ -54,13 +62,17 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
     ): AnnotationsPosition?
 
     class Composed(
-        override val components: List<FirAnnotationsPlatformSpecificSupportComponent>
-    ) : FirAnnotationsPlatformSpecificSupportComponent(), FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
+        override val components: List<FirAnnotationsPlatformSpecificSupportComponent>,
+    ) : FirAnnotationsPlatformSpecificSupportComponent(),
+        FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
         override val requiredAnnotationsWithArguments: Set<ClassId> =
             components.flatMapTo(mutableSetOf()) { it.requiredAnnotationsWithArguments }
+
+        override val requiredArguments: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredArguments }
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
         override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
         override val repeatableAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.repeatableAnnotations }
+        override val jvmInlineAnnotationClassId: ClassId? = components.firstNotNullOfOrNull { it.jvmInlineAnnotationClassId }
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = buildMap {
             components.forEach { component ->
                 putAll(component.deprecationAnnotationsWithOverridesPropagation)
@@ -90,11 +102,16 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.SinceKotlin,
-            StandardClassIds.Annotations.IntroducedAt,
+        )
+
+        override val requiredArguments: Set<ClassId> = setOf(
+            StandardClassIds.DeprecationLevel,
+            StandardClassIds.AnnotationTarget,
         )
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
             StandardClassIds.Annotations.WasExperimental,
+            StandardClassIds.Annotations.EqualityBound,
         )
 
         override val volatileAnnotations: Set<ClassId> = setOf(
@@ -104,6 +121,9 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
         override val repeatableAnnotations: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Repeatable,
         )
+
+        override val jvmInlineAnnotationClassId: ClassId?
+            get() = null
 
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
             StandardClassIds.Annotations.Deprecated to true,

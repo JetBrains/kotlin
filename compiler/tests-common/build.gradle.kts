@@ -1,5 +1,8 @@
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
 }
@@ -39,6 +42,7 @@ dependencies {
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:cli-jvm"))
     testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
+    testFixturesImplementation(project(":compiler:javac-wrapper"))
     testFixturesApi(project(":compiler:cli-js"))
     testFixturesApi(project(":compiler:cli-metadata"))
     testFixturesApi(project(":analysis:light-classes-base"))
@@ -48,15 +52,13 @@ dependencies {
     testFixturesApi(project(":js:js.frontend"))
     testFixturesApi(project(":native:frontend.native"))
     testFixturesImplementation(project(":native:native.config"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(kotlinTest())
     testFixturesApi(project(":kotlin-scripting-compiler-impl"))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(libs.junit4) // for ComparisonFailure
     testFixturesApi(commonDependency("com.android.tools:r8"))
-    testFixturesApi(project(":analysis:analysis-internal-utils"))
-    testFixturesApi(project(":compiler:tests-mutes:mutes-junit4"))
     testFixturesCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesCompileOnly(toolsJarApi())
     testFixturesCompileOnly(intellijCore())
@@ -88,7 +90,7 @@ dependencies {
 
 tasks.processTestFixturesResources.configure {
     into("legacy") {
-        from(project(":compiler").layout.projectDirectory.dir("testData")) {
+        from(project(":compiler").isolated.projectDirectory.dir("testData")) {
             include("/diagnostics/helpers/types/checkTypeWithExact.kt")
         }
     }

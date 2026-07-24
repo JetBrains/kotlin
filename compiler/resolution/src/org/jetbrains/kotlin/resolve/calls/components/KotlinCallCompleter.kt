@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
 @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
+@K1Deprecation
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
@@ -99,7 +101,7 @@ class KotlinCallCompleter(
             candidate.getSubResolvedAtoms()
                 .filter { it is ResolvedLambdaAtom && !it.analyzed }
                 .map { candidate to it as ResolvedLambdaAtom }
-        }.groupBy { (_, atom) -> atom.atom }
+        }.groupBy { [_, atom] -> atom.atom }
             .values
             .singleOrNull()
             ?.toMap() ?: return candidates
@@ -114,17 +116,17 @@ class KotlinCallCompleter(
                 resolutionCallbacks
             )
         }
-        if (!lambdas.entries.same { (candidate, atom) -> candidate.getInputTypesOfLambdaAtom(atom) }) {
+        if (!lambdas.entries.same { [candidate, atom] -> candidate.getInputTypesOfLambdaAtom(atom) }) {
             return candidates
         }
 
-        val newAtoms = lambdas.mapValues { (candidate, atom) ->
+        val newAtoms = lambdas.mapValues { [candidate, atom] ->
             kotlinConstraintSystemCompleter.prepareLambdaAtomForFactoryPattern(atom, candidate, candidate)
         }
 
         val diagnosticHolderForLambda = KotlinDiagnosticsHolder.SimpleHolder()
         val iterator = newAtoms.entries.iterator()
-        val (firstCandidate, firstAtom) = iterator.next()
+        val [firstCandidate, firstAtom] = iterator.next()
 
         resolutionCallbacks.recordInlinabilityOfLambda(lambdas.entries)
 
@@ -138,7 +140,7 @@ class KotlinCallCompleter(
         propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, firstCandidate)
 
         while (iterator.hasNext()) {
-            val (candidate, atom) = iterator.next()
+            val [candidate, atom] = iterator.next()
             postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
                 candidate.getSystem().asPostponedArgumentsAnalyzerContext(),
                 atom,

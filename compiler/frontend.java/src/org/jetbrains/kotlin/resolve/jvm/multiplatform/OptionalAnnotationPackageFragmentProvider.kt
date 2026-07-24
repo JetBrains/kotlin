@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class OptionalAnnotationPackageFragmentProvider(
     module: ModuleDescriptor,
     storageManager: StorageManager,
@@ -67,13 +69,13 @@ class OptionalAnnotationPackageFragmentProvider(
                 )
             }
 
-            for ((packageFqName, classes) in classDataFinder.classIdToData.entries.groupBy { it.key.packageFqName }) {
-                val classNames = classes.mapNotNull { (classId) ->
+            for ([packageFqName, classes] in classDataFinder.classIdToData.entries.groupBy { it.key.packageFqName }) {
+                val classNames = classes.mapNotNull { [classId] ->
                     classId.shortClassName.takeUnless { classId.isNestedClass }
                 }.toSet()
                 // TODO: make this lazy value more granular, e.g. a memoized function ClassId -> ClassDescriptor
                 val classDescriptors = storageManager.createLazyValue {
-                    classes.mapNotNull { (classId, classData) ->
+                    classes.mapNotNull { [classId, classData] ->
                         components().classDeserializer.deserializeClass(classId, classData)
                     }.associateBy(ClassDescriptor::getName)
                 }
@@ -97,7 +99,7 @@ class OptionalAnnotationPackageFragmentProvider(
 }
 
 private class OptionalAnnotationClassDataFinder(classes: List<ClassData>) : ClassDataFinder {
-    val classIdToData = classes.associateBy { (nameResolver, klass) -> nameResolver.getClassId(klass.fqName) }
+    val classIdToData = classes.associateBy { (val nameResolver, val klass = classProto) -> nameResolver.getClassId(klass.fqName) }
 
     override fun findClassData(classId: ClassId): ClassData? = classIdToData[classId]
 }

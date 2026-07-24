@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
+@K1Deprecation
 class ConstructorConsistencyChecker private constructor(
     private val classOrObject: KtClassOrObject,
     private val classDescriptor: ClassDescriptor,

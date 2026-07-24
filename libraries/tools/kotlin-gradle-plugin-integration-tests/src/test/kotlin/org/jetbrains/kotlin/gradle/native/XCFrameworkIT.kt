@@ -28,7 +28,6 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:linkDebugFrameworkIosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkIosSimulatorArm64")
                 assertTasksExecuted(":shared:assembleDebugIosSimulatorFatFrameworkForSharedXCFramework")
-                assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm32")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosSimulatorArm64")
@@ -45,7 +44,7 @@ class XCFrameworkIT : KGPBaseTest() {
             build("assembleSharedDebugXCFramework") {
                 assertTasksUpToDate(":shared:linkDebugFrameworkIosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkIosX64")
-                assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm32")
+                assertTasksUpToDate(":shared:linkDebugFrameworkWatchosSimulatorArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosX64")

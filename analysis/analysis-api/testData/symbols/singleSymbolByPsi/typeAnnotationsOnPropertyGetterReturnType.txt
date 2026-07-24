@@ -1,7 +1,8 @@
 KaPropertyGetterSymbol:
+  anchorPsi: KtPropertyAccessor
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -15,6 +16,8 @@ KaPropertyGetterSymbol:
   location: PROPERTY
   modality: FINAL
   origin: SOURCE
+  psi: KtPropertyAccessor
+  realPsi: KtPropertyAccessor
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
@@ -27,10 +30,11 @@ KaPropertyGetterSymbol:
     ]
     typeArguments: []
     type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)
   getContainingJvmClassName: TypeAnnotationsOnPropertyGetterReturnTypeKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

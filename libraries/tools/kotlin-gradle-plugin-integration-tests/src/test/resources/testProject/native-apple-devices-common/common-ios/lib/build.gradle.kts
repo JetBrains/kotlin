@@ -16,17 +16,17 @@ kotlin {
     iosArm64("iosLibArm64")
 
     iosX64("iosLibX64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     iosArm64("iosLibArm64") {
-        println("Configuring ${this.name}")
+        logger.lifecycle("Configuring ${this.name}")
     }
 
     sourceSets {
-        val iosLibMain by creating
-        val iosLibX64Main by getting
-        val iosLibArm64Main by getting
+        val iosLibMain = create("iosLibMain")
+        val iosLibX64Main = getByName("iosLibX64Main")
+        val iosLibArm64Main = getByName("iosLibArm64Main")
         iosLibX64Main.dependsOn(iosLibMain)
         iosLibArm64Main.dependsOn(iosLibMain)
     }

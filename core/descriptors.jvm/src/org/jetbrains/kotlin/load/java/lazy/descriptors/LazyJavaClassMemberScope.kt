@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
+@K1Deprecation
 class LazyJavaClassMemberScope(
     c: LazyJavaResolverContext,
     override val ownerDescriptor: ClassDescriptor,
@@ -126,7 +128,7 @@ class LazyJavaClassMemberScope(
 
         val attr = TypeUsage.COMMON.toAttributes(isForAnnotationParameter = false)
 
-        for ((index, component) in components.withIndex()) {
+        for ([index, component] in components.withIndex()) {
             val parameterType = c.typeResolver.transformJavaType(component.type, attr)
             val varargElementType =
                 if (component.isVararg) c.components.module.builtIns.getArrayElementType(parameterType) else null
@@ -746,13 +748,13 @@ class LazyJavaClassMemberScope(
 
         val attr = TypeUsage.COMMON.toAttributes(isForAnnotationParameter = true)
 
-        val (methodsNamedValue, otherMethods) = methods.partition { it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
+        val [methodsNamedValue, otherMethods] = methods.partition { it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
 
         assert(methodsNamedValue.size <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
         val methodNamedValue = methodsNamedValue.firstOrNull()
         if (methodNamedValue != null) {
             val parameterNamedValueJavaType = methodNamedValue.returnType
-            val (parameterType, varargType) =
+            val [parameterType, varargType] =
                 if (parameterNamedValueJavaType is JavaArrayType)
                     Pair(
                         c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
@@ -765,7 +767,7 @@ class LazyJavaClassMemberScope(
         }
 
         val startIndex = if (methodNamedValue != null) 1 else 0
-        for ((index, method) in otherMethods.withIndex()) {
+        for ([index, method] in otherMethods.withIndex()) {
             val parameterType = c.typeResolver.transformJavaType(method.returnType, attr)
             result.addAnnotationValueParameter(constructor, index + startIndex, method, parameterType, null)
         }

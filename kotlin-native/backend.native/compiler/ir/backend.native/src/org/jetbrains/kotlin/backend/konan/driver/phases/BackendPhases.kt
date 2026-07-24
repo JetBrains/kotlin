@@ -52,7 +52,7 @@ internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<Nat
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-) { _, (irModule, irBuiltins) ->
+) { _, [irModule, irBuiltins] ->
     ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
 }
 
@@ -91,5 +91,5 @@ private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqNa
         override fun getMemberScope(): MemberScope = MemberScope.Empty
     }
 
-    return IrFileImpl(fileEntry, packageFragmentDescriptor).also(this::addFile)
+    return IrFileImpl(fileEntry, packageFragmentDescriptor, this).also(this::addFile)
 }

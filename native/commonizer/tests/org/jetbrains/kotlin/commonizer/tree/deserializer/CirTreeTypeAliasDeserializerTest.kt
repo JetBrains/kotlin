@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirRegularTypeProjection
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasType
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
 class CirTreeTypeAliasDeserializerTest : AbstractCirTreeDeserializerTest() {
 
+    @Test
     fun `test simple type alias`() {
         val module = createCirTreeFromSourceCode("typealias x = Int")
         val typeAlias = module.assertSingleTypeAlias().typeAlias
@@ -25,6 +27,7 @@ class CirTreeTypeAliasDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertEquals("kotlin/Int", typeAlias.underlyingType.toString())
     }
 
+    @Test
     fun `test transitive type alias`() {
         val module = createCirTreeFromSourceCode(
             """

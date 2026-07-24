@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.synthetic
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
+@K1Deprecation
 fun FunctionDescriptor.hasJavaOriginInHierarchy(): Boolean {
     return if (original.overriddenDescriptors.isEmpty())
         this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor
@@ -32,9 +34,11 @@ fun FunctionDescriptor.hasJavaOriginInHierarchy(): Boolean {
         original.overriddenDescriptors.any { it.hasJavaOriginInHierarchy() }
 }
 
+@K1Deprecation
 fun DescriptorVisibility.isVisibleOutside() =
     this != DescriptorVisibilities.PRIVATE && this != DescriptorVisibilities.PRIVATE_TO_THIS && this != DescriptorVisibilities.INVISIBLE_FAKE
 
+@K1Deprecation
 fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility, isUsedForExtension: Boolean): DescriptorVisibility {
     return when (val originalVisibility = originalDescriptor.visibility) {
         DescriptorVisibilities.PUBLIC -> DescriptorVisibilities.PUBLIC
@@ -69,6 +73,7 @@ fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility,
 
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> ResolvedCall<D>.isResolvedWithSamConversions(): Boolean {
     if (this is NewResolvedCallImpl<D> && resolvedCallAtom.argumentsWithConversion.isNotEmpty()) {
         return true

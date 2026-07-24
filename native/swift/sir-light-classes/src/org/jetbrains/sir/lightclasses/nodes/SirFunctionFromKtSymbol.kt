@@ -1,43 +1,43 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
-import org.jetbrains.kotlin.analysis.api.components.builtinTypes
-import org.jetbrains.kotlin.analysis.api.components.containingSymbol
-import org.jetbrains.kotlin.analysis.api.components.render
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.SirTypeNamer.KotlinNameType
-import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
-import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
+import org.jetbrains.kotlin.sir.providers.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionBuilder
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
-import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
-import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
+import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.sir.util.unavailableTypes
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
+import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
+import org.jetbrains.sir.lightclasses.extensions.sirModality
+import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
-import org.jetbrains.sir.lightclasses.utils.translateParameters
-import org.jetbrains.sir.lightclasses.utils.translateReturnType
-import kotlin.lazy
 
 internal open class SirFunctionFromKtSymbol(
     override val ktSymbol: KaFunctionSymbol,
@@ -116,11 +116,12 @@ internal open class SirFunctionFromKtSymbol(
 
         val contextParameters = contextParameters?.second ?: emptyList()
         val extensionReceiverParameter = extensionReceiverParameter?.let {
-            SirParameter("", "receiver", it.type)
+            SirParameter(null, "receiver", it.type)
         }
 
-        // For F-bounded methods, use the interface type as self type to generate direct cast
-        val effectiveSelfType = computeFBoundedInterfaceSirType() ?: selfType
+        // For interface methods (and F-bounded class methods that override interfaces),
+        // use the protocol existential as the self type.
+        val effectiveSelfType = computeInterfaceSelfType() ?: selfType
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -129,44 +130,136 @@ internal open class SirFunctionFromKtSymbol(
             kotlinFqName = fqName,
             kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = (parent !is SirModule && isInstance).ifTrue {
-                SirParameter("", "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
+                SirParameter(null, "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
             },
             contextParameters = contextParameters,
             extensionReceiverParameter = extensionReceiverParameter,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "_out_error", it)
+                SirParameter(null, "_out_error", it)
             },
             isAsync = isAsync,
         )
     }
 
-    override val bridges: List<SirBridge> by lazyWithSessions {
-        bridgeProxy?.createSirBridges {
-            val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
-            val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
-            val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
-                it.render(renderer, position = Variance.INVARIANT)
-            } ?: ""
-            val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
-            val argumentsString = actualArgs.joinToString()
+    context(_: KaSession, _: SirSession)
+    private fun buildForwardKotlinCall(): BridgeFunctionBuilder.() -> String = {
+        val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
+        val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
+        val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
+            it.render(renderer, position = Variance.INVARIANT)
+        } ?: ""
+        val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
+        buildCall("$typesAsString(${actualArgs.joinToString()})")
+    }
 
-            buildCall("$typesAsString($argumentsString)")
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        val forwardKotlinCall = buildForwardKotlinCall()
+
+        val forwardBridges = bridgeProxy?.let { proxy ->
+            buildList {
+                addAll(proxy.createSirBridges(forwardKotlinCall))
+                val ktSymbol = this@SirFunctionFromKtSymbol.ktSymbol
+                if (needsNonVirtualForwardBridge() && !isAbstractKotlinMethod && ktSymbol is KaNamedSymbol) {
+                    add(proxy.createDirectDispatchForwardBridge(ktSymbol.name.asString(), forwardKotlinCall))
+                }
+            }
         }.orEmpty()
+
+        val reverseBridges = if (needsReverseBridge()) {
+            val params = buildList {
+                addIfNotNull(contextParameter)
+                addIfNotNull(extensionReceiverParameter)
+                addAll(parameters)
+            }
+            bridgeProxy?.createReverseSirBridges(
+                targetClassFqName = (ktSymbol as? KaNamedFunctionSymbol)
+                    ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+                    ?: "",
+                targetMethodName = ktSymbol.name?.asString() ?: "",
+                swiftDynamicCall = { selfExpr, paramExprs ->
+                    check(paramExprs.size == params.size) { "Parameter expression count doesn't match parameter count" }
+                    val methodName = this@SirFunctionFromKtSymbol.name
+                    val tryPrefix = when {
+                        isAsync -> "try await "
+                        errorType != SirType.never -> "try! "
+                        else -> ""
+                    }
+                    if (params.any { it.isVariadic }) {
+                        val destType = SirFunctionalType(
+                            parameterTypes = params.map { if (it.isVariadic) SirArrayType(it.type) else it.type },
+                            isAsync = isAsync,
+                            returnType = returnType,
+                            errorType = errorType,
+                        ).swiftName
+                        "${tryPrefix}unsafeBitCast($selfExpr.$methodName, to: ($destType).self)(${paramExprs.joinToString(", ")})"
+                    } else {
+                        val args = params
+                            .zip(paramExprs)
+                            .joinToString(", ") { [param, expr] ->
+                                param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
+                            }
+                        "$tryPrefix$selfExpr.$methodName($args)"
+                    }
+                },
+                swiftDeprecation = effectiveReverseBridgeDeprecation(),
+            ).orEmpty()
+        } else {
+            emptyList()
+        }
+
+        forwardBridges + reverseBridges
+    }
+
+    private fun needsNonVirtualForwardBridge(): Boolean = withSessions {
+        needsReverseBridge() && parent is SirClass
+    }
+
+    private val isAbstractKotlinMethod: Boolean
+        get() = ktSymbol.modality == KaSymbolModality.ABSTRACT
+
+    private fun needsReverseBridge(): Boolean = withSessions {
+        if (!isInstance) return@withSessions false
+        if (isUnavailable) return@withSessions false
+        when (val containingDecl = parent) {
+            is SirClass -> {
+                if (modality != SirModality.OPEN) return@withSessions false
+                if (containingDecl.modality != SirModality.OPEN) return@withSessions false
+                if (containingDecl.isUnavailable) return@withSessions false
+                return@withSessions true
+            }
+            is SirProtocol -> {
+                if (containingDecl.isUnavailable) return@withSessions false
+                return@withSessions true
+            }
+            else -> return@withSessions false
+        }
+    }
+
+    private fun effectiveReverseBridgeDeprecation(): SirAttribute.Available? {
+        fun SirDeclaration.deprecatedAttr(): SirAttribute.Available? =
+            attributes.firstOrNull { it is SirAttribute.Available && it.deprecated } as? SirAttribute.Available
+        return this.deprecatedAttr()
+            ?: (parent as? SirClass)?.deprecatedAttr()
+            ?: (parent as? SirProtocol)?.deprecatedAttr()
     }
 
     /**
-     * For methods on F-bounded classes that override interface methods, computes the interface SirType
-     * to use as the self parameter type. This allows the bridge to cast self directly to the interface type
-     * (e.g., "Comparable<Any?>") instead of first casting to the class type and then to the interface.
-     * Returns null if not applicable (not an F-bounded method).
+     * Computes the self SirType for interface methods (covering both direct protocol parents
+     * and F-bounded class methods overriding interface methods). Returns `SirExistentialType(proto)`
+     * so that the bridge uses `AsExistential` — whose kotlinToSwift conversion produces
+     * `KotlinBase.__createProtocolWrapper(externalRCRef:) as! Foo`, required for reverse bridges
+     * where the concrete Swift conformer is unknown at compile time.
+     *
+     * Returns null if not applicable (e.g., plain class method with no interface origin).
      */
-    private fun computeFBoundedInterfaceSirType(): SirType? = withSessions {
-        // Only for instance methods on F-bounded classes
+    private fun computeInterfaceSelfType(): SirType? = withSessions {
         if (!isInstance) return@withSessions null
+
+        (parent as? SirProtocol)?.let { return@withSessions SirExistentialType(it) }
+
         val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return@withSessions null
         if (!containingClass.hasFBoundedTypeParameters()) return@withSessions null
 
-        // Find the interface that declares this method
         val overriddenInterfaceMethod = ktSymbol.allOverriddenSymbols
             .filterIsInstance<KaNamedFunctionSymbol>()
             .firstOrNull { overridden ->
@@ -177,7 +270,6 @@ internal open class SirFunctionFromKtSymbol(
         val interfaceSymbol = overriddenInterfaceMethod.containingSymbol as? KaNamedClassSymbol
             ?: return@withSessions null
 
-        // Get the SirProtocol for the interface and wrap it in SirExistentialType
         val sirProtocol = interfaceSymbol.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()
             ?: return@withSessions null
 
@@ -186,5 +278,42 @@ internal open class SirFunctionFromKtSymbol(
 
     override var body: SirFunctionBody?
         set(_) {}
-        get() = withSessions { bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody) }
+        get() = withSessions {
+            val proxy = bridgeProxy ?: return@withSessions null
+            if (!needsNonVirtualForwardBridge()) {
+                return@withSessions SirFunctionBody(proxy.createSwiftInvocation { "return $it" })
+            }
+            val wrapperFqName = (parent as SirClass).swiftFqName
+            val virtualLines = proxy.createSwiftInvocation { "return $it" }
+            val fallbackLines = if (isAbstractKotlinMethod) {
+                listOf("fatalError(\"Cannot invoke the inherited implementation of abstract member '$wrapperFqName.$name': a Swift subclass must override it and must not call super.\")")
+            } else {
+                proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" }
+            }
+            SirFunctionBody(buildList {
+                add("if Self.self == $wrapperFqName.self {")
+                virtualLines.forEach { add("    $it") }
+                add("} else {")
+                fallbackLines.forEach { add("    $it") }
+                add("}")
+            })
+        }
+
+    internal fun directDispatchProtocolWitnessOrNull(): SirFunction? = withSessions {
+        if (parent !is SirProtocol) return@withSessions null
+        if (!isInstance || isUnavailable || isAbstractKotlinMethod) return@withSessions null
+        if (!needsReverseBridge()) return@withSessions null
+        val proxy = bridgeProxy ?: return@withSessions null
+        val named = ktSymbol as? KaNamedSymbol ?: return@withSessions null
+
+        val forwardKotlinCall = buildForwardKotlinCall()
+        buildFunctionCopy(this@SirFunctionFromKtSymbol) {
+            origin = SirOrigin.Trampoline(this@SirFunctionFromKtSymbol)
+            isOverride = false
+            modality = SirModality.UNSPECIFIED
+            bridges.clear()
+            bridges.add(proxy.createDirectDispatchForwardBridge(named.name.asString(), forwardKotlinCall))
+            body = SirFunctionBody(proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" })
+        }
+    }
 }

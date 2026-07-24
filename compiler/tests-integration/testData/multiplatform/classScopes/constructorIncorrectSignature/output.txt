@@ -8,7 +8,7 @@ expect class Foo {
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/tests-integration/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:14: error: 'actual class Foo : Any' has no corresponding members for expected class members:
+compiler/tests-integration/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:1:14: error: 'actual class Foo : Any' has no corresponding members for 'expect' class members:
 
     expect constructor(s: String): Foo
 
@@ -17,7 +17,7 @@ compiler/tests-integration/testData/multiplatform/classScopes/constructorIncorre
 
 actual class Foo {
              ^^^
-compiler/tests-integration/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:5: error: 'public actual constructor(s: Array<String>): Foo' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/classScopes/constructorIncorrectSignature/jvm.kt:2:5: error: 'public actual constructor(s: Array<String>): Foo' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter types are different:
     expect constructor(s: String): Foo
 

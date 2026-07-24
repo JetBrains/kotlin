@@ -62,7 +62,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
         withResolutionFacade(ktFile) { resolutionFacade ->
             checkResolutionFacade(resolutionFacade)
 
-            val (elementToResolve, resolver) = resolverProvider(resolutionFacade)
+            val [elementToResolve, resolver] = resolverProvider(resolutionFacade)
             val filesToRender = when (outputRenderingMode) {
                 OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES -> {
                     val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
@@ -137,7 +137,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             error("$PRE_RESOLVED_PHASE is declared, but there are no pre-resolved carets.")
         }
 
-        preresolvedElementCarets.forEach { (declaration, _) ->
+        preresolvedElementCarets.forEach { [declaration, _] ->
             val containingFile = declaration.containingKtFile
 
             // We should preresolve the declaration with its own resolution facade instead of the main file's facade, as the preresolved

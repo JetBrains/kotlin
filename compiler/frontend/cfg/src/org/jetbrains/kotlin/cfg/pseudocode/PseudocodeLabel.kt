@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 class PseudocodeLabel internal constructor(
     override val pseudocode: PseudocodeImpl, override val name: String, private val comment: String?
 ) : Label {

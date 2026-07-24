@@ -21,11 +21,17 @@ internal class KotlinBridgePrinter {
     fun add(bridge: SirBridge) {
         when (bridge) {
             is SirFunctionBridge -> add(bridge)
+            is SirReverseFunctionBridge -> add(bridge)
             is SirTypeBindingBridge -> add(bridge)
         }
     }
 
     private fun add(bridge: SirFunctionBridge) {
+        functions += bridge.kotlinFunctionBridge.lines
+        imports += bridge.kotlinFunctionBridge.packageDependencies
+    }
+
+    private fun add(bridge: SirReverseFunctionBridge) {
         functions += bridge.kotlinFunctionBridge.lines
         imports += bridge.kotlinFunctionBridge.packageDependencies
     }

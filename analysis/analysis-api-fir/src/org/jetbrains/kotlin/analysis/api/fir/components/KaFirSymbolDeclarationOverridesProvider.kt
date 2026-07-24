@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -159,8 +159,8 @@ private inline fun <T> processOverrides(
     } as? KaClassSymbol ?: return
 
     when (containingDeclaration) {
-        is KaFirNamedClassSymbol, is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
-        else -> errorWithAttachment("Expected the containing symbol to be a ${KaFirNamedClassSymbol::class.simpleName} or ${KaFirAnonymousObjectSymbol::class.simpleName}") {
+        is KaFirNamedClassSymbolBase<*>, is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+        else -> errorWithAttachment("Expected the containing symbol to be a ${KaFirNamedClassSymbolBase::class.simpleName} or ${KaFirAnonymousObjectSymbol::class.simpleName}") {
             withSymbolAttachment("callable", analysisSession, callableSymbol)
             withSymbolAttachment("containingDeclaration", analysisSession, containingDeclaration)
         }

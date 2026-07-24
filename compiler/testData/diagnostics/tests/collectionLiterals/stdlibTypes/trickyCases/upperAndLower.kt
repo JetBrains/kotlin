@@ -6,7 +6,7 @@ fun <K> select(vararg k: K): K = k[0]
 fun cond(): Boolean = true
 
 fun test() {
-    val _: Set<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> select(mutableListOf(), [42])
+    val _: Set<*> = <!INITIALIZER_TYPE_MISMATCH!>select<!>(mutableListOf(), [42])
 
     val _: Set<*> = select(setOf(), [42])
     val _: Collection<*> = select(setOf(), [42])
@@ -185,10 +185,10 @@ fun testWhen() {
             }
             else -> [42]
         }
-    val _: MutableCollection<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!>
+    val _: MutableCollection<Any> =
         when {
             cond() -> mutableSetOf()
-            else -> [42]
+            else -> <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
         }
 }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementChecke
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
+@K1Deprecation
 object NativeObjCRefinementOverridesChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -45,7 +47,7 @@ object NativeObjCRefinementOverridesChecker : DeclarationChecker {
         val supersNotHiddenFromObjC = mutableListOf<CallableMemberDescriptor>()
         val supersNotRefinedInSwift = mutableListOf<CallableMemberDescriptor>()
         for (overriddenDescriptor in descriptor.overriddenDescriptors) {
-            val (superIsHiddenFromObjC, superIsRefinedInSwift) = overriddenDescriptor.inheritsRefinedAnnotations()
+            val [superIsHiddenFromObjC, superIsRefinedInSwift] = overriddenDescriptor.inheritsRefinedAnnotations()
             if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(overriddenDescriptor)
             if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(overriddenDescriptor)
         }
@@ -58,11 +60,11 @@ object NativeObjCRefinementOverridesChecker : DeclarationChecker {
     }
 
     private fun CallableMemberDescriptor.inheritsRefinedAnnotations(): Pair<Boolean, Boolean> {
-        val (hasObjC, hasSwift) = hasRefinedAnnotations()
+        val [hasObjC, hasSwift] = hasRefinedAnnotations()
         if (hasObjC && hasSwift) return true to true
         if (overriddenDescriptors.isEmpty()) return hasObjC to hasSwift
         // Note: `checkOverrides` requires all overridden descriptors to be either refined or not refined.
-        val (inheritsObjC, inheritsSwift) = overriddenDescriptors.first().inheritsRefinedAnnotations()
+        val [inheritsObjC, inheritsSwift] = overriddenDescriptors.first().inheritsRefinedAnnotations()
         return (hasObjC || inheritsObjC) to (hasSwift || inheritsSwift)
     }
 

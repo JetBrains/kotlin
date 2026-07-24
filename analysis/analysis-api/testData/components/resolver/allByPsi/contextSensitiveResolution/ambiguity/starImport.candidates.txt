@@ -391,23 +391,7 @@ KtDotQualifiedExpression(352,362): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(352,355): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(356,362): 'Sealed'
   KaInapplicableCallCandidate:
@@ -557,23 +541,7 @@ KtDotQualifiedExpression(429,439): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(429,432): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(433,439): 'Sealed'
   KaInapplicableCallCandidate:
@@ -665,23 +633,7 @@ KtDotQualifiedExpression(460,470): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(460,463): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(464,470): 'Sealed'
   KaInapplicableCallCandidate:
@@ -1749,7 +1701,7 @@ KtNameReferenceExpression(1311,1312): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1313,1315): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1887,7 +1839,7 @@ KtNameReferenceExpression(1360,1361): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1362,1364): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2063,7 +2015,7 @@ KtNameReferenceExpression(1418,1419): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1420,1422): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2223,7 +2175,7 @@ KtNameReferenceExpression(1468,1469): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1470,1472): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2399,7 +2351,7 @@ KtNameReferenceExpression(1524,1525): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1526,1528): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2537,7 +2489,7 @@ KtNameReferenceExpression(1582,1583): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1584,1586): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2717,7 +2669,7 @@ KtNameReferenceExpression(1649,1650): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1651,1653): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2877,7 +2829,7 @@ KtNameReferenceExpression(1708,1709): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1710,1712): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3015,7 +2967,7 @@ KtNameReferenceExpression(1757,1758): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1759,1761): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3191,7 +3143,7 @@ KtNameReferenceExpression(1815,1816): 's'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1817,1819): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

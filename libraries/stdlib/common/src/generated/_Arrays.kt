@@ -5757,9 +5757,9 @@ public fun CharArray.isSorted(): Boolean {
 @SinceKotlin("2.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.isSortedBy(selector: (T) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5784,9 +5784,9 @@ public inline fun <T, R : Comparable<R>> Array<out T>.isSortedBy(selector: (T) -
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ByteArray.isSortedBy(selector: (Byte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5811,9 +5811,9 @@ public inline fun <R : Comparable<R>> ByteArray.isSortedBy(selector: (Byte) -> R
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ShortArray.isSortedBy(selector: (Short) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5838,9 +5838,9 @@ public inline fun <R : Comparable<R>> ShortArray.isSortedBy(selector: (Short) ->
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> IntArray.isSortedBy(selector: (Int) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5865,9 +5865,9 @@ public inline fun <R : Comparable<R>> IntArray.isSortedBy(selector: (Int) -> R?)
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> LongArray.isSortedBy(selector: (Long) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5892,9 +5892,9 @@ public inline fun <R : Comparable<R>> LongArray.isSortedBy(selector: (Long) -> R
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> FloatArray.isSortedBy(selector: (Float) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5919,9 +5919,9 @@ public inline fun <R : Comparable<R>> FloatArray.isSortedBy(selector: (Float) ->
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> DoubleArray.isSortedBy(selector: (Double) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5946,9 +5946,9 @@ public inline fun <R : Comparable<R>> DoubleArray.isSortedBy(selector: (Double) 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> BooleanArray.isSortedBy(selector: (Boolean) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -5973,9 +5973,9 @@ public inline fun <R : Comparable<R>> BooleanArray.isSortedBy(selector: (Boolean
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> CharArray.isSortedBy(selector: (Char) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
-        val currentValue = selector(this[i])
+    var previousValue: R? = null
+    for (element in this) {
+        val currentValue = selector(element)
         if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
@@ -6001,10 +6001,10 @@ public inline fun <R : Comparable<R>> CharArray.isSortedBy(selector: (Char) -> R
 @SinceKotlin("2.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.isSortedByDescending(selector: (T) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6029,10 +6029,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.isSortedByDescending(selec
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ByteArray.isSortedByDescending(selector: (Byte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6057,10 +6057,10 @@ public inline fun <R : Comparable<R>> ByteArray.isSortedByDescending(selector: (
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ShortArray.isSortedByDescending(selector: (Short) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6085,10 +6085,10 @@ public inline fun <R : Comparable<R>> ShortArray.isSortedByDescending(selector: 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> IntArray.isSortedByDescending(selector: (Int) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6113,10 +6113,10 @@ public inline fun <R : Comparable<R>> IntArray.isSortedByDescending(selector: (I
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> LongArray.isSortedByDescending(selector: (Long) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6141,10 +6141,10 @@ public inline fun <R : Comparable<R>> LongArray.isSortedByDescending(selector: (
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> FloatArray.isSortedByDescending(selector: (Float) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6169,10 +6169,10 @@ public inline fun <R : Comparable<R>> FloatArray.isSortedByDescending(selector: 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> DoubleArray.isSortedByDescending(selector: (Double) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6197,10 +6197,10 @@ public inline fun <R : Comparable<R>> DoubleArray.isSortedByDescending(selector:
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> BooleanArray.isSortedByDescending(selector: (Boolean) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6225,10 +6225,10 @@ public inline fun <R : Comparable<R>> BooleanArray.isSortedByDescending(selector
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> CharArray.isSortedByDescending(selector: (Char) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -14277,6 +14277,945 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
  */
 public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun <T> Array<out T>.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<T>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctByteArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ByteArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    // more than 256 values force a duplicate
+    if (size > (1 shl Byte.SIZE_BITS)) return false
+    val seen = UByteValueSet()
+    for (element in this) {
+        if (!seen.add(element.toUByte())) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctShortArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ShortArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    // more than 65536 values force a duplicate
+    if (size > (1 shl Short.SIZE_BITS)) return false
+    val seen = HashSet<Short>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctIntArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun IntArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Int>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctLongArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun LongArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Long>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using equality semantics consistent with [Float.equals].
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctFloatArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun FloatArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Float>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using equality semantics consistent with [Double.equals].
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Double.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctDoubleArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun DoubleArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Double>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctBooleanArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun BooleanArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    // more than 2 values force a duplicate
+    return size == 2 && this[0] != this[1]
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun CharArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    // more than 65536 values force a duplicate
+    if (size > (1 shl Char.SIZE_BITS)) return false
+    val seen = HashSet<Char>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <T, K> Array<out T>.allDistinctBy(selector: (T) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctByteArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ByteArray.allDistinctBy(selector: (Byte) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctShortArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ShortArray.allDistinctBy(selector: (Short) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctIntArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> IntArray.allDistinctBy(selector: (Int) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctLongArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> LongArray.allDistinctBy(selector: (Long) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctFloatArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> FloatArray.allDistinctBy(selector: (Float) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctDoubleArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> DoubleArray.allDistinctBy(selector: (Double) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctBooleanArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> BooleanArray.allDistinctBy(selector: (Boolean) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> CharArray.allDistinctBy(selector: (Char) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun <T> Array<out T>.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ByteArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ShortArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun IntArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun LongArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using equality semantics consistent with [Float.equals],
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun FloatArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first.compareTo(this[i]) != 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using equality semantics consistent with [Double.equals],
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Double.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun DoubleArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first.compareTo(this[i]) != 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun BooleanArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun CharArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <T, K> Array<out T>.allEqualBy(selector: (T) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ByteArray.allEqualBy(selector: (Byte) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ShortArray.allEqualBy(selector: (Short) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> IntArray.allEqualBy(selector: (Int) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> LongArray.allEqualBy(selector: (Long) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> FloatArray.allEqualBy(selector: (Float) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> DoubleArray.allEqualBy(selector: (Double) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> BooleanArray.allEqualBy(selector: (Boolean) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> CharArray.allEqualBy(selector: (Char) -> K): Boolean {
+    if (size < 2) return true
+    var firstKey: K? = null
+    for (i in indices) {
+        val key = selector(this[i])
+        if (i == 0) {
+            firstKey = key
+        } else {
+            // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+            val equal = firstKey?.equals(key) ?: (key == null)
+            if (!equal) return false
+        }
+    }
     return true
 }
 

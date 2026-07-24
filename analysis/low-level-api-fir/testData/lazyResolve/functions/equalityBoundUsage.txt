@@ -1,0 +1,115 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] eb: EB, [ResolvedTo(RAW_FIR)] a: Any?): Boolean { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] eb: EB, [ResolvedTo(RAW_FIR)] a: Any?): Boolean { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun test([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] eb: EB, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Any?): Boolean { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun test([ResolvedTo(COMPANION_GENERATION)] eb: EB, [ResolvedTo(COMPANION_GENERATION)] a: Any?): Boolean { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun test([ResolvedTo(SUPER_TYPES)] eb: EB, [ResolvedTo(SUPER_TYPES)] a: Any?): Boolean { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public? final? [ResolvedTo(TYPES)] fun test([ResolvedTo(TYPES)] eb: R|EB|, [ResolvedTo(TYPES)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(STATUS)] fun test([ResolvedTo(STATUS)] eb: R|EB|, [ResolvedTo(STATUS)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] eb: R|EB|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] eb: R|EB|, [ResolvedTo(CONTRACTS)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] eb: R|EB|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] eb: R|EB|, [ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] eb: R|EB|, [ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface EB : R|kotlin/Any| {
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] @EqualityBound[Unresolved](LAZY_EXPRESSION) other: Any?): Boolean
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] equalityBoundUsage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] eb: R|EB|, [ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any?|): R|kotlin/Boolean| {
+        ^test ==(R|<local>/eb|, R|<local>/a|)
+    }
+    public abstract [ResolvedTo(STATUS)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](<getClass>(EB#)) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] equalityBoundUsage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] eb: R|EB|, [ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any?|): R|kotlin/Boolean| {
+        ^test ==(R|<local>/eb|, R|<local>/a|)
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface EB : R|kotlin/Any| {
+        public abstract override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=EB] @R|kotlin/EqualityBound|[Types](bound = <getClass>(Q|EB|) [evaluated = <getClass>(Q|EB|)]) other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    }

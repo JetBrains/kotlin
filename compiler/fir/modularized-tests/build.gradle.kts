@@ -4,16 +4,15 @@
  */
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
 }
 
-repositories {
-    mavenLocal()
-}
-
-val composeCompilerPlugin by configurations.creating
+val composeCompilerPlugin = configurations.create("composeCompilerPlugin")
 
 dependencies {
     testFixturesImplementation(intellijCore())
@@ -37,8 +36,9 @@ dependencies {
 
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 
-    val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
-    if (asyncProfilerClasspath != null) {
+    // Used by modularized-tests
+    if (project.extra.has("fir.bench.async.profiler.classpath")) {
+        val asyncProfilerClasspath = project.extra.get("fir.bench.async.profiler.classpath") as String
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
     }
 }
@@ -55,13 +55,19 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
+    testTask(
+        minHeapSizeMb = 8192,
+        maxHeapSizeMb = 8192,
+        reservedCodeCacheSizeMb = 512,
+        javaLauncher = JdkMajorVersion.JDK_1_8
+    ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
-        val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String
-        if (argsExt != null) {
+        // Used by modularized-tests
+        if (project.extra.has("fir.modularized.jvm.args")) {
+            val argsExt = project.extra.get("fir.modularized.jvm.args") as String
             val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
             this.jvmArgs(paramRegex.findAll(argsExt).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }

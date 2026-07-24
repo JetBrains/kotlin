@@ -1,0 +1,175 @@
+KtFile: 'removableQualifierWhenIsPattern.kt'
+  null
+
+KtPackageDirective(70,82): 'package test'
+  null
+
+KtNameReferenceExpression(78,82): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(82,82): ''
+  null
+
+KtClass(84,130): 'sealed class Base {'
+  null
+
+KtDeclarationModifierList(84,90): 'sealed'
+  null
+
+KtClassBody(102,130): '{'
+  null
+
+KtClass(108,128): 'class Child : Base()'
+  null
+
+KtSuperTypeList(122,128): 'Base()'
+  null
+
+KtSuperTypeCallEntry(122,128): 'Base()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.Base
+    ]
+
+KtConstructorCalleeExpression(122,126): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): test.Base
+    ]
+
+KtTypeReference(122,126): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtUserType(122,126): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(122,126): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtValueArgumentList(126,128): '()'
+  null
+
+KtNamedFunction(132,214): 'fun usage(b: Base) {'
+  null
+
+KtParameterList(141,150): '(b: Base)'
+  null
+
+KtParameter(142,149): 'b: Base'
+  null
+
+KtTypeReference(145,149): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtUserType(145,149): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(145,149): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtBlockExpression(151,214): '{'
+  null
+
+KtWhenExpression(157,212): 'when (b) {'
+  null
+
+KtNameReferenceExpression(163,164): 'b'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: test.Base
+    ]
+
+KtWhenEntry(176,206): 'is Base.Child -> "".hashCode()'
+  null
+
+KtWhenConditionIsPattern(176,189): 'is Base.Child'
+  null
+
+KtTypeReference(179,189): 'Base.Child'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtUserType(179,189): 'Base.Child'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtUserType(179,183): 'Base'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(179,183): 'Base'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base
+    ]
+
+KtNameReferenceExpression(184,189): 'Child'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Base.Child
+    ]
+
+KtDotQualifiedExpression(193,206): '"".hashCode()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
+
+KtStringTemplateExpression(193,195): '""'
+  null
+
+KtCallExpression(196,206): 'hashCode()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
+
+KtNameReferenceExpression(196,204): 'hashCode'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
+
+KtValueArgumentList(204,206): '()'
+  null

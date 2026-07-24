@@ -125,6 +125,10 @@ class ConeCollectionLiteralAmbiguity(val candidatesWithOf: List<FirRegularClassS
     override val reason: String get() = "Ambiguous collection literal"
 }
 
+object ConeCannotResolveEqualityBoundType : ConeDiagnostic {
+    override val reason: String get() = "Cannot resolve argument of 'EqualityBound'"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

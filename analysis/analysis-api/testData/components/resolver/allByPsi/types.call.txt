@@ -125,12 +125,14 @@ KtCallExpression(251,263): 'InnerClass()'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -140,11 +142,14 @@ KtCallExpression(251,263): 'InnerClass()'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/two/TopLevelClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.two.TopLevelClass
       extensionReceiver = null
@@ -165,12 +170,14 @@ KtNameReferenceExpression(251,261): 'InnerClass'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtTypeReference
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -180,11 +187,14 @@ KtNameReferenceExpression(251,261): 'InnerClass'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+          psi: KtTypeReference
+          realPsi: KtTypeReference
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: one/two/TopLevelClass
+          typeParameters: []
           visibility: PUBLIC
         type = one.two.TopLevelClass
       extensionReceiver = null

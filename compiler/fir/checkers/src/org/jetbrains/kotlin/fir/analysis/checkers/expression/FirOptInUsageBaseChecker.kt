@@ -348,9 +348,10 @@ object FirOptInUsageBaseChecker {
         val isSubclassOptInApplicable = (context.containingDeclarations.lastOrNull() as? FirClassSymbol)
             ?.let { getSubclassOptInApplicabilityAndMessage(it).first }
             ?: false
-        for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
+        for ((val annotationClassId, val severity, val message, val _ = supertypeName, val fromSupertype) in experimentalities) {
+            context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, source, context.containingFileSymbol?.source)
             if (!isExperimentalityAcceptableInContext(annotationClassId, fromSupertype)) {
-                val (diagnostic, messageProvider, verb) = when (severity) {
+                val [diagnostic, messageProvider, verb] = when (severity) {
                     Experimentality.Severity.WARNING if fromSupertype -> Triple(
                         FirErrors.OPT_IN_TO_INHERITANCE,
                         OptInInheritanceDiagnosticMessageProvider(isSubclassOptInApplicable),
@@ -394,11 +395,12 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         symbol: FirCallableSymbol<*>,
     ) {
-        for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
+        for ((val annotationClassId, val severity, val markerMessage = message, val supertypeName) in experimentalities) {
+            context.session.lookupTracker?.recordClassLikeLookup(annotationClassId, symbol.source, context.containingFileSymbol?.source)
             if (!symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, fromSupertype = false)
             ) {
-                val (diagnostic, verb) = when (severity) {
+                val [diagnostic, verb] = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_OVERRIDE to "should"
                     Experimentality.Severity.ERROR -> FirErrors.OPT_IN_OVERRIDE_ERROR to "must"
                 }

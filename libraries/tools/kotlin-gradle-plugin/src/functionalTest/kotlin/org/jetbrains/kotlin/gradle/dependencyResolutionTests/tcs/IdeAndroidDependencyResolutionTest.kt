@@ -31,7 +31,6 @@ class IdeAndroidDependencyResolutionTest {
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.configureDefaults()
-        repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
 
         multiplatformExtension.apply {

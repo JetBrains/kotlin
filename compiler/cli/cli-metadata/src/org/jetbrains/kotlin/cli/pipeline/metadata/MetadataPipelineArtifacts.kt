@@ -32,6 +32,7 @@ data class MetadataInMemorySerializationArtifact(
     val metadata: SerializedMetadata,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
+
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataInMemorySerializationArtifact {
         return copy(configuration = newConfiguration)

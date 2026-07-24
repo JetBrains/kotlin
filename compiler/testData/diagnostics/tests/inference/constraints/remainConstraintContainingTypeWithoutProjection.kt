@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
-// SKIP_TXT
 
 // FILE: Test.java
 import java.util.Collection;

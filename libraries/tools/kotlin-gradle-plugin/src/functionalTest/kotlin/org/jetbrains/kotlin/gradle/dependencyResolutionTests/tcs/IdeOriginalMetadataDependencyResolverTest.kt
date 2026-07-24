@@ -27,7 +27,6 @@ class IdeOriginalMetadataDependencyResolverTest {
             enableDependencyVerification(false)
             enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
-            repositories.mavenLocal()
             repositories.mavenCentralCacheRedirector()
         }
 

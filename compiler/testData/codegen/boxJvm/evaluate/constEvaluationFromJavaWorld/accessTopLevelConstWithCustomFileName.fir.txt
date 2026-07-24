@@ -7,7 +7,7 @@ FILE: Main.kt
     public final const [EvaluatedValue=Int(3)] val BAZ: R|kotlin/Int| = Q|one/two/Bar|.R|one/two/Bar.BAR*s|.R|kotlin/Int.plus|(Int(1))
         public get(): R|kotlin/Int|
     public final class Child : R|one/two/Bar| {
-        public [ContainingClassKey=Child] constructor(): R|one/two/Child| {
+        public constructor(): R|one/two/Child| {
             super<R|one/two/Bar|>()
         }
 

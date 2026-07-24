@@ -27,7 +27,7 @@ class IdeDiagnosticMessageHolder : DiagnosticMessageHolder {
         val rootElement = errorReport.createElement("report")
         errorReport.appendChild(rootElement)
 
-        for ((diagnostic, message) in diagnostics) {
+        for ([diagnostic, message] in diagnostics) {
             val errorRange = DiagnosticRangeUtils.firstRange(diagnostic.textRanges)
 
             val reportEntry = errorReport.createElement("reportEntry")

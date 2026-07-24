@@ -2,11 +2,6 @@ plugins {
     kotlin("jvm") version "1.7.20"
 }
 
-repositories {
-    mavenCentral()
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-}
-
 dependencies {
     implementation("org.jetbrains.dukat:dukat:0.5.8-rc.5")
     implementation(libs.jsoup)

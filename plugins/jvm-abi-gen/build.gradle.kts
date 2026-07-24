@@ -1,10 +1,13 @@
 description = "ABI generation for Kotlin/JVM"
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {
@@ -16,10 +19,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-val embedded by configurations
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
-configurations.getByName("compileOnly").extendsFrom(embedded)
-configurations.getByName("testApi").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
+configurations.testApi.get().extendsFrom(embedded)
 
 dependencies {
     // Should come before dependency on proguarded compiler because StringUtil methods are deleted from it
@@ -34,6 +37,8 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":compiler:backend.common.jvm"))
 
     // Include kotlin.metadata for metadata stripping.
     // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,
@@ -44,11 +49,10 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
-    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
@@ -67,7 +71,7 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
         addClasspathProperty("kotlin.jvm.abi.jar.path") {
             from(tasks.jar.map { it.archiveFile.get() })
         }

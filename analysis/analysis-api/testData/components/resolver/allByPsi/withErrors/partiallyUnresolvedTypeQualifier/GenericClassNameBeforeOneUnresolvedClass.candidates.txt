@@ -154,7 +154,7 @@ KtCallExpression(145,181): 'take {'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
+    diagnostic = ERROR<EXPECTED_PARAMETER_TYPE_MISMATCH: Parameter type mismatch: actual type is '??? (Unresolved qualified name: Foo.Bar)', but 'uninferred T (of fun <T> take)' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(145,149): 'take'
@@ -193,7 +193,7 @@ KtNameReferenceExpression(145,149): 'take'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
+    diagnostic = ERROR<EXPECTED_PARAMETER_TYPE_MISMATCH: Parameter type mismatch: actual type is '??? (Unresolved qualified name: Foo.Bar)', but 'uninferred T (of fun <T> take)' was expected.>
     isInBestCandidates = true
 
 KtLambdaArgument(150,181): '{'

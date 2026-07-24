@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.Family
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeBytes
 
 /**
  * Builds Apple bundle directory.
@@ -20,7 +22,7 @@ internal class BundleBuilder(
 ) {
     fun build(
             moduleDescriptor: ModuleDescriptor,
-            bundleDirectory: File,
+            bundleDirectory: Path,
             name: String,
     ) {
         val target = config.target
@@ -28,11 +30,11 @@ internal class BundleBuilder(
             Family.IOS,
             Family.WATCHOS,
             Family.TVOS -> bundleDirectory
-            Family.OSX -> bundleDirectory.child("Contents")
+            Family.OSX -> bundleDirectory.resolve("Contents")
             else -> error(target)
-        }.apply { mkdirs() }
+        }.apply { createDirectories() }
 
-        bundleContents.child("Info.plist").run {
+        bundleContents.resolve("Info.plist").run {
             val infoPlistContents = infoPListBuilder.build(name, mainPackageGuesser, moduleDescriptor)
             writeBytes(infoPlistContents.toByteArray())
         }

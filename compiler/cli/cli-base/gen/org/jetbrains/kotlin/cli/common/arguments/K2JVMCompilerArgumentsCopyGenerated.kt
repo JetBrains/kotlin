@@ -34,6 +34,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.includeRuntime = from.includeRuntime
     to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts
+    to.javaDirect = from.javaDirect
     to.javaModulePath = from.javaModulePath
     to.javaPackagePrefix = from.javaPackagePrefix
     to.javaParameters = from.javaParameters
@@ -47,10 +48,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.jvmDefaultStable = from.jvmDefaultStable
     to.jvmExposeBoxed = from.jvmExposeBoxed
     to.jvmTarget = from.jvmTarget
-    to.klibLibraries = from.klibLibraries
     to.lambdas = from.lambdas
-    @Suppress("DEPRECATION")
-    to.linkViaSignatures = from.linkViaSignatures
     to.moduleName = from.moduleName
     to.noCallAssertions = from.noCallAssertions
     to.noJdk = from.noJdk
@@ -73,16 +71,16 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.strictMetadataVersionSemantics = from.strictMetadataVersionSemantics
     to.stringConcat = from.stringConcat
     to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations
-    to.suppressDeprecatedJvmTargetWarning = from.suppressDeprecatedJvmTargetWarning
     to.suppressMissingBuiltinsError = from.suppressMissingBuiltinsError
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
+    to.useMetadataOnIncrementalClasspath = from.useMetadataOnIncrementalClasspath
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme
     to.useTypeTable = from.useTypeTable
+    to.valhallaSupport = from.valhallaSupport
     to.validateBytecode = from.validateBytecode
-    to.valueClasses = from.valueClasses
     to.whenExpressionsGeneration = from.whenExpressionsGeneration
 
     return to

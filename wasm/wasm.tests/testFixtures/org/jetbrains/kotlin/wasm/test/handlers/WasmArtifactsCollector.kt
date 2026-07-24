@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -36,20 +35,20 @@ internal interface WasmArtifactsCollector {
             }
         }
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
+        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".js")
             .takeIf { it.exists() }
             ?.let {
                 jsFiles += AdditionalFile(it.name, it.readText())
             }
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
+        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + ".mjs")
             .takeIf { it.exists() }
             ?.let {
                 mjsFiles += AdditionalFile(it.name, it.readText())
             }
 
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
+        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.js")
             .takeIf { it.exists() }
             ?.let {
                 entryMjs = it.name

@@ -17,7 +17,7 @@ data class BuildAttributes(
     }
 
     fun addAll(other: BuildAttributes) {
-        other.myAttributes.forEach { (attr, n) -> add(attr, n) }
+        other.myAttributes.forEach { [attr, n] -> add(attr, n) }
     }
 
     fun asMap(): Map<BuildAttribute, Int> = myAttributes

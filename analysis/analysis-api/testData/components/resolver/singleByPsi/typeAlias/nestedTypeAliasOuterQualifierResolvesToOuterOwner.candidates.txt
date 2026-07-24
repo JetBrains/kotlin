@@ -1,0 +1,2 @@
+KtNameReferenceExpression(419,424): 'Outer'
+  NO_CANDIDATES

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.types.SimpleType
 
+@K1Deprecation
 interface LocalClassifierTypeSettings {
     val replacementTypeForLocalClassifiers: SimpleType?
 

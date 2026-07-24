@@ -22,7 +22,7 @@ typealias ThrowsTA = kotlin.jvm.Throws
 typealias JvmFieldTA = kotlin.jvm.JvmField
 typealias JvmSuppressWildcardsTA = kotlin.jvm.JvmSuppressWildcards
 typealias JvmWildcardTA = kotlin.jvm.JvmWildcard
-typealias JvmInlineTA = kotlin.jvm.JvmInline
+typealias JvmInlineTA = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_ERROR!>kotlin.jvm.JvmInline<!>
 @OptIn(ExperimentalStdlibApi::class)
 typealias JvmExposeBoxedTA = kotlin.jvm.JvmExposeBoxed
 

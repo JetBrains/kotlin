@@ -62,18 +62,18 @@ constructor(
      */
     private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
         override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
         }
 
         override fun <V> set(
             key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
             value: V,
         ) {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.set to set option values")
         }
 
         override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated. Use JvmSnapshotBasedIncrementalCompilationConfiguration.get to read option values")
         }
     }
 
@@ -319,6 +319,7 @@ constructor(
          */
         @JvmField
         @ExperimentalCompilerArgument
+        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
 
         /**
@@ -472,6 +473,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
          */
         @JvmField
         @ExperimentalCompilerArgument
+        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**

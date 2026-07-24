@@ -1,0 +1,20 @@
+[type]
+CapturedType(in R)
+
+[direct super types]
+kotlin.CharSequence
+A
+
+[approximated direct super types]
+kotlin.CharSequence
+A
+
+[all super types]
+kotlin.CharSequence
+A
+kotlin.Any
+
+[approximated all super types]
+kotlin.CharSequence
+A
+kotlin.Any

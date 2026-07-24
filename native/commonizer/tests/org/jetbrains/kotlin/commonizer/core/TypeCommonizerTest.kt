@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
@@ -111,6 +113,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     }
 
 
+    @Test
     fun `test class types in Kotlin package with same name`() {
         assertEquals(
             mockClassType("kotlin/collections/List"), createCommonizer().invoke(
@@ -123,6 +126,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -135,6 +139,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with different names - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -147,6 +152,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with different names - 3`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -159,6 +165,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlinx package with same name`() {
         assertEquals(
             mockClassType("kotlinx/cinterop/CPointer"), createCommonizer().invoke(
@@ -171,6 +178,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlinx package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -183,6 +191,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with same name`() {
         assertEquals(
             mockClassType("org/sample/Foo"), createCommonizer().invoke(
@@ -195,6 +204,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -206,6 +216,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with different names - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -217,6 +228,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with different names - 3`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -228,6 +240,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with same nullability - 1`() {
         assertEquals(
             mockClassType("kotlin/collections/List", nullable = false), createCommonizer().invoke(
@@ -240,6 +253,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with same nullability - 2`() {
         assertEquals(
             mockClassType("kotlin/collections/List", nullable = true), createCommonizer().invoke(
@@ -252,6 +266,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with different nullability - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -264,6 +279,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in Kotlin package with different nullability - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -276,6 +292,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with same nullability - 1`() {
         assertEquals(
             mockClassType("org/sample/Foo", nullable = false), createCommonizer().invoke(
@@ -288,6 +305,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with same nullability - 2`() {
         assertEquals(
             mockClassType("org/sample/Foo", nullable = true), createCommonizer().invoke(
@@ -300,6 +318,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with different nullability - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -312,6 +331,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test class types in user package with different nullability - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
@@ -324,6 +344,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test ta types in Kotlin package with same name and class`() {
         val commonizer = createCommonizer(
             commonDependencySources = {
@@ -345,6 +366,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             )))
     }
 
+    @Test
     fun `test ta types in Kotlin package with different names`() {
         val commonizer = createCommonizer(
             commonDependencySources = {
@@ -376,6 +398,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                 )))
     }
 
+    @Test
     fun `test ta types in Kotlin package with different classes`() {
         val commonizer = createCommonizer(
             targetADependencySources = {
@@ -414,6 +437,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             )))
     }
 
+    @Test
     fun `test multilevel ta types in Kotlin package with same name and right hand side class`() {
         val commonizer = createCommonizer(
             targetASpecificSources = {
@@ -471,6 +495,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )))
     }
 
+    @Test
     fun `test multilevel ta types in user package with same name and right hand side class - 1`() {
         val commonizer = createCommonizer(
             targetASpecificSources = {
@@ -522,6 +547,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test multilevel ta types in user package with same name and right hand side class - 3`() {
         val commonizer = createCommonizer(
             commonTargetSources = {
@@ -562,6 +588,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
     }
 
+    @Test
     fun `test ta types in Kotlin package with different nullability`() {
         val commonizer = createCommonizer(
             targetADependencySources = {
@@ -599,6 +626,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )))
     }
 
+    @Test
     fun `test ta types in user package with same nullability`() {
         val commonizer = createCommonizer(
             commonTargetSources = {

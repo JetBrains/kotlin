@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -USELESS_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-
 // FILE: j/Base.java
 package j;
 public interface Base {

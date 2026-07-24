@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrTransformer<IrFunction?>() {
+internal class DataClassOperatorsLowering(val context: NativeBackendContext) : FileLoweringPass, IrTransformer<IrFunction?>() {
     private val irBuiltins = context.irBuiltIns
 
     override fun lower(irFile: IrFile) {

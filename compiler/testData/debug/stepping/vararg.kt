@@ -36,10 +36,7 @@ fun box(): String {
 // test.kt:18 box
 
 // EXPECTATIONS NATIVE
-// test.kt:1 box
 // test.kt:13 box
-// test.kt:4 <get-array>
-// test.kt:1 <get-array>
 // test.kt:4 <get-array>
 // test.kt:13 box
 // test.kt:12 box
@@ -48,21 +45,17 @@ fun box(): String {
 // test.kt:12 box
 // test.kt:11 box
 // test.kt:6 sum
-// test.kt:1 sum
 // test.kt:7 sum
 // test.kt:7 sum
 // test.kt:8 sum
 // test.kt:11 box
 // test.kt:15 box
 // test.kt:4 <get-array>
-// test.kt:1 <get-array>
-// test.kt:4 <get-array>
 // test.kt:15 box
 // test.kt:15 box
 // test.kt:15 box
 // test.kt:15 box
 // test.kt:6 sum
-// test.kt:1 sum
 // test.kt:7 sum
 // test.kt:7 sum
 // test.kt:8 sum
@@ -70,7 +63,6 @@ fun box(): String {
 // test.kt:16 box
 // test.kt:16 box
 // test.kt:6 sum
-// test.kt:1 sum
 // test.kt:7 sum
 // test.kt:7 sum
 // test.kt:8 sum
@@ -78,7 +70,6 @@ fun box(): String {
 // test.kt:17 box
 // test.kt:17 box
 // test.kt:6 sum
-// test.kt:1 sum
 // test.kt:7 sum
 // test.kt:7 sum
 // test.kt:8 sum
@@ -87,13 +78,10 @@ fun box(): String {
 // test.kt:19 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 <init properties test.kt>
 // test.kt:11 box
-// test.kt:4 <get-array>
 // test.kt:12 box
 // test.kt:7 sum
 // test.kt:15 box
-// test.kt:4 <get-array>
 // test.kt:15 box
 // test.kt:7 sum
 // test.kt:16 box

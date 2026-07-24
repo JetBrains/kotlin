@@ -17,82 +17,14 @@ internal fun ObjCExportContext.mangleObjCMethods(
     }.map { stub -> mangleObjCMemberGenerics(stub) }
 }
 
-internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
-    val with = if (attribute.isConstructor) "With" else ""
-    return if (attribute.parameters.isEmpty())
-        listOf(attribute.name + attribute.postfix)
-    else if (attribute.parameters.size == 1) {
-        val mangledAttribute = (attribute.name + with + attribute.parameters.first()
-            .replaceFirstChar { it.uppercaseChar() }).mangleSelector(attribute.postfix)
-        if (attribute.parameters.first() == "_:") {
-            /**
-             * Function with single parameter and name "_" is an extension function.
-             * Where receiver is passed as a parameter with name "_".
-             * It is a special mangling case.
-             *
-             * ```kotlin
-             * class Foo {
-             *   fun Int.bar() = Foo()
-             * }
-             * ```
-             * ```c
-             * interface Foo {
-             *   - (Foo *)bar:(int_32_t)receiver __attribute__((swift_name("days(_:)")));
-             * }
-             * ```
-             *
-             * So when there is another extension function with the same name we mangle:
-             * - swift_name parameter
-             * - selector
-             *
-             * ```kotlin
-             * class Foo {
-             *   fun Int.bar() = Foo()
-             *   fun Double.bar() = Foo()
-             * }
-             * ```
-             * ```c
-             * interface Foo {
-             *   - (Foo *)bar:(int_32_t)receiver __attribute__((swift_name("days(_:)")));
-             *   - (Foo *)bar_:(double)receiver __attribute__((swift_name("days(__:)")));
-             * }
-             * ```
-             *
-             * We add '_' to swift_attribute parameter and keep selector with one less '_' char:
-             * - bar > _
-             * - bar_ > __
-             * - bar__ > ___
-             * etc
-             */
-            listOf("${mangledAttribute.dropLast(2)}:")
-        } else {
-            /**
-             * If extension function has parameters we have the same amount of `_` for selector and parameter:
-             * - bar param > _:param
-             * - bar param_ > _:param_
-             * - bar param__ > _:param__
-             * etc
-             */
-            listOf(mangledAttribute)
-        }
-
-    } else {
-        attribute.parameters.mapIndexed { index, param ->
-            when (index) {
-                0 -> {
-                    if (param.isReceiver) {
-                        attribute.name + ":"
-                    } else {
-                        /** First selector is a combination of a method name and first parameter */
-                        attribute.name + with + param.replaceFirstChar { it.uppercaseChar() }
-                    }
-                }
-                /** Last selector always mangled */
-                attribute.parameters.size - 1 -> param.mangleSelector(attribute.postfix)
-                /** Middle selectors remain unchanged */
-                else -> param
+internal fun buildMangledSelectors(postfix: String, selectors: List<String>): List<String> {
+    return selectors.mapIndexed { index, selector ->
+        when (index) {
+            selectors.lastIndex -> {
+                selector.mangleSelector(postfix)
             }
-        }.toList()
+            else -> selector
+        }
     }
 }
 

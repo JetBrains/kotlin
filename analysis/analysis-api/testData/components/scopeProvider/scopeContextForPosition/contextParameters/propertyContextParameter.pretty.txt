@@ -5,6 +5,8 @@ implicit values:
     type = B
     ownerSymbol = KaKotlinPropertySymbol:
       val foo: kotlin.Boolean
+    label = foo
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 1
@@ -71,4 +73,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
-

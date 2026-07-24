@@ -30,7 +30,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
     protected open fun expectedOutputFile(testDir: File): File =
         File(testDir, "result.out")
 
-    fun doTest(testDataPath: String) {
+    fun runTest(testDataPath: String) {
         val testDir = File(testDataPath)
 
         val oldClassMap = classesForPrefixedSources(testDir, workingDir, "old")

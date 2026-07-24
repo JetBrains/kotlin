@@ -33,7 +33,7 @@ fun test() {
     oneParameter(func = ::stringIdentity) // unit coercion
 
     oneParameter(func = <!ARGUMENT_TYPE_MISMATCH!>{ it, <!CANNOT_INFER_VALUE_PARAMETER_TYPE, CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> it.length }<!>)
-    oneParameter(func = <!ARGUMENT_TYPE_MISMATCH!>{ it: Int -> }<!>)
+    oneParameter(func = { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>it: Int<!> -> })
     oneParameter(func = ::<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>acceptInt<!>)
 
     genericLambda<String>("", f = { it.length.toString() })

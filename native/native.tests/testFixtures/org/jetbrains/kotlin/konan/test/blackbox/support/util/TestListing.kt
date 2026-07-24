@@ -36,7 +36,7 @@ internal object DumpedTestListing {
                 emptyLineEncountered -> parseError("Unexpected empty line")
 
                 else -> {
-                    val (packageAndClass, functionName) = line.trim()
+                    val [packageAndClass, functionName] = line.trim()
                         .split(':')
                         .takeIf { items -> items.size == 2 && items.none(String::isBlank) }
                         ?: parseError("Malformed test name")

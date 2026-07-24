@@ -1,0 +1,2 @@
+expected symbols:
+expect class Platform

@@ -7,12 +7,12 @@ enum class A : Enum<A> {
 
   }
 
-  /* static */ fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+  companion fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
-  /* static */ fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
+  companion fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
 
-  /* static */ val entries: EnumEntries<A>
-    get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
+  companion val entries: EnumEntries<A>
+    companion get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
 
 }
 

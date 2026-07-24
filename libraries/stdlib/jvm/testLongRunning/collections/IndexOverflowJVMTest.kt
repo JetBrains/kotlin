@@ -70,8 +70,8 @@ class IndexOverflowJVMTest {
 
     @Test
     fun withIndexOverflow() {
-        assertIndexOverflow { maxIndexSequence.withIndex().forEach { (index, _) -> checkIndexPositive(index) } }
-        assertIndexOverflow { maxIndexIterable.withIndex().forEach { (index, _) -> checkIndexPositive(index) } }
+        assertIndexOverflow { maxIndexSequence.withIndex().forEach { [index, _] -> checkIndexPositive(index) } }
+        assertIndexOverflow { maxIndexIterable.withIndex().forEach { [index, _] -> checkIndexPositive(index) } }
     }
 
 

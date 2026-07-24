@@ -31,7 +31,10 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
     skipExternalMethods = false
 ) {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
+        if (declaration is IrFunction &&
+            declaration !is IrConstructor &&
+            declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        ) return null
         return super.transformFlat(declaration)
     }
 
@@ -39,8 +42,7 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
 
     override fun useConstructorMarker(function: IrFunction): Boolean =
         function is IrConstructor ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
     override fun IrBlockBodyBuilder.generateSuperCallHandlerCheckIfNeeded(
         irFunction: IrFunction,

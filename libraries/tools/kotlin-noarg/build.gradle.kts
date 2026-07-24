@@ -1,6 +1,9 @@
 import org.gradle.plugin.compatibility.compatibility
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
 }
 
@@ -9,7 +12,6 @@ dependencies {
     commonImplementation(project(":kotlin-allopen"))
 
     testImplementation(gradleApi())
-    testImplementation(libs.junit4)
 }
 
 gradlePlugin {

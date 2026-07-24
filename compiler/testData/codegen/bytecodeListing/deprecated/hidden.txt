@@ -1,4 +1,23 @@
 @kotlin.Metadata
+public final class A$DefaultImpls {
+    // source: 'hidden.kt'
+    public synthetic deprecated static @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="999.999") method getHiddenGetterButNotSetter$annotations(): void
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface A {
+    // source: 'hidden.kt'
+    public synthetic deprecated abstract @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="1.0") method getHiddenGetter(): int
+    public synthetic deprecated abstract @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="1.0") method getHiddenGetterButNotSetter(): int
+    public abstract method getHiddenSetter(): int
+    public abstract method setHiddenGetter(p0: int): void
+    public deprecated abstract method setHiddenGetterButNotSetter(p0: int): void
+    public synthetic deprecated abstract @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="1.0") method setHiddenSetter(p0: int): void
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
 public class Base {
     // source: 'hidden.kt'
     public method <init>(): void
@@ -16,4 +35,8 @@ public final class Derived {
 public final class HiddenKt {
     // source: 'hidden.kt'
     public synthetic deprecated final static @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="1.0") method hidden(): void
+    public deprecated final static @kotlin.Deprecated(message="", level=ERROR) method notHidden1(): void
+    public deprecated final static @kotlin.Deprecated(message="", level=WARNING) method notHidden2(): void
+    public deprecated final static @kotlin.Deprecated(message="") method notHidden3(): void
+    public deprecated final static @kotlin.Deprecated(message="") @kotlin.DeprecatedSinceKotlin(hiddenSince="999.999") method notHidden4(): void
 }

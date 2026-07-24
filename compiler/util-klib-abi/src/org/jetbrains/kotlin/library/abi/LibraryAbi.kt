@@ -315,6 +315,7 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
         ReplaceWith("valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }")
     )
     val contextReceiverParametersCount: Int
+    val companionExtensionsClass: AbiClassifierReference.ClassReference?
     val valueParameters: List<AbiValueParameter>
     val returnType: AbiType?
 }

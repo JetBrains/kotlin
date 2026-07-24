@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82122
-// LATEST_LV_DIFFERENCE
 
 class WithParenthesizes<T> {
     inner class A<K> {
@@ -9,10 +8,10 @@ class WithParenthesizes<T> {
 }
 
 fun testWithParenthesizes() {
-    (WithParenthesizes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><String, Int><!>.A)::foo
-    (WithParenthesizes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!><String, Int><!>).A::foo
-    (<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>WithParenthesizes<!>.A<String, Int>)::foo
-    (<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>WithParenthesizes<!>).A<String, Int>::foo
+    (WithParenthesizes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int><!>.A)::foo
+    (WithParenthesizes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int><!>).A::foo
+    (<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>WithParenthesizes<!>.A<String, Int>)::foo
+    (<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>WithParenthesizes<!>).A<String, Int>::foo
     (WithParenthesizes<String>).A<Int>::foo
 }
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
+import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.js.config.*
@@ -387,7 +388,6 @@ class IrModuleToJsTransformer(
         )
     }
 
-    private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
     private val optimizeGeneratedJs = backendContext.configuration.get(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, true)
 
@@ -435,11 +435,11 @@ class IrModuleToJsTransformer(
                 startComment = "region "
             }
 
-            if (generateRegionComments || generateFilePaths) {
+            if (generateRegionComments) {
                 val originalPath = fileExports.file.path
                 val path = pathPrefixMap.entries
-                    .find { (k, _) -> originalPath.startsWith(k) }
-                    ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                    .find { [k, _] -> originalPath.startsWith(k) }
+                    ?.let { [k, v] -> v + originalPath.substring(k.length) }
                     ?: originalPath
 
                 startComment += "file: $path"
@@ -455,7 +455,7 @@ class IrModuleToJsTransformer(
             }
         }
 
-        staticContext.classModels.entries.forEach { (symbol, model) ->
+        staticContext.classModels.entries.forEach { [symbol, model] ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
                 JsIrIcClassModel(model.dependsOnClasses.memoryOptimizedMap(staticContext::getNameForClass)).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
@@ -478,9 +478,10 @@ class IrModuleToJsTransformer(
         backendContext.testFunsPerFile[fileExports.file]
             ?.let { definitionSet.computeTag(it) }
             ?.let {
-                val suiteFunctionTag = definitionSet.computeTag(backendContext.symbols.suiteFun!!.owner)
+                val suiteFun = backendContext.symbols.suiteFun!!
+                val suiteFunctionTag = definitionSet.computeTag(suiteFun.owner)
                     ?: irError("Expect suite function tag exists") {
-                        withIrEntry("backendContext.suiteFun.owner", backendContext.symbols.suiteFun.owner)
+                        withIrEntry("backendContext.suiteFun.owner", suiteFun.owner)
                     }
                 result.testEnvironment = JsIrProgramTestEnvironment(it, suiteFunctionTag)
             }
@@ -519,7 +520,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.nameMap.entries.forEach { (declaration, name) ->
+        nameGenerator.nameMap.entries.forEach { [declaration, name] ->
             definitions.computeTag(declaration)?.let { tag ->
                 nameBindings[tag] = name
                 if (isBuiltInClass(declaration) || checkIsFunctionInterface(declaration.symbol.signature)) {
@@ -533,7 +534,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
+        nameGenerator.imports.entries.forEach { [declaration, importExpression] ->
             val tag = definitions.computeTag(declaration)
                 ?: irError("No tag for imported declaration") {
                     withIrEntry("declaration", declaration)
@@ -576,7 +577,7 @@ private fun generateMultiWrappedModuleBody(
     // TODO: It makes sense to invent something better, because this logic can be easily broken
     val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind).toMutableList()
 
-    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
+    val mainModule = moduleToRef.removeLast().let { [main, mainRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration,
             main.fragments,
@@ -587,7 +588,7 @@ private fun generateMultiWrappedModuleBody(
         )
     }
 
-    mainModule.dependencies = moduleToRef.map { (module, moduleRef) ->
+    mainModule.dependencies = moduleToRef.map { [module, moduleRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration.copy(moduleName = module.externalModuleName, outputName = module.externalModuleName),
             module.fragments,
@@ -628,7 +629,9 @@ fun generateSingleWrappedModuleBody(
         val sourceMapPrefix = sourceMapsInfo.sourceMapPrefix
         val outputDir = sourceMapsInfo.outputDir?.resolve(artifactConfiguration.moduleName.substringBeforeLast("/", ""))
 
-        sourceMapBuilder = SourceMap3Builder(null, jsCode::getColumn, sourceMapPrefix)
+        sourceMapBuilder = SourceMap3Builder(null, jsCode::getColumn, sourceMapPrefix).apply {
+            addIgnoredSource(JsLocation.IGNORED.file)
+        }
 
         val pathResolver = SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapPrefix, outputDir)
 

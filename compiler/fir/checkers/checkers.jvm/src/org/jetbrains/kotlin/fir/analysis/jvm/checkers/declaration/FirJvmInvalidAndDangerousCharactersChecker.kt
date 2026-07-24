@@ -24,6 +24,7 @@ object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(M
             is FirNamedFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirEnumEntry -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirFile -> {
@@ -31,7 +32,21 @@ object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(M
                     FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source)
                 }
             }
-            else -> return
+            is FirAnonymousInitializer,
+            is FirCodeFragment,
+            is FirDanglingModifierList,
+            is FirAnonymousFunction,
+            is FirConstructor,
+            is FirErrorFunction,
+            is FirPropertyAccessor,
+            is FirBackingField,
+            is FirField,
+            is FirAnonymousObject,
+            is FirReceiverParameter,
+            is FirReplSnippet,
+            is FirScript,
+                -> {
+            }
         }
     }
 }

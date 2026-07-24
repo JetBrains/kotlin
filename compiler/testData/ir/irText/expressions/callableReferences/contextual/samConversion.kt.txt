@@ -1,0 +1,22 @@
+fun interface Sam {
+  abstract fun invoke()
+
+}
+
+fun acceptSam(t: Sam) {
+}
+
+context($context-String: String)
+fun foo() {
+}
+
+fun String.test() {
+  acceptSam(t = KFunction0<Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local fun(c0: String) {
+      foo(/* $context-String = c0 */)
+    }
+  )
+ /*-> Sam */)
+}
+

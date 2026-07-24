@@ -1,4 +1,0 @@
-inlineFunctions/A.<init>|<init>(){}[0]
-inlineFunctions/A.bar|bar(){}[0]
-inlineFunctions/A|null[0]
-inlineFunctions/baz|baz(){}[0]

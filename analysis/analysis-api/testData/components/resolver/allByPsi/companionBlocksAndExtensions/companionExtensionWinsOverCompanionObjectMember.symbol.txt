@@ -1,0 +1,112 @@
+KtFile: 'companionExtensionWinsOverCompanionObjectMember.kt'
+  null
+
+KtPackageDirective(51,63): 'package test'
+  null
+
+KtNameReferenceExpression(59,63): 'test'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(63,63): ''
+  null
+
+KtClass(65,128): 'class C {'
+  null
+
+KtClassBody(73,128): '{'
+  null
+
+KtObjectDeclaration(79,126): 'companion object {'
+  null
+
+KtDeclarationModifierList(79,88): 'companion'
+  null
+
+KtClassBody(96,126): '{'
+  null
+
+KtNamedFunction(106,120): 'fun same() = 1'
+  null
+
+KtParameterList(114,116): '()'
+  null
+
+KtConstantExpression(119,120): '1'
+  null
+
+KtNamedFunction(130,157): 'companion fun C.same() = ""'
+  null
+
+KtDeclarationModifierList(130,139): 'companion'
+  null
+
+KtTypeReference(144,145): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(144,145): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(144,145): 'C'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtParameterList(150,152): '()'
+  null
+
+KtStringTemplateExpression(155,157): '""'
+  null
+
+KtNamedFunction(159,187): 'fun usage() {'
+  null
+
+KtParameterList(168,170): '()'
+  null
+
+KtBlockExpression(171,187): '{'
+  null
+
+KtDotQualifiedExpression(177,185): 'C.same()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/same(<extension receiver>: test.C): kotlin.String
+    ]
+
+KtNameReferenceExpression(177,178): 'C'
+  isImplicitReferenceToCompanion: true
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C.Companion
+    ]
+
+KtCallExpression(179,185): 'same()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/same(<extension receiver>: test.C): kotlin.String
+    ]
+
+KtNameReferenceExpression(179,183): 'same'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/same(<extension receiver>: test.C): kotlin.String
+    ]
+
+KtValueArgumentList(183,185): '()'
+  null

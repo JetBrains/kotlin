@@ -2,7 +2,6 @@
 // FULL_JDK
 // DUMP_IR
 // ISSUE: KT-68401
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 // FILE: other/AClass.java
 
 package other;

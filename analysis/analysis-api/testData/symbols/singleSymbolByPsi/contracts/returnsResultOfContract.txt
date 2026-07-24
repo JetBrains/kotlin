@@ -1,10 +1,10 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
   callableId: /myLet
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -13,16 +13,17 @@ KaNamedFunctionSymbol:
         KaContractExplicitParameterValue:
           symbol:
             KaValueParameterSymbol:
+              anchorPsi: KtParameter
               annotations: []
               callableId: null
-              compilerVisibility: Public
+              contextParameters: []
               contextReceivers: []
-              generatedPrimaryConstructorProperty: null
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
               isCompanion: false
               isCrossinline: false
+              isDelegated: false
               isExpect: false
               isExtension: false
               isExternal: false
@@ -34,6 +35,9 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              primaryConstructorProperty: null
+              psi: KtParameter
+              realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -46,28 +50,30 @@ KaNamedFunctionSymbol:
                     type: R
                 ]
                 type: (T) -> R
+              typeParameters: []
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
               getContainingJvmClassName: ReturnsResultOfContractKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
-      occurrencesRange: EXACTLY_ONCE
+      invocationKind: EXACTLY_ONCE
     KaContractReturnsResultOfEffectDeclaration:
       valueParameterReference:
         KaContractExplicitParameterValue:
           symbol:
             KaValueParameterSymbol:
+              anchorPsi: KtParameter
               annotations: []
               callableId: null
-              compilerVisibility: Public
+              contextParameters: []
               contextReceivers: []
-              generatedPrimaryConstructorProperty: null
               hasDeclaredDefaultValue: false
               hasDefaultValue: false
               isActual: false
               isCompanion: false
               isCrossinline: false
+              isDelegated: false
               isExpect: false
               isExtension: false
               isExternal: false
@@ -79,6 +85,9 @@ KaNamedFunctionSymbol:
               modality: FINAL
               name: block
               origin: SOURCE
+              primaryConstructorProperty: null
+              psi: KtParameter
+              realPsi: KtParameter
               receiverParameter: null
               returnType: KaFunctionType:
                 annotations: []
@@ -91,11 +100,12 @@ KaNamedFunctionSymbol:
                     type: R
                 ]
                 type: (T) -> R
+              typeParameters: []
               visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
               getContainingJvmClassName: ReturnsResultOfContractKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
   ]
   hasStableParameterNames: true
@@ -116,13 +126,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: myLet
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -132,23 +146,26 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/myLet)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaTypeParameterType:
       annotations: []
       type: T
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
     getContainingJvmClassName: ReturnsResultOfContractKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaTypeParameterType:
     annotations: []
     type: R
   typeParameters: [
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -157,16 +174,18 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: T
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -175,26 +194,29 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: R
       origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
       upperBounds: []
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
-      generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -206,6 +228,9 @@ KaNamedFunctionSymbol:
       modality: FINAL
       name: block
       origin: SOURCE
+      primaryConstructorProperty: null
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaFunctionType:
         annotations: []
@@ -218,11 +243,12 @@ KaNamedFunctionSymbol:
             type: R
         ]
         type: (T) -> R
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(returnsResultOfContract.kt)
       getContainingJvmClassName: ReturnsResultOfContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -230,6 +256,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnsResultOfContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: myLet

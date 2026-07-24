@@ -109,7 +109,7 @@ private fun List<TypeProjection>.enhanceTypeArguments() =
     }
 
 private fun List<TypeProjection>.wereTypeArgumentsChanged(newArguments: List<TypeProjection>) =
-    newArguments.size != this.size || !this.withIndex().all { (i, arg) -> newArguments[i] === arg }
+    newArguments.size != this.size || !this.withIndex().all { [i, arg] -> newArguments[i] === arg }
 
 private fun KotlinType.wereTypeArgumentsChanged(newArguments: List<TypeProjection>, newArgumentsForUpperBound: List<TypeProjection>) =
     when (val type = unwrap()) {

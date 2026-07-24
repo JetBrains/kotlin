@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 
+@K1Deprecation
 interface ContractParsingDiagnosticsCollector {
     fun unsupportedFeature(languageVersionSettings: LanguageVersionSettings)
     fun contractNotAllowed(message: String)
@@ -36,6 +38,7 @@ interface ContractParsingDiagnosticsCollector {
     }
 }
 
+@K1Deprecation
 class TraceBasedCollector(private val bindingTrace: BindingTrace, mainCall: KtExpression) : ContractParsingDiagnosticsCollector {
     constructor(callContext: ContractCallContext) : this(callContext.trace, callContext.contractCallExpression)
 

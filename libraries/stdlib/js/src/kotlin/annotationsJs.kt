@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -83,7 +83,7 @@ public actual annotation class JsSymbol(actual val name: String)
  *
  * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
  */
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(FILE)
 @SinceKotlin("1.9")
 public actual annotation class JsFileName(actual val name: String)
@@ -208,19 +208,16 @@ public actual annotation class JsQualifier(actual val value: String)
  *
  * It is currently prohibited to export the following kinds of declarations:
  *
- *   * `expect` declarations
  *   * inline functions with reified type parameters
- *   * suspend functions
  *   * secondary constructors without `@JsName`
  *   * extension properties
- *   * enum classes
- *   * annotation classes
  *
  * Signatures of exported declarations must only contain "exportable" types:
  *
- *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`
- *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`
- *   * `Array<exportable-type>`
+ *   * `dynamic`, `Any`, `String`, `Boolean`, `Byte`, `Short`, `Int`, `Float`, `Double`, `Long`
+ *   * `BooleanArray`, `ByteArray`, `ShortArray`, `IntArray`, `FloatArray`, `DoubleArray`, `LongArray`
+ *   * `Array<exportable-type>`,
+ *   * `(Mutable)List<exportable-type>`, `(Mutable)Map<exportable-type, exportable-type>`, `(Mutable)Set<exportable-type>`
  *   * Function types with exportable parameters and return types
  *   * `external` or `@JsExport` classes and interfaces
  *   * Nullable counterparts of types above
@@ -230,7 +227,7 @@ public actual annotation class JsQualifier(actual val value: String)
  */
 @ExperimentalJsExport
 @Retention(AnnotationRetention.BINARY)
-@Target(CLASS, PROPERTY, FUNCTION, FILE)
+@Target(CLASS, PROPERTY, FUNCTION, FILE, TYPEALIAS)
 @SinceKotlin("1.3")
 public actual annotation class JsExport {
     /**
@@ -239,7 +236,7 @@ public actual annotation class JsExport {
      */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
-    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
+    @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR, TYPEALIAS)
     @SinceKotlin("1.8")
     public actual annotation class Ignore
 

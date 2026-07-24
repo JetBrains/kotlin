@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import java.util.Properties
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]
@@ -40,6 +39,7 @@ const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
+const val KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION = "new_companion_initialization"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -78,15 +78,17 @@ const val KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES = "language_features"
  */
 const val KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES = "poisoning_language_features"
 
+/**
+ *  Bitmask of all set metadata flags
+ */
+const val KLIB_PROPERTY_METADATA_FLAGS = "metadata_flags"
+
 
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
  */
 
 interface BaseKotlinLibrary {
-    /** This is the obsolete but still supported way to get the library "location". Please use [Klib.location] instead. */
-    val libraryFile: File
-
     val versions: KotlinLibraryVersioning
 
     val manifestProperties: Properties
@@ -167,6 +169,9 @@ val BaseKotlinLibrary.commonizerTarget: String?
 
 val BaseKotlinLibrary.builtInsPlatform: BuiltInsPlatform?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM)?.let(BuiltInsPlatform::parseFromString)
+
+val BaseKotlinLibrary.newCompanionInitializationEnabled: Boolean
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION)?.toBoolean() == true
 
 val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
     get() = if (manifestProperties.containsKey(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS))

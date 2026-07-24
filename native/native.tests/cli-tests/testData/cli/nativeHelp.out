@@ -1,0 +1,53 @@
+Usage: kotlinc-native <options> <source files>
+where possible options include:
+  -enable-assertions (-ea)   Enable runtime assertions in generated code.
+  -entry (-e) <name>         Qualified entry point name.
+  -friend-modules <path>     Paths to friend modules.
+  -g                         Enable the emission of debug information.
+  -generate-no-exit-test-runner (-trn)
+                             Produce a runner for unit tests that doesn't force an exit.
+  -generate-test-runner (-tr) Produce a runner for unit tests.
+  -generate-worker-test-runner (-trw)
+                             Produce a worker runner for unit tests.
+  -include-binary (-ib) <path> Pack the given external binary into the klib.
+  -library (-l) <path>       Link with the given library.
+  -linker-option <arg>       Pass the given argument to the linker.
+  -linker-options <arg>      Pass arguments to the linker.
+  -list-targets              List available hardware targets.
+  -manifest <path>           Provide a manifest addend file.
+  -memory-model <model>      Choose the memory model to be used – 'strict' and 'experimental' are currently supported.
+  -module-name <name>        Specify a name for the compilation module.
+  -native-library (-nl) <path> Include the given native bitcode library.
+  -no-default-libs           Don't link the libraries from dist/klib automatically.
+  -nomain                    Assume the 'main' entry point will be provided by external libraries.
+  -nopack                    Don't pack the library into a klib file.
+  -nostdlib                  Don't link with the stdlib.
+  -opt                       Enable optimizations during compilation.
+  -output (-o) <name>        Output name.
+  -produce (-p) {program|static|dynamic|framework|library|bitcode}
+                             Specify the output file kind.
+  -target <target>           Set the hardware target.
+  -P plugin:<pluginId>:<optionName>=<value>
+                             Pass an option to a plugin.
+  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
+  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
+  -language-version <version> Provide source compatibility with the specified version of Kotlin.
+  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
+  -progressive               Enable progressive compiler mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately
+                             instead of going through a graceful migration cycle.
+                             Code written in progressive mode is backward compatible; however, code written without
+                             progressive mode enabled may cause compilation errors in progressive mode.
+  -script                    Evaluate the given Kotlin script (*.kts) file.
+  -Werror                    Report an error if there are any warnings.
+  -Wextra                    Enable extra checkers for K2.
+  -X                         Print a synopsis of advanced options.
+  -help (-h)                 Print a synopsis of standard options.
+  -nowarn                    Don't generate any warnings.
+  -verbose                   Enable verbose logging output.
+  -version                   Display the compiler version.
+  -J<option>                 Pass an option directly to JVM.
+  @<argfile>                 Read compiler arguments and file paths from the given file.
+
+For details, see https://kotl.in/cli
+OK

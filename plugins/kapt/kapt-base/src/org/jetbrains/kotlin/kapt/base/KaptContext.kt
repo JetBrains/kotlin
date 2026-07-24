@@ -56,7 +56,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         KaptJavaCompiler.preRegister(context)
 
         cacheManager = options.incrementalCache?.let {
-            JavaClassCacheManager(it)
+            JavaClassCacheManager(it, logger)
         }
         if (options.flags[KaptFlag.INCREMENTAL_APT]) {
             sourcesToReprocess = run {
@@ -91,12 +91,12 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         }
 
         javacOptions = Options.instance(context).apply {
-            for ((key, value) in options.processingOptions) {
+            for ([key, value] in options.processingOptions) {
                 val option = if (value.isEmpty()) "-A$key" else "-A$key=$value"
                 put(option, option) // key == value: it's intentional
             }
 
-            for ((key, value) in options.javacOptions) {
+            for ([key, value] in options.javacOptions) {
                 if (value.isNotEmpty()) {
                     put(key, value)
                 } else {

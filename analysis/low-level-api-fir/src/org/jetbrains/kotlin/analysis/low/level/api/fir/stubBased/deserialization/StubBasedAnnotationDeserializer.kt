@@ -113,7 +113,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 coneType = classId.toLookupTag().constructClassType()
             }
             this.argumentMapping = buildAnnotationArgumentMapping {
-                valueArguments?.forEach { (name, constantValue) ->
+                valueArguments?.forEach { [name, constantValue] ->
                     mapping[name] = resolveValue(ktAnnotation, constantValue)
                 }
             }

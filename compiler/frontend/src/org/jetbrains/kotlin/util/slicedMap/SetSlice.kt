@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.util.slicedMap
 
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 open class SetSlice<K> @JvmOverloads constructor(rewritePolicy: RewritePolicy, isCollective: Boolean = false) :
     BasicWritableSlice<K, Boolean>(rewritePolicy, isCollective) {
     companion object {

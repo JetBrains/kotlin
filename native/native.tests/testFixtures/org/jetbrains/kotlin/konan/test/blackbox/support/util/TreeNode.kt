@@ -24,7 +24,7 @@ interface TreeNode<T> {
 }
 
 internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageName, transform: (T) -> R): Collection<TreeNode<R>> {
-    val groupedItems: Map<PackageName, List<R>> = groupBy(extractPackageName).mapValues { (_, items) -> items.map(transform) }
+    val groupedItems: Map<PackageName, List<R>> = groupBy(extractPackageName).mapValues { [_, items] -> items.map(transform) }
 
     // Fast pass.
     when (groupedItems.size) {
@@ -36,7 +36,7 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageNa
     val root = TreeBuilder<R>(PackageName.EMPTY)
 
     // Populate the tree.
-    groupedItems.forEach { (packageName, items) ->
+    groupedItems.forEach { [packageName, items] ->
         var node = root
         packageName.segments.forEach { packageSegment ->
             val packageSegmentAsName = PackageName(listOf(packageSegment))

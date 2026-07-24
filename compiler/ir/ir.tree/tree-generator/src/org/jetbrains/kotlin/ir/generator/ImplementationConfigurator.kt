@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.constructorSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding
@@ -68,6 +69,12 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(functionWithLateBinding) {
             configureDeclarationWithLateBindinig(simpleFunctionSymbol)
+        }
+
+        impl(constructor)
+
+        impl(constructorWithLateBinding) {
+            configureDeclarationWithLateBindinig(constructorSymbol)
         }
 
         impl(field) {
@@ -160,30 +167,13 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
-            implementation.generationCallback = {
-                println()
-                printlnMultiLine(
-                    """
-                    companion object {
-                        @Deprecated(
-                            message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
-                            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
-                        )
-                        fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
-                            org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
-                    }
-                    """
-                )
-            }
         }
 
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
+            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName", "module")
             defaultWithErrorOnSet("startOffset", "0")
             defaultWithErrorOnSet("endOffset", "maxOf(fileEntry.maxOffset, 0)")
-            isMutable("module")
-            isLateinit("module")
         }
 
         allImplOf(loop) {
@@ -310,16 +300,16 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 printlnMultiLine("""
                     companion object {
                         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.String, value)
                 
                         fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Int, value)
                 
                         fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Null, null)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Null, null)
                 
                         fun boolean(startOffset: Int, endOffset: Int, type: IrType, value: Boolean): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Boolean, value)
                 
                         fun constTrue(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl =
                             boolean(startOffset, endOffset, type, true)
@@ -328,22 +318,22 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                             boolean(startOffset, endOffset, type, false)
                 
                         fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Long, value)
                 
                         fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Float, value)
                 
                         fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Double, value)
                 
                         fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Char, value)
                 
                         fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Byte, value)
                 
                         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl =
-                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
+                            IrConstImpl(null, startOffset, endOffset, type, IrConstKind.Short, value)
                     }
                 """.trimIndent())
             }
@@ -384,6 +374,12 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(annotation) {
+            default("classSymbol", "symbol.owner.parentAsClass.symbol", withGetter = true)
+            default("argumentMapping", "IrAnnotationArgsView(arguments, symbol)")
+
+            implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "IrAnnotationArgsView"))
+
             implementation.generationCallback = {
                 println()
                 println("companion object")

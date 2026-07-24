@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirDataObjectContentChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirDataObjectContentChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return

@@ -8,14 +8,18 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.convertAsColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.impl.insertImpliedColumns
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 
 class Require0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.column: SingleColumnApproximation by arg()
+    val Arguments.typeArg1 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.insertImpliedColumns(column)
+        // convertAsColumn creates implied columns
+        return receiver.convertAsColumn(column) { simpleColumnOf(it.name, typeArg1.coneType) }
     }
 }

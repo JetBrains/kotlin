@@ -15,18 +15,25 @@
  */
 
 package org.jetbrains.ring
-import org.jetbrains.benchmarksLauncher.Random
+
+import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 /**
  * Created by Mikhail.Glukhikh on 10/03/2015.
  *
  * Tests performance for function calls with default parameters
  */
-open class DefaultArgumentBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class DefaultArgument : SkipWhenBaseOnly() {
     private var arg = 0
 
     init {
-        arg = Random.nextInt()
+        // Use the same seed for reproducibility
+        val rnd = Random(84)
+        arg = rnd.nextInt(100)
     }
 
     
@@ -45,38 +52,38 @@ open class DefaultArgumentBenchmark {
         return first + second + third + fourth + fifth + sixth + seventh + eighth
     }
 
-    
-    //Benchmark
-    fun testOneOfTwo() {
-        sumTwo(arg)
+    @Benchmark
+    fun testOneOfTwo(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumTwo(arg))
     }
 
-    
-    //Benchmark
-    fun testTwoOfTwo() {
-        sumTwo(arg, arg)
+    @Benchmark
+    fun testTwoOfTwo(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumTwo(arg, arg))
     }
-    
-    //Benchmark
-    fun testOneOfFour() {
-        sumFour(arg)
-    }
-
-    
-    //Benchmark
-    fun testFourOfFour() {
-        sumFour(arg, arg, arg, arg)
+    @Benchmark
+    fun testOneOfFour(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumFour(arg))
     }
 
-    
-    //Benchmark
-    fun testOneOfEight() {
-        sumEight(arg)
+    @Benchmark
+    fun testFourOfFour(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumFour(arg, arg, arg, arg))
     }
 
-    
-    //Benchmark
-    fun testEightOfEight() {
-        sumEight(arg, arg, arg, arg, arg, arg, arg, arg)
+    @Benchmark
+    fun testOneOfEight(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumEight(arg))
+    }
+
+    @Benchmark
+    fun testEightOfEight(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(sumEight(arg, arg, arg, arg, arg, arg, arg, arg))
     }
 }

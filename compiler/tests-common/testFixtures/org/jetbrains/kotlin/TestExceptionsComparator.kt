@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.junit.Assert
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.test.fail
 
 private enum class ExceptionType {
     ANALYZING_EXPRESSION,
@@ -39,7 +39,7 @@ class TestExceptionsComparator(wholeFile: File) {
     private val filePathPrefix = "${wholeFile.parent}/${wholeFile.nameWithoutExtension}.$EXCEPTIONS_FILE_PREFIX"
 
     private fun analyze(e: Throwable): Matcher? {
-        for ((_, pattern) in exceptionMessagePatterns) {
+        for ([_, pattern] in exceptionMessagePatterns) {
             val matches = pattern.matcher(e.message ?: continue)
             if (matches.find()) return matches
         }
@@ -65,7 +65,7 @@ class TestExceptionsComparator(wholeFile: File) {
 
         postfixesOfFilesToCheck.forEach {
             if (File("$filePathPrefix.${it.postfix}.txt").exists())
-                Assert.fail("No $it, but file $filePathPrefix.${it.postfix}.txt exists.")
+                fail("No $it, but file $filePathPrefix.${it.postfix}.txt exists.")
         }
     }
 

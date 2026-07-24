@@ -5,36 +5,37 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.collectToggledCheckers
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
-import org.jetbrains.kotlin.test.GroupingPhaseInputArtifact
+import org.jetbrains.kotlin.test.GroupingStageInputArtifact
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.artifactsProvider
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -50,6 +51,7 @@ class NativeCompilerSecondStageFacade private constructor(
     class NonGrouping(
         testServices: TestServices,
         private val customNativeCompilerSettings: CustomNativeCompilerSettings,
+        private val isCompatibilityTesting: Boolean,
     ) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
         override val outputKind get() = ArtifactKinds.Native
         override fun isMainModule(module: TestModule): Boolean {
@@ -67,11 +69,14 @@ class NativeCompilerSecondStageFacade private constructor(
         ): BinaryArtifacts.Native {
             val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
             val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
-            require(compilerConfiguration.konanTarget == facade.kotlinNativeTargets.testTarget.name) {
+            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            checkTestInfrastructure(compilerConfiguration.konanTarget == facade.kotlinNativeTargets.testTarget.name) {
                 "Internal error: konanTargets in `compilerConfiguration`(${compilerConfiguration.konanTarget}) " +
                         "and `facade.kotlinNativeTargets`(${facade.kotlinNativeTargets.testTarget.name}) don't match.\n" +
                         "Check, if NativeSecondStageEnvironmentConfigurator has calculated `konanTarget` properly."
             }
+            @OptIn(ExperimentalCompilerArgument::class)
             val (exitCode, output, executableFile) = facade.runCli(
                 dirName = File(mainLibrary).name,
                 executableFileName = "${module.name}.${facade.executableExtension}",
@@ -81,8 +86,8 @@ class NativeCompilerSecondStageFacade private constructor(
                 mainLibraries = listOf(mainLibrary),
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE],
                 withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
-                customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
-                freeArgs = module.directives[FREE_COMPILER_ARGS] + customArgs,
+                freeArgs = module.directives[FREE_COMPILER_ARGS] + irCheckersArguments(module) + customArgs,
+                verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
@@ -98,9 +103,9 @@ class NativeCompilerSecondStageFacade private constructor(
     class Grouping(
         val testServices: TestServices,
         private val customNativeCompilerSettings: CustomNativeCompilerSettings
-    ) : AbstractGroupingPhaseTestFacade<GroupingPhaseInputArtifact, BinaryArtifacts.Native>() {
-        override fun transform(inputArtifact: GroupingPhaseInputArtifact): BinaryArtifacts.Native {
-            val servicesOfSomeModule = inputArtifact.nonGroupingPhaseOutputs.first().testServices
+    ) : AbstractGroupingStageTestFacade<GroupingStageInputArtifact, BinaryArtifacts.Native>() {
+        override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Native {
+            val servicesOfSomeModule = inputArtifact.nonGroupingStageOutputs.first().testServices
             val someModule = servicesOfSomeModule.moduleStructure.modules.last()
             var someLibrary: File? = null
             val freeArgs = someModule.directives[FREE_COMPILER_ARGS]
@@ -108,9 +113,9 @@ class NativeCompilerSecondStageFacade private constructor(
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
             val mainLibraries = mutableListOf<String>()
-            for ((services, _) in inputArtifact.nonGroupingPhaseOutputs) {
+            for ((val services = testServices, val _ = catchingExecutor) in inputArtifact.nonGroupingStageOutputs) {
                 val mainModule = services.moduleStructure.modules.last()
-                mainModule.collectDependencies(services).let { (regular, friend) ->
+                mainModule.collectDependencies(services).let { [regular, friend] ->
                     regularDependencies += regular
                     friendDependencies += friend
                 }
@@ -134,6 +139,7 @@ class NativeCompilerSecondStageFacade private constructor(
             // limit of 260 characters for executable file path. So we use the hash of the module name
             // instead.
             val moduleNameHash = someModule.name.hashCode().toHexString()
+            @OptIn(ExperimentalCompilerArgument::class)
             val (exitCode, output, executableFile) = facade.runCli(
                 dirName = someLibrary!!.resolveSibling(moduleNameHash).absolutePath,
                 executableFileName = "$moduleNameHash.${facade.executableExtension}",
@@ -143,8 +149,8 @@ class NativeCompilerSecondStageFacade private constructor(
                 mainLibraries = mainLibraries,
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
-                customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                freeArgs = freeArgs + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+                freeArgs = freeArgs + irCheckersArguments(someModule) + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+                verifyIrMode = VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
@@ -156,8 +162,8 @@ class NativeCompilerSecondStageFacade private constructor(
             }
         }
 
-        override val inputKind: TestArtifactKind<GroupingPhaseInputArtifact>
-            get() = GroupingPhaseInputArtifact.Kind
+        override val inputKind: TestArtifactKind<GroupingStageInputArtifact>
+            get() = GroupingStageInputArtifact.Kind
         override val outputKind: TestArtifactKind<BinaryArtifacts.Native>
             get() = ArtifactKinds.Native
     }
@@ -185,6 +191,7 @@ class NativeCompilerSecondStageFacade private constructor(
 
     data class CliRunResult(val exitCode: ExitCode, val output: ByteArrayOutputStream, val executableFile: File)
 
+    @OptIn(ExperimentalCompilerArgument::class)
     fun runCli(
         dirName: String,
         executableFileName: String,
@@ -194,8 +201,8 @@ class NativeCompilerSecondStageFacade private constructor(
         mainLibraries: List<String>,
         enableAssertions: Boolean,
         withPlatformLibs: Boolean,
-        customLanguageFeatures: List<String>,
-        freeArgs: List<String>
+        freeArgs: List<String>,
+        verifyIrMode: VerifyIrMode = VerifyIrMode.ERROR,
     ): CliRunResult {
         val executableFile = getNativeArtifactsOutputDir(testServices, dirName).resolve(executableFileName)
 
@@ -206,34 +213,36 @@ class NativeCompilerSecondStageFacade private constructor(
             val friendModules = friendDependencies.joinToString(File.pathSeparator)
             customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
-                listOfNotNull(
-                    K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
-                    optimizationArgument.cliArgument,
-                    K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
-                    K2NativeCompilerArguments::verifyIr.cliArgument("error"),
-                    K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
-                    K2NativeCompilerArguments::produce.cliArgument, "program",
-                    K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,
-                    K2NativeCompilerArguments::generateTestRunner.cliArgument,
-                    K2NativeCompilerArguments::testDumpOutputPath.cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path),
-                    *mainLibraries.map { mainLibrary ->
+                buildList {
+                    addAll(listOf(K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath))
+                    add(optimizationArgument.cliArgument)
+                    add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.runtimeAssertionsMode}=${RuntimeAssertsMode.PANIC}"))
+                    add(K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name))
+                    add(K2NativeCompilerArguments::llvmVariant.cliArgument("dev"))
+                    addAll(listOf(K2NativeCompilerArguments::produce.cliArgument, "program"))
+                    addAll(listOf(K2NativeCompilerArguments::outputName.cliArgument, executableFile.path))
+                    add(K2NativeCompilerArguments::generateTestRunner.cliArgument)
+                    add(K2NativeCompilerArguments::testDumpOutputPath
+                        .cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path))
+                    addAll(mainLibraries.map { mainLibrary ->
                         K2NativeCompilerArguments::includes.cliArgument(mainLibrary)
-                    }.toTypedArray(),
-                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
-                        .takeIf { cacheMode.useStaticCacheForDistributionLibraries },
-                    K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf { enableAssertions },
-                    K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name, // consider getting it from compilerConfiguration
-                    K2NativeCompilerArguments::nodefaultlibs.cliArgument.takeIf {
-                        !(this.withPlatformLibs || withPlatformLibs)
-                    },
-                ),
+                    })
+                    if (cacheMode.useStaticCacheForDistributionLibraries) {
+                        add(K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath))
+                        add(K2NativeCompilerArguments::binaryOptions.cliArgument("${BinaryOptions.enableReleaseBinaryCache}=true"))
+                    }
+                    if (enableAssertions) {
+                        add(K2NativeCompilerArguments::enableAssertions.cliArgument)
+                    }
+                    addAll(listOf(K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name)) // consider getting it from compilerConfiguration
+                    if (!(this@NativeCompilerSecondStageFacade.withPlatformLibs || withPlatformLibs)) {
+                        add(K2NativeCompilerArguments::nodefaultlibs.cliArgument)
+                    }
+                },
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
                 },
                 listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
-                customLanguageFeatures
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
-                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 freeArgs,
                 fileCheckStage?.let {
                     listOf(
@@ -251,10 +260,21 @@ internal fun TestModule.fileCheckStage(): String? {
     if (!directives.contains(FILECHECK_STAGE))
         return null
     return directives[FILECHECK_STAGE].singleOrNull()
-        ?: error("Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files")
+    // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+    // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        ?: testInfraError(
+            "Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files"
+        )
 }
 
 /**
  * Constructs file check dump path for the given executable file and stage
  */
 internal fun File.fileCheckDump(fileCheckStage: String): File = this.resolveSibling("out.$fileCheckStage.ll")
+
+fun irCheckersArguments(module: TestModule): List<String> =
+    module.directives.collectToggledCheckers().let { [additional, disabled] ->
+        val additionalArgs = additional.ifNotEmpty { "-Xadditional-ir-checkers=" + additional.joinToString(",") }
+        val disabledArgs = disabled.ifNotEmpty { "-Xdisable-ir-checkers=" + disabled.joinToString(",") }
+        listOfNotNull(additionalArgs, disabledArgs)
+    }

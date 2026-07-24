@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-66344
 // RENDER_DIAGNOSTIC_ARGUMENTS
-// LATEST_LV_DIFFERENCE
 
 sealed interface Key
 class AlphaKey : Key
@@ -14,20 +13,20 @@ open class Container<K: Key> {
     inner class Inner<T: Element<K>>
 
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Element<K>><!>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<K (of class Container<K : Key>)>; Alpha; T (of class Inner<T : Element<K>, Outer(K) : Key>)")!>Alpha<!>>::toString
+        Inner<Element<K>>::toString
     }
 }
 
 class ImplAlpha : Container<AlphaKey>() {
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
+        Inner<Alpha>::toString
     }
 }
 
 class ImplBeta : Container<BetaKey>() {
     private fun foo() {
-        <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; inner class Inner<T : Element<K>, Outer(K) : Key> : Any")!>Inner<Alpha><!>::toString
+        Inner<<!UPPER_BOUND_VIOLATED("Element<BetaKey>; Alpha; T (of class Inner<T : Element<K>, Outer(K) : Key>)")!>Alpha<!>>::toString
     }
 }
 
@@ -50,8 +49,8 @@ open class A<X> {
 }
 
 class D : A<String>() {
-    val refString = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("3; inner class C<Z, Outer(Y) : X, Outer(X)> : Any")!>B<String>.C<Int><!>::toString
-    val refAny = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS("3; inner class C<Z, Outer(Y) : X, Outer(X)> : Any")!>B<Any>.C<Int><!>::toString
+    val refString = B<String>.C<Int>::toString
+    val refAny = B<<!UPPER_BOUND_VIOLATED("String; Any; Y (of class B<Y : X, Outer(X)>)")!>Any<!>>.C<Int>::toString
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, interfaceDeclaration, sealed,

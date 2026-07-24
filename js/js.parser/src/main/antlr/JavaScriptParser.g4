@@ -469,6 +469,8 @@ singleExpressionImpl
     | identifier                                                                   # IdentifierExpression
     | Super                                                                        # SuperExpression
     | literal                                                                      # LiteralExpression
+    | objectBindingPattern '=' rhs=singleExpressionImpl                            # ObjectDestructuringAssignmentExpression // ECMAScript 6: destructuring assignment
+    | arrayBindingPattern '=' rhs=singleExpressionImpl                             # ArrayDestructuringAssignmentExpression  // ECMAScript 6: destructuring assignment
     | arrayLiteral                                                                 # ArrayLiteralExpression
     | objectLiteral                                                                # ObjectLiteralExpression
     | '(' expressionSequence ')'                                                   # ParenthesizedExpression

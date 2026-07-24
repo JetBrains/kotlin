@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsPacka
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
+@K1Deprecation
 class JvmBuiltInsPackageFragmentProvider(
     storageManager: StorageManager,
     finder: KotlinClassFinder,

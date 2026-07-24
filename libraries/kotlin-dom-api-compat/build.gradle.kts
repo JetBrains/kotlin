@@ -2,6 +2,9 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     `maven-publish`
     kotlin("multiplatform")
 }
@@ -35,7 +38,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
         )
-    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
+    val renderDiagnosticNames = project.kotlinBuildProperties.renderDiagnosticNames.get()
+    extra.set("renderDiagnosticNames", renderDiagnosticNames)
     if (renderDiagnosticNames) {
         compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
     }
@@ -43,7 +47,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
     compilerOptions.allWarningsAsErrors.set(true)
 }
 
-val emptyJavadocJar by tasks.registering(Jar::class) {
+val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
 

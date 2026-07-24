@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.load.kotlin.isContainedByCompiledPartOfOurModule
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper
 import java.io.File
 
+@OptIn(K1Deprecation::class)
 class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
     override fun isInFriendModule(what: DeclarationDescriptor, from: DeclarationDescriptor): Boolean {
         val fromSource = getSourceElement(from)
@@ -70,6 +72,7 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
    At the moment, there is no proper support for module infrastructure in the compiler.
    So we add try to remember given list of interdependent modules and use it for checking visibility.
  */
+@OptIn(K1Deprecation::class)
 class CliModuleVisibilityManagerImpl(override val enabled: Boolean) : ModuleVisibilityManager, Disposable {
     override val chunk: MutableList<Module> = arrayListOf()
     override val friendPaths: MutableList<String> = arrayListOf()

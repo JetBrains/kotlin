@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import java.io.File
 
 object MockLibraryUtilExt {
@@ -27,7 +27,7 @@ object MockLibraryUtilExt {
             extraJavacOptions,
             extraClasspath,
             extraModulepath = listOf(),
-            JUnit4Assertions
+            JUnit5Assertions
         )
     }
 

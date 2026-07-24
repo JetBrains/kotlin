@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -58,11 +59,13 @@ fun collectSources(
     val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
+    @OptIn(K1Deprecation::class)
     val virtualFileCreator = PreprocessedFileCreator(projectEnvironment.project)
 
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
         if (!pluginsConfigured) {
+            @OptIn(K1Deprecation::class)
             for (extension in compilerConfiguration.getCompilerExtensions(CompilerConfigurationExtension)) {
                 extension.updateFileRegistry(projectEnvironment.project)
             }
@@ -98,6 +101,7 @@ fun collectSources(
                 }
             },
             convertToSourceFiles = {
+                @OptIn(K1Deprecation::class)
                 val sources = listOf(KtVirtualFileSourceFile(virtualFileCreator.create(it)))
                 if (it.extension == KotlinFileType.EXTENSION) sources
                 else {

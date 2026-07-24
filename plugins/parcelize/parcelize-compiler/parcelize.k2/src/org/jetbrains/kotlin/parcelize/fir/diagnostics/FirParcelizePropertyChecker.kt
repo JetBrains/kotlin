@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -112,7 +113,11 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         inDataClass: Boolean = false
     ): Set<ConeKotlinType> {
         val session = context.session
-        if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
+        if (
+            type.hasParcelerAnnotation(session) ||
+            type in customParcelerTypes ||
+            (type.isMarkedNullable && type.withNullability(nullable = false, session.typeContext) in customParcelerTypes)
+        ) {
             return emptySet()
         }
 
@@ -146,7 +151,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
                 return setOf(type)
             }
-            val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
+            val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { [parameter, arg] ->
                 when (arg) {
                     is ConeKotlinType -> parameter to arg
                     is ConeKotlinTypeProjectionOut -> parameter to arg.type

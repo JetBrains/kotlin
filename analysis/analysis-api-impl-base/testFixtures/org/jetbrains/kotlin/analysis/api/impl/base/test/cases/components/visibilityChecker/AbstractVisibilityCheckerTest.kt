@@ -9,8 +9,11 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.allDeclarationsRecursively
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
@@ -77,7 +80,8 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 
-    private fun KaSession.findTargetSymbol(contextFile: KtFile, provider: ExpressionMarkerProvider): KaDeclarationSymbol {
+    context(_: KaSession)
+    private fun findTargetSymbol(contextFile: KtFile, provider: ExpressionMarkerProvider): KaDeclarationSymbol {
         val declarationByCaret = provider.getBottommostElementOfTypeAtCaretOrNull<KtNamedDeclaration>(contextFile, TARGET_QUALIFIER)
         return declarationByCaret?.symbol ?: getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, contextFile)
     }
@@ -97,7 +101,8 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         error("Cannot find use-site element to check visibility at.")
     }
 
-    private fun KaSession.checkVisibilityAndBuildResult(
+    context(session: KaSession)
+    private fun checkVisibilityAndBuildResult(
         declarationSymbol: KaDeclarationSymbol,
         useSiteElement: KtExpression,
         useSiteFileSymbol: KaFileSymbol,
@@ -110,9 +115,11 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
             useSiteElement,
         ).isVisible(declarationSymbol)
 
-        @Suppress("DEPRECATION")
-        val isVisibleByDeprecatedVisibilityFunction =
-            isVisible(declarationSymbol, useSiteFileSymbol, receiverExpression, useSiteElement)
+        val isVisibleByDeprecatedVisibilityFunction = createUseSiteVisibilityChecker(
+            useSiteFile = useSiteFileSymbol,
+            receiverExpression = receiverExpression,
+            position = useSiteElement,
+        ).isVisible(declarationSymbol)
 
         testServices.assertions.assertEquals(isVisibleByDeprecatedVisibilityFunction, visibleByUseSiteVisibilityChecker) {
             val receiverDescription = if (receiverExpression != null) " with receiver" else ""

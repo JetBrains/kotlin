@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.tests
 
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -52,6 +53,7 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
     fun `test - simple class`() {
         val module = createModuleDescriptor("class Foo")
         val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("Foo"))!!
+        @OptIn(K1Deprecation::class)
         assertNull(createObjCExportMapper().getCustomTypeMapper(foo))
     }
 
@@ -62,6 +64,8 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
     fun `test - List of int`() {
         /* We are only using built in / stdlib parts, so we can provide empty source code */
         val module = createModuleDescriptor("")
+
+        @OptIn(K1Deprecation::class)
         val objcExportMapper = createObjCExportMapper()
         val objcExportNamer = createObjCExportNamer(mapper = objcExportMapper)
 

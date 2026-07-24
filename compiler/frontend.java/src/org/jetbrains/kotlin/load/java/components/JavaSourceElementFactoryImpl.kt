@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaElement
@@ -28,6 +29,7 @@ private class JavaSourceElementImpl(override val javaElement: JavaElement) : Psi
         get() = (javaElement as? JavaElementImpl<*>)?.psi
 }
 
+@K1Deprecation
 class JavaSourceElementFactoryImpl : JavaSourceElementFactory {
     override fun source(javaElement: JavaElement): JavaSourceElement = JavaSourceElementImpl(javaElement)
 }

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
+@KaImplementationDetail
 interface LLModuleResolutionStrategyProvider {
     /**
      * Returns [LLModuleResolutionStrategy.STATIC] if the [module] is treated as a binary for the current session,
@@ -25,6 +27,7 @@ interface LLModuleResolutionStrategyProvider {
 /**
  * Specifies the way declarations are loaded and handled in the module.
  */
+@KaImplementationDetail
 enum class LLModuleResolutionStrategy {
     /**
      * When a module is analyzed with a [LAZY] resolution strategy, its declarations might be in an unresolved

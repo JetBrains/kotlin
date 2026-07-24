@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocodeTraverser
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkIn
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
 import java.util.*
 
+@K1Deprecation
 fun Pseudocode.traverse(
     traversalOrder: TraversalOrder,
     analyzeInstruction: (Instruction) -> Unit
@@ -39,6 +41,7 @@ fun Pseudocode.traverse(
     }
 }
 
+@K1Deprecation
 fun <D> Pseudocode.traverse(
     traversalOrder: TraversalOrder,
     edgesMap: Map<Instruction, Edges<D>>,
@@ -54,6 +57,7 @@ fun <D> Pseudocode.traverse(
     }
 }
 
+@K1Deprecation
 fun Pseudocode.traverseIncludingDeadCode(analyzeInstruction: (Instruction) -> Unit) {
     for (instruction in instructionsIncludingDeadCode) {
         if (instruction is LocalFunctionDeclarationInstruction) {
@@ -63,6 +67,7 @@ fun Pseudocode.traverseIncludingDeadCode(analyzeInstruction: (Instruction) -> Un
     }
 }
 
+@K1Deprecation
 fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectData(
     traversalOrder: TraversalOrder,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
@@ -172,8 +177,10 @@ private fun <I : ControlFlowInfo<*, *, *>> updateEdgeDataForInstruction(
     }
 }
 
+@K1Deprecation
 data class Edges<out T>(val incoming: T, val outgoing: T)
 
+@K1Deprecation
 enum class TraverseInstructionResult {
     CONTINUE,
     SKIP,
@@ -181,6 +188,7 @@ enum class TraverseInstructionResult {
 }
 
 // returns false when interrupted by handler
+@K1Deprecation
 fun traverseFollowingInstructions(
     rootInstruction: Instruction,
     visited: MutableSet<Instruction> = HashSet(),
@@ -204,25 +212,32 @@ fun traverseFollowingInstructions(
     return true
 }
 
+@K1Deprecation
 enum class TraversalOrder {
     FORWARD,
     BACKWARD
 }
 
+@K1Deprecation
 fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
     if (traversalOrder == FORWARD) enterInstruction else sinkInstruction
 
+@K1Deprecation
 fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
     if (traversalOrder == FORWARD) sinkInstruction else enterInstruction
 
+@K1Deprecation
 fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): List<Instruction> =
     if (traversalOrder == FORWARD) instructions else reversedInstructions
 
+@K1Deprecation
 fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
     if (traversalOrder == FORWARD) nextInstructions else previousInstructions
 
+@K1Deprecation
 fun Instruction.getPreviousInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
     if (traversalOrder == FORWARD) previousInstructions else nextInstructions
 
+@K1Deprecation
 fun Instruction.isStartInstruction(traversalOrder: TraversalOrder): Boolean =
     if (traversalOrder == FORWARD) this is SubroutineEnterInstruction else this is SubroutineSinkInstruction

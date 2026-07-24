@@ -1,0 +1,63 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario
+
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.ModuleContext
+
+/**
+ * This assertion has side effects modifying the expected total outputs list!
+ * If you decided to start using it, don't mix it with regular [assertOutputs]
+ */
+context(module: ModuleContext, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
+    assertAddedOutputs(addedOutputs.toSet())
+}
+
+/**
+ * This assertion has side effects modifying the expected total outputs list!
+ * If you decided to start using it, don't mix it with regular [assertOutputs]
+ */
+context(module: ModuleContext, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
+    requireScenarioModuleImpl().addOutputFiles(addedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
+}
+
+/**
+ * This assertion has side effects modifying the expected total outputs list!
+ * If you decided to start using it, don't mix it with regular [assertOutputs]
+ */
+context(module: ModuleContext, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
+    assertRemovedOutputs(removedOutputs.toSet())
+}
+
+/**
+ * This assertion has side effects modifying the expected total outputs list!
+ * If you decided to start using it, don't mix it with regular [assertOutputs]
+ */
+context(module: ModuleContext, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
+    val outputs = requireScenarioModuleImpl().outputFiles
+    val notPresentOutputs = removedOutputs - outputs
+    assert(notPresentOutputs.isEmpty()) {
+        "The following files were expected to be removed, however they weren't even produced: $notPresentOutputs"
+    }
+    requireScenarioModuleImpl().removeOutputFiles(removedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
+}
+
+context(module: ModuleContext, scenarioModule: ScenarioModule)
+fun CompilationOutcome.assertNoOutputSetChanges() {
+    val outputs = requireScenarioModuleImpl().outputFiles
+    assertOutputs(outputs)
+}
+
+context(scenarioModule: ScenarioModule)
+private fun requireScenarioModuleImpl() =
+    (scenarioModule as? BaseScenarioModule<*, *> ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))

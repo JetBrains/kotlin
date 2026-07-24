@@ -162,7 +162,9 @@ abstract class KotlinCompileCommon @Inject constructor(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles(),
-            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+            toolingDiagnosticsCollector = toolingDiagnosticsCollector,
+            toolingDiagnosticsContext = toolingDiagnosticsContext,
         )
         compilerRunner.runMetadataCompilerAsync(args, environment)
         compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }

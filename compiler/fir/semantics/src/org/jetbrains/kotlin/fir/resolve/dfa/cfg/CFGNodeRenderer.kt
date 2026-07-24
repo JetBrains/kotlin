@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
@@ -118,7 +119,7 @@ fun CFGNode<*>.render(): String =
                 is CodeFragmentEnterNode -> "Enter code fragment"
                 is CodeFragmentExitNode -> "Exit code fragment"
 
-                is FakeExpressionEnterNode -> "Enter fake expression"
+                is FakeExpressionTerminalNode -> "Enter or exit fake expression"
 
                 is EnterValueParameterNode -> "Enter default value of ${fir.name}"
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"

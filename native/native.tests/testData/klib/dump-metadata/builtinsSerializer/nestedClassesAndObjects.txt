@@ -1,5 +1,5 @@
 library {
-  // module name: <nestedClassesAndObjects.kt>
+  // module name: <main>
 
   library fragment {
     // package name: test
@@ -99,6 +99,9 @@ library {
 
       public final val memberFromObjA: kotlin/Int /* = ... */
         public final get
+    }
+
+    package {
     }
   }
 }

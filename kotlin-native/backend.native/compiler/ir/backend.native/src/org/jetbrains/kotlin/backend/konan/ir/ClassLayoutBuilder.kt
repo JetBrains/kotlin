@@ -57,7 +57,7 @@ internal class OverriddenFunctionInfo(
                 && function.target.overrides(overriddenFunction)
                 && function.bridgeDirectionsTo(overriddenFunction, policy).allNotNeeded()
 
-    fun getImplementation(context: Context): IrSimpleFunction? {
+    fun getImplementation(context: NativeBackendContext): IrSimpleFunction? {
         val target = function.target
         val implementation = if (!needBridge)
             target
@@ -104,7 +104,7 @@ internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int, 
 
 internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
 
-internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrModuleFragment) {
+internal class GlobalHierarchyAnalysis(val context: NativeBackendContext, val irModule: IrModuleFragment) {
     fun run() {
         /*
          * The algorithm for fast interface call and check:
@@ -286,7 +286,7 @@ internal fun IrField.requiredAlignment(llvm: CodegenLlvmHelpers): Int {
 }
 
 
-internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
+internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBackendContext) {
     private val bridgesPolicy = context.config.bridgesPolicy
 
     private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): FieldInfo {
@@ -479,10 +479,10 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         irClass.annotations.forEach {
             val irFile = irClass.fileOrNull
 
-            val annotationClass = it.symbol.owner.constructedClass
+            val annotationClass = it.classSymbol.owner
 
             if (annotationClass.hasAnnotation(RuntimeNames.associatedObjectKey)) {
-                val argument = it.arguments[0]
+                val argument = it.argumentMapping.values.singleOrNull()
 
                 val irClassReference = argument as? IrClassReference
                         ?: error(irFile, argument, "unexpected annotation argument")

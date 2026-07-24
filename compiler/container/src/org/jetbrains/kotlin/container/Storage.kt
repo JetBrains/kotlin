@@ -25,7 +25,9 @@ import java.lang.reflect.Type
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 enum class ComponentStorageState {
     Initial,
     Initialized,
@@ -35,6 +37,7 @@ enum class ComponentStorageState {
 
 internal class InvalidCardinalityException(message: String) : Exception(message)
 
+@K1Deprecation
 class ComponentStorage(private val myId: String, parent: ComponentStorage?) : ValueResolver {
     var state = ComponentStorageState.Initial
 

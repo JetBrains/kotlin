@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TestServices
@@ -38,7 +38,7 @@ abstract class AbstractNativeCoreTest : AbstractKotlinCompilerWithTargetBackendT
     }
 }
 
-abstract class AbstractTwoPhaseNativeCoreTest : AbstractTwoStageKotlinCompilerTest() {
+abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerTest() {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension
@@ -46,7 +46,7 @@ abstract class AbstractTwoPhaseNativeCoreTest : AbstractTwoStageKotlinCompilerTe
         this.extensionContext = context
     }
 
-    override fun configure(builder: TwoPhaseTestConfigurationBuilder): Unit = with(builder) {
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         commonConfiguration {
             useAdditionalService { // Register TestRunSettings into TestServices
                 extensionContext.createTestRunSettings(extensionContext.computeBlackBoxTestInstances())

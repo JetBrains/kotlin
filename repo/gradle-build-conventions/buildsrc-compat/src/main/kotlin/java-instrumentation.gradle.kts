@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-allprojects {
-    afterEvaluate {
-        configureJavaInstrumentation()
-    }
+afterEvaluate {
+    configureJavaInstrumentation()
 }
 
 // Hide window of instrumentation tasks
@@ -17,10 +15,10 @@ logger.info("Setting java.awt.headless=true, old value was $headlessOldValue")
  *  Configures instrumentation for all JavaCompile tasks in project
  */
 fun Project.configureJavaInstrumentation() {
-    if (plugins.hasPlugin("org.gradle.java")) {
-        val javaInstrumentator by configurations.creating
+    plugins.withId("org.gradle.java") {
+        val javaInstrumentator = configurations.create("javaInstrumentator")
         dependencies {
-            javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${rootProject.extra["versions.intellijSdk"]}")
+            javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${project.kotlinBuildProperties.versionsProperty("intellijSdk").get()}")
         }
         for (sourceSet in listOf(mainSourceSet, testSourceSet)) {
             tasks.named(sourceSet.compileJavaTaskName, InstrumentJava(javaInstrumentator))

@@ -47,22 +47,22 @@ import java.io.File
  *
  * @property isAfterDeserialization Whether the handler is to be executed before serialization (false) or after deserialization (true).
  */
-class SerializedIrDumpHandler(
+open class SerializedIrDumpHandler(
     testServices: TestServices,
-    private val isAfterDeserialization: Boolean,
+    protected val isAfterDeserialization: Boolean,
 ) : AbstractIrHandler(testServices) {
 
-    private val dumper = MultiModuleInfoDumper()
+    protected val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(KlibBasedCompilerTestDirectives)
 
-    override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (module.isSkipped) return
-
-        val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-
-        val dumpOptions = DumpIrTreeOptions(
+    protected open fun createDumpOptions(
+        module: TestModule,
+        info: IrBackendInput,
+        isFirFrontend: Boolean,
+    ): DumpIrTreeOptions {
+        return DumpIrTreeOptions(
             /** Rename temporary local variables using a stable naming scheme. */
             normalizeNames = true,
 
@@ -216,6 +216,9 @@ class SerializedIrDumpHandler(
                      * As a much simpler approach, fake overrides in local classes are not dumped both before and after serialization.
                      */
                     true
+                } else if (declaration is IrTypeAlias && !isAfterDeserialization) {
+                    /** KT-86632: Type aliases are not serialized into KLIBs. */
+                    true
                 } else {
                     false
                 }
@@ -229,25 +232,6 @@ class SerializedIrDumpHandler(
             printSourceOffsets = isFirFrontend,
 
             /**
-             * A workaround for mismatched offsets in default value expressions in annotations of fake overrides,
-             * which is finally going to be fixed in KT-74938.
-             *
-             * Example:
-             * ```
-             * // Fir2LazyIr:
-             * FUN[138, 282] FAKE_OVERRIDE name:...
-             *   annotations:
-             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[-1, -1] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
-             *
-             * // Deserialized IR:
-             * FUN[138, 282] FAKE_OVERRIDE name:...
-             *   annotations:
-             *     Deprecated(message = "...", replaceWith = <null>, level = GET_ENUM[1899, 1905] 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
-             * ```
-             */
-            printAnnotationsInFakeOverrides = false,
-
-            /**
              * It may happen that after running the IR inliner at the 1st phase of compilation, there are unbound symbols in
              * various flavors of [IrDeclarationReference] expressions. For such expressions, the IR dumper just renders
              * the standard "unbound symbol" text. Which leads to diverging ID dumps.
@@ -256,6 +240,14 @@ class SerializedIrDumpHandler(
              */
             referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(info.irMangler),
         )
+    }
+
+    override fun processModule(module: TestModule, info: IrBackendInput) {
+        if (module.isSkipped) return
+
+        val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+
+        val dumpOptions = createDumpOptions(module, info, isFirFrontend)
 
         val builder = dumper.builderForModule(module.name)
 

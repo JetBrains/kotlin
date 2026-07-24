@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -7,12 +10,8 @@ sourceSets {
 }
 
 dependencies {
-    api(project(":core:deserialization"))
-    api(project(":compiler:psi:psi-api"))
-    api(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    api(project(":analysis:decompiled:decompiler-to-psi"))
-
-    implementation(project(":js:js.serializer"))
+    api(kotlinStdlib())
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
 
     compileOnly(intellijCore())
 }

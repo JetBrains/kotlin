@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 fun <T> r(x: suspend () -> T): T = null!!
 
 fun nonReproducer1(): String = r {

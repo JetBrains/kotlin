@@ -1,8 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS
-
-// KT-61141: mustCheckInImports throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
-// IGNORE_BACKEND: NATIVE
+// DUMP_IR_DIFFERENCE: JVM
+// K/JVM: mustCheckInImports throws java.lang.IllegalStateException instead of IllegalStateException
 
 abstract class Visibility(val name: String, val isPublicAPI: Boolean) {
     open val internalDisplayName: String

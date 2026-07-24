@@ -16,10 +16,21 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ImmediateDiagnosticReporting
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticImmediately
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.hasDirectOrTransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.registerPackageGeneration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.syntheticImportProjectProductTypeFromFrameworkTypes
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -38,7 +49,7 @@ internal enum class AppleTarget(
     MACOS_DEVICE("macos", listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64)),
     IPHONE_DEVICE("ios", listOf(KonanTarget.IOS_ARM64)),
     IPHONE_SIMULATOR("iosSimulator", listOf(KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64)),
-    WATCHOS_DEVICE("watchos", listOf(KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64)),
+    WATCHOS_DEVICE("watchos", listOf(KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64)),
     WATCHOS_SIMULATOR("watchosSimulator", listOf(KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64)),
     TVOS_DEVICE("tvos", listOf(KonanTarget.TVOS_ARM64)),
     TVOS_SIMULATOR("tvosSimulator", listOf(KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64))
@@ -133,15 +144,75 @@ private fun Project.registerAssembleXCFrameworkTask(
     xcFrameworkName: String,
     buildType: NativeBuildType,
 ): TaskProvider<XCFrameworkTask> {
+    val xcframeworkVariant = lowerCamelCaseName(xcFrameworkName, buildType.getName())
     val taskName = lowerCamelCaseName(
         "assemble",
-        xcFrameworkName,
-        buildType.getName(),
+        xcframeworkVariant,
         "XCFramework"
     )
-    return registerTask(taskName) { task ->
+
+    val xcframeworkTask = registerTask<XCFrameworkTask>(taskName) { task ->
         task.baseName = provider { xcFrameworkName }
         task.buildType = buildType
+    }
+
+    emitSwiftPMDependenciesWithXCFrameworkIfNeeded(
+        xcframeworkTask = xcframeworkTask,
+        xcframeworkVariant = xcframeworkVariant,
+        xcframeworkName = xcFrameworkName,
+    )
+
+    return xcframeworkTask
+}
+
+private fun Project.emitSwiftPMDependenciesWithXCFrameworkIfNeeded(
+    xcframeworkTask: TaskProvider<XCFrameworkTask>,
+    xcframeworkVariant: String,
+    xcframeworkName: String,
+) {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return
+    // XCFramework() can be called before the Kotlin plugin registers the `kotlin` extension
+    // (AndroidX applies the multiplatform plugin lazily). Defer the SwiftPM check until the
+    // build script is evaluated and the extension exists. KT-86858.
+    launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
+        project.emitSwiftPMDependenciesWithXCFramework(xcframeworkTask, xcframeworkVariant, xcframeworkName)
+    }
+}
+
+private fun Project.emitSwiftPMDependenciesWithXCFramework(
+    xcframeworkTask: TaskProvider<XCFrameworkTask>,
+    xcframeworkVariant: String,
+    xcframeworkName: String,
+) {
+    val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
+    val xcframeworkPackageGeneration = registerPackageGeneration(
+        suffix = lowerCamelCaseName("forXCFramework", xcframeworkVariant),
+        swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension(),
+        syntheticImportProjectRoot = xcframeworkTask.map { it.outputXCFrameworkFile.parentFile },
+        syntheticImportProjectProductType = syntheticImportProjectProductTypeFromFrameworkTypes(),
+        // FIXME: KT-86745 This assumes that XCFramework is created from all frameworks, which are all created from main compilations
+        transitiveSwiftPMMetadataProvider = transitiveSwiftPMMetadataProvider(),
+    )
+    xcframeworkPackageGeneration.configure {
+        it.xcframeworkPath.set(provider { xcframeworkTask.map { it.outputXCFrameworkFile }.get() })
+        it.packageIdentifier.set(xcframeworkName + "Package")
+        it.onlyIf("Has SwiftPM dependencies") {
+            hasDirectOrTransitiveSwiftPMDependencies.get()
+        }
+    }
+    xcframeworkTask.dependsOn(xcframeworkPackageGeneration)
+    val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(this)
+    xcframeworkTask.configure {
+        it.doLast {
+            if (hasDirectOrTransitiveSwiftPMDependencies.get()) {
+                @OptIn(ImmediateDiagnosticReporting::class)
+                reportDiagnosticImmediately(
+                    it.logger,
+                    renderingOptions,
+                    KotlinToolingDiagnostics.XCFrameworkWithSwiftPMDependencies()
+                )
+            }
+        }
     }
 }
 

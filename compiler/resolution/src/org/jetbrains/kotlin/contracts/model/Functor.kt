@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
@@ -29,11 +30,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
  * to call of corresponding function, but instead of taking values and returning
  * values, it takes effects and returns effects.
  */
+@K1Deprecation
 interface Functor {
     fun invokeWithArguments(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect>
 }
 
 
+@K1Deprecation
 abstract class AbstractFunctor : Functor {
     override fun invokeWithArguments(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> =
         reducer.reduceEffects(doInvocation(arguments, typeSubstitution, reducer))
@@ -45,6 +48,7 @@ abstract class AbstractFunctor : Functor {
     ): List<ESEffect>
 }
 
+@K1Deprecation
 class ESTypeSubstitution(
     val substitutor: NewTypeSubstitutor,
     val builtIns: KotlinBuiltIns

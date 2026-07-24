@@ -20,11 +20,15 @@ import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.junit.Assert
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.fail
 import java.io.File
 
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
@@ -33,11 +37,13 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     protected open val moduleNames: Collection<String>? get() = null
 
+    @BeforeEach
     override fun setUp() {
         lookupsDuringTest = hashSetOf()
         super.setUp()
     }
 
+    @AfterEach
     override fun tearDown() {
         try {
             super.tearDown()
@@ -59,8 +65,8 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     open fun failFile(testDir: File): File = testDir.resolve(FAIL_FILE_NAME)
 
-    fun doTest(path: String) {
-        val testDir = File(path)
+    fun runTest(path: String) {
+        val testDir = ForTestCompileRuntime.transformTestDataPath(path)
         val failFile = failFile(testDir)
         var testPassed = false
         try {
@@ -93,7 +99,12 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val sourceRoots = setupTest(testDir, srcDir, cacheDir, outDir)
         val args = createCompilerArgumentsImpl(outDir, testDir)
 
-        val (initialExitCode, _, errors, initialCachesDump) = initialMake(cacheDir, outDir, sourceRoots, args)
+        (val initialExitCode = exitCode, val errors = compileErrors, val initialCachesDump = mappingsDump) = initialMake(
+            cacheDir,
+            outDir,
+            sourceRoots,
+            args
+        )
         var lastExitCode = initialExitCode
         var lastCachesDump = initialCachesDump
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
@@ -121,17 +132,20 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val expectedSBWithoutErrors = StringBuilder()
         val actualSBWithoutErrors = StringBuilder()
         var step = 1
-        for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
+        for ([modificationStep, buildLogStep] in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (incrementalExitCode, compiledSources, compileErrors, incrementalCachesDump) = incrementalMake(
-                cacheDir,
-                outDir,
-                sourceRoots,
-                createCompilerArgumentsImpl(
+            (
+                val incrementalExitCode = exitCode, val compiledSources, val compileErrors, val incrementalCachesDump = mappingsDump
+            ) =
+                incrementalMake(
+                    cacheDir,
                     outDir,
-                    testDir
+                    sourceRoots,
+                    createCompilerArgumentsImpl(
+                        outDir,
+                        testDir
+                    )
                 )
-            )
 
             lastExitCode = incrementalExitCode
             lastCachesDump = incrementalCachesDump
@@ -158,7 +172,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         if (expectedSBWithoutErrors.toString() != actualSBWithoutErrors.toString()) {
             if (BuildLogFinder.isJpsLogFile(buildLogFile)) {
                 // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
-                Assert.assertEquals(expectedSB.toString(), actualSB.toString())
+                Assertions.assertEquals(expectedSB.toString(), actualSB.toString())
             } else {
                 KtUsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, actualSB.toString(), false)
             }
@@ -189,9 +203,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
         val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
         val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
-        Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
+        Assertions.assertEquals(rebuildExpectedToSucceed, rebuildSucceeded, "Rebuild exit code differs from incremental exit code")
 
-        Assert.assertEquals("Compilation result differs", rebuildResult.exitCode, finalExitCode)
+        Assertions.assertEquals(rebuildResult.exitCode, finalExitCode, "Compilation result differs")
         if (finalExitCode != ExitCode.OK) {
             return
         }
@@ -200,7 +214,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         }
 
         // compare caches
-        assertEquals(rebuildResult.mappingsDump, finalMappingDump)
+        Assertions.assertEquals(rebuildResult.mappingsDump, finalMappingDump)
     }
 
     protected open val buildLogFinder: BuildLogFinder

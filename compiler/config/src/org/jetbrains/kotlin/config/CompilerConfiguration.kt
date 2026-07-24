@@ -120,7 +120,7 @@ class CompilerConfiguration {
 
     override fun toString(): String {
         return buildString {
-            for ((key, value) in map) {
+            for ([key, value] in map) {
                 append(key).append(":")
                 when (value) {
                     is Collection<*> -> {
@@ -131,7 +131,7 @@ class CompilerConfiguration {
                     }
                     is Map<*, *> -> {
                         appendLine()
-                        for ((k, v) in value) {
+                        for ([k, v] in value) {
                             append("  ").append(k).append("=").appendLine(v)
                         }
                     }

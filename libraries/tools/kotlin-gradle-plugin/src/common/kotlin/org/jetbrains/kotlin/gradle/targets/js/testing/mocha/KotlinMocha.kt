@@ -67,6 +67,7 @@ class KotlinMocha internal constructor(
             versions.kotlinWebHelpers,
         )
 
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.7.")
     override fun getPath() = "$basePath:kotlinMocha"
 
     // https://mochajs.org/#-timeout-ms-t-ms

@@ -5,12 +5,16 @@ implicit values:
     type = Child
     ownerSymbol = KaNamedClassSymbol:
       /Child
+    label = Child
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 4
     type = Base.Companion
     ownerSymbol = KaNamedClassSymbol:
       /Base.Companion
+    label = null
+
 
 scopes:
   LocalScope, index = 0

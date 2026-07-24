@@ -22,7 +22,7 @@ class AbiSnapshotDiffService() {
         fun compareJarsInternal(
             oldSnapshot: AbiSnapshot, newSnapshot: AbiSnapshot,
             caches: IncrementalCacheCommon
-        ) = diffCache.computeIfAbsent(Pair(oldSnapshot, newSnapshot)) { (snapshot, actual) -> doCompute(snapshot, actual, caches, emptyList()) }
+        ) = diffCache.computeIfAbsent(Pair(oldSnapshot, newSnapshot)) { [snapshot, actual] -> doCompute(snapshot, actual, caches, emptyList()) }
 
         fun inScope(fqName: FqName, scopes: Collection<String>) = scopes.any { scope -> fqName.toString().startsWith(scope) }
 
@@ -31,11 +31,11 @@ class AbiSnapshotDiffService() {
             val dirtyFqNames = mutableListOf<FqName>()
             val dirtyLookupSymbols = mutableListOf<LookupSymbol>()
 
-            for ((fqName, protoData) in snapshot.protos) {
+            for ([fqName, protoData] in snapshot.protos) {
                 if (!inScope(fqName, scopes)) continue
                 val newProtoData = actual.protos[fqName]
                 if (newProtoData == null) {
-                    val (fqNames, symbols) = addProtoInfo(protoData, fqName)
+                    val [fqNames, symbols] = addProtoInfo(protoData, fqName)
                     dirtyFqNames.addAll(fqNames)
                     dirtyLookupSymbols.addAll(symbols)
                 } else {

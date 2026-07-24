@@ -1,0 +1,3 @@
+expression: arr[0] = 1
+expression PSI: KtBinaryExpression
+type: kotlin.Unit

@@ -1,7 +1,0 @@
-KtNameReferenceExpression(29,34): 'Value'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in <local>: foo) Value [fake.kt]

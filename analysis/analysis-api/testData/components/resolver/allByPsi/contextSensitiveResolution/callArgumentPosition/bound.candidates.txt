@@ -380,7 +380,7 @@ KtNameReferenceExpression(331,336): 'value'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(337,339): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -529,7 +529,7 @@ KtNameReferenceExpression(399,404): 'value'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(405,407): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

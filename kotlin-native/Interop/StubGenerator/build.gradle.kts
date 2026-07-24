@@ -5,17 +5,21 @@ import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
     id("native-dependencies")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 application {
     mainClass.set("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
 }
 
-val testCppRuntime by configurations.creating {
+val testCppRuntime = configurations.create("testCppRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -34,6 +38,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":native:kotlin-native-utils")))
@@ -62,7 +67,11 @@ open class TestArgumentProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask {
+        // konan.home points to the kotlin-native project directory for konan.properties; declare it
+        // as an input so the cache is properly invalidated when it changes.
+        inputs.dir(project(":kotlin-native").isolated.projectDirectory.dir("konan"))
+            .withPathSensitivity(PathSensitivity.RELATIVE)
         // Copy-pasted from Indexer build.gradle.kts.
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
@@ -83,9 +92,5 @@ projectTests {
             "${it.key}=${it.value}"
         })
         environment["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
-
-        // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
-        // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }

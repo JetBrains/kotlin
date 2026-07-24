@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.backend.utils.irOrigin
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -67,7 +68,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 this@buildList
             )
 
-            fir.receiverParameter?.let {
+            fir.receiverParameter?.takeUnless { fir.isCompanionExtension }?.let {
                 this += irFunction.declareThisReceiverParameter(
                     thisType = it.typeRef.toIrType(),
                     thisOrigin = irFunction.origin,

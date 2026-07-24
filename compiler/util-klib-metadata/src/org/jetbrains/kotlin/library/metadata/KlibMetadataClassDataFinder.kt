@@ -20,7 +20,7 @@ class KlibMetadataClassDataFinder(
     private val nameResolver: NameResolver,
     private val containerSource: KlibDeserializedContainerSource? = null
 ) : ClassDataFinder {
-    val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
+    val nameList: List<Int> = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
     val classIdToIndex: Map<ClassId, Int> = buildMap {
         nameList.forEachIndexed { index, value -> this[nameResolver.getClassId(value)] = index }

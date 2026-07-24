@@ -65,7 +65,7 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
         mainModule: KtTestModule,
         testServices: TestServices,
     ) {
-        val (stubBasedDump, phases) = stubBasedOutput
+        val [stubBasedDump, phases] = stubBasedOutput
         val astBasedFirFile = astBasedFile.getOrBuildFirFile(facade)
         val astBasedElements = astBasedFirFile.collectAllElementsOfType<FirElementWithResolveState>()
         val shouldHaveDifferentLength = INCONSISTENT_DECLARATIONS in testServices.moduleStructure.allDirectives
@@ -83,7 +83,7 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
             }
         }
 
-        astBasedElements.zip(phases).forEach { (element, phase) ->
+        astBasedElements.zip(phases).forEach { [element, phase] ->
             element.lazyResolveToPhase(phase)
         }
 

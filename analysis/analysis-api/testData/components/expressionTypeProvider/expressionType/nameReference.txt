@@ -1,2 +1,3 @@
 expression: pair
+expression PSI: KtNameReferenceExpression
 type: ERROR_TYPE(Unresolved name: Pair)

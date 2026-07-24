@@ -1,0 +1,19 @@
+// Declared signatures: 5
+callables/Foo|null[0]
+callables/funWith1Parameter|funWith1Parameter(kotlin.collections.Map<*,*>){}[0]
+callables/funWith2Parameters|funWith2Parameters(kotlin.Pair<*,*>;callables.Foo){}[0]
+callables/funWithLocalMembers|funWithLocalMembers(){}[0]
+callables/funWithoutParameters|funWithoutParameters(){}[0]
+
+// Imported signatures: 11
+kotlin.collections/Collection|null[0]
+kotlin.collections/Iterator|null[0]
+kotlin.collections/List|null[0]
+kotlin.collections/Map|null[0]
+kotlin.collections/Set|null[0]
+kotlin/Any|null[0]
+kotlin/Int|null[0]
+kotlin/Nothing|null[0]
+kotlin/Pair|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]

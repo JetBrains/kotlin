@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtClass
   annotations: []
   callableId: /MyKotlinEnum.values
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: values
   origin: SOURCE_MEMBER_GENERATED
+  psi: KtClass
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -40,6 +42,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyKotlinEnum
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyKotlinEnum.values

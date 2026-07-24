@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -50,16 +52,27 @@ import org.jetbrains.kotlin.utils.bind
  *
  * There are handler steps after each facade step.
  */
-fun TestConfigurationBuilder.setupJvmPipelineSteps(parser: FirParser) {
+fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser: FirParser) {
     commonServicesConfigurationForCodegenAndDebugTest()
     configureFirParser(parser)
 
     facadeStep(::FirCliJvmFacade)
-    firHandlersStep()
+    firHandlersStep(init = {})
     facadeStep(::Fir2IrCliJvmFacade)
     irHandlersStep(init = {})
     facadeStep(::BackendCliJvmFacade)
     jvmArtifactsHandlersStep(init = {})
+}
+
+/**
+ * Sets up the pipeline for all JVM backend tests (the same as [setupJvmPipelineStepsWithoutCompilationErrorHandlers]).
+ * Also includes default compilation error handlers for all the steps.
+ */
+fun TestConfigurationBuilder.setupJvmPipelineSteps(parser: FirParser) {
+    setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
+    configureFirHandlersStep { commonFirHandlersForCodegenTest() }
+    configureIrHandlersStep { commonIrHandlersForCodegenTest() }
+    configureJvmArtifactsHandlersStep { useHandlers(::NoJvmSpecificCompilationErrorsHandler) }
 }
 
 /**
@@ -155,6 +168,9 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureFirHandlersStep {
         commonFirHandlersForCodegenTest()
     }
+    configureIrHandlersStep {
+        commonIrHandlersForCodegenTest()
+    }
     configureJvmArtifactsHandlersStep {
         commonBackendHandlersForCodegenTest()
     }
@@ -163,16 +179,25 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
 /**
  * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
  */
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
 }
 
 /**
+ * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
+ */
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonIrHandlersForCodegenTest() {
+    useHandlers(
+        ::NoIrCompilationErrorsHandler,
+    )
+}
+
+/**
  * Add JVM artifact handlers usually used in codegen tests
  */
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
     useHandlers(
         ::JvmBackendDiagnosticsHandler,
         ::DxCheckerHandler,
@@ -270,6 +295,11 @@ fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
 
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava21/*") {
         configureModernJavaTest(TestJdkKind.FULL_JDK_21, JvmTarget.JVM_21)
+    }
+
+    forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithValhalla/*") {
+        defaultDirectives { configureValhallaDefaultDirectives() }
+        useMetaTestConfigurators(::ValhallaJdkAvailabilitySkipper)
     }
 }
 

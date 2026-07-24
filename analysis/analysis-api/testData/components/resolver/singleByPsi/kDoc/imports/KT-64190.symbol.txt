@@ -1,2 +1,5 @@
-KtNamedFunction(0,32): '/**'
-  null
+KDocName(14,18): 'List'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List
+    ]

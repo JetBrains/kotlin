@@ -1,0 +1,20 @@
+[type]
+C?
+
+[direct super types]
+A?
+B?
+
+[approximated direct super types]
+A?
+B?
+
+[all super types]
+A?
+B?
+kotlin.Any?
+
+[approximated all super types]
+A?
+B?
+kotlin.Any?

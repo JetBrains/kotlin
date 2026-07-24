@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ public interface KotlinModuleInformationProvider : KotlinOptionalPlatformCompone
      * Whether [module] is empty, meaning it has no content.
      *
      * This function is used internally as an optimization to avoid creating dependency sessions for empty [KaModule]s. An empty [KaModule]
-     * can still be used as the use-site module of [analyze][org.jetbrains.kotlin.analysis.api.analyze].
+     * can still be used as the use-site module of [analyze][org.jetbrains.kotlin.analysis.api.session.analyze].
      *
      * @return `true` if the module is empty, `false` if it has content, or `null` if it cannot be determined.
      */

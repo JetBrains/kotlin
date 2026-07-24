@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -33,6 +35,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
+@SmokeTest
 class ScriptTest {
     @Test
     fun testStandardScriptWithParams() {
@@ -134,6 +137,7 @@ class ScriptTest {
 
             loadScriptingPlugin(configuration, rootDisposable)
 
+            @OptIn(CoreEnvironmentDeprecation::class)
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             try {

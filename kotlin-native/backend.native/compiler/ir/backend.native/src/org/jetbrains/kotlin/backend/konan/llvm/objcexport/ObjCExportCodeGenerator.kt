@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.*
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import kotlin.jvm.Throws
 
 internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> llvm.kNull
@@ -478,6 +480,14 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
+        // The following two also contain stuff from swift-export
+        generationState.bindClassToObjCNameClassAdapters.forEach { [name, ptr] ->
+            placedClassAdapters.putIfAbsent(name, ptr)
+        }
+        generationState.bindClassToObjCNameInterfaceAdapters.forEach { [name, ptr] ->
+            placedInterfaceAdapters.putIfAbsent(name, ptr)
+        }
+
         fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
             val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {
                 it.second
@@ -523,6 +533,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     // TODO: consider including this into ObjCExportCodeSpec.
+    @OptIn(K1Deprecation::class)
     private val objCClassForAny = ObjCClassForKotlinClass(
             namer.kotlinAnyName.binaryName,
             irBuiltIns.anyClass,
@@ -551,7 +562,7 @@ internal class ObjCExportCodeGenerator(
             unreachable()
         }
 
-        val methods = selectorsToDefine.map { (selector, bridge) ->
+        val methods = selectorsToDefine.map { [selector, bridge] ->
             ObjCDataGenerator.Method(selector, getEncoding(bridge), imp.toConstPointer())
         }
 
@@ -1003,7 +1014,7 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
                 emptyList()
             }
 
-    val throwsVararg = throwsAnnotation.arguments[0]
+    val throwsVararg = throwsAnnotation.argumentMapping[Name.identifier(Throws::exceptionClasses.name)]
             ?: return emptyList()
 
     if (throwsVararg !is IrVararg) error(method.fileOrNull, throwsVararg, "unexpected vararg")
@@ -1053,7 +1064,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         val objCReferenceArgsToRelease = mutableListOf<LLVMValueRef>()
 
-        val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
+        val objCArgs = methodBridge.parametersAssociated(irFunction).map { [bridge, parameter] ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
                     parameter!!
@@ -1512,7 +1523,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         null
     }
 
-    val (itable, itableSize) = when {
+    val [itable, itableSize] = when {
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
         irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
@@ -1596,7 +1607,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
             val allOverriddenMethods = method.allOverriddenFunctions
 
-            val (inherited, uninherited) = allOverriddenMethods.partition {
+            val [inherited, uninherited] = allOverriddenMethods.partition {
                 it in methodsCoveredByInheritedAdapters
             }
 
@@ -1665,7 +1676,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
     return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
 
-private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
+private fun ObjCExportCodeGenerator.findImplementation(irClass: IrClass, method: IrSimpleFunction, context: NativeBackendContext): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
         method in it.getLowered().allOverriddenFunctions
     } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")

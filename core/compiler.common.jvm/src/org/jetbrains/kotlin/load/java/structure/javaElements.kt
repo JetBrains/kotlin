@@ -134,6 +134,15 @@ interface JavaField : JavaMember {
     val type: JavaType
     val initializerValue: Any?
     val hasConstantNotNullInitializer: Boolean
+
+    /**
+     * Whether the source/binary declaration carries any initializer expression (constant or not).
+     * Broader than [hasConstantNotNullInitializer].
+     * Used by the lombok plugin's `@RequiredArgsConstructor`/`@AllArgsConstructor` generation to
+     * exclude fields that already have an initializer (`RequiredArgsConstructorGeneratorPart`,
+     * `AllArgsConstructorGeneratorPart` in `plugins/lombok`).
+     */
+    val hasInitializer: Boolean
 }
 
 interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {

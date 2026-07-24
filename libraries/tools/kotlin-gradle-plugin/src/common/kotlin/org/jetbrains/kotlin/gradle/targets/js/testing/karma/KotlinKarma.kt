@@ -9,7 +9,6 @@ import com.google.gson.GsonBuilder
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -102,22 +102,16 @@ class KotlinKarma internal constructor(
 
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.7.")
     override fun getPath() = "$basePath:kotlinKarma"
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
-    internal val isWasm: Boolean = compilation.webTargetVariant(
-        jsVariant = false,
-        wasmVariant = true,
-    )
+    internal val isWasm: Boolean = compilation.isWasm
 
-    internal val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-        compilation.webTargetVariant(
-            { npmProjectDir.map { it.asFile } },
-            { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
-        )
-    )
+    internal val npmToolingDir: Provider<Directory> =
+        compilation.npmToolingDir()
 
     /**
      * Used by IntelliJ IDEA to determine which Karma URL should be opened in a browser when starting a debug session.
@@ -143,7 +137,8 @@ class KotlinKarma internal constructor(
         progressReporter = true,
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait"),
-        resolveLoadersFromKotlinToolingDir = isWasm
+        resolveLoadersFromKotlinToolingDir = isWasm,
+        defineNonBrowserEnvironmentProperties = objects.property<Boolean>().convention(isWasm),
     )
 
     init {
@@ -200,11 +195,11 @@ class KotlinKarma internal constructor(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-reporter.js');
+                config.plugins.push(require('kotlin-web-helpers/dist/karma-kotlin-reporter'));
                 
                 config.loggers = [
                     {
-                        type: 'kotlin-web-helpers/dist/tc-log-appender.js',
+                        type: require('kotlin-web-helpers/dist/tc-log-appender'),
                         //default layout
                         layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
@@ -224,7 +219,7 @@ class KotlinKarma internal constructor(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-web-helpers/dist/karma-webpack-output.js');
+                config.plugins.push(require('kotlin-web-helpers/dist/karma-webpack-output'));
             """.trimIndent()
             )
         }
@@ -669,7 +664,7 @@ internal fun writeConfig(
                 """
                         config.plugins = config.plugins || [];
                         
-                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
+                        config.plugins.push(require('kotlin-web-helpers/dist/karma-kotlin-debug-plugin'));
                     """.trimIndent()
             )
         }

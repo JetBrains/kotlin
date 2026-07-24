@@ -64,10 +64,10 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
 
         if (expression is FirCollectionLiteral) {
             // FirCollectionLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, isVararg = isNamedSpread(it), expression.resolvedType) }
+            expression.arguments.forEach { checkArgument(it, isVararg = true, expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
-            for ((argument, parameter) in argumentMap) {
+            for ([argument, parameter] in argumentMap) {
                 if (!parameter.isVararg) continue
                 if (argument is FirVarargArgumentsExpression) {
                     argument.arguments.forEach { checkArgument(it, isVararg = true, parameter.returnTypeRef.coneType) }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @Suppress("UNUSED")
 class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testIntTypeMarkNullable(): KaType {
         val intTypeSymbol = getClassLikeSymbolByCaret("int")
         return session.typeCreator.classType(intTypeSymbol) {

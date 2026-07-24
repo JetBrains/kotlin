@@ -41,7 +41,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             ) {
                 println()
                 if (name == "source") {
-                    println("@", firImplementationDetailType.render())
+                    println(firImplementationDetailType.render())
                 }
                 replaceFunctionDeclaration(this, override, kind, overriddenType, forceNullable)
                 println()

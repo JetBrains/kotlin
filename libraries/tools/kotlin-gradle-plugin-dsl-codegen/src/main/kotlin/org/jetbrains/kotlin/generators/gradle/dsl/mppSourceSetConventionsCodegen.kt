@@ -36,6 +36,7 @@ internal fun generateKotlinMultiplatformSourceSetConventionsKt(withPrinterToFile
         .replaceRegion("Native Source Set Accessors", nativeDeclarations)
         .replaceRegion("Non-Native Source Set Accessors", nonNativeDeclarations)
         .replaceRegion("Common Source Set Accessors", commonDeclarations)
+        .trimEnd()
 
     withPrinterToFile(sourceFile) {
         println(newSource)
@@ -64,6 +65,7 @@ internal fun generateKotlinMultiplatformSourceSetConventionsImplKt(withPrinterTo
         .replaceRegion("Native Source Set Accessors", nativeDeclarations)
         .replaceRegion("Non-Native Source Set Accessors", nonNativeDeclarations)
         .replaceRegion("Common Source Set Accessors", commonDeclarations)
+        .trimEnd()
 
     withPrinterToFile(sourceFile) {
         println(newSource)

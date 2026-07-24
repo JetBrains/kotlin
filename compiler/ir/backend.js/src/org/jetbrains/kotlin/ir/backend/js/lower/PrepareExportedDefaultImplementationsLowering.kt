@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
@@ -22,9 +21,11 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 val EXPORTED_DEFAULT_IMPLEMENTATIONS by IrDeclarationOriginImpl.Regular
@@ -35,7 +36,6 @@ val IrDeclaration.isExportedDefaultImplementation: Boolean
 /**
  * Extracts default implementations from exported interfaces
  */
-@PhasePrerequisites(PrepareCollectionsToExportLowering::class)
 class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val allowImplementingInterfaces = context.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay
@@ -47,7 +47,7 @@ class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBac
     }
 
     private fun IrOverridableDeclaration<*>.shouldExtractAsExportedDefaultImplementation(): Boolean =
-        origin != CONVERTERS_TO_JS_COLLECTIONS
+        !hasAnnotation(JsStandardClassIds.Annotations.JsDontExportDefaultImplementation)
                 && modality != Modality.ABSTRACT
                 && isReal
                 && isExported(context)

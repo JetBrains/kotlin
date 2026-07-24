@@ -1,26 +1,32 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
-    api(project(":core:descriptors"))
-    api(project(":core:descriptors.jvm"))
-    api(project(":core:deserialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    runtimeOnly(project(":core:deserialization"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(libs.intellij.asm)
+    implementation(libs.guava)
+    implementation(commonDependency("com.google.code.findbugs", "jsr305"))
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:frontend.java"))
     api(project(":compiler:cli"))
     api(project(":compiler:cli-jvm"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:backend.jvm"))
     api(project(":compiler:cli-js"))
     api(project(":compiler:cli-metadata"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
-    api(project(":compiler:ir.serialization.jvm"))
-    api(project(":compiler:backend.jvm.entrypoint"))
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
     api(project(":compiler:build-tools:kotlin-build-statistics"))
@@ -28,8 +34,9 @@ dependencies {
     implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     compileOnly(intellijCore())
 
-    testFixturesApi(libs.junit4)
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
     testFixturesApi(kotlinStdlib())
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -41,11 +48,9 @@ dependencies {
     testImplementation(commonDependency("com.google.code.gson:gson"))
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
-    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
-
-optInToK1Deprecation()
 
 sourceSets {
     main { projectDefault() }
@@ -57,27 +62,18 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
-    testTask("testJvmICWithJdk11", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask("testJvmICWithJdk11", javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
         }
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 
-    tasks.withType<Test>().configureEach {
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
-            }
-        }
-    }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
     testData(project.isolated, "testData")

@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
 @DefaultImplementation(impl = OverridesBackwardCompatibilityHelper.Default::class)
+@K1Deprecation
 interface OverridesBackwardCompatibilityHelper {
     fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean
 

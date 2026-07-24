@@ -32,18 +32,11 @@ class GradleRunner(pathManager: PathManager) {
         listOfCommands.add(pathManager.tmpFolder + "/build.gradle")
     }
 
-
-    suspend fun clean() {
-        println("Building gradle project...")
-        runProcessCancellable(generateCommandLine("clean"))
-    }
-
-    suspend fun assembleAndroidTest() {
-        println("Building gradle project...")
-        val build = generateCommandLine("assembleAndroidTest")
-        build.addParameter("--stacktrace")
-        build.addParameter("--warn")
-        runProcessCancellable(build)
+    suspend fun assembleAndroidDebugTest(flavorName: String) {
+        println("Build APKs for flavor $flavorName...")
+        val capitalizedFlavor = Strings.capitalize(flavorName)
+        runProcessCancellable(generateBuildCommandLine("assemble" + capitalizedFlavor + "Debug"))
+        runProcessCancellable(generateBuildCommandLine("assemble" + capitalizedFlavor + "DebugAndroidTest"))
     }
 
     suspend fun installAndroidDebugTest(flavorName: String) {
@@ -56,6 +49,13 @@ class GradleRunner(pathManager: PathManager) {
     private fun generateCommandLine(taskName: String): GeneralCommandLine {
         val commandLine = GeneralCommandLine(listOfCommands)
         commandLine.addParameter(taskName)
+        return commandLine
+    }
+
+    private fun generateBuildCommandLine(taskName: String): GeneralCommandLine {
+        val commandLine = generateCommandLine(taskName)
+        commandLine.addParameter("--stacktrace")
+        commandLine.addParameter("--warn")
         return commandLine
     }
 }

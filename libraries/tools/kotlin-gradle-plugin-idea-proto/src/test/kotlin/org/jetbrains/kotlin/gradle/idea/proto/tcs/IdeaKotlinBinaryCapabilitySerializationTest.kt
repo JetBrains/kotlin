@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProto
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
-import org.junit.Test
+import kotlin.test.Test
 
 class IdeaKotlinBinaryCapabilitySerializationTest : AbstractSerializationTest<IdeaKotlinBinaryCapability>() {
     override fun serialize(value: IdeaKotlinBinaryCapability): ByteArray = IdeaKotlinBinaryCapabilityProto(value).toByteArray()

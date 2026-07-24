@@ -1,0 +1,37 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol value: R|kotlin/Any?|
+    Element 7
+        Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
+Smart Casts:
+    FirValueParameterSymbol value: R|kotlin/Any?|
+    Stability: STABLE_VALUE
+    Types:
+        kotlin.String
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] stableSmartCast.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/value| !is R|kotlin/String|) ->  {
+                ^test Unit
+            }
+        }
+
+        R|<local>/value|
+    }

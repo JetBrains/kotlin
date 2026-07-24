@@ -13,4 +13,4 @@ suspend fun suspendFun() { }
 <!WRONG_EXPORTED_DECLARATION("extension property")!>val String.extensionProperty<!>
     get() = this.length
 
-annotation class <!WRONG_EXPORTED_DECLARATION("annotation class")!>AnnotationClass<!>
+annotation class AnnotationClass

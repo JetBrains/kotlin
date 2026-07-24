@@ -30,6 +30,7 @@ object PathUtil {
     const val JS_LIB_10_JAR_NAME = "kotlin-jslib.jar"
 
     const val WASM_JS_LIB_NAME = "kotlin-stdlib-wasm-js"
+    const val WASM_WASI_LIB_NAME = "kotlin-stdlib-wasm-wasi"
 
     const val ALLOPEN_PLUGIN_NAME = "allopen-compiler-plugin"
     const val ALLOPEN_PLUGIN_JAR_NAME = "$ALLOPEN_PLUGIN_NAME.jar"
@@ -94,6 +95,8 @@ object PathUtil {
 
     const val KOTLIN_TEST_JS_NAME = "kotlin-test-js"
     const val KOTLIN_TEST_JS_JAR = "$KOTLIN_TEST_JS_NAME.jar"
+    const val KOTLIN_TEST_WASM_JS_NAME = "kotlin-test-wasm-js"
+    const val KOTLIN_TEST_WASM_WASI_NAME = "kotlin-test-wasm-wasi"
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
 

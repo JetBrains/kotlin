@@ -1,5 +1,5 @@
 // FULL_JDK
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FIR_DUMP
 
 import lombok.extern.java.Log

@@ -5,12 +5,14 @@ KtNameReferenceExpression(248,251): 'add'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
+          anchorPsi: KtFunctionLiteral
           annotations: []
           callableId: null
-          compilerVisibility: Public
+          contextParameters: []
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -20,6 +22,8 @@ KtNameReferenceExpression(248,251): 'add'
           name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          psi: KtFunctionLiteral
+          realPsi: KtFunctionLiteral
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -30,6 +34,7 @@ KtNameReferenceExpression(248,251): 'add'
                 type: kotlin/String
             ]
             type: test/Target<kotlin/String>
+          typeParameters: []
           visibility: PUBLIC
         type = test.Target<kotlin.String>
       extensionReceiver = null

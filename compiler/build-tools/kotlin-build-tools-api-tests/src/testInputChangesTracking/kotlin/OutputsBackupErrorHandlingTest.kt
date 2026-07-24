@@ -23,34 +23,34 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Externally tracked: with backup options, outputs are preserved after compilation error")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testExternallyTrackedWithBackupOptionsOutputsPreserved(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testWithBackupOptionsOutputsPreserved(strategyConfig) {
-            module("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
+            module("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Externally tracked: without backup options, outputs are lost after compilation error")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testExternallyTrackedWithoutBackupOptionsOutputsLost(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testWithoutBackupOptionsOutputsLost(strategyConfig) { module("jvm-module-1") }
+        testWithoutBackupOptionsOutputsLost(strategyConfig) { module("basic-multimodule-project/module-1") }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Internally tracked: with backup options, outputs are preserved after compilation error")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testInternallyTrackedWithBackupOptionsOutputsPreserved(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testWithBackupOptionsOutputsPreserved(strategyConfig) {
-            trackedModule("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
+            trackedModule("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Internally tracked: without backup options, outputs are lost after compilation error")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testInternallyTrackedWithoutBackupOptionsOutputsLost(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testWithoutBackupOptionsOutputsLost(strategyConfig) { trackedModule("jvm-module-1") }
+        testWithoutBackupOptionsOutputsLost(strategyConfig) { trackedModule("basic-multimodule-project/module-1") }
     }
 
     private fun testWithBackupOptionsOutputsPreserved(
@@ -71,7 +71,7 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
                 expectFail()
                 assertNoOutputSetChanges()
                 assertOutputFileExists("ExtraKt.class")
-                assertOutputFileExists("META-INF/jvm-module-1.kotlin_module")
+                assertOutputFileExists("META-INF/basic-multimodule-project_module-1.kotlin_module")
             }
         }
     }
@@ -93,26 +93,26 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
             module.compile {
                 expectFail()
                 assertOutputFileDoesNotExist("ExtraKt.class")
-                assertOutputFileDoesNotExist("META-INF/jvm-module-1.kotlin_module")
+                assertOutputFileDoesNotExist("META-INF/basic-multimodule-project/module-1.kotlin_module")
             }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Externally tracked: BACKUP_CLASSES only, outputs preserved but caches invalid - recompiles on revert")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testExternallyTrackedBackupClassesOnlyOutputsPreservedButCachesInvalid(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testBackupClassesOnlyOutputsPreservedButCachesInvalid(strategyConfig) {
-            module("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true })
+            module("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true })
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Internally tracked: BACKUP_CLASSES only, outputs preserved but caches invalid - recompiles on revert")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testInternallyTrackedBackupClassesOnlyOutputsPreservedButCachesInvalid(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testBackupClassesOnlyOutputsPreservedButCachesInvalid(strategyConfig) {
-            trackedModule("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true })
+            trackedModule("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true })
         }
     }
 
@@ -147,19 +147,19 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Externally tracked: with backup, compiled code is correct after error and fix")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testExternallyTrackedCorrectnessAfterRecovery(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testCorrectnessAfterRecovery(strategyConfig) {
-            module("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
+            module("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Internally tracked: with backup, compiled code is correct after error and fix")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testInternallyTrackedCorrectnessAfterRecovery(strategyConfig: CompilerExecutionStrategyConfiguration) {
         testCorrectnessAfterRecovery(strategyConfig) {
-            trackedModule("jvm-module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
+            trackedModule("basic-multimodule-project/module-1", icOptionsConfigAction = { it[BACKUP_CLASSES] = true; it[KEEP_IC_CACHES_IN_MEMORY] = true })
         }
     }
 

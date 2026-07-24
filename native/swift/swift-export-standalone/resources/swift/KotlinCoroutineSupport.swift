@@ -1,6 +1,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinCoroutineSupportBridge
+import Synchronization
 
 /// A Bridge type for Job-like class in Kotlin
 ///
@@ -10,22 +11,13 @@ import KotlinRuntimeSupport
 /// The value of this type should never outlive the task it wraps.
 @objc(KotlinTask)
 package final class KotlinTask: KotlinRuntime.KotlinBase {
-    public convenience init(_ currentTask: UnsafeCurrentTask) {
-        self.init { shouldCancel in
-            defer { if shouldCancel { currentTask.cancel() } }
-            return currentTask.isCancelled
-        }
-    }
 
-    private init(
-        cancellationCallback: @escaping (Swift.Bool) -> Swift.Bool
-    ) {
+    private let task = Mutex<UnsafeCurrentTask?>(nil)
+
+    fileprivate init(_ currentTask: UnsafeCurrentTask) {
         let __kt = __root___SwiftJob_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___SwiftJob_init_initialize(__kt, {
-            let originalBlock = cancellationCallback
-            return { arg0 in return originalBlock(arg0) }
-        }())
+        __root___SwiftJob_init_initialize(__kt, setTask(currentTask))
     }
 
     package override init(
@@ -35,12 +27,70 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 
-    public func cancelExternally() -> Swift.Void {
-        return __root___SwiftJob_cancelExternally(self.__externalRCRef())
+    private func setTask(_ task: UnsafeCurrentTask) -> (() -> Void) {
+        self.task.withLock {
+            guard $0 == nil else { fatalError("KotlinTask has already been initialized with a Task") }
+            $0 = task
+        }
+        return { [weak self] in self?.task.withLock { task in task?.cancel() } }
     }
 
-    public func setCallback(_ callback: @escaping @convention(block) (Bool) -> Bool) {
-        __root___SwiftJob_setCallback(self.__externalRCRef(), callback)
+    fileprivate func setTask(_ task: UnsafeCurrentTask) {
+        __root___SwiftJob_setCallback(self.__externalRCRef(), setTask(task))
+    }
+
+    fileprivate func clear() {
+        task.withLock { $0 = nil }
+    }
+
+    fileprivate func cancelExternally() -> Swift.Void {
+        return __root___SwiftJob_cancelExternally(self.__externalRCRef())
+    }
+}
+
+package func withKotlinContinuation<T>(
+    _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
+) async throws -> T {
+    try await withUnsafeCurrentTask { currentTask in
+        let cancellation = KotlinTask(currentTask!)
+        defer { cancellation.clear() }
+        return try await withTaskCancellationHandler {
+            return try await withUnsafeThrowingContinuation { nativeContinuation in
+                let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
+                let exception: (KotlinRuntime.KotlinBase?) -> Void = { error in
+                    nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                }
+                fn(continuation, exception, cancellation)
+            }
+        } onCancel: {
+            cancellation.cancelExternally()
+        }
+    }
+}
+
+package func withKotlinTask<T>(
+    _ continuation: @escaping (T) -> Void,
+    _ exception: @escaping (Error?) -> Void,
+    _ cancellation: KotlinTask,
+    _ operation: @escaping () async throws -> T
+) {
+    Task {
+        await withUnsafeCurrentTask { currentTask in
+            cancellation.setTask(currentTask!)
+            defer { cancellation.clear() }
+            await withTaskCancellationHandler {
+                do {
+                    let result = try await operation()
+                    continuation(result)
+                } catch let error as CancellationError {
+                    exception(nil)
+                } catch {
+                    exception(error)
+                }
+            } onCancel: {
+                cancellation.cancelExternally()
+            }
+        }
     }
 }
 
@@ -229,40 +279,23 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
     }
 
     public func next() async throws -> Element? {
-        try await {
-            try Task.checkCancellation()
-            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<Element?, any Error>) in
-                    withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Optional<Element>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
-
-                        let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0, arg1 in
-                                return {
-                                    if arg0 {
-                                        let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
-                                        continuation(.some(element))
-                                    } else {
-                                        continuation(.none)
-                                    }
-                                    return 0
-                                }()
-                        }, { arg0 in
-                                return {
-                                    exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
-                                    return 0
-                                }()
-                        }, cancellation.__externalRCRef())
-                    }
+        let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
+            let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
+                if arg0 {
+                    let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                    continuation(.some(element))
+                } else {
+                    continuation(.none)
                 }
-            } onCancel: {
-                cancellation?.cancelExternally()
+                return 0
             }
-        }()
+            let _exception: (UnsafeMutableRawPointer?) -> Int32 = { arg0 in
+                exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
+                return 0
+            }
+            let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), _continuation, _exception, cancellation.__externalRCRef())
+        }
+        return result
     }
 }
 

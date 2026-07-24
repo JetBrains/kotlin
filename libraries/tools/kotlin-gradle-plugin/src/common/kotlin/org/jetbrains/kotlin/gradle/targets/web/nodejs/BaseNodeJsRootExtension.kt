@@ -88,7 +88,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var version = "24.10.0"
+    var version = "24.16.0"
 
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
@@ -106,13 +106,18 @@ abstract class BaseNodeJsRootExtension internal constructor(
     val rootProjectDir
         get() = project.rootDir
 
-    val packageManagerExtension: Property<NpmApiExt> = project.objects.property()
+    val packageManagerExtension: Property<NpmApiExtension<*, *>> = project.objects.property()
 
     val taskRequirements: TasksRequirements
         get() = resolver.tasksRequirements
 
     lateinit var resolver: KotlinRootNpmResolver
 
+    /**
+     * Root directory for the root npm project.
+     * Nested inside the Gradle project's root `build/` directory.
+     * Contains subdirectories of npm workspaces for each Kotlin compilation.
+     */
     val rootPackageDirectory: Provider<Directory> = project.layout.buildDirectory.dir(rootDir)
 
     val projectPackagesDirectory: Provider<Directory>

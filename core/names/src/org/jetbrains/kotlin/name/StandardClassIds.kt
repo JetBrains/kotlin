@@ -198,6 +198,8 @@ object StandardClassIds {
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
 
+        val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
+
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
@@ -235,6 +237,8 @@ object StandardClassIds {
         val MustUseReturnValues = "MustUseReturnValues".baseId()
         val IgnorableReturnValue = "IgnorableReturnValue".baseId()
 
+        val EqualityBound = "EqualityBound".baseId()
+
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
         val OptionalExpectation = "OptionalExpectation".baseId()
@@ -246,6 +250,7 @@ object StandardClassIds {
         val Transient = "Transient".jvmId()
 
         val jsExport = "JsExport".jsId()
+        val jsImplicitExport = "JsImplicitExport".jsId()
         val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
         val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
         val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
@@ -266,6 +271,8 @@ object StandardClassIds {
 
             val retentionValue = value
             val targetAllowedTargets = Name.identifier("allowedTargets")
+
+            val equalityBound = Name.identifier("bound")
 
             val sinceKotlinVersion = Name.identifier("version")
 
@@ -344,4 +351,4 @@ private fun String.callableId(classId: ClassId) = CallableId(classId, Name.ident
 
 private fun String.jsId() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
 
-private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { (k, v) -> v to k }
+private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { [k, v] -> v to k }

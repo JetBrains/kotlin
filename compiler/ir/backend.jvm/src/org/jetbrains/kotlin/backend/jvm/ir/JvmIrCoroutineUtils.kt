@@ -35,7 +35,7 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean {
     if (isStaticInlineClassReplacement) return false
 
     val parentClass = parent as? IrClass ?: return false
-    if (!parentClass.isSingleFieldValueClass) return false
+    if (!parentClass.isInlineClass) return false
 
     return parentClass.declarations.find {
         it.attributeOwnerId == attributeOwnerId && it !== this

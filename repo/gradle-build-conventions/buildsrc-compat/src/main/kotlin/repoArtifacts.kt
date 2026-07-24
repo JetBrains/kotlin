@@ -13,6 +13,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
@@ -56,13 +57,13 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
  */
 fun Project.testsJarToBeUsedAlongWithFixtures() {
     // Define a test jar task.
-    val testsJar by tasks.registering(Jar::class) {
+    val testsJar = tasks.register("testsJar", Jar::class) {
         archiveClassifier.set("tests")
         from(sourceSets["test"].output)
     }
 
     // Create a consumable, non-resolvable configuration with a unique capability.
-    val testsJarConfig by configurations.creating {
+    val testsJarConfig = configurations.create("testsJarConfig") {
         isCanBeConsumed = true
         isCanBeResolved = false
         attributes {
@@ -81,6 +82,7 @@ fun Project.testsJarToBeUsedAlongWithFixtures() {
 fun Project.setPublishableArtifact(
     jarTask: TaskProvider<out Jar>
 ) {
+    noDefaultJar()
     addArtifact("runtimeElements", jarTask)
     addArtifact("apiElements", jarTask)
     tasks.named("assemble").configure { dependsOn(jarTask) }
@@ -312,8 +314,16 @@ fun Project.publish(moduleMetadata: Boolean = false, sbom: Boolean = true, confi
     }
 }
 
-fun Project.idePluginDependency(block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
+fun Project.idePluginPublishingLatch(block: () -> Unit) {
+    specialPublishingLatch("publish.ide.plugin.dependencies", block)
+}
+
+fun Project.analysisApiPublishingLatch(block: () -> Unit) {
+    specialPublishingLatch("publish.analysis.api", block)
+}
+
+private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
+    val shouldActivate = project.kotlinBuildProperties.booleanProperty(latchPropertyName).getOrElse(false)
     if (shouldActivate) {
         block()
     }
@@ -324,15 +334,13 @@ fun Project.publishJarsForIde(
     libraryDependencies: List<String> = emptyList(),
     jarTaskConfiguration: Jar.() -> Unit = {},
 ) {
-    val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-
     for (projectName in projects) {
-        check(projectName in projectsUsedInIntelliJKotlinPlugin) {
-            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `extra[\"projectsUsedInIntelliJKotlinPlugin\"]`"
+        check(projectName in CompilerModules.projectsDependingOnStableStdlib) {
+            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `CompilerModules.projectsDependingOnStableStdlib`"
         }
     }
 
-    idePluginDependency {
+    idePluginPublishingLatch {
         publishProjectJars(projects, libraryDependencies, jarTaskConfiguration)
     }
     configurations.all {
@@ -360,7 +368,7 @@ fun Project.publishTestJarsForIde(
     projectWithFixturesNames: List<String> = emptyList(),
     projectWithRenamedTestJarNames: List<String> = emptyList(),
 ) {
-    idePluginDependency {
+    idePluginPublishingLatch {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
@@ -400,7 +408,7 @@ fun Project.publishProjectJars(
 ) {
     apply<JavaPlugin>()
 
-    val fatJarContents by configurations.creating
+    val fatJarContents = configurations.create("fatJarContents")
 
     dependencies {
         for (projectName in projects) {
@@ -414,7 +422,7 @@ fun Project.publishProjectJars(
 
     publish()
 
-    val jar: Jar by tasks
+    val jar = tasks.getByName<Jar>("jar")
 
     jar.apply {
         dependsOn(fatJarContents)
@@ -427,13 +435,6 @@ fun Project.publishProjectJars(
     }
 
     sourcesJar {
-        for (projectPath in projects) {
-            val projectTasks = project(projectPath).tasks
-            if (projectTasks.names.any { it == "compileKotlin" }) {
-                // this is needed in order to declare explicit dependency on code generation tasks
-                dependsOn(projectTasks.named("compileKotlin").map { it.dependsOn })
-            }
-        }
         from {
             projects.map {
                 project(it).mainSourceSet.allSource
@@ -452,7 +453,7 @@ private fun Project.publishTestJar(
 ) {
     apply<JavaPlugin>()
 
-    val fatJarContents by configurations.creating
+    val fatJarContents = configurations.create("fatJarContents")
 
     dependencies {
         for (projectName in projects) {
@@ -470,7 +471,7 @@ private fun Project.publishTestJar(
 
     publish(sbom = false)
 
-    val jar: Jar by tasks
+    val jar = tasks.getByName<Jar>("jar")
 
     jar.apply {
         dependsOn(fatJarContents)

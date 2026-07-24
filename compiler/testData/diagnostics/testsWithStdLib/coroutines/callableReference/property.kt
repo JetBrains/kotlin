@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 import kotlin.coroutines.coroutineContext
 
 val c = ::<!UNSUPPORTED!>coroutineContext<!>

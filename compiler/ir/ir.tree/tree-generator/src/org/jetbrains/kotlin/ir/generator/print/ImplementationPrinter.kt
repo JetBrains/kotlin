@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.print
 import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
 import org.jetbrains.kotlin.generators.tree.AbstractImplementationPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
+import org.jetbrains.kotlin.generators.tree.PrintableAnnotation
 import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
@@ -29,7 +30,7 @@ internal class ImplementationPrinter(
     override fun getPureAbstractElementType(implementation: Implementation): ClassRef<*> =
         org.jetbrains.kotlin.ir.generator.elementBaseType
 
-    override val implementationOptInAnnotation: ClassRef<*>
+    override val implementationOptInAnnotation: PrintableAnnotation
         get() = irImplementationDetailType
 
     override val separateFieldsWithBlankLine: Boolean

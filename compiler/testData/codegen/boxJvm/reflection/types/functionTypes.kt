@@ -12,6 +12,8 @@ class A {
     fun suspendFunction0(): (suspend () -> Unit)? = null
     fun suspendFunction1(): (suspend (String) -> Unit) = null!!
     fun suspendFunction3(): (suspend (Any, Int, Unit?) -> LongArray)? = null
+    fun extensionFunction0(): (String.() -> Int) = null!!
+    fun extensionFunction1(): ((String.(Int) -> Boolean)?) = null
 }
 
 fun check(function: KCallable<*>, typeToString: String, classFqName: String, arguments: String) {
@@ -31,6 +33,8 @@ fun box(): String {
     check(A::suspendFunction0, "(suspend () -> kotlin.Unit)?", "kotlin.Function1", "[kotlin.Unit]")
     check(A::suspendFunction1, "suspend (kotlin.String) -> kotlin.Unit", "kotlin.Function2", "[kotlin.String, kotlin.Unit]")
     check(A::suspendFunction3, "(suspend (kotlin.Any, kotlin.Int, kotlin.Unit?) -> kotlin.LongArray)?", "kotlin.Function4", "[kotlin.Any, kotlin.Int, kotlin.Unit?, kotlin.LongArray]")
+    check(A::extensionFunction0, "kotlin.String.() -> kotlin.Int", "kotlin.Function1", "[kotlin.String, kotlin.Int]")
+    check(A::extensionFunction1, "(kotlin.String.(kotlin.Int) -> kotlin.Boolean)?", "kotlin.Function2", "[kotlin.String, kotlin.Int, kotlin.Boolean]")
 
     return "OK"
 }

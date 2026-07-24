@@ -1,0 +1,7 @@
+STEP 0:
+    dependencies: lib1
+    added file: m.kt
+    expected dts: m.0.d.ts
+STEP 1:
+    dependencies: lib1
+    expected dts: m.1.d.ts

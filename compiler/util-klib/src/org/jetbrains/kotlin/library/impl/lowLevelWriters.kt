@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.utils.writeUnsignedLeb128
 import java.io.ByteArrayOutputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
-import java.io.FileOutputStream
+import java.nio.file.Path
+import kotlin.io.path.outputStream
 
 sealed class IrDataWriter {
     protected abstract fun writeData(dataOutput: DataOutput)
 
-    fun writeIntoFile(path: String) {
-        FileOutputStream(path).use { fos ->
+    fun writeIntoFile(path: Path) {
+        path.outputStream().use { fos ->
             DataOutputStream(fos).use { dos -> writeData(dos) }
         }
     }

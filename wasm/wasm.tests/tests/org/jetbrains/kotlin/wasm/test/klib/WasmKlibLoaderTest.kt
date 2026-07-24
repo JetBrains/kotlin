@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibLoaderTest
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
-import java.io.File
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 import kotlin.test.fail
 
 abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : AbstractKlibLoaderTest() {
@@ -46,24 +47,22 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
         )
 
     override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
+        parameters: CompilationParameters
     ) {
         val args = KotlinWasmCompilerArguments().apply {
-            if (asFile) {
-                outputDir = klibLocation.parent
+            if (parameters.asFile) {
+                outputDir = parameters.klibLocation.parent.pathString
             } else {
                 nopack = true
-                outputDir = klibLocation.path
+                outputDir = parameters.klibLocation.pathString
             }
             wasmTarget = this@AbstractWasmKlibLoaderTest.target.alias
             libraries = stdlib
-            moduleName = sourceFile.nameWithoutExtension
-            irModuleName = sourceFile.nameWithoutExtension
-            customKlibAbiVersion = abiVersion.toString()
-            freeArgs = listOf(sourceFile.absolutePath)
+            moduleName = parameters.sourceFile.nameWithoutExtension
+            irModuleName = parameters.sourceFile.nameWithoutExtension
+            customKlibAbiVersion = parameters.abiVersion.toString()
+            freeArgs = listOf(parameters.sourceFile.absolutePathString())
+            if (parameters.withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
         }
 
         val messageCollector = MessageCollectorImpl()

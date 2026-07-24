@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ESEffect
 
+@K1Deprecation
 class CallComputation(override val type: ESType?, override val effects: List<ESEffect>) : Computation
 
+@K1Deprecation
 object UNKNOWN_COMPUTATION : Computation {
     override val type: ESType? = null
     override val effects: List<ESEffect> = emptyList()

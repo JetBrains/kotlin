@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function sum(x: number, y: number): Promise<number>;
         function varargInt(x: Int32Array): Promise<number>;
@@ -115,9 +114,11 @@ declare namespace JS_TESTS {
                 readonly "foo.HolderOfParentSuspendFun1": unique symbol;
             };
         }
-        class ExportedChild /* extends foo.NotExportedParent */ {
+        class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
+            parentSuspendFun1(someValue?: string): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -127,3 +128,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

@@ -1,5 +1,5 @@
 library {
-  // module name: <TopLevelFunctions.kt>
+  // module name: <main>
 
   library fragment {
     // package name: <root>
@@ -24,12 +24,6 @@ library {
     }
 
     package {
-
-      @A
-      @B
-      public final fun a(): kotlin/Unit
-
-      public final fun Foo.e(): kotlin/Unit
 
       public final fun f1(x: Foo): kotlin/Unit
 
@@ -58,6 +52,12 @@ library {
       public final inline fun <reified T#0 /* T */> t4(x: T#0): kotlin/Unit
 
       public final fun <T#0 /* T */ : kotlin/Number> t5(x: T#0): kotlin/Unit
+
+      public final fun Foo.e(): kotlin/Unit
+
+      @A
+      @B
+      public final fun a(): kotlin/Unit
     }
   }
 }

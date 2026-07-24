@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -135,7 +136,7 @@ public fun FirExtension.createConstructor(
         }
     }.build().also {
         if (generateDelegatedNoArgConstructorCall) {
-            it.generateNoArgDelegatingConstructorCall(session)
+            it.tryPopulatingNoArgDelegatingConstructorCall(session)
         }
     }
 }
@@ -159,22 +160,24 @@ public fun FirExtension.createDefaultPrivateConstructor(
     }
 }
 
-private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSession) {
+private fun FirConstructor.tryPopulatingNoArgDelegatingConstructorCall(session: FirSession) {
     val owner = returnTypeRef.coneType.toClassSymbol(session)
     requireNotNull(owner)
-    val delegatingConstructorCall = buildDelegatedConstructorCall {
-        val superClasses = owner.resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
-        val singleSupertype = when (superClasses.size) {
-            0 -> session.builtinTypes.anyType.coneType
-            1 -> superClasses.first()
-            else -> error("Object $owner has more than one class supertypes: $superClasses")
-        }
-        constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
-        val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
-        val superConstructorSymbol = superSymbol.declaredMemberScope(session, memberRequiredPhase = null)
+    replaceDelegatedConstructor(owner.tryGeneratingNoArgDelegatingConstructorCall(session))
+}
+
+/**
+ * Attempts to generate a no-argument delegating constructor call for the given class symbol.
+ *
+ * It returns `null` if the correct delegated constructor call can't be generated for some reason.
+ */
+public fun FirClassSymbol<*>.tryGeneratingNoArgDelegatingConstructorCall(session: FirSession): FirDelegatedConstructorCall? {
+    return buildDelegatedConstructorCall {
+        val superClassSymbol = getSuperClassSymbolOrAny(session) ?: return null
+        constructedTypeRef = superClassSymbol.defaultType().toFirResolvedTypeRef()
+        val superConstructorSymbol = superClassSymbol.declaredMemberScope(session, memberRequiredPhase = null)
             .getDeclaredConstructors()
-            .firstOrNull { it.valueParameterSymbols.isEmpty() }
-            ?: error("No arguments constructor for class $singleSupertype not found")
+            .firstOrNull { it.valueParameterSymbols.isEmpty() } ?: return null
         calleeReference = buildResolvedNamedReference {
             name = superConstructorSymbol.name
             resolvedSymbol = superConstructorSymbol
@@ -182,5 +185,4 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSe
         argumentList = FirEmptyArgumentList
         isThis = false
     }
-    replaceDelegatedConstructor(delegatingConstructorCall)
 }

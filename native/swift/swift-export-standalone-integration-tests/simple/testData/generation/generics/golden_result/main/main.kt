@@ -13,15 +13,97 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(StringProducer::class, "4main14StringProducerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(TripleBox::class, "4main9TripleBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_A")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_AFactory")
 @file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_B")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_Consumer")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_ConsumerProducer")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_Processor")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_Producer")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("AFactory_create__reverse_swift")
+internal external fun AFactory_create__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(AFactory::class, "create")
+public fun AFactory_create__reverse(self: AFactory<A<kotlin.Unit>>): A<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = AFactory_create__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as A<kotlin.Any?>
+}
+
+@ImportedBridge("A_foo_get__reverse_swift")
+internal external fun A_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(A::class, "<get-foo>")
+public fun A_foo_get__reverse(self: A<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = A_foo_get__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("B_foo_get__reverse_swift")
+internal external fun B_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(B::class, "<get-foo>")
+public fun B_foo_get__reverse(self: B<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = B_foo_get__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, item: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Consumer::class, "consume")
+public fun Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Consumer<kotlin.Any?>, item: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __item = if (item == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(item)
+    val _result = Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __item)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, input: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Processor::class, "process")
+public fun Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Processor<kotlin.Any?, kotlin.Any?>, input: kotlin.Any?): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __input = if (input == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(input)
+    val _result = Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __input)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("Producer_produce__reverse_swift")
+internal external fun Producer_produce__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Producer::class, "produce")
+public fun Producer_produce__reverse(self: Producer<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Producer_produce__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("StringProducer_produce__reverse_swift")
+internal external fun StringProducer_produce__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(StringProducer::class, "produce")
+public fun StringProducer_produce__reverse(self: StringProducer): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = StringProducer_produce__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ExportedBridge("AFactory_create")
+public fun AFactory_create(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AFactory<A<kotlin.Unit>>
+    val _result = run { __self.create() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
 
 @ExportedBridge("A_foo_get")
 public fun A_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -142,6 +224,13 @@ public fun Producer_produce(self: kotlin.native.internal.NativePtr): kotlin.nati
 
 @ExportedBridge("StringProducer_produce")
 public fun StringProducer_produce(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as StringProducer
+    val _result = run { __self.produce() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("StringProducer_produce_direct", nonVirtualTargetMethod = "produce")
+public fun StringProducer_produce_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as StringProducer
     val _result = run { __self.produce() }
     return _result.objcPtr()
@@ -335,7 +424,8 @@ public fun __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_
     val __predicate = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(predicate);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             _result
         }
     }
@@ -351,12 +441,27 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
+public fun __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
+    val __box = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
+        { arg0: Box<*> ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val _result = run { produceBoxStar(__box) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
 public fun __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
     val __box = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
-        { arg0: Box<kotlin.Any?> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+        { arg0: Box<*> ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }

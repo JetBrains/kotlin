@@ -1,5 +1,8 @@
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
@@ -10,7 +13,11 @@ dependencies {
     testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-jvm-host"))
     testRuntimeOnly(libs.guava)
-    testImplementation(libs.junit4)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -18,3 +25,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks.test {
+    useJUnitPlatform()
+}

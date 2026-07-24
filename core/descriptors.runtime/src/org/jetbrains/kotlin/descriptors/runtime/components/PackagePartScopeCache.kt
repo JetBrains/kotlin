@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.concurrent.ConcurrentHashMap
 
+@K1Deprecation
 class PackagePartScopeCache(private val resolver: DeserializedDescriptorResolver, private val kotlinClassFinder: ReflectKotlinClassFinder) {
     private val cache = ConcurrentHashMap<ClassId, MemberScope>()
 

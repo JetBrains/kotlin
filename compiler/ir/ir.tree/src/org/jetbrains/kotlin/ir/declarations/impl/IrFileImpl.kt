@@ -14,20 +14,6 @@ import org.jetbrains.kotlin.name.FqName
 
 fun IrFileImpl(
     fileEntry: IrFileEntry,
-    symbol: IrFileSymbol,
-    fqName: FqName,
-    module: IrModuleFragment,
-) = IrFileImpl(fileEntry, symbol, fqName).apply {
-    this.module = module
-}
-
-fun IrFileImpl(
-    fileEntry: IrFileEntry,
-    packageFragmentDescriptor: PackageFragmentDescriptor,
-) = IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
-
-fun IrFileImpl(
-    fileEntry: IrFileEntry,
     packageFragmentDescriptor: PackageFragmentDescriptor,
     module: IrModuleFragment,
 ) = IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName, module)

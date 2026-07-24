@@ -1,16 +1,18 @@
 KaSyntheticJavaPropertySymbol:
+  anchorPsi: null
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
-  compilerVisibility: Public
+  contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
+    anchorPsi: PsiMethodImpl
     annotations: [
       java/lang/Override()
         psi: null
     ]
     callableId: /JavaClass.getFoo
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -24,13 +26,17 @@ KaSyntheticJavaPropertySymbol:
     location: PROPERTY
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
+    psi: PsiMethodImpl
+    realPsi: null
     receiverParameter: KaReceiverParameterSymbol:
+      anchorPsi: PsiParameterImpl
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      contextParameters: []
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -40,21 +46,25 @@ KaSyntheticJavaPropertySymbol:
       name: <receiver>
       origin: JAVA_SYNTHETIC_PROPERTY
       owningCallableSymbol: KaPropertyGetterSymbol(/JavaClass.getFoo)
+      psi: PsiParameterImpl
+      realPsi: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: @EnhancedNullability kotlin/String
+      typeParameters: []
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    typeParameters: []
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -64,7 +74,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -72,11 +82,10 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
-  isFromPrimaryConstructor: false
   isOverride: false
   isStatic: false
   isVal: true
@@ -86,13 +95,17 @@ KaSyntheticJavaPropertySymbol:
   modality: OPEN
   name: foo
   origin: JAVA_SYNTHETIC_PROPERTY
+  psi: null
+  realPsi: null
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: PsiParameterImpl
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -102,16 +115,19 @@ KaSyntheticJavaPropertySymbol:
     name: <receiver>
     origin: JAVA_SYNTHETIC_PROPERTY
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
+    psi: PsiParameterImpl
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: @EnhancedNullability kotlin/String
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -127,7 +143,7 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   importableFqName: null

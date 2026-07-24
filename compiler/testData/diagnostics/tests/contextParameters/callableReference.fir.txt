@@ -8,37 +8,75 @@ FILE: callableReference.kt
     context(<unused var>: R|kotlin/String|)
     public final fun R|kotlin/Int|.f3(): R|kotlin/Unit| {
     }
-    public final fun simple(): R|kotlin/Unit| {
-        R|/accept|<R|kotlin/Any|>(::R|/f1|)
-        R|/accept|<R|kotlin/Any|>(::R|/f2|)
-        R|/accept|<R|kotlin/Any|>(Q|kotlin/Int|::R|/f3|)
-        R|/accept|<R|@ContextFunctionTypeParams(1) kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>|>(::R|/f1|)
-        R|/accept|<R|@ContextFunctionTypeParams(1) kotlin/reflect/KFunction2<kotlin/String, @R|kotlin/ParameterName|(name = String(i))  kotlin/Int, kotlin/Unit>|>(::R|/f2|)
-        R|/accept|<R|@ContextFunctionTypeParams(1) @ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/String, kotlin/Int, kotlin/Unit>|>(Q|kotlin/Int|::R|/f3|)
+    context(<unused var>: R|kotlin/String|)
+    public final val p1: R|kotlin/Unit|
+        public get(): R|kotlin/Unit| {
+            ^ Q|kotlin/Unit|
+        }
+    context(<unused var>: R|kotlin/String|)
+    public final val R|kotlin/Int|.p3: R|kotlin/Unit|
+        public get(): R|kotlin/Unit| {
+            ^ Q|kotlin/Unit|
+        }
+    public final fun testContextualFunctionType(): R|kotlin/Unit| {
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) () -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) (kotlin/Int) -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f2>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /f3>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) () -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /p1>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /p3>#)
     }
-    public final fun testFunctionTypeWithContext(): R|kotlin/Unit| {
-        R|/accept|<R|context(kotlin/String) () -> kotlin/Unit|>(::R|/f1|)
-        R|/accept|<R|context(kotlin/String) (kotlin/Int) -> kotlin/Unit|>(::R|/f2|)
-        R|/accept|<R|context(kotlin/String) kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::R|/f3|)
+    context(<unused var>: R|kotlin/String|)
+    public final fun testContextualFunctionTypeWithContext(): R|kotlin/Unit| {
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) () -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) (kotlin/Int) -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f2>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /f3>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) () -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /p1>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|context(kotlin/String) kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /p3>#)
     }
     public final fun R|kotlin/String|.testReceiver(): R|kotlin/Unit| {
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|(kotlin/Int) -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f2>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /f3>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(Int(1)::<Inapplicable(INAPPLICABLE): /f3>#)
+        R|/accept|<R|kotlin/Any|>(context(this@R|/testReceiver|) ::R|/f1|)
+        R|/accept|<R|kotlin/Any|>(context(this@R|/testReceiver|) ::R|/f2|)
+        R|/accept|<R|kotlin/Any|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|kotlin/reflect/KFunction0<kotlin/Unit>|>(context(this@R|/testReceiver|) ::R|/f1|)
+        R|/accept|<R|kotlin/reflect/KFunction1<@R|kotlin/ParameterName|(name = String(i))  kotlin/Int, kotlin/Unit>|>(context(this@R|/testReceiver|) ::R|/f2|)
+        R|/accept|<R|@ExtensionFunctionType kotlin/reflect/KFunction1<kotlin/Int, kotlin/Unit>|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|kotlin/Any|>(context(this@R|/testReceiver|) ::R|/p1|)
+        R|/accept|<R|kotlin/Any|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/p3|)
+        R|/accept|<R|kotlin/reflect/KProperty0<kotlin/Unit>|>(context(this@R|/testReceiver|) ::R|/p1|)
+        R|/accept|<R|kotlin/reflect/KProperty1<kotlin/Int, kotlin/Unit>|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/p3|)
+        lval x1: R|kotlin/reflect/KFunction0<kotlin/Unit>| = context(this@R|/testReceiver|) ::R|/f1|
+        lval x2: R|kotlin/reflect/KFunction1<@R|kotlin/ParameterName|(name = String(i))  kotlin/Int, kotlin/Unit>| = context(this@R|/testReceiver|) ::R|/f2|
+        lval x3: R|@ExtensionFunctionType kotlin/reflect/KFunction1<kotlin/Int, kotlin/Unit>| = context(this@R|/testReceiver|) Q|kotlin/Int|::R|/f3|
+        lval x3Bound: R|kotlin/reflect/KFunction0<kotlin/Unit>| = context(this@R|/testReceiver|) Int(1)::R|/f3|
+        R|/accept|<R|() -> kotlin/Unit|>(context(this@R|/testReceiver|) ::R|/f1|)
+        R|/accept|<R|(kotlin/Int) -> kotlin/Unit|>(context(this@R|/testReceiver|) ::R|/f2|)
+        R|/accept|<R|kotlin/Int.() -> kotlin/Unit|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|() -> kotlin/Unit|>(context(this@R|/testReceiver|) Int(1)::R|/f3|)
+        lval y1: R|kotlin/reflect/KProperty0<kotlin/Unit>| = context(this@R|/testReceiver|) ::R|/p1|
+        lval y3: R|kotlin/reflect/KProperty1<kotlin/Int, kotlin/Unit>| = context(this@R|/testReceiver|) Q|kotlin/Int|::R|/p3|
+        lval y3Bound: R|kotlin/reflect/KProperty0<kotlin/Unit>| = context(this@R|/testReceiver|) Int(1)::R|/p3|
+        R|/accept|<R|() -> kotlin/Unit|>(context(this@R|/testReceiver|) ::R|/p1|)
+        R|/accept|<R|kotlin/Int.() -> kotlin/Unit|>(context(this@R|/testReceiver|) Q|kotlin/Int|::R|/p3|)
+        R|/accept|<R|() -> kotlin/Unit|>(context(this@R|/testReceiver|) Int(1)::R|/p3|)
     }
     context(<unused var>: R|kotlin/String|)
     public final fun testContextParameter(): R|kotlin/Unit| {
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|(kotlin/Int) -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f2>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /f3>#)
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(Int(1)::<Inapplicable(INAPPLICABLE): /f3>#)
+        R|/accept|<R|() -> kotlin/Unit|>(context(R|<local>/<unused var>|) ::R|/f1|)
+        R|/accept|<R|(kotlin/Int) -> kotlin/Unit|>(context(R|<local>/<unused var>|) ::R|/f2|)
+        R|/accept|<R|kotlin/Int.() -> kotlin/Unit|>(context(R|<local>/<unused var>|) Q|kotlin/Int|::R|/f3|)
+        R|/accept|<R|() -> kotlin/Unit|>(context(R|<local>/<unused var>|) Int(1)::R|/f3|)
+        R|/accept|<R|() -> kotlin/Unit|>(context(R|<local>/<unused var>|) ::R|/p1|)
+        R|/accept|<R|kotlin/Int.() -> kotlin/Unit|>(context(R|<local>/<unused var>|) Q|kotlin/Int|::R|/p3|)
+        R|/accept|<R|() -> kotlin/Unit|>(context(R|<local>/<unused var>|) Int(1)::R|/p3|)
     }
     public final fun testMissingContext(): R|kotlin/Unit| {
         R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f1>#)
         R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|(kotlin/Int) -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /f2>#)
         R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /f3>#)
         R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(Int(1)::<Inapplicable(INAPPLICABLE): /f3>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(::<Inapplicable(INAPPLICABLE): /p1>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|kotlin/Int.() -> kotlin/Unit|>(Q|kotlin/Int|::<Inapplicable(INAPPLICABLE): /p3>#)
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|<R|() -> kotlin/Unit|>(Int(1)::<Inapplicable(INAPPLICABLE): /p3>#)
     }
     public final fun <T> accept(t: R|T|): R|kotlin/Unit| {
     }

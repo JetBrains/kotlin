@@ -84,7 +84,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
             intrinsicCallType,
             replacement
         ).also { newCall ->
-            newCall.arguments.assignFrom(replacement.owner.parameters zip arguments) { (parameter, argument) ->
+            newCall.arguments.assignFrom(replacement.owner.parameters zip arguments) { [parameter, argument] ->
                 argument!!.coerceIfPossible(parameter.type) ?: return this@replaceWithCallTo
             }
         }

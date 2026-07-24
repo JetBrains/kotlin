@@ -18,8 +18,8 @@ object PlatformInfo {
 
     @JvmStatic
     fun checkXcodeVersion(project: Project) {
-        val requiredMajorVersion = project.findProperty("xcodeMajorVersion")?.toString()
-        val checkXcodeVersion = project.findProperty("checkXcodeVersion")?.toString() == "true"
+        val requiredMajorVersion = project.providers.gradleProperty("xcodeMajorVersion").orNull
+        val checkXcodeVersion = project.providers.gradleProperty("checkXcodeVersion").orNull == "true"
 
         if (!DependencyProcessor.isInternalSeverAvailable
                 && checkXcodeVersion

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +CustomEqualsInValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 
 @JvmInline

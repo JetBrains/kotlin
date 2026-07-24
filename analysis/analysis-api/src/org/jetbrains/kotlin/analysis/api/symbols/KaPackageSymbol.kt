@@ -20,8 +20,10 @@ public abstract class KaPackageSymbol : KaSymbol {
      */
     public abstract val fqName: FqName
 
+    abstract override fun createPointer(): KaSymbolPointer<KaPackageSymbol>
+
+    //region Implementation details
     final override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
-
-    abstract override fun createPointer(): KaSymbolPointer<KaPackageSymbol>
+    //endregion
 }

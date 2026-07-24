@@ -20,6 +20,8 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.FirParser;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -28,23 +30,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PackageGenTest extends CodegenTestCase {
-    @Override
-    public boolean getUseFir() {
-        return true;
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
+public class PackageGenTest extends CodegenTestCase {
     @Override
     public @NotNull FirParser getFirParser() {
         return FirParser.LightTree;
     }
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @Test
     public void testPSVM() throws Exception {
         loadText("fun main(args: Array<String>) { }");
         Method main = generateFunction();
@@ -52,6 +51,7 @@ public class PackageGenTest extends CodegenTestCase {
         main.invoke(null, args);
     }
 
+    @Test
     public void testReturnOne() throws Exception {
         loadText("fun f() : Int { return 42; }");
         Method main = generateFunction();
@@ -59,6 +59,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(new Integer(42), returnValue);
     }
 
+    @Test
     public void testReturnA() throws Exception {
         loadText("fun foo(a : Int) = a");
         Method main = generateFunction();
@@ -66,18 +67,17 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(new Integer(50), returnValue);
     }
 
+    @Test
     public void testCurrentTime() throws Exception {
         loadText("fun f() : Long { return System.currentTimeMillis(); }");
         Method main = generateFunction();
         long actual = (Long) main.invoke(null);
         long expected = System.currentTimeMillis();
         long diff = Math.abs(actual - expected);
-        assertTrue(
-                "Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
-                diff <= 100
-        );
+        assertTrue(diff <= 100, "Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)");
     }
 
+    @Test
     public void testIdentityHashCode() throws Exception {
         loadText("fun f(o: Any) : Int { return System.identityHashCode(o); }");
         Method main = generateFunction();
@@ -86,13 +86,15 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(returnValue, System.identityHashCode(o));
     }
 
+    @Test
     public void testSystemOut() throws Exception {
         loadText("fun f() : Any? { return System.out; }");
         Method main = generateFunction();
         Object returnValue = main.invoke(null);
-        assertEquals(returnValue, System.out);
+        assertEquals(System.out, returnValue);
     }
 
+    @Test
     public void testBoxedInt() throws Exception {
         loadText("fun foo(a: Int?) = if (a != null) a else 239");
         Method main = generateFunction();
@@ -100,30 +102,35 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(239, main.invoke(null, new Object[] {null}));
     }
 
+    @Test
     public void testIntBoxed() throws Exception {
         loadText("fun foo(s: String): Int? = Integer.getInteger(s, 239)");
         Method main = generateFunction();
         assertEquals(239, main.invoke(null, "no.such.system.property"));
     }
 
+    @Test
     public void testBoxConstant() throws Exception {
         loadText("fun foo(): Int? = 239");
         Method main = generateFunction();
         assertEquals(239, main.invoke(null));
     }
 
+    @Test
     public void testBoxVariable() throws Exception {
         loadText("fun foo(): Int? { var x = 239; return x; }");
         Method main = generateFunction();
         assertEquals(239, main.invoke(null));
     }
 
+    @Test
     public void testAugAssign() throws Exception {
         loadText("fun foo(a: Int): Int { var x = a; x += 5; return x; }");
         Method main = generateFunction();
         assertEquals(10, main.invoke(null, 5));
     }
 
+    @Test
     public void testBooleanNot() throws Exception {
         loadText("fun foo(b: Boolean): Boolean = !b");
         Method main = generateFunction();
@@ -131,6 +138,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(false, main.invoke(null, true));
     }
 
+    @Test
     public void testBooleanNotJump() throws Exception {
         loadText("fun foo(a: Int) : Int = if (!(a < 5)) a else 0");
         Method main = generateFunction();
@@ -138,6 +146,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(0, main.invoke(null, 4));
     }
 
+    @Test
     public void testAnd() throws Exception {
         loadText("fun foo(a : Int): Boolean = a > 0 && a/0 > 0");
         Method main = generateFunction();
@@ -153,6 +162,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertTrue(hadException);
     }
 
+    @Test
     public void testOr() throws Exception {
         loadText("fun foo(a : Int): Boolean = a > 0 || a/0 > 0");
         Method main = generateFunction();
@@ -168,13 +178,15 @@ public class PackageGenTest extends CodegenTestCase {
         assertTrue(hadException);
     }
 
+    @Test
     public void testJavaConstructor() throws Exception {
         loadText("fun foo(): StringBuilder = StringBuilder()");
         Method main = generateFunction();
         Object result = main.invoke(null);
-        assertTrue(result instanceof StringBuilder);
+        assertInstanceOf(StringBuilder.class, result);
     }
 
+    @Test
     public void testJavaConstructorWithParameters() throws Exception {
         loadText("fun foo(): StringBuilder = StringBuilder(\"beer\")");
         Method main = generateFunction();
@@ -183,6 +195,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     @SuppressWarnings("StringOperationCanBeSimplified")
+    @Test
     public void testJavaEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 == s2");
         Method main = generateFunction();
@@ -191,6 +204,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     @SuppressWarnings("StringOperationCanBeSimplified")
+    @Test
     public void testJavaNotEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 != s2");
         Method main = generateFunction();
@@ -198,6 +212,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.TRUE, main.invoke(null, new String("kotlin"), new String("ceylon")));
     }
 
+    @Test
     public void testJavaEqualsNull() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
         Method main = generateFunction();
@@ -206,6 +221,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, null, "kotlin"));
     }
 
+    @Test
     public void testEqualsNullLiteral() throws Exception {
         loadText("fun foo(s: String?) = s == null");
         Method main = generateFunction();
@@ -214,6 +230,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     @SuppressWarnings("StringOperationCanBeSimplified")
+    @Test
     public void testTripleEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 === s2");
         Method main = generateFunction();
@@ -224,6 +241,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     @SuppressWarnings("StringOperationCanBeSimplified")
+    @Test
     public void testTripleNotEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 !== s2");
         Method main = generateFunction();
@@ -233,12 +251,14 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.TRUE, main.invoke(null, s1, s2));
     }
 
+    @Test
     public void testStringPlus() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 + s2");
         Method main = generateFunction();
         assertEquals("kotlinLang", main.invoke(null, "kotlin", "Lang"));
     }
 
+    @Test
     public void testStringPlusChained() throws Exception {
         loadText("fun foo(s1: String, s2: String, s3: String) = s1 + s2 + s3");
         String text = generateToText();
@@ -248,12 +268,14 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("kotlin Lang", main.invoke(null, "kotlin", " ", "Lang"));
     }
 
+    @Test
     public void testStringPlusEq() throws Exception {
         loadText("fun foo(s: String) : String { var result = s; result += s; return result; } ");
         Method main = generateFunction();
         assertEquals("JarJar", main.invoke(null, "Jar"));
     }
 
+    @Test
     public void testStringCompare() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 < s2");
         Method main = generateFunction();
@@ -261,6 +283,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, "Kotlin", "Java"));
     }
 
+    @Test
     public void testElvis() throws Exception {
         loadText("fun foo(s: String?) = s ?: \"null\"");
         Method main = generateFunction();
@@ -268,6 +291,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("null", main.invoke(null, new Object[] {null}));
     }
 
+    @Test
     public void testElvisInt() throws Exception {
         loadText("fun foo(a: Int?): Int = a ?: 239");
         Method main = generateFunction();
@@ -275,6 +299,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(239, main.invoke(null, new Object[] {null}));
     }
 
+    @Test
     public void testVarargs() throws Exception {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         Method main = generateFunction();
@@ -282,6 +307,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(Arrays.asList("IntelliJ", "IDEA"), list);
     }
 
+    @Test
     public void testFieldRead() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) = c.gridx");
         Method main = generateFunction();
@@ -290,6 +316,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(239, main.invoke(null, c));
     }
 
+    @Test
     public void testFieldWrite() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx = 239 }");
         Method main = generateFunction();
@@ -298,6 +325,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(239, c.gridx);
     }
 
+    @Test
     public void testFieldIncrement() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx++; return; }");
         Method main = generateFunction();
@@ -307,6 +335,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(610, c.gridx);
     }
 
+    @Test
     public void testFieldAugAssign() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx *= 2; return; }");
         Method main = generateFunction();
@@ -316,17 +345,20 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(610, c.gridx);
     }
 
+    @Test
     public void testIncrementAsLastOperation() {
         loadText("fun foo() { var a = 0; a++; }");
         generateFunction();  // make sure we're not falling off end of code
     }
 
+    @Test
     public void testArrayRead() throws Exception {
         loadText("fun foo(c: Array<String>) = c[0]");
         Method main = generateFunction();
         assertEquals("main", main.invoke(null, new Object[] {new String[] {"main"}}));
     }
 
+    @Test
     public void testArrayWrite() throws Exception {
         loadText("fun foo(c: Array<String>) { c[0] = \"kotlin\"; }");
         Method main = generateFunction();
@@ -335,6 +367,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("kotlin", array[0]);
     }
 
+    @Test
     public void testArrayAugAssign() throws Exception {
         loadText("fun foo(c: Array<Int>) { c[0] *= 2 }");
         Method main = generateFunction();
@@ -343,6 +376,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(10, data[0].intValue());
     }
 
+    @Test
     public void testArrayAugAssignLong() throws Exception {
         loadText("fun foo(c: LongArray) { c[0] *= 2.toLong() }");
         Method main = generateFunction();
@@ -351,6 +385,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(10L, data[0]);
     }
 
+    @Test
     public void testArrayNewNullable() throws Exception {
         loadText("fun foo() = arrayOfNulls<Int>(4)");
         Method main = generateFunction();
@@ -358,6 +393,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(4, result.length);
     }
 
+    @Test
     public void testFloatArrayNew() throws Exception {
         loadText("fun foo() = FloatArray(4)");
         Method main = generateFunction();
@@ -365,6 +401,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(4, result.length);
     }
 
+    @Test
     public void testArraySize() throws Exception {
         loadText("fun foo(a: Array<Int>) = a.size");
         Method main = generateFunction();
@@ -373,6 +410,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(4, result);
     }
 
+    @Test
     public void testIntArraySize() throws Exception {
         loadText("fun foo(a: IntArray) = a.size");
         Method main = generateFunction();
@@ -381,6 +419,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(4, result);
     }
 
+    @Test
     public void testIntRange() throws Exception {
         loadText("fun foo() = 1..10");
         Method main = generateFunction();
@@ -391,6 +430,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertFalse((Boolean) contains.invoke(result, 11));
     }
 
+    @Test
     public void testSubstituteJavaMethodTypeParameters() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<Int>) { l.add(10) }");
         Method main = generateFunction();
@@ -399,6 +439,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals(10, l.get(0).intValue());
     }
 
+    @Test
     public void testCallMethodDeclaredInSuperclass() throws Exception {
         loadText("fun foo(sb: StringBuilder) = sb.get(0)");
         Method main = generateFunction();
@@ -406,12 +447,14 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals('x', ((Character) main.invoke(null, sb)).charValue());
     }
 
+    @Test
     public void testPutBooleanAsVoid() throws Exception {
         loadText("class C(val x: Int) { init { x > 0 } } fun box() { val c = C(0) } ");
         Method main = generateFunction();
         main.invoke(null);  // must not fail
     }
 
+    @Test
     public void testJavaInterfaceMethod() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<String>) { l.add(\"foo\") }");
         Method main = generateFunction();
@@ -420,6 +463,7 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("foo", list.get(0));
     }
 
+    @Test
     public void testArrayAccessForArrayList() throws Exception {
         loadText("import java.util.*; fun foo(l: ArrayList<String>) { l[0] = \"Kotlin\" + l[0]; }");
         Method main = generateFunction();
@@ -429,36 +473,42 @@ public class PackageGenTest extends CodegenTestCase {
         assertEquals("KotlinLanguage", list.get(0));
     }
 
+    @Test
     public void testEscapeSequence() throws Exception {
         loadText("fun foo() = \"a\\nb\\$\"");
         Method main = generateFunction();
         assertEquals("a\nb$", main.invoke(null));
     }
 
+    @Test
     public void testStringTemplate() throws Exception {
         loadText("fun foo(a: String) = \"IntelliJ $a Rulezzz\"");
         Method main = generateFunction();
         assertEquals("IntelliJ IDEA Rulezzz", main.invoke(null, "IDEA"));
     }
 
+    @Test
     public void testExplicitCallOfBinaryOpIntrinsic() throws Exception {
         loadText("fun foo(a: Int) = a.plus(1)");
         Method main = generateFunction();
         assertEquals(2, ((Integer) main.invoke(null, 1)).intValue());
     }
 
+    @Test
     public void testExplicitCallOfUnaryMinusIntrinsic() throws Exception {
         loadText("fun foo(a: Int) = a.unaryMinus()");
         Method main = generateFunction();
         assertEquals(-1, ((Integer) main.invoke(null, 1)).intValue());
     }
 
+    @Test
     public void testExplicitCallOfBooleanNotIntrinsic() throws Exception {
         loadText("fun foo(a: Boolean) = a.not()");
         Method main = generateFunction();
         assertFalse(((Boolean) main.invoke(null, true)).booleanValue());
     }
 
+    @Test
     public void testAppendArrayToString() throws Exception {
         loadText("fun foo(a: String, b: Array<String>) = a + b");
         Method main = generateFunction();

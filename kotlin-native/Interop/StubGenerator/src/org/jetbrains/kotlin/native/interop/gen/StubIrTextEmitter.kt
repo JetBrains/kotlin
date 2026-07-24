@@ -94,6 +94,10 @@ class StubIrTextEmitter(
         }
 
         val suppress = mutableListOf("UNUSED_VARIABLE", "UNUSED_EXPRESSION").apply {
+            // Generated stubs reference @kotlin.internal.LowPriorityInOverloadResolution
+            // on the String-accepting twin of functions with const char* parameters.
+            add("INVISIBLE_REFERENCE")
+            add("INVISIBLE_MEMBER")
             add("DEPRECATION") // CVariable.Type and CEnum companion deprecations.
             if (context.configuration.library.language == Language.OBJECTIVE_C) {
                 add("CONFLICTING_OVERLOADS")
@@ -488,6 +492,15 @@ class StubIrTextEmitter(
                 else -> "($protocolGetter, $binaryName)"
             }
         }
+        AnnotationStub.ObjC.Unavailable -> "@ObjCUnavailable"
+        is AnnotationStub.ObjC.ObjCName -> {
+            val args = listOfNotNull(
+                    annotationStub.name.takeIf { it.isNotEmpty() }?.let { "name = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.swiftName.takeIf { it.isNotEmpty() }?.let { "swiftName = ${it.quoteAsKotlinLiteral()}" },
+                    annotationStub.exact.takeIf { it }?.let { "exact = true" }
+            )
+            "@kotlin.native.ObjCName(${args.joinToString(", ")})"
+        }
         AnnotationStub.CCall.CString ->
             "@CCall.CString"
         AnnotationStub.CCall.WCString ->
@@ -512,6 +525,8 @@ class StubIrTextEmitter(
                     "DeprecationLevel.${annotationStub.level.name})"
         is AnnotationStub.ExperimentalForeignApi ->
             "@${KotlinTypes.experimentalForeignApi.topLevelName}"
+        is AnnotationStub.LowPriorityInOverloadResolution ->
+            "@kotlin.internal.LowPriorityInOverloadResolution"
         is AnnotationStub.CEnumEntryAlias,
         is AnnotationStub.CEnumVarTypeSize,
         is AnnotationStub.CStruct.MemberAt,

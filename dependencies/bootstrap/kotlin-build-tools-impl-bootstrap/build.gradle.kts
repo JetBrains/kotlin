@@ -1,3 +1,9 @@
+plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
+}
+
 val resolvedBootstrap = configurations.resolvable("kotlinBuildToolsApiImplBootstrapClasspath") {
     val dependency: Dependency = project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:${bootstrapKotlinVersion}")
     dependencies.addLater(providers.provider { dependency })

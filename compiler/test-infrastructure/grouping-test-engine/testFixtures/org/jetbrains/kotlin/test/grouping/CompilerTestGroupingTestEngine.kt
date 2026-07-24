@@ -9,7 +9,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.jetbrains.kotlin.test.DynamicWithMaxThresholdParallelExecutionConfigurationStrategy
-import org.jetbrains.kotlin.test.NonGroupingPhaseOutput
+import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -23,6 +23,7 @@ import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor
 import org.junit.jupiter.engine.discovery.DiscoverySelectorResolver
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext
+import org.junit.jupiter.engine.execution.LauncherStoreFacade
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory.createThrowableCollector
 import org.junit.platform.engine.*
 import org.junit.platform.engine.reporting.ReportEntry
@@ -87,7 +88,11 @@ class CompilerTestGroupingTestEngine : TestEngine {
     override fun execute(request: ExecutionRequest) {
         ExecutionContext(request.configurationParameters).use { ctx ->
             val synchronizedListener = SynchronizedEngineExecutionListener(request.engineExecutionListener)
-            val baseContext = JupiterEngineExecutionContext(synchronizedListener, getJupiterConfiguration(request))
+            val baseContext = JupiterEngineExecutionContext(
+                synchronizedListener,
+                getJupiterConfiguration(request),
+                LauncherStoreFacade(request.store),
+            )
             runBlocking(ctx.dispatcher) {
                 traverseClasses(request.rootTestDescriptor, baseContext) { context, classDescriptor ->
                     launch {
@@ -137,18 +142,18 @@ class CompilerTestGroupingTestEngine : TestEngine {
                 ctx.activeClasses.withPermit {
                     val testInfosFutures = methodsChunk.map { method ->
                         async {
-                            runNonGroupingPhase(method, context)
+                            runNonGroupingStage(method, context)
                         }
                     }
                     val testInfos = testInfosFutures.awaitAll().filterNotNull()
-                    runGroupingPhase(context, classDescriptor, testInfos, groupCounter)
+                    runGroupingStage(context, classDescriptor, testInfos, groupCounter)
                 }
             }
         }
         groupJobs.joinAll()
     }
 
-    private fun runNonGroupingPhase(
+    private fun runNonGroupingStage(
         method: TestMethodTestDescriptor,
         context: JupiterEngineExecutionContext,
     ): TestMethodInfo? {
@@ -171,33 +176,33 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
         val info = TestMethodInfo(method, methodContext, testInstance).apply {
             if (finishIfFailed()) return@apply
-            nonGroupingPhaseThrowableCollector.execute {
+            nonGroupingStageThrowableCollector.execute {
                 val testRunner = testInstance.nonGroupingRunner
                 testRunner.runTestPreprocessing()
                 testRunner.runSteps()
-                hadIgnoredFailuresOnNonGroupingPhase = testRunner.failuresInterceptor.reportFailures(checkForUnmuting = false)
+                hadIgnoredFailuresOnNonGroupingStage = testRunner.failuresInterceptor.reportFailures(checkForUnmuting = false)
             }
             finishIfFailed()
         }
         return info
     }
 
-    private suspend fun CoroutineScope.runGroupingPhase(
+    private suspend fun CoroutineScope.runGroupingStage(
         context: JupiterEngineExecutionContext,
         classDescriptor: TestDescriptor,
         tests: List<TestMethodInfo>,
         groupCounter: AtomicInteger,
     ) {
-        val successfulTests = tests.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingPhase }
+        val successfulTests = tests.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
         if (successfulTests.isEmpty()) return
         val batches = groupTestsInBatches(successfulTests)
 
         val batchFutures = batches.map { batch ->
             launch {
                 if (batch.size == 1) {
-                    runGroupingPhaseOnSingleSizedBatch(batch.single())
+                    runGroupingStageOnSingleSizedBatch(batch.single())
                 } else {
-                    runGroupingPhaseOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
+                    runGroupingStageOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
                 }
             }
         }
@@ -214,7 +219,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
 
         return buildList {
-            for ((tokens, batch) in groupedByTokens) {
+            for ([tokens, batch] in groupedByTokens) {
                 if (BatchToken.Isolated in tokens) {
                     for (info in batch) {
                         add(listOf(info))
@@ -226,14 +231,14 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
     }
 
-    private fun runGroupingPhaseOnBatch(
+    private fun runGroupingStageOnBatch(
         context: JupiterEngineExecutionContext,
         classDescriptor: TestDescriptor,
         batch: List<TestMethodInfo>,
         index: Int,
     ) {
         require(batch.size > 1) { "Batch expected to have at least 2 methods, got ${batch.size}" }
-        val testDescriptor = GroupingPhaseTestDescriptor(
+        val testDescriptor = GroupingStageTestDescriptor(
             uniqueId = batch.first().descriptor.uniqueId.removeLastSegment().append("dynamic-test", "batch$index"),
             displayName = "Grouped batch #$index"
         )
@@ -245,16 +250,16 @@ class CompilerTestGroupingTestEngine : TestEngine {
         executionListener.dynamicTestRegistered(testDescriptor)
         executionListener.executionStarted(testDescriptor)
         throwableCollector.execute {
-            val testRunner = someTestInstance.groupingPhaseRunner
-            val nonGroupingPhaseOutputs = batch.map { methodInfo ->
-                NonGroupingPhaseOutput(
+            val testRunner = someTestInstance.groupingStageRunner
+            val nonGroupingStageOutputs = batch.map { methodInfo ->
+                NonGroupingStageOutput(
                     testServices = methodInfo.testInstance.nonGroupingRunner.testServices,
                     catchingExecutor = { wrapper, block ->
                         methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.withAssertionCatching(wrapper, block)
                     }
                 )
             }
-            testRunner.run(nonGroupingPhaseOutputs)
+            testRunner.run(nonGroupingStageOutputs)
             testRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
         }
         for (methodInfo in batch) {
@@ -269,25 +274,25 @@ class CompilerTestGroupingTestEngine : TestEngine {
 
         executionListener.executionFinished(testDescriptor, throwableCollector.toTestExecutionResult())
         batch.forEach {
-            it.finalizeNonGroupingPhase()
-            val collector = if (it.failed) it.nonGroupingPhaseThrowableCollector else throwableCollector
+            it.finalizeNonGroupingStage()
+            val collector = if (it.failed) it.nonGroupingStageThrowableCollector else throwableCollector
             it.reportFinished(collector)
         }
     }
 
-    private fun runGroupingPhaseOnSingleSizedBatch(testInfo: TestMethodInfo) {
-        val throwableCollector = testInfo.nonGroupingPhaseThrowableCollector
+    private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo) {
+        val throwableCollector = testInfo.nonGroupingStageThrowableCollector
         val testInstance = testInfo.testInstance
         throwableCollector.execute {
-            val groupingRunner = testInstance.groupingPhaseRunner
+            val groupingRunner = testInstance.groupingStageRunner
             val nonGroupingRunner = testInstance.nonGroupingRunner
-            val nonGroupingPhaseOutput = NonGroupingPhaseOutput(
+            val nonGroupingStageOutput = NonGroupingStageOutput(
                 testServices = testInstance.nonGroupingRunner.testServices,
                 catchingExecutor = { wrapper, block ->
                     nonGroupingRunner.failuresInterceptor.withAssertionCatching(wrapper, block)
                 }
             )
-            groupingRunner.run(listOf(nonGroupingPhaseOutput))
+            groupingRunner.run(listOf(nonGroupingStageOutput))
 
             /*
              * Exceptions from facades were reported to the failures interceptor of the grouping runner.
@@ -298,7 +303,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
             nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
         }
 
-        testInfo.finalizeNonGroupingPhase()
+        testInfo.finalizeNonGroupingStage()
         testInfo.reportFinished(throwableCollector)
     }
 
@@ -306,7 +311,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         val configuration = CachingJupiterConfiguration(
             DefaultJupiterConfiguration(
                 discoveryRequest.configurationParameters,
-                discoveryRequest.outputDirectoryProvider
+                discoveryRequest.outputDirectoryCreator
             )
         )
         val engineDescriptor = JupiterEngineDescriptor(uniqueId, configuration)
@@ -391,7 +396,7 @@ private object DynamicTestExecutorStub : Node.DynamicTestExecutor {
     }
 }
 
-private class GroupingPhaseTestDescriptor(
+private class GroupingStageTestDescriptor(
     uniqueId: UniqueId,
     displayName: String,
 ) : AbstractTestDescriptor(uniqueId, displayName, /* source = */ null) {
@@ -404,20 +409,20 @@ private data class TestMethodInfo(
     val testInstance: AbstractTwoStageKotlinCompilerTestBase,
 ) {
     val failed: Boolean
-        get() = nonGroupingPhaseThrowableCollector.isNotEmpty
+        get() = nonGroupingStageThrowableCollector.isNotEmpty
 
-    var hadIgnoredFailuresOnNonGroupingPhase: Boolean = false
+    var hadIgnoredFailuresOnNonGroupingStage: Boolean = false
 
     var finalized: Boolean = false
         private set
 
-    val nonGroupingPhaseThrowableCollector: ThrowableCollector
+    val nonGroupingStageThrowableCollector: ThrowableCollector
         get() = context.throwableCollector
 
-    fun finalizeNonGroupingPhase() {
+    fun finalizeNonGroupingStage() {
         if (finalized) return
-        nonGroupingPhaseThrowableCollector.execute {
-            if (testInstance.nonGroupingPhaseRunnerInitialized) {
+        nonGroupingStageThrowableCollector.execute {
+            if (testInstance.nonGroupingStageRunnerInitialized) {
                 testInstance.nonGroupingRunner.finalizeAndDispose()
             }
         }
@@ -429,10 +434,10 @@ private data class TestMethodInfo(
  * @returns true if the test failed
  */
 private fun TestMethodInfo.finishIfFailed(): Boolean {
-    return (failed || hadIgnoredFailuresOnNonGroupingPhase).also {
+    return (failed || hadIgnoredFailuresOnNonGroupingStage).also {
         if (it) {
-            finalizeNonGroupingPhase()
-            reportFinished(nonGroupingPhaseThrowableCollector)
+            finalizeNonGroupingStage()
+            reportFinished(nonGroupingStageThrowableCollector)
         }
     }
 }

@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -221,7 +219,6 @@ class JvmCachedDeclarations(
                 visibility = defaultImplsVisibility,
                 isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters,
-                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
@@ -243,6 +240,10 @@ class JvmCachedDeclarations(
                 endOffset = interfaceClass.endOffset
                 origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
                 name = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
+                // The DefaultImpls class shall have visibility at least of the original interface, but
+                // it also should not be protected or internal as a nested class of an interface. So,
+                // the safest option is to make it public.
+                visibility = DescriptorVisibilities.PUBLIC
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
@@ -259,7 +260,6 @@ class JvmCachedDeclarations(
     private fun computeClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement? {
         val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
         val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
-        context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
         val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
 
         findDefaultImplsRedirection(implementation, newFunction, superFunction)?.let { return it }
@@ -359,18 +359,12 @@ private var IrClass.interfaceCompanionFieldForObjectInstance: IrField? by irAttr
 /*
     This class keeps track of singleton fields for instances of object classes.
  */
-class CachedFieldsForObjectInstances(
-    private val irFactory: IrFactory,
-    private val languageVersionSettings: LanguageVersionSettings,
-) {
+class CachedFieldsForObjectInstances(private val irFactory: IrFactory) {
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singleton::fieldForObjectInstance.getOrSetIfNull {
             val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
-            val useProperVisibilityForCompanion =
-                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
-                        && singleton.isCompanion
-                        && !singleton.parentAsClass.isInterface
+            val useProperVisibilityForCompanion = singleton.isCompanion && !singleton.parentAsClass.isInterface
             irFactory.buildField {
                 name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
                 type = singleton.defaultType

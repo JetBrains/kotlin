@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.isCompilerInternalSyntheticAnnotation
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -24,7 +25,10 @@ import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
-import kotlin.reflect.jvm.internal.types.*
+import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.FlexibleKType
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
+import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.jvmErasure
 
 internal fun ClassName.toClassId(): ClassId {
@@ -125,7 +129,11 @@ internal fun KmType.toKType(
         kClassifier,
         arguments,
         isNullable,
-        annotations.map { it.toAnnotation(classLoader) },
+        lazy(PUBLICATION) {
+            annotations
+                .filter { !it.className.toClassId().asSingleFqName().isCompilerInternalSyntheticAnnotation }
+                .map { it.toAnnotation(classLoader) }
+        },
         abbreviatedType?.toKType(classLoader, typeParameterTable),
         isDefinitelyNonNull,
         (classifier as? KmClassifier.Class)?.name == "kotlin/Nothing",
@@ -155,7 +163,7 @@ private fun unwrapSuspendFunctionType(type: SimpleKType, computeJavaType: (() ->
         type.classifier,
         type.arguments.dropLast(2) + KTypeProjection.invariant(returnType),
         type.isMarkedNullable,
-        type.annotations,
+        type.lazyAnnotations,
         type.abbreviation,
         type.isDefinitelyNotNullType,
         type.isNothingType,
@@ -222,7 +230,7 @@ internal fun KmVariance.toKVariance(): KVariance = when (this) {
 private fun KmClassifier.toMutableCollectionKClass(kClassifier: KClassifier): MutableCollectionKClass<*>? {
     val classId = (this as? KmClassifier.Class)?.name?.toClassId() ?: return null
     if (!JavaToKotlinClassMap.isMutable(classId)) return null
-    return getMutableCollectionKClass(classId.asSingleFqName(), kClassifier as KClass<*>)
+    return getMutableCollectionKClass(kClassifier as KClass<*>)
 }
 
 internal fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 
+@K1Deprecation
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, project: Project) : CallChecker {
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 

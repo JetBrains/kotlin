@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.isEnabled
@@ -26,17 +25,19 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -48,7 +49,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             return
         }
         val csBuilder = candidate.system.getBuilder()
-        val (substitutor, freshVariables) =
+        val [substitutor, freshVariables] =
             createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder)
         candidate.initializeSubstitutorAndVariables(substitutor, freshVariables)
 
@@ -249,7 +250,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             addConstraintsTheOldWay(toFreshVariables, freshTypeVariables, typeParameters)
         }
 
-        for ((lower, upper) in constraints) {
+        for ([lower, upper] in constraints) {
             csBuilder.addSubtypeConstraint(lower, upper, ConeDeclaredUpperBoundConstraintPosition())
         }
 
@@ -265,7 +266,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
         val isTypealiasConstructor = typeAliasConstructorInfo != null
 
-        val (typeArgumentsForConstraining, typeParametersForConstraining) = when {
+        val [typeArgumentsForConstraining, typeParametersForConstraining] = when {
             isTypealiasConstructor -> {
                 val fullyExpandedType = declaration.unwrapSubstitutionOverrides().returnTypeRef.coneType.fullyExpandedType()
                 val arguments = fullyExpandedType.let(toFreshVariables::substituteOrSelf).typeArguments.toList()
@@ -279,7 +280,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
 
-        for ((index, parameter) in typeParametersForConstraining.withIndex()) {
+        for ([index, parameter] in typeParametersForConstraining.withIndex()) {
             val argumentType = typeArgumentsForConstraining.getOrNull(index)?.type?.let(toFreshVariables::substituteOrSelf) ?: continue
 
             for (bound in parameter.symbol.resolvedBounds) {

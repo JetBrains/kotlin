@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 
 // This annotation is declared here in frontend (as opposed to frontend.java) because it's used in MainFunctionDetector.
 // If you wish to add another JVM-related annotation and has/find utility methods, please proceed to jvmAnnotationUtil.kt
+@K1Deprecation
 val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 
+@K1Deprecation
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
 }

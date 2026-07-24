@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
+@K1Deprecation
 object RuntimeErrorReporter : ErrorReporter {
     // TODO: specialized exceptions
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: MutableList<String>) {

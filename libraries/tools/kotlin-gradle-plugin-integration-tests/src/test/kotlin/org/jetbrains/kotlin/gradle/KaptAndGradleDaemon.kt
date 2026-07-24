@@ -110,5 +110,5 @@ class KaptAndGradleDaemon : KGPDaemonsBaseTest() {
         }
     }
 
-    private val String.withPrefix get() = "kapt2/$this"
+    private val String.withPrefix get() = "kapt/$this"
 }

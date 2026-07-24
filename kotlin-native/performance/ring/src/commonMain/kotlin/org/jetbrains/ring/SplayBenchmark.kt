@@ -41,9 +41,13 @@
 // also has to deal with a lot of changes to the large tree object
 // graph.
 
+@file:OptIn(kotlin.native.concurrent.ObsoleteWorkersApi::class)
+
 import kotlin.native.concurrent.*
 import kotlin.concurrent.*
 import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 // A splay tree is a self-balancing binary search tree with the additional
 // property that recently accessed elements are quick to access again.
@@ -242,7 +246,10 @@ class SplayTree<K: Comparable<K>, V> {
     }
 }
 
-class SplayBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class SplayHideName {
     // Seed random number generator for deterministic "random" number generation.
     val random = Random(20)
     val splayTreeSize = 8000;
@@ -278,6 +285,7 @@ class SplayBenchmark {
         return result
     }
 
+    @TearDown
     fun splayTearDown() {
         val keys = splayTree.exportKeys()
         val length = keys.size
@@ -291,7 +299,8 @@ class SplayBenchmark {
         }
     }
 
-    fun runSplay() {
+    @Benchmark
+    fun Splay(bh: Blackhole) {
         for (i in 0 until splayTreeModifications) {
             val key = insertNewNode(splayTree, splayTreePayloadDepth)
             val greatest = splayTree.findGreatestLessThan(key)
@@ -301,19 +310,26 @@ class SplayBenchmark {
                 splayTree.remove(greatest.key)
             }
         }
+        bh.consume(splayTree)
     }
 }
 
-class SplayBenchmarkUsingWorkers {
+
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class SplayWithWorkersHideName {
     val numberOfWorkers = 5;
     val workers = Array(numberOfWorkers, { _ -> Worker.start() })
-    val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
+    val splayTrees = Array(numberOfWorkers, { _ -> SplayHideName() });
 
-    fun runSplayWorkers() {
-        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.runSplay()})};
+    @Benchmark
+    fun SplayWithWorkers(bh: Blackhole) {
+        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] to bh }, { (splay, bh) -> splay.Splay(bh)})};
         futures.forEach{it.consume {}};
     }
 
+    @TearDown
     fun splayTearDownWorkers() {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.splayTearDown()})};
         futures.forEach{it.consume {}};
@@ -321,7 +337,10 @@ class SplayBenchmarkUsingWorkers {
     }
 }
 
-class SplayBenchmarkWithMarkHelpers {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class SplayWithMarkHelpersHideName {
     val numberOfMarkHelpers = 5;
     val markHelpers = Array(numberOfMarkHelpers, { _ -> Worker.start() })
 
@@ -350,12 +369,14 @@ class SplayBenchmarkWithMarkHelpers {
         }
     }
 
-    val splay = SplayBenchmark()
+    val splay = SplayHideName()
 
-    fun runSplayWithMarkHelpers() {
-        splay.runSplay()
+    @Benchmark
+    fun SplayWithMarkHelpers(bh: Blackhole) {
+        splay.Splay(bh)
     }
 
+    @TearDown
     fun splayTearDownMarkHelpers() {
         done = true
         splay.splayTearDown()

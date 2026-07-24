@@ -1,4 +1,7 @@
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
@@ -27,7 +30,7 @@ sourceSets {
 testsJar {}
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_1_8) {
         workingDir = rootDir
     }
 

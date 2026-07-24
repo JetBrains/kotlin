@@ -1241,6 +1241,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("stubBasedNonLocalDestructuring.kt")
+  public void testStubBasedNonLocalDestructuring() {
+    run("stubBasedNonLocalDestructuring.kt");
+  }
+
+  @Test
   @TestMetadata("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt")
   public void testSuperQualifierTypeArgsInDelegatedConstructorInnerClass() {
     run("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt");
@@ -1808,18 +1814,6 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
-    @TestMetadata("multiFieldValueClass.kt")
-    public void testMultiFieldValueClass() {
-      run("multiFieldValueClass.kt");
-    }
-
-    @Test
-    @TestMetadata("multiFieldValueClassWithTypeAlias.kt")
-    public void testMultiFieldValueClassWithTypeAlias() {
-      run("multiFieldValueClassWithTypeAlias.kt");
-    }
-
-    @Test
     @TestMetadata("multiLevelClasspathSubstitution.kt")
     public void testMultiLevelClasspathSubstitution() {
       run("multiLevelClasspathSubstitution.kt");
@@ -1976,21 +1970,9 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
-    @TestMetadata("valueClassWithMultiFieldValueClass.kt")
-    public void testValueClassWithMultiFieldValueClass() {
-      run("valueClassWithMultiFieldValueClass.kt");
-    }
-
-    @Test
     @TestMetadata("valueClassWithNestedClass.kt")
     public void testValueClassWithNestedClass() {
       run("valueClassWithNestedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("valueClassWithNullableMultiFieldValueClass.kt")
-    public void testValueClassWithNullableMultiFieldValueClass() {
-      run("valueClassWithNullableMultiFieldValueClass.kt");
     }
 
     @Test
@@ -2556,6 +2538,18 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("equalityBoundUsage.kt")
+    public void testEqualityBoundUsage() {
+      run("equalityBoundUsage.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitEqualityBound.kt")
+    public void testExplicitEqualityBound() {
+      run("explicitEqualityBound.kt");
+    }
+
+    @Test
     @TestMetadata("functionCallWithGenericResult.kt")
     public void testFunctionCallWithGenericResult() {
       run("functionCallWithGenericResult.kt");
@@ -2679,6 +2673,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("incompleteFunctionTypeParameter.kt")
     public void testIncompleteFunctionTypeParameter() {
       run("incompleteFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedEqualityBound.kt")
+    public void testInheritedEqualityBound() {
+      run("inheritedEqualityBound.kt");
     }
 
     @Test
@@ -2867,6 +2867,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("integerLiteralCall.kt")
     public void testIntegerLiteralCall() {
       run("integerLiteralCall.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmInlineTypealias.kt")
+    public void testJvmInlineTypealias() {
+      run("jvmInlineTypealias.kt");
     }
 
     @Test
@@ -3479,6 +3485,18 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("introducedAt.kt")
     public void testIntroducedAt() {
       run("introducedAt.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTarget.kt")
+    public void testJavaTarget() {
+      run("javaTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetWithImport.kt")
+    public void testJavaTargetWithImport() {
+      run("javaTargetWithImport.kt");
     }
 
     @Test

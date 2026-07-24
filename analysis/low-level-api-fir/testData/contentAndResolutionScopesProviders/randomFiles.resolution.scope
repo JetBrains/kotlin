@@ -1,9 +1,13 @@
 Resulting Resolution Scope:
 Module MAIN:
-    a.kt
-    z.kt
-    c.kt
-    x.kt
+    + a.kt
+    - b.kt
+    + c.kt
+    + x.kt
+    + z.kt
 Module SOME_DEPENDENCY:
-    c.kt
-    x.kt
+    - a.kt
+    - b.kt
+    + c.kt
+    + x.kt
+    - z.kt

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea
 
+import org.jetbrains.kotlin.K1Deprecation
+
 /**
  * Indicates sensitive frontend API, which should be used with caution to avoid invariant violation.
  * Use sites of this annotation include all methods for direct access to frontend components.
@@ -13,4 +15,5 @@ package org.jetbrains.kotlin.idea
  * Not following this rule may lead to obscure memory leaks and other potential problems.
  */
 @RequiresOptIn
+@K1Deprecation
 annotation class FrontendInternals

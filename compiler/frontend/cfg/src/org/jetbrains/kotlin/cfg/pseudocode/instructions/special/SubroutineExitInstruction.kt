@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
 
+@K1Deprecation
 class SubroutineExitInstruction(
     val subroutine: KtElement,
     blockScope: BlockScope,

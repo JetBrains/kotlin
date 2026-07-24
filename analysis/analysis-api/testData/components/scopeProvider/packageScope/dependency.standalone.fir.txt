@@ -1,7 +1,7 @@
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/fooApi3
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -23,6 +23,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -35,14 +37,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalFooApi3
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -64,6 +66,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -76,14 +80,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateFooApi3
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -105,6 +109,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -117,14 +123,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/barApi3
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -146,13 +152,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -162,16 +172,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/FakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -184,14 +197,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalBarApi3
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -213,13 +226,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -229,16 +246,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalFakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -251,14 +271,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateBarApi3
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -280,13 +300,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi3
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -296,16 +320,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi3)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateFakeI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: dependency.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -318,14 +345,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.ExtensionKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi3
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/fooApi1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -347,6 +374,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -359,14 +388,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalFooApi1
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -388,6 +417,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -400,14 +431,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateFooApi1
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -429,6 +460,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -441,14 +474,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/barApi1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -470,13 +503,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -486,16 +523,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi1)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/I
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -508,14 +548,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalBarApi1
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -537,13 +577,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -553,16 +597,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi1)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -575,14 +622,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateBarApi1
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -604,13 +651,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi1
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -620,16 +671,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi1)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateI
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.kt)
     getContainingJvmClassName: dependency.api.IKt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -642,14 +696,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.IKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi1
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/fooApi2
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -671,6 +725,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: fooApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -683,14 +739,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalFooApi2
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -712,6 +768,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalFooApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -724,14 +782,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateFooApi2
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -753,6 +811,8 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateFooApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -765,14 +825,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/barApi2
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -794,13 +854,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: barApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -810,16 +874,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/barApi2)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/C1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -832,14 +899,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/internalBarApi2
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -861,13 +928,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: internalBarApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -877,16 +948,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/internalBarApi2)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/InternalC1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -899,14 +973,14 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi2
 
 KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
   annotations: []
   callableId: dependency/api/privateBarApi2
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -928,13 +1002,17 @@ KaNamedFunctionSymbol:
   modality: FINAL
   name: privateBarApi2
   origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
   receiverParameter: KaReceiverParameterSymbol:
+    anchorPsi: KtTypeReference
     annotations: []
     callableId: null
-    compilerVisibility: Public
+    contextParameters: []
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -944,16 +1022,19 @@ KaNamedFunctionSymbol:
     name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(dependency/api/privateBarApi2)
+    psi: KtTypeReference
+    realPsi: KtTypeReference
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: dependency/api/PrivateC1
+    typeParameters: []
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(C1.kt)
     getContainingJvmClassName: dependency.api.C1Kt
     getContainingModule: KaSourceModule "Sources of dependency"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -966,16 +1047,16 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: dependency.api.C1Kt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi2
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/FakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -988,6 +1069,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: FakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -998,16 +1081,16 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.FakeI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/InternalFakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1020,6 +1103,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalFakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1030,16 +1115,16 @@ KaNamedClassSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.InternalFakeI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/PrivateFakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -1052,6 +1137,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateFakeI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1062,16 +1149,16 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(extension.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.PrivateFakeI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/I
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1084,6 +1171,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1094,16 +1183,16 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.I
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/InternalI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1116,6 +1205,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: InternalI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1126,16 +1217,16 @@ KaNamedClassSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.InternalI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/PrivateI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -1148,6 +1239,8 @@ KaNamedClassSymbol:
   modality: ABSTRACT
   name: PrivateI
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1158,16 +1251,16 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(I.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.PrivateI
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/C1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1180,6 +1273,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: C1
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1190,16 +1285,16 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.C1
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/InternalC1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1212,6 +1307,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: InternalC1
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1222,16 +1319,16 @@ KaNamedClassSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.InternalC1
 
 KaNamedClassSymbol:
+  anchorPsi: KtClass
   annotations: []
   classId: dependency/api/PrivateC1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -1244,6 +1341,8 @@ KaNamedClassSymbol:
   modality: FINAL
   name: PrivateC1
   origin: SOURCE
+  psi: KtClass
+  realPsi: KtClass
   superTypes: [
     KaUsualClassType:
       annotations: []
@@ -1254,6 +1353,6 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(C1.kt)
   getContainingModule: KaSourceModule "Sources of dependency"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: dependency.api.PrivateC1

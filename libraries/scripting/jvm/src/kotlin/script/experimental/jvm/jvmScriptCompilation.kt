@@ -60,13 +60,16 @@ fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     )
 }
 
-fun ScriptCompilationConfiguration.withUpdatedClasspath(classpath: Collection<File>): ScriptCompilationConfiguration {
+fun ScriptCompilationConfiguration.withUpdatedClasspath(classpath: Collection<File>, prepend: Boolean = false): ScriptCompilationConfiguration {
 
     val newClasspath = classpath.filterNewClasspath(this[ScriptCompilationConfiguration.dependencies])
         ?: return this
 
     return ScriptCompilationConfiguration(this) {
-        dependencies.append(JvmDependency(newClasspath))
+        if (prepend)
+            dependencies.prepend(JvmDependency(newClasspath))
+        else
+            dependencies.append(JvmDependency(newClasspath))
     }
 }
 

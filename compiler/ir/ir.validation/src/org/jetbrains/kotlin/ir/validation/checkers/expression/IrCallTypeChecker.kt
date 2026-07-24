@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
+import org.jetbrains.kotlin.ir.validation.checkers.IrTypeCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
+@IrTypeCheckers
 object IrCallTypeChecker : IrElementChecker<IrCall>(IrCall::class) {
     override fun check(element: IrCall, context: CheckerContext) {
         val callee = element.symbol.owner

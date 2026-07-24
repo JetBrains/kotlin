@@ -11,90 +11,77 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 object ValueScopeUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
-        element.acceptVoid(ValueScopeVisitor(context, block))
+    override fun enterContext(context: CheckerContext, element: IrElement) {
+        when (element) {
+            is IrValueDeclaration -> {
+                context.valueSymbolScopeStack.addToCurrentScope(element.symbol)
+            }
+            is IrClass -> {
+                context.enterNewScopeForOwner(element) {
+                    // By default, `thisReceiver` is always visited _after_ the child declarations (where it may be referenced),
+                    // so we add it manually before.
+                    addIfNotNull(element.thisReceiver?.symbol)
+                }
+            }
+            is IrScript -> {
+                context.enterNewScopeForOwner(element) {
+                    // By default, `thisReceiver` is always visited _after_ the script statements (where it may be referenced),
+                    // so we add it manually before.
+                    addIfNotNull(element.thisReceiver?.symbol)
+                    addAll(element.implicitReceiversParameters.map { it.symbol })
+                    addAll(element.explicitCallParameters.map { it.symbol })
+                }
+            }
+            is IrReplSnippet -> {
+                context.enterNewScopeForOwner(element) {
+                    element.variablesFromOtherSnippets.mapTo(this, IrVariable::symbol)
+                }
+            }
+            is IrFunction -> {
+                context.enterNewScopeForOwner(element) {
+                    // A function parameter's default value may reference the parameters that come after it,
+                    // so we add all the parameters to the scope manually before validating any of them
+                    element.parameters.mapTo(this, IrValueParameter::symbol)
+                }
+            }
+            is IrAnonymousInitializer -> {
+                context.enterNewScopeForOwner(element) {
+                    addValueParametersOfPrimaryConstructor(element)
+                }
+            }
+            is IrField -> {
+                context.enterNewScopeForOwner(element) {
+                    addValueParametersOfPrimaryConstructor(element)
+                }
+            }
+            is IrCatch -> {
+                // catchParameter only has scope over result expression, so create a new scope
+                context.enterNewScopeForOwner(element)
+            }
+            is IrBlock -> {
+                // Entering a new scope
+                context.enterNewScopeForOwner(element)
+            }
+        }
     }
 
-    private class ValueScopeVisitor(
-        private val context: CheckerContext,
-        private val block: () -> Unit
-    ) : IrVisitorVoid() {
-        override fun visitElement(element: IrElement) {
-            block()
+    override fun exitContext(context: CheckerContext, element: IrElement) {
+        when (element) {
+            is IrClass -> context.exitScopeForOwner(element)
+            is IrScript -> context.exitScopeForOwner(element)
+            is IrReplSnippet -> context.exitScopeForOwner(element)
+            is IrFunction -> context.exitScopeForOwner(element)
+            is IrAnonymousInitializer -> context.exitScopeForOwner(element)
+            is IrField -> context.exitScopeForOwner(element)
+            is IrCatch -> context.exitScopeForOwner(element)
+            is IrBlock -> context.exitScopeForOwner(element)
         }
+    }
 
-        override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrValueDeclaration) {
-                context.valueSymbolScopeStack.addToCurrentScope(declaration.symbol)
-            }
-            block()
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            context.withScopeOwner(declaration, block) {
-                // By default, `thisReceiver` is always visited _after_ the child declarations (where it may be referenced),
-                // so we add it manually before.
-                addIfNotNull(declaration.thisReceiver?.symbol)
-            }
-        }
-
-        override fun visitScript(declaration: IrScript) {
-            context.withScopeOwner(declaration, block) {
-                // By default, `thisReceiver` is always visited _after_ the script statements (where it may be referenced),
-                // so we add it manually before.
-                addIfNotNull(declaration.thisReceiver?.symbol)
-                addAll(declaration.implicitReceiversParameters.map { it.symbol })
-                addAll(declaration.explicitCallParameters.map { it.symbol })
-            }
-        }
-
-        override fun visitReplSnippet(declaration: IrReplSnippet) {
-            context.withScopeOwner(declaration, block) {
-                declaration.variablesFromOtherSnippets.mapTo(this, IrVariable::symbol)
-            }
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            context.withScopeOwner(declaration, block) {
-                // A function parameter's default value may reference the parameters that come after it,
-                // so we add all the parameters to the scope manually before validating any of them
-                declaration.parameters.mapTo(this, IrValueParameter::symbol)
-            }
-        }
-
-        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-            context.withScopeOwner(declaration, block) {
-                addValueParametersOfPrimaryConstructor(declaration)
-            }
-        }
-
-        override fun visitField(declaration: IrField) {
-            context.withScopeOwner(declaration, block) {
-                addValueParametersOfPrimaryConstructor(declaration)
-            }
-        }
-
-        override fun visitCatch(aCatch: IrCatch) {
-            // catchParameter only has scope over result expression, so create a new scope
-            context.withScopeOwner(aCatch, block)
-        }
-
-        override fun visitBlock(expression: IrBlock) {
-            // Entering a new scope
-            context.withScopeOwner(expression, block)
-        }
-
-        private fun MutableSet<IrValueSymbol>.addValueParametersOfPrimaryConstructor(declaration: IrDeclaration) {
-            (declaration.parent as? IrClass)?.primaryConstructor?.parameters?.mapTo(this, IrValueParameter::symbol)
-        }
+    private fun MutableSet<IrValueSymbol>.addValueParametersOfPrimaryConstructor(declaration: IrDeclaration) {
+        (declaration.parent as? IrClass)?.primaryConstructor?.parameters?.mapTo(this, IrValueParameter::symbol)
     }
 }

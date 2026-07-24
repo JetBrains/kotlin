@@ -1,8 +1,13 @@
 package org.jetbrains.ring
 
 import kotlin.experimental.and
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-class CoordinatesSolverBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class CoordinatesSolver {
     val solver: Solver
 
     init {
@@ -336,15 +341,15 @@ class CoordinatesSolverBenchmark {
         return input
     }
 
-    fun solve() {
+    @Benchmark
+    fun solve(bh: Blackhole) {
         val output = solver.solve()
 
+        var result = 0
         for (c in output.steps) {
-            val value = if (c == null) {
-                "felvesz"
-            } else {
-                "${c.x} ${c.y}"
-            }
+            if (c != null)
+                result += c.x + c.y
         }
+        bh.consume(result)
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
+@K1Deprecation
 class SubroutineSinkInstruction(
     val subroutine: KtElement,
     blockScope: BlockScope,

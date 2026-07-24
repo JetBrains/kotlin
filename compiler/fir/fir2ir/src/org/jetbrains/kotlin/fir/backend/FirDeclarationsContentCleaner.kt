@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,7 +37,7 @@ sealed class FirDeclarationsContentCleaner {
                 configuration.allowNonCachedDeclarations || // IDE debugger mode
                         configuration.skipBodies || // KAPT mode
                         // In HMPP mode we need to iterate over FIR bodies once again, after all modules are converted to IR in [referenceAllCommonDependencies]
-                        configuration.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)
+                        configuration.languageVersionSettings.hmppProvidersEnabled
                     -> DoNothing
 
                 else -> CleanBodies(c.session)

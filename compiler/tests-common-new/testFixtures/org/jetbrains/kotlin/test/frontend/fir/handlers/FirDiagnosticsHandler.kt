@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -57,14 +58,11 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -88,7 +86,7 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
 
     fun assertCollectedDiagnostics(testServices: TestServices, expectedExtension: String) {
         val directives = testServices.moduleStructure.allDirectives
-        if (USE_LATEST_LANGUAGE_VERSION in directives) return
+        if (TestDumpDirectives.DUMP_CLASSIFIER in directives) return
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
@@ -177,7 +175,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 }
                 val diagnosticsMetadataInfos = diagnostics
                     .groupBy({ it.kmpCompilationMode }, { it.diagnostic })
-                    .flatMap { (kmpCompilation, diagnostics) ->
+                    .flatMap { [kmpCompilation, diagnostics] ->
                         diagnostics.diagnosticCodeMetaInfos(
                             currentModule, file,
                             diagnosticsService, globalMetadataInfoHandler,
@@ -204,7 +202,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile)
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
-            .mapValues { (_, value) -> value.toSet() }
+            .mapValues { [_, value] -> value.toSet() }
 
         val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
         val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
@@ -227,6 +225,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     if (ContextSensitiveResolutionMightBeUsed in element.nonFatalDiagnostics) {
                         consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED, element.conversionTypeRef.source)
                     }
+
+                    if (ContextSensitiveResolutionMightBeUsedInsteadOfImport in element.nonFatalDiagnostics) {
+                        consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, element.conversionTypeRef.source)
+                    }
                 }
 
                 if (shouldRenderDynamic && element is FirResolvable) {
@@ -245,6 +247,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             ) {
                 if (ContextSensitiveResolutionMightBeUsed in nonFatalDiagnostics) {
                     consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED, element.source)
+                }
+
+                if (ContextSensitiveResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics) {
+                    consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, element.source)
                 }
             }
 
@@ -474,6 +480,7 @@ private class DebugDiagnosticConsumer(
 
         private val FORCE_REPORTING = setOf(
             KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED,
+            KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT,
         )
     }
 
@@ -623,7 +630,7 @@ fun KtDiagnostic.toMetaInfos(
                 targetPlatform.isJs() -> "JS"
                 targetPlatform.isNative() -> "NATIVE"
                 targetPlatform.isCommon() -> "COMMON"
-                else -> error("Should not be here")
+                else -> testInfraError("Unsupported targetPlatform $targetPlatform")
             }
         }
         if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {
@@ -666,7 +673,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
 
-    open fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+    fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
         return cache.getOrPut(info) { computeDiagnostics(info) }
     }
 
@@ -679,7 +686,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return getFrontendDiagnosticsForModule(info).values.any { it.diagnostic.severity == Severity.ERROR }
     }
 
-    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
+    protected open fun computeDiagnostics(info: FirOutputArtifact): DiagnosticsMap {
         val allFiles = info.partsForDependsOnModules.flatMap { it.firFilesByTestFile.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
@@ -691,7 +698,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
-                    for ((sourceFile, diagnostics) in diagnosticsCollector.diagnosticsByFile) {
+                    for ([sourceFile, diagnostics] in diagnosticsCollector.diagnosticsByFile) {
                         if (sourceFile == null) continue
                         val firFile = allFiles.first { it.sourceFile == sourceFile }
                         put(firFile, diagnostics)
@@ -761,7 +768,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
                 }
             }
-            for ((file, diagnostics) in lostDiagnostics) {
+            for ([file, diagnostics] in lostDiagnostics) {
                 diagnostics.forEach { result.put(file, it) }
             }
         }
@@ -784,7 +791,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         part: FirOutputPartForDependsOnModule,
         destination: ListMultimap<FirFile, DiagnosticWithKmpCompilationMode>,
     ) {
-        for ((_, firFile) in part.firFilesByTestFile) {
+        for ([_, firFile] in part.firFilesByTestFile) {
             val syntaxErrors = if (firFile.psi != null) {
                 AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).map {
                     @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -836,6 +843,7 @@ val TestServices.firDiagnosticCollectorService: FirDiagnosticCollectorService by
 private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
     val DYNAMIC by debugInfo0()
     val CSR_MIGHT_BE_USED by debugInfo0()
+    val CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT by debugInfo0()
     val EXPRESSION_TYPE by debugInfo1()
     val CALL by debugInfo1()
     val CALLABLE_OWNER by debugInfo1()
@@ -846,6 +854,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DebugInfo") {
             it.put(DYNAMIC, "")
             it.put(CSR_MIGHT_BE_USED, "")
+            it.put(CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, "")
             it.put(EXPRESSION_TYPE, "{0}", TO_STRING)
             it.put(CALL, "{0}", TO_STRING)
             it.put(CALLABLE_OWNER, "{0}", TO_STRING)

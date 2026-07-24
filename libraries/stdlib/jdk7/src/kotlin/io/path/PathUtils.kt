@@ -743,6 +743,7 @@ public inline fun Path.getLastModifiedTime(vararg options: LinkOption): FileTime
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setLastModifiedTime(value: FileTime): Path =
     Files.setLastModifiedTime(this, value)
 
@@ -797,6 +798,7 @@ public inline fun Path.getPosixFilePermissions(vararg options: LinkOption): Set<
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.setPosixFilePermissions(value: Set<PosixFilePermission>): Path =
     Files.setPosixFilePermissions(this, value)
 

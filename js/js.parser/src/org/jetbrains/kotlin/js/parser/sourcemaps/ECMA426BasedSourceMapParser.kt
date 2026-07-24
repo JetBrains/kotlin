@@ -251,7 +251,7 @@ object ECMA426BasedSourceMapParser {
             return Failure("Invalid JSON type of $key: expected $e, actual $a")
         }
         // 5. For each element item of JSONArrayIterate(values), do
-        for ((index, item) in jsonArrayIterate(values).withIndex()) {
+        for ([index, item] in jsonArrayIterate(values).withIndex()) {
             // a. If item is a String, then
             if (item is JsonString) {
                 // i. Append item to list.
@@ -283,7 +283,7 @@ object ECMA426BasedSourceMapParser {
             return Failure("Invalid JSON type of $key: expected $e, actual $a")
         }
         // 5. For each element item of JSONArrayIterate(values), do
-        for ((index, item) in jsonArrayIterate(values).withIndex()) {
+        for ([index, item] in jsonArrayIterate(values).withIndex()) {
             // a. If item is a String, then
             if (item is JsonString) {
                 // i. Append item to list.
@@ -318,7 +318,7 @@ object ECMA426BasedSourceMapParser {
             return Failure("Invalid JSON type of $key: expected $e, actual $a")
         }
         // 5. For each element item of JSONArrayIterate(values), do
-        for ((index, item) in jsonArrayIterate(values).withIndex()) {
+        for ([index, item] in jsonArrayIterate(values).withIndex()) {
             // a. If item is an integral Number
             expectType<JsonNumber>(item) { e, a ->
                 return Failure("Invalid JSON type of array element in $key at index $index: expected $e, actual $a")

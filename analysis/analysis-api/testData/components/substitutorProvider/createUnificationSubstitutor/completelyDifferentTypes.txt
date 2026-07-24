@@ -1,5 +1,0 @@
-UNIVERSAL:
-Substitutor: null
-
-EXISTENTIAL:
-Substitutor: null

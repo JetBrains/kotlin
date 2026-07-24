@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -57,7 +56,7 @@ class AnonymousObjectTransformer(
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(
-                    null, maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces
+                    maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
                 if (superName.isCoroutineSuperClass()) {
                     inliningContext.isContinuation = true
@@ -111,7 +110,7 @@ class AnonymousObjectTransformer(
                 return if (isCapturedFieldName(name)) {
                     null
                 } else {
-                    classBuilder.newField(NO_ORIGIN, access, name, desc, signature, value)
+                    classBuilder.newField(null, access, name, desc, signature, value)
                 }
             }
 
@@ -225,7 +224,7 @@ class AnonymousObjectTransformer(
         writeOuterInfo(classBuilder)
 
         if (inliningContext.generateAssertField && fieldNames.none { it.key == ASSERTIONS_DISABLED_FIELD_NAME }) {
-            val clInitBuilder = classBuilder.newMethod(NO_ORIGIN, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
+            val clInitBuilder = classBuilder.newMethod(null, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
             generateAssertionsDisabledFieldInitialization(classBuilder, clInitBuilder, inliningContext.root.callSiteInfo.ownerClassName)
             clInitBuilder.visitInsn(Opcodes.RETURN)
             clInitBuilder.visitEnd()
@@ -263,7 +262,7 @@ class AnonymousObjectTransformer(
             publicAbi,
             header.extraInt and JvmAnnotationNames.METADATA_PUBLIC_ABI_FLAG.inv()
         ) action@{ av ->
-            val (newProto, newStringTable) = transformMetadata(header) ?: run {
+            val [newProto, newStringTable] = transformMetadata(header) ?: run {
                 val data = header.data
                 val strings = header.strings
                 if (data != null && strings != null) {
@@ -288,7 +287,7 @@ class AnonymousObjectTransformer(
 
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
-                val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+                val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
                 val newStringTable = JvmStringTable(nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
@@ -296,7 +295,7 @@ class AnonymousObjectTransformer(
                 return newProto to newStringTable
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
-                val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
+                val [nameResolver, functionProto] = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
                 val newStringTable = JvmStringTable(nameResolver)
                 val newProto = functionProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
@@ -392,7 +391,7 @@ class AnonymousObjectTransformer(
         //TODO for inline method make public class
         transformationInfo.newConstructorDescriptor = constructorDescriptor
         val constructorVisitor = classBuilder.newMethod(
-            NO_ORIGIN, constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
+            null, constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
         )
 
         val newBodyStartLabel = Label()
@@ -410,7 +409,7 @@ class AnonymousObjectTransformer(
             if (!param.isSkipped && info is CapturedParamInfo && !info.isSkipInConstructor) {
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
-                classBuilder.newField(NO_ORIGIN, access, info.newFieldName, desc, null, null)
+                classBuilder.newField(null, access, info.newFieldName, desc, null, null)
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                 constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), offset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)
@@ -460,7 +459,7 @@ class AnonymousObjectTransformer(
             )
         ) {
             builder.newMethod(
-                NO_ORIGIN, original.access, original.name, original.desc, original.signature,
+                null, original.access, original.name, original.desc, original.signature,
                 ArrayUtil.toStringArray(original.exceptions)
             )
         }
