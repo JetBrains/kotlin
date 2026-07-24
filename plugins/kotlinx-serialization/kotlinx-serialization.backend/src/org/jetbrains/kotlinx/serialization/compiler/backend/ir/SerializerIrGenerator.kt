@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
@@ -295,7 +296,7 @@ open class SerializerIrGenerator(
             })
             +irInvoke(writeSelfFunction.symbol, args, typeArgs)
         } else {
-            val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
+            val propertyByParamReplacer: (IrValueParameterSymbol) -> IrExpression? =
                 createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize)
 
             val thisSymbol = serializableIrClass.thisReceiver!!.symbol
@@ -530,8 +531,8 @@ open class SerializerIrGenerator(
             val ctorDeclaration = serializableIrClass.primaryConstructorOrFail
             val ctor: IrConstructorSymbol = ctorDeclaration.symbol
 
-            val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = { vpd ->
-                val propertyDescriptor = serializableIrClass.properties.find { it.name == vpd.name }
+            val variableByParamReplacer: (IrValueParameterSymbol) -> IrExpression? = { vpd ->
+                val propertyDescriptor = serializableIrClass.properties.find { it.name == vpd.owner.name }
                 if (propertyDescriptor != null) {
                     val serializable = serialPropertiesMap[propertyDescriptor]
                     (serializable ?: transientsPropertiesMap[propertyDescriptor])?.get()
