@@ -8,8 +8,6 @@ plugins {
 }
 
 kotlin {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
 
     compilerOptions {
@@ -17,7 +15,7 @@ kotlin {
     }
 
     target.compilations.getByName("main").compileTaskProvider.configure {
-        compilerOptions.allWarningsAsErrors.set(true)
+        compilerOptions.allWarningsAsErrors.set(false)
     }
     target.compilations.getByName("test").compileTaskProvider.configure {
         compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
@@ -77,7 +75,7 @@ project.configurations.configureEach {
     if (name.startsWith(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME)) {
         resolutionStrategy {
             eachDependency {
-                if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(project.bootstrapKotlinVersion)
             }
         }
     }

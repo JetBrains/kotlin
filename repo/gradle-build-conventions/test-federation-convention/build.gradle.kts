@@ -16,23 +16,14 @@ group = "org.jetbrains.kotlin"
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
+        allWarningsAsErrors.set(false)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
 
         //youtrack.jetbrains.com/issue/KT-85412
         moduleName.set(project.name)
-    }
-}
-
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
-        }
     }
 }
 

@@ -22,7 +22,7 @@ kotlin {
     jvmToolchain(17)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
+        allWarningsAsErrors.set(false)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }

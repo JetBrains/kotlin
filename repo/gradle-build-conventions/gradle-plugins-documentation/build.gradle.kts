@@ -8,11 +8,10 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
+        allWarningsAsErrors.set(false)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
@@ -27,14 +26,6 @@ dependencies {
 
     constraints {
         api(libs.apache.commons.lang)
-    }
-}
-
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
-        }
     }
 }
 

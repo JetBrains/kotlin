@@ -11,7 +11,6 @@ description = "Generates KGP npm tooling dependency versions."
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
     compilerOptions {
         optIn.add("kotlinx.serialization.ExperimentalSerializationApi")
@@ -32,14 +31,6 @@ gradlePlugin {
         register("KgpNpmToolingHelperPlugin") {
             id = "kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper"
             implementationClass = "org.jetbrains.kotlin.build.kgpnpmtooling.KgpNpmToolingHelperPlugin"
-        }
-    }
-}
-
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
         }
     }
 }
