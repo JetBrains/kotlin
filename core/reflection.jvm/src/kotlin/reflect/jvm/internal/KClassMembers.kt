@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
@@ -27,7 +26,6 @@ import kotlin.metadata.ClassKind
 import kotlin.metadata.kind
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
@@ -67,8 +65,10 @@ private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: Mutable
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
     if (useK1Implementation || isComplicatedBuiltinSubclass) {
-        addAll(getDescriptorBasedMembers(memberScope, DECLARED, name))
-        addAll(getDescriptorBasedMembers(staticScope, DECLARED, name))
+        addAll(getDescriptorBasedFunctions(memberScope, DECLARED, name))
+        addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
+        addAll(getDescriptorBasedFunctions(staticScope, DECLARED, name))
+        addAll(getDescriptorBasedProperties(staticScope, DECLARED, name))
     } else if (kmClass != null) {
         val kmClass = kmClass!!
         for (function in kmClass.functions) {
@@ -85,11 +85,11 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             }
         }
         data.value.additionalFunctions.filterTo(this) { it.name == name }
-        getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
-        getDescriptorBasedMembers(staticScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
+        addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
+        addAll(getDescriptorBasedProperties(staticScope, DECLARED, name))
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-        getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
+        addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -118,8 +118,10 @@ internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<Reflec
     if (useK1Implementation || isComplicatedBuiltinSubclass) {
         buildList {
             addAll(data.value.getDeclaredMembersByName(name))
-            addAll(getDescriptorBasedMembers(memberScope, INHERITED, name))
-            addAll(getDescriptorBasedMembers(staticScope, INHERITED, name))
+            addAll(getDescriptorBasedFunctions(memberScope, INHERITED, name))
+            addAll(getDescriptorBasedProperties(memberScope, INHERITED, name))
+            addAll(getDescriptorBasedFunctions(staticScope, INHERITED, name))
+            addAll(getDescriptorBasedProperties(staticScope, INHERITED, name))
         }
     } else {
         val isKotlin = isKotlin
@@ -167,19 +169,21 @@ private fun KClassImpl<*>.getMemberNamesFromDescriptors(): Set<String> = buildSe
     staticScope.getVariableNames().mapTo(this, Name::asString)
 }
 
-private fun KClassImpl<*>.getDescriptorBasedMembers(
+private fun KClassImpl<*>.getDescriptorBasedFunctions(
     scope: MemberScope, belonginess: MemberBelonginess, name: String,
-): Collection<DescriptorKCallable<*>> {
-    val visitor = object : CreateKCallableVisitor(this) {
-        override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
-            throw IllegalStateException("No constructors should appear here: $descriptor")
-    }
-    val identifier = Name.identifier(name)
-    return (scope.getContributedFunctions(identifier, NoLookupLocation.FROM_REFLECTION) +
-            scope.getContributedVariables(identifier, NoLookupLocation.FROM_REFLECTION)).mapNotNull { descriptor ->
-        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE && belonginess.accept(descriptor))
-            descriptor.accept(visitor, Unit) else null
-    }
+): Collection<DescriptorKFunction> =
+    scope.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_REFLECTION).createCallables(this, belonginess)
+
+private fun KClassImpl<*>.getDescriptorBasedProperties(
+    scope: MemberScope, belonginess: MemberBelonginess, name: String,
+): Collection<DescriptorKProperty<*>> =
+    scope.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_REFLECTION).createCallables(this, belonginess)
+
+private inline fun <reified T : DescriptorKCallable<*>> Collection<CallableMemberDescriptor>.createCallables(
+    container: KClassImpl<*>, belonginess: MemberBelonginess,
+): List<T> = mapNotNull { descriptor ->
+    if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE && belonginess.accept(descriptor))
+        descriptor.accept(CreateNonConstructorKCallableVisitor(container), Unit) as T else null
 }
 
 private enum class MemberBelonginess {
