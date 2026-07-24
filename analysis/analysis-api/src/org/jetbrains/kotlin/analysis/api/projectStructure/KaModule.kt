@@ -217,7 +217,16 @@ public interface KaLibraryModule : KaModule {
     public val binaryRoots: Collection<Path>
 
     /**
-     * A list of binary files in [VirtualFile] form if the library module represents a library in an in-memory file system.
+     * A list of binary roots which constitute the library, in [VirtualFile] form. Like [binaryRoots], the list can contain JARs, KLIBs,
+     * folders with `.class` files, and so on.
+     *
+     * Originally, this property was only intended to cover libraries in an in-memory file system, whose roots cannot be represented as
+     * paths in [binaryRoots]. However, not every disk-based binary root can be represented as a path either (e.g. roots in a JAR file
+     * system), so the Analysis API is moving towards virtual files as the canonical representation of binary roots (see
+     * [KT-72676](https://youtrack.jetbrains.com/issue/KT-72676)): [binaryVirtualFiles] is to cover *all* binary roots, and [binaryRoots]
+     * will eventually change its return type to a collection of [VirtualFile]s (after a deprecation cycle), at which point this property
+     * will be removed. The IntelliJ platform implementation already exposes all binary roots through this property, while the Standalone
+     * platform currently exposes only in-memory roots, keeping disk-based roots in [binaryRoots].
      */
     @KaExperimentalApi
     public val binaryVirtualFiles: Collection<VirtualFile>
