@@ -132,16 +132,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "compiler/testData/codegen") {
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(
-                    klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>()
-                )
-            ) {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
             testClass<AbstractNativeIrDeserializationTest> {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
