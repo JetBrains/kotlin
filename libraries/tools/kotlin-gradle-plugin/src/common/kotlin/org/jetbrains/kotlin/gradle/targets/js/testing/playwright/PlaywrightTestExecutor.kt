@@ -260,6 +260,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
+                page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
                     if (it.text().startsWith(runner.finishMarker)) {
