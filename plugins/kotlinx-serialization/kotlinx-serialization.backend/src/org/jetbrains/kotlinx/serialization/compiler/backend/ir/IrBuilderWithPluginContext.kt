@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
@@ -249,15 +248,13 @@ interface IrBuilderWithPluginContext {
             }
         }
 
-        anonymousInit.buildWithScope { initIrBody ->
-            initIrBody.body =
-                DeclarationIrBuilder(
-                    compilerContext,
-                    initIrBody.symbol,
-                    initIrBody.startOffset,
-                    initIrBody.endOffset
-                ).irBlockBody(body = body)
-        }
+        anonymousInit.body =
+            DeclarationIrBuilder(
+                compilerContext,
+                anonymousInit.symbol,
+                anonymousInit.startOffset,
+                anonymousInit.endOffset
+            ).irBlockBody(body = body)
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
@@ -276,14 +273,6 @@ interface IrBuilderWithPluginContext {
             irObject.defaultType,
             irObject.symbol
         )
-
-    fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
-        also { irDeclaration ->
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            compilerContext.symbolTable.withReferenceScope(irDeclaration) {
-                builder(irDeclaration)
-            }
-        }
 
     class BranchBuilder(
         val irWhen: IrWhen,
