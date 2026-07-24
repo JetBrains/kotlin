@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.registerSwiftExportMetadataTaskAndConsumableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal object SwiftExportDSLConstants {
@@ -39,6 +40,13 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         .matching { it.konanTarget.family.isAppleFamily }
 
     if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
+
+    // Publish Swift Export metadata (module name and package flattening rule) into the root component so consumers can
+    // read how this library exposes itself to Swift. Only published when the user explicitly configured one of them.
+    // Checked after awaitTargets() so the user's swiftExport {} block has already been evaluated.
+    if (swiftExportExtension.moduleName.isPresent || swiftExportExtension.flattenPackage.isPresent) {
+        registerSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportExtension)
+    }
 
     initSwiftExportClasspathConfigurations()
     registerSwiftExportPipeline(swiftExportExtension)
