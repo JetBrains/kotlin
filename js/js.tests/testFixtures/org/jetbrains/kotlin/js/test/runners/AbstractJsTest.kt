@@ -135,8 +135,8 @@ abstract class AbstractJsKlibSyntheticAccessorsBoxTest : AbstractJsCodegenBoxTes
 )
 
 
-abstract class AbstractJsCodegenSplittingInlineTest(
-    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
+abstract class AbstractJsCodegenSplittingTest(
+    pathToTestDir: String = "compiler/testData/codegen/",
     testGroupOutputDirPrefix: String = "codegen/boxInlineSplitted/",
 ) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
@@ -151,11 +151,6 @@ abstract class AbstractJsCodegenSplittingInlineTest(
         builder.useMetaTestConfigurators(::SplittingTestConfigurator)
     }
 }
-
-abstract class AbstractJsCodegenSplittingTest : AbstractJsCodegenSplittingInlineTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/boxSplitted/",
-)
 
 abstract class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"

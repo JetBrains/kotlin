@@ -162,9 +162,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
-            }
-
-            testClass<AbstractJsCodegenSplittingInlineTest> {
                 model("boxInline")
             }
 
