@@ -61,7 +61,7 @@ open class SerializerIrGenerator(
 
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD
-    ) { true }?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
+    ) { true }?.takeIf { it.isFromPlugin() }
 
     protected val irAnySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -614,17 +614,16 @@ open class SerializerIrGenerator(
         val prop = generatedSerialDescPropertyDescriptor?.let { generateSerializableClassProperty(it); true } ?: false
         if (prop)
             generateSerialDesc()
-        val withFir = compilerContext.afterK2
-        val save = irClass.findPluginGeneratedMethod(SAVE, withFir)?.let { generateSave(it); true } ?: false
-        val load = irClass.findPluginGeneratedMethod(LOAD, withFir)?.let { generateLoad(it); true } ?: false
-        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier, withFir)
+        val save = irClass.findPluginGeneratedMethod(SAVE)?.let { generateSave(it); true } ?: false
+        val load = irClass.findPluginGeneratedMethod(LOAD)?.let { generateLoad(it); true } ?: false
+        irClass.findPluginGeneratedMethod(SerialEntityNames.CHILD_SERIALIZERS_GETTER.identifier)
             ?.let { generateChildSerializersGetter(it) }
-        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier, withFir)
+        irClass.findPluginGeneratedMethod(SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER.identifier)
             ?.let { generateTypeParamsSerializersGetter(it) }
         if (!prop && (save || load))
             generateSerialDesc()
         if (serializableIrClass.typeParameters.isNotEmpty()) {
-            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin(withFir) }?.let {
+            findSerializerConstructorForTypeArgumentsSerializers(irClass)?.takeIf { it.owner.isFromPlugin() }?.let {
                 generateGenericFieldsAndConstructor(it.owner)
             }
         }
@@ -647,7 +646,7 @@ open class SerializerIrGenerator(
                 else -> SerializerIrGenerator(irClass, context)
             }
             generator.generate()
-            if (irClass.isFromPlugin(context.afterK2)) {
+            if (irClass.isFromPlugin()) {
                 // replace origin only for plugin generated serializers
                 irClass.origin = SERIALIZATION_PLUGIN_ORIGIN
             }
