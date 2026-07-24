@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleBareInferenceFailed
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.types.model.canHaveUndefinedNullability
 import org.jetbrains.kotlin.types.model.makeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.types.model.replaceType
 import org.jetbrains.kotlin.types.model.withNullability
+import kotlin.collections.forEach
 
 
 context(onDiagnostic: (ConeDiagnostic) -> Unit)
@@ -121,22 +123,18 @@ private fun BodyResolveComponents.trySimpleInference(
             return@forEach
         }
 
-        val [originalInstantiation, idx] = directInheritanceArguments.single()
+        val [_, idx] = directInheritanceArguments.single()
+        val originalInstantiation = originalType.fullyExpandedType().typeArguments[idx]
         val originalTypeParameter = originalType.fullyExpandedType().classLikeLookupTagIfAny!!.toClassSymbol()!!.typeParameterSymbols[idx]
-        val isSameConstraints = originalTypeParameter.resolvedBounds.all { typeParameter.resolvedBounds.contains(it) }
+        val isSameConstraints = areBoundsEqual(originalTypeParameter.toConeType(), typeParameter.toConeType())
         val isSameVariance = originalTypeParameter.variance == typeParameter.variance
         val isOriginalUnconstrained =
-            originalInstantiation.isStarProjection || (originalInstantiation is ConeTypeParameterType && originalInstantiation.collectUpperBounds(
-                this.session.typeContext
-            ).all { originalTypeParameter.resolvedBounds.map { it.coneType }.contains(it) })
+            originalInstantiation.isStarProjection || (originalInstantiation is ConeTypeParameterType && areBoundsEqual(
+                originalInstantiation, originalTypeParameter.toConeType()
+            ))
 
         val stats = SimpleInferenceStats(
-            containingArguments.size,
-            directInheritanceArguments.size,
-            isSameConstraints,
-            isSameVariance,
-            isOriginalUnconstrained,
-            null
+            containingArguments.size, directInheritanceArguments.size, isSameConstraints, isSameVariance, isOriginalUnconstrained, null
         )
 
         onDiagnostic(ConeSimpleBareInferenceFailed(stats.toString()))
@@ -153,6 +151,12 @@ private fun BodyResolveComponents.trySimpleInference(
     }
     if (substitution.size != typeParameters.size) return null
     return substitution
+}
+
+private fun BodyResolveComponents.areBoundsEqual(a: ConeTypeParameterType, b: ConeTypeParameterType): Boolean {
+    val aBounds = a.collectUpperBounds(session.typeContext)
+    val bBounds = b.collectUpperBounds(session.typeContext)
+    return aBounds.size == bBounds.size && aBounds.all { bBounds.contains(it) } && bBounds.all { aBounds.contains(it) }
 }
 
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
