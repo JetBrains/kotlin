@@ -23,10 +23,7 @@ internal class KotlinKNamedFunction(
 ) : KotlinKFunction(container, signature, rawBoundReceiver, overriddenStorage) {
     override val contextParameters: List<KmValueParameter> get() = kmFunction.contextParameters
 
-    override val extensionReceiverType: KmType? by lazy(PUBLICATION) {
-        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-        kmFunction.receiverParameterType.takeUnless { kmFunction.isStatic }
-    }
+    override val extensionReceiverType: KmType? get() = kmFunction.receiverParameterType
 
     override val valueParameters: List<KmValueParameter> get() = kmFunction.valueParameters
     override val typeParameterTable: TypeParameterTable get() = _typeParameterTable.value
