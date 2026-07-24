@@ -173,7 +173,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
-                    klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
@@ -186,7 +185,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
-                    klibIrInliner(),
                 )
             ) {
                 model()
