@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.abi
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
 import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -42,10 +40,6 @@ open class AbstractNativeLibraryAbiReaderTest :
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LANGUAGE with listOf(
-                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
             // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
             // `Any`, `String`, `println`, etc.
             +ConfigurationDirectives.WITH_STDLIB

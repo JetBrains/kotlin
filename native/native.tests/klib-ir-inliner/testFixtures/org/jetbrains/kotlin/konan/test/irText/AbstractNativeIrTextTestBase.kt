@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.irText
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.*
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTex
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
@@ -70,10 +68,6 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
                 // `Any`, `String`, `println`, etc.
                 +ConfigurationDirectives.WITH_STDLIB
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
                 +ALLOW_KOTLIN_PACKAGE
             }
         }
