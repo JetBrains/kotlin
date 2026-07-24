@@ -41,6 +41,7 @@ _LIST_BACKING_FIELD_NAMES = ("backing", "$this_asList", "backingArray")
 _LIST_SIZE_FIELD_NAMES = ("length",)
 _MAP_BACKING_FIELD_NAMES = ("keysArray", "valuesArray")
 _MAP_SIZE_FIELD_NAMES = ("length",)
+_SET_BACKING_FIELD_NAME = "backing"
 
 
 def initialize_expression_options():
@@ -214,6 +215,15 @@ def _is_kotlin_map(value):
     ).unsigned != 0
 
 
+def _is_kotlin_set(value):
+    set_addr = _symbol_loaded_address("kclass:kotlin.collections.Set")
+    if set_addr == 0:
+        return False
+    return _evaluate(
+        f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(set_addr)})"
+    ).unsigned != 0
+
+
 def _type_info(value):
     """
     This method checks self-referencing of pointer of first member of TypeInfo
@@ -248,6 +258,13 @@ _FACTORY = {}
 # Cache type info pointer to [ChildMetaInfo]
 _SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
 _SBVALUE_QUERY_CACHE = {}
+# Cache a collection kind by concrete runtime type. An empty string means the
+# type is not one of the collections with a logical child count.
+_COLLECTION_TYPE_INFO_CACHE = {}
+_COLLECTION_KIND_LIST = "list"
+_COLLECTION_KIND_MAP = "map"
+_COLLECTION_KIND_SET = "set"
+_COLLECTION_KIND_NONE = ""
 _SBVALUE_QUERY_CACHE_STATE = None
 _TO_STRING_DEPTH = 2
 _ARRAY_TO_STRING_LIMIT = 10
@@ -258,6 +275,7 @@ class CachedSbValueResponses:
     def __init__(self):
         self.children_count = None
         self.summary = None
+        self.type_info = None
 
 
 def _trace_children_count_cache(message):
@@ -335,7 +353,9 @@ def _get_or_create_cached_sbvalue_responses_for_key(process, key):
     return responses
 
 
-def _set_cached_children_count_for_key(process, key, children_count):
+def _set_cached_children_count_for_key(
+    process, key, children_count, type_info=None
+):
     if key == 0:
         _trace_children_count_cache(
             f"skip-seed key=0 count={children_count}"
@@ -344,6 +364,8 @@ def _set_cached_children_count_for_key(process, key, children_count):
     responses = _get_or_create_cached_sbvalue_responses_for_key(process, key)
     if responses is not None:
         responses.children_count = children_count
+        if type_info is not None:
+            responses.type_info = type_info
         _trace_children_count_cache(
             f"seed key={_hex(key)} count={children_count}"
         )
@@ -965,7 +987,10 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                 ):
                     child_key = self._read_pointer(child_address)
                     _set_cached_children_count_for_key(
-                        self._process, child_key, child_count
+                        self._process,
+                        child_key,
+                        child_count,
+                        self._object_type_info(child_key),
                     )
                     if (
                         summary_data is not None
@@ -1254,6 +1279,14 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
             f"{self._struct_prefix()}{pointer_format}", raw
         )[0]
 
+    def _object_type_info(self, object_address):
+        type_info = self._read_pointer(object_address) & ~0x3
+        return (
+            type_info
+            if type_info and self._read_pointer(type_info) == type_info
+            else None
+        )
+
     def _read_int32(self, address):
         error = lldb.SBError()
         raw = self._process.ReadMemory(address, 4, error)
@@ -1407,6 +1440,7 @@ class KonanProxyTypeProvider:
         self._proxy = None
         self._uses_list_backing = False
         self._uses_map_backing = False
+        self._uses_set_backing = False
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
     def _cached_children_count(self):
@@ -1414,6 +1448,16 @@ class KonanProxyTypeProvider:
         if responses is None:
             return None
         return responses.children_count
+
+    def _cached_type_info(self):
+        responses = _get_cached_sbvalue_responses(self._valobj)
+        return None if responses is None else responses.type_info
+
+    def _cached_collection_kind(self):
+        type_info = self._cached_type_info()
+        if type_info is None:
+            return None
+        return _COLLECTION_TYPE_INFO_CACHE.get(type_info)
 
     def _get_proxy(self):
         if self._proxy is not None:
@@ -1432,7 +1476,7 @@ class KonanProxyTypeProvider:
             )
             self._proxy = KonanNullSyntheticProvider(valobj)
         else:
-            tip = _type_info(valobj)
+            tip = self._cached_type_info() or _type_info(valobj)
             if not tip:
                 self._log.debug(
                     "%s, name: %s NULL syntectic %s",
@@ -1448,24 +1492,47 @@ class KonanProxyTypeProvider:
                 self._proxy = _select_provider(
                     valobj, tip, self._internal_dict
                 )
-                if _is_kotlin_list(valobj):
+                collection_kind = self._collection_kind(valobj, tip)
+                if collection_kind == _COLLECTION_KIND_LIST:
                     backing_proxy = self._list_backing_proxy(self._proxy)
                     if backing_proxy is not None:
                         self._proxy = backing_proxy
                         self._uses_list_backing = True
-                elif _is_kotlin_map(valobj):
+                elif collection_kind == _COLLECTION_KIND_MAP:
                     map_proxy = KonanMapSyntheticProvider.create(
                         valobj, self._proxy, self._internal_dict
                     )
                     if map_proxy is not None:
                         self._proxy = map_proxy
                         self._uses_map_backing = True
+                elif collection_kind == _COLLECTION_KIND_SET:
+                    backing_proxy = self._set_backing_proxy(self._proxy)
+                    if backing_proxy is not None:
+                        self._proxy = backing_proxy
+                        self._uses_set_backing = True
 
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
             "%s _proxy: %s", value_str, self._proxy.__class__.__name__
         )
         return self._proxy
+
+    @staticmethod
+    def _collection_kind(valobj, type_info):
+        collection_kind = _COLLECTION_TYPE_INFO_CACHE.get(type_info)
+        if collection_kind is not None:
+            return collection_kind
+
+        if _is_kotlin_list(valobj):
+            collection_kind = _COLLECTION_KIND_LIST
+        elif _is_kotlin_map(valobj):
+            collection_kind = _COLLECTION_KIND_MAP
+        elif _is_kotlin_set(valobj):
+            collection_kind = _COLLECTION_KIND_SET
+        else:
+            collection_kind = _COLLECTION_KIND_NONE
+        _COLLECTION_TYPE_INFO_CACHE[type_info] = collection_kind
+        return collection_kind
 
     def _list_backing_proxy(self, object_proxy):
         visible_children_count = self._list_size(object_proxy)
@@ -1488,6 +1555,30 @@ class KonanProxyTypeProvider:
                 return value.GetValueAsUnsigned()
         return None
 
+    def _set_backing_proxy(self, object_proxy):
+        backing = self._object_field(object_proxy, _SET_BACKING_FIELD_NAME)
+        if backing is None or not backing.IsValid() or backing.unsigned == 0:
+            self._log.debug(
+                "%s has no supported Set backing field",
+                _hex(self._valobj.unsigned),
+            )
+            return None
+
+        backing_type_info = _type_info(backing)
+        if not backing_type_info:
+            return None
+        backing_object_proxy = _select_provider(
+            backing, backing_type_info, self._internal_dict
+        )
+        keys = self._object_field(backing_object_proxy, "keysArray")
+        if keys is None or not keys.IsValid() or keys.unsigned == 0:
+            return None
+
+        visible_children_count = self._list_size(backing_object_proxy)
+        return KonanProxyTypeProvider(
+            keys, self._internal_dict, visible_children_count
+        )
+
     @staticmethod
     def _object_field(object_proxy, field_name):
         try:
@@ -1505,16 +1596,27 @@ class KonanProxyTypeProvider:
         return self._valobj.GetValue()
 
     def num_children(self):
-        if self._uses_list_backing or self._uses_map_backing:
+        cached_children_count = self._cached_children_count()
+        if (
+            cached_children_count is not None
+            and self._cached_collection_kind() == _COLLECTION_KIND_NONE
+        ):
+            return self._limit_children_count(cached_children_count)
+
+        proxy = self._get_proxy()
+        if (
+            self._uses_list_backing
+            or self._uses_map_backing
+            or self._uses_set_backing
+        ):
             return self._limit_children_count(
-                self._get_proxy().num_children()
+                proxy.num_children()
             )
 
-        cached_children_count = self._cached_children_count()
         if cached_children_count is not None:
             return self._limit_children_count(cached_children_count)
 
-        return self._limit_children_count(self._get_proxy().num_children())
+        return self._limit_children_count(proxy.num_children())
 
     def update(self):
         if self._proxy is not None:
@@ -1522,13 +1624,27 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        if not self._uses_list_backing and not self._uses_map_backing:
-            cached_children_count = self._cached_children_count()
+        cached_children_count = self._cached_children_count()
+        if (
+            cached_children_count is not None
+            and self._cached_collection_kind() == _COLLECTION_KIND_NONE
+        ):
+            return self._limit_children_count(cached_children_count) > 0
+
+        proxy = self._get_proxy()
+        if not (
+            self._uses_list_backing
+            or self._uses_map_backing
+            or self._uses_set_backing
+        ):
             if cached_children_count is not None:
                 return self._limit_children_count(cached_children_count) > 0
 
-        proxy = self._get_proxy()
-        if self._uses_list_backing or self._uses_map_backing:
+        if (
+            self._uses_list_backing
+            or self._uses_map_backing
+            or self._uses_set_backing
+        ):
             return self.num_children() > 0
         return self._limit_children_count(proxy.num_children()) > 0
 
