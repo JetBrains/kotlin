@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -673,10 +672,6 @@ private val compileTimeExtensionFunctions = listOf("floorDiv", "mod", "code").ma
 
 private val FirSession.intrinsicConstEvaluationEnabled: Boolean
     get() = languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-
-private fun FirBasedSymbol<*>.isIntrinsicConst(session: FirSession): Boolean {
-    return this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
-}
 
 private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
     if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
