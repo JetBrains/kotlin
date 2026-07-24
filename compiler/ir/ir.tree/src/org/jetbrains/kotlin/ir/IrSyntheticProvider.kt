@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns.Companion.BUILTIN_OPERATOR
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltinsPackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -34,15 +34,12 @@ import org.jetbrains.kotlin.types.Variance
 
 @OptIn(InternalSymbolFinderAPI::class)
 class IrSyntheticProvider(
-    packageFragmentDescriptor: PackageFragmentDescriptor,
+    module: IrModuleFragment,
     private val symbolTable: SymbolTable,
     private val signatureComputer: (IrDeclaration) -> IdSignature,
 ) {
     private val irFactory: IrFactory = symbolTable.irFactory
-    val operatorsPackageFragment = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(descriptor = packageFragmentDescriptor), StandardClassIds.BASE_INTERNAL_IR_PACKAGE,
-        module = null,
-    )
+    val operatorsPackageFragment = createOperatorsPackageFragment(module)
 
     private val anyClass = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature())
     private val anyType = anyClass.defaultTypeWithoutArguments
@@ -274,6 +271,13 @@ class IrSyntheticProvider(
             constructorTypeArgumentsCount = 0,
             origin = null
         )
+    }
+
+    private fun createOperatorsPackageFragment(module: IrModuleFragment): IrExternalPackageFragment {
+        val packageDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(module.descriptor, StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
+        val packageSymbol = IrExternalPackageFragmentSymbolImpl(packageDescriptor)
+
+        return IrExternalPackageFragmentImpl(packageSymbol, packageDescriptor.fqName, module)
     }
 
     public fun finish() {
