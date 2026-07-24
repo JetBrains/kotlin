@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -147,7 +146,7 @@ class WasmBackendContext(
         IrExternalPackageFragmentImpl(
             DescriptorlessExternalPackageFragmentSymbol(),
             FqName("kotlin"),
-            module = irBuiltIns.anyClass.owner.moduleFragment,
+            module = irBuiltIns.moduleFragment,
         )
     }
 
