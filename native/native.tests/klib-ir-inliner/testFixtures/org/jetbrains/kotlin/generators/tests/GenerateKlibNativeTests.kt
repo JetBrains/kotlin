@@ -70,16 +70,6 @@ fun main(args: Array<String>) {
                 model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
                 model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
             }
-
-            testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
-                suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(klib())
-            ) {
-                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
-                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
-                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
-            }
         }
 
         // Dump KLIB metadata tests
