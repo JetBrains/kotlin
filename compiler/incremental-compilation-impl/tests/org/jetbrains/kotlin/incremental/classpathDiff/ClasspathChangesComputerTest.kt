@@ -152,6 +152,21 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     @Test
+    fun testTypeAliasExpansion() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testTypeAliasExpansion/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "foo", scope = "com.example.B"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                // The type alias `A = B` exposes B's members, so the change in B.foo also surfaces as A.foo.
+                LookupSymbol(name = "foo", scope = "com.example.A"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.A"),
+            ),
+            fqNames = setOf("com.example.B", "com.example.A")
+        ).assertEquals(changes)
+    }
+
+    @Test
     fun testDifferentClassKinds() {
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testDifferentClassKinds/src"), tmpDir)
         Changes(
