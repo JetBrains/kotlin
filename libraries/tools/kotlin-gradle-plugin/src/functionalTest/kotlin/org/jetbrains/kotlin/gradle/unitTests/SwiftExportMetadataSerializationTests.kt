@@ -52,6 +52,12 @@ class SwiftExportMetadataSerializationTests {
     }
 
     @Test
+    fun `swift export metadata round-trips with absent module name`() {
+        val metadata = SwiftExportMetadata(moduleName = null, flattenPackage = "org.bar.foo")
+        assertEquals(metadata, metadata.roundTrip())
+    }
+
+    @Test
     fun `swift export metadata is serialized with the current schema version`() {
         val serialized = ByteArrayOutputStream()
         SwiftExportMetadata(moduleName = "Foo", flattenPackage = "org.bar.foo").serializeSwiftExportMetadata(serialized)
@@ -111,6 +117,32 @@ class SwiftExportMetadataSerializationTests {
             assertNull(
                 configurations.findByName("swiftExportMetadataElements"),
                 "swiftExportMetadataElements configuration should not be created when swiftExport is not configured"
+            )
+        }
+    }
+
+    @Test
+    fun `swift export metadata variant is published when only the flatten package is configured`() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        with(buildProjectWithMPP()) {
+            kotlin {
+                iosArm64()
+                swiftExport {
+                    flattenPackage.set("org.bar.foo")
+                }
+            }
+            configureRepositoriesForTests()
+            evaluate()
+
+            assertNotNull(
+                configurations.findByName("swiftExportMetadataElements"),
+                "swiftExportMetadataElements configuration should be created when only flattenPackage is configured"
+            )
+
+            val serializeTask = tasks.withType(SerializeSwiftExportMetadata::class.java).single()
+            assertEquals(
+                SwiftExportMetadata(moduleName = null, flattenPackage = "org.bar.foo"),
+                serializeTask.swiftExportMetadata()
             )
         }
     }

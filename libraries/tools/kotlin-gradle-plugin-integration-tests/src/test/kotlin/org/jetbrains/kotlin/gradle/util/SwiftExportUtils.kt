@@ -22,8 +22,12 @@ import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.GradleMetadata
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.Variant
+import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import java.io.File
@@ -331,4 +335,33 @@ internal fun assertAllSwiftModuleSymbols(
     }
 
     assertEquals(expectedSymbolsByModule, actualSymbolsByModule)
+}
+
+private val gradleMetadataJson = Json { ignoreUnknownKeys = true }
+
+/**
+ * Asserts that the published root component declares the Swift Export metadata variant with the attributes consumers
+ * match on, and that the variant carries the metadata artifact.
+ */
+internal fun PublishedProject.assertSwiftExportMetadataVariantExistsInRootComponent() {
+    val gradleMetadata = gradleMetadataJson
+        .decodeFromString<GradleMetadata>(rootComponent.gradleMetadata.readText())
+
+    assertEquals(
+        Variant(
+            name = "swiftExportMetadataElements",
+            attributes = mapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "swiftExportMetadata",
+            ),
+            availableAt = null,
+            files = listOf(
+                VariantFile(
+                    name = "swiftExportMetadata",
+                    url = "$name-$version-swift-export-metadata.json",
+                )
+            ),
+        ).prettyPrinted,
+        gradleMetadata.variants.single { it.name == "swiftExportMetadataElements" }.prettyPrinted
+    )
 }

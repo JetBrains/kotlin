@@ -65,6 +65,7 @@ data class PublishedProject(
         val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
         val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
         val swiftPmMetadata: File get() = path.resolve("${artifactsPrefix}-swiftpm-metadata.json")
+        val swiftExportMetadata: File get() = path.resolve("${artifactsPrefix}-swift-export-metadata.json")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
