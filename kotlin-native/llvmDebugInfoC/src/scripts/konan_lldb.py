@@ -37,6 +37,8 @@ _FAST_ARRAY_PREFETCH_RADIUS = 50
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
+_LIST_BACKING_FIELD_NAMES = ("backing", "$this_asList", "backingArray")
+_LIST_SIZE_FIELD_NAMES = ("length",)
 
 
 def initialize_expression_options():
@@ -190,6 +192,15 @@ def _is_string_or_array(value):
     logging.debug("%s: %s", value_str, soa)
     _bench(start, lambda: f"is_string_or_array({value_str}) = {soa}")
     return soa
+
+
+def _is_kotlin_list(value):
+    list_addr = _symbol_loaded_address("kclass:kotlin.collections.List")
+    if list_addr == 0:
+        return False
+    return _evaluate(
+        f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(list_addr)})"
+    ).unsigned != 0
 
 
 def _type_info(value):
@@ -1276,11 +1287,13 @@ class KonanNotInitializedObjectSyntheticProvider(KonanZerroSyntheticProvider):
 
 
 class KonanProxyTypeProvider:
-    def __init__(self, valobj, internal_dict):
+    def __init__(self, valobj, internal_dict, visible_children_count=None):
         self._log = logging.getLogger(self.__class__.__name__)
         self._valobj = valobj
         self._internal_dict = internal_dict
+        self._visible_children_count = visible_children_count
         self._proxy = None
+        self._uses_list_backing = False
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
     def _cached_children_count(self):
@@ -1322,6 +1335,11 @@ class KonanProxyTypeProvider:
                 self._proxy = _select_provider(
                     valobj, tip, self._internal_dict
                 )
+                if _is_kotlin_list(valobj):
+                    backing_proxy = self._list_backing_proxy(self._proxy)
+                    if backing_proxy is not None:
+                        self._proxy = backing_proxy
+                        self._uses_list_backing = True
 
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
@@ -1329,14 +1347,54 @@ class KonanProxyTypeProvider:
         )
         return self._proxy
 
+    def _list_backing_proxy(self, object_proxy):
+        visible_children_count = self._list_size(object_proxy)
+        for field_name in _LIST_BACKING_FIELD_NAMES:
+            backing = self._object_field(object_proxy, field_name)
+            if backing is not None and backing.IsValid() and backing.unsigned != 0:
+                return KonanProxyTypeProvider(
+                    backing, self._internal_dict, visible_children_count
+                )
+
+        self._log.debug(
+            "%s has no supported List backing field", _hex(self._valobj.unsigned)
+        )
+        return None
+
+    def _list_size(self, object_proxy):
+        for field_name in _LIST_SIZE_FIELD_NAMES:
+            value = self._object_field(object_proxy, field_name)
+            if value is not None and value.IsValid():
+                return value.GetValueAsUnsigned()
+        return None
+
+    @staticmethod
+    def _object_field(object_proxy, field_name):
+        try:
+            field_index = object_proxy.get_child_index(field_name)
+        except (DebuggerException, ValueError):
+            return None
+        return object_proxy.get_child_at_index(field_index)
+
+    def _limit_children_count(self, children_count):
+        if self._visible_children_count is None:
+            return children_count
+        return min(children_count, self._visible_children_count)
+
     def get_value(self):
         return self._valobj.GetValue()
 
     def num_children(self):
+        if self._uses_list_backing:
+            return self._limit_children_count(
+                self._get_proxy().num_children()
+            )
+
         cached_children_count = self._cached_children_count()
         if cached_children_count is not None:
-            return cached_children_count
-        return self._get_proxy().num_children()
+            return self._limit_children_count(cached_children_count)
+
+        return self._limit_children_count(self._get_proxy().num_children())
 
     def update(self):
         if self._proxy is not None:
@@ -1344,10 +1402,24 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        cached_children_count = self._cached_children_count()
-        if cached_children_count is not None:
-            return cached_children_count > 0
-        return self._get_proxy().has_children()
+        if not self._uses_list_backing:
+            cached_children_count = self._cached_children_count()
+            if cached_children_count is not None:
+                return self._limit_children_count(cached_children_count) > 0
+
+        proxy = self._get_proxy()
+        if self._uses_list_backing:
+            return self.num_children() > 0
+        return self._limit_children_count(proxy.num_children()) > 0
+
+    def get_child_index(self, name):
+        child_index = self._get_proxy().get_child_index(name)
+        return child_index if 0 <= child_index < self.num_children() else -1
+
+    def get_child_at_index(self, index):
+        if not 0 <= index < self.num_children():
+            return None
+        return self._get_proxy().get_child_at_index(index)
 
     def __getattr__(self, item):
         return getattr(self._get_proxy(), item)
