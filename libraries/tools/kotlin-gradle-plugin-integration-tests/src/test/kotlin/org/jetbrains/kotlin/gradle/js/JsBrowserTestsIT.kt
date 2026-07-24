@@ -215,7 +215,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 assertTasksExecuted(":prepareWebpackBundleForKotlinJsTests")
                 assertTasksFailed(":jsBrowserTest")
                 assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:prepareWebpackBundleForKotlinJsTests/test.html""".toRegex())
-                assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser] FAILED")
+                assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser, chromium] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
                 // TODO: KT-86778 Add verification of test report
             }
@@ -276,7 +276,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
             buildAndFail("jsBrowserTest") {
                 assertTasksFailed(":jsBrowserTest")
-                assertOutputContains("chromium.JsBrowserTimeoutTest.test[js, browser] FAILED")
+                assertOutputContains("chromium.JsBrowserTimeoutTest.test[js, browser, chromium] FAILED")
                 assertOutputContains("com.microsoft.playwright.TimeoutError: Timeout 1234ms exceeded")
             }
         }
