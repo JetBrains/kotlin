@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -183,15 +184,7 @@ class IrTextDumpHandler(
         )
 
         if (!hasTargetSpecificDifferenceDirective) {
-            checkOneExpectedFile(baseGoldenFile, actualDump)
-        }
-    }
-
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
-        if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
-        } else {
-            assertions.assertFileDoesntExist(expectedFile, directive)
+            assertEqualsToDump(baseDumpExtension, actualDump.ifEmpty { null })
         }
     }
 
