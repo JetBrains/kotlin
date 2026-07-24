@@ -7,12 +7,12 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.protobuf.java.lite)
+    implementation(libs.protobuf.java.compose.test)
 }
 
 protobuf {
     protoc {
-        val protocVersion = libs.versions.protobuf.get()
+        val protocVersion = libs.versions.protobufComposeTest.get()
         artifact = "com.google.protobuf:protoc:$protocVersion"
     }
 
