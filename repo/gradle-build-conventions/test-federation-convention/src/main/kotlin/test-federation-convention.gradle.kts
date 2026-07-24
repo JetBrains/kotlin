@@ -81,6 +81,11 @@ tasks.withType<Test>().configureEach {
             println("##teamcity[addBuildTag 'Mode: Full']")
         }
 
+        val testFramework = testFramework
+        if (testFramework !is JUnitPlatformTestFramework) {
+            error("Unsupported 'testFramework': $testFramework; Expected 'JUnitPlatformTestFramework'")
+        }
+
         /* Configuring junit includes / categories */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             smokeTestConfig as SmokeTestConfig.Enabled
@@ -91,30 +96,16 @@ tasks.withType<Test>().configureEach {
             a better rendering of the executed tests.
             */
             if (smokeTestConfig.autoSmokeTestPercentage == 0) {
-                val testFramework = testFramework
-                if (testFramework is JUnitPlatformTestFramework) {
-                    testFramework.options.includeTags("smoke")
-                    affectedDomains.get().forEach { domain ->
-                        testFramework.options.includeTags("affectedBy:${domain.name}")
-                    }
-                }
-
-                if (testFramework is JUnitTestFramework) {
-                    testFramework.options.includeCategories("org.jetbrains.kotlin.testFederation.SmokeTest")
+                testFramework.options.includeTags("smoke")
+                affectedDomains.get().forEach { domain ->
+                    testFramework.options.includeTags("affectedBy:${domain.name}")
                 }
             }
         }
 
         /* Exclude nightly tests if not specifically running in 'nightly'  mode */
-        val testFramework = testFramework
         if (!areNightlyTestsEnabled.get()) {
-            if (testFramework is JUnitPlatformTestFramework) {
-                testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
-            }
-
-            if (testFramework is JUnitTestFramework) {
-                testFramework.options.excludeCategories("org.jetbrains.kotlin.testFederation.NightlyTest")
-            }
+            testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
         }
 
         /* Ensure that the test federation runtime is always available on the classpath (and the extension is enabled) */
@@ -123,6 +114,11 @@ tasks.withType<Test>().configureEach {
         /* Check if classpath contains test federation runtime */
         if (!classpath.files.containsAll(testFederationRuntime.files)) {
             error("Test Federation Runtime is not available on the classpath")
+        }
+
+        /* Check if classpath contains vintage engine and report it as unsupported */
+        if (classpath.files.any { file -> file.name.contains("junit-vintage-engine") }) {
+            error("Unsupported 'junit-vintage-engine' found in classpath. Please remove this dependency")
         }
     }
 }
