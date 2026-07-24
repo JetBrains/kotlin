@@ -48,8 +48,6 @@ val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
  */
 class EnhancedForWarningConeSubstitutor(
     typeContext: ConeTypeContext,
-    // TODO: drop me once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] cannot be disabled
-    private val useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature: LanguageFeature? = null,
 ) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         // We substitute and recombine the bounds of flexible types (using the unsubstituted bounds as fallback) to produce the final type.
@@ -92,7 +90,6 @@ class EnhancedForWarningConeSubstitutor(
     private fun ConeKotlinType.replacementTopLevelTypeOrNull(): ConeKotlinType? {
         return enhancedTypeForWarning
             ?: attributes.explicitTypeArgumentIfMadeFlexibleSynthetically
-                ?.takeIf { it.relevantFeature == useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature }
                 ?.coneType
     }
 }

@@ -15,7 +15,7 @@ class SamWithLambda {
     fun test2(): J<String?> = J<String?> { x -> null }
     fun test3(): J<String?> = <!RETURN_TYPE_MISMATCH!>J<String> { x -> x }<!>
     fun test3r(): J<String> = <!RETURN_TYPE_MISMATCH!>J<String?> { x -> x }<!>
-    fun test4(): J<String?> = J<String?> { x: String -> x }
+    fun test4(): J<String?> = J<String?> <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(String) -> String?; (String?) -> String?")!>{ x: String -> x }<!>
     fun test5(): J<String?> = J<String?> { x -> "x" }
     fun test6(): J<String?> = J<String?> { x: String? -> "x" }
     fun test7(): J<String?> = J<String?> { x: String? -> null }
@@ -31,7 +31,7 @@ class SamWithLambda {
     fun test17() = J<String> { x -> null }
     fun test18() = J<String> { x -> "null" }
     fun test19() = J<String?> { x: String? -> "null" }
-    fun test20() = J<String?> { x: String -> null }
+    fun test20() = J<String?> <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(String) -> String?; (String?) -> String?")!>{ x: String -> null }<!>
     fun test21() = J<String?> { x -> null }
     fun test22() = J<String?> { x -> "null" }
     fun test23(): J<String> = J { x: String? -> null }
