@@ -11,20 +11,28 @@ public class JBase<T extends JBase, F extends T> {
 public class JChild extends JBase {}
 
 // FILE: box.kt
+import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
 class KtSubclass : JChild()
 
-fun box(): String {
-    assertEquals(
-        "var KtSubclass.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>",
-        KtSubclass::class.members.single { it.name == "field" }.toString(),
-    )
+fun check(expected: String, reference: KCallable<*>, klass: KClass<*>) {
+    assertEquals(expected, reference.toString())
+    val fromMembers = klass.members.single { it.name == reference.name }
+    assertEquals(expected, fromMembers.toString())
+    assertEquals(reference, fromMembers)
+}
 
-    assertEquals(
-        "fun KtSubclass.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>",
-        KtSubclass::class.members.single { it.name == "method" }.toString(),
-    )
+fun box(): String {
+    check("var JBase<T, F>.field: T!", JBase<*, *>::field, JBase::class)
+    check("fun JBase<T, F>.method(): F!", JBase<*, *>::method, JBase::class)
+
+    check("var JChild.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChild::field, JChild::class)
+    check("fun JChild.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChild::method, JChild::class)
+
+    check("var KtSubclass.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::field, KtSubclass::class)
+    check("fun KtSubclass.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::method, KtSubclass::class)
 
     return "OK"
 }
