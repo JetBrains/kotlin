@@ -6,16 +6,11 @@ plugins {
     application
 }
 
-configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
-
 dependencies {
     implementation(project(":generators"))
     implementation(project(":compiler:config"))
     implementation(project(":compiler:arguments"))
 
-    compileOnly(intellijCore())
-
-    runtimeOnly(intellijJDom())
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
 }
 
