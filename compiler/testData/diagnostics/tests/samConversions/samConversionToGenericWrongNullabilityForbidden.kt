@@ -33,15 +33,15 @@ typealias StringAlias = String
 
 fun main() {
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        returnNullableString()
     }
 
     Supplier<StringAlias> {
-        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        returnNullableString()
     }
 
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
+        TestValueProvider.getNullableString()
     }
 
     val sam: Supplier<String> = Supplier{
@@ -50,17 +50,17 @@ fun main() {
 
     Supplier<String> {
         val x = 1
-        <!ARGUMENT_TYPE_MISMATCH!>when(x) {
+        when(x) {
             1 -> returnNullableString()
             else -> ""
-        }<!>
+        }
     }
 
     Supplier<String> {
-        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
-        run { return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!> }
+        if (true) return@Supplier returnNullableString()
+        run { return@Supplier returnNullableString() }
         try {
-            if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+            if (true) return@Supplier returnNullableString()
             2
         } finally {
             Unit
@@ -103,10 +103,10 @@ fun main() {
     }
 
     Supplier<String>(
-        <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("() -> String?; () -> String")!>fun(): String? {
-            if (true) return <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        fun(): String? {
+            if (true) return returnNullableString()
             return ""
-        }<!>
+        }
     )
 
     val sam5: Supplier<String> = Supplier {
@@ -117,7 +117,7 @@ fun main() {
     }
 
     Supplier<String> {
-        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        if (true) return@Supplier returnNullableString()
         ""
     }
 
@@ -191,13 +191,13 @@ fun scopes () {
 
 fun <T: Number> test1(x: T) {
     Supplier<T> {
-        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
+        x.foo()
     }
 }
 
 fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
     Supplier<T> {
-        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
+        x.foo()
     }
 }
 
@@ -207,7 +207,7 @@ fun <T> T.foo2(): T? = null!!
 
 fun test()  {
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString().foo2()<!>
+        returnNullableString().foo2()
     }
 }
 
