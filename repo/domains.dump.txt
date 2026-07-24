@@ -27,7 +27,6 @@ Compiler:
  - compiler/java-direct
  - compiler/jklib.tests
  - compiler/multiplatform-parsing
- - compiler/plugin-api
  - compiler/preloader
  - compiler/psi/parser
  - compiler/resolution
@@ -166,26 +165,8 @@ SwiftExport:
  - native/swift
 
 CompilerPlugins:
- - plugins/allopen
- - plugins/assign-plugin
- - plugins/atomicfu
- - plugins/compose
- - plugins/js-plain-objects
- - plugins/jvm-abi-gen
- - plugins/kapt
- - plugins/kotlin-dataframe
- - plugins/kotlinx-serialization
- - plugins/lombok
- - plugins/noarg
- - plugins/parcelize
- - plugins/plugins-interactions-testing
- - plugins/power-assert
- - plugins/sam-with-receiver
- - plugins/test-plugins
-
-Compiler, CompilerPlugins:
- - plugins/plugin-sandbox
- - plugins/scripting
+ - compiler/plugin-api
+ - plugins
 
 Js, SwiftExport:
  - libraries/tools/analysis-api-based-klib-reader

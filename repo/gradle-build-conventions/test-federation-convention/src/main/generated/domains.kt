@@ -24,8 +24,8 @@ enum class Domain {
 
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "compiler/psi/parser/**", "plugins/plugin-sandbox/**", "plugins/scripting/**", "jps/**")
-    override val exclude: List<String> = listOf("compiler/psi/**", "compiler/build-tools/**", "compiler/incremental-compilation-*/**", "compiler/daemon/**", "compiler/compiler-runner-unshaded/**")
+    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "compiler/psi/parser/**", "jps/**")
+    override val exclude: List<String> = listOf("compiler/psi/**", "compiler/build-tools/**", "compiler/incremental-compilation-*/**", "compiler/daemon/**", "compiler/compiler-runner-unshaded/**", "compiler/plugin-api/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
 
@@ -80,7 +80,7 @@ internal object SwiftExportDomainInfo : DomainInfo {
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
     override val domain = Domain.CompilerPlugins
-    override val include: List<String> = listOf("plugins/**")
+    override val include: List<String> = listOf("compiler/plugin-api/**", "plugins/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }

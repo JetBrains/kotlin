@@ -1,13 +1,12 @@
 $schema: domains.schema.json
 
+# CLI + Frontend + JVM backend
 Compiler:
   include:
     - "compiler/**"
     - "core/**"
     - "build-common/**"
     - "compiler/psi/parser/**"
-    - "plugins/plugin-sandbox/**"
-    - "plugins/scripting/**"
     - "jps/**"
   exclude:
     - "compiler/psi/**"
@@ -15,6 +14,7 @@ Compiler:
     - "compiler/incremental-compilation-*/**"
     - "compiler/daemon/**"
     - "compiler/compiler-runner-unshaded/**"
+    - "compiler/plugin-api/**"
   fullyAffectedBy:
     - CoreLibs
 
@@ -86,6 +86,7 @@ SwiftExport:
 
 CompilerPlugins:
   include:
+    - "compiler/plugin-api/**"
     - "plugins/**"
   fullyAffectedBy:
     - Compiler
