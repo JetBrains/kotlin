@@ -52,7 +52,6 @@ public val KaType.functionTypeFamily: KaFunctionTypeFamily?
 /**
  * Whether the [KaType] is a [kotlin.Function] type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isFunctionType: Boolean
     get() {
@@ -63,7 +62,6 @@ public val KaType.isFunctionType: Boolean
 /**
  * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isKFunctionType: Boolean
     get() {
@@ -75,7 +73,6 @@ public val KaType.isKFunctionType: Boolean
  * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
  * type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isSuspendFunctionType: Boolean
     get() {
@@ -86,7 +83,6 @@ public val KaType.isSuspendFunctionType: Boolean
 /**
  * Whether the [KaType] is a `KSuspendFunction` type.
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.isKSuspendFunctionType: Boolean
     get() {
