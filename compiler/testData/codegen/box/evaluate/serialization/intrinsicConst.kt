@@ -3,6 +3,10 @@
 // MODULE: lib
 // FILE: lib.kt
 
+enum class EnumClass {
+    OK, VALUE, anotherValue, WITH_UNDERSCORE
+}
+
 // Commented targets are not serializable
 @Target(
 /*1*/   AnnotationTarget.CLASS,
@@ -26,29 +30,29 @@ annotation class BinaryAnnotation(val str: String)
 
 // 1. CLASS
 // 8. CONSTRUCTOR
-@BinaryAnnotation("Str".uppercase())
-class A @BinaryAnnotation("Str".uppercase()) constructor(val i: Int) {
-    @BinaryAnnotation("Str".uppercase()) constructor() : this(0)
+@BinaryAnnotation(EnumClass.OK.name)
+class A @BinaryAnnotation(EnumClass.OK.name) constructor(val i: Int) {
+    @BinaryAnnotation(EnumClass.OK.name) constructor() : this(0)
 }
 
 // 2. ANNOTATION_CLASS
-@BinaryAnnotation("Str".uppercase())
+@BinaryAnnotation(EnumClass.OK.name)
 annotation class Anno
 
 // 3. TYPE_PARAMETER
-fun <@BinaryAnnotation("Str".uppercase()) T, U> fooWithTypeParam(a: T, b: U) {}
+fun <@BinaryAnnotation(EnumClass.OK.name) T, U> fooWithTypeParam(a: T, b: U) {}
 
 // 4. PROPERTY
-@BinaryAnnotation("Str".uppercase())
+@BinaryAnnotation(EnumClass.OK.name)
 val prop: Int = 0
 
 // 5. FIELD
 enum class SomeEnum {
-    @BinaryAnnotation("Str".uppercase()) A,
+    @BinaryAnnotation(EnumClass.OK.name) A,
     B;
 }
 
-@field:BinaryAnnotation("Str".uppercase())
+@field:BinaryAnnotation(EnumClass.OK.name)
 var x: Int = 5
 
 object Delegate {
@@ -56,42 +60,42 @@ object Delegate {
     operator fun setValue(instance: Any?, property: Any, value: String) {}
 }
 
-@delegate:BinaryAnnotation("Str".uppercase())
+@delegate:BinaryAnnotation(EnumClass.OK.name)
 val p: String by Delegate
 
 
 // 7. VALUE_PARAMETER
-fun @receiver:BinaryAnnotation("Str".uppercase()) String.myExtension() {  }
-fun foo(@BinaryAnnotation("Str".uppercase()) a: Int) {  }
+fun @receiver:BinaryAnnotation(EnumClass.OK.name) String.myExtension() {  }
+fun foo(@BinaryAnnotation(EnumClass.OK.name) a: Int) {  }
 
-val @receiver:BinaryAnnotation("Str".uppercase()) String.a: Int
+val @receiver:BinaryAnnotation(EnumClass.OK.name) String.a: Int
     get() = 0
 
 class WithConstructorArgumentAnnotation(
-    @BinaryAnnotation("Str".uppercase())
+    @BinaryAnnotation(EnumClass.OK.name)
     val a: Int
 )
 
-@setparam:BinaryAnnotation("Str".uppercase())
+@setparam:BinaryAnnotation(EnumClass.OK.name)
 var setParamProp: Int = 0
     get() = field + 1
     set(x: Int) { field = x * 2 }
 
 var mutablePropWithAnnotationOnSetterParam = 0
-    set(@BinaryAnnotation("Str".uppercase()) x: Int) { field = x * 2 }
+    set(@BinaryAnnotation(EnumClass.OK.name) x: Int) { field = x * 2 }
 
 // 9. FUNCTION
-@BinaryAnnotation("Str".uppercase())
+@BinaryAnnotation(EnumClass.OK.name)
 fun bar() {}
 
 // 10. PROPERTY_GETTER
 // 11. PROPERTY_SETTER
 var b: Int
-    @BinaryAnnotation("Str".uppercase()) get() = 0
-    @BinaryAnnotation("Str".uppercase()) set(value) {}
+    @BinaryAnnotation(EnumClass.OK.name) get() = 0
+    @BinaryAnnotation(EnumClass.OK.name) set(value) {}
 
 // 15. TYPEALIAS
-@BinaryAnnotation("Str".uppercase())
+@BinaryAnnotation(EnumClass.OK.name)
 typealias C = Int
 
 @Target(AnnotationTarget.CLASS)
@@ -102,10 +106,10 @@ annotation class AnnotationWithVararg(vararg val array: String)
 @Retention(AnnotationRetention.BINARY)
 annotation class AnnotationWithArray(val array: Array<String>)
 
-@AnnotationWithVararg("Str".uppercase(), "String2", "String${3}")
+@AnnotationWithVararg(EnumClass.OK.name, "String2", "String${3}")
 class D
 
-@AnnotationWithArray(["Str".uppercase(), "String2", "String${3}"])
+@AnnotationWithArray([EnumClass.OK.name, "String2", "String${3}"])
 class E
 
 // MODULE: main(lib)

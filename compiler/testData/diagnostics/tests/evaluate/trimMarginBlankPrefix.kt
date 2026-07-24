@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
+// LANGUAGE: -IntrinsicConstEvaluation
 
 const val blank = " "
 const val notBlank = "|"
