@@ -22,8 +22,6 @@ fun ProjectTestsExtension.jsTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    // KTI-3248, the heap size is the same as for the Wasm tests
-    maxHeapSizeMb = 6144,
     skipInLocalBuild = skipInLocalBuild,
 ) {
 
