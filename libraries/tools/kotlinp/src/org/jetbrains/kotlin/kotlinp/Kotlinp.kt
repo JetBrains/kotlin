@@ -176,7 +176,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalMustUseStatus::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
@@ -190,7 +190,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         renderFunctionModifiers(function, printer)
         append("fun ")
         appendTypeParameters(function.typeParameters, postfix = " ")
-        appendReceiverParameterType(function.receiverParameterType)
+        appendReceiverParameterType(function.receiverParameterType ?: function.companionExtensionReceiverType)
         appendName(function)
         appendValueParameters(function.valueParameters)
         append(": ").appendType(function.returnType)
@@ -217,6 +217,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isSuspend to "suspend",
             function.isExpect to "expect",
             function.isStatic to "static",
+            (function.companionExtensionReceiverType != null) to "companion",
             function.hasNonStableParameterNames to "/* non-stable parameter names */"
         )
     }
@@ -319,7 +320,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalMustUseStatus::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
@@ -335,7 +336,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         renderPropertyModifiers(property, printer)
         append(if (property.isVar) "var " else "val ")
         appendTypeParameters(property.typeParameters, postfix = " ")
-        appendReceiverParameterType(property.receiverParameterType)
+        appendReceiverParameterType(property.receiverParameterType ?: property.companionExtensionReceiverType)
         appendName(property)
         append(": ").appendType(property.returnType)
         if (property.hasConstant) {
@@ -372,7 +373,8 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
             property.isExpect to "expect",
-            property.isStatic to "static"
+            property.isStatic to "static",
+            (property.companionExtensionReceiverType != null) to "companion"
         )
     }
 

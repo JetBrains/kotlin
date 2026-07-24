@@ -538,6 +538,7 @@ public final class kotlin/metadata/KmFunction {
 	public field returnType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompanionExtensionReceiverType ()Lkotlin/metadata/KmType;
 	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
@@ -549,6 +550,7 @@ public final class kotlin/metadata/KmFunction {
 	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun getValueParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setCompanionExtensionReceiverType (Lkotlin/metadata/KmType;)V
 	public final fun setContract (Lkotlin/metadata/KmContract;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setReceiverParameterType (Lkotlin/metadata/KmType;)V
@@ -574,6 +576,7 @@ public final class kotlin/metadata/KmProperty {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getBackingFieldAnnotations ()Ljava/util/List;
+	public final fun getCompanionExtensionReceiverType ()Lkotlin/metadata/KmType;
 	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
@@ -587,6 +590,7 @@ public final class kotlin/metadata/KmProperty {
 	public final fun getSetterParameter ()Lkotlin/metadata/KmValueParameter;
 	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
+	public final fun setCompanionExtensionReceiverType (Lkotlin/metadata/KmType;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setReceiverParameterType (Lkotlin/metadata/KmType;)V
 	public final fun setReturnType (Lkotlin/metadata/KmType;)V

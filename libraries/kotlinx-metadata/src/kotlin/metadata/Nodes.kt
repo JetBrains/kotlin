@@ -255,9 +255,14 @@ public class KmFunction internal constructor(internal var flags: Int, public var
 
     /**
      * Type of the receiver of the function, if this is an extension function.
-     * Also contains the phantom receiver type for companion extensions.
      */
     public var receiverParameterType: KmType? = null
+
+    /**
+     * Companion extension class of the function, if this is a companion extension.
+     */
+    @ExperimentalCompanionBlocksAndExtensions
+    public var companionExtensionReceiverType: KmType? = null
 
     /**
      * Annotations on the extension receiver of the function, if this is an extension function.
@@ -404,9 +409,14 @@ public class KmProperty internal constructor(
 
     /**
      * Type of the receiver of the property, if this is an extension property.
-     * Also contains the phantom receiver type for companion extensions.
      */
     public var receiverParameterType: KmType? = null
+
+    /**
+     * Companion extension class of the property, if this is a companion extension.
+     */
+    @ExperimentalCompanionBlocksAndExtensions
+    public var companionExtensionReceiverType: KmType? = null
 
     /**
      * Annotations on the extension receiver of the property, if this is an extension property.
