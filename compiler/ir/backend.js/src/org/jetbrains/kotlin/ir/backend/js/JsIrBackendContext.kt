@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -76,11 +77,13 @@ class JsIrBackendContext(
 
     override val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
-    override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
-        DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin"),
-        module = null,
-    )
+    override val bodilessBuiltInsPackageFragment: IrPackageFragment by lazy {
+        IrExternalPackageFragmentImpl(
+            DescriptorlessExternalPackageFragmentSymbol(),
+            FqName("kotlin"),
+            module = irBuiltIns.anyClass.owner.moduleFragment,
+        )
+    }
 
     val packageLevelJsModules = hashSetOf<IrFile>()
 
