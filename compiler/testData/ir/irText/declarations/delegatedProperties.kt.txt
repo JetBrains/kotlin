@@ -6,7 +6,10 @@ val test1: Int /* by */
   get(): Int {
     return getValue<Int>(/* <this> = #test1$delegate, */ thisRef = null, property = KProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int    )
+      /* getter = */      local fun(): Int {
+        return <get-test1>()
+      }
+    )
 )
   }
 
@@ -15,13 +18,25 @@ var test4: Any /* by */
   get(): Any {
     return getValue<Any, Any>(/* <this> = #test4$delegate, */ thisRef = null, property = KMutableProperty0<Any>(
       /* bound = */ [],
-      /* getter = */      local fun(): Any      /* setter = */      local fun(value: Any)    )
+      /* getter = */      local fun(): Any {
+        return <get-test4>()
+      }
+      /* setter = */      local fun(value: Any) {
+        <set-test4>(<set-?> = value)
+      }
+    )
 )
   }
   set(<set-?>: Any) {
     return setValue<Any>(/* <this> = #test4$delegate, */ thisRef = null, property = KMutableProperty0<Any>(
       /* bound = */ [],
-      /* getter = */      local fun(): Any      /* setter = */      local fun(value: Any)    )
+      /* getter = */      local fun(): Any {
+        return <get-test4>()
+      }
+      /* setter = */      local fun(value: Any) {
+        <set-test4>(<set-?> = value)
+      }
+    )
 , value = <set-?>)
   }
 
@@ -38,7 +53,10 @@ class C {
     get(): Int {
       return getValue<Int>(/* <this> = <this>.#test2$delegate, */ thisRef = <this>, property = KProperty1<C, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Int      )
+        /* getter = */        local fun(p0: C): Int {
+          return p0.<get-test2>()
+        }
+      )
 )
     }
 
@@ -47,13 +65,25 @@ class C {
     get(): Any {
       return getValue<Any, Any>(/* <this> = <this>.#test3$delegate, */ thisRef = <this>, property = KMutableProperty1<C, Any>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Any        /* setter = */        local fun(p0: C, value: Any)      )
+        /* getter = */        local fun(p0: C): Any {
+          return p0.<get-test3>()
+        }
+        /* setter = */        local fun(p0: C, value: Any) {
+          p0.<set-test3>(<set-?> = value)
+        }
+      )
 )
     }
     set(<set-?>: Any) {
       return setValue<Any>(/* <this> = <this>.#test3$delegate, */ thisRef = <this>, property = KMutableProperty1<C, Any>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Any        /* setter = */        local fun(p0: C, value: Any)      )
+        /* getter = */        local fun(p0: C): Any {
+          return p0.<get-test3>()
+        }
+        /* setter = */        local fun(p0: C, value: Any) {
+          p0.<set-test3>(<set-?> = value)
+        }
+      )
 , value = <set-?>)
     }
 

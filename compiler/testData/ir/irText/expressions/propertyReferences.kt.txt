@@ -80,7 +80,10 @@ val delegatedVal: Int /* by */
   get(): Int {
     return #delegatedVal$delegate.getValue(thisRef = null, kProp = KProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int    )
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVal>()
+      }
+    )
 )
   }
 
@@ -99,13 +102,25 @@ var delegatedVar: Int /* by */
   get(): Int {
     return #delegatedVar$delegate.getValue(thisRef = null, kProp = KMutableProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVar>()
+      }
+      /* setter = */      local fun(value: Int) {
+        <set-delegatedVar>(<set-?> = value)
+      }
+    )
 )
   }
   set(<set-?>: Int) {
     return #delegatedVar$delegate.setValue(thisRef = null, kProp = KMutableProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVar>()
+      }
+      /* setter = */      local fun(value: Int) {
+        <set-delegatedVar>(<set-?> = value)
+      }
+    )
 , value = <set-?>)
   }
 

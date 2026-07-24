@@ -6,7 +6,10 @@ val test1: Int /* by */
   get(): Int {
     return getValue<Int>(/* <this> = #test1$delegate, */ thisRef = null, property = KProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int    )
+      /* getter = */      local fun(): Int {
+        return <get-test1>()
+      }
+    )
 )
   }
 

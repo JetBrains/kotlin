@@ -44,6 +44,11 @@ FILE fqName:test fileName:/typeParameterInDelegatedProperty.kt
             ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<T of test.<get-property>, T of test.<get-property>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final property: T of test.<get-property> declared in test'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:property visibility:local modality:FINAL returnType:T of test.<get-property>
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:T of test.<get-property>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun property (p0: T of test.<get-property>): T of test.<get-property> declared in test.<get-property>'
+                    CALL 'public final fun <get-property> <T> (<this>: T of test.<get-property>): T of test.<get-property> declared in test' type=T of test.<get-property> origin=null
+                      TYPE_ARG T: T of test.<get-property>
+                      ARG <this>: GET_VAR 'p0: T of test.<get-property> declared in test.<get-property>.property' type=T of test.<get-property> origin=null
   PROPERTY name:property2 visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:property2$delegate type:test.IDelegate<T of test.<get-property2>> visibility:private [final,static]
       EXPRESSION_BODY
@@ -101,6 +106,11 @@ FILE fqName:test fileName:/typeParameterInDelegatedProperty.kt
             ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<T of test.<get-property2>, T of test.<get-property2>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final property2: T of test.<get-property2> declared in test'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:property2 visibility:local modality:FINAL returnType:T of test.<get-property2>
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:T of test.<get-property2>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun property2 (p0: T of test.<get-property2>): T of test.<get-property2> declared in test.<get-property2>'
+                    CALL 'public final fun <get-property2> <T> (<this>: T of test.<get-property2>): T of test.<get-property2> declared in test' type=T of test.<get-property2> origin=null
+                      TYPE_ARG T: T of test.<get-property2>
+                      ARG <this>: GET_VAR 'p0: T of test.<get-property2> declared in test.<get-property2>.property2' type=T of test.<get-property2> origin=null
   CLASS INTERFACE name:IDelegate modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.IDelegate<T of test.IDelegate>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

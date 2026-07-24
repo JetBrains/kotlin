@@ -1,8 +1,8 @@
 --- a/delegatedProperties.ir.txt
 +++ b/delegatedProperties.ir.jvm_ir.txt
-@@ -20,9 +20,9 @@
-             ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final test1: kotlin.Int declared in <root>'
-               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:test1 visibility:local modality:FINAL returnType:kotlin.Int
+@@ -23,9 +23,9 @@
+                   RETURN type=kotlin.Nothing from='local final fun test1 (): kotlin.Int declared in <root>.<get-test1>'
+                     CALL 'public final fun <get-test1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
    PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
 -    FIELD PROPERTY_DELEGATE name:test4$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]
 +    FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]
@@ -12,7 +12,7 @@
            TYPE_ARG K: kotlin.String
            TYPE_ARG V: kotlin.Any
      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL returnType:kotlin.Any
-@@ -32,7 +32,7 @@
+@@ -35,7 +35,7 @@
            CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Any origin=null
              TYPE_ARG V: kotlin.Any
              TYPE_ARG V1: kotlin.Any
@@ -21,7 +21,7 @@
              ARG thisRef: CONST Null type=kotlin.Nothing? value=null
              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final test4: kotlin.Any declared in <root>'
                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:test4 visibility:local modality:FINAL returnType:kotlin.Any
-@@ -45,7 +45,7 @@
+@@ -54,7 +54,7 @@
          RETURN type=kotlin.Nothing from='public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>'
            CALL 'public final fun setValue <V> (<this>: kotlin.collections.MutableMap<in kotlin.String, in V of kotlin.collections.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
              TYPE_ARG V: kotlin.Any

@@ -17,7 +17,10 @@ class F {
     get(): Int {
       return <this>.#prop$delegate.getValue(t = <this>, p = KProperty2<F, A, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: F, p1: A): Int      )
+        /* getter = */        local fun(p0: F, p1: A): Int {
+          return p0.<get-prop>(/* <this> = p1 */)
+        }
+      )
 )
     }
 

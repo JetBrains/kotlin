@@ -29,6 +29,11 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
             ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final additionalText: kotlin.Int declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:additionalText visibility:local modality:FINAL returnType:kotlin.Int
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalText>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun additionalText (p0: <root>.Value<T of <root>.<get-additionalText>>): kotlin.Int declared in <root>.<get-additionalText>'
+                    CALL 'public final fun <get-additionalText> <T> (<this>: <root>.Value<T of <root>.<get-additionalText>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<get-additionalText>
+                      ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>.additionalText' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
@@ -59,6 +64,11 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
             ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final additionalValue: kotlin.Int declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:additionalValue visibility:local modality:FINAL returnType:kotlin.Int
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalValue>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun additionalValue (p0: <root>.Value<T of <root>.<get-additionalValue>>): kotlin.Int declared in <root>.<get-additionalValue>'
+                    CALL 'public final fun <get-additionalValue> <T> (<this>: <root>.Value<T of <root>.<get-additionalValue>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<get-additionalValue>
+                      ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>.additionalValue' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
   PROPERTY name:recivier visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY

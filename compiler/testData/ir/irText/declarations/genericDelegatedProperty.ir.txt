@@ -15,9 +15,19 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
             ARG kProp: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<get-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final genericDelegatedProperty: kotlin.Int declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:genericDelegatedProperty visibility:local modality:FINAL returnType:kotlin.Int
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C<T of <root>.<get-genericDelegatedProperty>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun genericDelegatedProperty (p0: <root>.C<T of <root>.<get-genericDelegatedProperty>>): kotlin.Int declared in <root>.<get-genericDelegatedProperty>'
+                    CALL 'public final fun <get-genericDelegatedProperty> <T> (<this>: <root>.C<T of <root>.<get-genericDelegatedProperty>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<get-genericDelegatedProperty>
+                      ARG <this>: GET_VAR 'p0: <root>.C<T of <root>.<get-genericDelegatedProperty>> declared in <root>.<get-genericDelegatedProperty>.genericDelegatedProperty' type=<root>.C<T of <root>.<get-genericDelegatedProperty>> origin=null
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:genericDelegatedProperty visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C<T of <root>.<get-genericDelegatedProperty>>
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+                BLOCK_BODY
+                  CALL 'public final fun <set-genericDelegatedProperty> <T> (<this>: <root>.C<T of <root>.<set-genericDelegatedProperty>>, <set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                    TYPE_ARG T: T of <root>.<get-genericDelegatedProperty>
+                    ARG <this>: GET_VAR 'p0: <root>.C<T of <root>.<get-genericDelegatedProperty>> declared in <root>.<get-genericDelegatedProperty>.genericDelegatedProperty' type=<root>.C<T of <root>.<get-genericDelegatedProperty>> origin=null
+                    ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<get-genericDelegatedProperty>.genericDelegatedProperty' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-genericDelegatedProperty> visibility:public modality:FINAL returnType:kotlin.Unit
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.C<T of <root>.<set-genericDelegatedProperty>>
@@ -31,9 +41,19 @@ FILE fqName:<root> fileName:/genericDelegatedProperty.kt
             ARG kProp: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.C<T of <root>.<set-genericDelegatedProperty>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final genericDelegatedProperty: kotlin.Int declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:genericDelegatedProperty visibility:local modality:FINAL returnType:kotlin.Int
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C<T of <root>.<set-genericDelegatedProperty>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun genericDelegatedProperty (p0: <root>.C<T of <root>.<set-genericDelegatedProperty>>): kotlin.Int declared in <root>.<set-genericDelegatedProperty>'
+                    CALL 'public final fun <get-genericDelegatedProperty> <T> (<this>: <root>.C<T of <root>.<get-genericDelegatedProperty>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<set-genericDelegatedProperty>
+                      ARG <this>: GET_VAR 'p0: <root>.C<T of <root>.<set-genericDelegatedProperty>> declared in <root>.<set-genericDelegatedProperty>.genericDelegatedProperty' type=<root>.C<T of <root>.<set-genericDelegatedProperty>> origin=null
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:genericDelegatedProperty visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C<T of <root>.<set-genericDelegatedProperty>>
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+                BLOCK_BODY
+                  CALL 'public final fun <set-genericDelegatedProperty> <T> (<this>: <root>.C<T of <root>.<set-genericDelegatedProperty>>, <set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                    TYPE_ARG T: T of <root>.<set-genericDelegatedProperty>
+                    ARG <this>: GET_VAR 'p0: <root>.C<T of <root>.<set-genericDelegatedProperty>> declared in <root>.<set-genericDelegatedProperty>.genericDelegatedProperty' type=<root>.C<T of <root>.<set-genericDelegatedProperty>> origin=null
+                    ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<set-genericDelegatedProperty>.genericDelegatedProperty' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
             ARG newValue: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-genericDelegatedProperty>' type=kotlin.Int origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C<T of <root>.C>

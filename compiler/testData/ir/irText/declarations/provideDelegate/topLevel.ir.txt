@@ -8,6 +8,9 @@ FILE fqName:<root> fileName:/topLevel.kt
           ARG thisRef: CONST Null type=kotlin.Nothing? value=null
           ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testTopLevel: kotlin.String declared in <root>'
             getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testTopLevel visibility:local modality:FINAL returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun testTopLevel (): kotlin.String declared in <root>.testTopLevel$delegate'
+                  CALL 'public final fun <get-testTopLevel> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL returnType:kotlin.String
       correspondingProperty: PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
@@ -17,6 +20,9 @@ FILE fqName:<root> fileName:/topLevel.kt
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
             ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testTopLevel: kotlin.String declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testTopLevel visibility:local modality:FINAL returnType:kotlin.String
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun testTopLevel (): kotlin.String declared in <root>.<get-testTopLevel>'
+                    CALL 'public final fun <get-testTopLevel> (): kotlin.String declared in <root>' type=kotlin.String origin=null
   CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegate
     PROPERTY name:value visibility:public modality:FINAL [val]

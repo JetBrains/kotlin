@@ -1,12 +1,18 @@
 val testO: String /* by */
   field = provideDelegate(/* <this> = MyClass(value = "O"), */ host = null, p = KProperty0<String>(
     /* bound = */ [],
-    /* getter = */    local fun(): String  )
+    /* getter = */    local fun(): String {
+      return <get-testO>()
+    }
+  )
 )
   get(): String {
     return getValue(/* <this> = #testO$delegate, */ receiver = null, p = KProperty0<String>(
       /* bound = */ [],
-      /* getter = */      local fun(): String    )
+      /* getter = */      local fun(): String {
+        return <get-testO>()
+      }
+    )
 )
   }
 
@@ -15,7 +21,10 @@ val testK: String /* by */
   get(): String {
     return getValue(/* <this> = #testK$delegate, */ receiver = null, p = KProperty0<String>(
       /* bound = */ [],
-      /* getter = */      local fun(): String    )
+      /* getter = */      local fun(): String {
+        return <get-testK>()
+      }
+    )
 )
   }
 

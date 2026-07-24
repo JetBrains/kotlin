@@ -18,13 +18,25 @@ class MyClass {
     get(): Int {
       return getValue<Int>(/* <this> = <this>.#delegatedToTopLevel$delegate, */ thisRef = <this>, property = KMutableProperty1<MyClass, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: MyClass): Int        /* setter = */        local fun(p0: MyClass, value: Int)      )
+        /* getter = */        local fun(p0: MyClass): Int {
+          return p0.<get-delegatedToTopLevel>()
+        }
+        /* setter = */        local fun(p0: MyClass, value: Int) {
+          p0.<set-delegatedToTopLevel>(<set-?> = value)
+        }
+      )
 )
     }
     set(<set-?>: Int) {
       return setValue<Int>(/* <this> = <this>.#delegatedToTopLevel$delegate, */ thisRef = <this>, property = KMutableProperty1<MyClass, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: MyClass): Int        /* setter = */        local fun(p0: MyClass, value: Int)      )
+        /* getter = */        local fun(p0: MyClass): Int {
+          return p0.<get-delegatedToTopLevel>()
+        }
+        /* setter = */        local fun(p0: MyClass, value: Int) {
+          p0.<set-delegatedToTopLevel>(<set-?> = value)
+        }
+      )
 , value = <set-?>)
     }
 

@@ -3,13 +3,25 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   get(): Int {
     return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = KMutableProperty1<C<T>, Int>(
       /* bound = */ [],
-      /* getter = */      local fun(p0: C<T>): Int      /* setter = */      local fun(p0: C<T>, value: Int)    )
+      /* getter = */      local fun(p0: C<T>): Int {
+        return <get-genericDelegatedProperty><T>(/* <this> = p0 */)
+      }
+      /* setter = */      local fun(p0: C<T>, value: Int) {
+        <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
+      }
+    )
 )
   }
   set(<set-?>: Int) {
     return #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = KMutableProperty1<C<T>, Int>(
       /* bound = */ [],
-      /* getter = */      local fun(p0: C<T>): Int      /* setter = */      local fun(p0: C<T>, value: Int)    )
+      /* getter = */      local fun(p0: C<T>): Int {
+        return <get-genericDelegatedProperty><T>(/* <this> = p0 */)
+      }
+      /* setter = */      local fun(p0: C<T>, value: Int) {
+        <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
+      }
+    )
 , newValue = <set-?>)
   }
 

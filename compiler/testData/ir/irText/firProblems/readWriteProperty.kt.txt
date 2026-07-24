@@ -4,13 +4,25 @@ class IdeWizard {
     get(): Int? {
       return <this>.#projectTemplate$delegate.getValue(thisRef = <this>, property = KMutableProperty1<IdeWizard, Int?>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: IdeWizard): Int?        /* setter = */        local fun(p0: IdeWizard, value: Int?)      )
+        /* getter = */        local fun(p0: IdeWizard): Int? {
+          return p0.<get-projectTemplate>()
+        }
+        /* setter = */        local fun(p0: IdeWizard, value: Int?) {
+          p0.<set-projectTemplate>(<set-?> = value)
+        }
+      )
 )
     }
     set(<set-?>: Int?) {
       return <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = KMutableProperty1<IdeWizard, Int?>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: IdeWizard): Int?        /* setter = */        local fun(p0: IdeWizard, value: Int?)      )
+        /* getter = */        local fun(p0: IdeWizard): Int? {
+          return p0.<get-projectTemplate>()
+        }
+        /* setter = */        local fun(p0: IdeWizard, value: Int?) {
+          p0.<set-projectTemplate>(<set-?> = value)
+        }
+      )
 , value = <set-?>)
     }
 
