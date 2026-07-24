@@ -233,7 +233,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             isInfix = false,
             isExternal = false,
         ).apply {
-            parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT)
+            parent = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName.ROOT, module = null)
         }
     }
 

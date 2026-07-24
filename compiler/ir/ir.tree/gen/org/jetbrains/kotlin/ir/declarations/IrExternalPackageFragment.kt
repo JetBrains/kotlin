@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 abstract class IrExternalPackageFragment : IrPackageFragment() {
     abstract override val symbol: IrExternalPackageFragmentSymbol
 
+    abstract var module: IrModuleFragment?
+
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)
 }

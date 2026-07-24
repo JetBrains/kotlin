@@ -34,6 +34,6 @@ class IrBuiltInsForLinker(
 
     private fun createEmptyExternalPackageFragment(fqName: FqName): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
-            IrExternalPackageFragmentSymbolImpl(), fqName
+            IrExternalPackageFragmentSymbolImpl(), fqName, module = null
         )
 }

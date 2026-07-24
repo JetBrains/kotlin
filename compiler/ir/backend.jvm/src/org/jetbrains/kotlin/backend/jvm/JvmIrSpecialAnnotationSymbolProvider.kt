@@ -33,10 +33,10 @@ import kotlin.apply
 
 class JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
     private val kotlinJvmInternalPackage: IrExternalPackageFragmentImpl =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL, module = null)
 
     private val kotlinInternalIrPackage: IrExternalPackageFragmentImpl =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN, module = null)
 
     private val enhancedNullabilityAnnotationInfo: AnnotationInfo = EnhancedNullability.getAnnotationInfo(kotlinJvmInternalPackage)
     private val flexibleNullabilityAnnotationInfo: AnnotationInfo = FlexibleNullability.getAnnotationInfo(kotlinInternalIrPackage)

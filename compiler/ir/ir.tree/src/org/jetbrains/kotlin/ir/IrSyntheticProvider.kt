@@ -40,7 +40,8 @@ class IrSyntheticProvider(
 ) {
     private val irFactory: IrFactory = symbolTable.irFactory
     val operatorsPackageFragment = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(descriptor = packageFragmentDescriptor), StandardClassIds.BASE_INTERNAL_IR_PACKAGE
+        IrExternalPackageFragmentSymbolImpl(descriptor = packageFragmentDescriptor), StandardClassIds.BASE_INTERNAL_IR_PACKAGE,
+        module = null,
     )
 
     private val anyClass = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature())

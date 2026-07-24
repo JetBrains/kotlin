@@ -120,6 +120,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         val packageFragment = IrExternalPackageFragmentImpl(
             symbol = IrExternalPackageFragmentSymbolImpl(),
             packageFqName = library.packageFqName?.let(::FqName) ?: error("C-interop library without the package name: ${library.path}"),
+            module = null,
         )
 
         val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl)

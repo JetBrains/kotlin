@@ -42,5 +42,5 @@ val IrPackageFragment.moduleDescriptor: ModuleDescriptor
 
 fun createEmptyExternalPackageFragment(module: IrModuleFragment, fqName: FqName): IrExternalPackageFragment =
     IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module.descriptor, fqName)), fqName
+        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module.descriptor, fqName)), fqName, module = null
     )

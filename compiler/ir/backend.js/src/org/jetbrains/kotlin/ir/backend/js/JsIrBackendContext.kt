@@ -78,7 +78,8 @@ class JsIrBackendContext(
 
     override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin")
+        FqName("kotlin"),
+        module = null,
     )
 
     val packageLevelJsModules = hashSetOf<IrFile>()
