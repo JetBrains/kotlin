@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -57,9 +56,7 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
     }
 }
 
-open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerWithTargetBackendTest(
-    targetBackend = TargetBackend.JVM_IR
-) {
+open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS

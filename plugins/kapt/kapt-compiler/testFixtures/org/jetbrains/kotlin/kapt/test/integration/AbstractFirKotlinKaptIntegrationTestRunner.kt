@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -30,7 +29,7 @@ class AbstractFirKotlinKaptIntegrationTestRunner(
     private val supportedAnnotations: List<String>,
     private val additionalPluginExtension: IrGenerationExtension?,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+) : AbstractKotlinCompilerJvmTest() {
 
     init {
         doOpenInternalPackagesIfRequired()

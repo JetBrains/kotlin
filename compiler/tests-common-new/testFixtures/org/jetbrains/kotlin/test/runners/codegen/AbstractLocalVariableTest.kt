@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.LocalVariableDebugRunner
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -16,10 +15,10 @@ import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTe
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForDebugTestsSourceProvider
 
-abstract class AbstractLocalVariableTestBase(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+abstract class AbstractLocalVariableTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         setupJvmPipelineSteps(parser)
         commonHandlersForCodegenTest()
