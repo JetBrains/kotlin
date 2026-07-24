@@ -379,6 +379,11 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
         }
     } else null
 
+internal class CreateNonConstructorKCallableVisitor(container: KDeclarationContainerImpl) : CreateKCallableVisitor(container) {
+    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+        throw IllegalStateException("No constructors should appear here: $descriptor")
+}
+
 internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) : CreateKFunctionVisitor(container) {
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): DescriptorKCallable<*> {
         val receiverCount =
