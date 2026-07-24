@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -53,8 +55,7 @@ internal fun validateTargetSpecificDumpFile(
         val targetSpecificExtension = targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
         val patchBackendName = targetBackend.directChildOf(matchedBackend).name.lowercase()
         val normalizedActualDump = actualDump.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
-        val targetSpecificFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(targetSpecificExtension)
+        val targetSpecificFile = moduleStructure.getClassifiedDumpFile(targetSpecificExtension)
 
         if (normalizedActualDump.isEmpty()) {
             checkTestInfrastructure(!targetSpecificFile.exists()) {
@@ -90,9 +91,9 @@ internal fun validateTargetSpecificDumpFile(
             }
         }
 
-        assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
+        assertions.assertEqualsToDump(moduleStructure, targetSpecificExtension, expectedPatch)
         // Sanity check: patch application must result in the actual dump
-        checkTestInfrastructure(applyPatch(mainDump, targetSpecificFile) == normalizedActualDump) {
+        checkTestInfrastructure(applyPatch(mainDump, expectedPatch) == normalizedActualDump) {
             "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
         }
         return true
@@ -153,21 +154,20 @@ private fun String.insertBackendBeforeTxtExtension(targetBackendName: String): S
     }
 }
 
-private fun applyPatch(baseText: String, patchFile: File): String {
-    val patchText = patchFile.readText()
+private fun applyPatch(baseText: String, patchText: String): String {
     val lines = patchText.lines().dropLastWhile { it.isEmpty() }
     checkTestInfrastructure(lines.size >= 3) {
-        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+        "Unknown target-specific patch format: $patchText"
     }
     checkTestInfrastructure(lines[0].startsWith("--- ") && lines[1].startsWith("+++ ")) {
-        "Unknown target-specific patch format: ${patchFile.absolutePath}"
+        "Unknown target-specific patch format: $patchText"
     }
 
     val patchedLines = try {
         val patch = UnifiedDiffUtils.parseUnifiedDiff(lines)
         DiffUtils.patch(baseText.lines(), patch)
     } catch (e: Throwable) {
-        testInfraError("Unknown target-specific patch format in ${patchFile.absolutePath}: $e")
+        testInfraError("Unknown target-specific patch format in $patchText: $e")
     }
 
     return patchedLines.joinToString(System.lineSeparator())
