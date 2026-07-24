@@ -63,6 +63,12 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
   }
 
   @Test
+  @TestMetadata("annotationUseSiteTargets.kt")
+  public void testAnnotationUseSiteTargets() {
+    run("annotationUseSiteTargets.kt");
+  }
+
+  @Test
   @TestMetadata("complexTypes.kt")
   public void testComplexTypes() {
     run("complexTypes.kt");
@@ -78,6 +84,12 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
   @TestMetadata("constructorOfAnonymousObject.kt")
   public void testConstructorOfAnonymousObject() {
     run("constructorOfAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorVisibility.kt")
+  public void testConstructorVisibility() {
+    run("constructorVisibility.kt");
   }
 
   @Test
@@ -244,6 +256,24 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("annotationOnFlexibleTypes.kt")
+    public void testAnnotationOnFlexibleTypes() {
+      run("annotationOnFlexibleTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFlexibleTypesNoShrinking.kt")
+    public void testAnnotationOnFlexibleTypesNoShrinking() {
+      run("annotationOnFlexibleTypesNoShrinking.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnFunctionTypes.kt")
+    public void testAnnotationOnFunctionTypes() {
+      run("annotationOnFunctionTypes.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnTypes.kt")
     public void testAnnotationOnTypes() {
       run("annotationOnTypes.kt");
@@ -271,6 +301,18 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
     @TestMetadata("extraTypeArguments.kt")
     public void testExtraTypeArguments() {
       run("extraTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeParameterNames.kt")
+    public void testFunctionTypeParameterNames() {
+      run("functionTypeParameterNames.kt");
+    }
+
+    @Test
+    @TestMetadata("mutabilityFlexibleTypes.kt")
+    public void testMutabilityFlexibleTypes() {
+      run("mutabilityFlexibleTypes.kt");
     }
   }
 }

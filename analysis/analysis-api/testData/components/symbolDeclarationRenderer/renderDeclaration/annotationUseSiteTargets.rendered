@@ -1,0 +1,32 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+annotation class Anno
+
+class ConstructorProperties(@Anno full: Int, @Anno simple: String, @Anno plain: Long) {
+  @Anno
+  private val simple: String
+
+  @Anno
+  var full: Int
+    @Anno
+    get()
+    @Anno
+    set(@Anno value: Int)
+}
+
+@Anno
+var withDefaultAccessors: Int
+  @Anno
+  get()
+  @Anno
+  set(@Anno value: Int)
+
+var withCustomSetter: Int
+  set(@Anno value: Int)
+
+val delegated: Int
+  get()
+
+fun @receiver:Anno String.extension()
+
+@Anno
+typealias Alias = String
