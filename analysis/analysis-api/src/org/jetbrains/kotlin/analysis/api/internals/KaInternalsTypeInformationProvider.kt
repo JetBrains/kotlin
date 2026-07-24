@@ -23,16 +23,12 @@ public interface KaInternalsTypeInformationProvider {
     @KaExperimentalApi
     public fun functionTypeFamily(type: KaType): KaFunctionTypeFamily?
 
-    @KaExperimentalApi
     public fun isFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isKFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isSuspendFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isKSuspendFunctionType(type: KaType): Boolean
 
     public fun isNullable(type: KaType): Boolean
@@ -85,7 +81,6 @@ public interface KaInternalsTypeInformationProvider {
 
     public fun isPrimitive(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun defaultInitializer(type: KaType): String?
 
     @KaExperimentalApi
