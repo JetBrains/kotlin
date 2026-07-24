@@ -9,9 +9,6 @@
 // DISABLE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
-// LANGUAGE: -IrCrossModuleInlinerBeforeKlibSerialization
-// ^^^KT-80867 With +IrCrossModuleInlinerBeforeKlibSerialization, in FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated
-//             both `array.isStack()` are wrongly false
 
 import kotlin.test.*
 import kotlin.native.internal.*
