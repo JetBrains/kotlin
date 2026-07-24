@@ -36,17 +36,13 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
     }
 
-    override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression {
-        val size = expression.statements.size
-        if (size == 0) TODO("Empty IrComposite is not supported")
-
-        val first = expression.statements[0].accept(this, data)
-        if (size == 1) return first
-
-        return expression.statements.fold(first) { left, right ->
-            JsBinaryOperation(JsBinaryOperator.COMMA, left, right.accept(this, data))
-        }
-    }
+    override fun visitComposite(expression: IrComposite, data: JsGenerationContext) =
+        expression.statements
+            .asSequence()
+            .map { it.accept(this, data) }
+            .reduceOrNull { left, right ->
+                JsBinaryOperation(JsBinaryOperator.COMMA, left, right)
+            } ?: TODO("Empty IrComposite is not supported")
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
