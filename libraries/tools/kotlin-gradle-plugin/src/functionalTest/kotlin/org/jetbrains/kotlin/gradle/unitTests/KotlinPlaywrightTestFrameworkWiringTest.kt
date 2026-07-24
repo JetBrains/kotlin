@@ -44,6 +44,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -291,6 +292,27 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val debugUrl = framework.buildDebugUrl(setup.jsBrowserTestTask)
 
         assertEquals("http://localhost:12345/test.html", debugUrl.toString().substringBefore("?"))
+    }
+
+    @Test
+    fun `playwright debug url uses configured runner timeout`() {
+        val timeout = 42L.seconds
+        val setup = buildBrowserTestProject {
+            firefox {
+                it.timeout.set(timeout)
+            }
+        }
+        val expectedTimeoutInMilliseconds = timeout.inWholeMilliseconds
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.firefoxRunners.get().single().testsLocation.set(location)
+
+        val debugUrl = framework.buildDebugUrl(setup.jsBrowserTestTask)
+
+        assertTrue(
+            decodeKotlinTestConfig(debugUrl).contains("\"mochaSetupOptions\":{\"timeout\":\"${expectedTimeoutInMilliseconds}\"}"),
+            "Expected the debug URL to contain the configured runner timeout",
+        )
     }
 
     @Test

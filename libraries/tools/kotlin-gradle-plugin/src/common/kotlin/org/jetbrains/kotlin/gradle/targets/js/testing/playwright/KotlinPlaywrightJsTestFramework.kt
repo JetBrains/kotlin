@@ -222,6 +222,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
+            timeout = timeout.get(),
             testsFinishedMarker = finishMarker.get(),
             kotlinTestCliArguments = cliArgs
         )
