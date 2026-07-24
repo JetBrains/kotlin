@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -265,16 +264,9 @@ val IrDeclaration.isLocal: Boolean
 val IrDeclaration.isOriginallyLocal: Boolean
     get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
 
-@ObsoleteDescriptorBasedAPI
-val IrDeclaration.module get() = this.descriptor.module
+val IrDeclaration.module get() = this.moduleFragment.descriptor
 
-val IrDeclaration.moduleFragment: IrModuleFragment
-    get() = when (val packageFragment = getPackageFragment()) {
-        is IrFile -> packageFragment.module
-        is IrExternalPackageFragment -> packageFragment.module
-            ?: error("The module of $packageFragment is not set")
-        else -> error("Unexpected package fragment: $packageFragment")
-    }
+val IrDeclaration.moduleFragment: IrModuleFragment get() = this.getPackageFragment().module
 
 const val SYNTHETIC_OFFSET = -2
 
