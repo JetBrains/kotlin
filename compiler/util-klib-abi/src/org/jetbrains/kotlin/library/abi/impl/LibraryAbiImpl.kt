@@ -105,7 +105,8 @@ internal class AbiConstructorImpl(
     override val signatures: AbiSignatures,
     annotations: AbiAnnotationListImpl,
     isInline: Boolean,
-    override val valueParameters: List<AbiValueParameter>
+    override val valueParameters: List<AbiValueParameter>,
+    override val declarationOrigin: AbiDeclarationOrigin,
 ) : AbiFunction, AbiAnnotatedEntity by annotations {
     private val flags = IS_INLINE.toFlags(isInline)
 
@@ -139,7 +140,8 @@ internal class AbiFunctionImpl(
     override val companionExtensionsClass: AbiClassifierReference.ClassReference?,
     override val typeParameters: List<AbiTypeParameter>,
     override val valueParameters: List<AbiValueParameter>,
-    override val returnType: AbiType?
+    override val returnType: AbiType?,
+    override val declarationOrigin: AbiDeclarationOrigin,
 ) : AbiFunction, AbiAnnotatedEntity by annotations {
     private val flags = IS_INLINE.toFlags(isInline) or
             IS_SUSPEND.toFlags(isSuspend) or
