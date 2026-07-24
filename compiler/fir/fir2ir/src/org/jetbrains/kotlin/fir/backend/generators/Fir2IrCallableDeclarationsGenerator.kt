@@ -59,7 +59,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         createPackageFragmentDescriptor: (FqName, ModuleDescriptor) -> PackageFragmentDescriptor = ::FirPackageFragmentDescriptor,
     ): IrExternalPackageFragment {
         val symbol = IrExternalPackageFragmentSymbolImpl(createPackageFragmentDescriptor(fqName, module.descriptor))
-        return IrExternalPackageFragmentImpl(symbol, fqName)
+        return IrExternalPackageFragmentImpl(symbol, fqName, module = null)
     }
 
     // ------------------------------------ functions ------------------------------------

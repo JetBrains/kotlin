@@ -133,7 +133,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         copyField(element, field)
                         println(",")
                     }
-                    if (element.isSubclassOf(IrTree.file)) {
+                    if (element.isSubclassOf(IrTree.packageFragment)) {
                         println("module = transformedModule ?: ${element.visitorParameterName}.module,")
                     }
                 }

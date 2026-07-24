@@ -65,7 +65,8 @@ class WasmBackendContext(
     fun getExcludedPackageFragmentOrCreate(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
         IrExternalPackageFragmentImpl(
             DescriptorlessExternalPackageFragmentSymbol(),
-            fqName
+            fqName,
+            module = null,
         )
     }
 
@@ -143,7 +144,8 @@ class WasmBackendContext(
 
     override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin")
+        FqName("kotlin"),
+        module = null,
     )
 
     companion object {

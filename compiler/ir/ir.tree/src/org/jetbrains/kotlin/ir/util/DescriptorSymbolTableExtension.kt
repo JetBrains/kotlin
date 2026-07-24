@@ -335,7 +335,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return externalPackageFragmentSlice.declare(
             descriptor,
             { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName) }
+            { IrExternalPackageFragmentImpl(it, descriptor.fqName, module = null) }
         )
     }
 
@@ -343,7 +343,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return externalPackageFragmentSlice.declareIfNotExists(
             descriptor,
             { IrExternalPackageFragmentSymbolImpl(descriptor) },
-            { IrExternalPackageFragmentImpl(it, descriptor.fqName) }
+            { IrExternalPackageFragmentImpl(it, descriptor.fqName, module = null) }
         )
     }
 

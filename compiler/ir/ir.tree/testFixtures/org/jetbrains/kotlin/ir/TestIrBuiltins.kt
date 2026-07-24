@@ -36,7 +36,7 @@ import kotlin.reflect.KProperty
 object TestIrBuiltins : IrBuiltIns() {
     override val symbolFinder by lazy { missingBuiltIn() }
 
-    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"))
+    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"), module = null)
 
     override val languageVersionSettings: LanguageVersionSettings
         get() = LanguageVersionSettingsImpl.DEFAULT

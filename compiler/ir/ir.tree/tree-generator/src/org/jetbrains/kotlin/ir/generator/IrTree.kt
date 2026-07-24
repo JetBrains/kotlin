@@ -655,6 +655,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(packageFragment)
 
         +declaredSymbol(externalPackageFragmentSymbol)
+        +field("module", moduleFragment, nullable = true, isChild = false) {
+            deepCopyExcludeFromConstructor = true
+        }
     }
     val file: Element by element(Declaration) {
         needTransformMethod()
