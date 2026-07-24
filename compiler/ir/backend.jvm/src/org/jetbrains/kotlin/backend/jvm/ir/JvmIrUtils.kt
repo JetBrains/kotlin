@@ -472,13 +472,6 @@ fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: Jvm
     return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
 
-val DeclarationDescriptorWithSource.psiElement: PsiElement?
-    get() = (source as? PsiSourceElement)?.psi
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrDeclaration.psiElement: PsiElement?
-    get() = (descriptor as? DeclarationDescriptorWithSource)?.psiElement
-
 fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
     if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
         return AsmUtil.RECEIVER_PARAMETER_NAME
