@@ -26,7 +26,7 @@ class ClasspathEntrySnapshot(
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
-    val classSnapshots: LinkedHashMap<String, ClassSnapshot>
+    val classSnapshots: LinkedHashMap<String, ClassSnapshot>,
 )
 
 /**
@@ -67,17 +67,26 @@ class RegularKotlinClassSnapshot(
     val companionObjectName: String?,
 
     /** List of constants defined in this class iff this class IS a companion object, or null otherwise. The list could be empty. */
-    val constantsInCompanionObject: List<String>?
+    val constantsInCompanionObject: List<String>?,
 
-) : KotlinClassSnapshot()
+    ) : KotlinClassSnapshot()
 
 /** [KotlinClassSnapshot] where class kind == [FILE_FACADE] or [MULTIFILE_CLASS_PART]. */
 class PackageFacadeKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val packageMemberNames: Set<String>
+    val packageMemberNames: Set<String>,
+    val typeAliases: List<TypeAliasSnapshot>,
 ) : KotlinClassSnapshot()
+
+/**
+ * Snapshot of a top-level Kotlin type alias: its own [ClassId] and the [ClassId] of the class it expands to.
+ */
+data class TypeAliasSnapshot(
+    val aliasClassId: ClassId,
+    val expandedClassId: ClassId,
+)
 
 /**
  * [KotlinClassSnapshot] where class kind == [MULTIFILE_CLASS].
@@ -95,7 +104,7 @@ class MultifileClassKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val constantNames: Set<String>
+    val constantNames: Set<String>,
 ) : KotlinClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
@@ -104,7 +113,7 @@ class JavaClassSnapshot(
     override val classAbiHash: Long,
     /** Snapshot of this class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL], null otherwise. */
     val classMemberLevelSnapshot: JavaClassMemberLevelSnapshot?,
-    val supertypes: List<JvmClassName>
+    val supertypes: List<JvmClassName>,
 ) : AccessibleClassSnapshot()
 
 /** Snapshot of a Java class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL]. */
@@ -116,7 +125,7 @@ class JavaClassMemberLevelSnapshot(
     val fieldsAbi: List<JavaElementSnapshot>,
 
     /** [JavaElementSnapshot]s of the class's methods. */
-    val methodsAbi: List<JavaElementSnapshot>
+    val methodsAbi: List<JavaElementSnapshot>,
 )
 
 /** Snapshot of a Java class or a Java class member (field or method). */
@@ -126,7 +135,7 @@ class JavaElementSnapshot(
     val name: String,
 
     /** The hash of the Java element's ABI. */
-    val abiHash: Long
+    val abiHash: Long,
 )
 
 /**

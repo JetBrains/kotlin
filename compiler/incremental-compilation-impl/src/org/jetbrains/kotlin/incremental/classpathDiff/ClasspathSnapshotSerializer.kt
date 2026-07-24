@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS
+import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES
+import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -125,6 +127,7 @@ private object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<P
         LongExternalizer.save(output, snapshot.classAbiHash)
         NullableValueExternalizer(KotlinClassInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
         SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
+        ListExternalizer(TypeAliasSnapshotExternalizer).save(output, snapshot.typeAliases)
     }
 
     override fun read(input: DataInput): PackageFacadeKotlinClassSnapshot {
@@ -133,7 +136,23 @@ private object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<P
             classId = ClassIdExternalizerWithInterning.read(input),
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KotlinClassInfoExternalizer).read(input),
-            packageMemberNames = SetExternalizer(StringExternalizer).read(input)
+            packageMemberNames = SetExternalizer(StringExternalizer).read(input),
+            typeAliases = ListExternalizer(TypeAliasSnapshotExternalizer).read(input)
+        )
+    }
+}
+
+private object TypeAliasSnapshotExternalizer : DataExternalizer<TypeAliasSnapshot> {
+
+    override fun save(output: DataOutput, value: TypeAliasSnapshot) {
+        ClassIdExternalizer.save(output, value.aliasClassId)
+        ClassIdExternalizer.save(output, value.expandedClassId)
+    }
+
+    override fun read(input: DataInput): TypeAliasSnapshot {
+        return TypeAliasSnapshot(
+            aliasClassId = ClassIdExternalizerWithInterning.read(input),
+            expandedClassId = ClassIdExternalizerWithInterning.read(input)
         )
     }
 }
