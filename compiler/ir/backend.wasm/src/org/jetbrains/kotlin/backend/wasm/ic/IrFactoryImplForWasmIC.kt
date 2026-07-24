@@ -36,40 +36,14 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import java.io.File
 
-private object WasmICCacheInvalidatingKeys : ICCacheInvalidatingKeys {
-    override val stringKeys: List<CompilerConfigurationKey<String>>
-        get() = listOf(
-            JSConfigurationKeys.SOURCE_MAP_PREFIX,
-            WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,
-        )
-
-    override val booleanKeys: List<CompilerConfigurationKey<Boolean>>
-        get() = listOf(
-            JSConfigurationKeys.SOURCE_MAP,
-            JSConfigurationKeys.GENERATE_DTS,
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
-            WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS,
-            WasmConfigurationKeys.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION,
-            WasmConfigurationKeys.WASM_ENABLE_ASSERTS,
-            WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS,
-            WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL,
-            WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL,
-            WasmConfigurationKeys.WASM_DEBUG,
-            WasmConfigurationKeys.WASM_GENERATE_WAT,
-            WasmConfigurationKeys.WASM_GENERATE_DWARF,
-            WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
-            WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY,
-            WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS,
-            WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE,
-        )
-
-    override val enumKeys: List<CompilerConfigurationKey<Enum<*>>>
-        get() = listOf()
-}
-
 abstract class WasmICContextBase : PlatformDependentICContext {
-    override fun getCacheInvalidatingKeys(): ICCacheInvalidatingKeys =
-        WasmICCacheInvalidatingKeys
+    override fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>> =
+        setOf(
+            JSConfigurationKeys.LIBRARIES,
+            JSConfigurationKeys.FRIEND_LIBRARIES,
+            JSConfigurationKeys.INCLUDES,
+            WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES
+        )
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun createBackendContext(

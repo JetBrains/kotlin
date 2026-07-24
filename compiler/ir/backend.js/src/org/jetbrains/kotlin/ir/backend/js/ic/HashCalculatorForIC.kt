@@ -143,6 +143,16 @@ private class HashCalculatorForIC(private val checkForClassStructuralChanges: Bo
         }
     }
 
+    fun updateConfigKeys(config: CompilerConfiguration, excludedKeys: Set<CompilerConfigurationKey<*>>) {
+        val stringifiedConfig = config.toString(excludedKeys) { value ->
+            when (value) {
+                is Int, is Boolean, is String, is Enum<*> -> value.toString()
+                else -> null
+            }
+        }
+        update(stringifiedConfig)
+    }
+
     fun finalizeAndGetHash(): ICHash {
         val hashBytes = md5Digest.digest()
         md5Digest.reset()
@@ -156,26 +166,16 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
     private val hashCalculator = HashCalculatorForIC(checkForClassStructuralChanges)
 
     fun calculateConfigHash(
-        invalidatingKeys: ICCacheInvalidatingKeys,
         config: CompilerConfiguration,
-        artifactConfiguration: WebArtifactConfiguration
+        artifactConfiguration: WebArtifactConfiguration,
+        icCacheStableKeys: Set<CompilerConfigurationKey<*>>,
     ): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
 
-        hashCalculator.updateConfigKeys(config, invalidatingKeys.booleanKeys) { value: Boolean ->
-            hashCalculator.update(if (value) 1 else 0)
-        }
-
-        hashCalculator.updateConfigKeys(config, invalidatingKeys.enumKeys) { value: Enum<*> ->
-            hashCalculator.update(value.ordinal)
-        }
+        hashCalculator.updateConfigKeys(config, icCacheStableKeys)
 
         hashCalculator.update(artifactConfiguration.moduleKind.ordinal)
         hashCalculator.update(artifactConfiguration.granularity.ordinal)
-
-        hashCalculator.updateConfigKeys(config, invalidatingKeys.stringKeys) { value: String ->
-            hashCalculator.update(value)
-        }
 
         hashCalculator.updateConfigKeys(config, listOf(PARTIAL_LINKAGE_CONFIGURATION)) { value: PartialLinkageConfig ->
             hashCalculator.update(value.logLevel.ordinal)
