@@ -193,7 +193,7 @@ private class ReplSnippetAccessCallsGenerator(
         irSnippetClassFromState: IrClassSymbol,
         startOffset: Int,
         endOffset: Int,
-    ): IrExpression? {
+    ): IrExpression {
         val getSnippetCall = IrCallImpl(startOffset, endOffset, mapGet.returnType, mapGet.symbol).apply {
             arguments[0] =
                 IrGetObjectValueImpl(
@@ -239,15 +239,40 @@ private class ReplSnippetToClassTransformer(
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: ScriptLikeToClassTransformerContext): IrExpression {
         val declaration = expression.symbol.owner as? IrDeclaration
         if (declaration != null && declaration in irSnippet.declarationsFromOtherSnippets) {
-            expression.dispatchReceiver = accessCallsGenerator.createAccessToSnippet(
-                (declaration.parent as IrClass).symbol,
-                expression.startOffset, expression.endOffset
-            )
+            expression.dispatchReceiver = declaration.toSnippetReceiverAccess(expression)
             expression.transformChildren(this, data)
             return expression
         }
         return super.visitMemberAccess(expression, data)
     }
+
+    override fun visitRichCallableReference(
+        expression: IrRichCallableReference<*>,
+        data: ScriptLikeToClassTransformerContext,
+    ): IrExpression {
+        val declaration = expression.reflectionTargetSymbol?.owner as? IrDeclaration
+        if (declaration != null && declaration in irSnippet.declarationsFromOtherSnippets) {
+            val function = when (declaration) {
+                is IrProperty -> declaration.getter
+                is IrFunction -> declaration
+                else -> null
+            }
+            val contextCount = function?.parameters?.count { it.kind == IrParameterKind.Context } ?: 0
+            expression.boundValues[contextCount] = declaration.toSnippetReceiverAccess(expression)
+            expression.transformChildren(this, data)
+            return expression
+        }
+
+        return super.visitRichCallableReference(expression, data)
+    }
+
+    private fun IrDeclaration.toSnippetReceiverAccess(expression: IrElement): IrExpression {
+        return accessCallsGenerator.createAccessToSnippet(
+            (parent as IrClass).symbol,
+            expression.startOffset, expression.endOffset
+        )
+    }
+
 
     override fun visitClass(declaration: IrClass, data: ScriptLikeToClassTransformerContext): IrClass {
         declaration.updateVisibilityToPublicIfNeeded()

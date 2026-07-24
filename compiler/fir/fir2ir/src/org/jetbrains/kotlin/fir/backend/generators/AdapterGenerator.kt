@@ -130,8 +130,14 @@ class AdapterGenerator(
             callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as FirCallableDeclaration
         val substitutor: ConeSubstitutor =
             callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
-        val boundDispatchReceiver: IrExpression? =
-            findBoundReceiver(explicitReceiverExpression, isDispatch = true)
+        val boundDispatchReceiver: IrExpression? = when {
+            // Dispatch receivers for previous snippet declarations are injected later by ReplSnippetToClassTransformer.
+            firAdaptee.originalReplSnippetSymbol != null -> IrErrorCallExpressionImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, builtins.nothingType,
+                description = "No REPL snippet class instance."
+            )
+            else -> findBoundReceiver(explicitReceiverExpression, isDispatch = true)
+        }
         val boundExtensionReceiver: IrExpression? =
             findBoundReceiver(explicitReceiverExpression, isDispatch = false)
 
