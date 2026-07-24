@@ -113,39 +113,6 @@ fun main(args: Array<String>) {
                 model("contentAndResolutionScopesProviders", recursive = false, pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            // Modifiable PSI tests must not be generated until KT-63650 is fixed.
-//        testClass<AbstractDeclarationModificationServiceCallExpressionCalleeResilienceTest> {
-//            model(
-//                "declarationModificationService/psiResilience/callExpression",
-//                recursive = false,
-//                pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-//            )
-//        }
-//
-//        testClass<AbstractDeclarationModificationServiceDotQualifiedExpressionReceiverResilienceTest> {
-//            model(
-//                "declarationModificationService/psiResilience/dotQualifiedExpression",
-//                recursive = false,
-//                pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-//            )
-//        }
-//
-//        testClass<AbstractDeclarationModificationServiceDotQualifiedExpressionSelectorResilienceTest> {
-//            model(
-//                "declarationModificationService/psiResilience/dotQualifiedExpression",
-//                recursive = false,
-//                pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-//            )
-//        }
-//
-//        testClass<AbstractDeclarationModificationServicePropertyDeclarationInitializerResilienceTest> {
-//            model(
-//                "declarationModificationService/psiResilience/propertyDeclaration",
-//                recursive = false,
-//                pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
-//            )
-//        }
-
             testClass<AbstractSourceLikeFileStructureTest> {
                 model("fileStructure", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
