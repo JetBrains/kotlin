@@ -39,6 +39,8 @@ _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
 _LIST_BACKING_FIELD_NAMES = ("backing", "$this_asList", "backingArray")
 _LIST_SIZE_FIELD_NAMES = ("length",)
+_MAP_BACKING_FIELD_NAMES = ("keysArray", "valuesArray")
+_MAP_SIZE_FIELD_NAMES = ("length",)
 
 
 def initialize_expression_options():
@@ -200,6 +202,15 @@ def _is_kotlin_list(value):
         return False
     return _evaluate(
         f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(list_addr)})"
+    ).unsigned != 0
+
+
+def _is_kotlin_map(value):
+    map_addr = _symbol_loaded_address("kclass:kotlin.collections.Map")
+    if map_addr == 0:
+        return False
+    return _evaluate(
+        f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(map_addr)})"
     ).unsigned != 0
 
 
@@ -477,6 +488,16 @@ def kotlin_object_type_summary(lldb_val, _):
         return _NULL
     summary = _render_object(lldb_val.unsigned)
     return "\"\"" if summary == "" else summary
+
+
+def kotlin_object_pair_type_summary(lldb_val, _):
+    summaries = []
+    for index in range(2):
+        child = lldb_val.GetChildAtIndex(index)
+        summary = child.GetSummary()
+        value = summary if summary is not None else child.GetValue()
+        summaries.append(_NULL if value is None else value)
+    return " = ".join(summaries)
 
 
 def _select_provider(lldb_val, tip, internal_dict):
@@ -1245,6 +1266,97 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         return (value + alignment - 1) & ~(alignment - 1)
 
 
+class KonanMapSyntheticProvider:
+    def __init__(self, valobj, object_proxy, internal_dict):
+        self._log = logging.getLogger(self.__class__.__name__)
+        self._valobj = valobj
+        self._target = lldb.debugger.GetSelectedTarget()
+        self._internal_dict = internal_dict
+        self._keys = self._backing_proxy(object_proxy, "keysArray")
+        self._values = self._backing_proxy(object_proxy, "valuesArray")
+        self._children_count = self._map_size(object_proxy)
+        self._entry_type = None
+
+    @classmethod
+    def create(cls, valobj, object_proxy, internal_dict):
+        provider = cls(valobj, object_proxy, internal_dict)
+        if provider._keys is None or provider._values is None:
+            return None
+        return provider
+
+    def _backing_proxy(self, object_proxy, field_name):
+        backing = self._object_field(object_proxy, field_name)
+        if backing is None or not backing.IsValid() or backing.unsigned == 0:
+            return None
+        return KonanProxyTypeProvider(backing, self._internal_dict)
+
+    def _map_size(self, object_proxy):
+        for field_name in _MAP_SIZE_FIELD_NAMES:
+            value = self._object_field(object_proxy, field_name)
+            if value is not None and value.IsValid():
+                return value.GetValueAsUnsigned()
+        return None
+
+    @staticmethod
+    def _object_field(object_proxy, field_name):
+        try:
+            field_index = object_proxy.get_child_index(field_name)
+        except (DebuggerException, ValueError):
+            return None
+        return object_proxy.get_child_at_index(field_index)
+
+    def num_children(self):
+        keys_count = self._keys.num_children()
+        values_count = self._values.num_children()
+        count = min(keys_count, values_count)
+        return count if self._children_count is None else min(count, self._children_count)
+
+    def has_children(self):
+        return self.num_children() > 0
+
+    def get_child_index(self, name):
+        try:
+            index = int(name.strip("[]"))
+        except ValueError:
+            return -1
+        return index if 0 <= index < self.num_children() else -1
+
+    def get_child_at_index(self, index):
+        if not 0 <= index < self.num_children():
+            return None
+
+        key = self._keys.get_child_at_index(index)
+        value = self._values.get_child_at_index(index)
+        if key is None or value is None or not key.IsValid() or not value.IsValid():
+            return None
+
+        if self._entry_type is None:
+            self._entry_type = key.GetType().GetArrayType(2)
+        if not self._entry_type.IsValid():
+            return None
+
+        pointer_size = self._target.GetAddressByteSize()
+        addresses = [key.GetValueAsUnsigned(), value.GetValueAsUnsigned()]
+        if pointer_size == 8:
+            data = lldb.SBData.CreateDataFromUInt64Array(
+                self._target.GetByteOrder(), pointer_size, addresses
+            )
+        elif pointer_size == 4:
+            data = lldb.SBData.CreateDataFromUInt32Array(
+                self._target.GetByteOrder(), pointer_size, addresses
+            )
+        else:
+            return None
+
+        entry = self._valobj.CreateValueFromData(
+            f"[{index}]", data, self._entry_type
+        )
+        return entry if entry.IsValid() else None
+
+    def update(self):
+        return False
+
+
 class KonanZerroSyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj):
         super().__init__(valobj)
@@ -1294,6 +1406,7 @@ class KonanProxyTypeProvider:
         self._visible_children_count = visible_children_count
         self._proxy = None
         self._uses_list_backing = False
+        self._uses_map_backing = False
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
     def _cached_children_count(self):
@@ -1340,6 +1453,13 @@ class KonanProxyTypeProvider:
                     if backing_proxy is not None:
                         self._proxy = backing_proxy
                         self._uses_list_backing = True
+                elif _is_kotlin_map(valobj):
+                    map_proxy = KonanMapSyntheticProvider.create(
+                        valobj, self._proxy, self._internal_dict
+                    )
+                    if map_proxy is not None:
+                        self._proxy = map_proxy
+                        self._uses_map_backing = True
 
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
@@ -1385,7 +1505,7 @@ class KonanProxyTypeProvider:
         return self._valobj.GetValue()
 
     def num_children(self):
-        if self._uses_list_backing:
+        if self._uses_list_backing or self._uses_map_backing:
             return self._limit_children_count(
                 self._get_proxy().num_children()
             )
@@ -1402,13 +1522,13 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        if not self._uses_list_backing:
+        if not self._uses_list_backing and not self._uses_map_backing:
             cached_children_count = self._cached_children_count()
             if cached_children_count is not None:
                 return self._limit_children_count(cached_children_count) > 0
 
         proxy = self._get_proxy()
-        if self._uses_list_backing:
+        if self._uses_list_backing or self._uses_map_backing:
             return self.num_children() > 0
         return self._limit_children_count(proxy.num_children()) > 0
 
@@ -1601,6 +1721,15 @@ def __lldb_init_module(debugger, _):
             "--no-value "
             "--python-function konan_lldb.kotlin_object_type_summary "
             '"ObjHeader *" '
+            "--category Kotlin"
+        )
+    )
+    debugger.HandleCommand(
+        (
+            "type summary add "
+            "--no-value "
+            "--python-function konan_lldb.kotlin_object_pair_type_summary "
+            '"ObjHeader *[2]" '
             "--category Kotlin"
         )
     )
