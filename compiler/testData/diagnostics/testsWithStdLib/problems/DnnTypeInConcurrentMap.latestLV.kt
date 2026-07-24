@@ -17,7 +17,7 @@ public class CollectionFactory {
 abstract class Bar<Element> {
     val map = CollectionFactory.createConcurrentHashMap<Element, String>()
     fun foo(element: Element) {
-        map[<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>element<!>] = ""
+        map[<!ARGUMENT_TYPE_MISMATCH!>element<!>] = ""
     }
 }
 

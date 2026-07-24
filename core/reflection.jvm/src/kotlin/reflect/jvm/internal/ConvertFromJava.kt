@@ -313,7 +313,7 @@ internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
 
     val purelyImplementedClassId =
         annotatedPurelyImplementedClassId
-            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(kClass.classId)
+            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(kClass.classId, concurrentMapEnhancementEnabled = false)
             ?: return null
 
     val superClass = kClass.java.safeClassLoader.loadClass(purelyImplementedClassId) ?: return null

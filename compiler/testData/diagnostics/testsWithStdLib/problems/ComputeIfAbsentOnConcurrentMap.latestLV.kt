@@ -23,7 +23,7 @@ private class Bar
 
 private fun bar(): Bar? = null
 
-private fun getOrCalculateDescriptor(foo: Foo): Bar? = map.computeIfAbsent(foo) { <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>bar()<!> }
+private fun getOrCalculateDescriptor(foo: Foo): Bar? = map.computeIfAbsent(foo) { <!RETURN_TYPE_MISMATCH!>bar()<!> }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
 nullableType, outProjection, propertyDeclaration, samConversion */

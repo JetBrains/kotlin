@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -800,21 +802,42 @@ class FirSignatureEnhancement(
 
 
     fun enhanceSuperTypes(nonEnhancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
-        val purelyImplementedSupertype = getPurelyImplementedSupertype(moduleData.session)
-        val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
+        val purelyImplementedSupertypeWithEnhancement = getPurelyImplementedSupertypeWithEnhancement(moduleData.session)
+        val purelyImplementedSupertypeClassId = purelyImplementedSupertypeWithEnhancement?.type?.classId
+        val purelyImplementedSupertypeClassIdForWarning = purelyImplementedSupertypeWithEnhancement?.enhancedTypeForWarning?.classId
         return buildList {
             nonEnhancedSuperTypes.mapNotNullTo(this) { superType ->
                 enhanceSuperType(superType).takeUnless {
                     purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
+                }?.run {
+                    if (purelyImplementedSupertypeClassIdForWarning != null && coneType.classId == purelyImplementedSupertypeClassIdForWarning) {
+                        withReplacedConeType(
+                            coneType.withArguments {
+                                if (it !is ConeKotlinTypeProjection) return@withArguments it
+                                val type = it.type
+                                if (type !is ConeFlexibleType) return@withArguments it
+                                type.withAttributes(
+                                    type.attributes.add(
+                                        ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
+                                            coneType = type.lowerBound,
+                                            relevantFeature = LanguageFeature.ConcurrentMapPurelyImplemented
+                                        )
+                                    )
+                                )
+                            }
+                        )
+                    } else this
                 }
             }
-            purelyImplementedSupertype?.let {
+            purelyImplementedSupertypeWithEnhancement?.type?.let {
                 add(buildResolvedTypeRef { coneType = it })
             }
         }
     }
 
-    private fun getPurelyImplementedSupertype(session: FirSession): ConeKotlinType? {
+    private data class TypeWithEnhancement(val type: ConeKotlinType?, val enhancedTypeForWarning: ConeKotlinType?)
+
+    private fun getPurelyImplementedSupertypeWithEnhancement(session: FirSession): TypeWithEnhancement? {
         val purelyImplementedClassIdFromAnnotation = owner.annotations
             .firstOrNull { it.unexpandedClassId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
             ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression) }
@@ -822,9 +845,17 @@ class FirSignatureEnhancement(
             ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
             ?.let { ClassId.topLevel(FqName(it)) }
         val purelyImplementedClassId = purelyImplementedClassIdFromAnnotation
-            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(owner.symbol.classId)
-            ?: return null
-        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(purelyImplementedClassId) ?: return null
+            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(
+                owner.symbol.classId,
+                concurrentMapEnhancementEnabled = session.languageVersionSettings.supportsFeature(LanguageFeature.ConcurrentMapPurelyImplemented)
+            )
+        val purelyImplementedClassIdForWarnings =
+            FakePureImplementationsProvider.getPurelyImplementedInterfaceForWarnings(
+                owner.symbol.classId,
+                concurrentMapEnhancementEnabled = session.languageVersionSettings.supportsFeature(LanguageFeature.ConcurrentMapPurelyImplemented)
+            )
+        val classId = purelyImplementedClassId ?: purelyImplementedClassIdForWarnings ?: return null
+        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols
         val typeParameters = owner.typeParameters
         val supertypeParameterCount = superTypeParameterSymbols.size
@@ -839,10 +870,21 @@ class FirSignatureEnhancement(
             }
             else -> return null
         }
-        return ConeClassLikeTypeImpl(
-            purelyImplementedClassId.toLookupTag(),
-            parametersAsTypeProjections.toTypedArray(),
-            isMarkedNullable = false
+        return TypeWithEnhancement(
+            type = purelyImplementedClassId?.let {
+                ConeClassLikeTypeImpl(
+                    purelyImplementedClassId.toLookupTag(),
+                    parametersAsTypeProjections.toTypedArray(),
+                    isMarkedNullable = false
+                )
+            },
+            enhancedTypeForWarning = purelyImplementedClassIdForWarnings?.let {
+                ConeClassLikeTypeImpl(
+                    purelyImplementedClassIdForWarnings.toLookupTag(),
+                    parametersAsTypeProjections.toTypedArray(),
+                    isMarkedNullable = false
+                )
+            }
         )
     }
 
