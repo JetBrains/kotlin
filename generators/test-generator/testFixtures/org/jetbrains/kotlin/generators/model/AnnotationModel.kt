@@ -14,7 +14,7 @@ class AnnotationModel(
 ) {
     fun generate(p: Printer) {
         val needExplicitNames = arguments.singleOrNull()?.name != AnnotationArgumentModel.DEFAULT_NAME
-        val argumentsString = arguments.joinToString(separator = ", ") { argument ->
+        val argumentsString = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")") { argument ->
             val valueString = when (val value = argument.value) {
                 is Enum<*> -> "${value.javaClass.simpleName}.${value.name}"
                 is Array<*> -> value.toJavaString()
@@ -22,8 +22,8 @@ class AnnotationModel(
                 else -> "\"$value\""
             }
             if (needExplicitNames) "${argument.name} = $valueString" else valueString
-        }
-        p.print("@${annotation.simpleName}($argumentsString)")
+        }.takeIf { arguments.isNotEmpty() } ?: ""
+        p.print("@${annotation.simpleName}$argumentsString")
     }
 
     private fun Array<*>.toJavaString(): String =

@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/backendDiagnostic")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
-@EnforcedHostTarget()
-@UseExtTestCaseGroupProvider()
+@EnforcedHostTarget
+@UseExtTestCaseGroupProvider
 public class AtomicfuNativeDiagnosticTestGenerated extends AbstractAtomicfuNativeDiagnosticTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/backendDiagnostic/" + fileName);
