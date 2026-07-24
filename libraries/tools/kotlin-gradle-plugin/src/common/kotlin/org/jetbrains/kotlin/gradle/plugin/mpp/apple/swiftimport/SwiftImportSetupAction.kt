@@ -179,12 +179,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
     }
 
-    val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
-        this,
-        provideXcodeDumpsDir(),
-        provideCheckoutDir(),
-        provideSyntheticPackageDir(),
-    )
+    val fingerprintCoordinationService = registerSwiftImportFingerprintedCoordinationService()
 
     project.launch {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
@@ -448,6 +443,14 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
     }
 }
+
+internal fun Project.registerSwiftImportFingerprintedCoordinationService(): Provider<SwiftImportFingerprintedCoordinationService> =
+    SwiftImportFingerprintedCoordinationService.registerIfAbsent(
+        this,
+        provideXcodeDumpsDir(),
+        provideCheckoutDir(),
+        provideSyntheticPackageDir(),
+    )
 
 internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = provider {
     val hasDynamicFrameworks = multiplatformExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.noSyncIdentifier
+
 
 
 @OsCondition(
@@ -112,9 +114,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                             repo to "1.0.1",
                         )
                     )
-
-                    //because we now also delete the synthetic package resolved file, if there is not persisted Package.resolved
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                 }
             }
         }

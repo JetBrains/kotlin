@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_XCODE_DUMP_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.registerSwiftImportFingerprintedCoordinationService
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariables
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariablesOverride
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
@@ -198,15 +200,20 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
         val generatedDefFile = projectPath.resolve("build/kotlin/swiftImportDefs/iphonesimulator/arm64.def").toFile()
         assertFileExists(generatedDefFile)
         val compilerOpts = generatedDefFile.readLines().single { it.startsWith("compilerOpts") }
+        val sharedDerivedDataDir = swiftPMXcodebuildDerivedDataPath(
+            rootDir = projectPath,
+            hashFile = projectPath.resolve("xcodebuildFingerprint"),
+            sdk = "iphonesimulator",
+        )
 
         val packageDependencyModule =
-            projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/packageOne.modulemap")
+            sharedDerivedDataDir.resolve("Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/packageOne.modulemap")
         assertFileExists(packageDependencyModule)
         // We must have discovered the modulmap file reference to be able to index it with cinterops
         assertContains(compilerOpts, "-fmodule-map-file=${packageDependencyModule.pathString}")
 
         val sharedDerivedDataSearchPath =
-            projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Products/Debug-iphonesimulator")
+            sharedDerivedDataDir.resolve("Build/Products/Debug-iphonesimulator")
         assertDirectoryExists(sharedDerivedDataSearchPath)
         // This is the general -I/-F search path, we expect to always be to discover it from the dump
         assertContains(compilerOpts, "-I${sharedDerivedDataSearchPath.pathString}")
@@ -223,6 +230,18 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
         plugins {
             kotlin("multiplatform").apply(false)
         }
+
+        val syntheticPackageFingerprintFile = projectPath.resolve("syntheticPackageFingerprint").also { it.createFile() }.toFile().also {
+            it.writeText(
+                "syntheticPackageFingerprintX" + "\n" + "syntheticPackageFingerprintB"
+            )
+        }
+
+        val xcodebuildFingerprintFile = projectPath.resolve("xcodebuildFingerprint").also { it.createFile() }.toFile().also {
+            it.writeText(
+                "xcodebuildFingerprintX" + "\n" + "xcodebuildFingerprintY"
+            )
+        }
         val stubTrackedFiles = projectPath.resolve("trackedFilesStub").also { it.createFile() }.toFile()
         buildScriptInjection {
             project.createKotlinExtension(KotlinMultiplatformExtension::class)
@@ -232,15 +251,20 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     products = listOf("packageOne"),
                 )
             }
+
+            val fingerprintedCoordinationService = project.registerSwiftImportFingerprintedCoordinationService()
             val packageGeneration = project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
                 configureWithExtension(extension)
+                coordinationService.set(fingerprintedCoordinationService)
                 konanTargets.set(setOf(KonanTarget.IOS_SIMULATOR_ARM64))
+                syntheticPackageFingerprint.set(syntheticPackageFingerprintFile)
                 transitiveSwiftPMMetadata.set(TransitiveSwiftPMMetadata(emptyMap()))
                 syntheticProductType.set(SyntheticProductType.DYNAMIC)
             }
 
             val packageBuild = project.tasks.register<DumpXcodeBuildArgs>("packageBuild") {
                 dependsOn(packageGeneration)
+                fingerprintCoordinationService.set(fingerprintedCoordinationService)
                 xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                 xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
                 architectures.set(setOf(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture))
@@ -248,6 +272,8 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
                 ideaSyncEnabled.set(false)
                 inputs.property("env", project.providers.environmentVariable("FOLLOW_RESP_FILES").orElse("true"))
+                xcodebuildFingerprint.set(xcodebuildFingerprintFile)
+                syntheticPackageFingerprint.set(syntheticPackageFingerprintFile)
             }
 
             project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
@@ -255,9 +281,11 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                 architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
                 discoverModulesImplicitly.set(true)
+                fingerprintsXcodeDumpsDir.set(project.rootProject.layout.projectDirectory.dir(SHARED_XCODE_DUMP_DIR))
                 hasSwiftPMDependencies.set(true)
                 localPackages.filesToTrackFromLocalPackages.set(stubTrackedFiles)
                 ideaSyncEnabled.set(false)
+                xcodebuildFingerprint.set(xcodebuildFingerprintFile)
             }
         }
     }
