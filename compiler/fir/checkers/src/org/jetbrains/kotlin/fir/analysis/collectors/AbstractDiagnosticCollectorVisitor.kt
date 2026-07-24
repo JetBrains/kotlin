@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFr
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
-import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -131,13 +130,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
-        if (shouldSuppressInlineContextAt(anonymousFunctionExpression, context.containingDeclarations.lastOrNull())) {
-            suppressInlineFunctionBodyContext {
-                visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
-            }
-        } else {
-            visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
-        }
+        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
