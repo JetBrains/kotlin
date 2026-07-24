@@ -25,4 +25,7 @@ fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     return actual
 }
 
-
+@Suppress("UNUSED_PARAMETER")
+fun assertNull(actual: Any?, message: String? = null) {
+    if (actual != null) throw Exception("")
+}
