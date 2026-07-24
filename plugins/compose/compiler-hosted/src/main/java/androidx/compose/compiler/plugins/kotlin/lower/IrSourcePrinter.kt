@@ -1511,13 +1511,6 @@ class IrSourcePrinterVisitor(
         append(")")
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
-        if (isBound)
-            StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
-        else
-            "<unbound $this: ${this.descriptor}>"
-
     private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder) {
         renderDeclarationParentFqn(sb)
         sb.append('.')
