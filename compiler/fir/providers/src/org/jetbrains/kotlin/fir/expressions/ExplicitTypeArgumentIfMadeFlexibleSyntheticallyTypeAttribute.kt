@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.types.ConeAttribute
+import org.jetbrains.kotlin.fir.types.ConeAttributeWithConeType
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import kotlin.reflect.KClass
@@ -17,9 +17,9 @@ import kotlin.reflect.KClass
  * TODO: Get rid of this class once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] cannot be disabled
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-    val coneType: ConeKotlinType,
+    override val coneType: ConeKotlinType,
     val relevantFeature: LanguageFeature? = null,
-) : ConeAttribute<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
+) : ConeAttributeWithConeType<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations
     override fun union(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? =
@@ -41,6 +41,10 @@ data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
 
     override val implementsEquality: Boolean
         get() = true
+
+    override fun copyWith(newType: ConeKotlinType): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute {
+        return ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(newType, relevantFeature)
+    }
 }
 
 val ConeAttributes.explicitTypeArgumentIfMadeFlexibleSynthetically: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? by ConeAttributes.attributeAccessor()
