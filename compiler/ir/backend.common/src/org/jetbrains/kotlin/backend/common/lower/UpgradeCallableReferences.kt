@@ -339,26 +339,22 @@ open class UpgradeCallableReferences(
                 type = expression.type,
                 reflectionTargetSymbol = expression.symbol,
                 getterFunction = expression.getter.owner.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                    expression.buildAccessorFunctionForLocalDelegatedProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
                 },
                 setterFunction = expression.setter?.owner?.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                    expression.buildAccessorFunctionForLocalDelegatedProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
                 },
                 origin = expression.origin
             )
         }
 
-        private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
+        private fun IrCallableReference<*>.buildAccessorFunctionForLocalDelegatedProperty(
             captured: List<CapturedValue>,
             parent: IrDeclarationParent,
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
-        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter) { _, _ ->
-            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException).apply {
-                arguments[0] = irString("Not supported for local property reference.")
-            }
-        }.apply {
+        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter, body = null).apply {
             returnType = context.irBuiltIns.nothingType
         }
 
