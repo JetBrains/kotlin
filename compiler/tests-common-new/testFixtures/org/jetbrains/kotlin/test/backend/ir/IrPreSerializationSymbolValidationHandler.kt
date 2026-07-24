@@ -78,7 +78,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is BackendWasmSymbols.CoroutinesStateMachineIntrinsics -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
             null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
-            is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is SymbolFinder -> Unit // do nothing
+            is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is IrModuleFragment, is SymbolFinder -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }
