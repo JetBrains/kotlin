@@ -40,7 +40,7 @@ public class KotlinModuleMetadata internal constructor(
      */
     public var version: JvmMetadataVersion,
 
-    internal val isAllowedToWrite: Boolean,
+    private val isAllowedToWrite: Boolean,
 ) {
     public constructor(
         kmModule: KmModule,
@@ -96,24 +96,11 @@ public class KotlinModuleMetadata internal constructor(
      * Collection of methods for reading and writing [KotlinModuleMetadata].
      */
     public companion object {
-        /**
-         * Parses the given byte array with the .kotlin_module file content and returns the [KotlinModuleMetadata] instance,
-         * or `null` if this byte array encodes a module with an unsupported metadata version.
-         *
-         * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
-         * It will throw an exception if the metadata version is greater than what kotlinx-metadata-jvm understands.
-         * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
-         * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
-         *
-         * @throws IllegalArgumentException if an error happened while parsing the given byte array,
-         * which means that it is either not the content of a `.kotlin_module` file, or it has been corrupted.
-         *
-         * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
-         */
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use readStrict instead", replaceWith = ReplaceWith("readStrict"))
         @JvmStatic
         @UnstableMetadataApi
         public fun read(bytes: ByteArray): KotlinModuleMetadata {
-            return readLenient(bytes, false)
+            return readMetadataImpl(bytes, lenient = false)
         }
 
         /**
@@ -133,7 +120,7 @@ public class KotlinModuleMetadata internal constructor(
         @JvmStatic
         @UnstableMetadataApi
         public fun readStrict(bytes: ByteArray): KotlinModuleMetadata {
-            return readLenient(bytes, false)
+            return readMetadataImpl(bytes, lenient = false)
         }
 
         /**
@@ -141,7 +128,6 @@ public class KotlinModuleMetadata internal constructor(
          * or `null` if this byte array encodes a module with an unsupported metadata version.
          *
          * This method makes best effort to read unsupported metadata versions.
-         * If [annotationData] version is greater than [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] + 1, this method still attempts to read it and may ignore parts of the metadata it does not understand.
          * Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
          * Because obtained metadata can be incomplete, its [KotlinClassMetadata.write] method will throw an exception.
          * This method still cannot read metadata produced by pre-1.0 compilers.
@@ -152,7 +138,12 @@ public class KotlinModuleMetadata internal constructor(
          * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
          */
         @JvmStatic
-        public fun readLenient(bytes: ByteArray, lenient: Boolean): KotlinModuleMetadata {
+        @UnstableMetadataApi
+        public fun readLenient(bytes: ByteArray): KotlinModuleMetadata {
+            return readMetadataImpl(bytes, lenient = true)
+        }
+
+        private fun readMetadataImpl(bytes: ByteArray, lenient: Boolean): KotlinModuleMetadata {
             return wrapIntoMetadataExceptionWhenNeeded {
                 val result = ModuleMapping.loadModuleMapping(
                     bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = lenient,
