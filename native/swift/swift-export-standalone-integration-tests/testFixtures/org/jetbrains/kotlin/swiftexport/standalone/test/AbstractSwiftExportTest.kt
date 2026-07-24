@@ -43,6 +43,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
+    var exportedGivenModules: Set<TestModule.Given> = emptySet()
     var minOSVersion: String? = null
 
     /**
@@ -88,7 +89,8 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
-                shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it)
+                shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it) ||
+                        exportedGivenModules.contains(it)
             )
         }
         val modulesToExport = inputModuleByTestModule.values.toSet()
@@ -179,7 +181,11 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         )
         return InputModule(
             path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
-            name = if (moduleToTranslate.name == "kotlinx-coroutines-core.klib") "KotlinxCoroutinesCore" else moduleToTranslate.name,
+            name = when (moduleToTranslate.name) {
+                "kotlinx-coroutines-core.klib" -> "KotlinxCoroutinesCore"
+                "atomicfu.klib" -> "Atomicfu"
+                else -> moduleToTranslate.name
+            },
             config = moduleConfig
         )
     }

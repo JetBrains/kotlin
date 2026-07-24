@@ -83,7 +83,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.removePrefix("lib")}",
 
             "-F", testRunSettings.systemFrameworksPath,
-            "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
+            "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath, "-Xlinker", "-ObjC",
             "-framework", "Testing",
             testRunSettings.systemToolchainPath?.let { "-plugin-path" },
             testRunSettings.systemToolchainPath?.let { "${it}/usr/lib/swift/host/plugins/testing/" },
