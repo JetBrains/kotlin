@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -451,13 +450,11 @@ interface IrBuilderWithPluginContext {
         return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
     }
 
-    context(irBuilder: IrBuilderWithScope) @OptIn(ObsoleteDescriptorBasedAPI::class)
+    context(irBuilder: IrBuilderWithScope)
     fun wrapperClassReference(classType: IrType): IrClassReference {
         if (compilerContext.platform.isJvm()) {
             // "Byte::class" -> "java.lang.Byte::class"
-//          TODO: get rid of descriptor
-            val wrapperFqName =
-                KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
+            val wrapperFqName = classType.getPrimitiveType()?.let(JvmPrimitiveType::get)?.wrapperFqName
             if (wrapperFqName != null) {
                 val wrapperClass = compilerContext.finderForBuiltins().findClass(ClassId.topLevel(wrapperFqName))
                     ?: error("Primitive wrapper class for $classType not found: $wrapperFqName")
