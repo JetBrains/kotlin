@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR, JS_IR, JS_IR_ES6
 
 import kotlinx.atomicfu.*
 import kotlin.test.*
