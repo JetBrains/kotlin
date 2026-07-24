@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.serialization
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -48,9 +46,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
 
         defaultDirectives {
-            LANGUAGE with listOf(
-                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
             +ALLOW_KOTLIN_PACKAGE
         }
         forTestsNotMatching(
