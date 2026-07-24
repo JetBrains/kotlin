@@ -11,6 +11,10 @@ Compiler:
     - "jps/**"
   exclude:
     - "compiler/psi/**"
+    - "compiler/build-tools/**"
+    - "compiler/incremental-compilation-*/**"
+    - "compiler/daemon/**"
+    - "compiler/compiler-runner-unshaded/**"
   fullyAffectedBy:
     - CoreLibs
 
@@ -63,6 +67,16 @@ AnalysisApi:
     - Compiler
     - CoreLibs
 
+BuildToolsApi:
+  include:
+    - "build-common/**"
+    - "compiler/build-tools/**"
+    - "compiler/incremental-compilation-*/**"
+    - "compiler/daemon/**"
+    - "compiler/compiler-runner-unshaded/**"
+  fullyAffectedBy:
+    - Compiler
+
 SwiftExport:
   include:
     - "native/swift/**"
@@ -78,7 +92,9 @@ CompilerPlugins:
 
 Gradle:
   include:
+    - "build-common/**"
     - "libraries/tools/*gradle*/**"
+    - "compiler/build-tools/kotlin-build-statistics/**"
 
 Maven:
   include:

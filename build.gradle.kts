@@ -473,15 +473,27 @@ tasks {
         dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")
         dependsOn(":kotlin-tooling-metadata:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
         dependsOn(":tools:stats-analyser:test")
         dependsOn(":libraries:tools:abi-validation:abi-tools:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-api:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-embeddable:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
+
+        /*
+        Duplicating 'buildToolsApiTest' for a transitionary period
+        We're introducing a dedicated build on TC for Build Tools API.
+        Once branches got rebased, we can roll out the change on TC and remove BTA checks here.
+        */
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
+    }
+
+    testLifecycleTask("buildToolsApiTest") {
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
     }
 
     testLifecycleTask("examplesTest") {
@@ -497,6 +509,7 @@ tasks {
         dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
+        dependsOn("buildToolsApiTest")
     }
 
     testLifecycleTask("specTest") {

@@ -9,6 +9,7 @@ enum class Domain {
     Native,
     CoreLibs,
     AnalysisApi,
+    BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
     Gradle,
@@ -24,7 +25,7 @@ enum class Domain {
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
     override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "compiler/psi/parser/**", "plugins/plugin-sandbox/**", "plugins/scripting/**", "jps/**")
-    override val exclude: List<String> = listOf("compiler/psi/**")
+    override val exclude: List<String> = listOf("compiler/psi/**", "compiler/build-tools/**", "compiler/incremental-compilation-*/**", "compiler/daemon/**", "compiler/compiler-runner-unshaded/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
 
@@ -63,6 +64,13 @@ internal object AnalysisApiDomainInfo : DomainInfo {
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
+internal object BuildToolsApiDomainInfo : DomainInfo {
+    override val domain = Domain.BuildToolsApi
+    override val include: List<String> = listOf("build-common/**", "compiler/build-tools/**", "compiler/incremental-compilation-*/**", "compiler/daemon/**", "compiler/compiler-runner-unshaded/**")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
+}
+
 internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
     override val include: List<String> = listOf("native/swift/**", "libraries/tools/analysis-api-based-klib-reader/**")
@@ -79,7 +87,7 @@ internal object CompilerPluginsDomainInfo : DomainInfo {
 
 internal object GradleDomainInfo : DomainInfo {
     override val domain = Domain.Gradle
-    override val include: List<String> = listOf("libraries/tools/*gradle*/**")
+    override val include: List<String> = listOf("build-common/**", "libraries/tools/*gradle*/**", "compiler/build-tools/kotlin-build-statistics/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
@@ -121,6 +129,7 @@ internal val allDomainInfos: List<DomainInfo> by lazy {
         NativeDomainInfo,
         CoreLibsDomainInfo,
         AnalysisApiDomainInfo,
+        BuildToolsApiDomainInfo,
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,
         GradleDomainInfo,
