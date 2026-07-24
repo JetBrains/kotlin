@@ -314,7 +314,7 @@ private fun buildSuffix(
 }
 
 private fun ConeKotlinType.isExplicitTypeArgumentMadeFlexibleSynthetically(): Boolean =
-    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.relevantFeature != null
+    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically != null
 
 private fun ConeKotlinType.featureFromExplicitTypeArgumentMadeFlexibleSynthetically(): LanguageFeature? =
     attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.relevantFeature
