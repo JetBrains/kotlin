@@ -63,7 +63,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = DefaultBuiltIns.Instance,
-            specialAnnotationsProvider = null,
+            createSpecialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
         )

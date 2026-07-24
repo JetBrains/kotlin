@@ -52,7 +52,7 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions = Fir2IrExtensions.Default
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter = Fir2IrVisibilityConverter.Default
     override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext = ::IrTypeSystemContextImpl
-    override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider? = null
+    override fun createSpecialAnnotationsProvider(): ((IrModuleFragment) -> IrSpecialAnnotationsProvider)? = null
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> =
         { emptyList() }
 

@@ -104,7 +104,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
-            specialAnnotationsProvider = null,
+            createSpecialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
         ) { irModuleFragment ->
             (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }

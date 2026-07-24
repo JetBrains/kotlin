@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -54,7 +55,7 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions
     protected abstract fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter
     protected abstract fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext
-    protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
+    protected abstract fun createSpecialAnnotationsProvider(): ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?
     protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>
 
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary>
@@ -109,7 +110,7 @@ abstract class AbstractFir2IrResultsConverter(
             createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             createTypeSystemContextProvider(),
-            specialAnnotationsProvider = createSpecialAnnotationsProvider(),
+            createSpecialAnnotationsProvider = createSpecialAnnotationsProvider(),
             extraActualDeclarationExtractorsInitializer = createExtraActualDeclarationExtractorInitializer(),
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
