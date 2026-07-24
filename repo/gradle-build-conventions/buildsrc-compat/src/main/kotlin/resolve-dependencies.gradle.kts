@@ -20,11 +20,7 @@ val resolveDependenciesInAllProjects by tasks.registering {
 
             // resolve implicit dependencies one by one to avoid conflicts between them
 //            configurations.findByName("implicitDependencies")?.allDependencies?.forEach { implicitDependency ->
-//                try {
-//                    configurations.detachedConfiguration(implicitDependency).resolve()
-//                } catch (_: Throwable) {
-//
-//                }
+//                configurations.detachedConfiguration(implicitDependency).resolve()
 //            }
 
             configurations.findByName("commonCompileClasspath")?.resolve()
