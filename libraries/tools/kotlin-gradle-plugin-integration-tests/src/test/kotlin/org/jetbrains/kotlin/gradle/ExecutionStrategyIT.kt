@@ -213,6 +213,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                runViaBuildToolsApi = false,
             )
         ) {
             subProject("app").kotlinSourcesDir().resolve("classes.kt").modify {
