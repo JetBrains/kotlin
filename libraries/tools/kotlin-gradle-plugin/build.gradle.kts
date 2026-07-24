@@ -157,6 +157,7 @@ val unpublishedCompilerRuntimeDependencies = listOf(
 val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
 dependencies {
+    commonImplementation("cglib:cglib:3.3.0")
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
