@@ -33,7 +33,6 @@ open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeSamConversions: Boolean = true,
     val castDispatchReceiver: Boolean = true,
-    val generateFakeAccessorsForReflectionProperty: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -257,30 +256,16 @@ open class UpgradeCallableReferences(
             val boundValues: List<IrExpression>
 
             if (getter != null) {
-                if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
-                    boundValues = emptyList()
-                    getterFun = getter.let {
-                        expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
-                        )
+                val getterArguments = expression.getCapturedValues()
+                boundValues = getterArguments.map { it.expression }
+                getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
+                setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
+                    requireNotNull(setter)
+                    val setterArguments = getterArguments.map {
+                        val parameter = it.correspondingParameter ?: error("Getter argument $it has no corresponding parameter")
+                        it.copy(correspondingParameter = setter.parameters.getOrNull(parameter.indexInParameters))
                     }
-                    setterFun = setter?.let {
-                        expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
-                        )
-                    }
-                } else {
-                    val getterArguments = expression.getCapturedValues()
-                    boundValues = getterArguments.map { it.expression }
-                    getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
-                    setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
-                        requireNotNull(setter)
-                        val setterArguments = getterArguments.map {
-                            val parameter = it.correspondingParameter ?: error("Getter argument $it has no corresponding parameter")
-                            it.copy(correspondingParameter = setter.parameters.getOrNull(parameter.indexInParameters))
-                        }
-                        expression.wrapFunction(setterArguments, data, setter, isPropertySetter = true)
-                    }
+                    expression.wrapFunction(setterArguments, data, setter, isPropertySetter = true)
                 }
             } else {
                 boundValues = listOfNotNull(expression.dispatchReceiver)
@@ -376,14 +361,6 @@ open class UpgradeCallableReferences(
         }.apply {
             returnType = context.irBuiltIns.nothingType
         }
-
-        private fun IrCallableReference<*>.buildReflectionPropertyAccessorWithoutBody(
-            captured: List<CapturedValue>,
-            parent: IrDeclarationParent,
-            name: Name,
-            isSuspend: Boolean,
-            isPropertySetter: Boolean,
-        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter, body = null)
 
         private fun IrCallableReference<*>.buildWrapperFunction(
             captured: List<CapturedValue>,
