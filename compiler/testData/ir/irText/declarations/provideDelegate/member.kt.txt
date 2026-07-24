@@ -36,12 +36,18 @@ class Host {
   val testMember: String /* by */
     field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = KProperty1<Host, String>(
       /* bound = */ [],
-      /* getter = */      local fun(p0: Host): String    )
+      /* getter = */      local fun(p0: Host): String {
+        return p0.<get-testMember>()
+      }
+    )
 )
     get(): String {
       return <this>.#testMember$delegate.getValue(thisRef = <this>, property = KProperty1<Host, String>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: Host): String      )
+        /* getter = */        local fun(p0: Host): String {
+          return p0.<get-testMember>()
+        }
+      )
 )
     }
 

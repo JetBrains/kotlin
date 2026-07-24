@@ -43,6 +43,9 @@ FILE fqName:<root> fileName:/test.kt
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
             ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.Boolean> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final x: kotlin.Boolean declared in <root>'
               getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:x visibility:local modality:FINAL returnType:kotlin.Boolean
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun x (): kotlin.Boolean declared in <root>.<get-x>'
+                    CALL 'public final fun <get-x> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
   FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun println (message: kotlin.Boolean): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
