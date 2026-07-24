@@ -157,9 +157,17 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
-        val debugOptions = if (debug) PwDebugOptions(
-            remoteDebuggingPort = debugPort.orNull,
-        ) else null
+        val debugOptions = if (debug) {
+            if (!debugPort.isPresent) {
+                task.logger.warn(
+                    "IDEA did not configure a remote debugging port for this Playwright debug run. " +
+                            "Continuing without IDEA debugger attachment."
+                )
+            }
+            PwDebugOptions(debugPort.orNull)
+        } else {
+            null
+        }
 
         val pwRunners = buildList {
             val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
