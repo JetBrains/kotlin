@@ -175,7 +175,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         val originalThis = parentAsClass.thisReceiver
 
         fun remapReceiverIfNeeded(accessor: IrSimpleFunction) = if (backingField == null) {
-            boundValueOrNull?.remapReceiver(originalThis, accessor.getReceiverParameterOrNull())
+            boundValueOrNull?.remapReceiver(originalThis, accessor.dispatchReceiverParameter)
         } else {
             null
         }
