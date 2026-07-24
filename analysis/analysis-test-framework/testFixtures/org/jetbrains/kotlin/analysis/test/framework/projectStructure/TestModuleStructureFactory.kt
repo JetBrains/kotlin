@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -35,9 +38,14 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.net.URI
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.Properties
 import kotlin.io.path.absolute
+import kotlin.io.path.copyTo
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -205,14 +213,20 @@ object TestModuleStructureFactory {
 
         val jsLibraryRootPaths = compilerConfiguration[JSConfigurationKeys.LIBRARIES].orEmpty()
 
+        val stdlibCompilerVersionOverride = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.STDLIB_COMPILER_VERSION)
+
         for (libraryRootPath in jsLibraryRootPaths) {
-            val libraryRoot = Paths.get(libraryRootPath)
+            var libraryRoot = Paths.get(libraryRootPath)
             if (compilerConfiguration.targetPlatform.isJs()) {
                 /**
                  * WASM infrastructure uses the same [JSConfigurationKeys.LIBRARIES] key to provide library roots.
                  * However, WASM roots are just regular directories, so we should only perform this check for JS targets.
                  */
                 check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+
+                if (stdlibCompilerVersionOverride != null) {
+                    libraryRoot = patchKlibManifestCompilerVersion(libraryRoot, stdlibCompilerVersionOverride, testServices)
+                }
             }
 
             val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {
@@ -238,7 +252,49 @@ object TestModuleStructureFactory {
 
         val libraryName = stripOutKotlinVersionFromFileName(libraryFile.nameWithoutExtension)
         val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
-        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
+        val binaryVirtualFiles = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+            listOf(libraryFile),
+            testServices.environmentManager.getApplicationEnvironment(),
+        )
+
+        return KaLibraryModuleImpl(
+            libraryName,
+            platform,
+            libraryScope,
+            project,
+            listOf(libraryFile),
+            librarySources = null,
+            isSdk = false,
+            binaryVirtualFiles,
+        )
+    }
+
+    /**
+     * Copies the given [klib] to a temporary directory and overrides the `compiler_version` property in its manifest with
+     * [compilerVersion].
+     *
+     * @see AnalysisApiTestDirectives.STDLIB_COMPILER_VERSION
+     */
+    private fun patchKlibManifestCompilerVersion(klib: Path, compilerVersion: String, testServices: TestServices): Path {
+        val patchedKlibsDirectory = testServices.temporaryDirectoryManager
+            .getOrCreateTempDirectory("patched-klibs-$compilerVersion")
+            .toPath()
+
+        val patchedKlib = patchedKlibsDirectory.resolve(klib.fileName)
+        if (patchedKlib.exists()) {
+            return patchedKlib
+        }
+
+        klib.copyTo(patchedKlib)
+
+        FileSystems.newFileSystem(URI.create("jar:${patchedKlib.toUri()}"), emptyMap<String, Any>()).use { klibFileSystem ->
+            val manifestPath = klibFileSystem.getPath(KLIB_DEFAULT_COMPONENT_NAME, KLIB_MANIFEST_FILE_NAME)
+            val manifest = Files.newInputStream(manifestPath).use { Properties().apply { load(it) } }
+            manifest.setProperty(KLIB_PROPERTY_COMPILER_VERSION, compilerVersion)
+            Files.newOutputStream(manifestPath).use { manifest.store(it, /* comments = */ null) }
+        }
+
+        return patchedKlib
     }
 
     fun getScopeForLibraryByRoots(project: Project, roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {

@@ -743,6 +743,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
     }
 
     @Test
+    @TestMetadata("actualEnumCloneJsPre21Stdlib.kt")
+    public void testActualEnumCloneJsPre21Stdlib() {
+      run("actualEnumCloneJsPre21Stdlib.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }

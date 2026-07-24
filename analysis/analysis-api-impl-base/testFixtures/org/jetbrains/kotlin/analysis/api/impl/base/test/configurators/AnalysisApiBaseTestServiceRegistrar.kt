@@ -133,8 +133,9 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 project,
                 testServices.environmentManager.getApplicationEnvironment(),
                 testKtFiles,
-                binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
-                sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
+                // `binaryVirtualFiles` may overlap with the virtual files computed from `binaryRoots`, so the lists have to be deduplicated.
+                binaryRoots = (mainBinaryRoots + mainBinaryVirtualFiles).distinct(),
+                sharedBinaryRoots = (sharedBinaryRoots + sharedBinaryVirtualFiles).distinct(),
                 skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                 shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
                 shouldComputeBinaryLibraryPackageSets = true,

@@ -82,6 +82,18 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         description = "Marks the library module as an SDK.",
         applicability = DirectiveApplicability.Module,
     )
+
+    /**
+     * Overrides the `compiler_version` property in the manifests of KLIB library dependencies provided by the compiler configuration
+     * (such as the JS standard library). Each KLIB is copied to a temporary directory and its manifest is patched, so the original
+     * artifact is not modified.
+     *
+     * This makes it possible to test behavior which depends on the Kotlin version a dependency KLIB was compiled with, without
+     * committing versioned binary fixtures to the repository.
+     */
+    val STDLIB_COMPILER_VERSION by stringDirective(
+        description = "Overrides the `compiler_version` in the manifests of KLIB library dependencies provided by the compiler configuration",
+    )
 }
 
 val TestModule.hasFallbackDependencies: Boolean
