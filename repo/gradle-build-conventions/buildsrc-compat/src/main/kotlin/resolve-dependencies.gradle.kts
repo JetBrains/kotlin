@@ -19,9 +19,13 @@ val resolveDependenciesInAllProjects by tasks.registering {
             logger.lifecycle("Resolving dependencies in ${project.displayName}")
 
             // resolve implicit dependencies one by one to avoid conflicts between them
-            configurations.findByName("implicitDependencies")?.allDependencies?.forEach { implicitDependency ->
-                configurations.detachedConfiguration(implicitDependency).resolve()
-            }
+//            configurations.findByName("implicitDependencies")?.allDependencies?.forEach { implicitDependency ->
+//                try {
+//                    configurations.detachedConfiguration(implicitDependency).resolve()
+//                } catch (_: Throwable) {
+//
+//                }
+//            }
 
             configurations.findByName("commonCompileClasspath")?.resolve()
             configurations.findByName("testRuntimeClasspath")?.resolve()
