@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -216,15 +215,9 @@ class IrFakeOverrideBuilder(
                 MemberWithOriginal(fromCurrent),
                 checkIsInlineFlag = true,
             )
-            when (overridability.result) {
-                OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
-                    overridden += fromSupertype
-                    bound += fromSupertype
-                }
-                OverrideCompatibilityInfo.Result.CONFLICT -> {
-                    bound += fromSupertype
-                }
-                OverrideCompatibilityInfo.Result.INCOMPATIBLE -> Unit
+            if (overridability.overridable) {
+                overridden += fromSupertype
+                bound += fromSupertype
             }
         }
 
@@ -466,10 +459,8 @@ class IrFakeOverrideBuilder(
                 continue
             }
             val finalResult = overrideChecker.getBothWaysOverridability(MemberWithOriginal(overrider), MemberWithOriginal(candidate))
-            if (finalResult == OverrideCompatibilityInfo.Result.OVERRIDABLE) {
+            if (finalResult.overridable) {
                 overridable.add(candidate)
-                iterator.remove()
-            } else if (finalResult == OverrideCompatibilityInfo.Result.CONFLICT) {
                 iterator.remove()
             }
         }
