@@ -270,7 +270,6 @@
         <entry key="Native.*Codegen.*">
           <value>
             <array>
-              <option value="K1" />
               <option value="Native" />
             </array>
           </value>
