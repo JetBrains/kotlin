@@ -268,6 +268,14 @@ val IrDeclaration.isOriginallyLocal: Boolean
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module
 
+val IrDeclaration.moduleFragment: IrModuleFragment
+    get() = when (val packageFragment = getPackageFragment()) {
+        is IrFile -> packageFragment.module
+        is IrExternalPackageFragment -> packageFragment.module
+            ?: error("The module of $packageFragment is not set")
+        else -> error("Unexpected package fragment: $packageFragment")
+    }
+
 const val SYNTHETIC_OFFSET = -2
 
 class NaiveSourceBasedFileEntryImpl(
