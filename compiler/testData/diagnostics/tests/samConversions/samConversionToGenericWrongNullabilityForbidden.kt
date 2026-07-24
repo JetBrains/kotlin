@@ -103,10 +103,10 @@ fun main() {
     }
 
     Supplier<String>(
-        fun(): String? {
+        <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("() -> String?; () -> String")!>fun(): String? {
             if (true) return <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
-        }
+        }<!>
     )
 
     val sam5: Supplier<String> = Supplier {
