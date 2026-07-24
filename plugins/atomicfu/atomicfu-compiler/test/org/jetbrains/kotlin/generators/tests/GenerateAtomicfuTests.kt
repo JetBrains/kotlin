@@ -32,14 +32,8 @@ fun main(args: Array<String>) {
             ) {
                 model()
             }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeTestWithInlinedFunInKlibGenerated",
-                annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
-            ) {
-                model()
-            }
             testClass<AbstractAtomicfuNativeKlibSyntheticAccessorTest>(
-                annotations = listOf(klibIrInliner(), *klibSyntheticAccessors(), *atomicfuNative())
+                annotations = listOf(*klibSyntheticAccessors(), *atomicfuNative())
             ) {
                 model()
             }
@@ -77,8 +71,8 @@ fun main(args: Array<String>) {
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
-            testClass<AbstractAtomicfuNativeWithInlinedFunInKlibDiagnosticTest>(
-                annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            testClass<AbstractAtomicfuNativeDiagnosticTest>(
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model("backendDiagnostic/")
             }

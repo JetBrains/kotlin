@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.tests.klibIrInliner
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.tests.standalone
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -68,12 +67,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "SerializationNativeTestGenerated",
                 annotations = listOf(standalone(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
-            ) {
-                model("boxIr")
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "SerializationNativeWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(standalone(), klibIrInliner(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model("boxIr")
             }
