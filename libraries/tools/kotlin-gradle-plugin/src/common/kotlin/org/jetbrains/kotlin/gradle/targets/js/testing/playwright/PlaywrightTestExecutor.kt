@@ -235,16 +235,17 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.FIREFOX -> playwright.firefox()
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
+
+        val runnerDebugPort = runner.debugOptions?.remoteDebuggingPort
         val launchOptions = BrowserType.LaunchOptions()
-            .setHeadless(runner.debugOptions == null && runner.headless)
+            .setHeadless(runnerDebugPort == null && runner.headless)
             .apply {
-                val debugPort = runner.debugOptions?.remoteDebuggingPort
-                val launchArgs = if (debugPort != null) {
+                val launchArgs = if (runnerDebugPort != null) {
                     // The IDE debugger speaks CDP here; non-Chromium runners are converted before reaching the executor.
                     check(runner.browserKind == PwBrowserKind.CHROMIUM) {
                         "IntelliJ browser test debugging for Playwright is supported only with Chromium runners"
                     }
-                    runner.launchArgs.withRemoteDebuggingPort(debugPort)
+                    runner.launchArgs.withRemoteDebuggingPort(runnerDebugPort)
                 } else {
                     runner.launchArgs
                 }
