@@ -165,6 +165,10 @@ abstract class KotlinIrLinker(
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
 
+    fun getBuiltInsModule(): IrModuleFragment =
+        deserializersForModules.values.firstOrNull { it is IrModuleDeserializerWithBuiltIns }?.moduleFragment
+            ?: error("The module with the built-ins has not been deserialized yet")
+
     /**
      * Run deserialization of top-level declarations previously scheduled for deserialization in the current [KotlinIrLinker].
      */
