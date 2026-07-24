@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
@@ -17,7 +15,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanPartialModuleDeserializer(
     kotlinIrLinker: KotlinIrLinker,
     moduleDescriptor: ModuleDescriptor,
@@ -31,10 +28,6 @@ class KonanPartialModuleDeserializer(
     strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
     libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {
-    private val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
-
-    fun getIdSignature(descriptor: DeclarationDescriptor): IdSignature? = descriptorSignatures[descriptor]
-
     val files by lazy { fileDeserializationStates.map { it.file } }
 
     fun getDeserializationStates(): List<FileDeserializationState> =
@@ -67,10 +60,8 @@ class KonanPartialModuleDeserializer(
     }
 
     fun getFileNameOf(declaration: IrDeclaration): String {
-        fun IrDeclaration.getSignature() = symbol.signature ?: descriptorSignatures[descriptor]
-
-        val idSig = declaration.getSignature()
-            ?: (declaration.parent as? IrDeclaration)?.getSignature()
+        val idSig = declaration.symbol.signature
+            ?: (declaration.parent as? IrDeclaration)?.symbol?.signature
             ?: error("Can't find signature of ${declaration.render()}")
         val topLevelIdSig = idSig.topLevelSignature()
         return topLevelIdSig.fileSignature()?.fileName
