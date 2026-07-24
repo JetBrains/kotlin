@@ -31,14 +31,14 @@ internal object CompilerDomainInfo : DomainInfo {
 
 internal object WasmDomainInfo : DomainInfo {
     override val domain = Domain.Wasm
-    override val include: List<String> = listOf("compiler/ir/backend.wasm", "wasm", "js/js.translator/testData")
+    override val include: List<String> = listOf("compiler/ir/backend.wasm", "wasm", "js/js.translator/testData", "js/js.sourcemap", "js/typescript-export-model", "js/typescript-printer", "libraries/tools/dukat", "js/js.tests/testFixtures/org/jetbrains/kotlin", "js/js.config/src/org/jetbrains/kotlin/js/config")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
-    override val include: List<String> = listOf("js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader")
+    override val include: List<String> = listOf("js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader", "libraries/tools/dukat")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
