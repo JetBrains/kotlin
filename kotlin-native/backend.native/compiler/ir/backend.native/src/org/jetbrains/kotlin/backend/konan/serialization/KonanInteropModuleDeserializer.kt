@@ -258,7 +258,7 @@ internal class KonanInteropModuleDeserializer(
             }
         } else {
             return ::externalIrPackageFragment.getOrSetIfNull {
-                IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor), definedPackageFqName, module = null)
+                IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor), definedPackageFqName, moduleFragment)
             }
         }
     }
