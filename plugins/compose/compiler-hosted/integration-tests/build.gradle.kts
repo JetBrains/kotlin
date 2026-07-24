@@ -77,7 +77,9 @@ dependencies {
 
     // runtime tests
     testImplementationArtifactOnly(composeRuntime())
+    testImplementationArtifactOnly(composeRuntimeDesktop())
     testImplementationArtifactOnly(composeRuntimeAnnotations())
+    testImplementationArtifactOnly(composeRuntimeAnnotationsJvm())
     testImplementation(libs.androidx.collections)
     testRuntimeOnly(project(":kotlin-script-runtime"))
 

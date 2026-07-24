@@ -49,7 +49,10 @@ dependencies {
 
     pluginsRuntime(libs.kotlinx.serialization.core)
     pluginsRuntime(composeRuntime())
+    pluginsRuntime(composeRuntimeDesktop())
     pluginsRuntime(composeRuntimeAnnotations())
+    pluginsRuntime(composeRuntimeAnnotationsJs())
+    pluginsRuntime(composeRuntimeAnnotationsJvm())
     pluginsRuntime(libs.androidx.collections)
 
     testFixturesApi(libs.junit.jupiter.api)
