@@ -94,19 +94,26 @@ Js:
  - compiler/ir/serialization.js
  - js/ReadMe.md
  - js/js.ast
- - js/js.config
+ - js/js.config/ReadMe.md
+ - js/js.config/build.gradle.kts
+ - js/js.config/gen
+ - js/js.config/src/org/jetbrains/kotlin/incremental
+ - js/js.config/src/org/jetbrains/kotlin/js/artifacts
+ - js/js.config/src/org/jetbrains/kotlin/platform
+ - js/js.config/src/org/jetbrains/kotlin/utils
  - js/js.frontend
  - js/js.frontend.common
  - js/js.parser
- - js/js.sourcemap
- - js/js.tests
+ - js/js.tests/ReadMe.md
+ - js/js.tests/build.gradle.kts
+ - js/js.tests/klib-compatibility
+ - js/js.tests/testFixtures/com
+ - js/js.tests/tests
  - js/js.translator/ReadMe.md
  - js/js.translator/build.gradle.kts
  - js/js.translator/src
  - js/npm
- - js/typescript-export-model
  - js/typescript-export-standalone
- - js/typescript-printer
 
 Native:
  - compiler/ir/backend.native
@@ -272,7 +279,6 @@ Unknown:
  - libraries/tools/abi-validation
  - libraries/tools/atomicfu
  - libraries/tools/binary-compatibility-validator
- - libraries/tools/dukat
  - libraries/tools/ide-plugin-dependencies-validator
  - libraries/tools/js-plain-objects
  - libraries/tools/klib-abi-reader
@@ -322,7 +328,13 @@ Unknown:
  - third-party
 
 Js, Wasm:
+ - js/js.config/src/org/jetbrains/kotlin/js/config
+ - js/js.sourcemap
+ - js/js.tests/testFixtures/org/jetbrains/kotlin
  - js/js.translator/testData
+ - js/typescript-export-model
+ - js/typescript-printer
+ - libraries/tools/dukat
 
 Compiler, CoreLibs:
  - core/descriptors.runtime
