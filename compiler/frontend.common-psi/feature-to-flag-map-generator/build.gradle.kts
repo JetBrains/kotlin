@@ -6,18 +6,10 @@ plugins {
     application
 }
 
-val runtimeOnly by configurations
-val compileOnly by configurations
-runtimeOnly.extendsFrom(compileOnly)
-
 dependencies {
     implementation(project(":core:language.version-settings"))
     implementation(project(":generators"))
     implementation(project(":compiler:arguments"))
-
-    compileOnly(intellijCore())
-
-    runtimeOnly(intellijJDom())
 }
 
 application {

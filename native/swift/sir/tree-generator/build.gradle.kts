@@ -6,8 +6,6 @@ plugins {
     application
 }
 
-configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
-
 dependencies {
     implementation(project(":generators:tree-generator-common"))
 }
