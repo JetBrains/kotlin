@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompil
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irText.AbstractPsiNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityTest
-import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
@@ -194,9 +193,6 @@ fun main(args: Array<String>) {
         // KLIB cross-compilation tests.
         testGroup(testsRoot, "native/native.tests/testData/klib/cross-compilation/identity") {
             testClass<AbstractKlibCrossCompilationIdentityTest> {
-                model()
-            }
-            testClass<AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest> {
                 model()
             }
         }
