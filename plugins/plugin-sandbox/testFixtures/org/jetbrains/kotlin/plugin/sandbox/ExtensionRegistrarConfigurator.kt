@@ -24,6 +24,9 @@ object PluginSandboxDirectives : SimpleDirectivesContainer() {
         If enabled plugin won't be applied to the synthetic modules.
         E.g. for empty module created in [${AbstractLoadedMetadataDumpHandler::class}]
     """.trimIndent())
+
+    val WITH_AND_WITHOUT_PLUGIN by directive(""" Runs test with and without plugin """.trimIndent())
+    val DISABLE_PLUGIN by directive(""" Turns off plugin completely """.trimIndent())
 }
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -31,6 +34,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         get() = listOf(PluginSandboxDirectives)
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        if (PluginSandboxDirectives.DISABLE_PLUGIN in moduleStructure.allDirectives) return
         if (PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES in moduleStructure.allDirectives) {
             if (module !in moduleStructure.modules) {
                 return

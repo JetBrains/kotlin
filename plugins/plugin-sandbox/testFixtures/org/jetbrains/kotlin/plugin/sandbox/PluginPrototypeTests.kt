@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
@@ -34,6 +35,13 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenTest : AbstractFirLightTr
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.commonFirWithPluginFrontendConfiguration()
+    }
+}
+
+open class AbstractFirJvmLightTreePluginBlackBoxCodegenTestWithoutPlugins : AbstractFirJvmLightTreePluginBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonWithoutPluginConfiguration()
     }
 }
 
@@ -151,4 +159,13 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration(dumpFir: B
     useFailureSuppressors(
         ::FirFailingTestSuppressor,
     )
+}
+
+fun TestConfigurationBuilder.commonWithoutPluginConfiguration() {
+    defaultDirectives {
+        +PluginSandboxDirectives.DISABLE_PLUGIN
+        TestDumpDirectives.DUMP_CLASSIFIER with "withoutPlugin"
+    }
+
+    useMetaTestConfigurators(::WithoutPluginsTestConfigurator)
 }

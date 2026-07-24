@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58539
 // IGNORE_HMPP: JVM_IR, JS_IR
+// WITH_AND_WITHOUT_PLUGIN
 
 // MODULE: common
 import org.jetbrains.kotlin.plugin.sandbox.MyInlineable
