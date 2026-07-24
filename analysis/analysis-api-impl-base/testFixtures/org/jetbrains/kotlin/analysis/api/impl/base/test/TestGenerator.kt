@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractLegacyRenderingTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.*
@@ -514,6 +515,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
     }
 
     component("symbolDeclarationRenderer") {
+        test<AbstractLegacyRenderingTest> {
+            model(it, "renderDeclaration")
+        }
+
         test<AbstractRendererTest> {
             model(it, "renderDeclaration")
         }

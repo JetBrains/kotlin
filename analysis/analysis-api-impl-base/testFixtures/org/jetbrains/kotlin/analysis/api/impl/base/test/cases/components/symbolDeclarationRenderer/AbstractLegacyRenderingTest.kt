@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderer
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOption
-import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOutput
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KaRendererBodyMemberScopeSorter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.render
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
-import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
-import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -20,11 +21,25 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
-    override val variantChain: TestVariantChain
-        get() = super.variantChain.withAdditionalVariant("new")
-
+abstract class AbstractLegacyRenderingTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+            classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
+            bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
+                override fun sortMembers(
+                    analysisSession: KaSession,
+                    members: List<KaDeclarationSymbol>,
+                    container: KaDeclarationContainerSymbol,
+                ): List<KaDeclarationSymbol> {
+                    with(analysisSession) {
+                        return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                            .sortMembers(analysisSession, members, container)
+                            .sortedBy { it.render() }
+                    }
+                }
+            }
+        }
+
         val actual = executeOnPooledThreadInReadAction {
             buildString {
                 // Since we want to render the whole file, we shouldn't use `IGNORE_SELF` as it's only designed for local use cases.
@@ -32,20 +47,8 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                     mainFile,
                     danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
                 ) { contextFile ->
-                    val renderer = KaRenderer.default.copy {
-                        // Reproduce the legacy member ordering (see `AbstractLegacyRenderingTest`).
-                        set(KaRenderingOption.ClassMemberOrdering) { first, second ->
-                            fun renderToString(symbol: KaSymbol): String =
-                                KaRenderingOutput.plainString().also { KaRenderer.default.render(symbol, it) }.toString()
-
-                            renderToString(first).compareTo(renderToString(second))
-                        }
-                    }
-
                     contextFile.declarations.forEach { declaration ->
-                        val output = KaRenderingOutput.plainString(indentationUnit = "  ")
-                        renderer.render(declaration.symbol, output)
-                        append(output.toString())
+                        append(declaration.symbol.render(renderer))
                         appendLine()
                         appendLine()
                     }
