@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.joinPackageNames
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.prependPackageName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.testFederation.AffectedByNative
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
+@AffectedByNative
 abstract class AbstractNativeBlackBoxTest : ExternalSourceTransformersProvider {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider

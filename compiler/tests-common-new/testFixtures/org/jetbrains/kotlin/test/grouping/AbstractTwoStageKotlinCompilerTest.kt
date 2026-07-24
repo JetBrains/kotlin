@@ -14,16 +14,15 @@ import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
-import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
-import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.testFederation.AffectedByNative
+import org.jetbrains.kotlin.testFederation.AffectedByWasm
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
-abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompilerTestBase() {
+abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend constructor() : AbstractTwoStageKotlinCompilerTestBase() {
     val configurationBuilder: TwoStageTestConfigurationBuilder.() -> Unit = {
         commonConfiguration {
             AbstractKotlinCompilerTest.defaultConfiguration(this)
@@ -97,3 +96,11 @@ abstract class AbstractTwoStageKotlinCompilerTest : AbstractTwoStageKotlinCompil
         nonGroupingRunner.prepareModuleStructure(filePath)
     }
 }
+
+@OptIn(UnspecifiedTargetBackend::class)
+@AffectedByWasm
+abstract class AbstractTwoStageKotlinCompilerWasmTest : AbstractTwoStageKotlinCompilerTest()
+
+@OptIn(UnspecifiedTargetBackend::class)
+@AffectedByNative
+abstract class AbstractTwoStageKotlinCompilerNativeTest : AbstractTwoStageKotlinCompilerTest()

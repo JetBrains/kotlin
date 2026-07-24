@@ -27,13 +27,11 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
-abstract class AbstractNativeLoadCompiledKotlinTest :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
-{
+abstract class AbstractNativeLoadCompiledKotlinTest : AbstractKotlinCompilerNativeTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
             ::CommonEnvironmentConfigurator,

@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
-import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
@@ -27,11 +23,10 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
+import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
-import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
@@ -54,7 +49,7 @@ import java.io.File
 
 @Tag("custom-second-stage")
 open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String = "compiler/testData/codegen/") :
-    AbstractTwoStageKotlinCompilerTest() {
+    AbstractTwoStageKotlinCompilerWasmTest() {
 
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customWasmJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
