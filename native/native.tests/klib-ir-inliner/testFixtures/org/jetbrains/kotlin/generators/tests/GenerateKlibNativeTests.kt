@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.test.abi.AbstractNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
@@ -203,7 +202,6 @@ fun main(args: Array<String>) {
 }
 
 private fun klib() = annotation(Tag::class.java, "klib")
-fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 
 fun klibSyntheticAccessors() = arrayOf(
     annotation(

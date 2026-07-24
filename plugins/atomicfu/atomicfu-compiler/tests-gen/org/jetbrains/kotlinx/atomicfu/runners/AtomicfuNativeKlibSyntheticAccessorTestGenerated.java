@@ -7,10 +7,10 @@ package org.jetbrains.kotlinx.atomicfu.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("klibIrInliner")
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
 @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
 @UseExtTestCaseGroupProvider()
@@ -42,7 +41,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -128,7 +126,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -250,7 +247,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -300,7 +296,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -326,7 +321,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/delegated")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -358,7 +352,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/locks")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -390,7 +383,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/top-level")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
@@ -422,7 +414,6 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/trace")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("klibIrInliner")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
   @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()

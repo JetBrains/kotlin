@@ -44,8 +44,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 import kotlin.time.Duration
 
-const val KLIB_IR_INLINER = "klibIrInliner"
-
 class NativeBlackBoxTestSupport : BeforeEachCallback {
     /**
      * Note: [BeforeEachCallback.beforeEach] allows accessing test instances while [BeforeAllCallback.beforeAll] which may look

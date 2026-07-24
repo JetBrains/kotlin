@@ -20,11 +20,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/backendDiagnostic")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("klibIrInliner")
 @Tag("atomicfu-native")
 @EnforcedHostTarget()
 @UseExtTestCaseGroupProvider()
-public class AtomicfuNativeWithInlinedFunInKlibDiagnosticTestGenerated extends AbstractAtomicfuNativeWithInlinedFunInKlibDiagnosticTest {
+public class AtomicfuNativeDiagnosticTestGenerated extends AbstractAtomicfuNativeDiagnosticTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/backendDiagnostic/" + fileName);
   }
