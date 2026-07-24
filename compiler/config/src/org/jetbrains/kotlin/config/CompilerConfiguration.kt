@@ -141,6 +141,17 @@ class CompilerConfiguration {
         }.trim()
     }
 
+    fun toString(excludedKeys: Set<CompilerConfigurationKey<*>>, valueMapper: (Any) -> String?): String = buildString {
+        for ([key, value] in map) {
+            if (excludedKeys.none { key == it.ideaKey }) {
+                val mappedValue = valueMapper(value)
+                if (mappedValue != null) {
+                    append(key).append(": ").appendLine(mappedValue)
+                }
+            }
+        }
+    }.trim()
+
     private fun checkReadOnly() {
         check(!isReadOnly) { "CompilerConfiguration is read-only" }
     }
