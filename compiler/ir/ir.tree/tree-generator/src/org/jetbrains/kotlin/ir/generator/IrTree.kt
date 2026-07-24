@@ -630,6 +630,9 @@ object IrTree : AbstractTreeBuilder() {
 
         +declaredSymbol(packageFragmentSymbol)
         +field("packageFqName", type<FqName>())
+        +field("module", moduleFragment, isChild = false) {
+            deepCopyExcludeFromConstructor = true
+        }
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
@@ -641,10 +644,8 @@ object IrTree : AbstractTreeBuilder() {
             Each declaration is contained either in some [${file.render()}], or in some [${externalPackageFragment.render()}].
             Declarations coming from dependencies are located in [${externalPackageFragment.render()}].
             
-            It can be used for obtaining a module descriptor, which contains the information about
-            the module from which the declaration came. It would be more correct to have a link to some
-            [${moduleFragment.render()}] instead, which would make [${moduleFragment.render()}] the only source of truth about modules,
-            but this is how things are now.
+            It can be used for obtaining an [${moduleFragment.render()}], which contains the information about
+            the module from which the declaration came.
             
             Also, it can be used for checking whether some declaration is external (by checking whether its top
             level parent is an [${externalPackageFragment.render()}]). But it is not possible
@@ -655,9 +656,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(packageFragment)
 
         +declaredSymbol(externalPackageFragmentSymbol)
-        +field("module", moduleFragment, nullable = true, isChild = false) {
-            deepCopyExcludeFromConstructor = true
-        }
     }
     val file: Element by element(Declaration) {
         needTransformMethod()
@@ -668,9 +666,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +declaredSymbol(fileSymbol)
-        +field("module", moduleFragment, isChild = false) {
-            deepCopyExcludeFromConstructor = true
-        }
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }
 
