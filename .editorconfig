@@ -2,3 +2,6 @@ root = true
 
 [*]
 insert_final_newline = true
+
+[**/*.xml]
+indent_size = 4
