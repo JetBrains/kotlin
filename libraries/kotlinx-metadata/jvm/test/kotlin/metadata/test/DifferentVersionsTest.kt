@@ -91,6 +91,6 @@ class DifferentVersionsTest {
         val futureVersion = md.write() // TODO this fails because I can't write far-future metadata
 
         assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata.readStrict(futureVersion) }
-        assertIs<KotlinModuleMetadata>(KotlinModuleMetadata.readStrict(futureVersion))
+        assertIs<KotlinModuleMetadata>(KotlinModuleMetadata.readLenient(futureVersion))
     }
 }
