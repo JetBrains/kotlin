@@ -108,7 +108,7 @@ public class KotlinModuleMetadata internal constructor(
          * or `null` if this byte array encodes a module with an unsupported metadata version.
          *
          * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
-         * It will throw an exception if the metadata version is greater than what kotlinx-metadata-jvm understands.
+         * It will throw an exception if the metadata version is greater than what kotlin-metadata-jvm understands.
          * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
          * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
          *
