@@ -11,7 +11,7 @@ fi
   -Pkotlin.native.enabled=true \
   resolveDependencies
 
-./gradlew :kotlin-gradle-plugin:publish
+./gradlew publish -Pkotlin.native.enabled=false
 
 ./gradlew \
   --write-verification-metadata sha256 \
