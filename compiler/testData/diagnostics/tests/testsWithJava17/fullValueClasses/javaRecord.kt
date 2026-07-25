@@ -16,7 +16,7 @@
 value class A(val x: Int, val y: Int)
 
 <!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>@JvmRecord<!>
-<!WRONG_MODIFIER_TARGET!>value<!> object B
+value object B
 
 @JvmRecord
 data class C(val x: Int, val y: Int)

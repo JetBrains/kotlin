@@ -1,0 +1,29 @@
+@kotlin.Metadata
+public final class Bar {
+    // source: 'valueObject.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Bar
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Foo {
+    // source: 'valueObject.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Foo
+    static method <clinit>(): void
+    private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method member(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ValueObjectKt {
+    // source: 'valueObject.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
