@@ -1,12 +1,6 @@
 #!/bin/bash
 
-cp gradle/verification-metadata.xml gradle/verification-metadata.xml.bak
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
-else
-  sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
-fi
+#cp gradle/verification-metadata.xml gradle/verification-metadata.xml.bak
 
 ./gradlew \
   --write-verification-metadata sha256 \
@@ -16,5 +10,5 @@ fi
   --continue \
   resolveDependencies
 
-mv gradle/verification-metadata.xml gradle/verification-metadata-for-bootstrap.xml
-mv gradle/verification-metadata.xml.bak gradle/verification-metadata.xml
+#mv gradle/verification-metadata.xml gradle/verification-metadata-for-bootstrap.xml
+#mv gradle/verification-metadata.xml.bak gradle/verification-metadata.xml
