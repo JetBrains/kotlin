@@ -9,6 +9,10 @@ plugins {
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-surface"))
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-implementation"))
+
+    // The meta-artifact is designed for Standalone users, so it also bundles the Standalone artifacts
+    api(project(":prepare:analysis-api:kotlin-analysis-api-standalone-surface"))
+    implementation(project(":prepare:analysis-api:kotlin-analysis-api-standalone-implementation"))
 }
 
 analysisApiArtifact {
