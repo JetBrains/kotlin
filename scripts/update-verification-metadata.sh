@@ -11,3 +11,12 @@ fi
   -Pkotlin.native.enabled=true \
   resolveDependencies
 
+./gradlew :kotlin-gradle-plugin:publish
+
+./gradlew \
+  --write-verification-metadata sha256 \
+  -Pkotlin.native.enabled=true \
+  -Pbootstrap.local=true \
+  -Pbootstrap.local.path=build/repo \
+  resolveDependencies
+
