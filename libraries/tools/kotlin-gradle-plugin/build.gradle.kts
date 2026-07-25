@@ -253,7 +253,7 @@ dependencies {
         exclude(group = "*")
     }
 
-    commonImplementation(libs.playwright) {
+    commonCompileOnly(libs.playwright) {
         exclude(group = "com.microsoft.playwright", module = "driver-bundle")
     }
     embedded(libs.playwright) {
