@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.*
@@ -540,6 +541,11 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
                 ?: checkArgumentsAndValueParameters()
+                ?: runIf(expression.superQualifierSymbol != null && expression.symbol.owner.modality == Modality.ABSTRACT) {
+                    // The calls via `super.foo()` are not virtual - they always invoke the concrete callee.
+                    // If it happens to be abstract, the call will always fail.
+                    UnimplementedAbstractCallable(expression.symbol.owner)
+                }
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
