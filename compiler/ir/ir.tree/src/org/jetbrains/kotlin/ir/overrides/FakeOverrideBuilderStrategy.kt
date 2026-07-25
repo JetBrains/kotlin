@@ -64,7 +64,7 @@ abstract class FakeOverrideBuilderStrategy {
      * if no fake override should be created for this member
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return runIf(isVisibleForOverrideInClass(member, clazz)) {
+        return runIf(!DescriptorVisibilities.isPrivate(member.visibility)) {
             buildFakeOverrideMember(superType, member, clazz)
         }
     }
@@ -89,29 +89,33 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
-    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
-        return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().moduleDescriptor
-                val memberModule = original.getPackageFragment().moduleDescriptor
+    fun isVisibleForOverride(original: IrOverridableMember, override: IrOverridableMember): Boolean {
+        if (DescriptorVisibilities.isPrivate(original.visibility) || DescriptorVisibilities.isPrivate(override.visibility)) {
+            return false
+        }
+        if (original.visibility == DescriptorVisibilities.INVISIBLE_FAKE || override.visibility == DescriptorVisibilities.INVISIBLE_FAKE) {
+            return false
+        }
 
-                when {
-                    thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
-                    !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
-                    else -> false
+        val overridePackageFragment = override.getPackageFragment()
+        val originalPackageFragment = original.getPackageFragment()
+        if (original.visibility == DescriptorVisibilities.INTERNAL || override.visibility == DescriptorVisibilities.INTERNAL) {
+            val overrideModule = overridePackageFragment.moduleDescriptor
+            val originalModule = originalPackageFragment.moduleDescriptor
+            when {
+                overrideModule == originalModule -> {}
+                shouldSeeInternals(overrideModule, originalModule) -> {}
+                !isOverrideOfPublishedApiFromOtherModuleDisallowed && original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> {}
+                else -> {
+                    return false
                 }
             }
-            else -> {
-                original.visibility.visibleFromPackage(
-                    clazz.getPackageFragment().packageFqName,
-                    original.getPackageFragment().packageFqName
-                )
-            }
         }
+
+        return original.visibility.visibleFromPackage(
+            overridePackageFragment.packageFqName,
+            originalPackageFragment.packageFqName
+        )
     }
 
     /**
@@ -146,21 +150,34 @@ abstract class FakeOverrideBuilderStrategy {
 
     abstract class BindToPrivateSymbols : FakeOverrideBuilderStrategy() {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-            function.acquireSymbol(IrSimpleFunctionSymbolImpl())
+            linkFakeOverrideToPrivateSymbol(function)
         }
 
         override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
-            property.acquireSymbol(IrPropertySymbolImpl())
-
-            property.getter?.let {
-                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), manglerCompatibleMode)
-            }
-            property.setter?.let {
-                linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), manglerCompatibleMode)
-            }
+            linkFakeOverrideToPrivateSymbol(property)
         }
 
         override fun <R> inFile(file: IrFile?, block: () -> R): R = block()
+    }
+
+    companion object {
+        fun linkFakeOverrideToPrivateSymbol(fakeOverride: IrOverridableMember) {
+            when (fakeOverride) {
+                is IrFunctionWithLateBinding -> {
+                    fakeOverride.acquireSymbol(IrSimpleFunctionSymbolImpl())
+                }
+                is IrPropertyWithLateBinding -> {
+                    fakeOverride.acquireSymbol(IrPropertySymbolImpl())
+                    fakeOverride.getter?.let {
+                        linkFakeOverrideToPrivateSymbol(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"))
+                    }
+                    fakeOverride.setter?.let {
+                        linkFakeOverrideToPrivateSymbol(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"))
+                    }
+                }
+                else -> error("Unexpected fake override: $fakeOverride")
+            }
+        }
     }
 }
 

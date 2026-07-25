@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy.Companion.linkFakeOverrideToPrivateSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -32,6 +34,7 @@ class IrFakeOverrideBuilder(
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
 
     internal data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember) {
+        var realMemberShadowsOriginal = false
         override fun toString(): String = override.render()
     }
 
@@ -209,31 +212,32 @@ class IrFakeOverrideBuilder(
         val bound = ArrayList<FakeOverride>(membersFromSuper.size)
         val overridden = mutableSetOf<FakeOverride>()
 
+        val clazz = fromCurrent.parentAsClass
         for (fromSupertype in membersFromSuper) {
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
             val overridability = overrideChecker.isOverridableBy(
                 MemberWithOriginal(fromSupertype),
                 MemberWithOriginal(fromCurrent),
                 checkIsInlineFlag = true,
-            )
-            when (overridability.result) {
-                OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
-                    overridden += fromSupertype
-                    bound += fromSupertype
+            ).result
+            if (overridability == OverrideCompatibilityInfo.Result.INCOMPATIBLE) continue
+
+            if (!strategy.isVisibleForOverride(fromSupertype.original, fromCurrent)) {
+                fromSupertype.realMemberShadowsOriginal = true
+            } else {
+                when (overridability) {
+                    OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
+                        overridden += fromSupertype
+                        bound += fromSupertype
+                    }
+                    OverrideCompatibilityInfo.Result.CONFLICT -> {
+                        bound += fromSupertype
+                    }
                 }
-                OverrideCompatibilityInfo.Result.CONFLICT -> {
-                    bound += fromSupertype
-                }
-                OverrideCompatibilityInfo.Result.INCOMPATIBLE -> Unit
             }
         }
 
-        // because of binary incompatible changes, it's possible to have private member colliding with fake override
-        // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
-            fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
-        }
-
+        fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         return bound
     }
 
@@ -368,7 +372,11 @@ class IrFakeOverrideBuilder(
         ) { "Overridden symbols should be set for fake override ${fakeOverride.render()}" }
 
         addedFakeOverrides.add(fakeOverride)
-        strategy.linkFakeOverride(fakeOverride, compatibilityMode)
+        if (mostSpecific.realMemberShadowsOriginal) {
+            linkFakeOverrideToPrivateSymbol(fakeOverride)
+        } else {
+            strategy.linkFakeOverride(fakeOverride, compatibilityMode)
+        }
         strategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, currentClass)
     }
 
