@@ -9,7 +9,7 @@ fun box() = abiTest {
 
     expectSuccess(2) { ClassWithInternalShadowingFinal().test() }
     expectSuccess(2) { ClassWithInternalShadowingOpen().test() }
-    /*expectFailure(linkage("Abstract function 'foo' is not implemented in non-abstract class 'ClassWithInternalShadowingAbstract'")) {
+    expectFailure(linkage("Abstract function 'foo' is not implemented in non-abstract class 'ClassWithInternalShadowingAbstract'")) {
         ClassWithInternalShadowingAbstract().test()
-    }*/
+    }
 }

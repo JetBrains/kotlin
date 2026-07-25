@@ -400,7 +400,7 @@ class IrBasedFunctionFactory(
 
         override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean = false
 
-        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean) {
             val signature = signatureComputer(function)
             val symbol = symbolTable.referenceSimpleFunction(signature)
             function.acquireSymbol(symbol)
@@ -414,13 +414,15 @@ class IrBasedFunctionFactory(
             property.getter?.let { getter ->
                 linkFunctionFakeOverride(
                     getter as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $getter"),
-                    manglerCompatibleMode
+                    manglerCompatibleMode,
+                    false
                 )
             }
             property.setter?.let { setter ->
                 linkFunctionFakeOverride(
                     setter as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $setter"),
-                    manglerCompatibleMode
+                    manglerCompatibleMode,
+                    false
                 )
             }
         }

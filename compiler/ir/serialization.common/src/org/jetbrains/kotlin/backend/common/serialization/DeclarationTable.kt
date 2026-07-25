@@ -51,6 +51,10 @@ open class GlobalDeclarationTable(val mangler: IrMangler) {
         }
     }
 
+    fun removeDeclaration(declaration: IrDeclaration) {
+        table.remove(declaration)
+    }
+
     fun clear() = table.clear()
 }
 
@@ -84,6 +88,11 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
 
     fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
         table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature() }
+
+    fun removeDeclaration(declaration: IrDeclaration) {
+        table.remove(declaration)
+        globalDeclarationTable.removeDeclaration(declaration)
+    }
 
     fun clear() {
         table.clear()

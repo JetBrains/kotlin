@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
-import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 interface FakeOverrideClassFilter {
@@ -54,6 +51,8 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
 }
 
+var IrOverridableMember.fakeOverrideNeedingDisambigation: Boolean by irFlag(copyByDefault = true)
+
 private class IrLinkerFakeOverrideBuilderStrategy(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
@@ -67,8 +66,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
 
-    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
+    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean) {
+        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode, avoidClashWithRealMember)
 
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
@@ -150,13 +149,15 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         property.getter?.let { getter ->
             linkFunctionFakeOverride(
                 getter as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $getter"),
-                manglerCompatibleMode
+                manglerCompatibleMode,
+                false
             )
         }
         property.setter?.let { setter ->
             linkFunctionFakeOverride(
                 setter as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $setter"),
-                manglerCompatibleMode
+                manglerCompatibleMode,
+                false
             )
         }
     }
@@ -166,7 +167,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 
     private fun computeFunctionFakeOverrideSymbol(
         function: IrFunctionWithLateBinding,
-        manglerCompatibleMode: Boolean
+        manglerCompatibleMode: Boolean,
+        avoidClashWithRealMember: Boolean,
     ): Pair<IdSignature, IrSimpleFunctionSymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
         val file = function.parentAsClass.fileOrNull
@@ -175,12 +177,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(file, signature)
             ?: symbolTable.referenceSimpleFunction(signature)
 
-        if (!partialLinkageSupport.isEnabled
-            || !symbol.isBound
-            || symbol.owner.let { boundFunction ->
-                boundFunction.isSuspend == function.isSuspend && !boundFunction.isInline && !function.isInline
-            }
-        ) {
+        if (!symbol.isBound) {
             return signature to symbol
         }
 
@@ -189,8 +186,9 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         // state or the existing function with `isInline=true`.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
-        val functionWithDisambiguatedSignature = buildFunctionWithDisambiguatedSignature(function)
-        val disambiguatedSignature = composeSignature(functionWithDisambiguatedSignature, manglerCompatibleMode)
+        function.fakeOverrideNeedingDisambigation = true
+        fakeOverrideDeclarationTable.removeDeclaration(function)
+        val disambiguatedSignature = composeSignature(function, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
 
         val symbolWithDisambiguatedSignature = linker.tryReferencingSimpleFunctionByLocalSignature(file, disambiguatedSignature)
@@ -210,13 +208,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val symbol = linker.tryReferencingPropertyByLocalSignature(file, signature)
             ?: symbolTable.referenceProperty(signature)
 
-        if (!partialLinkageSupport.isEnabled
-            || !symbol.isBound
-            || symbol.owner.let { boundProperty ->
-                boundProperty.getter?.isInline != true && boundProperty.setter?.isInline != true
-                        && property.getter?.isInline != true && property.setter?.isInline != true
-            }
-        ) {
+        if (!symbol.isBound) {
             return signature to symbol
         }
 
@@ -224,9 +216,11 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         // manually patch the signature of the fake override to avoid clash with the existing property with `inline` accessors.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // In new KLIB signatures `isInline` flag will be taken into account as a part of signature.
-
-        val propertyWithDisambiguatedSignature = buildPropertyWithDisambiguatedSignature(property)
-        val disambiguatedSignature = composeSignature(propertyWithDisambiguatedSignature, manglerCompatibleMode)
+        property.fakeOverrideNeedingDisambigation = true
+        property.getter?.fakeOverrideNeedingDisambigation = true
+        property.setter?.fakeOverrideNeedingDisambigation = true
+        fakeOverrideDeclarationTable.removeDeclaration(property)
+        val disambiguatedSignature = composeSignature(property, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
 
         val symbolWithDisambiguatedSignature = linker.tryReferencingPropertyByLocalSignature(file, disambiguatedSignature)
@@ -234,34 +228,6 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 
         return disambiguatedSignature to symbolWithDisambiguatedSignature
     }
-
-    private fun buildFunctionWithDisambiguatedSignature(function: IrSimpleFunction): IrSimpleFunction =
-        function.factory.buildFun {
-            updateFrom(function)
-            name = function.name
-        }.apply {
-            parent = function.parent
-            copyAnnotationsFrom(function)
-            copyFunctionSignatureFrom(function, returnType = irBuiltIns.unitType /* Does not matter */)
-
-            typeParameters = typeParameters + buildTypeParameter(this) {
-                name = Name.identifier("disambiguation type parameter")
-                index = typeParameters.size
-                superTypes += irBuiltIns.nothingType // This is something that can't be expressed in the source code.
-            }
-        }
-
-    private fun buildPropertyWithDisambiguatedSignature(property: IrProperty): IrProperty =
-        property.factory.buildProperty {
-            updateFrom(property)
-            name = property.name
-        }.apply {
-            parent = property.parent
-            copyAnnotationsFrom(property)
-
-            getter = property.getter?.let { buildFunctionWithDisambiguatedSignature(it) }
-            setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
-        }
 
     // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
     override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {

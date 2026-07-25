@@ -19,6 +19,6 @@ class ClassWithInternalShadowingOpen : ClassWithAddedOpen() {
    internal fun foo() = 3
 }
 
-/*class ClassWithInternalShadowingAbstract : ClassWithAddedAbstract() {
+class ClassWithInternalShadowingAbstract : ClassWithAddedAbstract() {
    internal fun foo() = 3
-}*/
+}

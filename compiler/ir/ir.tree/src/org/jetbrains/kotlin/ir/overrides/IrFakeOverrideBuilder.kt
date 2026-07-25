@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -221,18 +222,15 @@ class IrFakeOverrideBuilder(
                 checkIsInlineFlag = true,
             ).result
             if (overridability == OverrideCompatibilityInfo.Result.INCOMPATIBLE) continue
-
-            if (!strategy.isVisibleForOverride(fromSupertype.original, fromCurrent)) {
-                fromSupertype.realMemberShadowsOriginal = true
-            } else {
-                when (overridability) {
-                    OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
-                        overridden += fromSupertype
-                        bound += fromSupertype
-                    }
-                    OverrideCompatibilityInfo.Result.CONFLICT -> {
-                        bound += fromSupertype
-                    }
+            if (!strategy.isVisibleForOverride(fromSupertype.original, fromCurrent)) continue
+            
+            when (overridability) {
+                OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
+                    overridden += fromSupertype
+                    bound += fromSupertype
+                }
+                OverrideCompatibilityInfo.Result.CONFLICT -> {
+                    bound += fromSupertype
                 }
             }
         }
@@ -371,12 +369,12 @@ class IrFakeOverrideBuilder(
             fakeOverride.overriddenSymbols.isNotEmpty()
         ) { "Overridden symbols should be set for fake override ${fakeOverride.render()}" }
 
+        /*if (mostSpecific.realMemberShadowsOriginal) {
+            fakeOverride.name = Name.special("<FO>" + fakeOverride.name.asString())
+        }*/
+
         addedFakeOverrides.add(fakeOverride)
-        if (mostSpecific.realMemberShadowsOriginal) {
-            linkFakeOverrideToPrivateSymbol(fakeOverride)
-        } else {
-            strategy.linkFakeOverride(fakeOverride, compatibilityMode)
-        }
+        strategy.linkFakeOverride(fakeOverride, compatibilityMode, mostSpecific.realMemberShadowsOriginal)
         strategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, currentClass)
     }
 

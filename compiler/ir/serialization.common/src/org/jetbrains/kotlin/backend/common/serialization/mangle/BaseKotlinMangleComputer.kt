@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.backend.common.overrides.fakeOverrideNeedingDisambigation
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
@@ -180,6 +181,10 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
             builder.appendSignature(MangleConstant.COMPANION_EXTENSION_MARK)
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             builder.appendSignature(companionExtensionClassName)
+        }
+
+        if (this is IrSimpleFunction && this.fakeOverrideNeedingDisambigation) {
+            builder.appendSignature(MangleConstant.FAKE_OVERRIDE_DISAMBIGUATING_MARK)
         }
 
         platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }

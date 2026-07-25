@@ -79,9 +79,9 @@ abstract class FakeOverrideBuilderStrategy {
     /**
      * Create a symbol for the fake override.
      */
-    fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
+    fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean, avoidClashWithRealMember: Boolean) {
         when (fakeOverride) {
-            is IrFunctionWithLateBinding -> linkFunctionFakeOverride(fakeOverride, compatibilityMode)
+            is IrFunctionWithLateBinding -> linkFunctionFakeOverride(fakeOverride, compatibilityMode, avoidClashWithRealMember)
             is IrPropertyWithLateBinding -> linkPropertyFakeOverride(fakeOverride, compatibilityMode)
             else -> error("Unexpected fake override: $fakeOverride")
         }
@@ -135,7 +135,7 @@ abstract class FakeOverrideBuilderStrategy {
      * Contract:
      *   * [IrFunctionWithLateBinding.acquireSymbol] must be called inside on [function] argument
      */
-    protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean)
+    protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean)
 
     /**
      * Callback for creating a symbol for fake override property.
@@ -149,7 +149,7 @@ abstract class FakeOverrideBuilderStrategy {
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 
     abstract class BindToPrivateSymbols : FakeOverrideBuilderStrategy() {
-        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean) {
             linkFakeOverrideToPrivateSymbol(function)
         }
 
