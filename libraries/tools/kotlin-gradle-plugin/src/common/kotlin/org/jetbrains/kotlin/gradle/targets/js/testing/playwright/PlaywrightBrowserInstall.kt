@@ -17,14 +17,15 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -55,7 +56,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = if (browsers.get().isNotEmpty()) {
             setOf(
-                NpmPackageVersion("playwright", PLAYWRIGHT_VERSION)
+                compilation.nodeJsRoot().versions.playwright
             )
         } else emptySet()
 

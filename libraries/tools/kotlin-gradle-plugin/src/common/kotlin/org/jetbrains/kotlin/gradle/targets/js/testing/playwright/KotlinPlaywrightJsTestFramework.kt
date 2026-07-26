@@ -16,11 +16,11 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -107,7 +107,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
-        NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
+        compilation.nodeJsRoot().versions.playwrightCore
     )
 
     @get:Internal

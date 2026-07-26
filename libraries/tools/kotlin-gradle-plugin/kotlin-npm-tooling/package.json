@@ -17,6 +17,8 @@
     "kotlin-web-helpers": "^3.4.0",
     "mini-css-extract-plugin": "^2.10.2",
     "mocha": "^11.7.6",
+    "playwright": "1.61.0",
+    "playwright-core": "1.61.0",
     "sass": "^1.101.0",
     "sass-loader": "^16.0.8",
     "source-map-loader": "^5.0.0",
