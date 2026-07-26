@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
 
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
@@ -40,17 +39,21 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
-        val playwrightBrowserInstallTask = project.registerTask<PlaywrightBrowserInstall>(
+        val playwrightBrowserInstallTask = project.locateOrRegisterTask<PlaywrightBrowserInstall>(
             "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
-        ) {
-            it.browsers.set(browserTestDsl.allBrowserRunners.map { it.values.map {
-                when (it) {
-                    is KotlinFirefoxTestRunner -> "firefox"
-                    is KotlinWebkitTestRunner -> "webkit"
-                    is KotlinChromiumTestRunner -> "chromium"
-                    else -> throw IllegalArgumentException("Unsupported browser runner: ${it::class.simpleName}")
+        )
+        playwrightBrowserInstallTask.configure { task ->
+            val declaredBrowsers = browserTestDsl.allBrowserRunners.map {
+                it.values.map {
+                    when (it) {
+                        is KotlinFirefoxTestRunner -> "firefox"
+                        is KotlinWebkitTestRunner -> "webkit"
+                        is KotlinChromiumTestRunner -> "chromium"
+                        else -> throw IllegalArgumentException("Unsupported browser runner: ${it::class.simpleName}")
+                    }
                 }
-            }.toSet() })
+            }
+            task.browsers.addAll(declaredBrowsers)
         }
 
         testTaskProvider.configure { testTask ->

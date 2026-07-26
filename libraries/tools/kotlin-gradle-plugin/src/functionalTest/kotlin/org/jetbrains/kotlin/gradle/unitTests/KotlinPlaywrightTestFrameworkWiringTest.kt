@@ -11,6 +11,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -159,6 +160,42 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         val installTask = setup.project.tasks.findByName("kotlinInstallPlaywrightBrowsers")
         assertNull(installTask, "Expected no kotlinInstallPlaywrightBrowsers task when no runners declared")
+    }
+
+    @Test
+    fun `playwright install task should contain wasmJs and js browsers`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        test {
+                            it.chromium()
+                            it.webkit()
+                        }
+                    }
+                }
+
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser {
+                        test {
+                            it.chromium()
+                            it.firefox()
+                        }
+                    }
+                }
+            }
+        }
+        project.evaluate()
+
+        val installTask = assertIs<PlaywrightBrowserInstall>(
+            project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
+        )
+        assertNotNull(installTask, "Expected kotlinInstallPlaywrightBrowsers task to be registered")
+        assertEquals(
+            setOf("chromium", "firefox", "webkit"),
+            installTask.browsers.get().toSet()
+        )
     }
 
     @Test

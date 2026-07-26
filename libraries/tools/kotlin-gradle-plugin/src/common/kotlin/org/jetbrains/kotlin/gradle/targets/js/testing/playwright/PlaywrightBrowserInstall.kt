@@ -46,7 +46,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     internal val nodeExecutable: Property<String> = objects.property(project.kotlinNodeJsEnvSpec.executable)
 
     @get:Input
-    internal val browsers = objects.listProperty(String::class.java).convention(emptyList())
+    internal val browsers = objects.setProperty(String::class.java).convention(emptyList())
 
     init {
         onlyIf { browsers.get().isNotEmpty() }
