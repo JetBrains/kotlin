@@ -43,7 +43,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 ) : RequiresNpmDependenciesTask, DefaultTask() {
 
     @get:Input
-    internal val nodeExecutable: Property<String> = objects.property(project.kotlinNodeJsEnvSpec.executable)
+    internal val nodeExecutable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
 
     @get:Input
     internal val browsers = objects.setProperty(String::class.java).convention(emptyList())

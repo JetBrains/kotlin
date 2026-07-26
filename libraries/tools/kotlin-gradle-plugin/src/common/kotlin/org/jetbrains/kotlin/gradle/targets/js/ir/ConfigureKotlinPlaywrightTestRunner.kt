@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
 
@@ -38,10 +41,24 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testRun = browser.testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
+        val nodeJsRoot = testCompilation.nodeJsRoot()
+        val nodeJsEnvSpec = testCompilation.nodeJsEnvSpec
 
         val playwrightBrowserInstallTask = project.locateOrRegisterTask<PlaywrightBrowserInstall>(
             "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
-        )
+        ) {
+            with(nodeJsEnvSpec) {
+                dependsOn(project.nodeJsSetupTaskProvider)
+            }
+
+            dependsOn(nodeJsRoot.npmInstallTaskProvider)
+            dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+
+            if (target.isWasm && nodeJsRoot is WasmNodeJsRootExtension) {
+                dependsOn(nodeJsRoot.toolingInstallTaskProvider)
+            }
+        }
+
         playwrightBrowserInstallTask.configure { task ->
             val declaredBrowsers = browserTestDsl.allBrowserRunners.map {
                 it.values.map {

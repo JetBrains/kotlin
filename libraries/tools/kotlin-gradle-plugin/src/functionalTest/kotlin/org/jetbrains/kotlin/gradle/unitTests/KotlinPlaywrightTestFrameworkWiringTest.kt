@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
@@ -23,7 +22,10 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import java.io.File
 import java.net.URI
@@ -196,6 +198,47 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             setOf("chromium", "firefox", "webkit"),
             installTask.browsers.get().toSet()
         )
+    }
+
+    @Test
+    fun `playwright install should use wasmJs npm tooling dir when only wasmJs is declared`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    browser {
+                        test {
+                            it.chromium()
+                            it.firefox()
+                        }
+                    }
+                }
+            }
+        }
+        project.evaluate()
+        val installTask = assertIs<PlaywrightBrowserInstall>(
+            project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
+        )
+        assertEquals(
+            setOf("chromium", "firefox"),
+            installTask.browsers.get().toSet()
+        )
+        val wasmNodeEnv = project.extensions.getByType(WasmNodeJsEnvSpec::class.java)
+        val wasmExtension = project.extensions.getByType(WasmNodeJsRootExtension::class.java)
+
+        assertEquals(
+            installTask.npmToolingEnvDir.get().asFile,
+            wasmExtension.npmTooling.map { it.dir }.get(),
+            "Expected wasm npm tooling dir for playwright browsers installer"
+        )
+
+        assertEquals(
+            installTask.nodeExecutable.get(),
+            wasmNodeEnv.executable.get(),
+            "Expected wasm npm tooling dir for playwright browsers installer"
+        )
+
+        installTask.assertDependsOn(project.tasks.getByName("kotlinWasmToolingSetup"))
     }
 
     @Test

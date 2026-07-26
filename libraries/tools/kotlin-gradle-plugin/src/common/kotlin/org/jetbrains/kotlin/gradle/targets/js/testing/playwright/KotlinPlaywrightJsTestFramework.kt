@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.utils.asPathOrNull
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -100,10 +101,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val workingDir: DirectoryProperty = objects.directoryProperty()
 
-    @Transient
-    private val nodeJs = compilation.project.kotlinNodeJsEnvSpec
-
-    override val executable: Property<String> = objects.property(nodeJs.executable)
+    override val executable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
