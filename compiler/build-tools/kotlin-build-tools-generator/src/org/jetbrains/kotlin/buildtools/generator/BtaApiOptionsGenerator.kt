@@ -353,14 +353,8 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
 
 private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
     function("applyArgumentStrings") {
-        addKdoc(
-            """
-        Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
-        
-        When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
-        @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
-        """.trimIndent()
-        )
+        addAnnotation(ANNOTATION_DELICATE_API)
+        addKdoc(KDOC_APPLY_ARGUMENT_STRINGS)
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
                 .addKdoc("a list of arguments for the Kotlin CLI compiler").build()

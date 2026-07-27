@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.common.*
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
-@OptIn(ExperimentalCompilerArgument::class)
 internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @AllCommonCompilerArgumentsWithBtaVersionsTest

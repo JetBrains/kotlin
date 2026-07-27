@@ -2,7 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(ExperimentalBuildToolsApi::class)
+@file:OptIn(ExperimentalBuildToolsApi::class, DelicateBuildToolsApi::class)
 @file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
@@ -349,6 +349,7 @@ internal class KotlinWrapperPre2_3_20(
             base.set(key, value)
         }
 
+        @DelicateBuildToolsApi
         override fun applyArgumentStrings(arguments: List<String>) {
             base.applyArgumentStrings(arguments)
         }

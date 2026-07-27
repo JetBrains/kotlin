@@ -45,6 +45,7 @@ internal const val KOTLIN_COLLECTIONS = "kotlin.collections"
 internal const val KOTLIN_TEXT = "kotlin.text"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
+internal val ANNOTATION_DELICATE_API = ClassName(API_PACKAGE, "DelicateBuildToolsApi")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
 internal const val KDOC_SINCE = "@since"
@@ -75,6 +76,18 @@ internal val KDOC_OPTIONS_CONTAINS = """
     Note: trying to read an option (by using [get]) that has not been set will result in an exception.
 
     @return true if the option has a value set, false otherwise
+""".trimIndent()
+
+internal val KDOC_APPLY_ARGUMENT_STRINGS = """
+    Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+
+    When using Build Tools API version 2.5.0 or higher (regardless of the loaded BTA implementation version), this method only updates the 
+    options that are explicitly specified in the [arguments] list. Options not present in the list will retain their current values.
+    
+    Prior to version 2.5.0 of the Build Tools API, this method would reset all options to their default values before applying the provided [arguments].
+
+    When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
+    @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
 """.trimIndent()
 
 internal val experimentalLevelNames = listOf(

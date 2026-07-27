@@ -1053,6 +1053,7 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
     val compilerArgumentsClass = level.getCompilerArgumentsClassName()
 
     function("applyArgumentStrings") {
+        addAnnotation(ANNOTATION_DELICATE_API)
         addModifiers(KModifier.OVERRIDE)
         if (parentClass == null) {
             addModifiers(KModifier.OPEN)

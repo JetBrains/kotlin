@@ -9,6 +9,7 @@ import kotlin.DeprecationLevel
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 
 /**
@@ -94,11 +95,17 @@ public interface CommonToolArguments {
     /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
+     * When using Build Tools API version 2.5.0 or higher (regardless of the loaded BTA implementation version), this method only updates the 
+     * options that are explicitly specified in the [arguments] list. Options not present in the list will retain their current values.
+     *
+     * Prior to version 2.5.0 of the Build Tools API, this method would reset all options to their default values before applying the provided [arguments].
+     *
      * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
      * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
+    @DelicateBuildToolsApi
     public fun applyArgumentStrings(arguments: List<String>)
   }
 

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_TARGET_PLATFORM
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -160,6 +161,7 @@ internal class MetadataArgumentsImpl(
     return arguments
   }
 
+  @DelicateBuildToolsApi
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2MetadataCompilerArguments())
