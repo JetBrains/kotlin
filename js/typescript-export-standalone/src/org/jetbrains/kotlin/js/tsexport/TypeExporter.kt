@@ -82,7 +82,7 @@ internal class TypeExporter(
             classId == KaStandardTypeClassIds.SHORT -> Primitive.ShortArray
             classId == KaStandardTypeClassIds.INT -> Primitive.IntArray
             classId == KaStandardTypeClassIds.FLOAT -> Primitive.FloatArray
-            isDoubleType -> Primitive.DoubleArray
+            classId == KaStandardTypeClassIds.DOUBLE -> Primitive.DoubleArray
             classId == KaStandardTypeClassIds.LONG -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")
             isBooleanType -> ErrorType("BooleanArray")
             isCharType -> ErrorType("CharArray")
