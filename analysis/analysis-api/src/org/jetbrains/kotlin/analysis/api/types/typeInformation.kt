@@ -236,12 +236,19 @@ public val KaType.isByteType: Boolean
 /**
  * Whether the [KaType] is a [Float] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.FLOAT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isFloatType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isFloatType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.FLOAT
 
 /**
  * Whether the [KaType] is a [Double] type.

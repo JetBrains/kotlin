@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.analysis.api.types.isCharSequenceType as isCharSeque
 import org.jetbrains.kotlin.analysis.api.types.isCharType as isCharTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDoubleType as isDoubleTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isFloatType as isFloatTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionalInterface as isFunctionalInterfaceEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isKFunctionType as isKFunctionTypeEndpoint
@@ -133,7 +132,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isFloatType: Boolean
-        get() = context(analysisSession) { isFloatTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.FLOAT
+        }
 
     override val KaType.isDoubleType: Boolean
         get() = context(analysisSession) { isDoubleTypeEndpoint }
