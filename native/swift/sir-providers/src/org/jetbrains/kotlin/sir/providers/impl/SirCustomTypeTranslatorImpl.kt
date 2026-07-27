@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.BYTE
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.CHAR
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.INT
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.LONG
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.SHORT
@@ -136,7 +137,7 @@ public class SirCustomTypeTranslatorImpl(
     context(kaSession: KaSession)
     private fun KaUsualClassType.toPrimitiveTypeBridge(): SirCustomTypeTranslator.BridgeWrapper? {
         val declaration = when {
-            isCharType -> SirSwiftModule.utf16CodeUnit
+            classId == CHAR -> SirSwiftModule.utf16CodeUnit
 
             classId == BYTE -> SirSwiftModule.int8
             classId == SHORT -> SirSwiftModule.int16

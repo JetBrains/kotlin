@@ -85,7 +85,7 @@ internal class TypeExporter(
             classId == KaStandardTypeClassIds.DOUBLE -> Primitive.DoubleArray
             classId == KaStandardTypeClassIds.LONG -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")
             isBooleanType -> ErrorType("BooleanArray")
-            isCharType -> ErrorType("CharArray")
+            classId == KaStandardTypeClassIds.CHAR -> ErrorType("CharArray")
             else -> Array(exportType(type))
         }
     }
@@ -96,7 +96,7 @@ internal class TypeExporter(
             return Primitive.Boolean
         if (type.classId == KaStandardTypeClassIds.LONG || type.isULongType)
             return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")
-        if (type.isPrimitive && !type.isCharType)
+        if (type.isPrimitive && type.classId != KaStandardTypeClassIds.CHAR)
             return Primitive.Number
         if (type.isStringType)
             return Primitive.String

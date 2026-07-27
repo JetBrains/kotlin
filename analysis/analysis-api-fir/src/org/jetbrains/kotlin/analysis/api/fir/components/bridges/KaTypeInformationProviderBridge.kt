@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.analysis.api.types.isAnyType as isAnyTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray as isArrayOrPrimitiveArrayEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isBooleanType as isBooleanTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isCharSequenceType as isCharSequenceTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isCharType as isCharTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionalInterface as isFunctionalInterfaceEndpoint
@@ -141,7 +140,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isCharType: Boolean
-        get() = context(analysisSession) { isCharTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.CHAR
+        }
 
     override val KaType.isBooleanType: Boolean
         get() = context(analysisSession) { isBooleanTypeEndpoint }
