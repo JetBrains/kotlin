@@ -169,6 +169,9 @@ fun withLocal() {
     fun local() {}
 }
 
+<!JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME!>@JvmExposeBoxed("jvmName")<!>
+fun canBeReplacedWithJvmName() {}
+
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, annotationUseSiteTargetPropertyGetter,
 annotationUseSiteTargetPropertySetter, classDeclaration, classReference, companionObject, funWithExtensionReceiver,
 functionDeclaration, getter, inline, interfaceDeclaration, localFunction, nullableType, objectDeclaration, override,
