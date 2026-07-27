@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import java.lang.ref.WeakReference
 
 /** NOTE: The order and names are important. */
 enum class EffectsKind {
@@ -31,11 +30,10 @@ enum class EffectsKind {
  *
  * After effect analysis is finished though, we can cache the computed value because the dependencies won't change.
  */
-class EffectsKindCell(val context: JsCommonBackendContext, val owner: WeakReference<IrFunction>, val exact: EffectsKind?) {
+class EffectsKindCell(val context: JsCommonBackendContext, val owner: IrFunction, val exact: EffectsKind?) {
     private var minimum = EffectsKind.PURE
 
-    // We use weak references here because there can be loops.
-    private val dependencies = hashSetOf<WeakReference<EffectsKindCell>>()
+    private val dependencies = hashSetOf<EffectsKindCell>()
 
     private var cachedValue: EffectsKind? = null
 
@@ -45,8 +43,7 @@ class EffectsKindCell(val context: JsCommonBackendContext, val owner: WeakRefere
         visited.add(this)
         var result = minimum
         for (dependency in dependencies) {
-            val cell = dependency.get() ?: continue
-            val effects = cell.compute(visited)
+            val effects = dependency.compute(visited)
             if (effects > result) result = effects
         }
         return result
@@ -67,8 +64,8 @@ class EffectsKindCell(val context: JsCommonBackendContext, val owner: WeakRefere
             setAtLeast(cell.exact)
             return
         }
-        dependencies.add(WeakReference(cell))
-        cell.dependencies.asSequence().mapNotNull { it.get()?.exact }.forEach { setAtLeast(it) }
+        dependencies.add(cell)
+        cell.dependencies.asSequence().mapNotNull { it.exact }.forEach { setAtLeast(it) }
     }
 
     fun setAtLeast(kind: EffectsKind) {

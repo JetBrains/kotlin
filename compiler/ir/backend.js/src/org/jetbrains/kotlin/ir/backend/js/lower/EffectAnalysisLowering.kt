@@ -70,11 +70,11 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             if (effectsAnnotation != null) {
                 val arg = effectsAnnotation.argumentMapping[StandardClassIds.Annotations.ParameterNames.effectsKind]
                 if (arg is IrGetEnumValue) {
-                    owner.effects = EffectsKindCell(context, WeakReference(owner), EffectsKind.valueOf(arg.symbol.owner.name.asString()))
+                    owner.effects = EffectsKindCell(context, owner, EffectsKind.valueOf(arg.symbol.owner.name.asString()))
                     return owner.effects!!
                 }
             }
-            owner.effects = EffectsKindCell(context, WeakReference(owner), null)
+            owner.effects = EffectsKindCell(context, owner, null)
             owner.accept(this, owner)
             return owner.effects!!
         }
