@@ -21,6 +21,7 @@ import InterfaceWithSuspendLambdaProp = JS_TESTS.foo.InterfaceWithSuspendLambdaP
 import AbstractClassWithSuspendLambdaProp = JS_TESTS.foo.AbstractClassWithSuspendLambdaProp;
 import callHandlerFromInterface = JS_TESTS.foo.callHandlerFromInterface;
 import callHandlerFromAbstractClass = JS_TESTS.foo.callHandlerFromAbstractClass;
+import callAnonymousAbstractClassHandler = JS_TESTS.foo.callAnonymousAbstractClassHandler;
 import callbackThatThrows = JS_TESTS.foo.callbackThatThrows;
 import throwingSuspendLambda = JS_TESTS.foo.throwingSuspendLambda;
 import applyAll = JS_TESTS.foo.applyAll;
@@ -125,6 +126,7 @@ async function box(): Promise<string> {
     // TypeScript override of suspend lambda property from Kotlin abstract class
     const tsAbstractImpl = new TSAbstractClassImpl();
     assert(await callHandlerFromAbstractClass(tsAbstractImpl, 7) === "abstract:7", "callHandlerFromAbstractClass");
+    assert(await callAnonymousAbstractClassHandler() === "anon:42", "callAnonymousAbstractClassHandler");
 
     assert(
         await callbackThatThrows(async () => { throw new Error("ts-error") }) === "caught:ts-error",
