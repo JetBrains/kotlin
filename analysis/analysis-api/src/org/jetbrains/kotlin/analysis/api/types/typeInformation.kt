@@ -287,12 +287,19 @@ public val KaType.isCharType: Boolean
 /**
  * Whether the [KaType] is a [Boolean] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.BOOLEAN",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isBooleanType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isBooleanType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.BOOLEAN
 
 /**
  * Whether the [KaType] is a [String] type.

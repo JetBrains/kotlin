@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.BOOLEAN
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.BYTE
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.CHAR
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.INT
@@ -149,7 +150,7 @@ public class SirCustomTypeTranslatorImpl(
             isUIntType -> SirSwiftModule.uint32
             isULongType -> SirSwiftModule.uint64
 
-            isBooleanType -> SirSwiftModule.bool
+            classId == BOOLEAN -> SirSwiftModule.bool
 
             classId == KaStandardTypeClassIds.DOUBLE -> SirSwiftModule.double
             classId == KaStandardTypeClassIds.FLOAT -> SirSwiftModule.float
