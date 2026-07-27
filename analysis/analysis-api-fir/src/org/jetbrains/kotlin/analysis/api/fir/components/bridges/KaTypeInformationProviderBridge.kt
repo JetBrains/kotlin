@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseFunctionType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoin
 import org.jetbrains.kotlin.analysis.api.types.isUIntType as isUIntTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isULongType as isULongTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUShortType as isUShortTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isUnitType as isUnitTypeEndpoint
 
 /**
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
@@ -112,7 +112,9 @@ internal class KaTypeInformationProviderBridge(
         get() = context(analysisSession) { hasFlexibleNullabilityEndpoint }
 
     override val KaType.isUnitType: Boolean
-        get() = context(analysisSession) { isUnitTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.UNIT
+        }
 
     override val KaType.isIntType: Boolean
         get() = context(analysisSession) { isIntTypeEndpoint }

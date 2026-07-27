@@ -91,7 +91,9 @@ public class SirTypeProviderImpl(
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
                                     val translatedElement = when {
-                                        elementType.isUnitType -> ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+                                        elementType.classId == KaStandardTypeClassIds.UNIT ->
+                                            ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+
                                         else -> elementType.translateType(ctx)
                                     }
                                     if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {

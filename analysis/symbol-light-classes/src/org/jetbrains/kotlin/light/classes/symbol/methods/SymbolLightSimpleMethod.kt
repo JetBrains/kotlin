@@ -195,7 +195,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
     context(session: KaSession)
     private fun isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
-        return expandedType.isUnitType && !expandedType.isMarkedNullable
+        return expandedType.classId == KaStandardTypeClassIds.UNIT && !expandedType.isMarkedNullable
     }
 
     private val _returnedType: PsiType by lazyPub {

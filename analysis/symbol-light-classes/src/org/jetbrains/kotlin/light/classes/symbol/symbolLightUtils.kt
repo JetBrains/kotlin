@@ -150,7 +150,7 @@ internal fun getRequiredNullabilityAnnotation(type: KaType): NullabilityAnnotati
         ktType.isMarkedNullable -> return NullabilityAnnotation.NULLABLE
         ktType.hasFlexibleNullability -> return NullabilityAnnotation.NOT_REQUIRED
         else -> {
-            if (ktType.isUnitType) return NullabilityAnnotation.NON_NULLABLE
+            if (ktType.classId == KaStandardTypeClassIds.UNIT) return NullabilityAnnotation.NON_NULLABLE
 
             if (ktType.isPrimitiveBacked) return NullabilityAnnotation.NOT_REQUIRED
 
