@@ -197,7 +197,7 @@ dependencies {
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
     fatJarContents(commonDependency("javax.inject"))
-    fatJarContents(commonDependency("org.jline", "jline"))
+    fatJarContents(variantOf(libs.jline) { classifier("jdk8") })
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
