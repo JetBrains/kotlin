@@ -219,12 +219,19 @@ public val KaType.isShortType: Boolean
 /**
  * Whether the [KaType] is a [Byte] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.BYTE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isByteType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isByteType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.BYTE
 
 /**
  * Whether the [KaType] is a [Float] type.

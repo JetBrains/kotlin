@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability as hasFlex
 import org.jetbrains.kotlin.analysis.api.types.isAnyType as isAnyTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray as isArrayOrPrimitiveArrayEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isBooleanType as isBooleanTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isByteType as isByteTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isCharSequenceType as isCharSequenceTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isCharType as isCharTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
@@ -129,7 +128,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isByteType: Boolean
-        get() = context(analysisSession) { isByteTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.BYTE
+        }
 
     override val KaType.isFloatType: Boolean
         get() = context(analysisSession) { isFloatTypeEndpoint }

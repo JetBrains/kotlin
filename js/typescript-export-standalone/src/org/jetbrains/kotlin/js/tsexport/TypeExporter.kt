@@ -78,7 +78,7 @@ internal class TypeExporter(
     internal fun exportSpecializedArrayWithElementType(type: KaType): ExportedType = with(type) {
         when {
             isMarkedNullable -> Array(exportType(type))
-            isByteType -> Primitive.ByteArray
+            classId == KaStandardTypeClassIds.BYTE -> Primitive.ByteArray
             classId == KaStandardTypeClassIds.SHORT -> Primitive.ShortArray
             classId == KaStandardTypeClassIds.INT -> Primitive.IntArray
             isFloatType -> Primitive.FloatArray
