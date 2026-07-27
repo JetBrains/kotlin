@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.name.Name
  *         case 1:
  *           return;
  *         case 2:
- *           checkStaticInitializationState(Foo::class);
+ *           staticInitializationFailureWithClassName(Foo::class);
  *           break;
  *         default:
  *           static_init_called = 1;
