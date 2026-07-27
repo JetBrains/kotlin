@@ -51,19 +51,22 @@ import org.jetbrains.kotlin.name.Name
  *   companion {
  *     var static_init_called = 0
  *     static_init() {
- *       if (static_init_called == 1) return
- *       else if (static_init_called == 2) {
- *         staticInitializationFailureWithClassName(Foo::class)
- *       } else {
- *         static_init_called = 1
- *         try {
- *           first = initFirst()
- *           second = initSecond()
- *           third = initThird()
- *         } catch (reason: Throwable) {
- *           static_init_called = 2
- *           kotlint.internal.staticInitializationFailure(reason, null)
- *         }
+ *       switch (static_init_called) {
+ *         case 1:
+ *           return;
+ *         case 2:
+ *           checkStaticInitializationState(Foo::class);
+ *           break;
+ *         default:
+ *           static_init_called = 1;
+ *           try {
+ *             first = initFirst()
+ *             second = initSecond()
+ *             third = initThird()
+ *           } catch ($p) {
+ *             kotlin.internal.staticInitializationFailure(reason, null);
+ *           }
+ *           break;
  *       }
  *     }
  *   }
