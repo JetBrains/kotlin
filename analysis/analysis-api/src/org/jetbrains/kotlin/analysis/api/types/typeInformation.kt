@@ -424,12 +424,19 @@ public val KaType.isUShortType: Boolean
 /**
  * Whether the [KaType] is a [UByte] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.UByte",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUByteType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUByteType(this)
-    }
+    get() = classId == StandardClassIds.UByte
 
 /**
  * The class symbol backing the given [KaType], if available.
