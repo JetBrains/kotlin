@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.api.types.expandedSymbol as expandedSymbolE
 import org.jetbrains.kotlin.analysis.api.types.fullyExpandedType as fullyExpandedTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.functionTypeFamily as functionTypeFamilyEndpoint
 import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability as hasFlexibleNullabilityEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isAnyType as isAnyTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray as isArrayOrPrimitiveArrayEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
@@ -157,7 +156,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isAnyType: Boolean
-        get() = context(analysisSession) { isAnyTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.ANY
+        }
 
     override val KaType.isNothingType: Boolean
         get() = context(analysisSession) { isNothingTypeEndpoint }

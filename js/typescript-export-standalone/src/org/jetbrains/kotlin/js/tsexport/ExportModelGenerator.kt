@@ -146,7 +146,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             .filter {
                 val expandedSymbol = it.expandedSymbol ?: return@filter false
                 expandedSymbol.classKind != KaClassKind.INTERFACE
-                        && !it.isAnyType
+                        && it.classId != KaStandardTypeClassIds.ANY
                         && it.classId != StandardClassIds.Enum
             }
             .map { exportType(it, typeParameterScope, shouldCalculateExportedSupertypeForImplicit = false) }

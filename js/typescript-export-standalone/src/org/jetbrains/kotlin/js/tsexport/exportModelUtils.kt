@@ -286,7 +286,8 @@ private val KaNamedFunctionSymbol.isMethodOfAny: Boolean
             OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING ->
                 valueParameters.isEmpty()
             OperatorNameConventions.EQUALS ->
-                valueParameters.singleOrNull()?.returnType?.fullyExpandedType?.let { it.isAnyType && it.isNullable } == true
+                valueParameters.singleOrNull()?.returnType?.fullyExpandedType
+                    ?.let { it.classId == KaStandardTypeClassIds.ANY && it.isNullable } == true
             else -> false
         }
     }

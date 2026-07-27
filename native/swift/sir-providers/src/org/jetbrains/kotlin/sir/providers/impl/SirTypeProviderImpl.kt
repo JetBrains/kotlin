@@ -76,7 +76,7 @@ public class SirTypeProviderImpl(
                 is KaUsualClassType -> {
                     when {
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
-                        kaType.isAnyType -> ctx.anyRepresentativeType()
+                        kaType.classId == KaStandardTypeClassIds.ANY -> ctx.anyRepresentativeType()
 
                         else -> {
                             if (sirSession.isClassIdSupported(kaType.classId)) {
