@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.analysis.api.types.builtinFunctionTypeFamilies as builtinFunctionTypeFamiliesEndpoint
 import org.jetbrains.kotlin.analysis.api.types.defaultInitializer as defaultInitializerEndpoint
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol as expandedSymbolEndpoint
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isUIntType as isUIntTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isULongType as isULongTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUShortType as isUShortTypeEndpoint
 
@@ -165,7 +165,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isUIntType: Boolean
-        get() = context(analysisSession) { isUIntTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == StandardClassIds.UInt
+        }
 
     override val KaType.isULongType: Boolean
         get() = context(analysisSession) { isULongTypeEndpoint }

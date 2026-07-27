@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
@@ -372,12 +373,19 @@ public val KaType.isNothingType: Boolean
 /**
  * Whether the [KaType] is a [UInt] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.UInt",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUIntType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUIntType(this)
-    }
+    get() = classId == StandardClassIds.UInt
 
 /**
  * Whether the [KaType] is a [ULong] type.
