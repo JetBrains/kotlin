@@ -390,12 +390,19 @@ public val KaType.isUIntType: Boolean
 /**
  * Whether the [KaType] is a [ULong] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == StandardClassIds.ULong",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.name.StandardClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isULongType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isULongType(this)
-    }
+    get() = classId == StandardClassIds.ULong
 
 /**
  * Whether the [KaType] is a [UShort] type.
