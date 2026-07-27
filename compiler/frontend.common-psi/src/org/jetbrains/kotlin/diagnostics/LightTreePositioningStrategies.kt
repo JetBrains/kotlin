@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -1054,7 +1053,7 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
             if (node.tokenType == KtNodeTypes.INTEGER_CONSTANT) {
-                return listOf(TextRange.create(endOffset - 1, endOffset))
+                return listOf(TextRange(endOffset - 1, endOffset))
             }
             return super.mark(node, startOffset, endOffset, tree)
         }
@@ -1259,7 +1258,7 @@ object LightTreePositioningStrategies {
 
         //body of block node is in the separate tree, so here is hack - mark last symbol of block
         private fun lastSymbol(range: TextRange): TextRange =
-            if (range.isEmpty) range else TextRange.create(range.endOffset - 1, range.endOffset)
+            if (range.isEmpty) range else TextRange(range.endOffset - 1, range.endOffset)
     }
 
     val UNREACHABLE_CODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {

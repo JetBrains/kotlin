@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -26,7 +25,7 @@ object PsiPositioningStrategies {
                 source.psi as KtElement,
                 typed.a.mapNotNull { it.psi as? KtElement }.toSet(),
                 typed.b.mapNotNull { it.psi as? KtElement }.toSet()
-            )
+            ).map { it.toKotlinRange() }
         }
     }
 
@@ -34,10 +33,14 @@ object PsiPositioningStrategies {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
             require(diagnostic is KtDiagnosticWithSource)
             val element = diagnostic.element.psi ?: return emptyList()
-            (element as? KtNamedDeclaration)?.nameIdentifier?.let { nameIdentifier ->
-                return mark(nameIdentifier)
-            }
-            return mark(element)
+            val result = (element as? KtNamedDeclaration)?.nameIdentifier?.let { nameIdentifier ->
+                mark(nameIdentifier)
+            } ?: mark(element)
+            return result.map { it.toKotlinRange() }
         }
     }
+}
+
+fun com.intellij.openapi.util.TextRange.toKotlinRange(): TextRange {
+    return TextRange(startOffset, endOffset)
 }

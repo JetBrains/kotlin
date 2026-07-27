@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 annotation class DiagnosticLossRisk
 
 open class PositioningStrategy<in E : PsiElement> {
-    open fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
+    open fun markDiagnostic(diagnostic: DiagnosticMarker): List<org.jetbrains.kotlin.diagnostics.TextRange> {
         @Suppress("UNCHECKED_CAST")
-        return mark(diagnostic.psiElement as E)
+        return mark(diagnostic.psiElement as E).map(TextRange::toKotlinRange)
     }
 
     open fun mark(element: E): List<TextRange> {

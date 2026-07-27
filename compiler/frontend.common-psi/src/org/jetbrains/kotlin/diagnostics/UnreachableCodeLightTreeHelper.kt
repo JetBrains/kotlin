@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.TextRange
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.getChildren
@@ -60,27 +59,5 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
             }
         }
         return filter { it !in childrenToRemove }
-    }
-
-    fun List<TextRange>.mergeAdjacentTextRanges(): List<TextRange> {
-        val result = ArrayList<TextRange>()
-        val lastRange = fold(null as TextRange?) { currentTextRange, elementRange ->
-            when {
-                currentTextRange == null -> {
-                    elementRange
-                }
-                currentTextRange.endOffset == elementRange.startOffset -> {
-                    currentTextRange.union(elementRange)
-                }
-                else -> {
-                    result.add(currentTextRange)
-                    elementRange
-                }
-            }
-        }
-        if (lastRange != null) {
-            result.add(lastRange)
-        }
-        return result
     }
 }

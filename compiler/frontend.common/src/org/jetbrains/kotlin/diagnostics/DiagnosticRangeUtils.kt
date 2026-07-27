@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.openapi.util.TextRange
 import java.util.*
 
 object DiagnosticRangeUtils {

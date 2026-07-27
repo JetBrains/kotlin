@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -59,16 +58,13 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    public static PsiDiagnosticUtils.LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
-        PsiFile file = diagnostic.getPsiFile();
-        List<TextRange> textRanges = diagnostic.getTextRanges();
-        if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumn.NONE;
-        TextRange firstRange = firstRange(textRanges);
-        return getLineAndColumnInPsiFile(file, firstRange);
+    public static PsiDiagnosticUtils.LineAndColumn getLineAndColumnInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset());
     }
 
     @NotNull
-    public static PsiDiagnosticUtils.LineAndColumn getLineAndColumnInPsiFile(PsiFile file, TextRange range) {
+    public static PsiDiagnosticUtils.LineAndColumn getLineAndColumnInPsiFile(PsiFile file, com.intellij.openapi.util.TextRange range) {
         Document document = file.getViewProvider().getDocument();
         return PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset());
     }
@@ -89,6 +85,15 @@ public class DiagnosticUtils {
 
     @NotNull
     public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRangeInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return new PsiDiagnosticUtils.LineAndColumnRange(
+                PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset()),
+                PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getEndOffset())
+        );
+    }
+
+    @NotNull
+    public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRangeInPsiFile(PsiFile file, com.intellij.openapi.util.TextRange range) {
         Document document = file.getViewProvider().getDocument();
         return new PsiDiagnosticUtils.LineAndColumnRange(
                 PsiDiagnosticUtils.offsetToLineAndColumn(document, range.getStartOffset()),

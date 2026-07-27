@@ -47,11 +47,11 @@ object ClassicPositioningStrategies {
     @JvmField
     val INCOMPATIBLE_DECLARATION: PositioningStrategy<KtNamedDeclaration> =
         object : PositioningStrategies.DeclarationHeader<KtNamedDeclaration>(true) {
-            override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
+            override fun markDiagnostic(diagnostic: DiagnosticMarker): List<org.jetbrains.kotlin.diagnostics.TextRange> {
                 val element = diagnostic.psiElement as KtNamedDeclaration
                 val callableDeclaration = element as? KtCallableDeclaration
                 val incompatibility = diagnostic.firstIncompatibility
-                return when (incompatibility) {
+                val result = when (incompatibility) {
                     null, is K1ExpectActualCompatibility.Incompatible.ClassScopes,
                     K1ExpectActualCompatibility.Incompatible.EnumEntries -> null
                     K1ExpectActualCompatibility.Incompatible.ClassKind -> {
@@ -62,7 +62,7 @@ object ClassicPositioningStrategies {
                             element.node.findChildByType(PositioningStrategies.classKindTokens)?.psi
                                 ?: element.nameIdentifier
                         if (startElement != null && endElement != null) {
-                            return markRange(startElement, endElement)
+                            return markRange(startElement, endElement).map(TextRange::toKotlinRange)
                         } else {
                             endElement
                         }
@@ -117,16 +117,18 @@ object ClassicPositioningStrategies {
                         (element as? KtProperty)?.setter?.modifierList
                     }
                 }?.let { markElement(it) } ?: ACTUAL_DECLARATION_NAME.mark(element)
+                return result.map(TextRange::toKotlinRange)
             }
         }
 
     @JvmField
     val UNREACHABLE_CODE: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
-        override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
+        override fun markDiagnostic(diagnostic: DiagnosticMarker): List<org.jetbrains.kotlin.diagnostics.TextRange> {
             @Suppress("UNCHECKED_CAST")
             val unreachableCode = diagnostic as DiagnosticWithParameters2Marker<Set<KtElement>, Set<KtElement>>
-            return UnreachableCode.getUnreachableTextRanges(unreachableCode.psiElement as KtElement, unreachableCode.a, unreachableCode.b)
+            return UnreachableCode.getUnreachableTextRanges(
+                unreachableCode.psiElement as KtElement, unreachableCode.a, unreachableCode.b
+            ).map(TextRange::toKotlinRange)
         }
     }
-
 }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProvide
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
-    override fun getRangeInElement(): TextRange = element.getNameTextRange()
+    override fun getRangeInElement(): TextRange = element.getNameTextRange().let { TextRange(it.startOffset, it.endOffset) }
 
     override fun canRename(): Boolean = true
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector

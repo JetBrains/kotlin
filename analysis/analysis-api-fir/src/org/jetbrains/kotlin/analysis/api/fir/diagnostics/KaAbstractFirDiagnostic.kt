@@ -31,7 +31,7 @@ internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
         }
 
     override val textRanges: Collection<TextRange>
-        get() = withValidityAssertion { firDiagnostic.textRanges }
+        get() = withValidityAssertion { firDiagnostic.textRanges.map { TextRange(it.startOffset, it.endOffset) } }
 
     @Suppress("UNCHECKED_CAST")
     override val psi: PSI

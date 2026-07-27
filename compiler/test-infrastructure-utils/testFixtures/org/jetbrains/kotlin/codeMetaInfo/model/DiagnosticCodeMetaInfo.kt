@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.codeMetaInfo.model
 
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.DiagnosticCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.TextRange
 
 class DiagnosticCodeMetaInfo(
     override val start: Int,

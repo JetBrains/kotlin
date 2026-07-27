@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.diagnostics.TextRange
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName

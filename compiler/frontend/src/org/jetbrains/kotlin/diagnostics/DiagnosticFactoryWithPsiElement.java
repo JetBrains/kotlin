@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import kotlin.DeprecationLevel;
 
@@ -32,7 +31,7 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement, D ex
 
     protected List<TextRange> getTextRanges(ParametrizedDiagnostic<E> diagnostic) {
         // TODO: it's strange that java requires cast here, because ParametrizedDiagnostic<E> inherits DiagnosticMarker
-        return positioningStrategy.markDiagnostic((DiagnosticMarker) diagnostic);
+        return positioningStrategy.markDiagnostic(diagnostic);
     }
 
     protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {

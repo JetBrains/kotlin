@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.diagnostics.TextRange
 import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 

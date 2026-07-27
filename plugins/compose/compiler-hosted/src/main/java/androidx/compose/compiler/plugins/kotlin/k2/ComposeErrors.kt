@@ -138,7 +138,7 @@ object ComposeSourceElementPositioningStrategies {
                 startOffset: Int,
                 endOffset: Int,
                 tree: FlyweightCapableTreeStructure<LighterASTNode>,
-            ): List<TextRange> {
+            ): List<org.jetbrains.kotlin.diagnostics.TextRange> {
                 val target = tree.findChildByType(node, KtTokens.TRY_KEYWORD) ?: node
                 return markElement(target, startOffset, endOffset, tree, node)
             }
