@@ -31,7 +31,6 @@ val LIBRARIES = listOf(
 const val KOTLIN_VERSION = "Kotlin-Version"
 const val KOTLIN_RUNTIME_COMPONENT = "Kotlin-Runtime-Component"
 const val KOTLIN_RUNTIME_COMPONENT_VALUE = "Main"
-val KOTLIN_VERSION_VALUE = with(KotlinVersion.CURRENT) { "$major.$minor" }
 
 fun main(args: Array<String>) {
     val implementationTitles = arrayListOf<String>()
@@ -65,11 +64,18 @@ fun main(args: Array<String>) {
         if (value != null) append(" (actual value: $value)")
         else append(" (attribute is not found)")
     }
-    val incorrectVersionValues = versionValues.filterValues { it != KOTLIN_VERSION_VALUE }
-    if (incorrectVersionValues.isNotEmpty()) {
-        errors.appendLine("Manifests at these locations do not have the correct value of the $KOTLIN_VERSION attribute ($KOTLIN_VERSION_VALUE). " +
-                        "Please ensure that kotlin_language_version in libraries/build.gradle corresponds to the value in kotlin.KotlinVersion:")
-        incorrectVersionValues.entries.joinTo(errors, "\n", transform = ::renderEntry)
+    val missingVersionValues = versionValues.filterValues { it == null }
+    if (missingVersionValues.isNotEmpty()) {
+        errors.appendLine("Manifests at these locations do not have the $KOTLIN_VERSION attribute:")
+        missingVersionValues.entries.joinTo(errors, "\n", transform = ::renderEntry)
+        errors.appendLine()
+        errors.appendLine()
+    }
+
+    val distinctVersionValues = versionValues.values.filterNotNull().distinct()
+    if (distinctVersionValues.size > 1) {
+        errors.appendLine("Manifests at these locations have inconsistent values of the $KOTLIN_VERSION attribute:")
+        versionValues.entries.joinTo(errors, "\n", transform = ::renderEntry)
         errors.appendLine()
         errors.appendLine()
     }
