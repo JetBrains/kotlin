@@ -151,12 +151,19 @@ public val KaType.hasFlexibleNullability: Boolean
 /**
  * Whether the [KaType] is a [Unit] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.UNIT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isUnitType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isUnitType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.UNIT
 
 /**
  * Whether the [KaType] is an [Int] type.

@@ -153,7 +153,7 @@ public class SirCustomTypeTranslatorImpl(
             isDoubleType -> SirSwiftModule.double
             isFloatType -> SirSwiftModule.float
 
-            isUnitType -> SirSwiftModule.void
+            classId == KaStandardTypeClassIds.UNIT -> SirSwiftModule.void
             else -> return null
         }
         return SirNominalType(declaration).toBridge()

@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.types.isUnitType
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -503,7 +504,7 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
     namedFunction.bodyBlockExpression == body -> false
     // Note that `namedFunction.hasBlockBody() == false` means the function definition uses `=` e.g., fun foo() = bar
     !returnsUnit(namedFunction) -> true
-    namedFunction.bodyExpression == body -> (body as KtExpression).expressionType?.isUnitType == true
+    namedFunction.bodyExpression == body -> (body as KtExpression).expressionType?.classId == KaStandardTypeClassIds.UNIT
     else -> false
 }
 
@@ -517,7 +518,7 @@ private fun isVariableAccessCall(reference: KtReferenceExpression): Boolean = wh
 }
 
 context(session: KaSession)
-private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.isUnitType
+private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.classId == KaStandardTypeClassIds.UNIT
 
 internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
     is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase

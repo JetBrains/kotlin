@@ -102,7 +102,7 @@ internal class TypeExporter(
             return Primitive.String
         if (type.isAnyType)
             return Primitive.Any
-        if (type.isUnitType)
+        if (type.classId == KaStandardTypeClassIds.UNIT)
             return Primitive.Unit
         if (type.isNothingType)
             return Primitive.Nothing
