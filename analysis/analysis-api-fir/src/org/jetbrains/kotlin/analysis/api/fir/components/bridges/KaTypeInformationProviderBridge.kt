@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analysis.api.types.functionTypeFamily as functionTyp
 import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability as hasFlexibleNullabilityEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isAnyType as isAnyTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray as isArrayOrPrimitiveArrayEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isCharSequenceType as isCharSequenceTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionalInterface as isFunctionalInterfaceEndpoint
@@ -153,7 +152,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isCharSequenceType: Boolean
-        get() = context(analysisSession) { isCharSequenceTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.CHAR_SEQUENCE
+        }
 
     override val KaType.isAnyType: Boolean
         get() = context(analysisSession) { isAnyTypeEndpoint }

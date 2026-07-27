@@ -321,12 +321,19 @@ public val KaType.isStringType: Boolean
 /**
  * Whether the [KaType] is a [CharSequence] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.CHAR_SEQUENCE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isCharSequenceType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isCharSequenceType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.CHAR_SEQUENCE
 
 /**
  * Whether the [KaType] is an [Any] type.
