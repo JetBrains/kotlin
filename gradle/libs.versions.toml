@@ -30,6 +30,7 @@ gson = "2.11.0"
 jetbrains-ideaExt = "1.4.1"
 jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
+jline = "3.30.16"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
 junit5 = "5.14.4"
@@ -158,6 +159,7 @@ guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref =
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jline = { module = "org.jline:jline", version.ref = "jline" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
