@@ -66,8 +66,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
 
-    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean) {
-        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode, avoidClashWithRealMember)
+    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
 
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
@@ -149,15 +149,13 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         property.getter?.let { getter ->
             linkFunctionFakeOverride(
                 getter as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $getter"),
-                manglerCompatibleMode,
-                false
+                manglerCompatibleMode
             )
         }
         property.setter?.let { setter ->
             linkFunctionFakeOverride(
                 setter as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $setter"),
-                manglerCompatibleMode,
-                false
+                manglerCompatibleMode
             )
         }
     }
@@ -168,7 +166,6 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private fun computeFunctionFakeOverrideSymbol(
         function: IrFunctionWithLateBinding,
         manglerCompatibleMode: Boolean,
-        avoidClashWithRealMember: Boolean,
     ): Pair<IdSignature, IrSimpleFunctionSymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
         val file = function.parentAsClass.fileOrNull

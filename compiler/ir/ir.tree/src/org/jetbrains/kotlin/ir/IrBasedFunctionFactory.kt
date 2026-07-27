@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
-import java.io.File
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrAbstractFunctionFactory {
@@ -400,7 +399,7 @@ class IrBasedFunctionFactory(
 
         override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean = false
 
-        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean, avoidClashWithRealMember: Boolean) {
+        override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             val signature = signatureComputer(function)
             val symbol = symbolTable.referenceSimpleFunction(signature)
             function.acquireSymbol(symbol)
@@ -414,15 +413,13 @@ class IrBasedFunctionFactory(
             property.getter?.let { getter ->
                 linkFunctionFakeOverride(
                     getter as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $getter"),
-                    manglerCompatibleMode,
-                    false
+                    manglerCompatibleMode
                 )
             }
             property.setter?.let { setter ->
                 linkFunctionFakeOverride(
                     setter as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $setter"),
-                    manglerCompatibleMode,
-                    false
+                    manglerCompatibleMode
                 )
             }
         }

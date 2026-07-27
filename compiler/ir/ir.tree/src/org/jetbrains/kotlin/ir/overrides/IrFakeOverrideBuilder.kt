@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy.Companion.linkFakeOverrideToPrivateSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -35,7 +33,6 @@ class IrFakeOverrideBuilder(
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
 
     internal data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember) {
-        var realMemberShadowsOriginal = false
         override fun toString(): String = override.render()
     }
 
@@ -223,7 +220,7 @@ class IrFakeOverrideBuilder(
             ).result
             if (overridability == OverrideCompatibilityInfo.Result.INCOMPATIBLE) continue
             if (!strategy.isVisibleForOverride(fromSupertype.original, fromCurrent)) continue
-            
+
             when (overridability) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
                     overridden += fromSupertype
@@ -369,12 +366,8 @@ class IrFakeOverrideBuilder(
             fakeOverride.overriddenSymbols.isNotEmpty()
         ) { "Overridden symbols should be set for fake override ${fakeOverride.render()}" }
 
-        /*if (mostSpecific.realMemberShadowsOriginal) {
-            fakeOverride.name = Name.special("<FO>" + fakeOverride.name.asString())
-        }*/
-
         addedFakeOverrides.add(fakeOverride)
-        strategy.linkFakeOverride(fakeOverride, compatibilityMode, mostSpecific.realMemberShadowsOriginal)
+        strategy.linkFakeOverride(fakeOverride, compatibilityMode)
         strategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, currentClass)
     }
 
