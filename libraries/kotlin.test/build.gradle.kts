@@ -124,7 +124,6 @@ kotlin {
         nodejs {}
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
                 "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
             )
             compilerOptions.addReturnValueCheckerInfo()
@@ -137,9 +136,6 @@ kotlin {
         compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
-            freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
-            )
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
@@ -154,9 +150,6 @@ kotlin {
         (this as KotlinJsTargetDsl).compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
-            freeCompilerArgs.addAll(
-                "-Xklib-ir-inliner=intra-module",
-            )
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")

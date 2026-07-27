@@ -670,7 +670,6 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
             "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
-            "-Xklib-ir-inliner=intra-module",
             "-Xcontext-parameters",
             "-Xname-based-destructuring=complete",
             "-Xcollection-literals",
