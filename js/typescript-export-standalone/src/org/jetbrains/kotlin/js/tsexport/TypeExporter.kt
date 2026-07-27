@@ -84,7 +84,7 @@ internal class TypeExporter(
             classId == KaStandardTypeClassIds.FLOAT -> Primitive.FloatArray
             classId == KaStandardTypeClassIds.DOUBLE -> Primitive.DoubleArray
             classId == KaStandardTypeClassIds.LONG -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")
-            isBooleanType -> ErrorType("BooleanArray")
+            classId == KaStandardTypeClassIds.BOOLEAN -> ErrorType("BooleanArray")
             classId == KaStandardTypeClassIds.CHAR -> ErrorType("CharArray")
             else -> Array(exportType(type))
         }
@@ -92,7 +92,7 @@ internal class TypeExporter(
 
     context(_: KaSession)
     private fun exportSimpleNonNullableType(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
-        if (type.isBooleanType)
+        if (type.classId == KaStandardTypeClassIds.BOOLEAN)
             return Primitive.Boolean
         if (type.classId == KaStandardTypeClassIds.LONG || type.isULongType)
             return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")

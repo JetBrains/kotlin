@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analysis.api.types.functionTypeFamily as functionTyp
 import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability as hasFlexibleNullabilityEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isAnyType as isAnyTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray as isArrayOrPrimitiveArrayEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isBooleanType as isBooleanTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isCharSequenceType as isCharSequenceTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isDenotable as isDenotableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
@@ -145,7 +144,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isBooleanType: Boolean
-        get() = context(analysisSession) { isBooleanTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.BOOLEAN
+        }
 
     override val KaType.isStringType: Boolean
         get() = context(analysisSession) { isStringTypeEndpoint }
