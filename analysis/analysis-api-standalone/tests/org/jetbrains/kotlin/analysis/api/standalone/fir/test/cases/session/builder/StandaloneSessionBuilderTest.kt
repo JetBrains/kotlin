@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,8 +38,9 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneT
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.analysis.api.types.fullyExpandedType
-import org.jetbrains.kotlin.analysis.api.types.isIntType
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
@@ -189,7 +190,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             )
             // expanded to `actual` `typealias`
             val expandedType = type.fullyExpandedType
-            Assertions.assertTrue(expandedType.isIntType)
+            Assertions.assertEquals(KaStandardTypeClassIds.INT, expandedType.classId)
         }
 
         // Test stdlib-common: @JvmInline in the common module

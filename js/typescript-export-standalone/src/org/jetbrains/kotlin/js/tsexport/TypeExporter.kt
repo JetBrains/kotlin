@@ -80,7 +80,7 @@ internal class TypeExporter(
             isMarkedNullable -> Array(exportType(type))
             isByteType -> Primitive.ByteArray
             isShortType -> Primitive.ShortArray
-            isIntType -> Primitive.IntArray
+            classId == KaStandardTypeClassIds.INT -> Primitive.IntArray
             isFloatType -> Primitive.FloatArray
             isDoubleType -> Primitive.DoubleArray
             isLongType -> if (config.compileLongAsBigInt) Primitive.LongArray else ErrorType("LongArray")

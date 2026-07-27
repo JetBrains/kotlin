@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.analysis.api.types.isDoubleType as isDoubleTypeEndpo
 import org.jetbrains.kotlin.analysis.api.types.isFloatType as isFloatTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionType as isFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isFunctionalInterface as isFunctionalInterfaceEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isIntType as isIntTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isKFunctionType as isKFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isKSuspendFunctionType as isKSuspendFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isLongType as isLongTypeEndpoint
@@ -117,7 +116,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isIntType: Boolean
-        get() = context(analysisSession) { isIntTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.INT
+        }
 
     override val KaType.isLongType: Boolean
         get() = context(analysisSession) { isLongTypeEndpoint }

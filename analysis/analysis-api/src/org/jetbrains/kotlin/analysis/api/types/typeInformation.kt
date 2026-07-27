@@ -168,12 +168,19 @@ public val KaType.isUnitType: Boolean
 /**
  * Whether the [KaType] is an [Int] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.INT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isIntType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isIntType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.INT
 
 /**
  * Whether the [KaType] is a [Long] type.
