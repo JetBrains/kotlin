@@ -56,6 +56,7 @@
 # USER_OWNER: filipp.zhinkin@jetbrains.com fzhinkin
 # USER_OWNER: dmitry.nekrasov@jetbrains.com DmitryNekrasov
 # USER_OWNER: artem.olkov@jetbrains.com mMaxy
+# USER_OWNER: rick.clephas.external@jetbrains.com rickclephas
 # USER_OWNER: gleb.lukianets@jetbrains.com glukianets
 # USER_OWNER: sebastian.sellmair@jetbrains.com sellmair
 # USER_OWNER: anton.bannykh@jetbrains.com anton-bannykh
@@ -443,7 +444,7 @@
 /native/native.tests/klib-ir-inliner/ "Kotlin Common Backend"
 /native/objcexport-header-generator/ "Kotlin Native"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin Native"
-/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com anton.bannykh@jetbrains.com aleksei.glushko@jetbrains.com
+/native/swift/ artem.olkov@jetbrains.com gleb.lukianets@jetbrains.com anton.bannykh@jetbrains.com aleksei.glushko@jetbrains.com rick.clephas.external@jetbrains.com
 
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
