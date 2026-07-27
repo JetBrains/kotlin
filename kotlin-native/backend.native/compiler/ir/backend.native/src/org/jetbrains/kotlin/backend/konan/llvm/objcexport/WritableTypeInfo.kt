@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMLinkage
+import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
@@ -129,28 +130,43 @@ private fun CodeGenerator.setWritableTypeInfo(
     }
 }
 
-private fun CodeGenerator.buildWritableTypeInfoValue(
+internal fun buildWritableTypeInfoValue(
+        writableTypeInfoType: LLVMTypeRef,
+        typeInfoObjCExportAddition: LLVMTypeRef,
         convertToRetained: ConstPointer?,
-        objCClass: ConstPointer?,
+        objCClass: ConstPointer? = null,
         swiftClass: ConstPointer? = null,
-        typeAdapter: ConstPointer?
+        typeAdapter: ConstPointer? = null,
+        llvmPointerType: LLVMTypeRef
 ): Struct {
     if (convertToRetained != null) {
-        val expectedType = llvm.pointerType
-        assert(convertToRetained.llvmType == expectedType) {
-            "Expected: ${expectedType.toTypeString()} " +
-                    "found: ${convertToRetained.llvmType.toTypeString()}"
+        assert(convertToRetained.llvmType == llvmPointerType) {
+            "Expected: ${llvmPointerType.toTypeString()}, found: ${convertToRetained.llvmType.toTypeString()}"
         }
     }
 
     val objCExportAddition = Struct(
-            runtime.typeInfoObjCExportAddition,
+            typeInfoObjCExportAddition,
             convertToRetained,
             objCClass,
             swiftClass,
             typeAdapter
     )
 
-    val writableTypeInfoType = runtime.writableTypeInfoType!!
     return Struct(writableTypeInfoType, objCExportAddition)
 }
+
+private fun CodeGenerator.buildWritableTypeInfoValue(
+        convertToRetained: ConstPointer?,
+        objCClass: ConstPointer?,
+        swiftClass: ConstPointer? = null,
+        typeAdapter: ConstPointer?
+): Struct = buildWritableTypeInfoValue(
+        writableTypeInfoType = runtime.writableTypeInfoType!!,
+        typeInfoObjCExportAddition = runtime.typeInfoObjCExportAddition,
+        convertToRetained = convertToRetained,
+        objCClass = objCClass,
+        swiftClass = swiftClass,
+        typeAdapter = typeAdapter,
+        llvmPointerType = llvm.pointerType
+)

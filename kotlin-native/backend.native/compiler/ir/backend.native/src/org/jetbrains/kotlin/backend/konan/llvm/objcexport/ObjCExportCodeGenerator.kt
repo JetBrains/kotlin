@@ -735,35 +735,20 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
     fun importConverter(name: String): ConstPointer =
             llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
 
-    bindObjCExportConvertToRetained(
-            irBuiltIns.listClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
+    val collectionClasses = mapOf(
+            "kotlin.collections.List" to irBuiltIns.listClass.owner,
+            "kotlin.collections.MutableList" to irBuiltIns.mutableListClass.owner,
+            "kotlin.collections.Set" to irBuiltIns.setClass.owner,
+            "kotlin.collections.MutableSet" to irBuiltIns.mutableSetClass.owner,
+            "kotlin.collections.Map" to irBuiltIns.mapClass.owner,
+            "kotlin.collections.MutableMap" to irBuiltIns.mutableMapClass.owner,
     )
 
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableListClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.setClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableSetClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
-    )
-
-    bindObjCExportConvertToRetained(
-            irBuiltIns.mutableMapClass.owner,
-            importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
-    )
+    for ((kotlinFqName, converterFunctionName) in ObjCExportConverterConstants.standardConverters) {
+        val irClass = collectionClasses[kotlinFqName] ?: continue
+        val converter = importConverter(converterFunctionName)
+        bindObjCExportConvertToRetained(irClass, converter)
+    }
 }
 
 private fun ObjCExportFunctionGenerationContextBuilder.setupBridgeDebugInfo() {
