@@ -179,7 +179,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
                 referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
-        output.append(irFragment.dump(dumpOptions))
+        output.append(irFragment.dumpOrFail(dumpOptions))
     }
 }
 
@@ -226,7 +226,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
         val irDumps: List<String> = moduleDeserializer.reversedSignatureIndex.keys.mapNotNull { signature: IdSignature ->
             val preprocessedFunction = moduleDeserializer.deserializeInlineFunction(signature, dummyIrFile, dummyIrFile.module)
                     ?: return@mapNotNull null
-            val irDump = preprocessedFunction.dump(dumpOptions)
+            val irDump = preprocessedFunction.dumpOrFail(dumpOptions)
             val irDumpFirstLine = irDump.substringBefore(Printer.LINE_SEPARATOR)
             irDumpFirstLine to irDump
         }.sortedBy { /* irDumpFirstLine */ it.first }.map { /* irDump */ it.second }

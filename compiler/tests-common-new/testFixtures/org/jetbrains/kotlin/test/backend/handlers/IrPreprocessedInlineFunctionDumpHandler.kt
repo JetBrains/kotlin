@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpOrFail
 import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -53,6 +53,6 @@ class IrPreprocessedInlineFunctionDumpHandler(
 
     private fun IrSimpleFunction.dumpWithCallableId(stringBuilder: StringBuilder, dumpOptions: DumpIrTreeOptions) {
         stringBuilder.append("// CallableId=$callableId\n")
-        stringBuilder.append(dump(dumpOptions))
+        stringBuilder.append(dumpOrFail(dumpOptions))
     }
 }
