@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.analysis.api.types.isKSuspendFunctionType as isKSusp
 import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable as isMarkedNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isNestedArray as isNestedArrayEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
 
 /**
@@ -202,7 +201,9 @@ internal class KaTypeInformationProviderBridge(
     }
 
     override val KaType.isPrimitive: Boolean
-        get() = context(analysisSession) { isPrimitiveEndpoint }
+        get() = context(analysisSession) {
+            classId in KaStandardTypeClassIds.PRIMITIVES
+        }
 
     @KaExperimentalApi
     override val KaType.defaultInitializer: String?

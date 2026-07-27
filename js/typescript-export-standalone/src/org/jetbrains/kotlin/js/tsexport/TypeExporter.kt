@@ -96,7 +96,7 @@ internal class TypeExporter(
             return Primitive.Boolean
         if (type.classId == KaStandardTypeClassIds.LONG || type.classId == StandardClassIds.ULong)
             return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")
-        if (type.isPrimitive && type.classId != KaStandardTypeClassIds.CHAR)
+        if (type.classId in KaStandardTypeClassIds.PRIMITIVES && type.classId != KaStandardTypeClassIds.CHAR)
             return Primitive.Number
         if (type.classId == KaStandardTypeClassIds.STRING)
             return Primitive.String
