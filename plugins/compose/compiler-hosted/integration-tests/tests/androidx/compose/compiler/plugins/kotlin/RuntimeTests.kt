@@ -98,9 +98,9 @@ private fun createRuntimeTestClasses(): List<Pair<String, List<Class<*>>>> {
         val description = compiler.description
         compiler.disposeTestRootDisposable()
         iterator.remove()
-        result.add(description to classes)
+        result.add(description to classes.sortedBy { it.name })
     }
-    return result
+    return result.sortedBy { it.first }
 }
 
 
