@@ -636,8 +636,12 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { if (!onlyExplicit || isExplicit(arguments, "-script")) {
           this[SCRIPT] = arguments.script}
          } catch (_: NoSuchMethodError) {  }
-    try { this[COMPILER_PLUGINS] = applyCompilerPlugins(if(COMPILER_PLUGINS in this) this[COMPILER_PLUGINS] else emptyList<CompilerPlugin>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xplugin") || isExplicit(arguments, "-Xcompiler-plugin") || isExplicit(arguments, "-P")) {
+          this[COMPILER_PLUGINS] = applyCompilerPlugins(if(COMPILER_PLUGINS in this) this[COMPILER_PLUGINS] else emptyList<CompilerPlugin>(), arguments)}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwarning-level")) {
+          this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments)}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
       internalArguments.clear()
       internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })

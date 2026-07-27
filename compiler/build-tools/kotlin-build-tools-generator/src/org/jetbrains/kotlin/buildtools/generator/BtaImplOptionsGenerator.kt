@@ -388,13 +388,15 @@ internal class BtaImplOptionsGenerator(
         }
 
         val applierCode = CodeBlock.builder().apply {
-//            if (!generateCompatLayer) {
-//                beginControlFlow("if (!onlyExplicit || isExplicit(arguments, %S))", "-${argument.name}")
-//            }
+            if (!generateCompatLayer) {
+                val checks = argument.influencedByCompilerArguments.ifEmpty { listOf("-${argument.name}") }
+                val checkCondition = checks.joinToString(" || ") { "isExplicit(arguments, %S)" }
+                beginControlFlow("if (!onlyExplicit || $checkCondition)", *checks.toTypedArray())
+            }
             add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
-//            if (!generateCompatLayer) {
-//                endControlFlow()
-//            }
+            if (!generateCompatLayer) {
+                endControlFlow()
+            }
         }.build()
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
             applierCode,

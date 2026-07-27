@@ -64,6 +64,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         val defaultValue: CodeBlock,
         affectsCompilationOutcome: Boolean = true,
         delimiter: String? = null,
+        val influencedByCompilerArguments: List<String> = emptyList(),
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
         description = description,
@@ -78,6 +79,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
             origin: KotlinCompilerArgument,
             valueType: BtaCompilerArgumentValueType.CustomArgumentValueType,
             defaultValue: CodeBlock,
+            influencedByCompilerArguments: List<String> = emptyList(),
         ) : this(
             name = origin.name,
             description = origin.description.current,
@@ -90,6 +92,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
                 origin.calculateName().replaceFirstChar { it.uppercase() }
             }",
             affectsCompilationOutcome = origin.affectsCompilationOutcome,
+            influencedByCompilerArguments = influencedByCompilerArguments,
         )
     }
 }
@@ -133,6 +136,7 @@ object CustomCompilerArguments {
             MemberName("kotlin.collections", "emptyList"),
             ClassName(API_ARGUMENTS_PACKAGE, "CompilerPlugin")
         ),
+        influencedByCompilerArguments = listOf("-Xplugin", "-Xcompiler-plugin", "-P"),
     )
 
     val profileCompilerCommandArgumentFactory = CustomCompilerArgumentFactory(
@@ -179,9 +183,10 @@ object CustomCompilerArguments {
 class CustomCompilerArgumentFactory(
     private val valueType: BtaCompilerArgumentValueType.CustomArgumentValueType,
     private val defaultValue: CodeBlock,
+    private val influencingArguments: List<String> = emptyList(),
 ) {
     fun create(origin: KotlinCompilerArgument): BtaCompilerArgument.CustomCompilerArgument =
-        BtaCompilerArgument.CustomCompilerArgument(origin, valueType, defaultValue)
+        BtaCompilerArgument.CustomCompilerArgument(origin, valueType, defaultValue, influencingArguments)
 }
 
 @OptIn(ExperimentalArgumentApi::class)
