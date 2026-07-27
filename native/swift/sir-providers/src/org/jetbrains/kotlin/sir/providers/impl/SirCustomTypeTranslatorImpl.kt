@@ -141,7 +141,7 @@ public class SirCustomTypeTranslatorImpl(
             isByteType -> SirSwiftModule.int8
             isShortType -> SirSwiftModule.int16
             classId == INT -> SirSwiftModule.int32
-            isLongType -> SirSwiftModule.int64
+            classId == LONG -> SirSwiftModule.int64
 
             isUByteType -> SirSwiftModule.uint8
             isUShortType -> SirSwiftModule.uint16
