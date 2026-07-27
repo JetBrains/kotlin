@@ -353,6 +353,45 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     /**
+     * Tests [TypeAliasExpansionImpact]: a change in the class a type alias expands to must also be reported against the alias, so that
+     * source files referencing only the alias are recompiled.
+     */
+    @Test
+    fun testImpactComputation_TypeAliasExpansions() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "KotlinOnly/testImpactComputation_TypeAliasExpansions/src"), tmpDir, expandTypeAliases = true
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.B"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                // The alias mirrors the change in the class it expands to
+                LookupSymbol(name = "changedFunction", scope = "com.example.AliasOfB"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AliasOfB"),
+            ),
+            fqNames = setOf(
+                "com.example.B",
+                "com.example.AliasOfB"
+            )
+        ).assertEquals(changes)
+    }
+
+    /** Without [ClasspathEntrySnapshotter.Settings.expandTypeAliases], the change above must not be attributed to the alias. */
+    @Test
+    fun testImpactComputation_TypeAliasExpansions_Disabled() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "KotlinOnly/testImpactComputation_TypeAliasExpansions/src"), tmpDir
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.B"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+            ),
+            fqNames = setOf("com.example.B")
+        ).assertEquals(changes)
+    }
+
+    /**
      * Tests granularity transition with a companion object where only the companion's ABI changes.
      * Without the fix in computeKotlinClassChanges, this triggers IllegalStateException:
      * "The following FqNames can't be derived from DirtyData.dirtyLookupSymbols"
@@ -642,10 +681,11 @@ private fun List<ClassSnapshot>.toClasspathSnapshot(): ClasspathSnapshot {
 private fun computeClasspathChanges(
     classpathSourceDir: File,
     tmpDir: File,
-    granularity: ClassSnapshotGranularity? = null
+    granularity: ClassSnapshotGranularity? = null,
+    expandTypeAliases: Boolean = false,
 ): Changes {
-    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity)
-    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity)
+    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity, expandTypeAliases)
+    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity, expandTypeAliases)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
 }
 
