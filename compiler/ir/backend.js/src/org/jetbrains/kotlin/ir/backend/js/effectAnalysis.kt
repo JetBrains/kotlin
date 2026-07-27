@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -29,6 +31,9 @@ enum class EffectsKind {
  * here, and instead have to keep track of dependencies and resolve them lazily.
  *
  * After effect analysis is finished though, we can cache the computed value because the dependencies won't change.
+ *
+ * If the `exact` parameter is present, it overrides everything else, including the `minimum` value.
+ * It is used when a function is annotated with `@Effects`.
  */
 class EffectsKindCell(val context: JsCommonBackendContext, val owner: IrFunction, val exact: EffectsKind?) {
     private var minimum = EffectsKind.PURE
@@ -78,13 +83,22 @@ class EffectsKindCell(val context: JsCommonBackendContext, val owner: IrFunction
 class ExpressionEffectVisitor(val function: IrFunction?) : IrVisitorVoid() {
     var result = EffectsKind.PURE
 
-    override fun visitExpression(expression: IrExpression) {
-        expression.acceptChildrenVoid(this)
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
     }
 
     override fun visitGetField(expression: IrGetField) {
         super.visitGetField(expression)
-        // pending not having field accesses during this phase
+        if (expression.symbol.owner.parent != function) {
+            result = EffectsKind.READ
+        }
+    }
+
+    override fun visitSetField(expression: IrSetField) {
+        super.visitSetField(expression)
+        if (expression.symbol.owner.parent != function) {
+            result = EffectsKind.WRITE
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
