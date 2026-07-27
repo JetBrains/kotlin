@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.analysis.api.types.isNestedArray as isNestedArrayEnd
 import org.jetbrains.kotlin.analysis.api.types.isNothingType as isNothingTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isStringType as isStringTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUIntType as isUIntTypeEndpoint
@@ -149,7 +148,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isStringType: Boolean
-        get() = context(analysisSession) { isStringTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.STRING
+        }
 
     override val KaType.isCharSequenceType: Boolean
         get() = context(analysisSession) { isCharSequenceTypeEndpoint }

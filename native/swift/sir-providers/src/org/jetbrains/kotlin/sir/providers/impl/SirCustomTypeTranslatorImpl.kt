@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.CHAR
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.INT
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.LONG
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.SHORT
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.STRING
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.name.ClassId
@@ -44,7 +45,7 @@ public class SirCustomTypeTranslatorImpl(
         var swiftType: SirNominalType
         return context(session) {
             when {
-                isStringType -> {
+                classId == STRING -> {
                     swiftType = SirNominalType(SirSwiftModule.string)
                     AsObjCBridged(swiftType, CType.NSString).wrapper()
                 }

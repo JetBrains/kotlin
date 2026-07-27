@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.isStringType
+import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -269,7 +270,8 @@ internal class SymbolLightFieldForProperty private constructor(
                         // NB: not as?, since _initializerValue already checks that
                         (propertySymbol as KaKotlinPropertySymbol).isConst &&
                         // javac rejects all non-primitive and non String constants
-                        (propertySymbol.returnType.isPrimitiveBacked || propertySymbol.returnType.isStringType)
+                        (propertySymbol.returnType.isPrimitiveBacked ||
+                                propertySymbol.returnType.classId == KaStandardTypeClassIds.STRING)
             }
         }
     }

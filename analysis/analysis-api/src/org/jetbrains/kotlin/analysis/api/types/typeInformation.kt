@@ -304,12 +304,19 @@ public val KaType.isBooleanType: Boolean
 /**
  * Whether the [KaType] is a [String] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.STRING",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isStringType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isStringType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.STRING
 
 /**
  * Whether the [KaType] is a [CharSequence] type.
