@@ -625,7 +625,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigu
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProjectsHolderKt {
 	public static final field MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING Ljava/lang/String;
 	public static final field MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO Ljava/lang/String;
-	public static final field MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING Ljava/lang/String;
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper {

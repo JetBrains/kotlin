@@ -2418,6 +2418,31 @@ internal object KotlinToolingDiagnostics {
                 }
         }
     }
+
+    internal object PluginLoadedInMultipleProjectsError : ToolingDiagnosticFactory(
+        ERROR,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(loadedInProjects: List<String>) = build {
+            title {
+                "The Kotlin Gradle plugin was loaded multiple times in different subprojects, " +
+                        "which is not supported and may break the build."
+            }
+                .description {
+                    "The Kotlin plugin was loaded in the following projects: " +
+                            loadedInProjects.joinToString(limit = 4, postfix = ".\n") { "'$it'" } +
+                            "This might happen in subprojects that apply the Kotlin plugins with the Gradle " +
+                            "'plugins { ... }' DSL if they specify explicit versions, even if the versions are equal."
+                }
+                .solution {
+                    "Please add the Kotlin plugin to the common parent project or the root project, then remove " +
+                            "the versions in the subprojects. If the parent project does not need the plugin, add " +
+                            "'apply false' to the plugin line. As a last resort, set the " +
+                            "kotlin.pluginLoadedInMultipleProjects.ignore=true property to suppress the error. " +
+                            "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
+                }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
