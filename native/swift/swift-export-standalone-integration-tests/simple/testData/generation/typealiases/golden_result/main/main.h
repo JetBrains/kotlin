@@ -77,6 +77,8 @@ int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
 
 void * SEALED_O_get();
 
+_Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
 
 _Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);

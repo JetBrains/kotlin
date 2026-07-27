@@ -62,6 +62,7 @@ fun box(): String {
 // InlineFunCallSite.kt:14 render
 // InlineFunDeclaration.kt:23 render
 // InlineFunCallSite.kt:15 render
+// InlineFunDeclaration.kt:... render
 // InlineFunCallSite.kt:16 render
 // test.kt:30 box
 // test.kt:31 box

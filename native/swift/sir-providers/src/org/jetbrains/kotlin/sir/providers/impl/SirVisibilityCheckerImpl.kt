@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
-import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
@@ -97,12 +96,7 @@ public class SirVisibilityCheckerImpl(
                 } else return@withSessions exported
             }
             is KaConstructorSymbol -> {
-                if ((ktSymbol.containingSymbol as? KaClassSymbol)?.modality?.isAbstract() != false) {
-                    // Hide abstract class constructors from users, but not from other Swift Export modules.
-                    SirVisibility.PACKAGE
-                } else {
-                    SirVisibility.PUBLIC
-                }
+                SirVisibility.PUBLIC
             }
             is KaNamedFunctionSymbol -> {
                 if (!ktSymbol.isExported()) {
