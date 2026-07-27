@@ -451,7 +451,7 @@ class IrSourcePrinterVisitor(
         }
     }
 
-    private fun IrMemberAccessExpression<*>.printExplicitReceiver(
+    private fun IrExpression.printExplicitReceiver(
         suffix: String? = null,
         superQualifierSymbol: IrClassSymbol? = null,
     ) {
@@ -460,7 +460,7 @@ class IrSourcePrinterVisitor(
 
         when (this) {
             is IrFunctionAccessExpression, is IrFunctionReference -> {
-                val owner = symbol.owner
+                val owner = (this as IrMemberAccessExpression<*>).symbol.owner as IrFunction
                 val dispatchReceiver = owner.firstParameterOfKind(IrParameterKind.DispatchReceiver)
                 val extensionReceiver = owner.firstParameterOfKind(IrParameterKind.ExtensionReceiver)
                 dispatchReceiverArg = dispatchReceiver?.let { arguments[it.indexInParameters] }
@@ -469,6 +469,24 @@ class IrSourcePrinterVisitor(
             is IrPropertyReference -> {
                 dispatchReceiverArg = arguments.firstOrNull()
                 extensionReceiverArg = null
+            }
+            is IrRichFunctionReference -> {
+                val boundMapping = invokeFunction.parameters.zip(boundValues)
+                dispatchReceiverArg = boundMapping.firstOrNull {
+                    it.first.kind == IrParameterKind.DispatchReceiver
+                }?.second
+                extensionReceiverArg = boundMapping.firstOrNull {
+                    it.first.kind == IrParameterKind.ExtensionReceiver
+                }?.second
+            }
+            is IrRichPropertyReference -> {
+                val boundMapping = getterFunction.parameters.zip(boundValues)
+                dispatchReceiverArg = boundMapping.firstOrNull {
+                    it.first.kind == IrParameterKind.DispatchReceiver
+                }?.second
+                extensionReceiverArg = boundMapping.firstOrNull {
+                    it.first.kind == IrParameterKind.ExtensionReceiver
+                }?.second
             }
             else -> {
                 error("Unknown expression type: ${dump()}")
@@ -1336,6 +1354,32 @@ class IrSourcePrinterVisitor(
         }
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+        val function = expression.reflectionTargetSymbol?.owner ?: expression.invokeFunction
+
+        expression.printExplicitReceiver()
+        print("::")
+
+        val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+
+        if (prop != null) {
+            val propName = prop.name.asString()
+            print(propName)
+            if (function == prop.setter) {
+                print("::set")
+            } else if (function == prop.getter) {
+                print("::get")
+            }
+        } else {
+            print(function.name.asString())
+        }
+        println(" {")
+        indented {
+            expression.invokeFunction.print()
+        }
+        println("}")
+    }
+
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
         val constructedClass = expression.classSymbol.owner
         val name = constructedClass.name
@@ -1386,6 +1430,20 @@ class IrSourcePrinterVisitor(
         expression.printExplicitReceiver()
         print("::")
         print(property.name)
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        val propertyName = (expression.reflectionTargetSymbol?.owner as? IrDeclarationWithName)?.name
+            ?: expression.getterFunction.name
+        expression.printExplicitReceiver()
+        print("::")
+        print(propertyName)
+        println(" {")
+        indented {
+            expression.getterFunction.print()
+            expression.setterFunction?.print()
+        }
+        println("}")
     }
 
     override fun visitSpreadElement(spread: IrSpreadElement) {
