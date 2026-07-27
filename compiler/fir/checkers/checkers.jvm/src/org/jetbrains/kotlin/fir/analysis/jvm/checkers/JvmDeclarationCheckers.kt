@@ -40,6 +40,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmRecordChecker,
             FirJvmInlineApplicabilityChecker,
+            FirInterfaceJvmFieldApplicabilityChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
