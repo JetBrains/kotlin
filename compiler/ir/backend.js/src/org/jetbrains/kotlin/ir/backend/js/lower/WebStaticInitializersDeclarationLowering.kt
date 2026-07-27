@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.name.Name
  *             first = initFirst()
  *             second = initSecond()
  *             third = initThird()
- *           } catch ($p) {
+ *           } catch (reason: Throwable) {
  *             kotlin.internal.staticInitializationFailure(reason, null);
  *           }
  *           break;
