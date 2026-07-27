@@ -888,8 +888,8 @@ class SwiftPMImportUnitTests {
         )
 
         assertEquals(
-            iphoneSimulatorFingerprintTask.syntheticPackageFingerprint.get().asFile,
-            iphoneSimulatorDumpTask.syntheticPackageFingerprint.get().asFile,
+            iphoneSimulatorFingerprintTask.syntheticPackageFingerprintFile.get().asFile,
+            iphoneSimulatorDumpTask.syntheticPackageFingerprint.fingerprintFile.get().asFile,
             "Fingerprint hash and dump task for iphonesimulator should match"
         )
     }
@@ -914,7 +914,7 @@ class SwiftPMImportUnitTests {
         assertIs<GenerateSyntheticLinkageImportProject>(syntheticPackageGenerationTask)
 
         assertFalse(
-            syntheticPackageGenerationTask.syntheticPackageFingerprint.isPresent,
+            syntheticPackageGenerationTask.syntheticPackageFingerprint.fingerprintFile.isPresent,
             message = "Synthetic package fingerprint should not be set for synthetic package generation when noSynchronization is set"
         )
 
@@ -925,7 +925,7 @@ class SwiftPMImportUnitTests {
         assertIs<FetchSyntheticImportProjectPackages>(fetchSyntheticPackageTask)
 
         assertFalse(
-            fetchSyntheticPackageTask.syntheticPackageFingerprint.isPresent,
+            fetchSyntheticPackageTask.syntheticPackageFingerprint.fingerprintFile.isPresent,
             message = "Synthetic package fingerprint should not be set for fetch task when noSynchronization is set"
         )
 
@@ -939,12 +939,12 @@ class SwiftPMImportUnitTests {
         assertIs<DumpXcodeBuildArgs>(dumpXcodebuildTask)
 
         assertFalse(
-            dumpXcodebuildTask.syntheticPackageFingerprint.isPresent,
+            dumpXcodebuildTask.syntheticPackageFingerprint.fingerprintFile.isPresent,
             message = "Synthetic package fingerprint should not be set for dump task when noSynchronization is set"
         )
 
         assertFalse(
-            dumpXcodebuildTask.xcodebuildFingerprint.isPresent,
+            dumpXcodebuildTask.xcodebuildFingerprint.fingerprintFile.isPresent,
             message = "Xcodebuild fingerprint should not be set for dump task when noSynchronization is set"
         )
     }
@@ -1037,32 +1037,32 @@ class SwiftPMImportUnitTests {
         assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(leftProjectConvertTask)
 
         assertEquals(
-            leftProjectSyntheticPackageFingerprint.syntheticPackageFingerprint.get().asFile,
-            leftProjectSyntheticPackageGenerate.syntheticPackageFingerprint.get().asFile,
+            leftProjectSyntheticPackageFingerprint.syntheticPackageFingerprintFile.get().asFile,
+            leftProjectSyntheticPackageGenerate.syntheticPackageFingerprint.fingerprintFile.get().asFile,
             "Generate synthetic package tasks should use the same synthetic package fingerprint as the fingerprint task in the same project"
         )
 
         assertEquals(
-            leftProjectSyntheticPackageGenerate.syntheticPackageFingerprint.get().asFile,
-            leftProjectFetchTask.syntheticPackageFingerprint.get().asFile,
+            leftProjectSyntheticPackageGenerate.syntheticPackageFingerprint.fingerprintFile.get().asFile,
+            leftProjectFetchTask.syntheticPackageFingerprint.fingerprintFile.get().asFile,
             "Fetch task should use the same synthetic package fingerprint as the generate task in the same project"
         )
 
         assertEquals(
-            leftProjectXcodebuildFingerprint.syntheticPackageFingerprint.get().asFile,
-            leftProjectFetchTask.syntheticPackageFingerprint.get().asFile,
+            leftProjectXcodebuildFingerprint.syntheticPackageFingerprint.fingerprintFile.get().asFile,
+            leftProjectFetchTask.syntheticPackageFingerprint.fingerprintFile.get().asFile,
             "Xcodebuild fingerprint task should use the same synthetic package fingerprint as the fetch task in the same project"
         )
 
         assertEquals(
-            leftProjectXcodeDumpTask.xcodebuildFingerprint.get().asFile,
-            leftProjectXcodebuildFingerprint.xcodebuildFingerprint.get().asFile,
+            leftProjectXcodeDumpTask.xcodebuildFingerprint.fingerprintFile.get().asFile,
+            leftProjectXcodebuildFingerprint.xcodebuildFingerprintFile.get().asFile,
             "Dump task should use the same xcodebuild fingerprint as the fingerprint task in the same project"
         )
 
         assertEquals(
-            leftProjectConvertTask.xcodebuildFingerprint.get().asFile,
-            leftProjectXcodeDumpTask.xcodebuildFingerprint.get().asFile,
+            leftProjectConvertTask.xcodebuildFingerprint.fingerprintFile.get().asFile,
+            leftProjectXcodeDumpTask.xcodebuildFingerprint.fingerprintFile.get().asFile,
             "Convert task should use the same xcodebuild fingerprint as the dump task in the same project"
         )
 

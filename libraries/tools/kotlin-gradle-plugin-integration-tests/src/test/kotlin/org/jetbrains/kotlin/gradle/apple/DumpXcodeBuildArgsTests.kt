@@ -237,8 +237,8 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                         "Different SDKs for the same SwiftPM graph should share the same root-build bucket"
                     )
                     assertEquals(
-                        parseSwiftPMFingerprint(localXcodebuildFingerprint(appProjectName, "iphoneos")),
-                        parseSwiftPMFingerprint(localXcodebuildFingerprint(appProjectName, "iphonesimulator")),
+                        parseSwiftPMIncrementalFingerprint(localXcodebuildFingerprintFile(appProjectName, "iphoneos")),
+                        parseSwiftPMIncrementalFingerprint(localXcodebuildFingerprintFile(appProjectName, "iphonesimulator")),
                         "The xcodebuild execution fingerprint should be SDK-independent"
                     )
                     assertDumpDirectoryContainsXcodebuildArgsDump(iphoneosDumpLocation)
@@ -310,8 +310,8 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     assertFileExists(fuzzFingerprintFile)
                     assertFileExists(buzzFingerprintFile)
                     assertNotEquals(
-                        parseSwiftPMFingerprint(fuzzFingerprintFile),
-                        parseSwiftPMFingerprint(buzzFingerprintFile),
+                        parseSwiftPMIncrementalFingerprint(fuzzFingerprintFile),
+                        parseSwiftPMIncrementalFingerprint(buzzFingerprintFile),
                         "The xcodebuild execution hash should include lock identifiers"
                     )
                     assertNotEquals(
@@ -411,8 +411,8 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     val coreFingerprintFile = localIphoneosDumpFingerprintFile(coreProjectName)
                     val logsFingerprintFile = localIphoneosDumpFingerprintFile(logsProjectName)
                     assertNotEquals(
-                        parseSwiftPMFingerprint(coreFingerprintFile),
-                        parseSwiftPMFingerprint(logsFingerprintFile),
+                        parseSwiftPMIncrementalFingerprint(coreFingerprintFile),
+                        parseSwiftPMIncrementalFingerprint(logsFingerprintFile),
                         "Different selected products should not share one xcodebuild dump"
                     )
                     assertNotEquals(
