@@ -87,7 +87,7 @@ private class BackendChecker(
 
     private val outerDeclarations = mutableListOf<IrDeclaration>()
 
-    private val outerClass: IrClass? get() = outerDeclarations.last { it is IrClass } as? IrClass
+    private val outerClass: IrClass? get() = outerDeclarations.lastOrNull { it is IrClass } as? IrClass
     private val outerFunction: IrFunction? get() = outerDeclarations.last { it is IrFunction } as? IrFunction
 
     private val outerAnnotators = mutableListOf<Lazy<ClosureAnnotator>>()
@@ -349,7 +349,7 @@ private class BackendChecker(
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
         expression.acceptChildrenVoid(this)
 
-        val constructedClass = outerClass!!
+        val constructedClass = outerClass ?: return
 
         if (!constructedClass.isObjCClass())
             return
