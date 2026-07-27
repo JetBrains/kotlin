@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.analysis.api.types.isNestedArray as isNestedArrayEnd
 import org.jetbrains.kotlin.analysis.api.types.isNothingType as isNothingTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isShortType as isShortTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isStringType as isStringTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoint
@@ -125,7 +124,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isShortType: Boolean
-        get() = context(analysisSession) { isShortTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == KaStandardTypeClassIds.SHORT
+        }
 
     override val KaType.isByteType: Boolean
         get() = context(analysisSession) { isByteTypeEndpoint }
