@@ -170,6 +170,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
         parameters.kgpVersion.set(kgpVersion)
         parameters.parseInlinedLocalClasses.set(project.kotlinPropertiesProvider.parseInlinedLocalClasses)
+        parameters.expandTypeAliases.set(project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots)
 
         val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         if (!suppressVersionInconsistencyChecks) {

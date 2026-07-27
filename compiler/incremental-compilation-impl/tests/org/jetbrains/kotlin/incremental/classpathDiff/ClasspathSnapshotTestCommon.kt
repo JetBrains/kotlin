@@ -188,7 +188,8 @@ abstract class ClasspathSnapshotTestCommon {
             val classes = map { ClassFileWithContentsProvider(it) { it.readBytes() } }
             val settings = ClasspathEntrySnapshotter.Settings(
                 granularity = granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
-                parseInlinedLocalClasses = false
+                parseInlinedLocalClasses = false,
+                expandTypeAliases = false
             )
             return PlainClassListSnapshotter(classes, settings).snapshot()
         }

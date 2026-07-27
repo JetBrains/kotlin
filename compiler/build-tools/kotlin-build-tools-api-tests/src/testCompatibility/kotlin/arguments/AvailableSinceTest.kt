@@ -235,6 +235,9 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES.availableSinceVersion) {
                         this[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = false
                     }
+                    trySet(JvmClasspathSnapshottingOperation.EXPAND_TYPE_ALIASES.availableSinceVersion) {
+                        this[JvmClasspathSnapshottingOperation.EXPAND_TYPE_ALIASES] = true
+                    }
                 }
             }
         }

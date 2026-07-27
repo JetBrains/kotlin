@@ -23,7 +23,8 @@ object ClasspathEntrySnapshotter {
 
     data class Settings(
         val granularity: ClassSnapshotGranularity,
-        val parseInlinedLocalClasses: Boolean
+        val parseInlinedLocalClasses: Boolean,
+        val expandTypeAliases: Boolean,
     )
 
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
