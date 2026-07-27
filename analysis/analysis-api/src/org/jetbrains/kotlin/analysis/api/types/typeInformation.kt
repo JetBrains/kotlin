@@ -202,12 +202,19 @@ public val KaType.isLongType: Boolean
 /**
  * Whether the [KaType] is a [Short] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.SHORT",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isShortType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isShortType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.SHORT
 
 /**
  * Whether the [KaType] is a [Byte] type.

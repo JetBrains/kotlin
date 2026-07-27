@@ -79,7 +79,7 @@ internal class TypeExporter(
         when {
             isMarkedNullable -> Array(exportType(type))
             isByteType -> Primitive.ByteArray
-            isShortType -> Primitive.ShortArray
+            classId == KaStandardTypeClassIds.SHORT -> Primitive.ShortArray
             classId == KaStandardTypeClassIds.INT -> Primitive.IntArray
             isFloatType -> Primitive.FloatArray
             isDoubleType -> Primitive.DoubleArray
