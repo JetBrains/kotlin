@@ -1,3 +1,6 @@
+@file:Suppress("UnstableApiUsage")
+
+import JdkMajorVersion.JDK_1_8
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
@@ -5,6 +8,7 @@ plugins {
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    `java-test-fixtures`
 }
 
 sourceSets {
@@ -15,6 +19,12 @@ sourceSets {
     main {
         projectDefault()
         compileClasspath += sourceSets["bootClasspath"].output
+    }
+
+    testFixtures {
+        projectDefault()
+        compileClasspath += sourceSets["bootClasspath"].output
+        runtimeClasspath += sourceSets["bootClasspath"].output
     }
 
     test {
@@ -30,8 +40,10 @@ dependencies {
     compileOnly(libs.intellij.asm)
     bootClasspathCompileOnly(libs.org.jetbrains.annotations)
 
-    implementation(kotlinStdlib())
+    api(kotlinStdlib())
     implementation(libs.bytebuddy)
+
+    testFixturesApi(libs.junit.jupiter.api)
 }
 
 val agentJar = tasks.register<ShadowJar>("agentJar") {
@@ -60,5 +72,35 @@ configurations {
         outgoing {
             artifact(bootClasspathJar)
         }
+    }
+}
+
+kotlin {
+    // JDK 25 is only for executing tests and benchmarks
+    // The instrumentation code itself is compiled with JDK 8
+    jvmToolchain(25)
+}
+
+testing {
+    suites.withType<JvmTestSuite>().configureEach {
+        useJUnitJupiter()
+    }
+}
+
+tasks {
+    compileKotlin {
+        configureTaskToolchain(JDK_1_8)
+    }
+
+    compileJava {
+        configureTaskToolchain(JDK_1_8)
+    }
+
+    named<JavaCompile>("compileBootClasspathJava") {
+        configureTaskToolchain(JDK_1_8)
+    }
+
+    named("checkBuild") {
+        dependsOn(test)
     }
 }
