@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
@@ -379,7 +378,7 @@ fun FirCallableSymbol<*>.getImplementationStatus(
             if (
                 parentClassSymbol is FirRegularClassSymbol &&
                 parentClassSymbol.isData &&
-                symbol.matchesDataClassSyntheticMemberSignatures
+                symbol.isMethodOfAny
             ) {
                 return ImplementationStatus.INHERITED_OR_SYNTHESIZED
             }
@@ -421,29 +420,6 @@ private fun List<FirCallableSymbol<*>>.subjectToManyNotImplemented(): Boolean {
     }
     return false
 }
-
-private val FirNamedFunctionSymbol.matchesDataClassSyntheticMemberSignatures: Boolean
-    get() {
-        val name = callableId.callableName
-        return receiverParameterSymbol == null &&
-                !hasContextParameters &&
-                (name == OperatorNameConventions.EQUALS && matchesEqualsSignature) ||
-                (name == HASHCODE_NAME && matchesHashCodeSignature) ||
-                (name == OperatorNameConventions.TO_STRING && matchesToStringSignature)
-    }
-
-// NB: we intentionally do not check return types
-private val FirNamedFunctionSymbol.matchesEqualsSignature: Boolean
-    get() {
-        val valueParameters = valueParameterSymbols
-        return valueParameters.size == 1 && valueParameters[0].resolvedReturnType.isNullableAny
-    }
-
-private val FirNamedFunctionSymbol.matchesHashCodeSignature: Boolean
-    get() = valueParameterSymbols.isEmpty()
-
-private val FirNamedFunctionSymbol.matchesToStringSignature: Boolean
-    get() = valueParameterSymbols.isEmpty()
 
 val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 

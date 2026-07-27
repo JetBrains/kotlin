@@ -1269,8 +1269,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun FirCallableSymbol<*>.isFunctionFromAny(): Boolean {
-        if (this !is FirNamedFunctionSymbol) return false
-        return isMethodOfAny
+        return this is FirNamedFunctionSymbol && isMethodOfAny
     }
 
     private fun generateErrorCallExpression(
