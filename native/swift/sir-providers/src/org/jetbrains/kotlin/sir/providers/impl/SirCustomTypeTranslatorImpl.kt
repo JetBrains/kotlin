@@ -150,7 +150,7 @@ public class SirCustomTypeTranslatorImpl(
 
             isBooleanType -> SirSwiftModule.bool
 
-            isDoubleType -> SirSwiftModule.double
+            classId == KaStandardTypeClassIds.DOUBLE -> SirSwiftModule.double
             classId == KaStandardTypeClassIds.FLOAT -> SirSwiftModule.float
 
             classId == KaStandardTypeClassIds.UNIT -> SirSwiftModule.void

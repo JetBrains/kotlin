@@ -253,12 +253,19 @@ public val KaType.isFloatType: Boolean
 /**
  * Whether the [KaType] is a [Double] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.DOUBLE",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isDoubleType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isDoubleType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.DOUBLE
 
 /**
  * Whether the [KaType] is a [Char] type.
