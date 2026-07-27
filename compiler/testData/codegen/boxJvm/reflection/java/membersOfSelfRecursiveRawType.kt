@@ -17,8 +17,8 @@ import kotlin.test.assertEquals
 
 class KtSubclass : JChild()
 
-fun check(expected: String, reference: KCallable<*>, klass: KClass<*>) {
-    assertEquals(expected, reference.toString())
+fun check(expected: String, reference: KCallable<*>, klass: KClass<*>, expectedReference: String? = null) {
+    assertEquals(expectedReference ?: expected, reference.toString())
     val fromMembers = klass.members.single { it.name == reference.name }
     assertEquals(expected, fromMembers.toString())
     assertEquals(reference, fromMembers)
@@ -29,7 +29,12 @@ fun box(): String {
     check("fun JBase<T, F>.method(): F!", JBase<*, *>::method, JBase::class)
 
     check("var JChild.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChild::field, JChild::class)
-    check("fun JChild.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChild::method, JChild::class)
+    check(
+        "fun JChild.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChild::method, JChild::class,
+        expectedReference = "fun JChild.method(): F!".takeUnless {
+            Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true
+        },
+    )
 
     check("var KtSubclass.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::field, KtSubclass::class)
     check("fun KtSubclass.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::method, KtSubclass::class)
