@@ -125,6 +125,7 @@ private object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<P
         LongExternalizer.save(output, snapshot.classAbiHash)
         NullableValueExternalizer(KotlinClassInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
         SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
+        NullableValueExternalizer(ListExternalizer(TypeAliasSnapshotExternalizer)).save(output, snapshot.typeAliases)
     }
 
     override fun read(input: DataInput): PackageFacadeKotlinClassSnapshot {
@@ -133,7 +134,24 @@ private object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<P
             classId = ClassIdExternalizerWithInterning.read(input),
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KotlinClassInfoExternalizer).read(input),
-            packageMemberNames = SetExternalizer(StringExternalizer).read(input)
+            packageMemberNames = SetExternalizer(StringExternalizer).read(input),
+            typeAliases = NullableValueExternalizer(ListExternalizer(TypeAliasSnapshotExternalizer)).read(input)
+        )
+    }
+}
+
+private object TypeAliasSnapshotExternalizer : DataExternalizer<TypeAliasSnapshot> {
+
+    override fun save(output: DataOutput, value: TypeAliasSnapshot) {
+        ClassIdExternalizer.save(output, value.aliasClassId)
+        ClassIdExternalizer.save(output, value.expandedClassId)
+    }
+
+    override fun read(input: DataInput): TypeAliasSnapshot {
+        return TypeAliasSnapshot(
+            // To reduce memory usage, apply object interning to classId's package name as they are commonly shared.
+            aliasClassId = ClassIdExternalizerWithInterning.read(input),
+            expandedClassId = ClassIdExternalizerWithInterning.read(input)
         )
     }
 }
