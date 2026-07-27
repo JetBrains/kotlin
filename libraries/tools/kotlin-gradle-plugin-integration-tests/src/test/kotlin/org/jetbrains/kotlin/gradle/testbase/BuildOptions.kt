@@ -94,6 +94,8 @@ data class BuildOptions(
     val continuousBuild: Boolean? = null,
     val generateCompilerRefIndex: Boolean? = null,
     val jvmClasspathMetadata: Boolean? = null,
+    val separateCompilation: Boolean? = null,
+    val expandTypeAliasesInClasspathSnapshots: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -310,6 +312,16 @@ data class BuildOptions(
 
         if (jvmClasspathMetadata != null) {
             arguments.add("-Pkotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation=$jvmClasspathMetadata")
+        }
+
+        if (separateCompilation != null) {
+            arguments.add("-Pkotlin.kmp.separateCompilation=$separateCompilation")
+        }
+
+        if (expandTypeAliasesInClasspathSnapshots != null) {
+            arguments.add(
+                "-Pkotlin.internal.jvm.expandTypeAliasesInClasspathSnapshots=$expandTypeAliasesInClasspathSnapshots"
+            )
         }
 
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
