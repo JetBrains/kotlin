@@ -211,21 +211,90 @@ internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
 internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     val string = try {
         when (value) {
-            is Array<*> -> value.contentToString()
-            is CharArray -> value.contentToString()
-            is BooleanArray -> value.contentToString()
-            is ByteArray -> value.contentToString()
-            is ShortArray -> value.contentToString()
-            is IntArray -> value.contentToString()
-            is LongArray -> value.contentToString()
-            is FloatArray -> value.contentToString()
-            is DoubleArray -> value.contentToString()
+            is List<*> -> collectionDebugString("List", value.size, value)
+            is Set<*> -> collectionDebugString("Set", value.size, value)
+            is Map<*, *> -> collectionDebugString("Map", value.size, value.entries)
+            is Array<*> -> arrayDebugString("Array", value.size) { value[it] }
+            is CharArray -> arrayDebugString("CharArray", value.size) { value[it] }
+            is BooleanArray -> arrayDebugString("BooleanArray", value.size) { value[it] }
+            is ByteArray -> arrayDebugString("ByteArray", value.size) { value[it] }
+            is ShortArray -> arrayDebugString("ShortArray", value.size) { value[it] }
+            is IntArray -> arrayDebugString("IntArray", value.size) { value[it] }
+            is LongArray -> arrayDebugString("LongArray", value.size) { value[it] }
+            is FloatArray -> arrayDebugString("FloatArray", value.size) { value[it] }
+            is DoubleArray -> arrayDebugString("DoubleArray", value.size) { value[it] }
             else -> value.toString()
         }
     } catch (error: Throwable) {
         "<Thrown $error when converting to string>"
     }
     return string.encodeToByteArray()
+}
+
+private fun collectionDebugString(
+    type: String,
+    size: Int,
+    elements: Iterable<*>,
+): String = buildString {
+    append(type)
+    append("(size=")
+    append(size)
+    append(") [")
+
+    val iterator = elements.iterator()
+    val displayedElements = if (size > 10) 9 else size
+    repeat(displayedElements) { index ->
+        if (index > 0) append(", ")
+        append(collectionDebugElementString(iterator.next()))
+    }
+    if (size > 10) {
+        var lastElement = iterator.next()
+        while (iterator.hasNext()) {
+            lastElement = iterator.next()
+        }
+        append(", ..., ")
+        append(collectionDebugElementString(lastElement))
+    }
+    append(']')
+}
+
+private inline fun arrayDebugString(
+    type: String,
+    size: Int,
+    elementAt: (Int) -> Any?,
+): String = buildString {
+    append(type)
+    append("(size=")
+    append(size)
+    append(") [")
+
+    val displayedElements = if (size > 10) 9 else size
+    repeat(displayedElements) { index ->
+        if (index > 0) append(", ")
+        append(collectionDebugElementString(elementAt(index)))
+    }
+    if (size > 10) {
+        append(", ..., ")
+        append(collectionDebugElementString(elementAt(size - 1)))
+    }
+    append(']')
+}
+
+private fun collectionDebugElementString(value: Any?): String = when (value) {
+    is List<*> -> "List(size=${value.size})"
+    is Set<*> -> "Set(size=${value.size})"
+    is Map<*, *> -> "Map(size=${value.size})"
+    is Array<*> -> "Array(size=${value.size})"
+    is CharArray -> "CharArray(size=${value.size})"
+    is BooleanArray -> "BooleanArray(size=${value.size})"
+    is ByteArray -> "ByteArray(size=${value.size})"
+    is ShortArray -> "ShortArray(size=${value.size})"
+    is IntArray -> "IntArray(size=${value.size})"
+    is LongArray -> "LongArray(size=${value.size})"
+    is FloatArray -> "FloatArray(size=${value.size})"
+    is DoubleArray -> "DoubleArray(size=${value.size})"
+    is Map.Entry<*, *> -> "${collectionDebugElementString(value.key)}=${collectionDebugElementString(value.value)}"
+    else -> value.toString()
 }
 
 @UsedFromCompilerGeneratedCode
