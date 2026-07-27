@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -14,11 +15,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.isInlineClassThatRequiresMangling
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -56,12 +55,6 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             declaration.isOverride -> OVERRIDES
             declaration.isLateInit -> LATEINIT
             declaration.isConst -> CONST
-            containingClassSymbol != null && containingClassSymbol.isInterfaceOrInterfaceCompanion(session) ->
-                if (!containingClassSymbol.isInterfaceWithPublicJvmFieldProperties()) {
-                    NOT_PUBLIC_VAL_WITH_JVMFIELD
-                } else {
-                    return
-                }
             containingClassSymbol == null && isInsideJvmMultifileClassFile() ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
@@ -99,48 +92,41 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 (setter != null && setter?.source?.kind !is KtFakeSourceElementKind)
     }
 
-    private fun FirRegularClassSymbol.isInterfaceOrInterfaceCompanion(session: FirSession): Boolean {
-        if (isInterface) return true
-        if (!isCompanion) {
-            return false
-        }
-
-        val outerClassKind = getContainingDeclaration(session)?.classKind
-        return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
-    }
-
     context(context: CheckerContext)
-    private fun FirRegularClassSymbol.isInterfaceWithPublicJvmFieldProperties(): Boolean {
-        var result = true
-        val processor = processAllDeclaredCallables@ { symbol: FirCallableSymbol<*> ->
-            if (!result || symbol !is FirPropertySymbol) return@processAllDeclaredCallables
+    private fun isInsideJvmMultifileClassFile(): Boolean {
+        return context.containingFileSymbol?.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session) == true
+    }
+}
+
+object FirInterfaceJvmFieldApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
+        if (!declaration.isInterface && declaration.classKind != ClassKind.ANNOTATION_CLASS) return
+        var hasIncompatible = false
+        val jvmFieldAnnotations = mutableListOf<KtSourceElement>()
+
+        val processor = processAllDeclaredCallables@{ symbol: FirCallableSymbol<*> ->
+            if (symbol !is FirPropertySymbol) return@processAllDeclaredCallables
+            val annotation = symbol.backingFieldSymbol?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, context.session)
+
+            if (annotation != null) jvmFieldAnnotations.add(annotation.source!!)
 
             if (symbol.visibility != Visibilities.Public ||
                 symbol.isVar ||
                 symbol.modality != Modality.FINAL ||
-                !symbol.hasJvmFieldAnnotation(context.session)
+                annotation == null
             ) {
-                result = false
+                hasIncompatible = true
             }
         }
 
-        if (isInterface) {
-            staticScope(context)?.processAllProperties(processor)
-            resolvedCompanionObjectSymbol?.declaredMemberScope()?.processAllProperties(processor)
-        } else {
-            declaredMemberScope().processAllProperties(processor)
-            (getContainingDeclaration(context.session) as? FirRegularClassSymbol)?.staticScope(context)?.processAllProperties(processor)
+        declaration.staticScope(context)?.processAllProperties(processor)
+        declaration.symbol.resolvedCompanionObjectSymbol?.declaredMemberScope()?.processAllProperties(processor)
+
+        if (hasIncompatible) {
+            for (source in jvmFieldAnnotations) {
+                reporter.reportOn(source, FirJvmErrors.INAPPLICABLE_JVM_FIELD, NOT_PUBLIC_VAL_WITH_JVMFIELD.errorMessage)
+            }
         }
-
-        return result
-    }
-
-    private fun FirPropertySymbol.hasJvmFieldAnnotation(session: FirSession): Boolean {
-        return backingFieldSymbol?.hasAnnotationWithClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) == true
-    }
-
-    context(context: CheckerContext)
-    private fun isInsideJvmMultifileClassFile(): Boolean {
-        return context.containingFileSymbol?.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session) == true
     }
 }
