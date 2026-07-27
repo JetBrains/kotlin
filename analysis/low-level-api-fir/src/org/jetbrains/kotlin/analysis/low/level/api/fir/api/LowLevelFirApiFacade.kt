@@ -95,9 +95,10 @@ fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: Diagn
 @KaImplementationDetail
 fun KtFile.diagnostics(
     resolutionFacade: LLResolutionFacade,
-    filter: DiagnosticCheckerFilter
+    filter: DiagnosticCheckerFilter,
+    ignoreSuppression: Boolean = false
 ): Sequence<KtPsiDiagnostic> =
-    resolutionFacade.diagnostics(this, filter)
+    resolutionFacade.diagnostics(this, filter, ignoreSuppression)
 
 /**
  * Build [FirElement] node in its final resolved state for a requested element.

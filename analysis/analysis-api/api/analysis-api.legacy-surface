@@ -133,6 +133,7 @@ org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics(KaDiagnosticCheckerFilter)
+org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.directDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator
 org.jetbrains.kotlin.analysis.api.components.KaEvaluator.evaluate()
@@ -623,6 +624,7 @@ org.jetbrains.kotlin.analysis.api.components.delegatedMemberScope
 org.jetbrains.kotlin.analysis.api.components.deprecation
 org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
+org.jetbrains.kotlin.analysis.api.components.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.directDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.directSupertypes
 org.jetbrains.kotlin.analysis.api.components.directSupertypes(Boolean)

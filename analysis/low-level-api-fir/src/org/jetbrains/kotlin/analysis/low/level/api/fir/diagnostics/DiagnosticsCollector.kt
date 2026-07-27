@@ -19,8 +19,8 @@ internal class DiagnosticsCollector(private val fileStructureCache: FileStructur
         return diagnostics.diagnosticsFor(filter, element)
     }
 
-    fun diagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+    fun diagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> {
         val fileStructure = fileStructureCache.getFileStructure(ktFile)
-        return fileStructure.diagnostics(filter)
+        return fileStructure.diagnostics(filter, ignoreSuppression)
     }
 }

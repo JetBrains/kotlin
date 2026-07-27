@@ -39,7 +39,14 @@ internal class KaFirDiagnosticProvider(
         file: KtFile,
         filter: KaDiagnosticCheckerFilter,
     ): Sequence<KaDiagnosticWithPsi<*>> = file.withPsiValidityAssertion {
-        file.diagnostics(resolutionFacade, filter.asLLFilter()).map { it.asKaDiagnostic() }
+        file.diagnostics(resolutionFacade, filter.asLLFilter(), ignoreSuppression = false).map { it.asKaDiagnostic() }
+    }
+
+    override fun diagnosticsIgnoringSuppression(
+        file: KtFile,
+        filter: KaDiagnosticCheckerFilter,
+    ): Sequence<KaDiagnosticWithPsi<*>> = file.withPsiValidityAssertion {
+        file.diagnostics(resolutionFacade, filter.asLLFilter(), ignoreSuppression = true).map { it.asKaDiagnostic() }
     }
 
     private fun KaDiagnosticCheckerFilter.asLLFilter() = when (this) {

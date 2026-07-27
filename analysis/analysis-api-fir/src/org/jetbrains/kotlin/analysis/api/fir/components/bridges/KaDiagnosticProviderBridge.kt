@@ -37,4 +37,7 @@ internal class KaDiagnosticProviderBridge(
 
     override fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
         proxy.diagnostics(this, filter)
+
+    override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
+        proxy.diagnosticsIgnoringSuppression(this, filter)
 }

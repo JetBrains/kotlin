@@ -5,3 +5,7 @@ Diagnostics from file:
   for PSI element of type KtProperty at (4,1-16)
     MUST_BE_INITIALIZED      text ranges: [(47,62)]
       PSI: KtProperty at (4,1-16)
+Additionally reported when ignoring suppression:
+  for PSI element of type KtProperty at (1,1) - (2,13)
+    MUST_BE_INITIALIZED      text ranges: [(33,45)]
+      PSI: KtProperty at (1,1) - (2,13)

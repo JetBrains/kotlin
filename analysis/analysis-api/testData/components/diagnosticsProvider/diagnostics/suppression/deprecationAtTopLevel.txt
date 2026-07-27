@@ -1,2 +1,6 @@
 Diagnostics from file:
   <NO DIAGNOSTICS>
+Additionally reported when ignoring suppression:
+  for PSI element of type KtNameReferenceExpression at (7,5-8)
+    DEPRECATION      text ranges: [(82,85)]
+      PSI: KtNameReferenceExpression at (7,5-8)

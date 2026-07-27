@@ -19,4 +19,6 @@ public interface KaInternalsDiagnosticProvider {
     public fun collectDiagnostics(file: KtFile, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
     public fun diagnostics(file: KtFile, filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
+
+    public fun diagnosticsIgnoringSuppression(file: KtFile, filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>>
 }

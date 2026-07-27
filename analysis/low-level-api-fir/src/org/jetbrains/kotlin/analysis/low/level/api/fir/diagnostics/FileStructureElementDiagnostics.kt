@@ -23,6 +23,18 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS)
     }
 
+    private val diagnosticByDefaultCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS, ignoreSuppression = true)
+    }
+
+    private val diagnosticByExtraCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS, ignoreSuppression = true)
+    }
+
+    private val diagnosticByExperimentalCheckersIgnoringSuppression: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS, ignoreSuppression = true)
+    }
+
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
         SmartList<KtPsiDiagnostic>().apply {
             if (filter.runDefaultCheckers) {
@@ -36,16 +48,28 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
             }
         }
 
-
-    inline fun forEach(filter: DiagnosticCheckerFilter, action: (List<KtPsiDiagnostic>) -> Unit) {
+    // TODO(KT-86610): avoid recalculation between suppressed and not suppressed diagnostics
+    inline fun forEach(filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean, action: (List<KtPsiDiagnostic>) -> Unit) {
         if (filter.runDefaultCheckers) {
-            diagnosticByDefaultCheckers.forEach(action)
+            if (ignoreSuppression) {
+                diagnosticByDefaultCheckersIgnoringSuppression.forEach(action)
+            } else {
+                diagnosticByDefaultCheckers.forEach(action)
+            }
         }
         if (filter.runExtraCheckers) {
-            diagnosticByExtraCheckers.forEach(action)
+            if (ignoreSuppression) {
+                diagnosticByExtraCheckersIgnoringSuppression.forEach(action)
+            } else {
+                diagnosticByExtraCheckers.forEach(action)
+            }
         }
         if (filter.runExperimentalCheckers) {
-            diagnosticByExperimentalCheckers.forEach(action)
+            if (ignoreSuppression) {
+                diagnosticByExperimentalCheckersIgnoringSuppression.forEach(action)
+            } else {
+                diagnosticByExperimentalCheckers.forEach(action)
+            }
         }
     }
 }

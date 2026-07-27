@@ -4,6 +4,7 @@ KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.creat
 KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.collectDiagnostics(KaDiagnosticCheckerFilter)
 KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.diagnostics(KaDiagnosticCheckerFilter)
+KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter)
 KaDiagnosticProvider: org.jetbrains.kotlin.analysis.api.components.directDiagnostics(KaDiagnosticCheckerFilter)
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
