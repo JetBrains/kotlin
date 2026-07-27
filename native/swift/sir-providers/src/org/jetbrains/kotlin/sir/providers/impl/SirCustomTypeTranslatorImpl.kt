@@ -138,7 +138,7 @@ public class SirCustomTypeTranslatorImpl(
         val declaration = when {
             isCharType -> SirSwiftModule.utf16CodeUnit
 
-            isByteType -> SirSwiftModule.int8
+            classId == BYTE -> SirSwiftModule.int8
             classId == SHORT -> SirSwiftModule.int16
             classId == INT -> SirSwiftModule.int32
             classId == LONG -> SirSwiftModule.int64
