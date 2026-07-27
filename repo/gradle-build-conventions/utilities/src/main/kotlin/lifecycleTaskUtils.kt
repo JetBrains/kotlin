@@ -22,7 +22,7 @@ fun Task.dependsOnAll(task: String, projects: List<String>) {
  */
 fun TaskContainer.testLifecycleTask(name: String, action: Action<Task>) {
     register(name) {
-        extensions.extraProperties["idea.internal.test"] = "true"
+        markAsIdeaTestTask()
         action.execute(this)
     }
 }
