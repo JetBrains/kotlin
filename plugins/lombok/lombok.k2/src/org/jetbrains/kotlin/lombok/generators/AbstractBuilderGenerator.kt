@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGeneratedCompanion
+import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.java.*
@@ -74,6 +75,8 @@ sealed class BuilderDeclarationType {
     }
 
     object Field : BuilderDeclarationType()
+
+    class DefaultFlagField(val fieldName: Name) : BuilderDeclarationType()
 
     sealed class Function : BuilderDeclarationType() {
         object Setter : Function()
@@ -324,6 +327,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val singularAnnotation = item.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                     ?: (item.symbol as? FirPropertySymbol)?.backingFieldSymbol?.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                 val singular: Singular? = singularAnnotation?.let { Singular.extract(it, session) }
+                val hasBuilderDefault = (item.symbol as? FirPropertySymbol)
+                    ?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, session) != null
 
                 generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
                     if (builderSymbol.hasJavaOrigin) {
@@ -359,6 +364,21 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             key = BuilderGeneratorKey(BuilderDeclarationType.Field),
                             name = it,
                             returnType = fieldType,
+                            isVal = false,
+                        ) {
+                            modality = Modality.FINAL
+                            visibility = Visibilities.Private
+                        }.symbol
+                    }
+                }
+
+                if (!builderSymbol.hasJavaOrigin && hasBuilderDefault && singular == null) {
+                    generatedVariables.addIfNonClashing(Name.identifier(item.name.identifier + $$"$set"), existingVariableNames) {
+                        createMemberProperty(
+                            owner = builderSymbol,
+                            key = BuilderGeneratorKey(BuilderDeclarationType.DefaultFlagField(item.name)),
+                            name = it,
+                            returnType = session.builtinTypes.booleanType.coneType,
                             isVal = false,
                         ) {
                             modality = Modality.FINAL
