@@ -742,10 +742,12 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
+    @all:Deprecated("Use '-generate-test-runner' ('-tr')")
     @Argument(
         value = "-generate-worker-test-runner",
         shortName = "-trw",
         description = "Produce a worker runner for unit tests.",
+        deprecatedVersion = "2.5.0",
     )
     var generateWorkerTestRunner: Boolean = false
         set(value) {

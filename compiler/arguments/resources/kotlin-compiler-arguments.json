@@ -18449,7 +18449,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": "1.5.20",
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "2.5.0",
                                             "removedVersion": null
                                         },
                                         "argumentType": {
@@ -18463,7 +18463,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "deprecatedMessage": null
+                                        "deprecatedMessage": "Use '-generate-test-runner' ('-tr')"
                                     },
                                     {
                                         "name": "include-binary",

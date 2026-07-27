@@ -50,7 +50,7 @@ object TestDirectives : SimpleDirectivesContainer() {
 
     val TEST_RUNNER by enumDirective<TestRunnerType>(
         description = """
-            Usage: // TEST_RUNNER: [DEFAULT, WORKER, NO_EXIT]
+            Usage: // TEST_RUNNER: [DEFAULT, NO_EXIT]
             Specify test runner type.
             Note that this directive makes sense only in combination with // KIND: REGULAR or // KIND: STANDALONE
         """.trimIndent()
@@ -220,7 +220,6 @@ enum class TestKind {
 
 enum class TestRunnerType {
     DEFAULT,
-    WORKER,
     NO_EXIT
 }
 
