@@ -187,8 +187,9 @@ FILE fqName:<root> fileName:/contravariantIntersectionType.kt
               invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:functionReference visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Any
                 BLOCK_BODY
-                  CALL 'public final fun functionReference (x: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                    ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.Any declared in <root>.example.functionReference' type=@[ParameterName(name = "x")] kotlin.Any origin=null
+                  RETURN type=kotlin.Nothing from='local final fun functionReference (p0: @[ParameterName(name = "x")] kotlin.Any): kotlin.Unit declared in <root>.example'
+                    CALL 'public final fun functionReference (x: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.Any declared in <root>.example.functionReference' type=@[ParameterName(name = "x")] kotlin.Any origin=null
   FUN name:functionReference visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any
     BLOCK_BODY

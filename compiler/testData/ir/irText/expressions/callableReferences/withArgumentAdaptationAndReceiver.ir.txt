@@ -29,11 +29,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverExpression.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverExpression.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverExpression'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverExpression.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverExpression.withVararg' type=kotlin.Int origin=null
     FUN name:testBoundReceiverLocalVal visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       BLOCK_BODY
@@ -47,11 +48,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVal'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=kotlin.Int origin=null
     FUN name:testBoundReceiverLocalVar visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       BLOCK_BODY
@@ -65,11 +67,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVar'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=kotlin.Int origin=null
     FUN name:testBoundReceiverParameter visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       VALUE_PARAMETER kind:Regular name:h index:1 type:<root>.Host
@@ -82,11 +85,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverParameter.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverParameter.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverParameter'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverParameter.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverParameter.withVararg' type=kotlin.Int origin=null
     FUN name:testImplicitThis visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       BLOCK_BODY
@@ -98,11 +102,12 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testImplicitThis.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.Host.testImplicitThis.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testImplicitThis'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testImplicitThis.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.Host.testImplicitThis.withVararg' type=kotlin.Int origin=null
     FUN name:withVararg visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       VALUE_PARAMETER kind:Regular name:xs index:1 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]

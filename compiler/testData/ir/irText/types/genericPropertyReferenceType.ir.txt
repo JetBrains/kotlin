@@ -57,10 +57,11 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                TYPE_ARG T: kotlin.String
-                ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test1.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
-                ARG v: GET_VAR 'value: kotlin.String declared in <root>.test1.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test1'
+                CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test1.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test1.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
   FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -82,10 +83,11 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                TYPE_ARG T: kotlin.String
-                ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test2.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
-                ARG v: GET_VAR 'value: kotlin.String declared in <root>.test2.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test2.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test2.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
   FUN name:use visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY

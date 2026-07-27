@@ -7,7 +7,7 @@ fun test() {
   useFoo(foo = Function1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: Int) {
-      withVararg(xs = [p0]) /*~> Unit */
+      return withVararg(xs = [p0]) /*~> Unit */
     }
   )
  /*-> IFoo */)

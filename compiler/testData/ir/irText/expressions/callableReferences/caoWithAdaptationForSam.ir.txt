@@ -108,10 +108,11 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
             invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test1'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
         CALL 'public final fun set (<this>: <root>.A, i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_0: <root>.A declared in <root>.test1' type=<root>.A origin=null
           ARG i: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
@@ -133,10 +134,11 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
             invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
         CALL 'public final fun set (<this>: <root>.B, i: <root>.IFoo2, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_2: <root>.B declared in <root>.test2' type=<root>.B origin=null
           ARG i: TYPE_OP type=<root>.IFoo2 origin=SAM_CONVERSION typeOperand=<root>.IFoo2

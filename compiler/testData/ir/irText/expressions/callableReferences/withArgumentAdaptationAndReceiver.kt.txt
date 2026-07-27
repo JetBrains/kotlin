@@ -9,7 +9,7 @@ class Host {
     use(fn = Function1<Int, Unit>(
       /* bound = */ [Host()],
       /* invoke = */      local fun(receiver: Host, p0: Int) {
-        receiver.withVararg(xs = [p0]) /*~> Unit */
+        return receiver.withVararg(xs = [p0]) /*~> Unit */
       }
     )
 )
@@ -20,7 +20,7 @@ class Host {
     use(fn = Function1<Int, Unit>(
       /* bound = */ [h],
       /* invoke = */      local fun(receiver: Host, p0: Int) {
-        receiver.withVararg(xs = [p0]) /*~> Unit */
+        return receiver.withVararg(xs = [p0]) /*~> Unit */
       }
     )
 )
@@ -31,7 +31,7 @@ class Host {
     use(fn = Function1<Int, Unit>(
       /* bound = */ [h],
       /* invoke = */      local fun(receiver: Host, p0: Int) {
-        receiver.withVararg(xs = [p0]) /*~> Unit */
+        return receiver.withVararg(xs = [p0]) /*~> Unit */
       }
     )
 )
@@ -41,7 +41,7 @@ class Host {
     use(fn = Function1<Int, Unit>(
       /* bound = */ [h],
       /* invoke = */      local fun(receiver: Host, p0: Int) {
-        receiver.withVararg(xs = [p0]) /*~> Unit */
+        return receiver.withVararg(xs = [p0]) /*~> Unit */
       }
     )
 )
@@ -51,7 +51,7 @@ class Host {
     use(fn = Function1<Int, Unit>(
       /* bound = */ [<this>],
       /* invoke = */      local fun(receiver: Host, p0: Int) {
-        receiver.withVararg(xs = [p0]) /*~> Unit */
+        return receiver.withVararg(xs = [p0]) /*~> Unit */
       }
     )
 )

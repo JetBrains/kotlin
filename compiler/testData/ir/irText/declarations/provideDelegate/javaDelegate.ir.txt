@@ -14,9 +14,10 @@ FILE fqName:k fileName:/box.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.J
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
             BLOCK_BODY
-              CALL 'public open fun setFoo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'receiver: <root>.J declared in k.p1$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
-                ARG s: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.p1$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.J, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.p1$delegate'
+                CALL 'public open fun setFoo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.J declared in k.p1$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG s: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.p1$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-p1> visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
@@ -33,8 +34,9 @@ FILE fqName:k fileName:/box.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:p1 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
-                  CALL 'public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<get-p1>.p1' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun p1 (value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.<get-p1>'
+                    CALL 'public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<get-p1>.p1' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-p1> visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
@@ -52,8 +54,9 @@ FILE fqName:k fileName:/box.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:p1 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
-                  CALL 'public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<set-p1>.p1' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun p1 (value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.<set-p1>'
+                    CALL 'public final fun <set-p1> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<set-p1>.p1' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p1>' type=@[FlexibleNullability] kotlin.String? origin=null
   PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]
@@ -70,9 +73,10 @@ FILE fqName:k fileName:/box.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.J
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
             BLOCK_BODY
-              CALL 'public open fun setFoo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'receiver: <root>.J declared in k.p2$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
-                ARG s: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.p2$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.J, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.p2$delegate'
+                CALL 'public open fun setFoo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.J declared in k.p2$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG s: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.p2$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-p2> visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
@@ -89,8 +93,9 @@ FILE fqName:k fileName:/box.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:p2 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
-                  CALL 'public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<get-p2>.p2' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun p2 (value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.<get-p2>'
+                    CALL 'public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<get-p2>.p2' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-p2> visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:@[FlexibleNullability] kotlin.String?
       correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
@@ -108,8 +113,9 @@ FILE fqName:k fileName:/box.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:p2 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:@[FlexibleNullability] kotlin.String?
                 BLOCK_BODY
-                  CALL 'public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<set-p2>.p2' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun p2 (value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k.<set-p2>'
+                    CALL 'public final fun <set-p2> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in k' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in k.<set-p2>.p2' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in k.<set-p2>' type=@[FlexibleNullability] kotlin.String? origin=null
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY

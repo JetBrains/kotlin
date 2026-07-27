@@ -17,7 +17,7 @@ fun String.test() {
       return <get-bar><String, Int, Long>(/* t = c0, <this> = receiver */)
     }
     /* setter = */    local fun(c0: String, receiver: Int, value: Long?) {
-      <set-bar><String, Int, Long>(/* t = c0, <this> = receiver, */ v = value)
+      return <set-bar><String, Int, Long>(/* t = c0, <this> = receiver, */ v = value)
     }
   )
 
@@ -27,7 +27,7 @@ fun String.test() {
       return <get-bar><String, Int, Long>(/* t = c0, <this> = p0 */)
     }
     /* setter = */    local fun(c0: String, p0: Int, value: Long?) {
-      <set-bar><String, Int, Long>(/* t = c0, <this> = p0, */ v = value)
+      return <set-bar><String, Int, Long>(/* t = c0, <this> = p0, */ v = value)
     }
   )
 

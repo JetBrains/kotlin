@@ -24,7 +24,7 @@ val test_varWithBackingField: KMutableProperty0<Int>
       return <get-varWithBackingField>()
     }
     /* setter = */    local fun(value: Int) {
-      <set-varWithBackingField>(<set-?> = value)
+      return <set-varWithBackingField>(<set-?> = value)
     }
   )
 
@@ -46,7 +46,7 @@ val test_varWithBackingFieldAndAccessors: KMutableProperty0<Int>
       return <get-varWithBackingFieldAndAccessors>()
     }
     /* setter = */    local fun(value: Int) {
-      <set-varWithBackingFieldAndAccessors>(value = value)
+      return <set-varWithBackingFieldAndAccessors>(value = value)
     }
   )
 
@@ -69,7 +69,7 @@ val test_varWithAccessors: KMutableProperty0<Int>
       return <get-varWithAccessors>()
     }
     /* setter = */    local fun(value: Int) {
-      <set-varWithAccessors>(value = value)
+      return <set-varWithAccessors>(value = value)
     }
   )
 
@@ -106,7 +106,7 @@ var delegatedVar: Int /* by */
         return <get-delegatedVar>()
       }
       /* setter = */      local fun(value: Int) {
-        <set-delegatedVar>(<set-?> = value)
+        return <set-delegatedVar>(<set-?> = value)
       }
     )
 )
@@ -118,7 +118,7 @@ var delegatedVar: Int /* by */
         return <get-delegatedVar>()
       }
       /* setter = */      local fun(value: Int) {
-        <set-delegatedVar>(<set-?> = value)
+        return <set-delegatedVar>(<set-?> = value)
       }
     )
 , value = <set-?>)
@@ -131,7 +131,7 @@ val test_delegatedVar: KMutableProperty0<Int>
       return <get-delegatedVar>()
     }
     /* setter = */    local fun(value: Int) {
-      <set-delegatedVar>(<set-?> = value)
+      return <set-delegatedVar>(<set-?> = value)
     }
   )
 
@@ -168,7 +168,7 @@ val test_J_nonConst: KMutableProperty0<Int>
       return #nonConst
     }
     /* setter = */    local fun(value: Int) {
-      #nonConst = value
+      return #nonConst = value
     }
   )
 

@@ -11,7 +11,7 @@ class MyClass {
         return <get-topLevelInt>()
       }
       /* setter = */      local fun(value: Int) {
-        <set-topLevelInt>(<set-?> = value)
+        return <set-topLevelInt>(<set-?> = value)
       }
     )
 
@@ -22,7 +22,7 @@ class MyClass {
           return p0.<get-delegatedToTopLevel>()
         }
         /* setter = */        local fun(p0: MyClass, value: Int) {
-          p0.<set-delegatedToTopLevel>(<set-?> = value)
+          return p0.<set-delegatedToTopLevel>(<set-?> = value)
         }
       )
 )
@@ -34,7 +34,7 @@ class MyClass {
           return p0.<get-delegatedToTopLevel>()
         }
         /* setter = */        local fun(p0: MyClass, value: Int) {
-          p0.<set-delegatedToTopLevel>(<set-?> = value)
+          return p0.<set-delegatedToTopLevel>(<set-?> = value)
         }
       )
 , value = <set-?>)

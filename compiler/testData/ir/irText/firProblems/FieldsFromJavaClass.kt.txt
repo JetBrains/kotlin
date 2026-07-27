@@ -5,7 +5,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return receiver.#f
     }
     /* setter = */    local fun(receiver: J, value: Int) {
-      receiver.#f = value
+      return receiver.#f = value
     }
   )
 
@@ -15,7 +15,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return #s
     }
     /* setter = */    local fun(value: Int) {
-      #s = value
+      return #s = value
     }
   )
 
@@ -25,7 +25,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return receiver.#f
     }
     /* setter = */    local fun(receiver: X, value: Int) {
-      receiver.#f = value
+      return receiver.#f = value
     }
   )
 
@@ -35,7 +35,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return #s
     }
     /* setter = */    local fun(value: Int) {
-      #s = value
+      return #s = value
     }
   )
 
@@ -45,7 +45,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return receiver.#f2
     }
     /* setter = */    local fun(receiver: X, value: Int) {
-      receiver.#f2 = value
+      return receiver.#f2 = value
     }
   )
 
@@ -55,7 +55,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return #s2
     }
     /* setter = */    local fun(value: Int) {
-      #s2 = value
+      return #s2 = value
     }
   )
 
@@ -65,7 +65,7 @@ fun f(j: J, x: X, j1: J1<String>) {
       return receiver.#f
     }
     /* setter = */    local fun(receiver: J1<String>, value: @FlexibleNullability String?) {
-      receiver.#f = value
+      return receiver.#f = value
     }
   )
 

@@ -22,7 +22,7 @@ var test4: Any /* by */
         return <get-test4>()
       }
       /* setter = */      local fun(value: Any) {
-        <set-test4>(<set-?> = value)
+        return <set-test4>(<set-?> = value)
       }
     )
 )
@@ -34,7 +34,7 @@ var test4: Any /* by */
         return <get-test4>()
       }
       /* setter = */      local fun(value: Any) {
-        <set-test4>(<set-?> = value)
+        return <set-test4>(<set-?> = value)
       }
     )
 , value = <set-?>)
@@ -69,7 +69,7 @@ class C {
           return p0.<get-test3>()
         }
         /* setter = */        local fun(p0: C, value: Any) {
-          p0.<set-test3>(<set-?> = value)
+          return p0.<set-test3>(<set-?> = value)
         }
       )
 )
@@ -81,7 +81,7 @@ class C {
           return p0.<get-test3>()
         }
         /* setter = */        local fun(p0: C, value: Any) {
-          p0.<set-test3>(<set-?> = value)
+          return p0.<set-test3>(<set-?> = value)
         }
       )
 , value = <set-?>)

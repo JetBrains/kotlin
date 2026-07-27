@@ -21,9 +21,10 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY
-                SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Derived' type=kotlin.Unit origin=null
-                  receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.Derived.ref.j' type=<root>.Derived origin=null
-                  value: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Derived.ref.j' type=@[FlexibleNullability] kotlin.String? origin=null
+                RETURN type=kotlin.Nothing from='local final fun j (receiver: <root>.Derived, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Derived.ref'
+                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Derived' type=kotlin.Unit origin=null
+                    receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.Derived.ref.j' type=<root>.Derived origin=null
+                    value: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Derived.ref.j' type=@[FlexibleNullability] kotlin.String? origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived
         correspondingProperty: PROPERTY name:ref visibility:public modality:FINAL [val]

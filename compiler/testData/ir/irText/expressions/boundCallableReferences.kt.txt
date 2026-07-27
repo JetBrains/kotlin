@@ -2,7 +2,7 @@ val test1: KFunction0<Unit>
   field = KFunction0<Unit>(
     /* bound = */ [A()],
     /* invoke = */    local fun(receiver: A) {
-      receiver.foo()
+      return receiver.foo()
     }
   )
 
@@ -22,7 +22,7 @@ val test3: KFunction0<Unit>
   field = KFunction0<Unit>(
     /* bound = */ [A()],
     /* invoke = */    local fun(receiver: A) {
-      qux(/* <this> = receiver */)
+      return qux(/* <this> = receiver */)
     }
   )
 
