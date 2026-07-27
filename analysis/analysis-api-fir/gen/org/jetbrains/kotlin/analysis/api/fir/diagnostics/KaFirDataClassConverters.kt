@@ -4333,6 +4333,12 @@ private fun KaDiagnosticConverterBuilder.addConversions96() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME) { firDiagnostic ->
+        JvmExposeBoxedCanBeReplacedWithJvmNameImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions97() {
