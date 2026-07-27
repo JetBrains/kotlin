@@ -3,6 +3,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// LANGUAGE: -JsAllowExportTypealiases +NestedTypeAliases
 // FILE: regular-classes.kt
 
 package foo
@@ -19,6 +20,9 @@ class A2(val x: String, var y: Boolean)
 @JsExport
 class A3 {
     val x: Int = 100
+
+    @JsExport.Ignore
+    typealias Ignored = A2
 }
 
 @JsExport
