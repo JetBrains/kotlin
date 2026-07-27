@@ -383,10 +383,12 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     .readText()
                     .replace(Regex("\\s+"), " ")
 
-                assertContains(
-                    manifestContent, ".product( name: \"AWSS3\", package: \"aws-sdk-ios-spm\", condition: .when(platforms: [.iOS]) ),",
-                    message = "AWSS3 product should have iOS platform condition"
+
+                assertFalse(
+                    manifestContent.contains(".product( name: \"AWSS3\", package: \"aws-sdk-ios-spm\", condition: .when(platforms: [.iOS]) ),"),
+                    message = "AWSS3 product should not have an iOS platform condition because iOS is already defined in the top-level platforms",
                 )
+
                 assertContains(
                     manifestContent,
                     ".product( name: \"AWSEC2\", package: \"aws-sdk-ios-spm\", condition: .when(platforms: [.macOS, .tvOS]) ),",
