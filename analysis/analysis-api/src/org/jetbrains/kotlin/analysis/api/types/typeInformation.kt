@@ -270,12 +270,19 @@ public val KaType.isDoubleType: Boolean
 /**
  * Whether the [KaType] is a [Char] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.CHAR",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isCharType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isCharType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.CHAR
 
 /**
  * Whether the [KaType] is a [Boolean] type.
