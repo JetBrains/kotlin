@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.types.IrType
 
 @PhasePrerequisites(
@@ -23,10 +22,9 @@ import org.jetbrains.kotlin.ir.types.IrType
     EnumEntryCreateGetInstancesFunsLowering::class,
 )
 class JsStaticInitializersDeclarationLowering(override val context: JsIrBackendContext) : WebStaticInitializersDeclarationLowering() {
-    override fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, container: IrClass): IrCall =
-        irCall(this@JsStaticInitializersDeclarationLowering.context.symbols.checkStaticInitializationState).apply {
-            arguments[0] = getStateField
-            arguments[1] = container.jsConstructorReference(this@JsStaticInitializersDeclarationLowering.context)
+    override fun IrBuilderWithScope.generateStaticInitializationFailureCallWithClassName(container: IrClass): IrCall =
+        irCall(this@JsStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailureWithClassName).apply {
+            arguments[0] = container.jsConstructorReference(this@JsStaticInitializersDeclarationLowering.context)
         }
 
     override fun IrBuilderWithScope.undefinedOrNull(): IrExpression = this@JsStaticInitializersDeclarationLowering.context.getVoid()
