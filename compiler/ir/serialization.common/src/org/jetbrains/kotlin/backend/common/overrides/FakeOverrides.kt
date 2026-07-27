@@ -62,6 +62,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
     private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean,
 ) : FakeOverrideBuilderStrategy() {
+    override val createFakeOverridesForInvisibleAbstract: Boolean get() = true
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)

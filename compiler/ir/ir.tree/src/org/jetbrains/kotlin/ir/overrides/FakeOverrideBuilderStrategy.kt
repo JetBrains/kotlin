@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -59,12 +60,18 @@ abstract class FakeOverrideBuilderStrategy {
      */
     open val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean = false
 
+    open val createFakeOverridesForInvisibleAbstract: Boolean get() = false
+
     /**
      * Creates a fake override for [member] from [superType] to be added to the class [clazz] or returns null,
      * if no fake override should be created for this member
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
-        return runIf(isVisibleForOverrideInClass(member, clazz)) {
+        val createFakeOverride = when {
+            createFakeOverridesForInvisibleAbstract && member.modality == Modality.ABSTRACT -> true
+            else -> isVisibleForOverride(clazz, member)
+        }
+        return runIf(createFakeOverride) {
             buildFakeOverrideMember(superType, member, clazz)
         }
     }
@@ -89,29 +96,52 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
-    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
-        return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().moduleDescriptor
-                val memberModule = original.getPackageFragment().moduleDescriptor
-
-                when {
-                    thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
-                    !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
-                    else -> false
+    fun isVisibleForOverride(visibleFrom: IrClass, target: IrOverridableMember, allowBothDirectionsOfFriendship: Boolean = false) : Boolean {
+        if (DescriptorVisibilities.isPrivate(target.visibility)) {
+            return false
+        }
+        if (target.visibility == DescriptorVisibilities.INVISIBLE_FAKE) {
+            return false
+        }
+        if (target.visibility == DescriptorVisibilities.INTERNAL) {
+            val visibleFromModule = visibleFrom.getPackageFragment().moduleDescriptor
+            val targetModule = target.getPackageFragment().moduleDescriptor
+            when {
+                visibleFromModule == targetModule -> {}
+                shouldSeeInternals(visibleFromModule, targetModule) -> {}
+                allowBothDirectionsOfFriendship && shouldSeeInternals(targetModule, visibleFromModule) -> {}
+                !isOverrideOfPublishedApiFromOtherModuleDisallowed && target.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> {}
+                else -> {
+                    return false
                 }
             }
-            else -> {
-                original.visibility.visibleFromPackage(
-                    clazz.getPackageFragment().packageFqName,
-                    original.getPackageFragment().packageFqName
-                )
+        }
+        return target.visibility.visibleFromPackage(
+            visibleFrom.getPackageFragment().packageFqName,
+            target.getPackageFragment().packageFqName
+        )
+    }
+
+    fun isVisibleForOverrideFromClass(override: IrOverridableMember, clazz: IrClass) : Boolean {
+        if (DescriptorVisibilities.isPrivate(override.visibility)) {
+            return false
+        }
+        if (override.visibility == DescriptorVisibilities.INTERNAL) {
+            val originalModule = clazz.getPackageFragment().moduleDescriptor
+            val overrideModule = override.getPackageFragment().moduleDescriptor
+            when {
+                overrideModule == originalModule -> {}
+                shouldSeeInternals(originalModule, overrideModule) -> {}
+                !isOverrideOfPublishedApiFromOtherModuleDisallowed && override.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> {}
+                else -> {
+                    return false
+                }
             }
         }
+        return override.visibility.visibleFromPackage(
+            override.getPackageFragment().packageFqName,
+            clazz.getPackageFragment().packageFqName,
+        )
     }
 
     /**
