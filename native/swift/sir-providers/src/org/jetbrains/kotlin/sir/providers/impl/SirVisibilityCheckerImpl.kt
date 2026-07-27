@@ -128,7 +128,7 @@ public class SirVisibilityCheckerImpl(
                         }
                     }
                     visibility
-                } else if (type.isPrimitive || type.classId == KaStandardTypeClassIds.NOTHING) {
+                } else if (type.classId in KaStandardTypeClassIds.PRIMITIVES || type.classId == KaStandardTypeClassIds.NOTHING) {
                     SirVisibility.PUBLIC
                 } else when (val availability = type.availability()) {
                     is SirAvailability.Available -> availability.visibility

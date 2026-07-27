@@ -500,12 +500,19 @@ public val KaType.isNestedArray: Boolean
 /**
  * Whether the [KaType] is a primitive type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId in KaStandardTypeClassIds.PRIMITIVES",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isPrimitive: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isPrimitive(this)
-    }
+    get() = classId in KaStandardTypeClassIds.PRIMITIVES
 
 /**
  * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
