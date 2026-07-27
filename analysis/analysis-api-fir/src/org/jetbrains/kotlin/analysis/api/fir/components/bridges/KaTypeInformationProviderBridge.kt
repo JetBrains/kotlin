@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.analysis.api.types.isNestedArray as isNestedArrayEnd
 import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoint
 
 /**
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
@@ -178,7 +177,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isUByteType: Boolean
-        get() = context(analysisSession) { isUByteTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == StandardClassIds.UByte
+        }
 
     override val KaType.expandedSymbol: KaClassSymbol?
         get() = context(analysisSession) { expandedSymbolEndpoint }

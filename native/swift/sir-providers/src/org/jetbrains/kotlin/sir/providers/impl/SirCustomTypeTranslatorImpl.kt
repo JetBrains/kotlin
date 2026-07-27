@@ -146,7 +146,7 @@ public class SirCustomTypeTranslatorImpl(
             classId == INT -> SirSwiftModule.int32
             classId == LONG -> SirSwiftModule.int64
 
-            isUByteType -> SirSwiftModule.uint8
+            classId == StandardClassIds.UByte -> SirSwiftModule.uint8
             classId == StandardClassIds.UShort -> SirSwiftModule.uint16
             classId == StandardClassIds.UInt -> SirSwiftModule.uint32
             classId == StandardClassIds.ULong -> SirSwiftModule.uint64
