@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
-    if (valueParameterSymbols.size != 1) return false
     if (contextParameterSymbols.isNotEmpty()) return false
     if (receiverParameterSymbol != null) return false
-    val parameter = valueParameterSymbols.first()
+    if (dispatchReceiverType == null) return false
+    val parameter = valueParameterSymbols.singleOrNull() ?: return false
     return parameter.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isNullableAny
 }
 
