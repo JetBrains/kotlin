@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.util.FirExceptionHandler
 
 internal object LLFirExceptionHandler : FirExceptionHandler() {
     override fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing {

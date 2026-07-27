@@ -40,6 +40,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
             is KtLightSourceElement ->
                 source.treeStructure.valOrVarKeyword(source.lighterASTNode)?.toKtLightSourceElement(source.treeStructure)
 
+            else -> error("Unexpected KtSourceElement: $source")
         } ?: return
 
         reporter.reportOn(

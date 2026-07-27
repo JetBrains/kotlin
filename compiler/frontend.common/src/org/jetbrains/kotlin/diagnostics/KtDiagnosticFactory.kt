@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -77,29 +75,7 @@ class KtDiagnosticFactory0(
         context: DiagnosticBaseContext,
     ): KtSimpleDiagnostic? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            is KtLightSourceElement -> KtLightSimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlySimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return element.createDiagnostic0(effectiveSeverity, this, positioningStrategy ?: defaultPositioningStrategy, context)
     }
 }
 
@@ -118,32 +94,7 @@ class KtDiagnosticFactory1<A>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters1<A>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return element.createDiagnostic1(effectiveSeverity, this, a, positioningStrategy ?: defaultPositioningStrategy, context)
     }
 }
 
@@ -163,35 +114,7 @@ class KtDiagnosticFactory2<A, B>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters2<A, B>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return element.createDiagnostic2(effectiveSeverity, this, a, b, positioningStrategy ?: defaultPositioningStrategy, context)
     }
 }
 
@@ -212,38 +135,7 @@ class KtDiagnosticFactory3<A, B, C>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters3<A, B, C>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return element.createDiagnostic3(effectiveSeverity, this, a, b, c, positioningStrategy ?: defaultPositioningStrategy, context)
     }
 }
 
@@ -265,41 +157,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters4<A, B, C, D>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return element.createDiagnostic4(effectiveSeverity, this, a, b, c, d, positioningStrategy ?: defaultPositioningStrategy, context)
     }
 }
 

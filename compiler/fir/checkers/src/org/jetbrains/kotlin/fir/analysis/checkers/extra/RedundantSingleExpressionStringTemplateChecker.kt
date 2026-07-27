@@ -43,6 +43,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCa
             is KtPsiSourceElement -> source.psi.stringParentChildrenCount()
             is KtLightSourceElement -> source.lighterASTNode.stringParentChildrenCount(source)
             null -> null
+            else -> error("Unexpected KtSourceElement: $source")
         }
     }
 

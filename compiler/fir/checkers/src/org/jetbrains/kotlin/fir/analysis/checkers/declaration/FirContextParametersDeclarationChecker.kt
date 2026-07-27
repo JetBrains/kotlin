@@ -123,6 +123,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
                     ?.let { treeStructure.findChildrenByType(it, KtNodeTypes.CONTEXT_PARAMETER_LIST) }
                     ?.map { it.toKtLightSourceElement(treeStructure) }
                     .orEmpty()
+            else -> error("Unexpected KtSourceElement: $this")
         }
     }
 }

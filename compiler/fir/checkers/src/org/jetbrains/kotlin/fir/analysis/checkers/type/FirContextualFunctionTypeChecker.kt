@@ -74,6 +74,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         return when (this) {
             is KtPsiSourceElement -> psi.findContextReceiverListSource()
             is KtLightSourceElement -> lighterASTNode.findContextReceiverListSource(treeStructure)
+            else -> error("Unexpected KtSourceElement: $this")
         }
     }
 }

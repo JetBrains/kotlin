@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDi
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 
 fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<FirFile>> {
     val resolveProcessor = FirTotalResolveProcessor(this)

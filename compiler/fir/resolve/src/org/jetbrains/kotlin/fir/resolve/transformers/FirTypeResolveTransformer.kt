@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.whileAnalysing
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirTypeResolveProcessor(

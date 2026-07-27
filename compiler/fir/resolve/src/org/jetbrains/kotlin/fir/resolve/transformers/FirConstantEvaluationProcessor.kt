@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirConstantEvaluationProcessor(

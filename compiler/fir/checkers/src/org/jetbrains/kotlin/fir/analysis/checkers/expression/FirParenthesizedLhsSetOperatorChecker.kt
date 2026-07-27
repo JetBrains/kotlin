@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.hasUnwrappableAsAssignmentLhs
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
-import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsAssignmentLhs
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirParenthesizedLhsSetOperatorChecker : FirFunctionCallChecker(MppCheckerKind.Platform) {

@@ -39,3 +39,4 @@
 -dontwarn org.jetbrains.kotlin.com.google.common.hash.**
 -dontwarn org.jetbrains.kotlin.org.apache.log4j.**
 -dontwarn org.jetbrains.kotlin.cli.**
+-dontwarn org.jetbrains.kotlin.util.**

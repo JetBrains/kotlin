@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.whileAnalysing
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirStatusResolveProcessor(

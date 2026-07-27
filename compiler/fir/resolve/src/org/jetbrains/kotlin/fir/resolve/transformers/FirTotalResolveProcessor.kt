@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTyp
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.optimization.FirAggressivePruningProcessor
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 
 class FirTotalResolveProcessor(private val session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()

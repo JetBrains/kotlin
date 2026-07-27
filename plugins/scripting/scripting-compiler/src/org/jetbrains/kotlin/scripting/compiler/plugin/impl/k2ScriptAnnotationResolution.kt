@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfiguration
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*

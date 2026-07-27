@@ -782,6 +782,7 @@ internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
     get() = when (this) {
         is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
         is KtLightSourceElement -> findDefaultValue(this)
+        else -> error("Unexpected KtSourceElement: $this")
     }
 
 private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {

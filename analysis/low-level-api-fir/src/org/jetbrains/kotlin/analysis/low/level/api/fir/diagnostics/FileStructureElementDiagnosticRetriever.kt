@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
+import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 
 /**
  * Collects [FileStructureElementDiagnosticList] for specific [declaration].
@@ -203,4 +203,12 @@ internal class ReplSnippetDiagnosticRetriever(
         context = context,
         components = components,
     )
+}
+
+private inline fun <R> withSourceCodeAnalysisExceptionUnwrapping(block: () -> R): R {
+    return try {
+        block()
+    } catch (throwable: Throwable) {
+        throw (throwable as? SourceCodeAnalysisException)?.cause ?: throwable
+    }
 }

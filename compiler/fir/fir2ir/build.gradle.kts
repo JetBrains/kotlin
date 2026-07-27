@@ -10,6 +10,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":compiler:fir:raw-fir:raw-fir.common"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
     implementation(project(":compiler:fir:cones"))

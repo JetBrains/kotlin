@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 
 @OptIn(PrivateForInline::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(

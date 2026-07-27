@@ -75,6 +75,7 @@ interface SourceNavigator {
             is KtLightSourceElement -> lightTreeInstance
             is KtPsiSourceElement -> PsiSourceNavigator
             null -> lightTreeInstance //shouldn't matter
+            else -> error("Unexpected KtSourceElement: $e")
         }
 
         inline fun <R> FirElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this.source), block)

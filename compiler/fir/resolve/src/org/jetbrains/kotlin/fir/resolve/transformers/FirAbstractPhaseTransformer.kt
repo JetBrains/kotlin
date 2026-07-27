@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 
 abstract class FirAbstractPhaseTransformer<D>(
     val baseTransformerPhase: FirResolvePhase

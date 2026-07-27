@@ -111,6 +111,7 @@ fun KtSourceElement?.getModifierList(): FirModifierList? {
             val offsetDelta = startOffset - lighterASTNode.startOffset
             FirModifierList.FirLightModifierList(modifierListNode, treeStructure, offsetDelta)
         }
+        else -> error("Unexpected KtSourceElement: $this")
     }
 }
 
@@ -133,4 +134,5 @@ internal val KtSourceElement?.valOrVarKeyword: KtKeywordToken?
         null -> null
         is KtPsiSourceElement -> (psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.let { it.node?.elementType as? KtKeywordToken }
         is KtLightSourceElement -> treeStructure.valOrVarKeyword(lighterASTNode)?.tokenType as? KtKeywordToken
+        else -> error("Unexpected KtSourceElement: $this")
     }

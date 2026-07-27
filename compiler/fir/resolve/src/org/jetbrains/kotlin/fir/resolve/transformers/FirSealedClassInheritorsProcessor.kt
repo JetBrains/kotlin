@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirSealedClassInheritorsProcessor(

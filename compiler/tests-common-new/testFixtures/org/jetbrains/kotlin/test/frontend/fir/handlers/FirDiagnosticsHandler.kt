@@ -441,6 +441,7 @@ private val KtSourceElement.parentAsSourceElement: KtSourceElement?
         KtNodeTypes.REFERENCE_EXPRESSION -> when (this) {
             is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
+            else -> error("Unexpected KtSourceElement: $this")
         }
         else -> null
     }
@@ -451,6 +452,7 @@ private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
             is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
             is KtLightSourceElement -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)
                 ?.toKtLightSourceElement(treeStructure, kind)
+            else -> error("Unexpected KtSourceElement: $this")
         }
         else -> null
     }
@@ -512,6 +514,7 @@ private class DebugDiagnosticConsumer(
                 factory.defaultPositioningStrategy,
                 DiagnosticContext.Default,
             )
+            else -> error("Unexpected KtSourceElement: $this")
         }
 
         result.add(diagnostic)
@@ -550,6 +553,7 @@ private class DebugDiagnosticConsumer(
                 factory.defaultPositioningStrategy,
                 DiagnosticContext.Default,
             )
+            else -> error("Unexpected KtSourceElement: $this")
         }
 
         result.add(diagnostic)

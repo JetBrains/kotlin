@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationS
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.util.FirExceptionHandler
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(
