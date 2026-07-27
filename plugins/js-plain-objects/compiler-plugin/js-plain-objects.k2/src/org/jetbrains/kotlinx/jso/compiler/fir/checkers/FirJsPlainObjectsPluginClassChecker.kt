@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
@@ -38,19 +37,18 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
             val classSymbol = declaration.symbol as? FirRegularClassSymbol ?: return
 
             if (classSymbol.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
-                checkJsPlainObjectAnnotationTargets(classSymbol, context, reporter)
-                checkJsPlainObjectSuperTypes(classSymbol, context, reporter)
-                checkJsPlainObjectMembers(classSymbol, context, reporter)
+                checkJsPlainObjectAnnotationTargets(classSymbol)
+                checkJsPlainObjectSuperTypes(classSymbol)
+                checkJsPlainObjectMembers(classSymbol)
             } else {
-                checkJsPlainObjectAsSuperInterface(classSymbol, context, reporter)
+                checkJsPlainObjectAsSuperInterface(classSymbol)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkJsPlainObjectAnnotationTargets(
         classSymbol: FirClassSymbol<FirClass>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val classKind = classSymbol.classKind.codeRepresentation ?: error("Unexpected enum entry")
 
@@ -64,10 +62,9 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkJsPlainObjectMembers(
         classSymbol: FirClassSymbol<FirClass>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (!classSymbol.isEffectivelyExternal(context.session) || !classSymbol.isInterface) return
         classSymbol
@@ -79,17 +76,16 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
             }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkJsPlainObjectSuperTypes(
         classSymbol: FirClassSymbol<FirClass>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val session = context.session
         if (!classSymbol.isEffectivelyExternal(session) || !classSymbol.isInterface) return
         classSymbol.resolvedSuperTypeRefs.forEach { superType ->
             val superInterface = superType.coneType
                 .takeIf { !it.isAny }
-                ?.fullyExpandedType(session)
+                ?.fullyExpandedType()
                 ?.toRegularClassSymbol(session) ?: return@forEach
 
             if (!superInterface.isAllowedToUseAsSuperType(session)) {
@@ -108,14 +104,13 @@ object FirJsPlainObjectsPluginClassChecker : FirClassChecker(MppCheckerKind.Plat
         hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session) ||
                 resolvedSuperTypeRefs.singleOrNull()?.isAny == true && fir.declarations.isEmpty()
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkJsPlainObjectAsSuperInterface(
         classSymbol: FirClassSymbol<FirClass>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val session = context.session
         classSymbol.resolvedSuperTypeRefs.forEach {
-            val superInterface = it.coneType.fullyExpandedType(session)
+            val superInterface = it.coneType.fullyExpandedType()
                 .toRegularClassSymbol(session)
                 ?.takeIf { it.classKind == ClassKind.INTERFACE } ?: return@forEach
 
