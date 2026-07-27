@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
 import javax.swing.Icon
 
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
-abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE),
-    KaElementJavaView {
+abstract class KtLightElementBase(
+    private var parent: PsiElement
+) : LightElement(parent.manager, KotlinLanguage.INSTANCE), KaElementJavaView {
     override fun toString() = "${this::class.simpleName.orEmpty()} of $parent"
     override fun getParent(): PsiElement = parent
 
