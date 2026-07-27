@@ -193,10 +193,19 @@ class ComposerParamTransformer(
     }
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
-        expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
+        if (expression.type.isKComposableFunction() || expression.type.isSyntheticComposableFunction()) {
+            expression.invokeFunction.createComposableAnnotationIfAbsent()
+            expression.overriddenFunctionSymbol =
+                expression.overriddenFunctionSymbol.owner.lambdaInvokeWithComposerParam(context).symbol
+        } else {
+            expression.overriddenFunctionSymbol =
+                expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
+        }
 
         return super.visitRichFunctionReference(expression)
     }
+
+
 
     private fun IrFunction.findCallInBody(): IrCall? {
         var call: IrCall? = null
