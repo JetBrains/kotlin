@@ -115,6 +115,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                 Kotlin Gradle plugin has run JVM compilations using the Build Tools API by default since Kotlin 2.3.20. The legacy mode is deprecated and will be removed in Kotlin 2.5.0. Please create an issue if something is not working correctly when the Build Tools API is active: https://kotl.in/issue
             """.trimIndent()
         ), // since 2.4.0
+        DeprecatedProperty(
+            propertyName = "kotlin.pluginLoadedInMultipleProjects.ignore",
+            details = "This property should not be used in normal circumstances. If your build doesn't work without it, please consider " +
+                    "filing an issue and providing details: https://kotl.in/issue.",
+        ), // since 2.5.0
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

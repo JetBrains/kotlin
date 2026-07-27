@@ -94,7 +94,4 @@ const val MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING: String =
 
             "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
 
-const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING: String =
-    "The Kotlin plugin was loaded in the following projects: "
-
 const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: String = "The full list of projects that loaded the Kotlin plugin is: "
