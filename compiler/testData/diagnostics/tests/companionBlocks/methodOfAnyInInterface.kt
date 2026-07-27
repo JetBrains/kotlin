@@ -4,13 +4,13 @@
 
 interface A {
     companion {
-        fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?): Boolean = true
+        fun equals(other: Any?): Boolean = true
     }
 }
 
 interface B {
     companion {
-        fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?): B = object : B {}
+        fun equals(other: Any?): B = object : B {}
     }
 }
 
