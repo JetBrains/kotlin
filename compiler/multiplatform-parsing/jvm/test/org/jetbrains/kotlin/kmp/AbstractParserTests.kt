@@ -20,6 +20,10 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
         TestParseNode<out NewParserTestNode>
         >(), Disposable {
 
+    init {
+        System.setProperty("ide.can.use.coroutines.fork", "false")
+    }
+
     protected val disposable = Disposer.newDisposable("Disposable for `${javaClass.simpleName}`")
 
     abstract val parseMode: ParseMode
