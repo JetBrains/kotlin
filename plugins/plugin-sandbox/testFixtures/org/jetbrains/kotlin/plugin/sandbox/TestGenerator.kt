@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.tests.standalone
-import org.jetbrains.kotlin.generators.tests.standaloneNoTR
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
@@ -22,6 +22,8 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "plugins/plugin-sandbox/testData") {
             testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("intentionallyEmpty")
+                model("intentionallyNonExistent")
             }
 
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
@@ -50,6 +52,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirMetadataPluginSandboxTest> {
                 model("metadata")
+            }
+
+            testClass<AbstractFirMetadataPluginSandboxTest>(suiteTestClassName = "EmptyTestGenerated") {
+                model("intentionallyEmpty")
+            }
+
+            testClass<AbstractFirMetadataPluginSandboxTest>(suiteTestClassName = "NonExistentTestGenerated") {
+                model("intentionallyNonExistent")
             }
 
             testClass<AbstractNativeCodegenBoxTest>(
