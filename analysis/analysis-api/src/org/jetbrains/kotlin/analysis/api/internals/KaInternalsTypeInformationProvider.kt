@@ -37,40 +37,6 @@ public interface KaInternalsTypeInformationProvider {
 
     public fun hasFlexibleNullability(type: KaType): Boolean
 
-    public fun isUnitType(type: KaType): Boolean
-
-    public fun isIntType(type: KaType): Boolean
-
-    public fun isLongType(type: KaType): Boolean
-
-    public fun isShortType(type: KaType): Boolean
-
-    public fun isByteType(type: KaType): Boolean
-
-    public fun isFloatType(type: KaType): Boolean
-
-    public fun isDoubleType(type: KaType): Boolean
-
-    public fun isCharType(type: KaType): Boolean
-
-    public fun isBooleanType(type: KaType): Boolean
-
-    public fun isStringType(type: KaType): Boolean
-
-    public fun isCharSequenceType(type: KaType): Boolean
-
-    public fun isAnyType(type: KaType): Boolean
-
-    public fun isNothingType(type: KaType): Boolean
-
-    public fun isUIntType(type: KaType): Boolean
-
-    public fun isULongType(type: KaType): Boolean
-
-    public fun isUShortType(type: KaType): Boolean
-
-    public fun isUByteType(type: KaType): Boolean
-
     public fun expandedSymbol(type: KaType): KaClassSymbol?
 
     public fun fullyExpandedType(type: KaType): KaType
@@ -78,8 +44,6 @@ public interface KaInternalsTypeInformationProvider {
     public fun isArrayOrPrimitiveArray(type: KaType): Boolean
 
     public fun isNestedArray(type: KaType): Boolean
-
-    public fun isPrimitive(type: KaType): Boolean
 
     public fun defaultInitializer(type: KaType): String?
 
