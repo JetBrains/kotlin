@@ -38,6 +38,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.generateDebugTrampolineString = from.generateDebugTrampolineString
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
     to.generateTestRunner = from.generateTestRunner
+    @Suppress("DEPRECATION")
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
     to.headerKlibPath = from.headerKlibPath
     to.includeBinaries = from.includeBinaries.copyOf()

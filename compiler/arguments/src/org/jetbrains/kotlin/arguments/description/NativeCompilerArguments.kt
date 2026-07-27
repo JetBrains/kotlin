@@ -65,10 +65,12 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "trw"
         description = "Produce a worker runner for unit tests.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        deprecatedMessage = "Use '-generate-test-runner' ('-tr')"
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 

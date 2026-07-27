@@ -786,7 +786,6 @@ class ExecutableCompilation(
         internal fun ArgsBuilder.applyTestRunnerSpecificArgs(extras: WithTestRunnerExtras, testDumpFile: File?) {
             val testRunnerArg = when (extras.runnerType) {
                 TestRunnerType.DEFAULT -> "-generate-test-runner"
-                TestRunnerType.WORKER -> "-generate-worker-test-runner"
                 TestRunnerType.NO_EXIT -> "-generate-no-exit-test-runner"
             }
             add(testRunnerArg)
@@ -957,7 +956,7 @@ internal class TestBundleCompilation(
         internal fun ArgsBuilder.applyTestRunnerSpecificArgs(extras: WithTestRunnerExtras, testDumpFile: File?) {
             val testRunnerArg = when (extras.runnerType) {
                 TestRunnerType.DEFAULT -> "-generate-test-runner"
-                TestRunnerType.WORKER, TestRunnerType.NO_EXIT -> error("${extras.runnerType} runner is not supported in XCTest execution")
+                TestRunnerType.NO_EXIT -> error("${extras.runnerType} runner is not supported in XCTest execution")
             }
             add(testRunnerArg)
             testDumpFile?.let { add("-Xdump-tests-to=$it") }
