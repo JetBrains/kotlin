@@ -547,7 +547,7 @@ internal fun createInheritanceList(
 
     fun KaType.needToAddTypeIntoList(): Boolean {
         // Do not add redundant "extends java.lang.Object" anywhere
-        if (this.isAnyType) return false
+        if (this.classId == KaStandardTypeClassIds.ANY) return false
         // Interfaces have only extends lists
         if (lightClass.isInterface) return forExtendsList
 

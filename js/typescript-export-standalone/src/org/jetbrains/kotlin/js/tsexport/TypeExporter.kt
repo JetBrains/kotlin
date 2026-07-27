@@ -53,7 +53,7 @@ internal class TypeExporter(
 
     context(_: KaSession)
     private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
-        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.isAnyType))
+        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.classId == KaStandardTypeClassIds.ANY))
             return Primitive.Unknown
 
         if (type is KaDynamicType || type in currentlyProcessedTypes)
@@ -100,7 +100,7 @@ internal class TypeExporter(
             return Primitive.Number
         if (type.classId == KaStandardTypeClassIds.STRING)
             return Primitive.String
-        if (type.isAnyType)
+        if (type.classId == KaStandardTypeClassIds.ANY)
             return Primitive.Any
         if (type.classId == KaStandardTypeClassIds.UNIT)
             return Primitive.Unit

@@ -338,12 +338,19 @@ public val KaType.isCharSequenceType: Boolean
 /**
  * Whether the [KaType] is an [Any] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.ANY",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isAnyType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isAnyType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.ANY
 
 /**
  * Whether the [KaType] is a [Nothing] type.
