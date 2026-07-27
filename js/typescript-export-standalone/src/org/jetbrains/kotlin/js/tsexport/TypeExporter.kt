@@ -94,7 +94,7 @@ internal class TypeExporter(
     private fun exportSimpleNonNullableType(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         if (type.classId == KaStandardTypeClassIds.BOOLEAN)
             return Primitive.Boolean
-        if (type.classId == KaStandardTypeClassIds.LONG || type.isULongType)
+        if (type.classId == KaStandardTypeClassIds.LONG || type.classId == StandardClassIds.ULong)
             return if (config.compileLongAsBigInt) Primitive.BigInt else ErrorType("Long")
         if (type.isPrimitive && type.classId != KaStandardTypeClassIds.CHAR)
             return Primitive.Number
