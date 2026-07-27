@@ -135,12 +135,7 @@ internal class JavaPackageIndexer(
                     !packageStartsWithOrEquals(it, prefix) -> return@mapNotNull null
                     else -> requestedSegments.drop(prefix.pathSegments().size)
                 }
-                var dir = entry.root
-                for (segment in relativeSegments) {
-                    dir = File(dir, segment)
-                    if (!dir.isDirectory) return@mapNotNull null
-                }
-                dir
+                descendDirectoriesCaseSensitive(entry.root, relativeSegments)
             }
         }
     }
@@ -305,11 +300,21 @@ internal class JavaPackageIndexer(
         return result
     }
 
-    private fun findPackageDirectoryUnder(root: File, relativeSegments: List<String>): File? {
+    private fun findPackageDirectoryUnder(root: File, relativeSegments: List<String>): File? =
+        descendDirectoriesCaseSensitive(root, relativeSegments)
+
+    /**
+     * Case-sensitive directory walk: uses [File.list] name equality, not `File(dir, name).isDirectory`,
+     * which would incorrectly match on case-insensitive filesystems (e.g. `Logger` vs `logger`).
+     */
+    private fun descendDirectoriesCaseSensitive(root: File, segments: List<String>): File? {
         var dir = root
-        for (segment in relativeSegments) {
-            dir = File(dir, segment)
-            if (!dir.isDirectory) return null
+        for (segment in segments) {
+            val childNames = dir.list() ?: return null
+            if (segment !in childNames) return null
+            val child = File(dir, segment)
+            if (!child.isDirectory) return null
+            dir = child
         }
         return dir
     }

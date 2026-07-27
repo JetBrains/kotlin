@@ -36,6 +36,20 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-27 — Make Java-source package directory descent case-sensitive
+- **Change**: `JavaPackageIndexer`'s per-package directory descent used `File(dir, segment).isDirectory`
+  (added 2026-07-21 when the source path moved from `VirtualFile` to `java.io.File`), which is
+  case-insensitive on macOS/Windows. A sibling source dir (`syntax/logger`, `platform/ml/session`)
+  was wrongly accepted as package `Logger`/`Session`, so nested-class imports like
+  `com.intellij.platform.syntax.Logger.Attachment` mis-split into a package prefix and reported
+  `UNRESOLVED_IMPORT`. Descent now matches against the parent's real child names via `File.list()`
+  (case-sensitive), mirroring the binary index / PSI VFS `findChild`.
+- **Files**: `JavaPackageIndexer.kt` (new `descendDirectoriesCaseSensitive`, used by
+  `findPackageDirectories` + `findPackageDirectoryUnder`).
+- **Tests**: box+phased green (0 FAILED); `IntelliJFullPipelineTestsGenerated.testIntellij_platform_syntax`
+  and `testIntellij_platform_ml` now pass with java-direct on.
+- **Result**: regression fixed.
+
 ### 2026-07-22 — Gate the binary seam on `useJavaDirect`; delete dead finder; dedup the ASM binary reader
 - **Change**: applied `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §4.1/§4.2/§4.7.
   §4.1: the binary deserializer seam is now gated on `configuration.useJavaDirect` in
