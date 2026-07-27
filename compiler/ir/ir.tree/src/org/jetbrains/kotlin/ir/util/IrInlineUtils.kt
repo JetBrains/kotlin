@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -71,3 +73,39 @@ private fun IrDeclarationParent.isInlineFunction(): Boolean {
 
 fun IrExpression.isLambdaBlock() =
     this is IrBlock && this.origin == IrStatementOrigin.LAMBDA
+
+// Declarations in the scope of an externally visible inline function are implicitly part of the
+// public ABI of a Kotlin module. This function returns the visibility of a containing inline function
+// (determined *before* lowering), or null if the given declaration is not in the scope of an inline function.
+//
+// Currently, for JVM we mark all declarations in the scope of a public inline function as public, even if they are
+// contained in a nested private inline function. This is an over approximation, since private declarations
+// inside of a public inline function can still escape if they are used without being regenerated.
+// See `plugins/jvm-abi-gen/testData/compile/inlineNoRegeneration` for an example.
+val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
+    get() {
+        var owner: IrDeclaration? = original
+        var result: DescriptorVisibility? = null
+        while (owner != null) {
+            if (owner is IrFunction && owner.isInline) {
+                result = if (!DescriptorVisibilities.isPrivate(owner.visibility)) {
+                    if (owner.parentClassOrNull?.visibility?.let(DescriptorVisibilities::isPrivate) == true)
+                        DescriptorVisibilities.PRIVATE
+                    else
+                        return owner.visibility
+                } else {
+                    owner.visibility
+                }
+            }
+            owner = (owner.parent as? IrDeclaration)?.original
+        }
+        return result
+    }
+
+// True for declarations which are in the scope of an externally visible inline function.
+val IrDeclaration.isInPublicInlineScope: Boolean
+    get() = inlineScopeVisibility?.let(DescriptorVisibilities::isPrivate) == false
+
+// Map declarations to original declarations before lowering.
+private val IrDeclaration.original: IrDeclaration
+    get() = (this.attributeOwnerId as? IrDeclaration) ?: this

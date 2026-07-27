@@ -82,7 +82,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                          * stage, and only then will they be lifted to the nearest declaration container by [LocalDeclarationPopupLowering],
                          * so that's when we will change their visibility to private.
                          */
-                        override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean) = declaration.visibility
+                        override fun forClass(declaration: IrClass, inPublicInlineScope: Boolean) = declaration.visibility
                         override fun forSimpleFunction(declaration: IrSimpleFunction) = declaration.visibility
                     },
                     // Lambdas cannot introduce new type parameters to the scope, which means that all the captured type parameters
