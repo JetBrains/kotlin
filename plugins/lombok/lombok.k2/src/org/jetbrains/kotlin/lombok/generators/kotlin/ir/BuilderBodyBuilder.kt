@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.IrStatement
@@ -14,9 +15,11 @@ import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -82,9 +85,19 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val field = builderClass.findBuilderField(parameter.name) ?: return
 
         +irSetField(irGet(thisParameter), field, irGet(parameter))
+        builderClass.defaultFlagField(parameter.name)?.let { flagField ->
+            +irSetField(irGet(thisParameter), flagField, irTrue())
+        }
         +irReturn(irGet(thisParameter))
     }
 
+    /**
+     * Resolves every constructor parameter's value into a local temporary, in declaration order, before
+     * constructing the entity. This lets a `@Builder.Default` field's default expression (which, unlike Java
+     * Lombok's, may reference an earlier constructor parameter, e.g. `@Builder.Default val b: Int = a + 1`)
+     * be evaluated against the *resolved* value of that earlier parameter — whether it came from an explicit
+     * builder setter call or from its own default — rather than re-reading a possibly-unset builder field.
+     */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction) {
         val builderClass = declaration.parent as IrClass
@@ -92,19 +105,51 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val entityClass = declaration.returnType.classOrNull!!.owner
         val constructor = entityClass.builderConstructor()
         val singularFieldNames = builderClass.singularFieldNames()
+        val regularParameters = constructor.parameters.filter { it.kind == IrParameterKind.Regular }
+
+        val resolvedValues = mutableMapOf<IrValueSymbol, IrValueSymbol>()
+        for (parameter in regularParameters) {
+            val field = builderClass.findBuilderField(parameter.name) ?: continue
+            val fieldRead = irGetField(irGet(thisParameter), field)
+            val value = when {
+                parameter.name in singularFieldNames -> buildSingularResult(field, thisParameter)
+                else -> builderClass.defaultFlagField(parameter.name)?.let { flagField ->
+                    buildDefaultOrSetValue(declaration, parameter, flagField, thisParameter, fieldRead, resolvedValues)
+                } ?: fieldRead
+            }
+            val temp = irTemporary(value, nameHint = parameter.name.identifier)
+            resolvedValues[parameter.symbol] = temp.symbol
+        }
 
         val constructorCall = irConstruct(declaration, constructor)
         constructor.parameters.forEachIndexed { index, parameter ->
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
-            val field = builderClass.findBuilderField(parameter.name) ?: return@forEachIndexed
-            constructorCall.arguments[index] = if (parameter.name in singularFieldNames) {
-                buildSingularResult(field, thisParameter)
-            } else {
-                irGetField(irGet(thisParameter), field)
-            }
+            val tempSymbol = resolvedValues[parameter.symbol] ?: return@forEachIndexed
+            constructorCall.arguments[index] = irGet(tempSymbol.owner)
         }
 
         +irReturn(constructorCall)
+    }
+
+    /** `if ($set) field else <default expression, with earlier-parameter references resolved to their temps>`. */
+    private fun IrBlockBodyBuilder.buildDefaultOrSetValue(
+        declaration: IrSimpleFunction,
+        parameter: IrValueParameter,
+        flagField: IrField,
+        thisParameter: IrValueParameter,
+        fieldRead: IrExpression,
+        resolvedValues: Map<IrValueSymbol, IrValueSymbol>,
+    ): IrExpression {
+        val defaultExpression = parameter.defaultValue?.expression ?: return fieldRead
+        val copiedDefault = defaultExpression
+            .deepCopyWithSymbols(initialParent = declaration)
+            .transform(ValueRemapper(resolvedValues), null)
+        return irIfThenElse(
+            parameter.type,
+            irGetField(irGet(thisParameter), flagField),
+            fieldRead,
+            copiedDefault,
+        )
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -121,7 +166,13 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val singularFieldNames = builderClass.singularFieldNames()
 
         val builder = irTemporary(irConstruct(declaration, builderClass.builderConstructor()), nameHint = "builder")
-        val fields = builderClass.declarations.mapNotNull { (it as? IrProperty)?.backingField }
+        val fields = builderClass.declarations.mapNotNull {
+            if (it is IrProperty && !it.isDefaultFlagField()) {
+                it.backingField
+            } else {
+                null
+            }
+        }
         for (field in fields) {
             val property = entityClass.findDeclaration<IrProperty> { it.name == field.name } ?: continue
             val getter = property.getter ?: continue
@@ -132,6 +183,10 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
                 entityValue
             }
             +irSetField(irGet(builder), field, newValue)
+            // The entity's current value must be preserved verbatim on `build()`, not silently re-defaulted.
+            builderClass.defaultFlagField(field.name)?.let { flagField ->
+                +irSetField(irGet(builder), flagField, irTrue())
+            }
         }
 
         +irReturn(irGet(builder))
@@ -153,6 +208,20 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             .filterIsInstance<BuilderDeclarationType.SingularFunction>()
             .map { it.fieldName }
             .toSet()
+
+    private fun IrProperty.isDefaultFlagField(): Boolean =
+        ((origin as? GeneratedByPlugin)?.pluginKey as? BuilderGeneratorKey)?.type is BuilderDeclarationType.DefaultFlagField
+
+    /** The hidden `$set` flag field backing a `@Builder.Default` field named [fieldName], if one was generated. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrClass.defaultFlagField(fieldName: Name): IrField? =
+        declarations.firstNotNullOfOrNull { declaration ->
+            val property = declaration as? IrProperty ?: return@firstNotNullOfOrNull null
+            val type = ((property.origin as? GeneratedByPlugin)?.pluginKey as? BuilderGeneratorKey)?.type
+            (type as? BuilderDeclarationType.DefaultFlagField)
+                ?.takeIf { it.fieldName == fieldName }
+                ?.let { property.backingField }
+        }
 
     // -------------------------------- @Singular support --------------------------------
     //

@@ -39,6 +39,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 listOf(
                     LombokNames.BUILDER,
                     LombokNames.SINGULAR,
+                    LombokNames.BUILDER_DEFAULT_ID.asSingleFqName()
                 )
             )
         }

@@ -45,6 +45,7 @@ object LombokNames {
     val DATA_ID = ClassId.topLevel(DATA)
     val VALUE_ID = ClassId.topLevel(VALUE)
     val BUILDER_ID = ClassId.topLevel(BUILDER)
+    val BUILDER_DEFAULT_ID = BUILDER_ID.createNestedClassId(Name.identifier("Default"))
     val SUPER_BUILDER_ID = ClassId.topLevel(SUPER_BUILDER)
     val SINGULAR_ID = ClassId.topLevel(SINGULAR)
     val NO_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(NO_ARGS_CONSTRUCTOR)
