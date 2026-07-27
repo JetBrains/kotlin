@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByWasm
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -177,6 +178,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     }
 }
 
+@AffectedByWasm
 @MppGradlePluginTests
 abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
