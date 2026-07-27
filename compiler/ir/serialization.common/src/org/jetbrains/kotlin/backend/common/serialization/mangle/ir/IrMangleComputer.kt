@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
+import org.jetbrains.kotlin.backend.common.overrides.fakeOverrideNeedingDisambiguation
 import org.jetbrains.kotlin.backend.common.serialization.mangle.BaseKotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
@@ -222,6 +223,10 @@ open class IrMangleComputer(
                 builder.appendSignature(MangleConstant.COMPANION_EXTENSION_MARK)
                 builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
                 builder.appendSignature(getCompanionExtensionName(companionExtensionClass))
+            }
+
+            if (declaration.fakeOverrideNeedingDisambiguation) {
+                builder.appendSignature(MangleConstant.FAKE_OVERRIDE_DISAMBIGUATING_MARK)
             }
 
             val contextParameters = accessor?.parameters?.filter { it.kind == IrParameterKind.Context }.orEmpty()
