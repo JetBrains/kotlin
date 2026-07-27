@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -24,6 +25,40 @@ fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
 }
 
 fun FirNamedFunction.isEquals(session: FirSession): Boolean = symbol.isEquals(session)
+
+fun FirNamedFunctionSymbol.isHashCode(): Boolean {
+    return when {
+        name != OperatorNameConventions.HASH_CODE -> false
+        contextParameterSymbols.isNotEmpty() -> false
+        receiverParameterSymbol != null -> false
+        dispatchReceiverType == null -> false
+        valueParameterSymbols.isNotEmpty() -> false
+        else -> true
+    }
+}
+
+fun FirNamedFunction.isHashCode(): Boolean = symbol.isHashCode()
+
+fun FirNamedFunctionSymbol.isToString(): Boolean {
+    return when {
+        name != OperatorNameConventions.TO_STRING -> false
+        contextParameterSymbols.isNotEmpty() -> false
+        receiverParameterSymbol != null -> false
+        dispatchReceiverType == null -> false
+        valueParameterSymbols.isNotEmpty() -> false
+        else -> true
+    }
+}
+
+fun FirNamedFunction.isToString(): Boolean = symbol.isToString()
+
+context(holder: SessionHolder)
+val FirNamedFunctionSymbol.isMethodOfAny: Boolean
+    get() = isToString() || isHashCode() || isEquals(holder.session)
+
+context(_: SessionHolder)
+val FirNamedFunction.isMethodOfAny: Boolean
+    get() = symbol.isMethodOfAny
 
 @JvmName("setEqualityBoundTypeFromOverriddenSymbols")
 fun FirNamedFunction.setEqualityBoundTypeFromOverridden(

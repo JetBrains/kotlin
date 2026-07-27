@@ -42,5 +42,13 @@ data object OverridenInSuper: Super() {
     }
 }
 
+data object TypeAliasOverride {
+    typealias NullableAny = Any?
+
+    <!DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE!>override<!> fun equals(other: NullableAny): Boolean {
+        return true
+    }
+}
+
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, functionDeclaration, integerLiteral, nullableType,
 objectDeclaration, operator, override, superExpression */

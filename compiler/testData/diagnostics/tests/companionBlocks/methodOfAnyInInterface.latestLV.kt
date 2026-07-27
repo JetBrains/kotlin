@@ -5,7 +5,7 @@
 
 interface A {
     companion {
-        <!ACCIDENTAL_OVERRIDE!>fun equals(other: Any?): Boolean = true<!>
+        fun equals(other: Any?): Boolean = true
     }
 }
 
@@ -17,7 +17,7 @@ interface B {
 
 interface C {
     companion {
-        <!ACCIDENTAL_OVERRIDE!>fun hashCode(): Int = 0<!>
+        fun hashCode(): Int = 0
     }
 }
 
@@ -29,7 +29,7 @@ interface D {
 
 interface E {
     companion {
-        <!ACCIDENTAL_OVERRIDE!>fun toString(): String = "E"<!>
+        fun toString(): String = "E"
     }
 }
 

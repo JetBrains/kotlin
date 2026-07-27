@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +CompanionBlocks
 annotation class Other
 
 @RequiresOptIn(message = "This is a test.")
@@ -28,6 +29,24 @@ class A {
     @Deprecated("other")
     @OptInMarker
     fun test(): Int = 5
+}
+
+class B {
+    typealias NullableAny = Any?
+
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@Deprecated("equals")<!>
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@OptInMarker<!>
+    override fun equals(other: NullableAny): Boolean {
+        return super.equals(other)
+    }
+}
+
+class C {
+    companion {
+        @Deprecated("equals")
+        @OptInMarker
+        fun equals(other: Any?): C = C()
+    }
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, nullableType,
