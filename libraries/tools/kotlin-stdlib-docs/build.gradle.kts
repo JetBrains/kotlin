@@ -25,7 +25,7 @@ val artifactsVersion = if (isTeamcityBuild) project.property("deployVersion") as
 extra["artifactsVersion"] = artifactsVersion
 val artifactsRepo = if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo"
 extra["artifactsRepo"] = artifactsRepo
-val dokka_version: String by project
+val dokka_version: String = libs.versions.dokka.get()
 
 println("# Parameters summary:")
 println("    isTeamcityBuild: $isTeamcityBuild")
