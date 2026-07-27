@@ -27,3 +27,12 @@ class AnotherClass {
     @JsExport.Ignore
     val Array<*>.extensionProperty get() = this.size
 }
+
+
+// KT-87352
+public class ParentClass {
+    // ...
+
+    @JsExport.Ignore
+    public typealias Alias = AnotherClass
+}
