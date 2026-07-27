@@ -445,7 +445,9 @@ fun Project.configureTests() {
         }
     }
     // Aggregate task for build related checks
-    tasks.register("checkBuild")
+    tasks.register("checkBuild") {
+        markAsIdeaTestTask()
+    }
     configureTestRetriesForTestTasks()
 }
 
