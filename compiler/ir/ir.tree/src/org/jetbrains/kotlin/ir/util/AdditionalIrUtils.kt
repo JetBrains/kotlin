@@ -264,6 +264,7 @@ val IrDeclaration.isLocal: Boolean
 val IrDeclaration.isOriginallyLocal: Boolean
     get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
 
+@ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.moduleFragment.descriptor
 
 val IrDeclaration.moduleFragment: IrModuleFragment get() = this.getPackageFragment().module
