@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.analysis.api.types.isNullable as isNullableEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isPrimitive as isPrimitiveEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspendFunctionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.types.isUByteType as isUByteTypeEndpoint
-import org.jetbrains.kotlin.analysis.api.types.isUShortType as isUShortTypeEndpoint
 
 /**
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
@@ -174,7 +173,9 @@ internal class KaTypeInformationProviderBridge(
         }
 
     override val KaType.isUShortType: Boolean
-        get() = context(analysisSession) { isUShortTypeEndpoint }
+        get() = context(analysisSession) {
+            classId == StandardClassIds.UShort
+        }
 
     override val KaType.isUByteType: Boolean
         get() = context(analysisSession) { isUByteTypeEndpoint }
