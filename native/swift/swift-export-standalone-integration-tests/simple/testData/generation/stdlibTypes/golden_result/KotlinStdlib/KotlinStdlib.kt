@@ -181,6 +181,13 @@ public fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("kotlin_collections_ByteIterator_next")
 public fun kotlin_collections_ByteIterator_next(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
@@ -193,6 +200,13 @@ public fun kotlin_collections_ByteIterator_nextByte(self: kotlin.native.internal
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
     val _result = run { __self.nextByte() }
     return _result
+}
+
+@ExportedBridge("kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.CharIterator()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("kotlin_collections_CharIterator_next")

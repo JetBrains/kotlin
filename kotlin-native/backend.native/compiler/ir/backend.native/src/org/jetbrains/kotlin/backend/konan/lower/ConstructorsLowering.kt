@@ -209,8 +209,8 @@ internal class ConstructorsLowering(private val context: NativeLoweringContext) 
             return super.visitCall(expression, data)
 
         val instance = expression.arguments[0]
-        val constructorCall = expression.arguments[1] as IrConstructorCall
-        val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner)
+        val constructorCall = expression.arguments[1] as IrFunctionAccessExpression
+        val loweredConstructorFunction = context.getLoweredConstructorFunction(constructorCall.symbol.owner as IrConstructor)
         val irBuilder = context.createIrBuilder(data!!.symbol, expression.startOffset, expression.endOffset)
         return irBuilder.irCall(loweredConstructorFunction).apply {
             dispatchReceiver = instance

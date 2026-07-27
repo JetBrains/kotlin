@@ -136,7 +136,12 @@ public final class DeprecatedInterfaceWrapper: KotlinRuntime.KotlinBase {
 open class Foo: KotlinRuntime.KotlinBase {
     @_spi(Foonnotation)
     public init() {
-        let __kt = __root___Foo_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.Foo.self {
+             __kt = __root___Foo_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -266,7 +271,12 @@ public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase 
 }
 open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___PublicClassImplHiddenInterface_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.PublicClassImplHiddenInterface.self {
+             __kt = __root___PublicClassImplHiddenInterface_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___PublicClassImplHiddenInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -484,7 +494,12 @@ public final class deprecatedChildT: main.deprecatedT {
 open class deprecatedT: KotlinRuntime.KotlinBase {
     open class deprecationInheritedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = deprecatedT_deprecationInheritedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.deprecatedT.deprecationInheritedT.self {
+                 __kt = deprecatedT_deprecationInheritedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -498,7 +513,12 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Obsoleted")
     open class deprecationReinforcedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = deprecatedT_deprecationReinforcedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.deprecatedT.deprecationReinforcedT.self {
+                 __kt = deprecatedT_deprecationReinforcedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { deprecatedT_deprecationReinforcedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -512,7 +532,12 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     @available(*, deprecated, message: "Deprecated")
     open class deprecationRestatedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = deprecatedT_deprecationRestatedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.deprecatedT.deprecationRestatedT.self {
+                 __kt = deprecatedT_deprecationRestatedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -550,7 +575,12 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     public init() {
-        let __kt = __root___deprecatedT_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.deprecatedT.self {
+             __kt = __root___deprecatedT_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -704,7 +734,12 @@ open class normalT: KotlinRuntime.KotlinBase {
         public init(
             deprecated: Swift.Int32
         ) {
-            let __kt = normalT_deprecatedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.normalT.deprecatedT.self {
+                 __kt = normalT_deprecatedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, deprecated); return () }()
         }
@@ -717,7 +752,12 @@ open class normalT: KotlinRuntime.KotlinBase {
     }
     open class normalT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = normalT_normalT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.normalT.normalT.self {
+                 __kt = normalT_normalT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -888,7 +928,12 @@ open class normalT: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        let __kt = __root___normalT_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.normalT.self {
+             __kt = __root___normalT_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -970,7 +1015,12 @@ open class obsoletedChildT: main.obsoletedT {
         }
     }
     public init() {
-        let __kt = __root___obsoletedChildT_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.obsoletedChildT.self {
+             __kt = __root___obsoletedChildT_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___obsoletedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -994,7 +1044,12 @@ open class obsoletedChildT: main.obsoletedT {
 open class obsoletedT: KotlinRuntime.KotlinBase {
     open class deprecationInheritedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = obsoletedT_deprecationInheritedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.obsoletedT.deprecationInheritedT.self {
+                 __kt = obsoletedT_deprecationInheritedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { obsoletedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -1008,7 +1063,12 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     @available(*, deprecated, message: "Deprecated")
     open class deprecationRelaxedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = obsoletedT_deprecationRelaxedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.obsoletedT.deprecationRelaxedT.self {
+                 __kt = obsoletedT_deprecationRelaxedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { obsoletedT_deprecationRelaxedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -1022,7 +1082,12 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
     @available(*, unavailable, message: "Obsoleted")
     open class deprecationRestatedT: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = obsoletedT_deprecationRestatedT_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == main.obsoletedT.deprecationRestatedT.self {
+                 __kt = obsoletedT_deprecationRestatedT_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { obsoletedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }

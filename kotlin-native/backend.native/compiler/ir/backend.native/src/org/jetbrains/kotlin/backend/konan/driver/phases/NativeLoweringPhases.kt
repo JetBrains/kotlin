@@ -121,7 +121,6 @@ private fun getLoweringsAfterInlining(
         ::NativeFunctionReferenceLowering,
         ::NativeSingleAbstractMethodLowering,
         ::PostInlineLowering,
-        ::ExportedBridgeNonVirtualLowering,
         ::ContractsDslRemover,
         ::NativeAnnotationImplementationLowering,
         ::RangeContainsLowering,

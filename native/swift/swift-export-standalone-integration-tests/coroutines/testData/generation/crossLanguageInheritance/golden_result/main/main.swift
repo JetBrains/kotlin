@@ -24,8 +24,11 @@ public protocol __AsyncDefaulter: KotlinRuntimeSupport._KotlinBridgeable {
 public protocol __AsyncGreeter: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != main.AsyncAbstractBase.self, "main.AsyncAbstractBase is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -98,7 +101,12 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
 }
 open class AsyncBase: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___AsyncBase_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.AsyncBase.self {
+             __kt = __root___AsyncBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -219,7 +227,12 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
 }
 open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main.__AsyncGreeter {
     public init() {
-        let __kt = __root___AsyncGreeterBase_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.AsyncGreeterBase.self {
+             __kt = __root___AsyncGreeterBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___AsyncGreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -312,7 +325,12 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
 }
 open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___AsyncOverloaded_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.AsyncOverloaded.self {
+             __kt = __root___AsyncOverloaded_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___AsyncOverloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

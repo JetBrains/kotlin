@@ -101,12 +101,7 @@ public class SirVisibilityCheckerImpl(
                 } else return@withSessions exported
             }
             is KaConstructorSymbol -> {
-                if ((ktSymbol.containingSymbol as? KaClassSymbol)?.modality?.isAbstract() != false) {
-                    // Hide abstract class constructors from users, but not from other Swift Export modules.
-                    SirVisibility.PACKAGE
-                } else {
-                    SirVisibility.PUBLIC
-                }
+                SirVisibility.PUBLIC
             }
             is KaNamedFunctionSymbol -> {
                 if (!ktSymbol.isExported()) {

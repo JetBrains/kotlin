@@ -161,7 +161,7 @@ internal open class SirFunctionFromKtSymbol(
 
         val forwardBridges = bridgeProxy?.let { proxy ->
             buildList {
-                addAll(proxy.createSirBridges(forwardKotlinCall))
+                addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardKotlinCall))
                 val ktSymbol = this@SirFunctionFromKtSymbol.ktSymbol
                 if (needsNonVirtualForwardBridge() && !isAbstractKotlinMethod && ktSymbol is KaNamedSymbol) {
                     add(proxy.createDirectDispatchForwardBridge(ktSymbol.name.asString(), forwardKotlinCall))

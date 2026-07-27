@@ -62,4 +62,6 @@ void * KotlinBridgeable_Dictionary_unbox(void * ref);
 int32_t KotlinBridgeable_getTypeTag(void * ref);
 void KotlinBridgeable_disposeRef(void * ref);
 
+void * Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass);
+
 NS_ASSUME_NONNULL_END

@@ -5,8 +5,11 @@ import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.kotlin.collections {
     open class BooleanIterator: KotlinRuntime.KotlinBase {
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.BooleanIterator.self, "ExportedKotlinPackages.kotlin.collections.BooleanIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -26,8 +29,11 @@ extension ExportedKotlinPackages.kotlin.collections {
         }
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -145,8 +151,11 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     open class Number: KotlinRuntime.KotlinBase {
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.Number.self, "ExportedKotlinPackages.kotlin.Number is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

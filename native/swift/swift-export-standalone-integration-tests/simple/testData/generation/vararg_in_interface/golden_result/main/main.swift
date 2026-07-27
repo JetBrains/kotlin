@@ -22,7 +22,12 @@ public protocol ___Driver_Listener: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class BaseDriver: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___BaseDriver_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.BaseDriver.self {
+             __kt = __root___BaseDriver_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___BaseDriver_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

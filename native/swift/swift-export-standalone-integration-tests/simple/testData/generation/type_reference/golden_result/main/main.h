@@ -61,6 +61,8 @@ _Bool Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swif
 
 void * Object_without_package_INNER_OBJECT_get();
 
+_Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___Class_without_package_init_allocate();
 
 _Bool __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

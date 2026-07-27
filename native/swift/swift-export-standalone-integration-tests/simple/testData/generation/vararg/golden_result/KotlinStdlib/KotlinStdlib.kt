@@ -163,6 +163,13 @@ public fun kotlin_IntArray_size_get(self: kotlin.native.internal.NativePtr): Int
     return _result
 }
 
+@ExportedBridge("kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Number()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("kotlin_Number_toByte")
 public fun kotlin_Number_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
@@ -219,6 +226,13 @@ public fun kotlin_Number_toShort(self: kotlin.native.internal.NativePtr): Short 
     return _result
 }
 
+@ExportedBridge("kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.BooleanIterator()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("kotlin_collections_BooleanIterator_next")
 public fun kotlin_collections_BooleanIterator_next(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.BooleanIterator
@@ -231,6 +245,13 @@ public fun kotlin_collections_BooleanIterator_nextBoolean(self: kotlin.native.in
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.BooleanIterator
     val _result = run { __self.nextBoolean() }
     return _result
+}
+
+@ExportedBridge("kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.IntIterator()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("kotlin_collections_IntIterator_next")

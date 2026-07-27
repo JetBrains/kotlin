@@ -15,7 +15,12 @@ extension ExportedKotlinPackages.weird {
             }
         }
         public init() throws {
-            let __kt = weird_A_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.weird.A.self {
+                 __kt = weird_A_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             var __error: UnsafeMutableRawPointer? = nil
             weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)

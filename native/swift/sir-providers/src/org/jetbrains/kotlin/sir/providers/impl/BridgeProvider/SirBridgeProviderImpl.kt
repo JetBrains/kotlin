@@ -142,7 +142,10 @@ public interface BridgeFunctionBuilder {
 
 public interface BridgeFunctionProxy {
     context(sir: SirSession)
-    public fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge>
+    public fun createSirBridges(
+        nonVirtualTargetMethod: String? = null,
+        kotlinCall: BridgeFunctionBuilder.() -> String,
+    ): List<SirBridge>
 
     context(sir: SirSession)
     public fun createDirectDispatchForwardBridge(
@@ -260,13 +263,13 @@ private class BridgeFunctionDescriptor(
     }
 
     context(sir: SirSession)
-    override fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge> {
+    override fun createSirBridges(nonVirtualTargetMethod: String?, kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge> {
         return buildList {
             add(
                 SirFunctionBridge(
                     name = baseBridgeName,
                     KotlinFunctionBridge(
-                        createKotlinBridge(typeNamer, buildCallSite = kotlinCall),
+                        createKotlinBridge(typeNamer, nonVirtualTargetMethod = nonVirtualTargetMethod, buildCallSite = kotlinCall),
                         listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
                     ),
                     CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))

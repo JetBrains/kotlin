@@ -210,6 +210,10 @@ extension Swift.Dictionary: KotlinRuntimeSupport._KotlinBridgeable {
 
 // MARK: - __createBridgeable: unwraps bridgeable types from externalRCRef
 
+package func _kotlinAllocInstanceForSwiftSubclass(_ metaobject: Swift.AnyClass) -> Swift.UnsafeMutableRawPointer {
+    return Kotlin_SwiftExport_allocInstanceForSwiftSubclass(metaobject)
+}
+
 extension KotlinBase {
     package static func __createBridgeable<T>(externalRCRef ref: UnsafeMutableRawPointer!, conformsTo type: T.Type) -> any _KotlinBridgeable {
         __createBridgeable(externalRCRef: ref, conformsTo: { wrapperClass in wrapperClass is T })

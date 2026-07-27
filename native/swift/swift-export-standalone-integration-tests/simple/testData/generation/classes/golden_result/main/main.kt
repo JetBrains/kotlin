@@ -643,6 +643,13 @@ public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, ABSTRACT_CLASS()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_allocate")
 public fun __root___CLASS_WITH_SAME_NAME_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<CLASS_WITH_SAME_NAME>() }
@@ -820,6 +827,13 @@ public fun intersection_overrides_AbstractFooBar_fooBar_get(self: kotlin.native.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as intersection_overrides.AbstractFooBar
     val _result = run { __self.fooBar }
     return _result
+}
+
+@ExportedBridge("intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, intersection_overrides.AbstractBaz()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("intersection_overrides_Bar_bar_get")

@@ -33,6 +33,8 @@ int32_t SomeInterface_something_get__TypesOfArgumentsE__Swift_String__(void * se
 
 _Bool SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32__(void * self, NSString * receiver, int32_t value);
 
+_Bool __root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * conflictingTypealiases_Bar_Conflict_init_allocate();
 
 _Bool conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

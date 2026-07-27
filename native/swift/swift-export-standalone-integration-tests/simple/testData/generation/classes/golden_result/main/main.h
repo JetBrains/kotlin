@@ -165,6 +165,8 @@ _Bool SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_
 
 void * SEALED_O_get();
 
+_Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___CLASS_WITH_SAME_NAME_init_allocate();
 
 _Bool __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -216,6 +218,8 @@ void * __root___OBJECT_WITH_GENERIC_INHERITANCE_get();
 int32_t intersection_overrides_AbstractFooBar_baz_get(void * self);
 
 int32_t intersection_overrides_AbstractFooBar_fooBar_get(void * self);
+
+_Bool intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 NSString * intersection_overrides_Bar_bar_get(void * self);
 

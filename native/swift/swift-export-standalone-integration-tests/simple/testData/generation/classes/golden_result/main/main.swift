@@ -89,8 +89,11 @@ public enum SEALED_SealedType: KotlinRuntimeSupport.SealedType {
     }
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != main.ABSTRACT_CLASS.self, "main.ABSTRACT_CLASS is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -379,7 +382,12 @@ public final class Foo: KotlinRuntime.KotlinBase {
 }
 open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___GENERIC_CLASS_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.GENERIC_CLASS.self {
+             __kt = __root___GENERIC_CLASS_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -392,7 +400,12 @@ open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
 }
 open class INHERITANCE_GENERIC: main.GENERIC_CLASS {
     public override init() {
-        let __kt = __root___INHERITANCE_GENERIC_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.INHERITANCE_GENERIC.self {
+             __kt = __root___INHERITANCE_GENERIC_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -1062,8 +1075,11 @@ extension ExportedKotlinPackages.intersection_overrides {
                 }
             }
         }
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.intersection_overrides.AbstractBaz.self, "ExportedKotlinPackages.intersection_overrides.AbstractBaz is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { intersection_overrides_AbstractBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

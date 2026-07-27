@@ -376,14 +376,24 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     }
     open class SerializationException: ExportedKotlinPackages.kotlin.IllegalArgumentException {
         public override init() {
-            let __kt = kotlinx_serialization_SerializationException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.serialization.SerializationException.self {
+                 __kt = kotlinx_serialization_SerializationException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         public override init(
             message: Swift.String?
         ) {
-            let __kt = kotlinx_serialization_SerializationException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.serialization.SerializationException.self {
+                 __kt = kotlinx_serialization_SerializationException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
@@ -391,14 +401,24 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlinx_serialization_SerializationException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.serialization.SerializationException.self {
+                 __kt = kotlinx_serialization_SerializationException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            let __kt = kotlinx_serialization_SerializationException_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.serialization.SerializationException.self {
+                 __kt = kotlinx_serialization_SerializationException_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
@@ -700,8 +720,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class NamedValueDecoder: ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder {
         @_spi(kotlinx$serialization$InternalSerializationApi)
-        package override init() {
-            fatalError()
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.NamedValueDecoder.self, "ExportedKotlinPackages.kotlinx.serialization.`internal`.NamedValueDecoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_internal_NamedValueDecoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -713,8 +736,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class NamedValueEncoder: ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder {
         @_spi(kotlinx$serialization$InternalSerializationApi)
-        package override init() {
-            fatalError()
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.NamedValueEncoder.self, "ExportedKotlinPackages.kotlinx.serialization.`internal`.NamedValueEncoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_internal_NamedValueEncoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -900,8 +926,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             }
         }
         @_spi(kotlinx$serialization$InternalSerializationApi)
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder.self, "ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_internal_TaggedDecoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -1119,8 +1148,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             return { kotlinx_serialization_internal_TaggedEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self.__externalRCRef(), descriptor.__externalRCRef()); return () }()
         }
         @_spi(kotlinx$serialization$InternalSerializationApi)
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder.self, "ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_internal_TaggedEncoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -2898,8 +2930,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             }
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.self, "ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_encoding_AbstractDecoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -3174,8 +3209,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             }
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        package init() {
-            fatalError()
+        public init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.self, "ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_serialization_encoding_AbstractEncoder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

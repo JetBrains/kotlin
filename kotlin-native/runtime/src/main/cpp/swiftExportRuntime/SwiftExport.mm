@@ -9,6 +9,8 @@
 
 #include "KAssert.h"
 #include "Memory.h"
+#include "Runtime.h"
+#include "ExternalRCRef.hpp"
 #include "WritableTypeInfo.hpp"
 #include "std_support/Atomic.hpp"
 #include "Types.h"
@@ -173,5 +175,35 @@ Class swiftExportRuntime::protocolWrapperFor(const TypeInfo* typeInfo) noexcept 
     AssertThreadState(ThreadState::kNative); // May take some time.
     Class result = getOrCreateWrapperClass(typeInfo, WrapperClassOptionBoundBridges | WrapperClassOptionExistentials) ?: anyWrapperClass();
     return result;
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz);
+extern "C" const TypeInfo* Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(Class clazz);
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, Class boundClass, const TypeInfo* kotlinSuperTypeInfo);
+
+/// Allocates an uninitialized Kotlin instance for a Swift subclass of an exported Kotlin class.
+RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass) {
+    RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
+
+    Kotlin_initRuntimeIfNeeded();
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+
+    const TypeInfo* typeInfo = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
+    if (typeInfo == nullptr) {
+        const TypeInfo* kotlinSuperTypeInfo = nullptr;
+        Class boundClass = nil;
+        for (Class cls = class_getSuperclass(swiftSubclass); cls != nil; cls = class_getSuperclass(cls)) {
+            if (const TypeInfo* candidate = Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(cls)) {
+                kotlinSuperTypeInfo = candidate;
+                boundClass = cls;
+                break;
+            }
+        }
+        RuntimeAssert(kotlinSuperTypeInfo != nullptr, "No bound Kotlin superclass found for Swift subclass %s", class_getName(swiftSubclass));
+        typeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(swiftSubclass, boundClass, kotlinSuperTypeInfo);
+    }
+    ObjHolder holder;
+    ObjHeader* instance = AllocInstance(typeInfo, holder.slot());
+    return mm::createRetainedExternalRCRef(instance);
 }
 #endif
