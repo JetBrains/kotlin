@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeArgumentsForOuterClass
+import org.jetbrains.kotlin.hasUnwrappableAsExplicitReceiver
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.resolve.source.getExplicitReceiverOfDotQualified
-import org.jetbrains.kotlin.resolve.source.hasUnwrappableAsExplicitReceiver
 import org.jetbrains.kotlin.toKtLightSourceElement
 import org.jetbrains.kotlin.toKtPsiSourceElement
 
@@ -127,6 +127,7 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
                                 .getExplicitReceiverOfDotQualified()
                                 ?.toKtPsiSourceElement()
                         }
+                        else -> error("Unexpected KtSourceElement: $source")
                     }
                     packageReceiverSource?.let {
                         checkNestedPackages(it)

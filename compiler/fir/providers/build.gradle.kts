@@ -11,6 +11,7 @@ dependencies {
     api(project(":compiler:resolution.common"))
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))
+    api(project(":compiler:frontend.common-psi"))
     implementation(project(":core:util.runtime"))
 
     compileOnly(libs.guava)

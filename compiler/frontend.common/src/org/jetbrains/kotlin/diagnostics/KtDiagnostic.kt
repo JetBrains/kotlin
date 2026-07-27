@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 // ------------------------------ diagnostics ------------------------------
 
@@ -61,134 +57,34 @@ sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
         get() = DiagnosticRangeUtils.firstRange(textRanges)
 }
 
-sealed class KtSimpleDiagnostic : KtDiagnosticWithSource() {
+abstract class KtSimpleDiagnostic : KtDiagnosticWithSource() {
     abstract override val factory: KtDiagnosticFactory0
 }
 
-sealed class KtDiagnosticWithParameters1<A> : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A> {
+abstract class KtDiagnosticWithParameters1<A> : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A> {
     abstract override val a: A
     abstract override val factory: KtDiagnosticFactory1<A>
 }
 
-sealed class KtDiagnosticWithParameters2<A, B> : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B> {
+abstract class KtDiagnosticWithParameters2<A, B> : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B> {
     abstract override val a: A
     abstract override val b: B
     abstract override val factory: KtDiagnosticFactory2<A, B>
 }
 
-sealed class KtDiagnosticWithParameters3<A, B, C> : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C> {
+abstract class KtDiagnosticWithParameters3<A, B, C> : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
     abstract override val factory: KtDiagnosticFactory3<A, B, C>
 }
 
-sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D> {
+abstract class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
     abstract override val d: D
     abstract override val factory: KtDiagnosticFactory4<A, B, C, D>
-}
-
-// ------------------------------ psi diagnostics ------------------------------
-
-interface KtPsiDiagnostic : DiagnosticMarker {
-    val factory: KtDiagnosticFactoryN
-    val element: KtPsiSourceElement
-    override val textRanges: List<TextRange>
-    override val severity: Severity
-
-    override val psiElement: PsiElement
-        get() = element.psi
-
-    val psiFile: PsiFile
-        get() = psiElement.containingFile
-}
-
-private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
-
-private fun KtPsiDiagnostic.checkPsiTypeConsistency() {
-    if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
-        requireWithAttachment(
-            factory.psiType.isInstance(psiElement),
-            { "${psiElement::class} is not a subtype of ${factory.psiType} for factory $factory" }
-        ) {
-            withPsiEntry("psi", psiElement)
-            withPsiEntry("file", psiFile)
-        }
-    }
-}
-
-data class KtPsiSimpleDiagnostic(
-    override val element: KtPsiSourceElement,
-    override val severity: Severity,
-    override val factory: KtDiagnosticFactory0,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
-) : KtSimpleDiagnostic(), KtPsiDiagnostic {
-    init {
-        checkPsiTypeConsistency()
-    }
-}
-
-data class KtPsiDiagnosticWithParameters1<A>(
-    override val element: KtPsiSourceElement,
-    override val a: A,
-    override val severity: Severity,
-    override val factory: KtDiagnosticFactory1<A>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters1<A>(), KtPsiDiagnostic {
-    init {
-        checkPsiTypeConsistency()
-    }
-}
-
-
-data class KtPsiDiagnosticWithParameters2<A, B>(
-    override val element: KtPsiSourceElement,
-    override val a: A,
-    override val b: B,
-    override val severity: Severity,
-    override val factory: KtDiagnosticFactory2<A, B>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters2<A, B>(), KtPsiDiagnostic {
-    init {
-        checkPsiTypeConsistency()
-    }
-}
-
-data class KtPsiDiagnosticWithParameters3<A, B, C>(
-    override val element: KtPsiSourceElement,
-    override val a: A,
-    override val b: B,
-    override val c: C,
-    override val severity: Severity,
-    override val factory: KtDiagnosticFactory3<A, B, C>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters3<A, B, C>(), KtPsiDiagnostic {
-    init {
-        checkPsiTypeConsistency()
-    }
-}
-
-data class KtPsiDiagnosticWithParameters4<A, B, C, D>(
-    override val element: KtPsiSourceElement,
-    override val a: A,
-    override val b: B,
-    override val c: C,
-    override val d: D,
-    override val severity: Severity,
-    override val factory: KtDiagnosticFactory4<A, B, C, D>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters4<A, B, C, D>(), KtPsiDiagnostic {
-    init {
-        checkPsiTypeConsistency()
-    }
 }
 
 // ------------------------------ light tree diagnostics ------------------------------

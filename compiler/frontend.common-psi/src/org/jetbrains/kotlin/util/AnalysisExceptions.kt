@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
 val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $message"
@@ -18,7 +17,6 @@ val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $messag
 class SourceCodeAnalysisException(val source: KtSourceElement, override val cause: Throwable) : Exception() {
     override val message get() = cause.classNameAndMessage
 }
-
 
 fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?): Throwable =
     if (this is SourceCodeAnalysisException || shouldIjPlatformExceptionBeRethrown(this) || this is VirtualMachineError) {
@@ -75,14 +73,14 @@ private fun KtSourceElement.isDefinitelyNotInsideFile(fileSource: KtSourceElemen
 private fun reportFileMismatch(source: KtSourceElement, fileSource: KtSourceElement, cause: Throwable): Throwable {
     val thisPsi = source.psi
     val otherPsi = fileSource.psi
-    val comparison = "This:\n\n${source.text?.asQuote}\n\n...is not present in"
+    val comparison = "This:\n\n${source.text.asQuote}\n\n...is not present in"
 
     val expectedFileMessage = if (thisPsi != null && otherPsi != null) {
         val actualPath = thisPsi.containingFile.virtualFile.path
         val expectedPath = otherPsi.containingFile.virtualFile.path
         "$expectedPath, but rather in $actualPath"
     } else {
-        "...${fileSource.text?.asQuote}"
+        "...${fileSource.text.asQuote}"
     }
 
     return IllegalStateException(

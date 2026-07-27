@@ -70,6 +70,8 @@ import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.util.FirCliExceptionHandler
+import org.jetbrains.kotlin.util.FirExceptionHandler
 
 // -------------------------- Required components --------------------------
 

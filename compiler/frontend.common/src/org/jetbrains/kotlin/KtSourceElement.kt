@@ -3,24 +3,38 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(SuspiciousFakeSourceCheck::class)
-
 package org.jetbrains.kotlin
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.TreeBackedLighterAST
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
+import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory4
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithParameters4
+import org.jetbrains.kotlin.diagnostics.KtLightDiagnosticWithParameters1
+import org.jetbrains.kotlin.diagnostics.KtLightDiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.KtLightDiagnosticWithParameters3
+import org.jetbrains.kotlin.diagnostics.KtLightDiagnosticWithParameters4
+import org.jetbrains.kotlin.diagnostics.KtLightSimpleDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtOffsetsOnlyDiagnosticWithParameters1
+import org.jetbrains.kotlin.diagnostics.KtOffsetsOnlyDiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.KtOffsetsOnlyDiagnosticWithParameters3
+import org.jetbrains.kotlin.diagnostics.KtOffsetsOnlyDiagnosticWithParameters4
+import org.jetbrains.kotlin.diagnostics.KtOffsetsOnlySimpleDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtSimpleDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.getElementTextWithContext
-import java.util.Objects
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+import java.util.*
 
 /**
  * The kind of a [KtSourceElement], used to distinguish different source elements backed by the same real source.
@@ -979,12 +993,162 @@ sealed class AbstractKtSourceElement {
         result = 31 * result + endOffset
         return result
     }
+
+    @InternalDiagnosticFactoryMethod
+    abstract fun createDiagnostic0(
+        severity: Severity,
+        factory: KtDiagnosticFactory0,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtSimpleDiagnostic
+
+    @InternalDiagnosticFactoryMethod
+    abstract fun <A> createDiagnostic1(
+        severity: Severity,
+        factory: KtDiagnosticFactory1<A>,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters1<A>
+
+    @InternalDiagnosticFactoryMethod
+    abstract fun <A, B> createDiagnostic2(
+        severity: Severity,
+        factory: KtDiagnosticFactory2<A, B>,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters2<A, B>
+
+    @InternalDiagnosticFactoryMethod
+    abstract fun <A, B, C> createDiagnostic3(
+        severity: Severity,
+        factory: KtDiagnosticFactory3<A, B, C>,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters3<A, B, C>
+
+    @InternalDiagnosticFactoryMethod
+    abstract fun <A, B, C, D> createDiagnostic4(
+        severity: Severity,
+        factory: KtDiagnosticFactory4<A, B, C, D>,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters4<A, B, C, D>
 }
 
 class KtOffsetsOnlySourceElement(
     override val startOffset: Int,
     override val endOffset: Int,
-) : AbstractKtSourceElement()
+) : AbstractKtSourceElement() {
+    @InternalDiagnosticFactoryMethod
+    override fun createDiagnostic0(
+        severity: Severity,
+        factory: KtDiagnosticFactory0,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext
+    ): KtSimpleDiagnostic {
+        return KtOffsetsOnlySimpleDiagnostic(
+            this,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A> createDiagnostic1(
+        severity: Severity,
+        factory: KtDiagnosticFactory1<A>,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext
+    ): KtDiagnosticWithParameters1<A> {
+        return KtOffsetsOnlyDiagnosticWithParameters1(
+            this,
+            a,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B> createDiagnostic2(
+        severity: Severity,
+        factory: KtDiagnosticFactory2<A, B>,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters2<A, B> {
+        return KtOffsetsOnlyDiagnosticWithParameters2(
+            this,
+            a,
+            b,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B, C> createDiagnostic3(
+        severity: Severity,
+        factory: KtDiagnosticFactory3<A, B, C>,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters3<A, B, C> {
+        return KtOffsetsOnlyDiagnosticWithParameters3(
+            this,
+            a,
+            b,
+            c,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B, C, D> createDiagnostic4(
+        severity: Severity,
+        factory: KtDiagnosticFactory4<A, B, C, D>,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters4<A, B, C, D> {
+        return KtOffsetsOnlyDiagnosticWithParameters4(
+            this,
+            a,
+            b,
+            c,
+            d,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+}
 
 /**
  * [KtSourceElement] represents the AST element associated with a specific location in the source code. It allows the compiler to map back
@@ -1032,7 +1196,7 @@ class KtOffsetsOnlySourceElement(
  * source elements. See the KDoc of `FirFunctionCallRefinementExtension` for more information.
  */
 // TODO: consider renaming to something like AstBasedSourceElement
-sealed class KtSourceElement : AbstractKtSourceElement() {
+abstract class KtSourceElement : AbstractKtSourceElement() {
     abstract val elementType: IElementType?
     abstract val kind: KtSourceElementKind
     abstract val lighterASTNode: LighterASTNode
@@ -1045,213 +1209,15 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 
     /** Elements of the same source should be considered equal. */
     abstract override fun equals(other: Any?): Boolean
-}
 
-// NB: in certain situations, psi.node could be null (see e.g. KT-44152)
-// Potentially exceptions can be provoked by elementType / lighterASTNode
-sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
-    companion object {
-        @JvmStatic
-        private val lighterASTNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            KtPsiSourceElement::class.java,
-            LighterASTNode::class.java,
-            "_lighterASTNode"
-        )
+    abstract fun fakeElement(
+        newKind: KtFakeSourceElementKind,
+        offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
+    ): KtSourceElement
 
-        @JvmStatic
-        private val treeStructureNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            KtPsiSourceElement::class.java,
-            FlyweightCapableTreeStructure::class.java,
-            "_treeStructure"
-        )
-    }
+    abstract fun realElement(): KtSourceElement
 
-    override val elementType: IElementType?
-        get() = psi.node?.elementType
-
-    override val startOffset: Int
-        get() = psi.textRange.startOffset
-
-    override val endOffset: Int
-        get() = psi.textRange.endOffset
-
-    @Volatile
-    private var _lighterASTNode: LighterASTNode? = null
-    final override val lighterASTNode: LighterASTNode
-        get() {
-            _lighterASTNode?.let { return it }
-            lighterASTNodeUpdater.compareAndSet(
-                /* obj = */ this,
-                /* expect = */ null,
-                /* update = */ TreeBackedLighterAST.wrap(psi.node)
-            )
-            return _lighterASTNode!!
-        }
-
-    @Volatile
-    private var _treeStructure: FlyweightCapableTreeStructure<LighterASTNode>? = null
-    final override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
-        get() {
-            _treeStructure?.let { return it }
-            treeStructureNodeUpdater.compareAndSet(
-                /* obj = */ this,
-                /* expect = */ null,
-                /* update = */ WrappedTreeStructure(psi.containingFile)
-            )
-            return _treeStructure!!
-        }
-
-    override fun getElementTextInContextForDebug(): String {
-        return getElementTextWithContext(psi)
-    }
-
-    internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
-        private val lighterAST = TreeBackedLighterAST(file.node)
-
-        fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
-
-        override fun toString(node: LighterASTNode): CharSequence = unwrap(node).text
-
-        override fun getRoot(): LighterASTNode = lighterAST.root
-
-        override fun getParent(node: LighterASTNode): LighterASTNode? =
-            unwrap(node).psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
-
-        override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
-            val psi = unwrap(node).psi
-            val children = mutableListOf<PsiElement>()
-            var child = psi.firstChild
-            while (child != null) {
-                children += child
-                child = child.nextSibling
-            }
-            if (children.isEmpty()) {
-                nodesRef.set(LighterASTNode.EMPTY_ARRAY)
-            } else {
-                nodesRef.set(children.map { TreeBackedLighterAST.wrap(it.node) }.toTypedArray())
-            }
-            return children.size
-        }
-
-        override fun disposeChildren(p0: Array<out LighterASTNode>?, p1: Int) {
-        }
-
-        override fun getStartOffset(node: LighterASTNode): Int {
-            return getStartOffset(unwrap(node).psi)
-        }
-
-        private fun getStartOffset(element: PsiElement): Int {
-            var child = element.firstChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.nextSibling
-                }
-                if (child != null) {
-                    return getStartOffset(child)
-                }
-            }
-            return element.textRange.startOffset
-        }
-
-        override fun getEndOffset(node: LighterASTNode): Int {
-            return getEndOffset(unwrap(node).psi)
-        }
-
-        private fun getEndOffset(element: PsiElement): Int {
-            var child = element.lastChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.prevSibling
-                }
-                if (child != null) {
-                    return getEndOffset(child)
-                }
-            }
-            return element.textRange.endOffset
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as KtPsiSourceElement
-
-        if (psi != other.psi) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return psi.hashCode()
-    }
-
-    override fun toString(): String = buildString {
-        append(this@KtPsiSourceElement::class.simpleName)
-        append('(')
-        append(psi::class.simpleName)
-        if (kind is KtFakeSourceElementKind) {
-            append(", ").append(kind)
-        }
-        append(", ").append(startOffset).append("..").append(endOffset)
-        append(')')
-    }
-}
-
-class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
-    override val kind: KtSourceElementKind get() = KtRealSourceElementKind
-}
-
-/**
- * Checking for [KtFakePsiSourceElement] only works for PSI sources.
- *
- * To check for a fake source regardless of source type, check if [KtSourceElement.kind] is a [KtFakeSourceElementKind].
- */
-@RequiresOptIn
-annotation class SuspiciousFakeSourceCheck
-
-@SuspiciousFakeSourceCheck
-open class KtFakePsiSourceElement(
-    psi: PsiElement,
-    override val kind: KtFakeSourceElementKind,
-) : KtPsiSourceElement(psi) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as KtFakePsiSourceElement
-
-        if (kind != other.kind) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + kind.hashCode()
-        return result
-    }
-}
-
-@SuspiciousFakeSourceCheck
-class KtFakePsiSourceElementWithCustomOffsetStrategy(
-    psi: PsiElement,
-    kind: KtFakeSourceElementKind,
-    val strategy: KtSourceElementOffsetStrategy.Custom,
-) : KtFakePsiSourceElement(psi, kind) {
-    override val startOffset: Int
-        get() = strategy.startOffset
-
-    override val endOffset: Int
-        get() = strategy.endOffset
-
-    override fun equals(other: Any?): Boolean = this === other ||
-            other is KtFakePsiSourceElementWithCustomOffsetStrategy &&
-            super.equals(other) &&
-            strategy == other.strategy
-
-    override fun hashCode(): Int = 31 * super.hashCode() + strategy.hashCode()
+    abstract val text: CharSequence
 }
 
 /**
@@ -1298,42 +1264,6 @@ sealed class KtSourceElementOffsetStrategy {
     }
 }
 
-fun KtSourceElement.fakeElement(
-    newKind: KtFakeSourceElementKind,
-    offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
-): KtSourceElement {
-    if (kind == newKind) return this
-    return when (this) {
-        is KtLightSourceElement -> {
-            val [startOffset, endOffset] = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
-                offsetStrategy.startOffset to offsetStrategy.endOffset
-            } else {
-                startOffset to endOffset
-            }
-
-            KtLightSourceElement(
-                lighterASTNode,
-                startOffset,
-                endOffset,
-                treeStructure,
-                newKind
-            )
-        }
-
-        is KtPsiSourceElement -> when (offsetStrategy) {
-            is KtSourceElementOffsetStrategy.Default -> KtFakePsiSourceElement(psi, newKind)
-            is KtSourceElementOffsetStrategy.Custom -> KtFakePsiSourceElementWithCustomOffsetStrategy(psi, newKind, offsetStrategy)
-        }
-    }
-}
-
-fun KtSourceElement.realElement(): KtSourceElement = when (this) {
-    is KtRealPsiSourceElement -> this
-    is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
-    is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
-}
-
-
 class KtLightSourceElement(
     override val lighterASTNode: LighterASTNode,
     override val startOffset: Int,
@@ -1343,19 +1273,6 @@ class KtLightSourceElement(
 ) : KtSourceElement() {
     override val elementType: IElementType
         get() = lighterASTNode.tokenType
-
-    /**
-     * We can create a [KtLightSourceElement] from a [KtPsiSourceElement] by using [KtPsiSourceElement.lighterASTNode];
-     * [unwrapToKtPsiSourceElement] allows to get original [KtPsiSourceElement] in such case.
-     *
-     * If it is `pure` [KtLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToKtPsiSourceElement] `null`.
-     * Otherwise, return some not-null result.
-     */
-    fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
-        if (treeStructure !is KtPsiSourceElement.WrappedTreeStructure) return null
-        val node = treeStructure.unwrap(lighterASTNode)
-        return node.psi?.toKtPsiSourceElement(kind)
-    }
 
     override fun getElementTextInContextForDebug(): String {
         return treeStructure.toString(lighterASTNode).toString()
@@ -1395,22 +1312,137 @@ class KtLightSourceElement(
         append(", ").append(startOffset).append("..").append(endOffset)
         append(')')
     }
-}
 
-val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
+    override fun fakeElement(
+        newKind: KtFakeSourceElementKind,
+        offsetStrategy: KtSourceElementOffsetStrategy,
+    ): KtLightSourceElement {
+        if (kind == newKind) return this
+        val [startOffset, endOffset] = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
+            offsetStrategy.startOffset to offsetStrategy.endOffset
+        } else {
+            startOffset to endOffset
+        }
 
-val KtSourceElement?.text: CharSequence?
-    get() = when (this) {
-        is KtPsiSourceElement -> psi.text
-        is KtLightSourceElement -> treeStructure.toString(lighterASTNode)
-        else -> null
+        return KtLightSourceElement(
+            lighterASTNode,
+            startOffset,
+            endOffset,
+            treeStructure,
+            newKind
+        )
     }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
-    is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
-    is KtFakeSourceElementKind -> KtFakePsiSourceElement(this, kind)
+    override fun realElement(): KtSourceElement {
+        return KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
+    }
+
+    override val text: CharSequence
+        get() = treeStructure.toString(lighterASTNode)
+
+    @InternalDiagnosticFactoryMethod
+    override fun createDiagnostic0(
+        severity: Severity,
+        factory: KtDiagnosticFactory0,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext
+    ): KtSimpleDiagnostic {
+        return KtLightSimpleDiagnostic(
+            this,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A> createDiagnostic1(
+        severity: Severity,
+        factory: KtDiagnosticFactory1<A>,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext
+    ): KtDiagnosticWithParameters1<A> {
+        return KtLightDiagnosticWithParameters1(
+            this,
+            a,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B> createDiagnostic2(
+        severity: Severity,
+        factory: KtDiagnosticFactory2<A, B>,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext
+    ): KtDiagnosticWithParameters2<A, B> {
+        return KtLightDiagnosticWithParameters2(
+            this,
+            a,
+            b,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B, C> createDiagnostic3(
+        severity: Severity,
+        factory: KtDiagnosticFactory3<A, B, C>,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters3<A, B, C> {
+        return KtLightDiagnosticWithParameters3(
+            this,
+            a,
+            b,
+            c,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
+
+    @InternalDiagnosticFactoryMethod
+    override fun <A, B, C, D> createDiagnostic4(
+        severity: Severity,
+        factory: KtDiagnosticFactory4<A, B, C, D>,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters4<A, B, C, D> {
+        return KtLightDiagnosticWithParameters4(
+            this,
+            a,
+            b,
+            c,
+            d,
+            severity,
+            factory,
+            positioningStrategy,
+            context,
+        )
+    }
 }
+
+val KtSourceElement?.text: CharSequence?
+    get() = this?.text
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toKtLightSourceElement(

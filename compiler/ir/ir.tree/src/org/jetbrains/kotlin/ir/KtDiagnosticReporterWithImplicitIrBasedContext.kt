@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -38,9 +37,8 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
 
     private val suppressCache = IrBasedSuppressCache()
 
-    private fun IrElement.toSourceElement(containingIrFile: IrFile): AbstractKtSourceElement? {
-        return PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
-            ?: (this as? IrMetadataSourceOwner)?.metadata?.source
+    private fun IrElement.toSourceElement(): AbstractKtSourceElement? {
+        return (this as? IrMetadataSourceOwner)?.metadata?.source
             ?: sourceElement()
     }
 
@@ -53,7 +51,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     }
 
     override fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticReporter.IrDiagnosticContext {
-        return at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
+        return at(irElement.toSourceElement(), irElement, containingIrFile)
     }
 
     override fun at(

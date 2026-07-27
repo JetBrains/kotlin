@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
@@ -41,8 +40,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATORS
-import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
-import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
 
 val FirBlock.lastExpression: FirExpression?
     get() = statements.lastOrNull() as? FirExpression
@@ -96,9 +93,6 @@ val FirFile.packageFqName: FqName
 
 val FirFileSymbol.packageFqName: FqName
     get() = fir.packageFqName
-
-val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
-val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi
 
 fun FirElement.renderWithType(): String =
     FirRenderer().renderElementWithTypeAsString(this)
@@ -235,42 +229,6 @@ private fun copyStatusAttributes(
     to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
     to.returnValueStatus = returnValueStatus
-}
-
-inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
-    return try {
-        block()
-    } catch (throwable: Throwable) {
-        session.exceptionHandler.handleExceptionOnElementAnalysis(element, throwable)
-    }
-}
-
-inline fun <R> withFileAnalysisExceptionWrapping(file: FirFile, block: () -> R): R {
-    return try {
-        block()
-    } catch (throwable: Throwable) {
-        file.moduleData.session.exceptionHandler.handleExceptionOnFileAnalysis(file, throwable)
-    }
-}
-
-abstract class FirExceptionHandler : FirSessionComponent {
-    abstract fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing
-    abstract fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing
-}
-
-val FirSession.exceptionHandler: FirExceptionHandler by FirSession.sessionComponentAccessor()
-
-object FirCliExceptionHandler : FirExceptionHandler() {
-    override fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing {
-        throw throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element.source)
-    }
-
-    override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
-        throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
-            file.sourceFile?.path,
-            file.source,
-        ) { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) }
-    }
 }
 
 @JvmInline

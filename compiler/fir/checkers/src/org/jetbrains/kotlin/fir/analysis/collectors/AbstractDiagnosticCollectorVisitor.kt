@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.util.whileAnalysing
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractDiagnosticCollectorVisitor(

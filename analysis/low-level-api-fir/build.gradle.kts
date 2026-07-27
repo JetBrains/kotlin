@@ -44,6 +44,7 @@ dependencies {
     testFixturesImplementation(project(":native:native.config"))
 
     implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":js:js.frontend"))
     implementation(project(":analysis:analysis-api-platform-interface"))
