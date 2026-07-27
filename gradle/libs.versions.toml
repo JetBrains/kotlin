@@ -96,6 +96,7 @@ bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
+jmh = "0.7.3"
 
 analysis-api-kotlin = "2.3.21"
 analysis-api-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
@@ -248,3 +249,4 @@ kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kot
 kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-crypto-checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-crypto-checksum" }
+jmh = { id = "me.champeau.jmh", version.ref = "jmh" }

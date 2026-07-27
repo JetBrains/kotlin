@@ -2,6 +2,7 @@
 
 import JdkMajorVersion.JDK_1_8
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import me.champeau.jmh.JMHTask
 
 plugins {
     id("common-configuration")
@@ -9,6 +10,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     `java-test-fixtures`
+    alias(libs.plugins.jmh)
 }
 
 sourceSets {
@@ -31,6 +33,11 @@ sourceSets {
         projectDefault()
         compileClasspath += sourceSets["bootClasspath"].output
         runtimeClasspath += sourceSets["bootClasspath"].output
+    }
+
+    "jmh" {
+        java.srcDirs("jmh")
+        compileClasspath += sourceSets["bootClasspath"].output
     }
 }
 
@@ -87,6 +94,13 @@ testing {
     }
 }
 
+jmh {
+    warmupIterations = 5
+    iterations = 10
+    fork = 3
+    threads = 1
+}
+
 tasks {
     compileKotlin {
         configureTaskToolchain(JDK_1_8)
@@ -98,6 +112,10 @@ tasks {
 
     named<JavaCompile>("compileBootClasspathJava") {
         configureTaskToolchain(JDK_1_8)
+    }
+
+    named<JMHTask>("jmh") {
+        jmhClasspath.from(sourceSets["bootClasspath"].output)
     }
 
     named("checkBuild") {

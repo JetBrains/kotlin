@@ -21,3 +21,20 @@ The following system properties are recognized:
 | `test.instrumenter.root.dir`             | Root dir of kotlin.git                            | `test-inputs-check-v2` |
 | `test.instrumenter.build.dir`            | Build dir of the project executing tests          | `test-inputs-check-v2` |
 | `test.instrumenter.declared.inputs.file` | Path to file containg list of declared inputs     | `test-inputs-check-v2` |
+
+## Benchmarking
+
+The performance of the `TestInputsChecker` is measured by the JMH microbenchmark `TestInputsCheckerBenchmark`.
+
+To run the benchmark:
+```bash
+./gradlew :test-instrumenter:jmh
+```
+
+After it completes, the `benchmark-baseline.txt` file will be updated.
+
+The number of milliseconds in `Score` column should be interpreted as how much overhead 
+the input checking instrumentation adds per 100k files accessed.
+
+> [!TIP]
+> Run the benchmark before and after modifying `TestInputsChecker` to compare the performance
