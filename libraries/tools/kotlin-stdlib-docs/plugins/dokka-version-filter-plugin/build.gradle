@@ -3,11 +3,9 @@ plugins {
 }
 description "Dokka Plugin to filter version for stdlib"
 
-final String dokka_version = property("dokka_version")
-
 dependencies {
-    implementation "org.jetbrains.dokka:dokka-base:$dokka_version"
-    compileOnly "org.jetbrains.dokka:dokka-core:$dokka_version"
+    implementation libs.dokka.base
+    compileOnly libs.dokka.core
     testImplementation 'org.jetbrains.kotlin:kotlin-test'}
 
 kotlin {
